@@ -1,5 +1,107 @@
+"use client"
+
 import { Button } from "@/components/ui/button"
-import { ArrowDownToLine } from "lucide-react"
+import { 
+  ArrowDownToLine, 
+  Network, 
+  Link2, 
+  LineChart, 
+  Code2, 
+  LayoutDashboard, 
+  FileSpreadsheet,
+  SplitSquareHorizontal,
+  Globe,
+  MonitorPlay,
+  MessageCircle,
+  BookOpen,
+  Bot,
+  Github
+} from "lucide-react"
+
+const features = [
+  {
+    title: "Access to 12+ Indian Brokers",
+    description: "Connect seamlessly with India's top broking platforms for comprehensive market access",
+    icon: Network,
+    category: "Integration"
+  },
+  {
+    title: "Multi-Platform Support",
+    description: "Connect your favorite trading platform - Amibroker, Tradingview, Python, Metatrader and more",
+    icon: Link2,
+    category: "Integration"
+  },
+  {
+    title: "Chartink Strategy Management",
+    description: "Comprehensive modules for managing and executing Chartink strategies effectively",
+    icon: LineChart,
+    category: "Trading"
+  },
+  {
+    title: "API Analyzer",
+    description: "Test your strategies thoroughly before going live with our advanced API analyzer",
+    icon: Code2,
+    category: "Developer Experience"
+  },
+  {
+    title: "20+ Simplified APIs",
+    description: "Extensive API suite covering Account, Data, and Order operations with simplified structure",
+    icon: Code2,
+    category: "Integration"
+  },
+  {
+    title: "Trading Modules",
+    description: "Simplified order execution process with Amibroker, Metatrader, and Google Spreadsheets modules",
+    icon: FileSpreadsheet,
+    category: "Trading"
+  },
+  {
+    title: "Advanced Order Types",
+    description: "SmartOrder, Basketorder, and SplitOrder functionality for sophisticated trading strategies",
+    icon: SplitSquareHorizontal,
+    category: "Trading"
+  },
+  {
+    title: "Common Format Architecture",
+    description: "OpenAlgo Common Symbol format and unified API endpoints across all supported brokers",
+    icon: Globe,
+    category: "Developer Experience"
+  },
+  {
+    title: "Modern UI Dashboards",
+    description: "Sleek, intuitive dashboards for effortless monitoring and control",
+    icon: MonitorPlay,
+    category: "User Experience"
+  },
+  {
+    title: "Community Support",
+    description: "Active Discord community support for seamless trading experience",
+    icon: MessageCircle,
+    category: "Support"
+  },
+  {
+    title: "Comprehensive Documentation",
+    description: "Detailed guides, tutorials, and API references with practical examples for every feature",
+    icon: BookOpen,
+    category: "Documentation"
+  },
+  {
+    title: "AI-Powered Development",
+    description: "Leveraging ChatGPT and Claude Sonnet 3.5 for rapid feature development and enhanced capabilities",
+    icon: Bot,
+    category: "Innovation"
+  }
+]
+
+const categories = [
+  { name: "Integration", color: "bg-purple-500/10 text-purple-500" },
+  { name: "Trading", color: "bg-blue-500/10 text-blue-500" },
+  { name: "Developer Experience", color: "bg-green-500/10 text-green-500" },
+  { name: "User Experience", color: "bg-orange-500/10 text-orange-500" },
+  { name: "Support", color: "bg-pink-500/10 text-pink-500" },
+  { name: "Documentation", color: "bg-yellow-500/10 text-yellow-500" },
+  { name: "Innovation", color: "bg-indigo-500/10 text-indigo-500" }
+]
 
 export default function Home() {
   return (
@@ -23,9 +125,9 @@ export default function Home() {
               </a>
             </Button>
             <Button variant="outline" size="lg" asChild>
-              <a href="/download" className="flex items-center">
-                <ArrowDownToLine className="w-5 h-5 mr-2" />
-                Download
+              <a href="https://github.com/marketcalls/openalgo" className="flex items-center" target="_blank" rel="noopener noreferrer">
+                <Github className="w-5 h-5 mr-2" />
+                GitHub
               </a>
             </Button>
           </div>
@@ -36,58 +138,27 @@ export default function Home() {
       <div className="py-24 bg-muted/50">
         <div className="container mx-auto px-4">
           <h2 className="text-3xl font-bold text-center mb-16">Key Features</h2>
-          <div className="grid md:grid-cols-3 gap-8">
-            <div className="bg-background p-8 rounded-lg border">
-              <h3 className="text-xl font-semibold mb-4">Multi-Platform Support</h3>
-              <p className="text-muted-foreground">Run strategies from Amibroker, TradingView, Python, and more</p>
-            </div>
-            <div className="bg-background p-8 rounded-lg border">
-              <h3 className="text-xl font-semibold mb-4">Broker Integration</h3>
-              <p className="text-muted-foreground">Seamless connection with top Indian brokers</p>
-            </div>
-            <div className="bg-background p-8 rounded-lg border">
-              <h3 className="text-xl font-semibold mb-4">Open Source</h3>
-              <p className="text-muted-foreground">Free and open source platform for everyone</p>
-            </div>
+          <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
+            {features.map((feature, index) => {
+              const category = categories.find(c => c.name === feature.category)
+              return (
+                <div key={index} className="bg-background p-8 rounded-lg border transition-all hover:shadow-lg">
+                  <div className={`inline-flex items-center justify-center p-2 rounded-lg ${category?.color} mb-4`}>
+                    <feature.icon className="w-6 h-6" />
+                  </div>
+                  <h3 className="text-xl font-semibold mb-2">{feature.title}</h3>
+                  <p className="text-muted-foreground">{feature.description}</p>
+                  <div className="mt-4">
+                    <span className={`text-sm px-3 py-1 rounded-full ${category?.color}`}>
+                      {feature.category}
+                    </span>
+                  </div>
+                </div>
+              )
+            })}
           </div>
         </div>
       </div>
-
-      {/* Footer */}
-      <footer className="bg-muted py-16">
-        <div className="container mx-auto px-4">
-          <div className="grid md:grid-cols-4 gap-8">
-            <div>
-              <h4 className="text-lg font-semibold mb-4">OpenAlgo</h4>
-              <p className="text-muted-foreground">Open source algo trading platform for everyone</p>
-            </div>
-            <div>
-              <h4 className="text-lg font-semibold mb-4">Quick Links</h4>
-              <ul className="space-y-2">
-                <li><a href="https://docs.openalgo.in" className="text-muted-foreground hover:text-foreground">Documentation</a></li>
-                <li><a href="https://docs.openalgo.in/getting-started" className="text-muted-foreground hover:text-foreground" target="_blank" rel="noopener noreferrer">Installation</a></li>
-                <li><a href="#" className="text-muted-foreground hover:text-foreground">Download</a></li>
-              </ul>
-            </div>
-            <div>
-              <h4 className="text-lg font-semibold mb-4">Contact</h4>
-              <ul className="space-y-2 text-muted-foreground">
-                <li>support@openalgo.in</li>
-              </ul>
-            </div>
-            <div>
-              <h4 className="text-lg font-semibold mb-4">Follow Us</h4>
-              <div className="flex space-x-4">
-                <a href="#" className="text-muted-foreground hover:text-foreground">GitHub</a>
-                <a href="#" className="text-muted-foreground hover:text-foreground">Twitter</a>
-              </div>
-            </div>
-          </div>
-          <div className="border-t border-border mt-12 pt-8 text-center text-muted-foreground">
-            <p> {new Date().getFullYear()} OpenAlgo. All rights reserved.</p>
-          </div>
-        </div>
-      </footer>
     </main>
   )
 }
