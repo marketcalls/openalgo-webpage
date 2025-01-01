@@ -56,11 +56,5 @@
   "github": {
     "silent": true,
     "autoJobCancelation": true
-  },
-  "functions": {
-    "api/*": {
-      "memory": 1024,
-      "maxDuration": 10
-    }
   }
 }
