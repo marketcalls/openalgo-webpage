@@ -31,38 +31,48 @@ export function Footer() {
         </div>
 
         <div className="flex justify-center gap-4 mt-6">
-          <a
-            href="https://github.com/marketcalls/openalgo"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-muted-foreground hover:text-foreground transition-colors"
-          >
-            <GitHubLogoIcon className="h-5 w-5" />
-          </a>
-          <a
-            href="/discord"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-muted-foreground hover:text-foreground transition-colors"
-          >
-            <DiscordLogoIcon className="h-5 w-5" />
-          </a>
-          <a
-            href="https://x.com/openalgoHQ"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-muted-foreground hover:text-foreground transition-colors"
-          >
-            <Twitter className="h-5 w-5" />
-          </a>
-          <a
-            href="https://www.youtube.com/@openalgo"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-muted-foreground hover:text-foreground transition-colors"
-          >
-            <Youtube className="h-5 w-5" />
-          </a>
+          <div className="flex items-center gap-4">
+            <a
+              href="https://github.com/marketcalls/openalgo"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-muted-foreground hover:text-foreground transition-colors"
+              aria-label="Visit OpenAlgo GitHub repository"
+            >
+              <GitHubLogoIcon className="h-4 w-4" />
+              <span className="sr-only">OpenAlgo GitHub repository</span>
+            </a>
+            <a
+              href="/discord"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-muted-foreground hover:text-foreground transition-colors"
+              aria-label="Join OpenAlgo Discord community"
+            >
+              <DiscordLogoIcon className="h-4 w-4" />
+              <span className="sr-only">OpenAlgo Discord community</span>
+            </a>
+            <a
+              href="https://x.com/openalgoHQ"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-muted-foreground hover:text-foreground transition-colors"
+              aria-label="Follow OpenAlgo on X (formerly Twitter)"
+            >
+              <Twitter className="h-4 w-4" />
+              <span className="sr-only">OpenAlgo X (Twitter) profile</span>
+            </a>
+            <a
+              href="https://www.youtube.com/@openalgo"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-muted-foreground hover:text-foreground transition-colors"
+              aria-label="Subscribe to OpenAlgo YouTube channel"
+            >
+              <Youtube className="h-4 w-4" />
+              <span className="sr-only">OpenAlgo YouTube channel</span>
+            </a>
+          </div>
         </div>
       </div>
     </footer>
