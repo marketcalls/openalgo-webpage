@@ -2,7 +2,7 @@
 
 import { usePathname } from 'next/navigation'
 import Link from 'next/link'
-import { Home, HelpCircle, Book, Download, Menu, Sun, Moon, GitBranch } from 'lucide-react'
+import { Home, HelpCircle, Book, Download, Menu, Sun, Moon, GitBranch, Github } from 'lucide-react'
 import { Button } from './ui/button'
 import { useTheme } from 'next-themes'
 import { clsx } from 'clsx'
@@ -53,11 +53,23 @@ export function Navbar() {
             </a>
           </nav>
         </div>
+        <a
+          href="https://github.com/marketcalls/openalgo"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="mr-2 flex items-center gap-2 px-3 py-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors"
+        >
+          <img
+            src="https://img.shields.io/github/stars/marketcalls/openalgo?style=social"
+            alt="GitHub stars"
+            className="h-5"
+          />
+        </a>
         <Button
           variant="ghost"
           size="icon"
           aria-label="Toggle Theme"
-          className="ml-auto"
+          className="ml-2"
           onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
         >
           {theme === "dark" ? (
