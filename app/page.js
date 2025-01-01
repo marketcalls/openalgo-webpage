@@ -110,9 +110,9 @@ export default function Home() {
       <div className="min-h-[calc(100vh-4rem)] flex items-center justify-center">
         <div className="text-center max-w-3xl mx-auto px-4">
           <h1 className="text-5xl font-bold mb-8">
-            Your Personal{" "}
-            <span className="text-primary">Algo Trading</span>{" "}
-            <span className="text-primary">Platform</span>
+            <span className="bg-clip-text text-transparent bg-gradient-to-r from-purple-500 via-blue-500 to-green-500 animate-gradient">Your Personal</span>{" "}
+            <span className="bg-clip-text text-transparent bg-gradient-to-r from-pink-500 via-red-500 to-yellow-500 animate-gradient">Algo Trading</span>{" "}
+            <span className="bg-clip-text text-transparent bg-gradient-to-r from-green-400 via-blue-500 to-purple-500 animate-gradient">Platform</span>
           </h1>
           <p className="text-xl mb-8 text-muted-foreground">
             Connect your algo strategies seamlessly with top Indian brokers. Run your strategies from any platform - Amibroker, TradingView, Python, ChartInk, MetaTrader, Excel, or Google Sheets.
