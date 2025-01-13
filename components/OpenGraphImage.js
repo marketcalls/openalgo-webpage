@@ -11,7 +11,7 @@ export const OpenGraphImage = async ({ title, description }) => {
           flexDirection: 'column',
           alignItems: 'flex-start',
           justifyContent: 'center',
-          backgroundColor: '#ffffff',
+          backgroundColor: '#2F3136',
           padding: '48px 64px',
         }}
       >
@@ -19,7 +19,7 @@ export const OpenGraphImage = async ({ title, description }) => {
           style={{
             fontSize: '48px',
             fontWeight: '600',
-            color: '#000000',
+            color: '#00A8FC',
             marginBottom: '24px',
             lineHeight: 1.3,
             maxWidth: '850px',
@@ -30,7 +30,7 @@ export const OpenGraphImage = async ({ title, description }) => {
         <p
           style={{
             fontSize: '24px',
-            color: '#666666',
+            color: '#DCDDDE',
             lineHeight: 1.4,
             maxWidth: '800px',
           }}
@@ -42,7 +42,7 @@ export const OpenGraphImage = async ({ title, description }) => {
             position: 'absolute',
             bottom: '48px',
             fontSize: '16px',
-            color: '#888888',
+            color: '#72767D',
           }}
         >
           openalgo.in
@@ -52,6 +52,16 @@ export const OpenGraphImage = async ({ title, description }) => {
     {
       width: 1200,
       height: 630,
+      fonts: [
+        {
+          name: 'Inter',
+          data: await fetch(
+            new URL('https://fonts.gstatic.com/s/inter/v12/UcCO3FwrK3iLTeHuS_fvQtMwCp50KnMw2boKoduKmMEVuDyfAZ9hiA.woff2')
+          ).then((res) => res.arrayBuffer()),
+          weight: 600,
+          style: 'normal',
+        }
+      ],
     }
   )
 }
