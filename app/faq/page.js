@@ -95,7 +95,7 @@ const resources = [
     title: "GitHub",
     description: "View the source code",
     icon: Github,
-    url: "https://github.com/openalgo"
+    url: "https://github.com/marketcalls/openalgo"
   }
 ]
 
