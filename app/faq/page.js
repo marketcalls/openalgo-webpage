@@ -23,11 +23,13 @@ const faqs = [
 • 5paisa
 • Angel One
 • Aliceblue
+• Compositedge
 • Dhan
 • Firstock
 • Flattrade
 • Fyers
 • Kotak
+• PayTM
 • ICICI Direct
 • Shoonya
 • Upstox
