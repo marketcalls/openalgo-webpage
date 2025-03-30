@@ -68,7 +68,7 @@ export default function PrivacyPolicy() {
         <h2 className="text-2xl font-semibold mt-6 mb-3">Contact Us</h2>
         <p className="mb-4">
           For more information about our privacy practices or if you have questions, please contact us at
-          support@openalgo.in.
+          rajandran@openalgo.in.
         </p>
       </div>
     </div>
