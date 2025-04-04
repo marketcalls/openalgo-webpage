@@ -33,9 +33,11 @@ const faqs = [
 • PayTM
 • ICICI Direct
 • IIFL (XTS)
-• Jainam (XTS)
+• Jainam Retail (XTS)
+• Jainam Dealer (XTS)
 • Shoonya
 • Upstox
+• Wisdom Capital
 • Zebu
 • Zerodha
 
