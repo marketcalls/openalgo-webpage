@@ -21,6 +21,7 @@ const faqs = [
     answer: `OpenAlgo currently supports integration with the following popular brokers in the Indian market:
 
 • 5paisa
+• 5paisa (XTS)
 • Angel One
 • Aliceblue
 • Compositedge
@@ -31,6 +32,8 @@ const faqs = [
 • Kotak
 • PayTM
 • ICICI Direct
+• IIFL (XTS)
+• Jainam (XTS)
 • Shoonya
 • Upstox
 • Zebu
