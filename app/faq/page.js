@@ -31,6 +31,7 @@ const faqs = [
 • Fyers
 • Kotak
 • PayTM
+• Pocketful
 • ICICI Direct
 • IIFL (XTS)
 • Jainam Retail (XTS)
