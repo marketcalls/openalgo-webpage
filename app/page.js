@@ -20,7 +20,7 @@ import {
 
 const features = [
   {
-    title: "Access to 12+ Indian Brokers",
+    title: "Access to 20+ Indian Brokers",
     description: "Connect seamlessly with India's top broking platforms for comprehensive market access",
     icon: Network,
     category: "Integration"
