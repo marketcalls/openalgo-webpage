@@ -29,10 +29,10 @@ const faqs = [
 • Firstock
 • Flattrade
 • Fyers
+• Groww
 • Kotak
 • PayTM
 • Pocketful
-• ICICI Direct
 • IIFL (XTS)
 • Jainam Retail (XTS)
 • Jainam Dealer (XTS)
