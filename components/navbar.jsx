@@ -2,7 +2,7 @@
 
 import { usePathname } from 'next/navigation'
 import Link from 'next/link'
-import { Home, HelpCircle, Book, Menu, GitBranch, Github, X, ArrowDownToLine, MessageCircle } from 'lucide-react'
+import { Home, HelpCircle, Book, Menu, GitBranch, Github, X, ArrowDownToLine, MessageCircle, PenTool } from 'lucide-react'
 import { Button } from './ui/button'
 import { clsx } from 'clsx'
 import { useState, useEffect } from 'react'
@@ -25,6 +25,7 @@ export function Navbar() {
   const menuItems = [
     { href: "/", icon: <Home className="h-4 w-4" />, label: "Home" },
     { href: "/download", icon: <ArrowDownToLine className="h-4 w-4" />, label: "Download" },
+    { href: "/blog", icon: <PenTool className="h-4 w-4" />, label: "Blog" },
     { href: "/discord", icon: <MessageCircle className="h-4 w-4" />, label: "Discord" },
     { href: "/faq", icon: <HelpCircle className="h-4 w-4" />, label: "FAQ" },
     { href: "/roadmap", icon: <GitBranch className="h-4 w-4" />, label: "Roadmap" },
