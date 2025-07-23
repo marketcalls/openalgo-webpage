@@ -35,7 +35,7 @@ const faqs = [
 • Pocketful
 • IIFL (XTS)
 • INDMoney
-• IndiaBulls Securities
+• IndiaBulls Securities (XTS)
 • Shoonya
 • Upstox
 • Wisdom Capital (XTS)
