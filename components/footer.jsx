@@ -32,7 +32,7 @@ export function Footer() {
           <span className="hidden md:inline">•</span>
           <div className="inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2">
             <p className="text-sm text-muted-foreground">
-              v1.0.0.26
+              v1.0.0.27
             </p>
           </div>
         </div>
