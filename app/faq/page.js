@@ -24,7 +24,7 @@ const faqs = [
 • 5paisa (XTS)
 • Angel One
 • Aliceblue
-• Compositedge
+• Compositedge (XTS)
 • Dhan
 • Firstock
 • Flattrade
@@ -34,11 +34,11 @@ const faqs = [
 • PayTM
 • Pocketful
 • IIFL (XTS)
-• Jainam Retail (XTS)
-• Jainam Dealer (XTS)
+• INDMoney
+• IndiaBulls Securities
 • Shoonya
 • Upstox
-• Wisdom Capital
+• Wisdom Capital (XTS)
 • Zebu
 • Zerodha
 
