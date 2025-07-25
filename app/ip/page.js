@@ -21,8 +21,8 @@ export default function IPTrackerPage() {
         setUserIp(ipData.ip)
         setIpAddress(ipData.ip)
         
-        // Then get location data for user's IP
-        const locationResponse = await fetch(`http://ip-api.com/json/${ipData.ip}?fields=status,message,continent,continentCode,country,countryCode,region,regionName,city,district,zip,lat,lon,timezone,offset,currency,isp,org,as,asname,reverse,mobile,proxy,hosting,query`)
+        // Then get location data for user's IP using our API route
+        const locationResponse = await fetch(`/api/ip-lookup?ip=${ipData.ip}`)
         const locationData = await locationResponse.json()
         
         if (locationData.status === "success") {
@@ -44,10 +44,18 @@ export default function IPTrackerPage() {
     setError("")
     
     try {
-      const response = await fetch(`http://ip-api.com/json/${ipAddress}?fields=status,message,continent,continentCode,country,countryCode,region,regionName,city,district,zip,lat,lon,timezone,offset,currency,isp,org,as,asname,reverse,mobile,proxy,hosting,query`)
+      const response = await fetch(`/api/ip-lookup?ip=${ipAddress}`)
       
       if (response.status === 429) {
         setError("Rate limit exceeded. Please try again in a few minutes.")
+        setLoading(false)
+        return
+      }
+      
+      if (!response.ok) {
+        const errorData = await response.json()
+        setError(errorData.error || "Failed to fetch IP data")
+        setIpData(null)
         setLoading(false)
         return
       }
