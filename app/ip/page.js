@@ -20,11 +20,11 @@ export default function IPTrackerPage() {
         const ipData = await ipResponse.json()
         setUserIp(ipData.ip)
         setIpAddress(ipData.ip)
-        
+
         // Then get location data for user's IP using our API route
         const locationResponse = await fetch(`/api/ip-lookup?ip=${ipData.ip}`)
         const locationData = await locationResponse.json()
-        
+
         if (locationData.status === "success") {
           setIpData(locationData)
         }
@@ -32,7 +32,7 @@ export default function IPTrackerPage() {
         console.error("Error fetching initial data:", error)
       }
     }
-    
+
     fetchUserData()
   }, [])
 
@@ -42,16 +42,16 @@ export default function IPTrackerPage() {
 
     setLoading(true)
     setError("")
-    
+
     try {
       const response = await fetch(`/api/ip-lookup?ip=${ipAddress}`)
-      
+
       if (response.status === 429) {
         setError("Rate limit exceeded. Please try again in a few minutes.")
         setLoading(false)
         return
       }
-      
+
       if (!response.ok) {
         const errorData = await response.json()
         setError(errorData.error || "Failed to fetch IP data")
@@ -59,9 +59,9 @@ export default function IPTrackerPage() {
         setLoading(false)
         return
       }
-      
+
       const data = await response.json()
-      
+
       if (data.status === "fail") {
         setError(data.message || "Invalid IP address or query failed")
         setIpData(null)
@@ -163,14 +163,14 @@ export default function IPTrackerPage() {
               <MapPin className="h-5 w-5 text-primary" />
               <h2 className="text-lg font-semibold">Geographic Location</h2>
             </div>
-            
+
             {error && (
               <div className="mb-4 p-4 rounded-lg bg-destructive/10 border border-destructive/20 flex items-center gap-2 text-destructive">
                 <AlertCircle className="h-4 w-4" />
                 <p className="text-sm">{error}</p>
               </div>
             )}
-            
+
             {ipData && ipData.status === "success" ? (
               <div className="space-y-4">
                 <div className="grid grid-cols-2 gap-4">
@@ -191,34 +191,34 @@ export default function IPTrackerPage() {
                     <p className="font-medium">{ipData.isp || "N/A"}</p>
                   </div>
                 </div>
-                
+
                 <div className="border-t pt-4 mt-4 space-y-3">
                   <div>
                     <p className="text-sm text-muted-foreground">TIME ZONE</p>
                     <p className="font-medium">{ipData.timezone || "N/A"}</p>
                   </div>
-                  
+
                   <div>
                     <p className="text-sm text-muted-foreground">COORDINATES</p>
                     <p className="font-medium">
-                      {ipData.lat && ipData.lon 
-                        ? `${ipData.lat}, ${ipData.lon}` 
+                      {ipData.lat && ipData.lon
+                        ? `${ipData.lat}, ${ipData.lon}`
                         : "N/A"}
                     </p>
                   </div>
-                  
+
                   <div>
                     <p className="text-sm text-muted-foreground">AS NUMBER</p>
                     <p className="font-medium">{ipData.as || "N/A"}</p>
                   </div>
-                  
+
                   {ipData.proxy && (
                     <div>
                       <p className="text-sm text-muted-foreground">PROXY DETECTED</p>
                       <p className="font-medium text-orange-500">Yes</p>
                     </div>
                   )}
-                  
+
                   {ipData.mobile && (
                     <div>
                       <p className="text-sm text-muted-foreground">MOBILE CONNECTION</p>
@@ -238,7 +238,7 @@ export default function IPTrackerPage() {
                     src={`https://maps.google.com/maps?q=${ipData.lat},${ipData.lon}&z=10&output=embed`}
                   />
                   <div className="absolute bottom-2 right-2 bg-background/90 backdrop-blur-sm px-2 py-1 rounded text-xs">
-                    <a 
+                    <a
                       href={`https://maps.google.com/maps?q=${ipData.lat},${ipData.lon}&z=10`}
                       target="_blank"
                       rel="noopener noreferrer"

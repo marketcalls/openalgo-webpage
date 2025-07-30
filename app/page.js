@@ -87,7 +87,7 @@ const features = [
   },
   {
     title: "AI-Powered Development",
-    description: "Leveraging ChatGPT and Claude Sonnet 3.5 for rapid feature development and enhanced capabilities",
+    description: "Leveraging Claude Opus and Sonnet for Development,\nChatGPT, Google Gemini for Documentation, Security Audit and Code Review",
     icon: Bot,
     category: "Innovation"
   }
