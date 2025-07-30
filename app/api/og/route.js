@@ -10,9 +10,9 @@ export async function GET() {
 
     return await OpenGraphImage({ title, description })
   } catch (e) {
-    console.log(`${e.message}`)
-    return new Response(`Failed to generate the image`, {
-      status: 500,
-    })
+    console.error('OG Image generation failed:', e.message)
+    
+    // Redirect to static fallback image
+    return Response.redirect('https://openalgo.in/assets/images/og-image.png', 302)
   }
 }

@@ -64,7 +64,7 @@ export function Navbar() {
               <a
                 key={item.href}
                 href={item.href}
-                className="flex items-center gap-2 text-muted-foreground transition-colors hover:text-primary"
+                className="flex items-center gap-2 text-foreground/80 transition-colors hover:text-primary"
                 target="_blank"
                 rel="noopener noreferrer"
               >
@@ -77,7 +77,7 @@ export function Navbar() {
                 href={item.href}
                 className={clsx(
                   "flex items-center gap-2 transition-colors hover:text-primary",
-                  pathname === item.href ? "text-primary" : "text-muted-foreground"
+                  pathname === item.href ? "text-primary" : "text-foreground/80"
                 )}
               >
                 {item.icon}
@@ -92,7 +92,7 @@ export function Navbar() {
             href="https://github.com/marketcalls/openalgo"
             target="_blank"
             rel="noopener noreferrer"
-            className="hidden md:flex items-center gap-2 px-3 py-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors"
+            className="hidden md:flex items-center gap-2 px-3 py-1.5 text-sm text-foreground/70 hover:text-foreground transition-colors"
           >
             <img
               src="https://img.shields.io/github/stars/marketcalls/openalgo?style=social"

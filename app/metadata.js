@@ -22,7 +22,7 @@ export const defaultMetadata = {
     description: 'OpenAlgo is a powerful algorithmic trading platform for Indian markets, offering seamless integration with multiple trading platforms and brokers.',
     siteName: 'OpenAlgo',
     images: [{
-      url: 'https://openalgo.in/api/og',
+      url: 'https://openalgo.in/assets/images/og-image.png',
       width: 1200,
       height: 630,
       alt: 'OpenAlgo - Your Personal Algo Trading Platform',
@@ -34,13 +34,13 @@ export const defaultMetadata = {
     title: 'OpenAlgo - Your Personal Algo Trading Platform',
     description: 'OpenAlgo is a powerful algorithmic trading platform for Indian markets, offering seamless integration with multiple trading platforms and brokers.',
     images: {
-      url: 'https://openalgo.in/api/og',
+      url: 'https://openalgo.in/assets/images/og-image.png',
       width: 1200,
       height: 630,
       alt: 'OpenAlgo - Your Personal Algo Trading Platform'
     },
-    creator: '@openalgo',
-    site: '@openalgo'
+    creator: '@openalgoHQ',
+    site: '@openalgoHQ'
   },
   alternates: {
     canonical: 'https://openalgo.in'
@@ -50,14 +50,14 @@ export const defaultMetadata = {
   },
   other: {
     'og:url': 'https://openalgo.in',
-    'og:image': 'https://openalgo.in/api/og',
-    'og:image:secure_url': 'https://openalgo.in/api/og',
+    'og:image': 'https://openalgo.in/assets/images/og-image.png',
+    'og:image:secure_url': 'https://openalgo.in/assets/images/og-image.png',
     'og:image:width': '1200',
     'og:image:height': '630',
     'og:image:type': 'image/png',
     'og:type': 'website',
     'og:locale': 'en_US',
     'twitter:url': 'https://openalgo.in',
-    'twitter:image': 'https://openalgo.in/api/og'
+    'twitter:image': 'https://openalgo.in/assets/images/og-image.png'
   }
 }
