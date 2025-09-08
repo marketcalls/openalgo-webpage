@@ -25,6 +25,7 @@ const faqs = [
 • Angel One
 • Aliceblue
 • Compositedge (XTS)
+• Definedge Securities
 • Dhan
 • Firstock
 • Flattrade
@@ -48,7 +49,8 @@ And more brokers are being added regularly.`
     question: "What are the system requirements?",
     answer: `The minimum requirements are:
 
-• 2GB RAM minimum
+• 0.5GB RAM with minimum 2GB of Swap memory
+• OR 2GB RAM without any swap memory
 • Stable internet connection
 • Python 3.10 or higher
 • Any modern operating system (Windows, Mac, or Linux)`
@@ -82,6 +84,48 @@ For best performance with Indian markets, it's recommended to host on servers lo
 • Secure storage of API keys and credentials
 • Regular security updates and improvements
 • Open-source code that can be audited for security`
+  },
+  {
+    question: "Why do I need to login daily?",
+    answer: `Daily login is required for exchange compliance and security:
+
+• Auth tokens expire at midnight as per exchange regulations
+• Broker servers expire sessions for security compliance
+• Fresh login ensures secure trading session each day
+• This is an industry-standard security practice mandated by Indian exchanges
+• Protects your account from unauthorized access`
+  },
+  {
+    question: "Licensing: If I build a strategy using the Python SDK, do I need to open source it?",
+    answer: "No. The SDKs are MIT-licensed. Your strategies remain completely private. The AGPL license only applies to modifications of the OpenAlgo core platform itself."
+  },
+  {
+    question: "Licensing: Can I use Analyze Mode for proprietary testing?",
+    answer: "Yes. You can test strategies without execution risk, and your logic stays private. The Analyze Mode is a feature of OpenAlgo, and your strategies using it remain your intellectual property."
+  },
+  {
+    question: "Licensing: I am a broker. Can I rebrand OpenAlgo for my clients?",
+    answer: "Yes, you can customize and rebrand the interface. But if you modify the core and offer it as a hosted service, you must release those modifications under AGPL. For proprietary modifications, commercial licensing is available."
+  },
+  {
+    question: "Licensing: What about internal use within my firm?",
+    answer: "Internal use does not require you to share modifications. AGPL applies only to distribution and network-based services. You can modify and use OpenAlgo internally without any obligation to share your changes."
+  },
+  {
+    question: "Licensing: Can I charge for training, consulting, or support?",
+    answer: "Yes. The license places no restrictions on service-based monetization. You can offer paid training, consulting, support, or managed services around OpenAlgo."
+  },
+  {
+    question: "Licensing: What if my business requires proprietary changes?",
+    answer: "Commercial licensing is available so you can keep certain modifications private. Contact the OpenAlgo team through Discord or GitHub to discuss commercial licensing options."
+  },
+  {
+    question: "Licensing: Does AGPL affect my WebSocket connections or custom webhooks?",
+    answer: "No. Your external integrations remain your property. AGPL only applies to modifications of the OpenAlgo core platform. Your strategies, webhooks, and external connections are yours."
+  },
+  {
+    question: "Licensing: How does OpenAlgo GPT affect licensing?",
+    answer: "OpenAlgo GPT is a community resource to help users. It does not change licensing terms. Any code or strategies you develop with its help remain your intellectual property."
   }
 ]
 

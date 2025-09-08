@@ -19,20 +19,6 @@ export const metadata = {
 export default function RootLayout({ children }) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <head>
-        <script 
-          async
-          src="https://tqec4ynyoy2hfntmxkphpfwx.agents.do-ai.run/static/chatbot/widget.js"
-          data-agent-id="5c0fa6aa-6d3b-11f0-bf8f-4e013e2ddde4"
-          data-chatbot-id="JsoOFfwGxirwLCaT_zanNJ3TATcva_4p"
-          data-name="OpenAlgo Expert Agent"
-          data-primary-color="#031B4E"
-          data-secondary-color="#E5E8ED"
-          data-button-background-color="#031B4E"
-          data-starting-message="Welcome to OpenAlgo Assistant. How can I help you make the most of the platform today?"
-          data-logo="/static/chatbot/icons/default-agent.svg"
-        ></script>
-      </head>
       <body className={inter.className}>
         <ThemeProvider
           attribute="class"
