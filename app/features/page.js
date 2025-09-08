@@ -37,7 +37,8 @@ import {
   User,
   Mail,
   Smartphone,
-  History
+  History,
+  Container
 } from "lucide-react"
 
 const features = [
@@ -159,8 +160,8 @@ const features = [
 
   // Real-Time Streaming
   {
-    title: "ZeroMQ Architecture",
-    description: "High-performance WebSocket distribution with ZeroMQ for ultra-low latency",
+    title: "Raw WebSocket Implementation",
+    description: "Direct broker API integration using raw WebSockets, not SDKs, for maximum performance and control",
     icon: Zap,
     category: "Real-Time Data"
   },
@@ -211,8 +212,8 @@ const features = [
 
   // Developer Experience
   {
-    title: "MIT-Licensed SDKs",
-    description: "Python and Node.js SDKs under MIT license - your strategies remain private",
+    title: "Python SDK with 100+ Indicators",
+    description: "Comprehensive Python SDK with 100+ built-in technical indicators for strategy development",
     icon: Code2,
     category: "Developer Tools"
   },
@@ -237,6 +238,30 @@ const features = [
 
   // Infrastructure
   {
+    title: "Zero-Config Installation",
+    description: "Easy one-command setup with sensible defaults - get trading in minutes, not hours",
+    icon: Package,
+    category: "Infrastructure"
+  },
+  {
+    title: "Docker Support",
+    description: "Production-ready Docker images for consistent deployment across any environment",
+    icon: Container,
+    category: "Infrastructure"
+  },
+  {
+    title: "Connection Pooling",
+    description: "Optimized connection management for faster order execution and reduced latency",
+    icon: Network,
+    category: "Infrastructure"
+  },
+  {
+    title: "Direct Broker API Integration",
+    description: "Built directly on broker REST APIs without SDK dependencies for maximum reliability",
+    icon: GitBranch,
+    category: "Infrastructure"
+  },
+  {
     title: "API Key Authentication",
     description: "Secure API key-based authentication for all endpoints",
     icon: Key,
@@ -255,8 +280,8 @@ const features = [
     category: "Infrastructure"
   },
   {
-    title: "Database Backend",
-    description: "SQLite database for storing configurations, logs, and audit trails",
+    title: "Database with Smart Caching",
+    description: "SQLite backend with intelligent caching layer for faster data retrieval and reduced database calls",
     icon: Database,
     category: "Infrastructure"
   },
@@ -314,18 +339,6 @@ const features = [
   },
 
   // Security & Compliance
-  {
-    title: "CSRF Protection",
-    description: "Token-based protection against cross-site request forgery attacks",
-    icon: Shield,
-    category: "Security"
-  },
-  {
-    title: "CORS Configuration",
-    description: "Properly configured CORS rules for secure cross-origin requests",
-    icon: Globe,
-    category: "Security"
-  },
   {
     title: "Exchange Compliance Security",
     description: "Daily fresh login required as auth tokens expire at midnight per exchange regulations for enhanced security",
