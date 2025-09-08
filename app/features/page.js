@@ -43,8 +43,8 @@ import {
 const features = [
   // Core Platform Features
   {
-    title: "Smart Order Management",
-    description: "Advanced position handling with stop-loss, trailing stops, and partial exits for precise trade control",
+    title: "Smart Order Execution",
+    description: "Intelligent order routing and execution management for complex trading strategies",
     icon: TrendingUp,
     category: "Trading Engine"
   },
@@ -99,8 +99,8 @@ const features = [
     category: "User Management"
   },
   {
-    title: "TOTP Authentication",
-    description: "Two-factor authentication support for enhanced account security",
+    title: "TOTP Password Reset",
+    description: "Time-based one-time password support for secure password recovery",
     icon: Smartphone,
     category: "Security"
   },
@@ -154,18 +154,6 @@ const features = [
     title: "Sequential Basket Orders",
     description: "Execute basket orders with buy-side legs first, followed by sell-side for optimal execution",
     icon: Package,
-    category: "Order Management"
-  },
-  {
-    title: "SmartOrder System",
-    description: "Intelligent order routing and execution management for complex strategies",
-    icon: Brain,
-    category: "Order Management"
-  },
-  {
-    title: "Position Sizing",
-    description: "Built-in position sizing and risk management calculations",
-    icon: Gauge,
     category: "Order Management"
   },
 

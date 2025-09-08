@@ -214,6 +214,27 @@ export default function DownloadPage() {
           </div>
         </div>
 
+        {/* Important Notice */}
+        <div className="mt-16 p-6 bg-amber-50 dark:bg-amber-950/20 border border-amber-200 dark:border-amber-800 rounded-lg">
+          <h3 className="text-lg font-semibold mb-2 flex items-center">
+            <ExternalLink className="h-5 w-5 mr-2 text-amber-600" />
+            Important Requirements
+          </h3>
+          <p className="text-amber-800 dark:text-amber-300 mb-3">
+            <strong>FastScalper, Chrome Plugin, and Excel Add-ins require:</strong>
+          </p>
+          <ul className="list-disc list-inside space-y-1 text-amber-700 dark:text-amber-400">
+            <li>A running OpenAlgo instance (self-hosted or cloud)</li>
+            <li>Valid API key generated from your OpenAlgo dashboard</li>
+            <li>Proper host URL configuration pointing to your OpenAlgo instance</li>
+            <li>Active broker connection configured in OpenAlgo</li>
+          </ul>
+          <p className="mt-3 text-sm text-amber-600 dark:text-amber-500">
+            Make sure OpenAlgo is running and accessible before using these tools. 
+            You can generate API keys from Settings → API Key Management in your OpenAlgo dashboard.
+          </p>
+        </div>
+
         {/* FastScalper Section - Moved Below */}
         <div className="mt-16">
           <h2 className="text-3xl font-bold text-center mb-8">FastScalper <span className="text-primary">Desktop</span></h2>
@@ -524,12 +545,6 @@ export default function DownloadPage() {
                     </div>
                   </div>
                 </div>
-              </div>
-              <div className="mt-6 p-4 bg-blue-50 dark:bg-blue-950/20 border border-blue-200 dark:border-blue-800 rounded-lg">
-                <p className="text-sm">
-                  <strong>Note:</strong> Both the Chrome Plugin and Excel Add-in require a running OpenAlgo instance 
-                  with valid API credentials. Make sure to configure your API keys and host URL after installation.
-                </p>
               </div>
             </div>
           </div>
