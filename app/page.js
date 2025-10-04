@@ -157,7 +157,7 @@ export default function Home() {
             <span className="bg-clip-text text-transparent bg-gradient-to-r from-green-400 via-blue-500 to-purple-500 animate-gradient">Platform</span>
           </h1>
           <p className="text-xl mb-8 text-muted-foreground">
-            Connect your algo strategies seamlessly with top Indian brokers. Run your strategies from any platform - Amibroker, TradingView, Python, ChartInk, MetaTrader, Excel, or Google Sheets.
+            Connect your algo strategies and run from any platform - Amibroker, TradingView, N8N, Python, GO, NodeJs, ChartInk, MetaTrader, Excel, or Google Sheets. And Recieve your Strategy Alerts to Telgram. 
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Button asChild size="lg">
