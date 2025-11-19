@@ -7,6 +7,7 @@ import { Button } from './ui/button'
 import { clsx } from 'clsx'
 import { useState, useEffect } from 'react'
 import { ThemeToggle } from './theme-toggle'
+import { GitHubStars } from './github-stars'
 
 export function Navbar() {
   const pathname = usePathname()
@@ -95,11 +96,7 @@ export function Navbar() {
             rel="noopener noreferrer"
             className="hidden md:flex items-center gap-2 px-3 py-1.5 text-sm text-foreground/70 hover:text-foreground transition-colors"
           >
-            <img
-              src="https://img.shields.io/github/stars/marketcalls/openalgo?style=social"
-              alt="GitHub stars"
-              className="h-5"
-            />
+            <GitHubStars />
           </a>
           
           <ThemeToggle />
@@ -162,11 +159,9 @@ export function Navbar() {
             >
               <Github className="h-4 w-4" />
               GitHub
-              <img
-                src="https://img.shields.io/github/stars/marketcalls/openalgo?style=social"
-                alt="GitHub stars"
-                className="h-5 ml-auto"
-              />
+              <div className="ml-auto">
+                <GitHubStars />
+              </div>
             </a>
           </div>
         </div>
