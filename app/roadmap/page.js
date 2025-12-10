@@ -22,20 +22,20 @@ import {
 const features = [
   {
     title: "OpenAlgo Rust Desktop",
-    description: "Build a high-performance native desktop application using Rust, delivering blazing-fast execution, minimal resource usage, and a seamless cross-platform trading experience.",
+    description: "Build a high performance native desktop application using Rust, delivering blazing fast execution, minimal resource usage, and a seamless cross platform trading experience.",
     icon: Monitor,
     category: "Platform",
     priority: "top"
   },
   {
     title: "Pure Trading Terminal",
-    description: "Transform OpenAlgo into a complete trading terminal with advanced charting, order management, market depth, and real-time analytics—all in one unified interface.",
+    description: "Transform OpenAlgo into a complete trading terminal with advanced charting, order management, market depth, and realtime analytics in one unified interface.",
     icon: LayoutDashboard,
     category: "Platform"
   },
   {
     title: "ATM Trade Management",
-    description: "Advanced Trade Management modules with simple Target, Stop-Loss, and Trailing Stop-Loss orders. Includes risk management controls, position sizing, and comprehensive position management.",
+    description: "Advanced Trade Management modules with simple Target, Stoploss, and Trailing Stoploss orders. Includes risk management controls, position sizing, and comprehensive position management.",
     icon: Shield,
     category: "Trading"
   },
@@ -47,19 +47,19 @@ const features = [
   },
   {
     title: "New Broker Integrations On Demand",
-    description: "Rapidly integrate new brokers based on community demand—expanding connectivity to meet user requirements efficiently.",
+    description: "Rapidly integrate new brokers based on community demand, expanding connectivity to meet user requirements efficiently.",
     icon: Network,
     category: "Integration"
   },
   {
     title: "Realtime Trade Updates via WebSockets",
-    description: "Building real-time trade updates and position changes through OpenAlgo Common WebSockets for instant push-based notifications.",
+    description: "Building realtime trade updates and position changes through OpenAlgo Common WebSockets for instant push based notifications.",
     icon: Zap,
     category: "Performance"
   },
   {
-    title: "Keyboard-Based Scalping",
-    description: "Port the super-responsive scalping workflow from OpenTerminal to OpenAlgo, delivering lightning-fast trade executions with a keyboard-first approach.",
+    title: "Keyboard Based Scalping",
+    description: "Port the super responsive scalping workflow from OpenTerminal to OpenAlgo, delivering lightning fast trade executions with a keyboard first approach.",
     icon: Keyboard,
     category: "Performance"
   },
@@ -71,7 +71,7 @@ const features = [
   },
   {
     title: "Pure Realtime Sandbox Mode",
-    description: "Making Sandbox Mode purely real-time to test algo trading strategies efficiently with live market simulation and instant feedback.",
+    description: "Making Sandbox Mode purely realtime to test algo trading strategies efficiently with live market simulation and instant feedback.",
     icon: FlaskConical,
     category: "Developer Experience"
   },
@@ -89,7 +89,7 @@ const features = [
   },
   {
     title: "Version Notifications & Easy Upgrades",
-    description: "Notify users on major version releases and simplify the OpenAlgo upgrade process with one-click updates and migration assistance.",
+    description: "Notify users on major version releases and simplify the OpenAlgo upgrade process with single click updates and migration assistance.",
     icon: ArrowUpCircle,
     category: "Developer Experience"
   },
@@ -113,7 +113,7 @@ const features = [
   },
   {
     title: "AI Agentic Trading Solutions",
-    description: "Integrate AI-powered agentic solutions for intelligent trade decision-making, strategy optimization, and autonomous trading workflows.",
+    description: "Integrate AI powered agentic solutions for intelligent trade decision making, strategy optimization, and autonomous trading workflows.",
     icon: Bot,
     category: "AI & Automation"
   },
