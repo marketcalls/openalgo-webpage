@@ -14,7 +14,9 @@ import {
   FlaskConical,
   Sliders,
   LayoutDashboard,
-  Shield
+  Shield,
+  Bot,
+  Code2
 } from "lucide-react"
 
 const features = [
@@ -108,6 +110,18 @@ const features = [
     description: "Build simple execution algorithmic controls for managing order flow, position sizing, and risk parameters through an intuitive interface.",
     icon: Sliders,
     category: "Trading"
+  },
+  {
+    title: "AI Agentic Trading Solutions",
+    description: "Integrate AI-powered agentic solutions for intelligent trade decision-making, strategy optimization, and autonomous trading workflows.",
+    icon: Bot,
+    category: "AI & Automation"
+  },
+  {
+    title: "Enhanced Python Hosting",
+    description: "Improve Python strategy hosting inside OpenAlgo with better execution environment, dependency management, and seamless strategy deployment.",
+    icon: Code2,
+    category: "Developer Experience"
   }
 ]
 
@@ -117,6 +131,7 @@ const categories = [
   { name: "Integration", color: "bg-purple-500/10 text-purple-500" },
   { name: "Performance", color: "bg-blue-500/10 text-blue-500" },
   { name: "Developer Experience", color: "bg-pink-500/10 text-pink-500" },
+  { name: "AI & Automation", color: "bg-violet-500/10 text-violet-500" },
   { name: "Global Expansion", color: "bg-emerald-500/10 text-emerald-500" }
 ]
 
