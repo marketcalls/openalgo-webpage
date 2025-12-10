@@ -1,12 +1,12 @@
 export const metadata = {
-  title: 'Roadmap | OpenAlgo',
-  description: 'Explore OpenAlgo\'s future developments and upcoming features. See our planned integrations, improvements, and new capabilities.',
+  title: 'Roadmap 2026 | OpenAlgo',
+  description: 'Explore OpenAlgo\'s 2026 roadmap featuring Rust Desktop app, global expansion to US brokers & crypto exchanges, advanced order types, and execution algorithms.',
   openGraph: {
-    title: 'OpenAlgo Roadmap',
-    description: 'Explore OpenAlgo\'s future developments and upcoming features. See our planned integrations, improvements, and new capabilities.',
+    title: 'OpenAlgo Roadmap 2026',
+    description: 'Explore OpenAlgo\'s 2026 roadmap featuring Rust Desktop app, global expansion to US brokers & crypto exchanges, advanced order types, and execution algorithms.',
   },
   twitter: {
-    title: 'OpenAlgo Roadmap',
-    description: 'Explore OpenAlgo\'s future developments and upcoming features. See our planned integrations, improvements, and new capabilities.',
+    title: 'OpenAlgo Roadmap 2026',
+    description: 'Explore OpenAlgo\'s 2026 roadmap featuring Rust Desktop app, global expansion to US brokers & crypto exchanges, advanced order types, and execution algorithms.',
   },
 }

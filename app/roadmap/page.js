@@ -2,29 +2,45 @@
 
 import {
   Keyboard,
-  Layers,
   Network,
-  LineChart,
   Zap,
-  Box,
-  Shield,
-  FileSpreadsheet,
-  Database,
-  Puzzle,
-  GitBranch,
-  BarChart2,
-  Clock,
   Bell,
   GitMerge,
-  Download,
-  TestTubes,
-  Container,
-  LockKeyhole,
-  Paintbrush,
-  Table2
+  Monitor,
+  Globe,
+  RefreshCw,
+  Workflow,
+  ArrowUpCircle,
+  FlaskConical,
+  Sliders
 } from "lucide-react"
 
 const features = [
+  {
+    title: "OpenAlgo Rust Desktop",
+    description: "Build a high-performance native desktop application using Rust, delivering blazing-fast execution, minimal resource usage, and a seamless cross-platform trading experience.",
+    icon: Monitor,
+    category: "Platform",
+    priority: "top"
+  },
+  {
+    title: "Bracket, Cover Orders & MTF/AMO Support",
+    description: "Bringing advanced order types including Bracket Orders, Cover Orders, and supporting Margin Trading Facility (MTF) and After Market Orders (AMO) product types.",
+    icon: GitMerge,
+    category: "Trading"
+  },
+  {
+    title: "New Broker Integrations On Demand",
+    description: "Rapidly integrate new brokers based on community demand—expanding connectivity to meet user requirements efficiently.",
+    icon: Network,
+    category: "Integration"
+  },
+  {
+    title: "Realtime Trade Updates via WebSockets",
+    description: "Building real-time trade updates and position changes through OpenAlgo Common WebSockets for instant push-based notifications.",
+    icon: Zap,
+    category: "Performance"
+  },
   {
     title: "Keyboard-Based Scalping",
     description: "Port the super-responsive scalping workflow from OpenTerminal to OpenAlgo, delivering lightning-fast trade executions with a keyboard-first approach.",
@@ -32,88 +48,34 @@ const features = [
     category: "Performance"
   },
   {
-    title: "Full-Stack Trade Management",
-    description: "Deeper integration for Amibroker, TradingView, Python strategies. Execution controls for limit orders, single-/multi-leg options, automated rollovers, and more.",
-    icon: Layers,
-    category: "Integration"
-  },
-  {
-    title: "New Broker Integrations",
-    description: "IIFL, Tradejini, Samco, Sharekhan, Motilal Oswal, PayTM, CompositEdge, Jainam and XTS based brokers —expanding our capabilities both locally and globally.",
-    icon: Network,
-    category: "Integration"
-  },
-  {
-    title: "Strategy-Level Position Tracking",
-    description: "Consolidate positions from multiple sources (Amibroker, TradingView, Python) under one unified dashboard for easier monitoring and control.",
-    icon: LineChart,
-    category: "Analytics"
-  },
-  {
-    title: "Common WebSocket Integration",
-    description: "Real-time market insights and push-based updates for position changes, PnL, and more.",
-    icon: Zap,
-    category: "Performance"
-  },
-  {
-    title: "Streamlined Installation",
-    description: "Aim for one-click or single-command deployment in production servers—no complex dev-ops required.",
-    icon: Box,
+    title: "CI/CD Pipeline",
+    description: "Building a robust Continuous Integration and Continuous Deployment pipeline for automated testing, building, and releasing OpenAlgo updates.",
+    icon: Workflow,
     category: "Developer Experience"
   },
   {
-    title: "Real-Time Trading Insights",
-    description: "Rich visual dashboards for both discretionary and automated traders, including advanced analytics.",
-    icon: BarChart2,
-    category: "Analytics"
-  },
-  {
-    title: "Simple Trade Management",
-    description: "Streamlined management of stop-loss, trailing stop-loss, and target triggers—minimal coding needed.",
-    icon: Shield,
-    category: "Trading"
-  },
-  {
-    title: "OpenEngine: Full-Stack Backtesting",
-    description: "An Indian market–focused backtesting platform with integrated live execution hooks.",
-    icon: GitBranch,
-    category: "Trading"
-  },
-  {
-    title: "Intraday MTM Visualizer",
-    description: "A clear snapshot of profit/loss, strategy-level MTM, and an optional panic button to square off all positions.",
-    icon: LineChart,
-    category: "Analytics"
-  },
-  {
-    title: "WatchList & Level 2 Data",
-    description: "Enhanced market-depth visibility and direct DOM-based trading features.",
-    icon: Table2,
-    category: "Trading"
-  },
-  {
-    title: "TradingView Chart Integration",
-    description: "Sleek, interactive charting right within the OpenAlgo interface.",
-    icon: LineChart,
-    category: "Integration"
-  },
-  {
-    title: "Enhanced Trading Dashboard",
-    description: "Modify positions on the fly—add, reduce, or close trades with intuitive controls.",
-    icon: BarChart2,
-    category: "Trading"
-  },
-  {
-    title: "CSV Exports",
-    description: "One-click download of Orderbook, TradeBook, PositionBook, Holdings, and API Analyzer results.",
-    icon: Download,
+    title: "Pure Realtime Sandbox Mode",
+    description: "Making Sandbox Mode purely real-time to test algo trading strategies efficiently with live market simulation and instant feedback.",
+    icon: FlaskConical,
     category: "Developer Experience"
   },
   {
-    title: "Time-Based Trading",
-    description: "Automate schedules—pre- or post-market strategies, time-based triggers, or day parting.",
-    icon: Clock,
+    title: "Automated Rollover",
+    description: "Automatically roll over expiring futures and options positions to the next contract series, ensuring seamless position continuity.",
+    icon: RefreshCw,
     category: "Trading"
+  },
+  {
+    title: "Simple Execution Algorithms",
+    description: "Building a simple execution algorithms workflow to enable TWAP, VWAP, and other execution strategies for optimal order placement.",
+    icon: Sliders,
+    category: "Trading"
+  },
+  {
+    title: "Version Notifications & Easy Upgrades",
+    description: "Notify users on major version releases and simplify the OpenAlgo upgrade process with one-click updates and migration assistance.",
+    icon: ArrowUpCircle,
+    category: "Developer Experience"
   },
   {
     title: "Price Alert Orders",
@@ -122,68 +84,26 @@ const features = [
     category: "Trading"
   },
   {
-    title: "Advanced Order Types",
-    description: "GTT orders, Cover Orders, Bracket Orders—single-leg and multi-leg options via broker APIs.",
-    icon: GitMerge,
+    title: "Global Expansion: US Brokers & Crypto",
+    description: "Build OpenAlgo support for US brokers and cryptocurrency exchanges, expanding the platform globally to serve traders worldwide.",
+    icon: Globe,
+    category: "Global Expansion"
+  },
+  {
+    title: "Execution Algorithmic Controls",
+    description: "Build simple execution algorithmic controls for managing order flow, position sizing, and risk parameters through an intuitive interface.",
+    icon: Sliders,
     category: "Trading"
-  },
-  {
-    title: "Automated Testing",
-    description: "Frontend: Jest for UI components. Backend: PyTest for Python modules, plus mock services for API testing.",
-    icon: TestTubes,
-    category: "Developer Experience"
-  },
-  {
-    title: "Stress & Load Testing",
-    description: "Endpoint stress tests, concurrent order handling, connection pool checks, WebSocket capacity validation.",
-    icon: TestTubes,
-    category: "Developer Experience"
-  },
-  {
-    title: "DockerHub Publishing",
-    description: "A production-grade Docker image for frictionless deployment.",
-    icon: Container,
-    category: "Developer Experience"
-  },
-  {
-    title: "Database Migrations",
-    description: "Simplify schema updates without downtime.",
-    icon: Database,
-    category: "Developer Experience"
-  },
-  {
-    title: "Broker Plugin Abstraction",
-    description: "Make it effortless to add or modify broker modules for faster integrations. This modular approach ensures easy maintenance and community-driven enhancements.",
-    icon: Puzzle,
-    category: "Developer Experience"
-  },
-  {
-    title: "Theming & UI Skins",
-    description: "Separate the UI layer so developers can build custom 'skins' or themes—similar to how WordPress handles templates. This fosters a plugin-driven ecosystem of design innovations.",
-    icon: Paintbrush,
-    category: "Developer Experience"
-  },
-  {
-    title: "CSRF Protection",
-    description: "Strengthen platform security by implementing token-based safeguards.",
-    icon: LockKeyhole,
-    category: "Security"
-  },
-  {
-    title: "Excel Addins",
-    description: "Build Excel Addins to Manage Trades/Monitor/ Build Visualisation Dashboard from Excel.",
-    icon: FileSpreadsheet,
-    category: "Integration"
   }
 ]
 
 const categories = [
-  { name: "Performance", color: "bg-blue-500/10 text-blue-500" },
-  { name: "Integration", color: "bg-purple-500/10 text-purple-500" },
-  { name: "Analytics", color: "bg-green-500/10 text-green-500" },
+  { name: "Platform", color: "bg-cyan-500/10 text-cyan-500" },
   { name: "Trading", color: "bg-orange-500/10 text-orange-500" },
+  { name: "Integration", color: "bg-purple-500/10 text-purple-500" },
+  { name: "Performance", color: "bg-blue-500/10 text-blue-500" },
   { name: "Developer Experience", color: "bg-pink-500/10 text-pink-500" },
-  { name: "Security", color: "bg-red-500/10 text-red-500" }
+  { name: "Global Expansion", color: "bg-emerald-500/10 text-emerald-500" }
 ]
 
 export default function RoadmapPage() {
@@ -192,10 +112,10 @@ export default function RoadmapPage() {
       <div className="space-y-8">
         {/* Header */}
         <div className="space-y-4 text-center">
-          <h1 className="text-4xl font-bold">Roadmap 2025</h1>
+          <h1 className="text-4xl font-bold">Roadmap 2026</h1>
           <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
-            As we look ahead, our vision is shaped by the challenges, feedback, and breakthroughs we've experienced so far. 
-            Here's the big picture of what's coming next.
+            Building the future of algorithmic trading. Our 2026 roadmap focuses on performance,
+            global expansion, and empowering traders with powerful new capabilities.
           </p>
         </div>
 
