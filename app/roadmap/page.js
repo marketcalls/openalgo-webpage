@@ -16,7 +16,8 @@ import {
   LayoutDashboard,
   Shield,
   Bot,
-  Code2
+  Code2,
+  Library
 } from "lucide-react"
 
 const features = [
@@ -112,8 +113,8 @@ const features = [
     category: "Trading"
   },
   {
-    title: "AI Agentic Trading Solutions",
-    description: "Integrate AI powered agentic solutions for intelligent trade decision making, strategy optimization, and autonomous trading workflows.",
+    title: "LLM & AI Agentic Trading",
+    description: "Integrate Large Language Models and AI Agentic solutions for intelligent trade decision making, strategy optimization, and autonomous trading workflows.",
     icon: Bot,
     category: "AI & Automation"
   },
@@ -121,6 +122,12 @@ const features = [
     title: "Enhanced Python Hosting",
     description: "Improve Python strategy hosting inside OpenAlgo with better execution environment, dependency management, and seamless strategy deployment.",
     icon: Code2,
+    category: "Developer Experience"
+  },
+  {
+    title: "Java, C# & Rust SDK Libraries",
+    description: "Bringing official SDK libraries for Java, C#, and Rust to enable developers to build trading applications in their preferred programming language.",
+    icon: Library,
     category: "Developer Experience"
   }
 ]
