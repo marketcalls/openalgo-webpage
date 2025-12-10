@@ -12,7 +12,8 @@ import {
   Workflow,
   ArrowUpCircle,
   FlaskConical,
-  Sliders
+  Sliders,
+  LayoutDashboard
 } from "lucide-react"
 
 const features = [
@@ -22,6 +23,12 @@ const features = [
     icon: Monitor,
     category: "Platform",
     priority: "top"
+  },
+  {
+    title: "Pure Trading Terminal",
+    description: "Transform OpenAlgo into a complete trading terminal with advanced charting, order management, market depth, and real-time analytics—all in one unified interface.",
+    icon: LayoutDashboard,
+    category: "Platform"
   },
   {
     title: "Bracket, Cover Orders & MTF/AMO Support",
