@@ -8,27 +8,43 @@ import {
   GitMerge,
   Monitor,
   Globe,
-  RefreshCw,
   Workflow,
   ArrowUpCircle,
   FlaskConical,
   Sliders,
-  LayoutDashboard
+  LayoutDashboard,
+  Shield,
+  Bot,
+  Code2,
+  Library,
+  Smartphone
 } from "lucide-react"
 
 const features = [
   {
     title: "OpenAlgo Rust Desktop",
-    description: "Build a high-performance native desktop application using Rust, delivering blazing-fast execution, minimal resource usage, and a seamless cross-platform trading experience.",
+    description: "Build a high performance native desktop application using Rust, delivering blazing fast execution, minimal resource usage, and a seamless cross platform trading experience.",
     icon: Monitor,
     category: "Platform",
     priority: "top"
   },
   {
     title: "Pure Trading Terminal",
-    description: "Transform OpenAlgo into a complete trading terminal with advanced charting, order management, market depth, and real-time analytics—all in one unified interface.",
+    description: "Transform OpenAlgo into a complete trading terminal with advanced charting, order management, market depth, and realtime analytics in one unified interface.",
     icon: LayoutDashboard,
     category: "Platform"
+  },
+  {
+    title: "Flutter Mobile App",
+    description: "Build a Flutter mobile application for traders to manage their algorithmic trading strategies, monitor positions, and control trades directly from their mobile devices.",
+    icon: Smartphone,
+    category: "Platform"
+  },
+  {
+    title: "ATM Trade Management",
+    description: "Advanced Trade Management modules with simple Target, Stoploss, and Trailing Stoploss orders. Includes risk management controls, position sizing, and comprehensive position management.",
+    icon: Shield,
+    category: "Trading"
   },
   {
     title: "Bracket, Cover Orders & MTF/AMO Support",
@@ -38,19 +54,19 @@ const features = [
   },
   {
     title: "New Broker Integrations On Demand",
-    description: "Rapidly integrate new brokers based on community demand—expanding connectivity to meet user requirements efficiently.",
+    description: "Rapidly integrate new brokers based on community demand, expanding connectivity to meet user requirements efficiently.",
     icon: Network,
     category: "Integration"
   },
   {
     title: "Realtime Trade Updates via WebSockets",
-    description: "Building real-time trade updates and position changes through OpenAlgo Common WebSockets for instant push-based notifications.",
+    description: "Building realtime trade updates and position changes through OpenAlgo Common WebSockets for instant push based notifications.",
     icon: Zap,
     category: "Performance"
   },
   {
-    title: "Keyboard-Based Scalping",
-    description: "Port the super-responsive scalping workflow from OpenTerminal to OpenAlgo, delivering lightning-fast trade executions with a keyboard-first approach.",
+    title: "Keyboard Based Scalping",
+    description: "Port the super responsive scalping workflow from OpenTerminal to OpenAlgo, delivering lightning fast trade executions with a keyboard first approach.",
     icon: Keyboard,
     category: "Performance"
   },
@@ -62,15 +78,9 @@ const features = [
   },
   {
     title: "Pure Realtime Sandbox Mode",
-    description: "Making Sandbox Mode purely real-time to test algo trading strategies efficiently with live market simulation and instant feedback.",
+    description: "Making Sandbox Mode purely realtime to test algo trading strategies efficiently with live market simulation and instant feedback.",
     icon: FlaskConical,
     category: "Developer Experience"
-  },
-  {
-    title: "Automated Rollover",
-    description: "Automatically roll over expiring futures and options positions to the next contract series, ensuring seamless position continuity.",
-    icon: RefreshCw,
-    category: "Trading"
   },
   {
     title: "Simple Execution Algorithms",
@@ -80,7 +90,7 @@ const features = [
   },
   {
     title: "Version Notifications & Easy Upgrades",
-    description: "Notify users on major version releases and simplify the OpenAlgo upgrade process with one-click updates and migration assistance.",
+    description: "Notify users on major version releases and simplify the OpenAlgo upgrade process with single click updates and migration assistance.",
     icon: ArrowUpCircle,
     category: "Developer Experience"
   },
@@ -101,6 +111,24 @@ const features = [
     description: "Build simple execution algorithmic controls for managing order flow, position sizing, and risk parameters through an intuitive interface.",
     icon: Sliders,
     category: "Trading"
+  },
+  {
+    title: "LLM & AI Agentic Trading",
+    description: "Integrate Large Language Models and AI Agentic solutions for intelligent trade decision making, strategy optimization, and autonomous trading workflows.",
+    icon: Bot,
+    category: "AI & Automation"
+  },
+  {
+    title: "Enhanced Python Hosting",
+    description: "Improve Python strategy hosting inside OpenAlgo with better execution environment, dependency management, and seamless strategy deployment.",
+    icon: Code2,
+    category: "Developer Experience"
+  },
+  {
+    title: "Java, C# & Rust SDK Libraries",
+    description: "Bringing official SDK libraries for Java, C#, and Rust to enable developers to build trading applications in their preferred programming language.",
+    icon: Library,
+    category: "Developer Experience"
   }
 ]
 
@@ -110,6 +138,7 @@ const categories = [
   { name: "Integration", color: "bg-purple-500/10 text-purple-500" },
   { name: "Performance", color: "bg-blue-500/10 text-blue-500" },
   { name: "Developer Experience", color: "bg-pink-500/10 text-pink-500" },
+  { name: "AI & Automation", color: "bg-violet-500/10 text-violet-500" },
   { name: "Global Expansion", color: "bg-emerald-500/10 text-emerald-500" }
 ]
 
