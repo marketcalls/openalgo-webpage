@@ -8,7 +8,6 @@ import {
   GitMerge,
   Monitor,
   Globe,
-  RefreshCw,
   Workflow,
   ArrowUpCircle,
   FlaskConical,
@@ -17,7 +16,8 @@ import {
   Shield,
   Bot,
   Code2,
-  Library
+  Library,
+  Smartphone
 } from "lucide-react"
 
 const features = [
@@ -32,6 +32,12 @@ const features = [
     title: "Pure Trading Terminal",
     description: "Transform OpenAlgo into a complete trading terminal with advanced charting, order management, market depth, and realtime analytics in one unified interface.",
     icon: LayoutDashboard,
+    category: "Platform"
+  },
+  {
+    title: "Flutter Mobile App",
+    description: "Build a Flutter mobile application for traders to manage their algorithmic trading strategies, monitor positions, and control trades directly from their mobile devices.",
+    icon: Smartphone,
     category: "Platform"
   },
   {
@@ -75,12 +81,6 @@ const features = [
     description: "Making Sandbox Mode purely realtime to test algo trading strategies efficiently with live market simulation and instant feedback.",
     icon: FlaskConical,
     category: "Developer Experience"
-  },
-  {
-    title: "Automated Rollover",
-    description: "Automatically roll over expiring futures and options positions to the next contract series, ensuring seamless position continuity.",
-    icon: RefreshCw,
-    category: "Trading"
   },
   {
     title: "Simple Execution Algorithms",
