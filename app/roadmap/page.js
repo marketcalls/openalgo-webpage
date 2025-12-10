@@ -13,7 +13,8 @@ import {
   ArrowUpCircle,
   FlaskConical,
   Sliders,
-  LayoutDashboard
+  LayoutDashboard,
+  Shield
 } from "lucide-react"
 
 const features = [
@@ -29,6 +30,12 @@ const features = [
     description: "Transform OpenAlgo into a complete trading terminal with advanced charting, order management, market depth, and real-time analytics—all in one unified interface.",
     icon: LayoutDashboard,
     category: "Platform"
+  },
+  {
+    title: "ATM Trade Management",
+    description: "Advanced Trade Management modules with simple Target, Stop-Loss, and Trailing Stop-Loss orders. Includes risk management controls, position sizing, and comprehensive position management.",
+    icon: Shield,
+    category: "Trading"
   },
   {
     title: "Bracket, Cover Orders & MTF/AMO Support",
