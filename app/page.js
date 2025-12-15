@@ -145,6 +145,34 @@ export default function Home() {
       icon: "emoji",
       iconValue: "📚",
       url: "https://github.com/marketcalls/openalgo-docs"
+    },
+    {
+      title: "OpenAlgo Terminal",
+      description: "Basic Flutter Mobile Trading App",
+      icon: "emoji",
+      iconValue: "📱",
+      url: "https://github.com/marketcalls/openalgo-mobile"
+    },
+    {
+      title: "OpenAlgo Charts",
+      description: "TradingView Lightweight charts integration",
+      icon: "emoji",
+      iconValue: "📈",
+      url: "https://github.com/marketcalls/openalgo-chart"
+    },
+    {
+      title: "AlgoMirror",
+      description: "Multi Account OpenAlgo Orchestrator",
+      icon: "emoji",
+      iconValue: "🪞",
+      url: "https://github.com/marketcalls/algomirror"
+    },
+    {
+      title: "OpenAlgo Plugin",
+      description: "OpenAlgo Plugin for Amibroker",
+      icon: "emoji",
+      iconValue: "🔌",
+      url: "https://github.com/marketcalls/OpenAlgoPlugin"
     }
   ]
 
