@@ -140,11 +140,11 @@ export default function Home() {
       url: "https://github.com/marketcalls/openalgo-webpage"
     },
     {
-      title: "Documentation",
-      description: "Gitbook docs",
+      title: "Go SDK",
+      description: "Golang SDK for OpenAlgo",
       icon: "emoji",
-      iconValue: "📚",
-      url: "https://github.com/marketcalls/openalgo-docs"
+      iconValue: "🔵",
+      url: "https://github.com/marketcalls/openalgo-go"
     },
     {
       title: "OpenAlgo Terminal",
@@ -158,7 +158,7 @@ export default function Home() {
       description: "TradingView Lightweight charts integration",
       icon: "emoji",
       iconValue: "📈",
-      url: "https://github.com/marketcalls/openalgo-chart"
+      url: "https://github.com/crypt0inf0/openalgo-chart"
     },
     {
       title: "AlgoMirror",
