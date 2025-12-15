@@ -158,7 +158,7 @@ export default function Home() {
       description: "TradingView Lightweight charts integration",
       icon: "emoji",
       iconValue: "📈",
-      url: "https://github.com/marketcalls/openalgo-chart"
+      url: "https://github.com/crypt0inf0/openalgo-chart"
     },
     {
       title: "AlgoMirror",
