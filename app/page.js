@@ -1,8 +1,8 @@
 "use client"
 
 import { Button } from "@/components/ui/button"
-import { 
-  ArrowDownToLine, 
+import {
+  ArrowDownToLine,
   Github,
   Shield,
   Users,
@@ -19,7 +19,9 @@ import {
   Bot,
   MessageCircle,
   TrendingUp,
-  FileSpreadsheet
+  FileSpreadsheet,
+  Download,
+  Star
 } from "lucide-react"
 
 export default function Home() {
@@ -175,18 +177,33 @@ export default function Home() {
           </div>
 
           {/* Stats Section */}
-          <div className="flex flex-wrap justify-center gap-8 sm:gap-12 mt-12 pt-8 border-t border-border/50">
-            <div className="text-center">
-              <div className="text-3xl sm:text-4xl font-bold text-primary">60K+</div>
-              <div className="text-sm text-muted-foreground mt-1">Downloads</div>
+          <div className="flex flex-wrap justify-center gap-6 sm:gap-8 mt-12">
+            <div className="flex items-center gap-3 px-6 py-4 rounded-xl bg-gradient-to-br from-blue-500/10 to-blue-600/5 border border-blue-500/20">
+              <div className="p-2 rounded-lg bg-blue-500/20">
+                <Download className="w-5 h-5 text-blue-500" />
+              </div>
+              <div>
+                <div className="text-2xl sm:text-3xl font-bold text-blue-500">60K+</div>
+                <div className="text-xs text-muted-foreground">Downloads</div>
+              </div>
             </div>
-            <div className="text-center">
-              <div className="text-3xl sm:text-4xl font-bold text-primary">100%</div>
-              <div className="text-sm text-muted-foreground mt-1">Open Source</div>
+            <div className="flex items-center gap-3 px-6 py-4 rounded-xl bg-gradient-to-br from-green-500/10 to-green-600/5 border border-green-500/20">
+              <div className="p-2 rounded-lg bg-green-500/20">
+                <Code2 className="w-5 h-5 text-green-500" />
+              </div>
+              <div>
+                <div className="text-2xl sm:text-3xl font-bold text-green-500">100%</div>
+                <div className="text-xs text-muted-foreground">Open Source</div>
+              </div>
             </div>
-            <div className="text-center">
-              <div className="text-3xl sm:text-4xl font-bold text-primary">1K+</div>
-              <div className="text-sm text-muted-foreground mt-1">GitHub Stars</div>
+            <div className="flex items-center gap-3 px-6 py-4 rounded-xl bg-gradient-to-br from-yellow-500/10 to-yellow-600/5 border border-yellow-500/20">
+              <div className="p-2 rounded-lg bg-yellow-500/20">
+                <Star className="w-5 h-5 text-yellow-500" />
+              </div>
+              <div>
+                <div className="text-2xl sm:text-3xl font-bold text-yellow-500">1K+</div>
+                <div className="text-xs text-muted-foreground">GitHub Stars</div>
+              </div>
             </div>
           </div>
         </div>
