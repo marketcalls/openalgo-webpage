@@ -173,6 +173,22 @@ export default function Home() {
               </a>
             </Button>
           </div>
+
+          {/* Stats Section */}
+          <div className="flex flex-wrap justify-center gap-8 sm:gap-12 mt-12 pt-8 border-t border-border/50">
+            <div className="text-center">
+              <div className="text-3xl sm:text-4xl font-bold text-primary">60K+</div>
+              <div className="text-sm text-muted-foreground mt-1">Downloads</div>
+            </div>
+            <div className="text-center">
+              <div className="text-3xl sm:text-4xl font-bold text-primary">100%</div>
+              <div className="text-sm text-muted-foreground mt-1">Open Source</div>
+            </div>
+            <div className="text-center">
+              <div className="text-3xl sm:text-4xl font-bold text-primary">1K+</div>
+              <div className="text-sm text-muted-foreground mt-1">GitHub Stars</div>
+            </div>
+          </div>
         </div>
       </div>
 
