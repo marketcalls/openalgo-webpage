@@ -50,18 +50,20 @@ export default function DownloadPage() {
 
           {/* Core Project */}
           <div className="mb-10">
-            <h3 className="text-xl font-semibold mb-4 flex items-center gap-2">
+            <h3 className="text-xl font-semibold mb-4 flex items-center justify-center gap-2">
               <span className="text-xl">🧠</span> Core Project
             </h3>
-            <a href="https://github.com/marketcalls/openalgo" target="_blank" rel="noopener noreferrer"
-               className="bg-card p-6 rounded-lg border hover:shadow-lg transition-all group block max-w-lg">
-              <div className="flex items-start justify-between mb-3">
-                <span className="text-2xl">🧠</span>
-                <ExternalLink className="h-4 w-4 text-muted-foreground group-hover:text-primary" />
-              </div>
-              <h4 className="font-semibold mb-2">OpenAlgo Core</h4>
-              <p className="text-sm text-muted-foreground">Central heartbeat of the ecosystem — powering the API service, authentication, routing, and platform logic. All SDKs, libraries, and integrations interact with the API endpoints exposed by OpenAlgo Core.</p>
-            </a>
+            <div className="flex justify-center">
+              <a href="https://github.com/marketcalls/openalgo" target="_blank" rel="noopener noreferrer"
+                 className="bg-card p-6 rounded-lg border hover:shadow-lg transition-all group block max-w-lg">
+                <div className="flex items-start justify-between mb-3">
+                  <span className="text-2xl">🧠</span>
+                  <ExternalLink className="h-4 w-4 text-muted-foreground group-hover:text-primary" />
+                </div>
+                <h4 className="font-semibold mb-2">OpenAlgo Core</h4>
+                <p className="text-sm text-muted-foreground">Central heartbeat of the ecosystem — powering the API service, authentication, routing, and platform logic. All SDKs, libraries, and integrations interact with the API endpoints exposed by OpenAlgo Core.</p>
+              </a>
+            </div>
           </div>
 
           {/* SDKs Section */}
