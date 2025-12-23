@@ -187,7 +187,7 @@ export default function Home() {
             <span className="bg-clip-text text-transparent bg-gradient-to-r from-green-400 via-blue-500 to-purple-500">Platform</span>
           </h1>
           <p className="text-lg sm:text-xl text-muted-foreground max-w-2xl mx-auto mb-16">
-            Connect your algo strategies and run from any platform - Amibroker, TradingView, GoCharting, N8N, Python, GO, NodeJs, ChartInk, MetaTrader, Excel, or Google Sheets. And Recieve your Strategy Alerts to Telegram.
+            Connect your algo strategies and run from any platform - Amibroker, TradingView, GoCharting, N8N, Python, Java, GO, .NET. NodeJs, ChartInk, MetaTrader, Excel, or Google Sheets. And Recieve your Strategy Alerts to Telegram.
           </p>
 
           {/* Stats Section */}
