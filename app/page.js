@@ -312,22 +312,23 @@ export default function Home() {
 
             {/* Core Project */}
             <div className="mb-8">
-              <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
+              <h3 className="text-lg font-semibold mb-4 flex items-center justify-center gap-2">
                 <span className="text-xl">🧠</span> Core Project
               </h3>
-              <a
-                href={coreProject.url}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="bg-background p-5 rounded-lg border hover:shadow-lg transition-all group block max-w-md"
-              >
-                <div className="flex items-start justify-between mb-2">
-                  <span className="text-2xl">{coreProject.iconValue}</span>
-                  <ExternalLink className="h-3 w-3 text-muted-foreground group-hover:text-primary" />
-                </div>
-                <h4 className="font-semibold mb-1">{coreProject.title}</h4>
-                <p className="text-sm text-muted-foreground">{coreProject.description}</p>
-              </a>
+              <div className="flex justify-center">
+                <a
+                  href={coreProject.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="bg-background p-5 rounded-lg border hover:shadow-lg transition-all group block max-w-md"
+                >
+                  <div className="flex items-start justify-between mb-2">
+                    <h4 className="font-semibold">{coreProject.title}</h4>
+                    <ExternalLink className="h-3 w-3 text-muted-foreground group-hover:text-primary" />
+                  </div>
+                  <p className="text-sm text-muted-foreground">{coreProject.description}</p>
+                </a>
+              </div>
             </div>
 
             {/* SDKs */}
