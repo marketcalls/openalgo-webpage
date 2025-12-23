@@ -61,27 +61,76 @@ export default function Home() {
     "Transparent Development"
   ]
 
-  const ecosystem = [
-    {
-      title: "OpenAlgo Core",
-      description: "Python Flask + Tailwind + DaisyUI",
-      icon: "emoji",
-      iconValue: "🧠",
-      url: "https://github.com/marketcalls/openalgo"
-    },
-    {
-      title: "Historify",
-      description: "Full Stack Stock Market Data Management",
-      icon: "emoji",
-      iconValue: "📦",
-      url: "https://github.com/marketcalls/historify"
-    },
+  // Core Project
+  const coreProject = {
+    title: "OpenAlgo Core",
+    description: "Central API service, authentication, routing, and platform logic",
+    icon: "emoji",
+    iconValue: "🧠",
+    url: "https://github.com/marketcalls/openalgo"
+  }
+
+  // SDKs - Official client packages for application development
+  const sdks = [
     {
       title: "Python SDK",
-      description: "MIT-licensed SDK for strategies",
+      description: "Official Python SDK for OpenAlgo API",
       icon: "emoji",
       iconValue: "🐍",
-      url: "https://github.com/marketcalls/openalgo-python-library"
+      url: "https://github.com/marketcalls/openalgo-python-library",
+      docs: "https://docs.openalgo.in/trading-platform/python"
+    },
+    {
+      title: "Node.js SDK",
+      description: "JavaScript/TypeScript SDK",
+      icon: "emoji",
+      iconValue: "🟢",
+      url: "https://github.com/marketcalls/openalgo-node",
+      docs: "https://docs.openalgo.in/trading-platform/nodejs"
+    },
+    {
+      title: "Java SDK",
+      description: "Official Java SDK for OpenAlgo",
+      icon: "emoji",
+      iconValue: "☕",
+      url: "https://github.com/marketcalls/openalgo-java",
+      docs: "https://docs.openalgo.in/trading-platform/java"
+    },
+    {
+      title: ".NET SDK",
+      description: "C# / .NET SDK for OpenAlgo",
+      icon: "emoji",
+      iconValue: "🔷",
+      url: "https://github.com/marketcalls/openalgo.NET",
+      docs: "https://docs.openalgo.in/trading-platform/.net"
+    },
+    {
+      title: "Go SDK",
+      description: "Golang SDK for OpenAlgo",
+      icon: "emoji",
+      iconValue: "🔵",
+      url: "https://github.com/marketcalls/openalgo-go",
+      docs: "https://docs.openalgo.in/trading-platform/go"
+    }
+  ]
+
+  // Libraries and Platform Integrations
+  const integrations = [
+    {
+      title: "Excel Add-in",
+      description: "Trade from Excel spreadsheets",
+      icon: "component",
+      iconComponent: FileSpreadsheet,
+      url: "https://github.com/marketcalls/OpenAlgo-Excel",
+      docs: "https://docs.openalgo.in/trading-platform/excel"
+    },
+    {
+      title: "Amibroker Plugin",
+      description: "OpenAlgo Plugin for Amibroker",
+      icon: "emoji",
+      iconValue: "📉",
+      url: "https://github.com/marketcalls/OpenAlgoPlugin",
+      docs: "https://docs.openalgo.in/trading-platform/amibroker/amibroker-plugin"
     },
     {
       title: "Backtrader",
@@ -91,74 +140,11 @@ export default function Home() {
       url: "https://github.com/p2c2e/openalgo-backtrader"
     },
     {
-      title: "Node.js SDK",
-      description: "JavaScript/TypeScript SDK",
-      icon: "emoji",
-      iconValue: "🟢",
-      url: "https://github.com/marketcalls/openalgo-node"
-    },
-    {
-      title: "Excel Add-in",
-      description: "Trade from Excel spreadsheets",
-      icon: "component",
-      iconComponent: FileSpreadsheet,
-      url: "https://github.com/marketcalls/OpenAlgo-Excel"
-    },
-    {
       title: "PineTS",
-      description: "TradingView indicators",
+      description: "TradingView indicators integration",
       icon: "emoji",
       iconValue: "⚡",
       url: "https://github.com/marketcalls/openalgo-pinets"
-    },
-    {
-      title: "MCP + AI",
-      description: "AI integration framework",
-      icon: "emoji",
-      iconValue: "🤖",
-      url: "https://github.com/marketcalls/openalgo-mcp"
-    },
-    {
-      title: "Chrome Plugin",
-      description: "Browser extension",
-      icon: "emoji",
-      iconValue: "🧩",
-      url: "https://github.com/marketcalls/openalgo-chrome"
-    },
-    {
-      title: "Fast Scalper",
-      description: "Rust + Tauri desktop app",
-      icon: "emoji",
-      iconValue: "⚡",
-      url: "https://github.com/marketcalls/fastscalper-tauri"
-    },
-    {
-      title: "Web Portal",
-      description: "NextJS + ShadcnUI",
-      icon: "emoji",
-      iconValue: "🌐",
-      url: "https://github.com/marketcalls/openalgo-webpage"
-    },
-    {
-      title: "Go SDK",
-      description: "Golang SDK for OpenAlgo",
-      icon: "emoji",
-      iconValue: "🔵",
-      url: "https://github.com/marketcalls/openalgo-go"
-    },
-    {
-      title: "OpenAlgo Terminal",
-      description: "Basic Flutter Mobile Trading App",
-      icon: "emoji",
-      iconValue: "📱",
-      url: "https://github.com/marketcalls/openalgo-mobile"
-    },
-    {
-      title: "OpenAlgo Charts",
-      description: "TradingView Lightweight charts integration",
-      icon: "emoji",
-      iconValue: "📈",
-      url: "https://github.com/crypt0inf0/openalgo-chart"
     },
     {
       title: "AlgoMirror",
@@ -168,13 +154,45 @@ export default function Home() {
       url: "https://github.com/marketcalls/algomirror"
     },
     {
-      title: "OpenAlgo Plugin",
-      description: "OpenAlgo Plugin for Amibroker",
+      title: "MCP / AI Agents",
+      description: "Model Context Protocol integration",
       icon: "emoji",
-      iconValue: "🔌",
-      url: "https://github.com/marketcalls/OpenAlgoPlugin"
+      iconValue: "🤖",
+      url: "https://github.com/marketcalls/openalgo-mcp",
+      docs: "https://docs.openalgo.in/mcp"
+    },
+    {
+      title: "OpenAlgo Mobile",
+      description: "Flutter Mobile Trading App",
+      icon: "emoji",
+      iconValue: "📱",
+      url: "https://github.com/marketcalls/openalgo-mobile"
+    },
+    {
+      title: "Web Portal",
+      description: "NextJS + ShadcnUI web interface",
+      icon: "emoji",
+      iconValue: "🌐",
+      url: "https://github.com/marketcalls/openalgo-webpage"
+    },
+    {
+      title: "Chrome Plugin",
+      description: "Browser extension for OpenAlgo",
+      icon: "emoji",
+      iconValue: "🧩",
+      url: "https://github.com/marketcalls/openalgo-chrome"
+    },
+    {
+      title: "Fast Scalper",
+      description: "High-performance app (Rust + Tauri)",
+      icon: "emoji",
+      iconValue: "🚄",
+      url: "https://github.com/marketcalls/fastscalper-tauri"
     }
   ]
+
+  // Combined ecosystem for backward compatibility
+  const ecosystem = [coreProject, ...sdks, ...integrations]
 
   return (
     <main className="min-h-screen bg-background">
@@ -282,41 +300,98 @@ export default function Home() {
         <div className="container mx-auto px-4">
           <div className="max-w-6xl mx-auto">
             <h2 className="text-3xl font-bold mb-2 text-center">Mini FOSS Universe</h2>
-            <p className="text-center text-muted-foreground mb-8">
-              Explore the open-source ecosystem around OpenAlgo — built for traders, by traders
+            <p className="text-center text-muted-foreground mb-4 max-w-3xl mx-auto">
+              A curated collection of open-source projects, SDKs, libraries, and integrations that extend the OpenAlgo ecosystem across languages, platforms, and workflows.
             </p>
-            
-            <div className="grid gap-4 md:grid-cols-3 lg:grid-cols-4">
-              {ecosystem.map((project, index) => {
-                const IconComponent = project.iconComponent
-                return (
+            <div className="flex flex-wrap justify-center gap-3 mb-8">
+              <span className="px-3 py-1 bg-background border rounded-full text-xs font-medium">Modular</span>
+              <span className="px-3 py-1 bg-background border rounded-full text-xs font-medium">Extensible</span>
+              <span className="px-3 py-1 bg-background border rounded-full text-xs font-medium">Language-agnostic</span>
+              <span className="px-3 py-1 bg-background border rounded-full text-xs font-medium">Production-ready</span>
+            </div>
+
+            {/* Core Project */}
+            <div className="mb-8">
+              <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
+                <span className="text-xl">🧠</span> Core Project
+              </h3>
+              <a
+                href={coreProject.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="bg-background p-5 rounded-lg border hover:shadow-lg transition-all group block max-w-md"
+              >
+                <div className="flex items-start justify-between mb-2">
+                  <span className="text-2xl">{coreProject.iconValue}</span>
+                  <ExternalLink className="h-3 w-3 text-muted-foreground group-hover:text-primary" />
+                </div>
+                <h4 className="font-semibold mb-1">{coreProject.title}</h4>
+                <p className="text-sm text-muted-foreground">{coreProject.description}</p>
+              </a>
+            </div>
+
+            {/* SDKs */}
+            <div className="mb-8">
+              <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
+                <Package className="h-5 w-5 text-primary" /> SDKs (API v1)
+              </h3>
+              <div className="grid gap-4 md:grid-cols-3 lg:grid-cols-5">
+                {sdks.map((sdk, index) => (
                   <a
                     key={index}
-                    href={project.url}
+                    href={sdk.url}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="bg-background p-4 rounded-lg border hover:shadow-lg transition-all group"
                   >
                     <div className="flex items-start justify-between mb-2">
-                      {project.icon === 'component' ? (
-                        <div className="p-1.5 rounded-lg bg-primary/10">
-                          <IconComponent className="h-5 w-5 text-primary" />
-                        </div>
-                      ) : (
-                        <span className="text-2xl">{project.iconValue}</span>
-                      )}
+                      <span className="text-2xl">{sdk.iconValue}</span>
                       <ExternalLink className="h-3 w-3 text-muted-foreground group-hover:text-primary" />
                     </div>
-                    <h3 className="font-semibold text-sm mb-1">{project.title}</h3>
-                    <p className="text-xs text-muted-foreground">{project.description}</p>
+                    <h4 className="font-semibold text-sm mb-1">{sdk.title}</h4>
+                    <p className="text-xs text-muted-foreground">{sdk.description}</p>
                   </a>
-                )
-              })}
+                ))}
+              </div>
             </div>
-            
+
+            {/* Libraries and Platform Integrations */}
+            <div className="mb-8">
+              <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
+                <GitBranch className="h-5 w-5 text-primary" /> Libraries & Platform Integrations
+              </h3>
+              <div className="grid gap-4 md:grid-cols-3 lg:grid-cols-5">
+                {integrations.map((project, index) => {
+                  const IconComponent = project.iconComponent
+                  return (
+                    <a
+                      key={index}
+                      href={project.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="bg-background p-4 rounded-lg border hover:shadow-lg transition-all group"
+                    >
+                      <div className="flex items-start justify-between mb-2">
+                        {project.icon === 'component' ? (
+                          <div className="p-1.5 rounded-lg bg-primary/10">
+                            <IconComponent className="h-5 w-5 text-primary" />
+                          </div>
+                        ) : (
+                          <span className="text-2xl">{project.iconValue}</span>
+                        )}
+                        <ExternalLink className="h-3 w-3 text-muted-foreground group-hover:text-primary" />
+                      </div>
+                      <h4 className="font-semibold text-sm mb-1">{project.title}</h4>
+                      <p className="text-xs text-muted-foreground">{project.description}</p>
+                    </a>
+                  )
+                })}
+              </div>
+            </div>
+
             <div className="mt-8 text-center">
               <p className="text-muted-foreground mb-4">
-                🛠 Dive in, fork it, build with it. Let's make algo trading more accessible, powerful, and open for everyone.
+                Open standards, transparent design, and tools that adapt to how traders actually work.
               </p>
               <Button variant="outline" size="lg" asChild>
                 <a href="https://github.com/marketcalls" target="_blank" rel="noopener noreferrer">

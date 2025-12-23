@@ -1,209 +1,165 @@
 "use client"
 
 import { Button } from "@/components/ui/button"
-import { Download, Laptop, Monitor, Terminal, ExternalLink, Github, Package, Chrome, FileSpreadsheet } from "lucide-react"
+import { Download, Laptop, Monitor, Terminal, ExternalLink, Github, Package, Chrome, FileSpreadsheet, GitBranch, BookOpen } from "lucide-react"
 import { useState } from "react"
 
 export default function DownloadPage() {
   const [activePlatform, setActivePlatform] = useState("mac")
+
+  // SDKs data
+  const sdks = [
+    { title: "Python", icon: "🐍", url: "https://github.com/marketcalls/openalgo-python-library", docs: "https://docs.openalgo.in/trading-platform/python" },
+    { title: "Node.js", icon: "🟢", url: "https://github.com/marketcalls/openalgo-node", docs: "https://docs.openalgo.in/trading-platform/nodejs" },
+    { title: "Java", icon: "☕", url: "https://github.com/marketcalls/openalgo-java", docs: "https://docs.openalgo.in/trading-platform/java" },
+    { title: ".NET / C#", icon: "🔷", url: "https://github.com/marketcalls/openalgo.NET", docs: "https://docs.openalgo.in/trading-platform/.net" },
+    { title: "Go", icon: "🔵", url: "https://github.com/marketcalls/openalgo-go", docs: "https://docs.openalgo.in/trading-platform/go" }
+  ]
+
+  // Libraries and Platform Integrations
+  const integrations = [
+    { title: "Excel Add-in", icon: "📊", url: "https://github.com/marketcalls/OpenAlgo-Excel", docs: "https://docs.openalgo.in/trading-platform/excel" },
+    { title: "Amibroker Plugin", icon: "📉", url: "https://github.com/marketcalls/OpenAlgoPlugin", docs: "https://docs.openalgo.in/trading-platform/amibroker/amibroker-plugin" },
+    { title: "Backtrader Integration", icon: "🔁", url: "https://github.com/p2c2e/openalgo-backtrader" },
+    { title: "PineTS", icon: "⚡", url: "https://github.com/marketcalls/openalgo-pinets" },
+    { title: "AlgoMirror", icon: "🪞", url: "https://github.com/marketcalls/algomirror" },
+    { title: "MCP / AI Agents", icon: "🤖", url: "https://github.com/marketcalls/openalgo-mcp", docs: "https://docs.openalgo.in/mcp" },
+    { title: "OpenAlgo Mobile", icon: "📱", url: "https://github.com/marketcalls/openalgo-mobile" },
+    { title: "Web Portal", icon: "🌐", url: "https://github.com/marketcalls/openalgo-webpage" },
+    { title: "Chrome Plugin", icon: "🧩", url: "https://github.com/marketcalls/openalgo-chrome" },
+    { title: "Fast Scalper", icon: "🚄", url: "https://github.com/marketcalls/fastscalper-tauri" }
+  ]
 
   return (
     <div className="container mx-auto px-4 py-16">
       <div className="max-w-6xl mx-auto">
         <h1 className="text-4xl font-bold text-center mb-12">Downloads</h1>
 
-        {/* FOSS Universe Section - Moved to Top */}
+        {/* Mini FOSS Universe Section */}
         <div className="mb-16">
-          <h2 className="text-3xl font-bold mb-2 text-center">OpenAlgo FOSS Universe</h2>
-          <p className="text-center text-muted-foreground mb-8">
-            Explore the open-source ecosystem around OpenAlgo — built for traders, by traders
+          <h2 className="text-3xl font-bold mb-2 text-center">Mini FOSS Universe</h2>
+          <p className="text-center text-muted-foreground mb-4 max-w-3xl mx-auto">
+            A curated collection of open-source projects, SDKs, libraries, and integrations that extend the OpenAlgo ecosystem across languages, platforms, and workflows.
           </p>
-          
-          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-            {/* Core Platform */}
-            <a href="https://github.com/marketcalls/openalgo" target="_blank" rel="noopener noreferrer" 
-               className="bg-card p-6 rounded-lg border hover:shadow-lg transition-all group">
+          <div className="flex flex-wrap justify-center gap-3 mb-8">
+            <span className="px-3 py-1 bg-muted border rounded-full text-xs font-medium">Modular</span>
+            <span className="px-3 py-1 bg-muted border rounded-full text-xs font-medium">Extensible</span>
+            <span className="px-3 py-1 bg-muted border rounded-full text-xs font-medium">Language-agnostic</span>
+            <span className="px-3 py-1 bg-muted border rounded-full text-xs font-medium">Production-ready</span>
+          </div>
+
+          {/* Core Project */}
+          <div className="mb-10">
+            <h3 className="text-xl font-semibold mb-4 flex items-center gap-2">
+              <span className="text-xl">🧠</span> Core Project
+            </h3>
+            <a href="https://github.com/marketcalls/openalgo" target="_blank" rel="noopener noreferrer"
+               className="bg-card p-6 rounded-lg border hover:shadow-lg transition-all group block max-w-lg">
               <div className="flex items-start justify-between mb-3">
                 <span className="text-2xl">🧠</span>
                 <ExternalLink className="h-4 w-4 text-muted-foreground group-hover:text-primary" />
               </div>
-              <h3 className="font-semibold mb-2">OpenAlgo Core</h3>
-              <p className="text-sm text-muted-foreground mb-3">Python Flask + Tailwind + DaisyUI</p>
-              <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                <Github className="h-3 w-3" />
-                <span>Main Platform</span>
-              </div>
-            </a>
-
-            {/* Historify */}
-            <a href="https://github.com/marketcalls/historify" target="_blank" rel="noopener noreferrer" 
-               className="bg-card p-6 rounded-lg border hover:shadow-lg transition-all group">
-              <div className="flex items-start justify-between mb-3">
-                <span className="text-2xl">📦</span>
-                <ExternalLink className="h-4 w-4 text-muted-foreground group-hover:text-primary" />
-              </div>
-              <h3 className="font-semibold mb-2">Historify</h3>
-              <p className="text-sm text-muted-foreground mb-3">Full Stack Stock Market Data Management</p>
-              <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                <Package className="h-3 w-3" />
-                <span>Data Platform</span>
-              </div>
-            </a>
-
-            {/* Python SDK */}
-            <a href="https://github.com/marketcalls/openalgo-python-library" target="_blank" rel="noopener noreferrer" 
-               className="bg-card p-6 rounded-lg border hover:shadow-lg transition-all group">
-              <div className="flex items-start justify-between mb-3">
-                <span className="text-2xl">🐍</span>
-                <ExternalLink className="h-4 w-4 text-muted-foreground group-hover:text-primary" />
-              </div>
-              <h3 className="font-semibold mb-2">Python SDK</h3>
-              <p className="text-sm text-muted-foreground mb-3">MIT-licensed SDK for strategy development</p>
-              <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                <Github className="h-3 w-3" />
-                <span>Library</span>
-              </div>
-            </a>
-
-            {/* Backtrader */}
-            <a href="https://github.com/p2c2e/openalgo-backtrader" target="_blank" rel="noopener noreferrer" 
-               className="bg-card p-6 rounded-lg border hover:shadow-lg transition-all group">
-              <div className="flex items-start justify-between mb-3">
-                <span className="text-2xl">🐍</span>
-                <ExternalLink className="h-4 w-4 text-muted-foreground group-hover:text-primary" />
-              </div>
-              <h3 className="font-semibold mb-2">OpenAlgo Backtrader</h3>
-              <p className="text-sm text-muted-foreground mb-3">Python Library for backtesting strategies</p>
-              <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                <Github className="h-3 w-3" />
-                <span>Backtesting</span>
-              </div>
-            </a>
-
-            {/* Node.js */}
-            <a href="https://github.com/marketcalls/openalgo-node" target="_blank" rel="noopener noreferrer" 
-               className="bg-card p-6 rounded-lg border hover:shadow-lg transition-all group">
-              <div className="flex items-start justify-between mb-3">
-                <span className="text-2xl">🟢</span>
-                <ExternalLink className="h-4 w-4 text-muted-foreground group-hover:text-primary" />
-              </div>
-              <h3 className="font-semibold mb-2">Node.js Library</h3>
-              <p className="text-sm text-muted-foreground mb-3">JavaScript/TypeScript SDK for OpenAlgo</p>
-              <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                <Github className="h-3 w-3" />
-                <span>Library</span>
-              </div>
-            </a>
-
-            {/* Excel Add-in */}
-            <a href="https://github.com/marketcalls/OpenAlgo-Excel" target="_blank" rel="noopener noreferrer" 
-               className="bg-card p-6 rounded-lg border hover:shadow-lg transition-all group">
-              <div className="flex items-start justify-between mb-3">
-                <span className="text-2xl">📊</span>
-                <ExternalLink className="h-4 w-4 text-muted-foreground group-hover:text-primary" />
-              </div>
-              <h3 className="font-semibold mb-2">Excel Add-in</h3>
-              <p className="text-sm text-muted-foreground mb-3">Trade directly from Excel spreadsheets</p>
-              <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                <Github className="h-3 w-3" />
-                <span>Integration</span>
-              </div>
-            </a>
-
-            {/* PineTS */}
-            <a href="https://github.com/marketcalls/openalgo-pinets" target="_blank" rel="noopener noreferrer" 
-               className="bg-card p-6 rounded-lg border hover:shadow-lg transition-all group">
-              <div className="flex items-start justify-between mb-3">
-                <span className="text-2xl">⚡</span>
-                <ExternalLink className="h-4 w-4 text-muted-foreground group-hover:text-primary" />
-              </div>
-              <h3 className="font-semibold mb-2">OpenAlgo-PineTS</h3>
-              <p className="text-sm text-muted-foreground mb-3">TradingView indicators integration</p>
-              <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                <Github className="h-3 w-3" />
-                <span>TradingView</span>
-              </div>
-            </a>
-
-            {/* MCP + AI */}
-            <a href="https://github.com/marketcalls/openalgo-mcp" target="_blank" rel="noopener noreferrer" 
-               className="bg-card p-6 rounded-lg border hover:shadow-lg transition-all group">
-              <div className="flex items-start justify-between mb-3">
-                <span className="text-2xl">🤖</span>
-                <ExternalLink className="h-4 w-4 text-muted-foreground group-hover:text-primary" />
-              </div>
-              <h3 className="font-semibold mb-2">MCP + AI Agents</h3>
-              <p className="text-sm text-muted-foreground mb-3">Model Context Protocol & AI integration</p>
-              <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                <Github className="h-3 w-3" />
-                <span>AI Integration</span>
-              </div>
-            </a>
-
-            {/* Chrome Plugin */}
-            <a href="https://github.com/marketcalls/openalgo-chrome" target="_blank" rel="noopener noreferrer" 
-               className="bg-card p-6 rounded-lg border hover:shadow-lg transition-all group">
-              <div className="flex items-start justify-between mb-3">
-                <span className="text-2xl">🧩</span>
-                <ExternalLink className="h-4 w-4 text-muted-foreground group-hover:text-primary" />
-              </div>
-              <h3 className="font-semibold mb-2">Chrome Plugin</h3>
-              <p className="text-sm text-muted-foreground mb-3">Browser extension for OpenAlgo</p>
-              <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                <Github className="h-3 w-3" />
-                <span>Browser Extension</span>
-              </div>
-            </a>
-
-            {/* Fast Scalper */}
-            <a href="https://github.com/marketcalls/fastscalper-tauri" target="_blank" rel="noopener noreferrer" 
-               className="bg-card p-6 rounded-lg border hover:shadow-lg transition-all group">
-              <div className="flex items-start justify-between mb-3">
-                <span className="text-2xl">⚡</span>
-                <ExternalLink className="h-4 w-4 text-muted-foreground group-hover:text-primary" />
-              </div>
-              <h3 className="font-semibold mb-2">Fast Scalper</h3>
-              <p className="text-sm text-muted-foreground mb-3">High-performance app (Rust + Tauri)</p>
-              <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                <Github className="h-3 w-3" />
-                <span>Desktop App</span>
-              </div>
-            </a>
-
-            {/* Web Portal */}
-            <a href="https://github.com/marketcalls/openalgo-webpage" target="_blank" rel="noopener noreferrer" 
-               className="bg-card p-6 rounded-lg border hover:shadow-lg transition-all group">
-              <div className="flex items-start justify-between mb-3">
-                <span className="text-2xl">🌐</span>
-                <ExternalLink className="h-4 w-4 text-muted-foreground group-hover:text-primary" />
-              </div>
-              <h3 className="font-semibold mb-2">Web Portal</h3>
-              <p className="text-sm text-muted-foreground mb-3">NextJS + ShadcnUI web interface</p>
-              <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                <Github className="h-3 w-3" />
-                <span>Website</span>
-              </div>
-            </a>
-
-            {/* Documentation */}
-            <a href="https://github.com/marketcalls/openalgo-docs" target="_blank" rel="noopener noreferrer" 
-               className="bg-card p-6 rounded-lg border hover:shadow-lg transition-all group">
-              <div className="flex items-start justify-between mb-3">
-                <span className="text-2xl">📚</span>
-                <ExternalLink className="h-4 w-4 text-muted-foreground group-hover:text-primary" />
-              </div>
-              <h3 className="font-semibold mb-2">Documentation</h3>
-              <p className="text-sm text-muted-foreground mb-3">Comprehensive Gitbook documentation</p>
-              <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                <Github className="h-3 w-3" />
-                <span>Docs</span>
-              </div>
+              <h4 className="font-semibold mb-2">OpenAlgo Core</h4>
+              <p className="text-sm text-muted-foreground">Central heartbeat of the ecosystem — powering the API service, authentication, routing, and platform logic. All SDKs, libraries, and integrations interact with the API endpoints exposed by OpenAlgo Core.</p>
             </a>
           </div>
 
-          <div className="mt-8 text-center">
-            <p className="text-muted-foreground mb-4">
-              🛠 Dive in, fork it, build with it. Let's make algo trading more accessible, powerful, and open for everyone.
+          {/* SDKs Section */}
+          <div className="mb-10">
+            <h3 className="text-xl font-semibold mb-2 flex items-center gap-2">
+              <Package className="h-5 w-5 text-primary" /> SDKs
+            </h3>
+            <p className="text-sm text-muted-foreground mb-4">
+              Official client packages for application development. Built against <strong>API v1</strong> — stable, backward-compatible, and recommended for production use.
+            </p>
+            <div className="grid gap-4 md:grid-cols-3 lg:grid-cols-5">
+              {sdks.map((sdk, index) => (
+                <a key={index} href={sdk.url} target="_blank" rel="noopener noreferrer"
+                   className="bg-card p-5 rounded-lg border hover:shadow-lg transition-all group">
+                  <div className="flex items-start justify-between mb-3">
+                    <span className="text-2xl">{sdk.icon}</span>
+                    <ExternalLink className="h-4 w-4 text-muted-foreground group-hover:text-primary" />
+                  </div>
+                  <h4 className="font-semibold mb-1">{sdk.title}</h4>
+                  {sdk.docs && (
+                    <a href={sdk.docs} target="_blank" rel="noopener noreferrer"
+                       className="text-xs text-primary hover:underline" onClick={(e) => e.stopPropagation()}>
+                      View Docs →
+                    </a>
+                  )}
+                </a>
+              ))}
+            </div>
+          </div>
+
+          {/* Libraries and Platform Integrations */}
+          <div className="mb-10">
+            <h3 className="text-xl font-semibold mb-2 flex items-center gap-2">
+              <GitBranch className="h-5 w-5 text-primary" /> Libraries & Platform Integrations
+            </h3>
+            <p className="text-sm text-muted-foreground mb-4">
+              Tools that extend OpenAlgo support to popular trading platforms, analysis tools, and user interfaces.
+            </p>
+            <div className="grid gap-4 md:grid-cols-3 lg:grid-cols-5">
+              {integrations.map((item, index) => (
+                <a key={index} href={item.url} target="_blank" rel="noopener noreferrer"
+                   className="bg-card p-5 rounded-lg border hover:shadow-lg transition-all group">
+                  <div className="flex items-start justify-between mb-3">
+                    <span className="text-2xl">{item.icon}</span>
+                    <ExternalLink className="h-4 w-4 text-muted-foreground group-hover:text-primary" />
+                  </div>
+                  <h4 className="font-semibold text-sm mb-1">{item.title}</h4>
+                  {item.docs && (
+                    <a href={item.docs} target="_blank" rel="noopener noreferrer"
+                       className="text-xs text-primary hover:underline" onClick={(e) => e.stopPropagation()}>
+                      View Docs →
+                    </a>
+                  )}
+                </a>
+              ))}
+            </div>
+          </div>
+
+          {/* Documentation Links */}
+          <div className="mb-10 p-6 bg-muted/50 rounded-lg border">
+            <h3 className="text-xl font-semibold mb-4 flex items-center gap-2">
+              <BookOpen className="h-5 w-5 text-primary" /> Documentation & Examples
+            </h3>
+            <p className="text-sm text-muted-foreground mb-4">
+              Each SDK and integration has dedicated documentation with installation steps, configuration guidance, and working examples.
+            </p>
+            <div className="grid gap-2 md:grid-cols-2 lg:grid-cols-4">
+              <a href="https://docs.openalgo.in/trading-platform/python" target="_blank" rel="noopener noreferrer" className="text-sm text-primary hover:underline flex items-center gap-1">
+                <span>🐍</span> Python Docs
+              </a>
+              <a href="https://docs.openalgo.in/trading-platform/nodejs" target="_blank" rel="noopener noreferrer" className="text-sm text-primary hover:underline flex items-center gap-1">
+                <span>🟢</span> Node.js Docs
+              </a>
+              <a href="https://docs.openalgo.in/trading-platform/java" target="_blank" rel="noopener noreferrer" className="text-sm text-primary hover:underline flex items-center gap-1">
+                <span>☕</span> Java Docs
+              </a>
+              <a href="https://docs.openalgo.in/trading-platform/.net" target="_blank" rel="noopener noreferrer" className="text-sm text-primary hover:underline flex items-center gap-1">
+                <span>🔷</span> .NET Docs
+              </a>
+              <a href="https://docs.openalgo.in/trading-platform/go" target="_blank" rel="noopener noreferrer" className="text-sm text-primary hover:underline flex items-center gap-1">
+                <span>🔵</span> Go Docs
+              </a>
+              <a href="https://docs.openalgo.in/trading-platform/excel" target="_blank" rel="noopener noreferrer" className="text-sm text-primary hover:underline flex items-center gap-1">
+                <span>📊</span> Excel Docs
+              </a>
+              <a href="https://docs.openalgo.in/trading-platform/amibroker/amibroker-plugin" target="_blank" rel="noopener noreferrer" className="text-sm text-primary hover:underline flex items-center gap-1">
+                <span>📉</span> Amibroker Docs
+              </a>
+              <a href="https://docs.openalgo.in/mcp" target="_blank" rel="noopener noreferrer" className="text-sm text-primary hover:underline flex items-center gap-1">
+                <span>🤖</span> MCP / AI Docs
+              </a>
+            </div>
+          </div>
+
+          {/* Philosophy */}
+          <div className="text-center p-6 bg-gradient-to-r from-purple-500/5 via-blue-500/5 to-green-500/5 rounded-lg border">
+            <p className="text-muted-foreground mb-4 max-w-2xl mx-auto">
+              The Mini FOSS Universe reflects OpenAlgo's core philosophy: <strong>open standards, transparent design, and tools that adapt to how traders actually work.</strong>
             </p>
             <Button variant="outline" size="lg" asChild>
               <a href="https://github.com/marketcalls" target="_blank" rel="noopener noreferrer">
