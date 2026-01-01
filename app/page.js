@@ -221,7 +221,7 @@ export default function Home() {
       title: "OpenAlgo Chart",
       description: "TradingView Lightweight Charts",
       icon: "emoji",
-      iconValue: "📉",
+      iconValue: "🕯️",
       url: "https://github.com/crypt0inf0/openalgo-chart"
     },
     {
