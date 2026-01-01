@@ -223,6 +223,13 @@ export default function Home() {
       icon: "emoji",
       iconValue: "📉",
       url: "https://github.com/crypt0inf0/openalgo-chart"
+    },
+    {
+      title: "OpenAlgo Docs",
+      description: "Official Documentation",
+      icon: "emoji",
+      iconValue: "📖",
+      url: "https://github.com/marketcalls/openalgo-docs"
     }
   ]
 
