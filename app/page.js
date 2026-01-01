@@ -135,7 +135,7 @@ export default function Home() {
       title: "Amibroker Plugin",
       description: "OpenAlgo Plugin for Amibroker",
       icon: "emoji",
-      iconValue: "📊",
+      iconValue: "🔌",
       url: "https://github.com/marketcalls/OpenAlgoPlugin",
       docs: "https://docs.openalgo.in/trading-platform/amibroker/amibroker-plugin"
     },
