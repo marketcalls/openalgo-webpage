@@ -76,7 +76,7 @@ export default function Home() {
       title: "Python SDK",
       description: "Official Python SDK for OpenAlgo API",
       icon: "emoji",
-      iconValue: "🐦",
+      iconValue: "🔶",
       url: "https://github.com/marketcalls/openalgo-python-library",
       docs: "https://docs.openalgo.in/trading-platform/python"
     },
@@ -135,7 +135,7 @@ export default function Home() {
       title: "Amibroker Plugin",
       description: "OpenAlgo Plugin for Amibroker",
       icon: "emoji",
-      iconValue: "📊",
+      iconValue: "🔌",
       url: "https://github.com/marketcalls/OpenAlgoPlugin",
       docs: "https://docs.openalgo.in/trading-platform/amibroker/amibroker-plugin"
     },
@@ -216,6 +216,20 @@ export default function Home() {
       icon: "emoji",
       iconValue: "📈",
       url: "https://github.com/marketcalls/openquest"
+    },
+    {
+      title: "OpenAlgo Chart",
+      description: "TradingView Lightweight Charts",
+      icon: "emoji",
+      iconValue: "🕯️",
+      url: "https://github.com/crypt0inf0/openalgo-chart"
+    },
+    {
+      title: "OpenAlgo Docs",
+      description: "Official Documentation",
+      icon: "emoji",
+      iconValue: "📖",
+      url: "https://github.com/marketcalls/openalgo-docs"
     }
   ]
 
