@@ -76,7 +76,7 @@ export default function Home() {
       title: "Python SDK",
       description: "Official Python SDK for OpenAlgo API",
       icon: "emoji",
-      iconValue: "🐍",
+      iconValue: "🐦",
       url: "https://github.com/marketcalls/openalgo-python-library",
       docs: "https://docs.openalgo.in/trading-platform/python"
     },
@@ -111,6 +111,13 @@ export default function Home() {
       iconValue: "🔵",
       url: "https://github.com/marketcalls/openalgo-go",
       docs: "https://docs.openalgo.in/trading-platform/go"
+    },
+    {
+      title: "Rust SDK",
+      description: "Official Rust SDK for OpenAlgo",
+      icon: "emoji",
+      iconValue: "🦀",
+      url: "https://github.com/marketcalls/openalgo-rust"
     }
   ]
 
@@ -128,7 +135,7 @@ export default function Home() {
       title: "Amibroker Plugin",
       description: "OpenAlgo Plugin for Amibroker",
       icon: "emoji",
-      iconValue: "📉",
+      iconValue: "📊",
       url: "https://github.com/marketcalls/OpenAlgoPlugin",
       docs: "https://docs.openalgo.in/trading-platform/amibroker/amibroker-plugin"
     },
@@ -150,7 +157,7 @@ export default function Home() {
       title: "AlgoMirror",
       description: "Multi Account OpenAlgo Orchestrator",
       icon: "emoji",
-      iconValue: "🪞",
+      iconValue: "🔄",
       url: "https://github.com/marketcalls/algomirror"
     },
     {
@@ -188,6 +195,27 @@ export default function Home() {
       icon: "emoji",
       iconValue: "🚄",
       url: "https://github.com/marketcalls/fastscalper-tauri"
+    },
+    {
+      title: "OpenAlgo Flow",
+      description: "N8N for Traders/Investors",
+      icon: "emoji",
+      iconValue: "🔀",
+      url: "https://github.com/marketcalls/openalgo-flow"
+    },
+    {
+      title: "Historify",
+      description: "Fullstack Stock Market Data Management Platform",
+      icon: "emoji",
+      iconValue: "📚",
+      url: "https://github.com/marketcalls/historify"
+    },
+    {
+      title: "OpenQuest",
+      description: "Realtime Stock Data Aggregator with TradingView Charts",
+      icon: "emoji",
+      iconValue: "📈",
+      url: "https://github.com/marketcalls/openquest"
     }
   ]
 
@@ -216,7 +244,7 @@ export default function Home() {
                   <Download className="w-6 h-6 text-blue-500" />
                 </div>
               </div>
-              <div className="text-3xl sm:text-4xl font-bold mb-1">62,000+</div>
+              <div className="text-3xl sm:text-4xl font-bold mb-1">67,000+</div>
               <div className="text-xs text-muted-foreground uppercase tracking-wider">Downloads</div>
             </div>
             <div className="bg-card border rounded-xl p-6 text-center">
