@@ -216,6 +216,13 @@ export default function Home() {
       icon: "emoji",
       iconValue: "📈",
       url: "https://github.com/marketcalls/openquest"
+    },
+    {
+      title: "OpenAlgo Chart",
+      description: "TradingView Lightweight Charts",
+      icon: "emoji",
+      iconValue: "📉",
+      url: "https://github.com/crypt0inf0/openalgo-chart"
     }
   ]
 
