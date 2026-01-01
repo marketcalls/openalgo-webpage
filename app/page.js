@@ -76,7 +76,7 @@ export default function Home() {
       title: "Python SDK",
       description: "Official Python SDK for OpenAlgo API",
       icon: "emoji",
-      iconValue: "🐦",
+      iconValue: "🔶",
       url: "https://github.com/marketcalls/openalgo-python-library",
       docs: "https://docs.openalgo.in/trading-platform/python"
     },
