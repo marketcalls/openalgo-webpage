@@ -258,7 +258,7 @@ export default function Home() {
                   <Download className="w-6 h-6 text-blue-500" />
                 </div>
               </div>
-              <div className="text-3xl sm:text-4xl font-bold mb-1">67,000+</div>
+              <div className="text-3xl sm:text-4xl font-bold mb-1">72,000+</div>
               <div className="text-xs text-muted-foreground uppercase tracking-wider">Downloads</div>
             </div>
             <div className="bg-card border rounded-xl p-6 text-center">
