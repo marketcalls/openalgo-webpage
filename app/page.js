@@ -378,7 +378,7 @@ export default function Home() {
               <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
                 <Package className="h-5 w-5 text-primary" /> SDKs (API v1)
               </h3>
-              <div className="grid gap-4 md:grid-cols-3 lg:grid-cols-5">
+              <div className="grid gap-4 sm:grid-cols-2 md:grid-cols-3">
                 {sdks.map((sdk, index) => (
                   <a
                     key={index}
