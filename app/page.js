@@ -276,7 +276,7 @@ export default function Home() {
                   <Star className="w-6 h-6 text-yellow-500" />
                 </div>
               </div>
-              <div className="text-3xl sm:text-4xl font-bold mb-1">1,000+</div>
+              <div className="text-3xl sm:text-4xl font-bold mb-1">1100+</div>
               <div className="text-xs text-muted-foreground uppercase tracking-wider">GitHub Stars</div>
             </div>
           </div>
