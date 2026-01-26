@@ -47,7 +47,7 @@ export default function Home() {
     {
       icon: Code2,
       title: "Multi-Platform Support",
-      description: "Integrate with 20+ brokers. Use from Python, TradingView, Excel, and more.",
+      description: "Integrate with 25+ brokers. Use from Python, TradingView, Excel, and more.",
       color: "bg-orange-500/10 text-orange-500"
     }
   ]
@@ -258,7 +258,7 @@ export default function Home() {
                   <Download className="w-6 h-6 text-blue-500" />
                 </div>
               </div>
-              <div className="text-3xl sm:text-4xl font-bold mb-1">72,000+</div>
+              <div className="text-3xl sm:text-4xl font-bold mb-1">75,000+</div>
               <div className="text-xs text-muted-foreground uppercase tracking-wider">Downloads</div>
             </div>
             <div className="bg-card border rounded-xl p-6 text-center">
@@ -464,7 +464,7 @@ export default function Home() {
                 <ul className="space-y-2 text-sm">
                   <li className="flex items-start">
                     <ArrowRight className="w-4 h-4 text-primary mr-2 mt-0.5" />
-                    <span>Unified API across 20+ brokers</span>
+                    <span>Unified API across 25+ brokers</span>
                   </li>
                   <li className="flex items-start">
                     <ArrowRight className="w-4 h-4 text-primary mr-2 mt-0.5" />
