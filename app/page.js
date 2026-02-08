@@ -276,7 +276,7 @@ export default function Home() {
               {[
                 "Amibroker", "TradingView", "GoCharting", "Python", "MetaTrader",
                 "N8N", "Java", "Go", ".NET", "Node.js", "Rust",
-                "ChartInk", "Excel", "Google Sheets"
+                "ChartInk", "Excel", "Google Sheets", "OpenClaw"
               ].map((platform) => (
                 <span
                   key={platform}
