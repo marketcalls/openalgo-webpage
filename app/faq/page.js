@@ -37,6 +37,7 @@ const faqs = [
 • IIFL (XTS)
 • INDMoney
 • IndiaBulls Securities (XTS)
+• Nubra
 • Shoonya
 • Upstox
 • Wisdom Capital (XTS)
