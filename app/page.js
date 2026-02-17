@@ -16,8 +16,6 @@ import {
   GitBranch,
   ExternalLink,
   Package,
-  Bot,
-  MessageCircle,
   TrendingUp,
   FileSpreadsheet,
   Download,
@@ -239,10 +237,10 @@ export default function Home() {
   return (
     <main className="min-h-screen bg-background">
       {/* Hero Section */}
-      <div className="min-h-[calc(100vh-4rem)] flex flex-col items-center justify-center px-4 py-12">
-        <div className="text-center max-w-5xl mx-auto">
+      <div className="min-h-[calc(100vh-4rem)] flex flex-col items-center justify-center px-4 py-16">
+        <div className="text-center max-w-4xl mx-auto">
           {/* V2 Release Badge */}
-          <div className="inline-flex items-center gap-2 px-4 py-2 mb-6 rounded-full bg-gradient-to-r from-purple-500/10 via-blue-500/10 to-green-500/10 border border-purple-500/20">
+          <div className="inline-flex items-center gap-2 px-4 py-2 mb-8 rounded-full bg-gradient-to-r from-purple-500/10 via-blue-500/10 to-green-500/10 border border-purple-500/20">
             <Sparkles className="w-4 h-4 text-purple-500" />
             <span className="text-sm font-medium">
               <span className="text-purple-500">OpenAlgo V2</span>
@@ -252,10 +250,12 @@ export default function Home() {
           </div>
 
           {/* Main Headline */}
-          <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold mb-4 leading-tight">
-            <span className="bg-clip-text text-transparent bg-gradient-to-r from-purple-500 via-blue-500 to-green-500">Your Personal</span>{" "}
-            <span className="bg-clip-text text-transparent bg-gradient-to-r from-pink-500 via-red-500 to-yellow-500">Algo Trading</span>{" "}
-            <span className="bg-clip-text text-transparent bg-gradient-to-r from-green-400 via-blue-500 to-purple-500">Platform</span>
+          <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold mb-4 leading-tight tracking-tight">
+            Your Personal{" "}
+            <span className="bg-clip-text text-transparent bg-gradient-to-r from-purple-500 via-blue-500 to-green-500">
+              Algo Trading
+            </span>{" "}
+            Platform
           </h1>
 
           {/* Tagline */}
@@ -264,85 +264,34 @@ export default function Home() {
           </p>
 
           {/* Description */}
-          <p className="text-base sm:text-lg text-muted-foreground max-w-3xl mx-auto mb-8">
+          <p className="text-base sm:text-lg text-muted-foreground max-w-2xl mx-auto mb-10 leading-relaxed">
             Connect your algo strategies and run from any platform you love. Build No-Code Trading Strategies
             and receive alerts directly to Telegram with zero coding effort.
           </p>
 
-          {/* Platform Integration Grid */}
-          <div className="mb-10">
-            <p className="text-sm text-muted-foreground mb-4 uppercase tracking-wider">Integrates With</p>
-            <div className="flex flex-wrap justify-center gap-2 max-w-3xl mx-auto">
-              {[
-                "Amibroker", "TradingView", "GoCharting", "Python", "MetaTrader",
-                "N8N", "Java", "Go", ".NET", "Node.js", "Rust",
-                "ChartInk", "Excel", "Google Sheets", "OpenClaw"
-              ].map((platform) => (
-                <span
-                  key={platform}
-                  className="px-3 py-1.5 text-sm bg-card border rounded-lg hover:border-primary/50 transition-colors"
-                >
-                  {platform}
-                </span>
-              ))}
+          {/* Stats - Compact Inline */}
+          <div className="flex flex-wrap items-center justify-center gap-6 sm:gap-8 mb-10">
+            <div className="flex items-center gap-2">
+              <Download className="w-4 h-4 text-blue-500" />
+              <span className="text-lg font-bold">95,000+</span>
+              <span className="text-sm text-muted-foreground">Downloads</span>
             </div>
-          </div>
-
-          {/* Feature Highlights */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 max-w-2xl mx-auto mb-10">
-            <div className="flex items-center gap-3 px-4 py-3 bg-card border rounded-lg">
-              <div className="p-2 rounded-full bg-green-500/10">
-                <Bot className="w-5 h-5 text-green-500" />
-              </div>
-              <div className="text-left">
-                <div className="font-medium text-sm">No-Code Strategies</div>
-                <div className="text-xs text-muted-foreground">Build without coding</div>
-              </div>
+            <div className="hidden sm:block w-px h-5 bg-border" />
+            <div className="flex items-center gap-2">
+              <Code2 className="w-4 h-4 text-green-500" />
+              <span className="text-lg font-bold">100%</span>
+              <span className="text-sm text-muted-foreground">Open Source</span>
             </div>
-            <div className="flex items-center gap-3 px-4 py-3 bg-card border rounded-lg">
-              <div className="p-2 rounded-full bg-blue-500/10">
-                <MessageCircle className="w-5 h-5 text-blue-500" />
-              </div>
-              <div className="text-left">
-                <div className="font-medium text-sm">Telegram Alerts</div>
-                <div className="text-xs text-muted-foreground">Instant notifications</div>
-              </div>
-            </div>
-          </div>
-
-          {/* Stats Section */}
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-10 max-w-3xl mx-auto">
-            <div className="bg-card border rounded-xl p-5 text-center">
-              <div className="flex justify-center mb-3">
-                <div className="p-2.5 rounded-full bg-blue-500/10">
-                  <Download className="w-5 h-5 text-blue-500" />
-                </div>
-              </div>
-              <div className="text-2xl sm:text-3xl font-bold mb-1">95,000+</div>
-              <div className="text-xs text-muted-foreground uppercase tracking-wider">Downloads</div>
-            </div>
-            <div className="bg-card border rounded-xl p-5 text-center">
-              <div className="flex justify-center mb-3">
-                <div className="p-2.5 rounded-full bg-green-500/10">
-                  <Code2 className="w-5 h-5 text-green-500" />
-                </div>
-              </div>
-              <div className="text-2xl sm:text-3xl font-bold mb-1">100%</div>
-              <div className="text-xs text-muted-foreground uppercase tracking-wider">Open Source</div>
-            </div>
-            <div className="bg-card border rounded-xl p-5 text-center">
-              <div className="flex justify-center mb-3">
-                <div className="p-2.5 rounded-full bg-yellow-500/10">
-                  <Star className="w-5 h-5 text-yellow-500" />
-                </div>
-              </div>
-              <div className="text-2xl sm:text-3xl font-bold mb-1">1300+</div>
-              <div className="text-xs text-muted-foreground uppercase tracking-wider">GitHub Stars</div>
+            <div className="hidden sm:block w-px h-5 bg-border" />
+            <div className="flex items-center gap-2">
+              <Star className="w-4 h-4 text-yellow-500" />
+              <span className="text-lg font-bold">1,300+</span>
+              <span className="text-sm text-muted-foreground">GitHub Stars</span>
             </div>
           </div>
 
           {/* CTA Buttons */}
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+          <div className="flex flex-col sm:flex-row gap-4 justify-center mb-12">
             <Button asChild size="lg" className="px-8">
               <a href="https://docs.openalgo.in/getting-started" className="flex items-center" target="_blank" rel="noopener noreferrer">
                 Get Started
@@ -355,6 +304,25 @@ export default function Home() {
                 GitHub
               </a>
             </Button>
+          </div>
+
+          {/* Platform Integrations */}
+          <div>
+            <p className="text-xs text-muted-foreground mb-3 uppercase tracking-widest">Integrates With</p>
+            <div className="flex flex-wrap justify-center gap-2 max-w-3xl mx-auto">
+              {[
+                "Amibroker", "TradingView", "GoCharting", "Python", "MetaTrader",
+                "N8N", "Java", "Go", ".NET", "Node.js", "Rust",
+                "ChartInk", "Excel", "Google Sheets", "OpenClaw"
+              ].map((platform) => (
+                <span
+                  key={platform}
+                  className="px-3 py-1 text-xs bg-card border rounded-full hover:border-primary/50 transition-colors text-muted-foreground"
+                >
+                  {platform}
+                </span>
+              ))}
+            </div>
           </div>
         </div>
       </div>
