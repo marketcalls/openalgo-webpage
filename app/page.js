@@ -251,11 +251,10 @@ export default function Home() {
 
           {/* Main Headline */}
           <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold mb-4 leading-tight tracking-tight">
-            Your Personal{" "}
+            <span className="block">Your Personal</span>
             <span className="bg-clip-text text-transparent bg-gradient-to-r from-purple-500 via-blue-500 to-green-500">
-              Algo Trading
-            </span>{" "}
-            Platform
+              Algo Trading Platform
+            </span>
           </h1>
 
           {/* Tagline */}
