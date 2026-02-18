@@ -28,7 +28,7 @@ import dynamic from "next/dynamic"
 const WABridgeDiagram = dynamic(() => import("@/components/wabridge-diagram"), {
   ssr: false,
   loading: () => (
-    <div className="w-full h-[400px] md:h-[450px] bg-card/50 rounded-lg border border-dashed border-muted-foreground/20 flex items-center justify-center">
+    <div className="w-full h-[300px] md:h-[350px] bg-card/50 rounded-lg border border-dashed border-muted-foreground/20 flex items-center justify-center">
       <p className="text-muted-foreground text-sm">Loading diagram...</p>
     </div>
   ),
@@ -126,7 +126,7 @@ export default function WABridgePage() {
           </p>
           <WABridgeDiagram />
           <p className="text-center text-xs text-muted-foreground/50 mt-3">
-            Amibroker, TradingView, Python, or any app sends HTTP requests to WABridge, which delivers them to WhatsApp.
+            Your App sends HTTP requests to WABridge, which delivers them to WhatsApp.
           </p>
         </div>
 
