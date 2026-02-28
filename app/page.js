@@ -45,7 +45,7 @@ export default function Home() {
     {
       icon: Code2,
       title: "Multi-Platform Support",
-      description: "Integrate with 25+ brokers. Use from Python, TradingView, Excel, and more.",
+      description: "Integrate with 30+ brokers. Use from Python, TradingView, Excel, and more.",
       color: "bg-orange-500/10 text-orange-500"
     }
   ]
@@ -311,7 +311,7 @@ export default function Home() {
               {[
                 "Amibroker", "TradingView", "GoCharting", "Python", "MetaTrader",
                 "N8N", "Java", "Go", ".NET", "Node.js", "Rust",
-                "ChartInk", "Excel", "Google Sheets", "OpenClaw"
+                "ChartInk", "Excel", "Google Sheets", "OpenClaw", "Telegram"
               ].map((platform) => (
                 <span
                   key={platform}
@@ -490,7 +490,7 @@ export default function Home() {
                 <ul className="space-y-2 text-sm">
                   <li className="flex items-start">
                     <ArrowRight className="w-4 h-4 text-primary mr-2 mt-0.5" />
-                    <span>Unified API across 25+ brokers</span>
+                    <span>Unified API across 30+ brokers</span>
                   </li>
                   <li className="flex items-start">
                     <ArrowRight className="w-4 h-4 text-primary mr-2 mt-0.5" />
