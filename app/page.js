@@ -264,7 +264,7 @@ export default function Home() {
 
           {/* Description */}
           <p className="text-base sm:text-lg text-muted-foreground max-w-2xl mx-auto mb-10 leading-relaxed">
-            Self Host your own Algo Platform, Test and Execute your Trading ideas, Connect your favorite Trading Platforms, AI Driven Strategy Development across 30+ Brokers.
+            Test and Execute your Trading ideas, Connect your favorite Trading Platforms, AI Driven Strategy Development across 30+ Brokers.
           </p>
 
           {/* Stats - Compact Inline */}
