@@ -264,15 +264,14 @@ export default function Home() {
 
           {/* Description */}
           <p className="text-base sm:text-lg text-muted-foreground max-w-2xl mx-auto mb-10 leading-relaxed">
-            Connect your algo strategies and run from any platform you love. Build No-Code Trading Strategies
-            and receive alerts directly to Telegram with zero coding effort.
+            Self Host your own Algo Platform, Test and Execute your Trading ideas, Connect your favorite Trading Platforms, AI Driven Strategy Development across 30+ Brokers.
           </p>
 
           {/* Stats - Compact Inline */}
           <div className="flex flex-wrap items-center justify-center gap-6 sm:gap-8 mb-10">
             <div className="flex items-center gap-2">
               <Download className="w-4 h-4 text-blue-500" />
-              <span className="text-lg font-bold">95,000+</span>
+              <span className="text-lg font-bold">1,00,000+</span>
               <span className="text-sm text-muted-foreground">Downloads</span>
             </div>
             <div className="hidden sm:block w-px h-5 bg-border" />
@@ -284,7 +283,7 @@ export default function Home() {
             <div className="hidden sm:block w-px h-5 bg-border" />
             <div className="flex items-center gap-2">
               <Star className="w-4 h-4 text-yellow-500" />
-              <span className="text-lg font-bold">1,300+</span>
+              <span className="text-lg font-bold">1,400+</span>
               <span className="text-sm text-muted-foreground">GitHub Stars</span>
             </div>
           </div>
