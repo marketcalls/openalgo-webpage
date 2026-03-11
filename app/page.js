@@ -271,7 +271,7 @@ export default function Home() {
           <div className="flex flex-wrap items-center justify-center gap-6 sm:gap-8 mb-10">
             <div className="flex items-center gap-2">
               <Download className="w-4 h-4 text-blue-500" />
-              <span className="text-lg font-bold">1,00,000+</span>
+              <span className="text-lg font-bold">1,06,000+</span>
               <span className="text-sm text-muted-foreground">Downloads</span>
             </div>
             <div className="hidden sm:block w-px h-5 bg-border" />
@@ -283,7 +283,7 @@ export default function Home() {
             <div className="hidden sm:block w-px h-5 bg-border" />
             <div className="flex items-center gap-2">
               <Star className="w-4 h-4 text-yellow-500" />
-              <span className="text-lg font-bold">1,400+</span>
+              <span className="text-lg font-bold">1,500+</span>
               <span className="text-sm text-muted-foreground">GitHub Stars</span>
             </div>
           </div>
