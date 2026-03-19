@@ -271,7 +271,7 @@ export default function Home() {
           <div className="flex flex-wrap items-center justify-center gap-6 sm:gap-8 mb-10">
             <div className="flex items-center gap-2">
               <Download className="w-4 h-4 text-blue-500" />
-              <span className="text-lg font-bold">1,06,000+</span>
+              <span className="text-lg font-bold">1,15,000+</span>
               <span className="text-sm text-muted-foreground">Downloads</span>
             </div>
             <div className="hidden sm:block w-px h-5 bg-border" />
