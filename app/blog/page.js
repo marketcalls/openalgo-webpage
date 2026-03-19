@@ -1,16 +1,13 @@
 "use client"
 
 import { useState, useEffect } from 'react'
-import { metadata as blogMetadata } from './metadata'
 import { Button } from "@/components/ui/button"
-import { Calendar, ExternalLink, User, Clock, BookOpen, Rss, Tag } from "lucide-react"
+import { Calendar, ExternalLink, User, Clock, BookOpen, Rss } from "lucide-react"
 
 async function fetchRSSFeed() {
   try {
     const response = await fetch('/api/blog-feed')
-    if (!response.ok) {
-      throw new Error('Failed to fetch RSS feed')
-    }
+    if (!response.ok) throw new Error('Failed to fetch RSS feed')
     return await response.json()
   } catch (error) {
     console.error('Error fetching RSS feed:', error)
@@ -18,20 +15,16 @@ async function fetchRSSFeed() {
   }
 }
 
-function BlogCard({ post, index }) {
+function BlogCard({ post }) {
   const formatDate = (dateString) => {
     return new Date(dateString).toLocaleDateString('en-US', {
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric'
+      year: 'numeric', month: 'long', day: 'numeric'
     })
   }
 
   const getReadingTime = (content) => {
-    const wordsPerMinute = 200
     const words = content.replace(/<[^>]*>/g, '').split(/\s+/).length
-    const minutes = Math.ceil(words / wordsPerMinute)
-    return `${minutes} min read`
+    return `${Math.ceil(words / 200)} min read`
   }
 
   const getBlogCategory = (categories) => {
@@ -39,64 +32,45 @@ function BlogCard({ post, index }) {
     return categories[0]
   }
 
-  const getCategoryColor = (category) => {
-    const categoryColors = {
-      'Trading': 'bg-orange-500/10 text-orange-500',
-      'Tutorial': 'bg-blue-500/10 text-blue-500', 
-      'Analysis': 'bg-green-500/10 text-green-500',
-      'Development': 'bg-purple-500/10 text-purple-500',
-      'News': 'bg-pink-500/10 text-pink-500',
-      'General': 'bg-blue-500/10 text-blue-500'
-    }
-    return categoryColors[category] || 'bg-blue-500/10 text-blue-500'
-  }
-
   const category = getBlogCategory(post.categories)
-  const categoryColor = getCategoryColor(category)
 
   return (
-    <article className="relative group rounded-lg border p-6 hover:shadow-md transition-all bg-card flex flex-col h-full">
-      <div className={`inline-flex p-2 rounded-lg ${categoryColor} mb-4`}>
-        <BookOpen className="h-6 w-6" />
+    <article className="relative group obsidian-card rounded-xl p-6 hover-lift ghost-border flex flex-col h-full">
+      <div className="inline-flex p-2.5 rounded-lg text-secondary bg-secondary/10 mb-4">
+        <BookOpen className="h-5 w-5" />
       </div>
-      
-      <div className="text-xs text-muted-foreground mb-3">
-        <div className="flex items-center gap-1 mb-1">
+
+      <div className="text-xs text-on-surface-variant mb-4 space-y-1.5">
+        <div className="flex items-center gap-2">
           <User className="w-3 h-3" />
-          <span>By {post.author || 'OpenAlgo'}</span>
+          <span className="font-label">By {post.author || 'OpenAlgo'}</span>
         </div>
         <div className="flex items-center justify-between">
-          <div className="flex items-center gap-1">
+          <div className="flex items-center gap-2">
             <Calendar className="w-3 h-3" />
-            <span>{formatDate(post.pubDate)}</span>
+            <span className="font-label">{formatDate(post.pubDate)}</span>
           </div>
-          <div className="flex items-center gap-1">
+          <div className="flex items-center gap-2">
             <Clock className="w-3 h-3" />
-            <span>{getReadingTime(post.content)}</span>
+            <span className="font-label">{getReadingTime(post.content)}</span>
           </div>
         </div>
       </div>
-      
-      <h3 className="text-lg font-semibold mb-2">{post.title}</h3>
-      
-      <p className="text-muted-foreground mb-4">{post.contentSnippet || (post.content?.replace(/<[^>]*>/g, '').substring(0, 150) + '...')}</p>
-      
+
+      <h3 className="text-base font-semibold mb-3 text-on-surface">{post.title}</h3>
+      <p className="text-on-surface-variant text-sm mb-5 leading-relaxed">{post.contentSnippet || (post.content?.replace(/<[^>]*>/g, '').substring(0, 150) + '...')}</p>
+
       <div className="mt-auto">
         <Button variant="outline" size="sm" asChild className="w-full">
-          <a 
-            href={post.link} 
-            target="_blank" 
-            rel="noopener noreferrer"
-            className="flex items-center justify-center gap-2"
-          >
+          <a href={post.link} target="_blank" rel="noopener noreferrer" className="flex items-center justify-center gap-2">
             Read More
             <ExternalLink className="w-4 h-4" />
           </a>
         </Button>
       </div>
-      
-      <div className="absolute top-8 right-8">
-        <span className={`text-xs font-medium px-3 py-1.5 rounded-full ${categoryColor}`}>
+
+      <div className="absolute top-6 right-6">
+        <span className="font-label text-label-sm px-2.5 py-1 rounded-full text-primary bg-primary/10">
           {category}
         </span>
       </div>
@@ -121,17 +95,16 @@ export default function BlogPage() {
         setLoading(false)
       }
     }
-
     loadPosts()
   }, [])
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-background">
-        <div className="container max-w-7xl py-12">
+      <div className="min-h-screen">
+        <div className="container max-w-7xl py-16">
           <div className="text-center">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
-            <p className="text-muted-foreground">Loading blog posts...</p>
+            <div className="w-12 h-12 rounded-full surface-container mx-auto mb-4 animate-pulse glow-primary" />
+            <p className="text-on-surface-variant font-label">Loading blog posts...</p>
           </div>
         </div>
       </div>
@@ -140,13 +113,11 @@ export default function BlogPage() {
 
   if (error) {
     return (
-      <div className="min-h-screen bg-background">
-        <div className="container max-w-7xl py-12">
+      <div className="min-h-screen">
+        <div className="container max-w-7xl py-16">
           <div className="text-center">
-            <p className="text-red-500 mb-4">{error}</p>
-            <Button onClick={() => window.location.reload()}>
-              Try Again
-            </Button>
+            <p className="text-destructive mb-5">{error}</p>
+            <Button onClick={() => window.location.reload()}>Try Again</Button>
           </div>
         </div>
       </div>
@@ -154,59 +125,43 @@ export default function BlogPage() {
   }
 
   return (
-    <div className="min-h-screen bg-background">
-      <div className="container max-w-7xl py-12">
-        <div className="space-y-8">
-        {/* Header */}
+    <div className="min-h-screen">
+      <div className="container max-w-7xl py-16">
+        <div className="space-y-10">
           <div className="space-y-4 text-center">
-            <h1 className="text-4xl font-bold">OpenAlgo Blog</h1>
-            <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
+            <h1 className="text-display-md text-on-surface">OpenAlgo Blog</h1>
+            <p className="text-lg text-on-surface-variant max-w-3xl mx-auto leading-relaxed">
               Stay updated with the latest insights, tutorials, and developments in algorithmic trading.
             </p>
           </div>
 
-        {/* Blog Posts Grid */}
           {posts.length > 0 ? (
-            <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
               {posts.map((post, index) => (
-                <BlogCard key={index} post={post} index={index} />
+                <BlogCard key={index} post={post} />
               ))}
             </div>
           ) : (
-            <div className="text-center py-12">
-              <p className="text-muted-foreground mb-4">No blog posts found</p>
+            <div className="text-center py-16">
+              <p className="text-on-surface-variant mb-5">No blog posts found</p>
               <Button variant="outline" asChild>
-                <a 
-                  href="https://blog.openalgo.in" 
-                  target="_blank" 
-                  rel="noopener noreferrer"
-                >
+                <a href="https://blog.openalgo.in" target="_blank" rel="noopener noreferrer">
                   Visit Blog Website
                 </a>
               </Button>
             </div>
           )}
 
-          <div className="text-center space-y-4">
-            <p className="text-muted-foreground">
-              Want to stay updated with our latest posts?
-            </p>
+          <div className="text-center space-y-5">
+            <p className="text-on-surface-variant">Want to stay updated with our latest posts?</p>
             <div className="flex justify-center gap-4">
               <Button variant="outline" asChild>
-                <a 
-                  href="https://blog.openalgo.in" 
-                  target="_blank" 
-                  rel="noopener noreferrer"
-                >
+                <a href="https://blog.openalgo.in" target="_blank" rel="noopener noreferrer">
                   Visit Full Blog
                 </a>
               </Button>
               <Button asChild>
-                <a 
-                  href="https://medium.com/feed/@openalgo" 
-                  target="_blank" 
-                  rel="noopener noreferrer"
-                >
+                <a href="https://medium.com/feed/@openalgo" target="_blank" rel="noopener noreferrer">
                   <Rss className="w-4 h-4 mr-2" />
                   RSS Feed
                 </a>

@@ -9,140 +9,121 @@ export default function FastScalperPage() {
       <div className="max-w-4xl mx-auto">
         {/* Hero Section */}
         <div className="text-center mb-16">
-          <h1 className="text-5xl font-bold mb-6">FastScalper</h1>
-          <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
+          <h1 className="text-display-md mb-6 text-on-surface">FastScalper</h1>
+          <p className="text-lg text-on-surface-variant max-w-2xl mx-auto leading-relaxed">
             A lightning-fast, Rust-based desktop application designed for scalpers who demand speed, reliability, and precision in their trading.
           </p>
         </div>
 
         {/* Key Features Grid */}
-        <div className="grid md:grid-cols-3 gap-8 mb-16">
-          <div className="bg-card rounded-lg p-6 text-center hover:shadow-lg transition-shadow">
-            <Zap className="h-12 w-12 mx-auto text-primary mb-4" />
-            <h3 className="text-xl font-semibold mb-2">Lightning Fast</h3>
-            <p className="text-muted-foreground">
-              Built with Rust for optimal performance and instant order execution
-            </p>
-          </div>
-          <div className="bg-card rounded-lg p-6 text-center hover:shadow-lg transition-shadow">
-            <Cpu className="h-12 w-12 mx-auto text-primary mb-4" />
-            <h3 className="text-xl font-semibold mb-2">Lightweight</h3>
-            <p className="text-muted-foreground">
-              Minimal resource usage while maintaining powerful functionality
-            </p>
-          </div>
-          <div className="bg-card rounded-lg p-6 text-center hover:shadow-lg transition-shadow">
-            <Lock className="h-12 w-12 mx-auto text-primary mb-4" />
-            <h3 className="text-xl font-semibold mb-2">Secure</h3>
-            <p className="text-muted-foreground">
-              Built-in security features and encrypted API communication
-            </p>
-          </div>
+        <div className="grid md:grid-cols-3 gap-6 mb-16">
+          {[
+            { icon: Zap, title: "Lightning Fast", desc: "Built with Rust for optimal performance and instant order execution" },
+            { icon: Cpu, title: "Lightweight", desc: "Minimal resource usage while maintaining powerful functionality" },
+            { icon: Lock, title: "Secure", desc: "Built-in security features and encrypted API communication" },
+          ].map(({ icon: Icon, title, desc }) => (
+            <div key={title} className="obsidian-card rounded-xl p-8 text-center hover-lift ghost-border group">
+              <div className="inline-flex p-3 rounded-xl surface-container mb-5 group-hover:glow-primary transition-all">
+                <Icon className="h-8 w-8 text-primary" />
+              </div>
+              <h3 className="text-lg font-semibold mb-3 text-on-surface">{title}</h3>
+              <p className="text-on-surface-variant text-sm leading-relaxed">{desc}</p>
+            </div>
+          ))}
         </div>
 
         {/* Platform Support */}
-        <div className="bg-card rounded-lg p-8 mb-16">
-          <h2 className="text-3xl font-bold mb-8 text-center">Cross-Platform Support</h2>
-          <div className="grid md:grid-cols-3 gap-8">
-            <div className="space-y-4">
-              <div className="flex items-center gap-3">
-                <MonitorSmartphone className="h-6 w-6 text-primary" />
-                <h3 className="text-xl font-semibold">Windows</h3>
+        <div className="rounded-xl surface-low p-10 mb-16 ghost-border">
+          <h2 className="text-headline-md mb-10 text-center text-on-surface">Cross-Platform Support</h2>
+          <div className="grid md:grid-cols-3 gap-10">
+            {[
+              { icon: MonitorSmartphone, title: "Windows", items: ["Multiple instance support", "Windows 10 or later", "MSI & EXE installers"] },
+              { icon: Laptop, title: "macOS", items: ["Universal binary", "Intel & Apple Silicon", "macOS 10.15 or later"] },
+              { icon: Terminal, title: "Linux", items: ["DEB & RPM packages", "AppImage support", "Major distros supported"] },
+            ].map(({ icon: Icon, title, items }) => (
+              <div key={title} className="space-y-4">
+                <div className="flex items-center gap-3">
+                  <Icon className="h-5 w-5 text-primary" />
+                  <h3 className="text-lg font-semibold text-on-surface">{title}</h3>
+                </div>
+                <ul className="space-y-2 text-on-surface-variant text-sm">
+                  {items.map(item => (
+                    <li key={item} className="flex items-start gap-3">
+                      <span className="w-1.5 h-1.5 rounded-full bg-tertiary mt-1.5 flex-shrink-0" />
+                      <span>{item}</span>
+                    </li>
+                  ))}
+                </ul>
               </div>
-              <ul className="space-y-2 text-muted-foreground">
-                <li>• Multiple instance support</li>
-                <li>• Windows 10 or later</li>
-                <li>• MSI & EXE installers</li>
-              </ul>
-            </div>
-            <div className="space-y-4">
-              <div className="flex items-center gap-3">
-                <Laptop className="h-6 w-6 text-primary" />
-                <h3 className="text-xl font-semibold">macOS</h3>
-              </div>
-              <ul className="space-y-2 text-muted-foreground">
-                <li>• Universal binary</li>
-                <li>• Intel & Apple Silicon</li>
-                <li>• macOS 10.15 or later</li>
-              </ul>
-            </div>
-            <div className="space-y-4">
-              <div className="flex items-center gap-3">
-                <Terminal className="h-6 w-6 text-primary" />
-                <h3 className="text-xl font-semibold">Linux</h3>
-              </div>
-              <ul className="space-y-2 text-muted-foreground">
-                <li>• DEB & RPM packages</li>
-                <li>• AppImage support</li>
-                <li>• Major distros supported</li>
-              </ul>
-            </div>
+            ))}
           </div>
         </div>
 
         {/* Trading Features */}
         <div className="mb-16">
-          <h2 className="text-3xl font-bold mb-8 text-center">Trading Features</h2>
-          <div className="grid md:grid-cols-2 gap-8">
-            <div className="bg-card rounded-lg p-6">
-              <h3 className="text-xl font-semibold mb-4">Order Management</h3>
-              <div className="space-y-4">
-                <div className="flex items-center gap-4 text-muted-foreground">
-                  <Keyboard className="h-5 w-5 text-primary flex-shrink-0" />
-                  <div>
-                    <p className="font-semibold text-foreground">Quick Order Controls</p>
-                    <p>LE (Long), LX (Exit Long), SE (Short), SX (Exit Short)</p>
+          <h2 className="text-headline-md mb-8 text-center text-on-surface">Trading Features</h2>
+          <div className="grid md:grid-cols-2 gap-6">
+            <div className="obsidian-card rounded-xl p-7 ghost-border">
+              <h3 className="text-lg font-semibold mb-5 text-on-surface">Order Management</h3>
+              <div className="space-y-5">
+                {[
+                  { icon: Keyboard, title: "Quick Order Controls", desc: "LE (Long), LX (Exit Long), SE (Short), SX (Exit Short)" },
+                  { icon: Settings, title: "Product Types", desc: "CNC (Cash & Carry), MIS (Intraday), NRML (Positional)" },
+                ].map(({ icon: Icon, title, desc }) => (
+                  <div key={title} className="flex items-start gap-4">
+                    <Icon className="h-5 w-5 text-primary flex-shrink-0 mt-0.5" />
+                    <div>
+                      <p className="font-semibold text-sm text-on-surface">{title}</p>
+                      <p className="text-sm text-on-surface-variant">{desc}</p>
+                    </div>
                   </div>
-                </div>
-                <div className="flex items-center gap-4 text-muted-foreground">
-                  <Settings className="h-5 w-5 text-primary flex-shrink-0" />
-                  <div>
-                    <p className="font-semibold text-foreground">Product Types</p>
-                    <p>CNC (Cash & Carry), MIS (Intraday), NRML (Positional)</p>
-                  </div>
-                </div>
+                ))}
               </div>
             </div>
-            <div className="bg-card rounded-lg p-6">
-              <h3 className="text-xl font-semibold mb-4">Smart Features</h3>
-              <div className="space-y-4">
-                <div className="flex items-center gap-4 text-muted-foreground">
-                  <Volume2 className="h-5 w-5 text-primary flex-shrink-0" />
-                  <div>
-                    <p className="font-semibold text-foreground">Voice Alerts</p>
-                    <p>Configurable audio confirmations for order actions</p>
+            <div className="obsidian-card rounded-xl p-7 ghost-border">
+              <h3 className="text-lg font-semibold mb-5 text-on-surface">Smart Features</h3>
+              <div className="space-y-5">
+                {[
+                  { icon: Volume2, title: "Voice Alerts", desc: "Configurable audio confirmations for order actions" },
+                  { icon: Webhook, title: "API Integration", desc: "Seamless connection with OpenAlgo for real-time trading" },
+                ].map(({ icon: Icon, title, desc }) => (
+                  <div key={title} className="flex items-start gap-4">
+                    <Icon className="h-5 w-5 text-primary flex-shrink-0 mt-0.5" />
+                    <div>
+                      <p className="font-semibold text-sm text-on-surface">{title}</p>
+                      <p className="text-sm text-on-surface-variant">{desc}</p>
+                    </div>
                   </div>
-                </div>
-                <div className="flex items-center gap-4 text-muted-foreground">
-                  <Webhook className="h-5 w-5 text-primary flex-shrink-0" />
-                  <div>
-                    <p className="font-semibold text-foreground">API Integration</p>
-                    <p>Seamless connection with OpenAlgo for real-time trading</p>
-                  </div>
-                </div>
+                ))}
               </div>
             </div>
           </div>
         </div>
 
         {/* Getting Started */}
-        <div className="bg-card rounded-lg p-8 mb-16">
-          <h2 className="text-3xl font-bold mb-8 text-center">Getting Started</h2>
-          <div className="grid md:grid-cols-2 gap-8">
+        <div className="rounded-xl surface-low p-10 mb-16 ghost-border">
+          <h2 className="text-headline-md mb-8 text-center text-on-surface">Getting Started</h2>
+          <div className="grid md:grid-cols-2 gap-10">
             <div>
-              <h3 className="text-xl font-semibold mb-4">Prerequisites</h3>
-              <ul className="space-y-3 text-muted-foreground list-disc list-inside">
-                <li>OpenAlgo installed and running</li>
-                <li>API key from OpenAlgo dashboard</li>
-                <li>Compatible operating system</li>
+              <h3 className="text-lg font-semibold mb-4 text-on-surface">Prerequisites</h3>
+              <ul className="space-y-3 text-on-surface-variant text-sm">
+                {["OpenAlgo installed and running", "API key from OpenAlgo dashboard", "Compatible operating system"].map(item => (
+                  <li key={item} className="flex items-start gap-3">
+                    <span className="w-1.5 h-1.5 rounded-full bg-primary mt-1.5 flex-shrink-0" />
+                    <span>{item}</span>
+                  </li>
+                ))}
               </ul>
             </div>
             <div>
-              <h3 className="text-xl font-semibold mb-4">Quick Setup</h3>
-              <ul className="space-y-3 text-muted-foreground list-disc list-inside">
-                <li>Download & install FastScalper</li>
-                <li>Configure API key and host URL</li>
-                <li>Set up your trading preferences</li>
+              <h3 className="text-lg font-semibold mb-4 text-on-surface">Quick Setup</h3>
+              <ul className="space-y-3 text-on-surface-variant text-sm">
+                {["Download & install FastScalper", "Configure API key and host URL", "Set up your trading preferences"].map(item => (
+                  <li key={item} className="flex items-start gap-3">
+                    <span className="w-1.5 h-1.5 rounded-full bg-tertiary mt-1.5 flex-shrink-0" />
+                    <span>{item}</span>
+                  </li>
+                ))}
               </ul>
             </div>
           </div>
