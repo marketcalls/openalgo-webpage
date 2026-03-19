@@ -8,9 +8,7 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion"
 import { MessageCircle, Github, BookOpen } from "lucide-react"
-import { ExternalLink } from "lucide-react"
 
-// FAQ data
 const faqs = [
   {
     question: "What is OpenAlgo?",
@@ -130,40 +128,24 @@ For best performance with Indian markets, it's recommended to host on servers lo
   }
 ]
 
-// Resource links
 const resources = [
-  {
-    title: "Documentation",
-    description: "Read the docs",
-    icon: BookOpen,
-    url: "https://docs.openalgo.in"
-  },
-  {
-    title: "Discord Community",
-    description: "Join our trading community",
-    icon: MessageCircle,
-    url: "/discord"
-  },
-  {
-    title: "GitHub",
-    description: "View the source code",
-    icon: Github,
-    url: "https://github.com/marketcalls/openalgo"
-  }
+  { title: "Documentation", description: "Read the docs", icon: BookOpen, url: "https://docs.openalgo.in" },
+  { title: "Discord Community", description: "Join our trading community", icon: MessageCircle, url: "/discord" },
+  { title: "GitHub", description: "View the source code", icon: Github, url: "https://github.com/marketcalls/openalgo" }
 ]
 
 export default function FAQPage() {
   return (
-    <div className="container max-w-5xl py-12">
-      <div className="space-y-6">
-        <div className="space-y-2 text-center">
-          <h1 className="text-3xl font-bold">Frequently Asked Questions</h1>
-          <p className="text-muted-foreground">
+    <div className="container max-w-5xl py-16">
+      <div className="space-y-12">
+        <div className="space-y-4 text-center">
+          <h1 className="text-display-md text-on-surface">Frequently Asked Questions</h1>
+          <p className="text-lg text-on-surface-variant">
             Common questions about OpenAlgo platform and its features
           </p>
         </div>
 
-        <Accordion type="single" collapsible className="w-full">
+        <Accordion type="single" collapsible className="w-full space-y-0">
           {faqs.map((faq, index) => (
             <AccordionItem key={index} value={`item-${index}`}>
               <AccordionTrigger className="text-left">
@@ -176,8 +158,8 @@ export default function FAQPage() {
           ))}
         </Accordion>
 
-        <div className="space-y-4">
-          <h2 className="text-2xl font-bold text-center">Resources</h2>
+        <div className="space-y-6">
+          <h2 className="text-headline-md text-center text-on-surface">Resources</h2>
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {resources.map((resource, index) => {
               const Icon = resource.icon
@@ -187,13 +169,13 @@ export default function FAQPage() {
                   href={resource.url}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex flex-col items-center justify-center p-6 bg-card text-card-foreground rounded-lg border shadow-sm hover:shadow-md transition-shadow"
+                  className="flex flex-col items-center justify-center p-8 obsidian-card rounded-xl ghost-border hover-lift"
                 >
-                  <Icon className="h-12 w-12 mb-4 text-primary" />
-                  <h3 className="text-lg font-semibold">{resource.title}</h3>
-                  <p className="text-sm text-muted-foreground">
-                    {resource.description}
-                  </p>
+                  <div className="p-3 rounded-xl surface-container mb-4">
+                    <Icon className="h-8 w-8 text-primary" />
+                  </div>
+                  <h3 className="text-lg font-semibold text-on-surface">{resource.title}</h3>
+                  <p className="text-sm text-on-surface-variant">{resource.description}</p>
                 </a>
               )
             })}
@@ -201,7 +183,7 @@ export default function FAQPage() {
         </div>
 
         <div className="text-center">
-          <p className="text-muted-foreground mb-4">
+          <p className="text-on-surface-variant mb-5">
             Still have questions? Join our Discord community
           </p>
           <Button asChild>
