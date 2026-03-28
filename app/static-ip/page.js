@@ -576,9 +576,10 @@ export default function StaticIPPage() {
                 </p>
                 <div className="rounded-lg sm:rounded-xl surface-container p-4">
                   <p className="text-sm">
-                    <strong className="text-on-surface">Each broker is different:</strong> Zerodha has a separate IP
-                    whitelisting section. Fyers requires IP during API app creation. Angel One includes
-                    it in the Smart API dashboard. Check your broker&apos;s documentation.
+                    <strong className="text-on-surface">Each broker is different:</strong> Some brokers have a
+                    separate IP whitelisting section in their developer portal. Others require IP attachment
+                    during API app creation itself. Check your specific broker&apos;s developer documentation
+                    for the exact steps.
                   </p>
                 </div>
               </div>
@@ -984,14 +985,14 @@ export default function StaticIPPage() {
           </div>
 
           {/* Multi-account */}
-          <div className="obsidian-card rounded-xl sm:rounded-2xl p-5 sm:p-8 ghost-border border-l-4 border-l-secondary">
+          <div className="obsidian-card rounded-xl sm:rounded-2xl p-5 sm:p-8 ghost-border border-l-4 border-l-secondary mb-8 sm:mb-10">
             <h3 className="text-base sm:text-lg font-semibold text-on-surface mb-3 flex items-center gap-2">
               <Users className="w-4 h-4 sm:w-5 sm:h-5 text-secondary" />
               Multiple Broker Accounts
             </h3>
             <p className="text-sm text-on-surface-variant mb-3">
               OpenAlgo is single-user: one instance connects to one broker. To run multiple accounts
-              (e.g., your Zerodha + family&apos;s Fyers + Angel One), use the multi-instance installer:
+              (your own accounts across different brokers, or family accounts), use the multi-instance installer:
             </p>
             <div className="rounded-lg surface-container p-3 sm:p-4 font-mono text-xs sm:text-sm overflow-x-auto">
               <p className="text-primary">sudo ./install-multi.sh</p>
@@ -1001,6 +1002,175 @@ export default function StaticIPPage() {
               Each instance gets its own subdomain, systemd service, and database.
               Ensure all accounts belong to you or your family as per SEBI guidelines.
             </p>
+          </div>
+
+          {/* Static IP Family Sharing */}
+          <div className="obsidian-card rounded-xl sm:rounded-2xl p-5 sm:p-8 ghost-border mb-8 sm:mb-10">
+            <h3 className="text-base sm:text-lg font-semibold text-on-surface mb-4 flex items-center gap-2">
+              <Users className="w-4 h-4 sm:w-5 sm:h-5 text-primary" />
+              Static IP Family Sharing
+            </h3>
+            <p className="text-sm sm:text-base text-on-surface-variant leading-relaxed mb-4">
+              This applies if you are <strong className="text-on-surface">hosting multiple OpenAlgo instances for
+              family accounts on a single static IP</strong>. By default, each static IP can only be assigned
+              to one trading account at a time. If you run OpenAlgo for your own account and your family
+              member&apos;s account from the same server or home network, you need to request the broker to
+              allow the same static IP across both accounts. This is called{" "}
+              <strong className="text-on-surface">Static IP Family Sharing</strong>.
+            </p>
+
+            <div className="rounded-lg sm:rounded-xl surface-container p-4 sm:p-6 mb-5">
+              <p className="font-label text-label-md sm:text-label-lg text-primary mb-3 uppercase tracking-wider">Who is Eligible?</p>
+              <div className="space-y-2 mb-4">
+                {[
+                  "Both accounts must have active API access with the broker",
+                  "The family member must be your Spouse, Parent, or Child (adult, 18+)",
+                  "Both must be on the same shared network infrastructure (e.g., same home broadband)",
+                  "The IP addresses must be static and registered under your name or shared network",
+                ].map(item => (
+                  <div key={item} className="flex items-start gap-2 text-sm">
+                    <CheckCircle2 className="w-3.5 h-3.5 text-tertiary mt-0.5 shrink-0" />
+                    <span className="text-on-surface-variant">{item}</span>
+                  </div>
+                ))}
+              </div>
+              <div className="rounded-lg bg-destructive/5 p-3 border-l-4 border-l-destructive">
+                <p className="text-xs sm:text-sm text-on-surface-variant">
+                  <strong className="text-on-surface">Not eligible:</strong> Siblings, cousins, in-laws, and all other
+                  relationships are not covered under this facility as per the SEBI circular
+                  (SEBI/HO/MIRSD/MIRSD-PoD1/P/CIR/2024/169 dated December 03, 2024).
+                  Only Spouse, Parent, and Child (adult) relationships are permitted.
+                </p>
+              </div>
+            </div>
+
+            <div className="mb-5">
+              <p className="font-label text-label-md sm:text-label-lg text-primary mb-3 uppercase tracking-wider">Typical Process</p>
+              <p className="text-sm text-on-surface-variant mb-4">
+                Different brokers have different processes for family IP sharing. The general steps are:
+              </p>
+              <div className="space-y-3">
+                {[
+                  { step: "Submit a formal request", desc: "Send an email or fill a form with your broker's API support team requesting static IP registration and family sharing activation." },
+                  { step: "Provide account details", desc: "Include your client ID, registered name, email, mobile, and your family member's client ID, name, email, and relationship." },
+                  { step: "Provide IP details", desc: "Include your primary static IP address and secondary IP (optional). The same IP set will be shared across both accounts." },
+                  { step: "Family member confirms consent", desc: "Your family member must independently confirm consent, typically by replying from their own registered email address." },
+                  { step: "Broker verifies and activates", desc: "The broker verifies both requests and activates the IP mapping, usually within 1 business day." },
+                  { step: "Both receive confirmation", desc: "Both you and your family member receive confirmation once the shared IP mapping is active." },
+                ].map((item, i) => (
+                  <div key={i} className="flex items-start gap-3">
+                    <div className="flex items-center justify-center w-7 h-7 rounded-full bg-primary/10 text-primary font-bold text-xs shrink-0 mt-0.5">{i + 1}</div>
+                    <div>
+                      <p className="text-sm font-semibold text-on-surface">{item.step}</p>
+                      <p className="text-xs sm:text-sm text-on-surface-variant">{item.desc}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <div className="mb-5">
+              <p className="font-label text-label-md sm:text-label-lg text-primary mb-3 uppercase tracking-wider">Before You Begin Checklist</p>
+              <p className="text-sm text-on-surface-variant mb-3">
+                Ensure all of the following are in place before sending your request. Incomplete requests
+                will be returned and will delay activation.
+              </p>
+              <div className="space-y-2">
+                {[
+                  "You know your own client/account ID with the broker",
+                  "You know your family member's client/account ID with the same or different broker",
+                  "You are sending the request from your registered email address (the one used when opening the account)",
+                  "Your family member's registered email address is available for confirmation",
+                  "You have a confirmed static IP address (not a dynamic/changing IP). Your ISP or VPS provider has verified this",
+                  "You know whether you need a secondary (backup) IP in addition to your primary IP",
+                  "Your family member is aware of the request and is ready to reply from their own registered email",
+                  "Your family member's relationship is Spouse, Parent, or Child (18 years or older)",
+                ].map(item => (
+                  <div key={item} className="flex items-start gap-2 text-xs sm:text-sm">
+                    <div className="w-4 h-4 rounded border border-outline-variant/40 mt-0.5 shrink-0" />
+                    <span className="text-on-surface-variant">{item}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <div className="mb-5">
+              <p className="font-label text-label-md sm:text-label-lg text-primary mb-3 uppercase tracking-wider">Declaration Requirements</p>
+              <p className="text-sm text-on-surface-variant mb-3">
+                When requesting family sharing, you typically need to declare:
+              </p>
+              <div className="space-y-2">
+                {[
+                  "The IP addresses listed are static and registered under your name or shared network infrastructure",
+                  "The family member qualifies under SEBI's definition of 'family' (Spouse / Parent / Child)",
+                  "The same IP set will be shared across both accounts and does not constitute separate or independent access",
+                  "IP addresses can be updated at most once per calendar week",
+                  "You take full responsibility for all API activity originating from the shared IP",
+                ].map(item => (
+                  <div key={item} className="flex items-start gap-2 text-xs sm:text-sm">
+                    <CheckCircle2 className="w-3.5 h-3.5 text-on-surface-variant mt-0.5 shrink-0" />
+                    <span className="text-on-surface-variant">{item}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <div className="rounded-xl bg-primary/5 p-4 border-l-4 border-l-primary">
+              <p className="text-sm text-on-surface-variant">
+                <strong className="text-on-surface">Important:</strong> The process varies significantly between
+                brokers. Some brokers handle this via email, some through their developer portal, and some may
+                require additional documentation. If you manage multiple family accounts on the same IP, always
+                check with your specific broker for their exact procedure and approval requirements before setting up.
+              </p>
+            </div>
+          </div>
+
+          {/* Broker Policies & Restrictions */}
+          <div className="obsidian-card rounded-xl sm:rounded-2xl p-5 sm:p-8 ghost-border border-l-4 border-l-primary">
+            <h3 className="text-base sm:text-lg font-semibold text-on-surface mb-4 flex items-center gap-2">
+              <AlertTriangle className="w-4 h-4 sm:w-5 sm:h-5 text-primary" />
+              Static IP Policies &amp; Restrictions to Be Aware Of
+            </h3>
+            <p className="text-sm text-on-surface-variant leading-relaxed mb-4">
+              Each broker implements static IP policies differently. Stay informed and proactive:
+            </p>
+            <div className="space-y-3">
+              {[
+                {
+                  title: "One API key per account (most brokers)",
+                  desc: "Most brokers allow only one API key creation per account with primary and secondary IP slots. Only a few selected brokers allow multiple API keys, but still with the same IP restrictions."
+                },
+                {
+                  title: "IP change cooldown period",
+                  desc: "Once you set your static IP, changes are typically allowed only once per calendar week. Plan your infrastructure migration carefully. A wrong IP means no orders for up to 7 days."
+                },
+                {
+                  title: "Check broker announcements regularly",
+                  desc: "Brokers send email announcements about static IP policy changes, new requirements, and deadline extensions. Read these carefully. Policies are evolving and may change without much notice."
+                },
+                {
+                  title: "Family sharing requires permission",
+                  desc: "If multiple family members use the same static IP from the same broker, you likely need explicit approval. The process, documentation, and timeline vary by broker."
+                },
+                {
+                  title: "Cross-broker family accounts",
+                  desc: "If family members use different brokers, each broker needs to be contacted separately. One broker's approval does not apply to another."
+                },
+                {
+                  title: "Static IP must match exactly",
+                  desc: "The IP from which your orders originate must exactly match the whitelisted IP. If your ISP changes your IP (dynamic IP), orders will be silently rejected. There is no fallback or grace period."
+                },
+                {
+                  title: "Keep records of all approvals",
+                  desc: "Save all email confirmations, ticket numbers, and approval references. If there is a dispute or audit, these records serve as proof of compliance."
+                },
+              ].map((item, i) => (
+                <div key={i} className="rounded-lg surface-container p-3 sm:p-4">
+                  <p className="text-sm font-semibold text-on-surface mb-1">{item.title}</p>
+                  <p className="text-xs sm:text-sm text-on-surface-variant">{item.desc}</p>
+                </div>
+              ))}
+            </div>
           </div>
         </div>
       </div>
