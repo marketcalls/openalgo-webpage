@@ -302,7 +302,7 @@ export default function StaticIPPage() {
                 desc: "Deploy a server with a VPS provider. Static IP included by default. Best for reliability and 24/7 uptime.",
                 tag: "Recommended",
                 tagColor: "bg-tertiary/10 text-tertiary",
-                items: ["Static IP included free", "24/7 uptime", "Mumbai datacenter options", "Starting from ~500/month"]
+                items: ["Static IP included free", "24/7 uptime", "Mumbai datacenter options", "Starting from ~\u20B9500/month"]
               },
               {
                 icon: Wifi,
@@ -506,7 +506,7 @@ export default function StaticIPPage() {
                   Purchase a domain from any registrar. Common options: GoDaddy, BigRock, Namecheap, Hostinger.
                   A <code className="px-1.5 py-0.5 rounded surface-high text-xs text-on-surface">.in</code> or{" "}
                   <code className="px-1.5 py-0.5 rounded surface-high text-xs text-on-surface">.com</code> domain
-                  typically costs 700 to 900 rupees per year.
+                  typically costs &#8377;700 to &#8377;900 per year.
                 </p>
                 <div className="rounded-lg sm:rounded-xl surface-container p-4">
                   <p className="text-sm"><strong className="text-on-surface">Example:</strong> myalgotrading.in, myalgo.com, or use a subdomain like algo.yourdomain.in</p>
@@ -1241,10 +1241,10 @@ export default function StaticIPPage() {
           <div className="obsidian-card rounded-xl sm:rounded-2xl p-5 sm:p-8 ghost-border">
             <div className="space-y-4">
               {[
-                { item: "Domain", cost: "700 to 900/year", note: ".in or .com domain" },
+                { item: "Domain", cost: "\u20B9700 to \u20B9900/year", note: ".in or .com domain" },
                 { item: "Cloudflare", cost: "Free", note: "Free plan is sufficient" },
-                { item: "VPS (Shared CPU)", cost: "500 to 1,000/month", note: "Good for starting out" },
-                { item: "VPS (Dedicated CPU)", cost: "2,500 to 4,000/month", note: "Recommended for live trading" },
+                { item: "VPS (Shared CPU)", cost: "\u20B9500 to \u20B91,000/month", note: "Good for starting out" },
+                { item: "VPS (Dedicated CPU)", cost: "\u20B92,500 to \u20B94,000/month", note: "Recommended for live trading" },
                 { item: "SSL Certificate", cost: "Free", note: "Via Let's Encrypt" },
                 { item: "OpenAlgo", cost: "Free forever", note: "Open source (AGPL-3.0)" },
               ].map((row, i) => (
@@ -1263,7 +1263,7 @@ export default function StaticIPPage() {
             <div className="mt-6 rounded-xl surface-container p-4 text-center">
               <p className="text-sm text-on-surface-variant">
                 <strong className="text-on-surface">Total estimated cost:</strong> Starting from approximately{" "}
-                <strong className="text-primary">1,500 to 2,000 per month</strong> for a basic setup
+                <strong className="text-primary">&#8377;1,500 to &#8377;2,000 per month</strong> for a basic setup
                 with domain + VPS. OpenAlgo, Cloudflare, and SSL are all free.
               </p>
             </div>
