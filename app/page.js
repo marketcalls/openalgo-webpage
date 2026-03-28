@@ -100,7 +100,7 @@ export default function Home() {
             <div className="w-2 h-2 rounded-full bg-tertiary pulse-live" />
             <span className="font-label text-label-md uppercase tracking-wider">
               <span className="text-primary">OpenAlgo V2</span>
-              <span className="text-on-surface-variant"> &mdash; React Version is Live</span>
+              <span className="text-on-surface-variant"> &mdash; Static IP Compliant</span>
             </span>
             <ArrowRight className="w-3 h-3 text-primary" />
           </div>

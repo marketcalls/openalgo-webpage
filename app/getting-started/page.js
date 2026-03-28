@@ -484,6 +484,7 @@ export default function BeginnerPage() {
                     <strong className="text-on-surface">How to get a Static IP:</strong> Contact your ISP (Jio, Airtel, ACT, Tata, etc.)
                     and request a static IP. If hosting on a VPS/cloud, static IPs are usually provided by default.
                     Check your current IP at <a href="/ip" className="text-primary hover:underline">openalgo.in/ip</a>.
+                    Read our complete <a href="/static-ip" className="text-primary hover:underline">Static IP & Server Hosting Guide</a> for step by step instructions.
                   </p>
                 </div>
               </div>
