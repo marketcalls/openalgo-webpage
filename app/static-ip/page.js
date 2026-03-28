@@ -614,7 +614,7 @@ export default function StaticIPPage() {
                 <div className="rounded-xl bg-primary/5 p-4 border-l-4 border-l-primary">
                   <p className="text-sm">
                     <strong className="text-on-surface">Multiple accounts?</strong> Use{" "}
-                    <code className="px-1 py-0.5 rounded surface-high text-xs">installation/install-multi.sh</code> instead
+                    <code className="px-1 py-0.5 rounded surface-high text-xs">install/install-multi.sh</code> instead
                     to run multiple OpenAlgo instances on one server. Ensure all accounts belong to you or
                     your family as per SEBI guidelines.
                   </p>
@@ -995,7 +995,7 @@ export default function StaticIPPage() {
               (your own accounts across different brokers, or family accounts), use the multi-instance installer:
             </p>
             <div className="rounded-lg surface-container p-3 sm:p-4 font-mono text-xs sm:text-sm overflow-x-auto">
-              <p className="text-primary">sudo ./installation/install-multi.sh</p>
+              <p className="text-primary">sudo ./install/install-multi.sh</p>
             </div>
             <p className="text-xs text-on-surface-variant mt-3">
               This runs multiple OpenAlgo instances on the same server with the same static IP.
