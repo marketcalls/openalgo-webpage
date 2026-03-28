@@ -167,7 +167,7 @@ export default function BeginnerPage() {
                   "Single-user application: one instance, one broker",
                   "No inbuilt strategies: you bring your own ideas",
                   "30+ Indian brokers supported (and growing)",
-                  "Expanding to crypto & US markets",
+                  "You can vibe code your strategies using AI tools",
                   "100% free, 100% open source (AGPL-3.0)",
                   "Runs on Windows, Mac, Linux, even Raspberry Pi"
                 ].map(fact => (
