@@ -69,10 +69,10 @@ export default function StaticIPPage() {
   ]
 
   const cloudProviders = [
-    { name: "Amazon AWS", note: "EC2 instances, static IP charged separately" },
-    { name: "Google Cloud", note: "Compute Engine, free tier available" },
-    { name: "Microsoft Azure", note: "Virtual Machines, free credits" },
-    { name: "Oracle Cloud", note: "Generous free tier" },
+    { name: "Amazon AWS", note: "Use Elastic IP for static IPv4.", cost: "~$3.60/month", detail: "Charged at $0.005/hr whether attached or not. First Elastic IP on a running instance was previously free but now incurs charges." },
+    { name: "Google Cloud", note: "Reserve an External Static IP via VPC Network.", cost: "~$3.65/month", detail: "Charged at $0.005/hr when attached to a running VM. Unused reserved IPs cost $0.01/hr (~$7.30/month)." },
+    { name: "Microsoft Azure", note: "Use a Static Public IP address resource.", cost: "~$3.72/month", detail: "Standard SKU at $0.005/hr. Charged regardless of whether the resource is active or not." },
+    { name: "Oracle Cloud", note: "Use a Reserved Public IP.", cost: "Free", detail: "Reserved public IPs are free. Always-free tier includes 1 reserved public IP + free ARM VM shapes." },
   ]
 
   return (
@@ -430,17 +430,55 @@ export default function StaticIPPage() {
               <Cloud className="w-4 h-4 sm:w-5 sm:h-5 text-primary" />
               Cloud Hyperscalers
             </h3>
-            <div className="grid grid-cols-2 gap-3 sm:gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 mb-5">
               {cloudProviders.map(p => (
-                <div key={p.name} className="obsidian-card rounded-lg sm:rounded-xl p-3 sm:p-4 ghost-border hover-lift">
-                  <p className="font-semibold text-on-surface text-sm">{p.name}</p>
-                  <p className="text-xs text-on-surface-variant mt-1">{p.note}</p>
+                <div key={p.name} className="obsidian-card rounded-lg sm:rounded-xl p-4 sm:p-5 ghost-border hover-lift">
+                  <div className="flex items-center justify-between mb-2">
+                    <p className="font-semibold text-on-surface text-sm">{p.name}</p>
+                    <span className={`font-label text-label-md px-2 py-0.5 rounded-full ${p.cost === "Free" ? "bg-tertiary/10 text-tertiary" : "bg-primary/10 text-primary"}`}>{p.cost}</span>
+                  </div>
+                  <p className="text-xs text-on-surface-variant mb-1">{p.note}</p>
+                  <p className="text-xs text-on-surface-variant">{p.detail}</p>
                 </div>
               ))}
             </div>
+
+            <div className="obsidian-card rounded-xl p-5 sm:p-6 ghost-border border-l-4 border-l-primary">
+              <h4 className="text-sm sm:text-base font-semibold text-on-surface mb-3 flex items-center gap-2">
+                <Shield className="w-4 h-4 text-primary" />
+                Firewall Configuration for Hyperscalers
+              </h4>
+              <p className="text-xs sm:text-sm text-on-surface-variant leading-relaxed mb-4">
+                If you are using a hyperscaler, you must configure <strong className="text-on-surface">ingress firewall rules</strong> to
+                allow traffic on ports 80 and 443. Port 80 is required initially for Let&apos;s Encrypt SSL certificate
+                verification. Port 443 provides HTTPS access for your custom domain
+                (e.g., <code className="px-1 py-0.5 rounded surface-high text-xs">https://algo.yourdomain.com</code>).
+                Without opening these ports, your OpenAlgo instance will not be accessible.
+              </p>
+              <p className="text-xs sm:text-sm text-on-surface-variant leading-relaxed mb-4">
+                Each provider uses a different name for this, but the concept is the same:
+              </p>
+              <div className="space-y-2 mb-4">
+                {[
+                  { provider: "AWS", term: "Security Group inbound rules (ingress rules)" },
+                  { provider: "Google Cloud", term: "VPC firewall rules (allow traffic by protocol/port/source)" },
+                  { provider: "Azure", term: "Network Security Group (NSG) inbound security rules" },
+                  { provider: "Oracle Cloud", term: "Security List or Network Security Group ingress rules" },
+                ].map(item => (
+                  <div key={item.provider} className="flex items-start gap-2 text-xs sm:text-sm">
+                    <span className="font-semibold text-on-surface min-w-[110px] shrink-0">{item.provider}:</span>
+                    <span className="text-on-surface-variant">{item.term}</span>
+                  </div>
+                ))}
+              </div>
+              <p className="text-xs sm:text-sm text-on-surface-variant leading-relaxed">
+                Also ensure <strong className="text-on-surface">server level hardening</strong> is in place to prevent
+                basic attacks. Disable unused ports, restrict SSH access, and keep your OS packages updated.
+              </p>
+            </div>
           </div>
 
-          <div className="rounded-xl bg-tertiary/5 p-4 border-l-4 border-l-tertiary">
+          <div className="rounded-xl bg-tertiary/5 p-4 border-l-4 border-l-tertiary mb-6">
             <p className="text-sm text-on-surface-variant">
               <strong className="text-on-surface">Recommendation:</strong> For OpenAlgo, 2 GB RAM is the minimum.
               4 GB is comfortable for daily use. Use 1 vCPU (2 vCPU if multitasking).
@@ -924,7 +962,7 @@ export default function StaticIPPage() {
                 { step: "Contact your ISP", desc: "Call Jio, Airtel, ACT, Tata, BSNL, etc. Ask for a static IP. Most charge a small monthly fee." },
                 { step: "Whitelist at broker", desc: "Enter your static IP in the broker's developer portal, same as the server method." },
                 { step: "Use localhost for OpenAlgo", desc: "Your redirect URL stays as 127.0.0.1:5000. Only the order-originating IP matters to the broker." },
-                { step: "Setup a firewall", desc: "Since your IP is now fixed and public, install a firewall on your machine for protection." },
+                { step: "Setup a firewall", desc: "A static IP makes your machine discoverable. Install a firewall (Windows Firewall, UFW on Linux, or pf on Mac) to block all incoming traffic except what you explicitly allow. This guards against external security attacks, port scans, and unauthorized access." },
               ].map((item, i) => (
                 <div key={i} className="flex items-start gap-3">
                   <div className="flex items-center justify-center w-7 h-7 rounded-full bg-primary/10 text-primary font-bold text-xs shrink-0 mt-0.5">{i + 1}</div>
