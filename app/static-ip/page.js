@@ -164,6 +164,38 @@ export default function StaticIPPage() {
             </div>
           </div>
 
+          {/* Who is a Tech-Savvy Trader */}
+          <div className="obsidian-card rounded-xl sm:rounded-2xl p-5 sm:p-8 ghost-border mb-8 sm:mb-10">
+            <h3 className="text-base sm:text-lg font-semibold text-on-surface mb-3 flex items-center gap-2">
+              <Monitor className="w-4 h-4 sm:w-5 sm:h-5 text-primary" />
+              Who is a &quot;Tech-Savvy Trader&quot;?
+            </h3>
+            <p className="text-sm text-on-surface-variant leading-relaxed mb-4">
+              SEBI classifies retail algo traders who manage their own infrastructure as &quot;tech-savvy investors.&quot;
+              This applies to you if:
+            </p>
+            <div className="grid sm:grid-cols-2 gap-2 mb-4">
+              {[
+                "You manage your own trading bots or strategies",
+                "You run code from Python, TradingView, Amibroker, etc.",
+                "You use a broker API to place orders programmatically",
+                "You host your own application on a server or desktop",
+                "You use tools like OpenAlgo for order routing",
+                "You maintain your own source code and infrastructure",
+              ].map(item => (
+                <div key={item} className="flex items-start gap-2 text-sm">
+                  <CheckCircle2 className="w-3.5 h-3.5 text-tertiary mt-0.5 shrink-0" />
+                  <span className="text-on-surface-variant">{item}</span>
+                </div>
+              ))}
+            </div>
+            <p className="text-xs text-on-surface-variant">
+              As long as your orders stay under 10 per second, you don&apos;t need exchange registration.
+              Beyond that threshold, you need to register with the exchange and get an algo ID assigned.
+              Most brokers handle the algo ID assignment on your behalf.
+            </p>
+          </div>
+
           {/* Broker Whitelisting */}
           <div className="obsidian-card rounded-xl sm:rounded-2xl p-5 sm:p-8 ghost-border border-l-4 border-l-primary">
             <div className="flex items-start gap-3 sm:gap-4">
@@ -172,11 +204,27 @@ export default function StaticIPPage() {
               </div>
               <div>
                 <h3 className="text-base sm:text-lg font-semibold text-on-surface mb-2">How Broker Whitelisting Works</h3>
-                <p className="text-sm sm:text-base text-on-surface-variant leading-relaxed">
+                <p className="text-sm sm:text-base text-on-surface-variant leading-relaxed mb-3">
                   When creating API keys in your broker&apos;s developer portal, you attach your static IP.
                   The broker only accepts orders arriving from that IP. Each broker&apos;s interface is slightly
                   different, but the concept is the same: API key + API secret + whitelisted IP.
                 </p>
+                <p className="text-sm text-on-surface-variant leading-relaxed mb-3">
+                  Most brokers allow only <strong className="text-on-surface">one API key</strong> with a
+                  primary and secondary IP slot. Only a few selected brokers allow multiple API key generation
+                  at their developer portal, but even then, only primary and secondary IPs are supported.
+                  Once set, you can only change your static IP <strong className="text-on-surface">after one week</strong>.
+                  Plan your infrastructure carefully before whitelisting.
+                </p>
+                <div className="rounded-xl bg-destructive/5 p-4 border-l-4 border-l-destructive mt-3">
+                  <p className="text-sm text-on-surface-variant">
+                    <strong className="text-on-surface">Avoid dynamic IPs.</strong> Your home internet likely uses a
+                    dynamic IP that changes without notice. It may work temporarily, but you never know when
+                    it will change. A single IP change means your orders get rejected by the broker until you
+                    update and wait a week. Talk to your ISP and get a static IP, or switch to an ISP that
+                    supports static IP. Using a VPS server is the most reliable option as static IPs are included by default.
+                  </p>
+                </div>
               </div>
             </div>
           </div>
@@ -751,7 +799,228 @@ export default function StaticIPPage() {
         </div>
       </div>
 
-      {/* Section 8: Cost Summary */}
+      {/* Section 8: Understanding Latency */}
+      <div className="py-12 sm:py-16 md:py-20 surface-low">
+        <div className="container max-w-4xl px-4 sm:px-6">
+          <div className="text-center mb-10 sm:mb-14">
+            <h2 className="text-headline-lg sm:text-display-sm mb-3 sm:mb-4 text-on-surface">Understanding Latency</h2>
+            <p className="text-base sm:text-lg text-on-surface-variant max-w-2xl mx-auto">
+              How fast do orders travel from your server to the exchange?
+            </p>
+          </div>
+
+          <div className="obsidian-card rounded-xl sm:rounded-2xl p-5 sm:p-8 ghost-border mb-8 sm:mb-10">
+            <h3 className="text-base sm:text-lg font-semibold text-on-surface mb-4">The Order Journey</h3>
+            <p className="text-sm text-on-surface-variant mb-6">
+              When you place an order, it travels through several hops. Each hop adds latency.
+              Here&apos;s what a typical end to end journey looks like on a dedicated server in Mumbai:
+            </p>
+
+            <div className="space-y-3 mb-6">
+              {[
+                { from: "Your Home (Bangalore)", to: "Your Server (Mumbai)", time: "~20ms", note: "Internet hop" },
+                { from: "OpenAlgo Processing", to: "", time: "~5 to 10ms", note: "Symbol lookup, validation, caching" },
+                { from: "Server", to: "Broker API", time: "~35 to 80ms", note: "Varies by broker" },
+                { from: "Broker OMS", to: "Exchange", time: "~6 to 50ms", note: "Broker's internal checks (130+ validations)" },
+              ].map((hop, i) => (
+                <div key={i} className="flex items-center gap-3 rounded-lg surface-container p-3">
+                  <div className="flex items-center justify-center w-7 h-7 rounded-full bg-primary/10 text-primary font-bold text-xs shrink-0">{i + 1}</div>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-xs sm:text-sm text-on-surface font-medium">{hop.from}{hop.to && ` → ${hop.to}`}</p>
+                    <p className="text-xs text-on-surface-variant">{hop.note}</p>
+                  </div>
+                  <span className="font-label text-label-md text-primary shrink-0">{hop.time}</span>
+                </div>
+              ))}
+            </div>
+
+            <div className="rounded-xl surface-container p-4 sm:p-5 text-center mb-6">
+              <p className="font-label text-label-lg text-on-surface-variant uppercase tracking-wider mb-2">Typical End to End Latency</p>
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <p className="text-xl sm:text-2xl font-bold text-primary">100 to 200ms</p>
+                  <p className="text-xs text-on-surface-variant mt-1">Dedicated CPU (recommended)</p>
+                </div>
+                <div>
+                  <p className="text-xl sm:text-2xl font-bold text-secondary">300 to 600ms</p>
+                  <p className="text-xs text-on-surface-variant mt-1">Shared CPU (budget option)</p>
+                </div>
+              </div>
+            </div>
+
+            <div className="rounded-xl bg-primary/5 p-4 border-l-4 border-l-primary">
+              <p className="text-sm text-on-surface-variant">
+                <strong className="text-on-surface">Measure it yourself:</strong> OpenAlgo has a built-in latency
+                dashboard under Logs → Latency. It measures the time from your server to the broker API for every
+                order, including OpenAlgo&apos;s processing overhead.
+              </p>
+            </div>
+          </div>
+
+          {/* Cloudflare Latency Myth */}
+          <div className="obsidian-card rounded-xl sm:rounded-2xl p-5 sm:p-8 ghost-border border-l-4 border-l-tertiary mb-8 sm:mb-10">
+            <h3 className="text-base sm:text-lg font-semibold text-on-surface mb-3">Does Cloudflare Add Latency to Orders?</h3>
+            <p className="text-sm text-on-surface-variant mb-3">
+              <strong className="text-on-surface">No.</strong> This is a common misconception. Cloudflare only sits
+              between your browser and the server (for accessing the web dashboard). Your trading orders go directly
+              from OpenAlgo on the server to the broker API. Cloudflare is not in that path at all.
+            </p>
+            <p className="text-sm text-on-surface-variant">
+              Even if Cloudflare has an outage, your strategies keep running and orders keep firing.
+              You just won&apos;t be able to access the OpenAlgo web dashboard until Cloudflare recovers.
+            </p>
+          </div>
+
+          {/* Live vs Analyzer Mode */}
+          <div className="obsidian-card rounded-xl sm:rounded-2xl p-5 sm:p-8 ghost-border">
+            <h3 className="text-base sm:text-lg font-semibold text-on-surface mb-4">Live Mode vs Analyzer Mode Latency</h3>
+            <div className="grid sm:grid-cols-2 gap-4">
+              <div className="rounded-xl surface-container p-4">
+                <p className="font-semibold text-sm text-on-surface mb-2 flex items-center gap-2">
+                  <Zap className="w-4 h-4 text-tertiary" /> Live Mode
+                </p>
+                <p className="text-xs text-on-surface-variant mb-3">
+                  Orders go directly to the broker. No LTP checks, no local database writes. Fastest possible execution.
+                </p>
+                <p className="font-label text-label-lg text-tertiary">40 to 150ms</p>
+              </div>
+              <div className="rounded-xl surface-container p-4">
+                <p className="font-semibold text-sm text-on-surface mb-2 flex items-center gap-2">
+                  <Shield className="w-4 h-4 text-secondary" /> Analyzer Mode
+                </p>
+                <p className="text-xs text-on-surface-variant mb-3">
+                  Fetches LTP, checks bid/ask, writes to local SQLite database. More overhead but safe for testing.
+                </p>
+                <p className="font-label text-label-lg text-secondary">200 to 400ms</p>
+              </div>
+            </div>
+            <p className="text-xs text-on-surface-variant mt-4">
+              Always test strategies in Analyzer mode first. Once validated, flip to Live mode for production execution.
+              The latency difference exists because Analyzer mode simulates execution locally while Live mode hits the broker directly.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      {/* Section 9: Desktop Users */}
+      <div className="py-12 sm:py-16 md:py-20">
+        <div className="container max-w-4xl px-4 sm:px-6">
+          <div className="text-center mb-10 sm:mb-14">
+            <h2 className="text-headline-lg sm:text-display-sm mb-3 sm:mb-4 text-on-surface">Running on Desktop?</h2>
+            <p className="text-base sm:text-lg text-on-surface-variant max-w-2xl mx-auto">
+              You don&apos;t need a server. Here&apos;s how static IP works from your home.
+            </p>
+          </div>
+
+          <div className="obsidian-card rounded-xl sm:rounded-2xl p-5 sm:p-8 ghost-border mb-8 sm:mb-10">
+            <p className="text-sm sm:text-base text-on-surface-variant leading-relaxed mb-6">
+              If you run OpenAlgo on your desktop or laptop, you need a static IP from your ISP (Internet Service Provider).
+              Your ISP provides you a public facing IP that your broker sees when orders are placed.
+              By default, this IP is dynamic (changes periodically). A static IP ensures it never changes.
+            </p>
+
+            <div className="space-y-4 mb-6">
+              {[
+                { step: "Contact your ISP", desc: "Call Jio, Airtel, ACT, Tata, BSNL, etc. Ask for a static IP. Most charge a small monthly fee." },
+                { step: "Whitelist at broker", desc: "Enter your static IP in the broker's developer portal, same as the server method." },
+                { step: "Use localhost for OpenAlgo", desc: "Your redirect URL stays as 127.0.0.1:5000. Only the order-originating IP matters to the broker." },
+                { step: "Setup a firewall", desc: "Since your IP is now fixed and public, install a firewall on your machine for protection." },
+              ].map((item, i) => (
+                <div key={i} className="flex items-start gap-3">
+                  <div className="flex items-center justify-center w-7 h-7 rounded-full bg-primary/10 text-primary font-bold text-xs shrink-0 mt-0.5">{i + 1}</div>
+                  <div>
+                    <p className="text-sm font-semibold text-on-surface">{item.step}</p>
+                    <p className="text-xs sm:text-sm text-on-surface-variant">{item.desc}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            <div className="rounded-xl bg-primary/5 p-4 border-l-4 border-l-primary">
+              <p className="text-sm text-on-surface-variant">
+                <strong className="text-on-surface">Important:</strong> Running on desktop means OpenAlgo is only
+                available when your computer is on. If you shut down or your internet drops, strategies stop.
+                For 24/7 reliability, a VPS server is recommended.
+              </p>
+            </div>
+          </div>
+
+          {/* Multi-account */}
+          <div className="obsidian-card rounded-xl sm:rounded-2xl p-5 sm:p-8 ghost-border border-l-4 border-l-secondary">
+            <h3 className="text-base sm:text-lg font-semibold text-on-surface mb-3 flex items-center gap-2">
+              <Users className="w-4 h-4 sm:w-5 sm:h-5 text-secondary" />
+              Multiple Broker Accounts
+            </h3>
+            <p className="text-sm text-on-surface-variant mb-3">
+              OpenAlgo is single-user: one instance connects to one broker. To run multiple accounts
+              (e.g., your Zerodha + family&apos;s Fyers + Angel One), use the multi-instance installer:
+            </p>
+            <div className="rounded-lg surface-container p-3 sm:p-4 font-mono text-xs sm:text-sm overflow-x-auto">
+              <p className="text-primary">sudo ./install-multi.sh</p>
+            </div>
+            <p className="text-xs text-on-surface-variant mt-3">
+              This runs multiple OpenAlgo instances on the same server with the same static IP.
+              Each instance gets its own subdomain, systemd service, and database.
+              Ensure all accounts belong to you or your family as per SEBI guidelines.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      {/* Section 10: FAQ */}
+      <div className="py-12 sm:py-16 md:py-20 surface-low">
+        <div className="container max-w-4xl px-4 sm:px-6">
+          <div className="text-center mb-10 sm:mb-14">
+            <h2 className="text-headline-lg sm:text-display-sm mb-3 sm:mb-4 text-on-surface">Frequently Asked Questions</h2>
+            <p className="text-base sm:text-lg text-on-surface-variant max-w-2xl mx-auto">
+              Common questions from the community about static IP and hosting.
+            </p>
+          </div>
+
+          <div className="space-y-4">
+            {[
+              {
+                q: "Can I shut down my server after market hours to save costs?",
+                a: "You can stop the server, but you'll still be billed for the reserved IP, storage, and backups. Only fully deleting the server stops billing entirely, but then you lose your IP and have to reconfigure everything. For most traders, the monthly cost of keeping it running is worth the convenience."
+              },
+              {
+                q: "What if my server IP changes?",
+                a: "VPS static IPs don't change unless you destroy and recreate the server. If you migrate servers, update the new IP in both Cloudflare (A record) and your broker's developer portal. Brokers allow IP changes once per week."
+              },
+              {
+                q: "Do I need a static IP for manual trading?",
+                a: "No. Static IP is only required for API-based algo trading. If you trade manually through your broker's website or mobile app, no static IP is needed."
+              },
+              {
+                q: "Can I use IPv6?",
+                a: "Not yet. Indian brokers currently only support IPv4 whitelisting. Always ensure your server provides an IPv4 address."
+              },
+              {
+                q: "Where should I host for lowest latency?",
+                a: "Mumbai datacenters are closest to the NSE/BSE exchange servers. Bangalore and Delhi add 10 to 20ms extra. International locations work but add more latency. For most retail traders, anywhere in India is fine."
+              },
+              {
+                q: "Can I run strategies from home but use a server for orders?",
+                a: "Yes. Run Amibroker, Python, or TradingView from home. Signals go to your server's OpenAlgo via the API. OpenAlgo processes and forwards orders to the broker from the server's static IP. The broker only sees the server IP."
+              },
+              {
+                q: "How many strategies can I run on one server?",
+                a: "Depends on how strategies fetch data. WebSocket-based strategies are lighter. If fetching historical data per strategy, broker rate limits become the bottleneck. Typically 5 to 10 strategies on a standard server."
+              },
+              {
+                q: "What happens if Cloudflare goes down?",
+                a: "Your OpenAlgo web dashboard becomes inaccessible, but your server and strategies keep running. Orders continue to fire normally because Cloudflare is only in the browser access path, not the order execution path."
+              },
+            ].map((faq, i) => (
+              <ExpandableCard key={i} title={faq.q} icon={MessageCircle}>
+                <p className="text-sm text-on-surface-variant leading-relaxed">{faq.a}</p>
+              </ExpandableCard>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      {/* Cost Summary */}
       <div className="py-12 sm:py-16 md:py-20 surface-low">
         <div className="container max-w-4xl px-4 sm:px-6">
           <div className="text-center mb-10 sm:mb-14">
