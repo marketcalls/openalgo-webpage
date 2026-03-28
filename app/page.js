@@ -141,7 +141,7 @@ export default function Home() {
           {/* CTA Buttons */}
           <div className="flex flex-col sm:flex-row gap-4 justify-center mb-16">
             <Button asChild size="lg">
-              <a href="https://docs.openalgo.in/getting-started" className="flex items-center" target="_blank" rel="noopener noreferrer">
+              <a href="/getting-started" className="flex items-center">
                 Get Started
                 <ArrowRight className="w-4 h-4 ml-2" />
               </a>
@@ -430,7 +430,7 @@ export default function Home() {
             </div>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Button asChild size="lg">
-                <a href="https://docs.openalgo.in/getting-started" target="_blank" rel="noopener noreferrer">
+                <a href="/getting-started">
                   Get Started
                   <ArrowRight className="ml-2 h-4 w-4" />
                 </a>
