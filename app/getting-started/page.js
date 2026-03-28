@@ -679,7 +679,7 @@ export default function BeginnerPage() {
               {
                 icon: ToggleLeft,
                 title: "Live & Analyzer Mode",
-                desc: "Flip between live trading and sandbox mode with one click. Test strategies with virtual capital before going live. Orders route to the correct mode automatically.",
+                desc: "Flip between live trading and sandbox mode with one click. Test strategies with sandbox capital before going live. Orders route to the correct mode automatically.",
                 color: "text-secondary bg-secondary/10"
               },
               {
