@@ -126,9 +126,9 @@ export default function Home() {
           {/* Stats */}
           <div className="flex flex-wrap items-center justify-center gap-8 sm:gap-12 mb-12">
             {[
-              { icon: Download, value: "1,30,000+", label: "Downloads", color: "text-secondary" },
+              { icon: Download, value: "1,35,000+", label: "Downloads", color: "text-secondary" },
               { icon: Code2, value: "100%", label: "Open Source", color: "text-tertiary" },
-              { icon: Star, value: "1,600+", label: "GitHub Stars", color: "text-primary" },
+              { icon: Star, value: "1,700+", label: "GitHub Stars", color: "text-primary" },
             ].map(({ icon: Icon, value, label, color }) => (
               <div key={label} className="flex items-center gap-3">
                 <Icon className={`w-5 h-5 ${color}`} />
