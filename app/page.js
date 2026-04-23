@@ -122,23 +122,20 @@ export default function Home() {
 
           {/* Main Headline */}
           <h1 className="text-display-lg sm:text-[4.5rem] leading-[1.05] mb-6 tracking-tight">
-            <span className="block text-on-surface">Algo Trading.</span>
+            <span className="block text-on-surface">Your Personal</span>
             <span className="bg-clip-text text-transparent bg-gradient-to-r from-primary via-secondary to-tertiary animate-gradient">
-              Options Analytics &amp; Execution.
+              Algo Trading Platform
             </span>
-            <span className="block text-on-surface">All In One Place.</span>
           </h1>
 
           {/* Tagline */}
           <p className="text-headline-sm font-semibold text-primary mb-6">
-            Self-Hosted. Broker-Agnostic. Community-Driven.
+            Community Driven Algo Trading Platform
           </p>
 
           {/* Description */}
           <p className="text-lg text-on-surface-variant max-w-2xl mx-auto mb-12 leading-relaxed">
-            OpenAlgo is no longer just an algo platform. Build strategies, analyse the options chain,
-            run Greeks &amp; IV studies, and execute baskets &mdash; all from one self-hosted app,
-            across 30+ brokers.
+            Test and Execute your Trading ideas, Connect your favorite Trading Platforms, AI Driven Strategy Development with a built-in Options Analytics Suite across 30+ Brokers.
           </p>
 
           {/* Stats */}
