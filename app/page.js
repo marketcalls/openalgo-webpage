@@ -31,7 +31,8 @@ import {
   Zap,
   Wallet,
   PieChart,
-  Wand2
+  Wand2,
+  Bot
 } from "lucide-react"
 
 export default function Home() {
@@ -90,6 +91,8 @@ export default function Home() {
     { title: "PineTS", description: "TradingView indicators integration", iconValue: "⚡", url: "https://github.com/marketcalls/openalgo-pinets" },
     { title: "AlgoMirror", description: "Multi Account OpenAlgo Orchestrator", iconValue: "🔄", url: "https://github.com/marketcalls/algomirror" },
     { title: "MCP / AI Agents", description: "Model Context Protocol integration", iconValue: "🤖", url: "/mcp", docs: "https://docs.openalgo.in/mcp" },
+    { title: "Indicator Skills", description: "AI agent skills for 100+ indicators, charts & scanners", iconValue: "📊", url: "/skills", docs: "https://docs.openalgo.in/skills/indicators" },
+    { title: "Backtesting Skills", description: "VectorBT backtesting skills for Claude Code, Cursor, Codex", iconValue: "🧪", url: "/skills", docs: "https://docs.openalgo.in/skills/backtesting" },
     { title: "OpenAlgo Mobile", description: "Flutter Mobile Trading App", iconValue: "📱", url: "https://github.com/marketcalls/openalgo-mobile" },
     { title: "Web Portal", description: "NextJS + ShadcnUI web interface", iconValue: "🌐", url: "https://github.com/marketcalls/openalgo-webpage" },
     { title: "Chrome Plugin", description: "Browser extension for OpenAlgo", iconValue: "🧩", url: "https://github.com/marketcalls/openalgo-chrome" },
@@ -299,6 +302,79 @@ export default function Home() {
                   <ArrowRight className="w-4 h-4 ml-2" />
                 </a>
               </Button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* AI-Native Trading */}
+      <div className="py-24 surface-low">
+        <div className="container mx-auto px-4">
+          <div className="max-w-6xl mx-auto">
+            <div className="text-center mb-12">
+              <div className="inline-flex items-center gap-2 px-3 py-1.5 mb-5 rounded-full bg-tertiary/10">
+                <Sparkles className="w-3.5 h-3.5 text-tertiary" />
+                <span className="font-label text-label-md uppercase tracking-wider text-tertiary">Made For AI</span>
+              </div>
+              <h2 className="text-display-sm mb-4 text-on-surface">
+                Trade &amp; Research With Your AI
+              </h2>
+              <p className="text-lg text-on-surface-variant max-w-3xl mx-auto leading-relaxed">
+                Two simple ways to bring AI into your trading &mdash; talk to your account like a trading desk,
+                or give your AI a toolkit to chart, scan, and backtest for you.
+              </p>
+            </div>
+
+            <div className="grid md:grid-cols-2 gap-6">
+              {/* MCP */}
+              <a href="/mcp" className="obsidian-card rounded-2xl p-8 ghost-border hover-lift group block">
+                <div className="flex items-start gap-4 mb-4">
+                  <div className="inline-flex p-3 rounded-xl bg-primary/10 flex-shrink-0">
+                    <Bot className="h-6 w-6 text-primary" />
+                  </div>
+                  <div className="flex-1">
+                    <div className="flex items-center gap-2 mb-1">
+                      <h3 className="text-headline-sm text-on-surface">OpenAlgo MCP</h3>
+                      <ArrowRight className="h-4 w-4 text-on-surface-variant group-hover:text-primary group-hover:translate-x-1 transition-all" />
+                    </div>
+                    <p className="font-label text-label-sm text-on-surface-variant uppercase tracking-wider">Trade by chatting</p>
+                  </div>
+                </div>
+                <p className="text-sm text-on-surface-variant leading-relaxed mb-4">
+                  Connect your OpenAlgo account to Claude, Cursor, Windsurf, or ChatGPT. Place orders,
+                  check positions, and pull live prices by simply asking &mdash; no dashboards, no clicks.
+                </p>
+                <div className="flex flex-wrap gap-2">
+                  {["25+ built-in actions", "Claude / Cursor / Windsurf / ChatGPT", "Runs on your computer"].map(tag => (
+                    <span key={tag} className="px-3 py-1 surface-container rounded-full font-label text-label-sm text-on-surface-variant">{tag}</span>
+                  ))}
+                </div>
+              </a>
+
+              {/* Skills */}
+              <a href="/skills" className="obsidian-card rounded-2xl p-8 ghost-border hover-lift group block">
+                <div className="flex items-start gap-4 mb-4">
+                  <div className="inline-flex p-3 rounded-xl bg-tertiary/10 flex-shrink-0">
+                    <Wand2 className="h-6 w-6 text-tertiary" />
+                  </div>
+                  <div className="flex-1">
+                    <div className="flex items-center gap-2 mb-1">
+                      <h3 className="text-headline-sm text-on-surface">OpenAlgo Skills</h3>
+                      <ArrowRight className="h-4 w-4 text-on-surface-variant group-hover:text-primary group-hover:translate-x-1 transition-all" />
+                    </div>
+                    <p className="font-label text-label-sm text-on-surface-variant uppercase tracking-wider">Chart, scan &amp; backtest</p>
+                  </div>
+                </div>
+                <p className="text-sm text-on-surface-variant leading-relaxed mb-4">
+                  Ready-made trading abilities you can drop into your AI assistant &mdash; charts, scanners,
+                  custom indicators, and backtests with real brokerage costs. Works with 40+ AI apps.
+                </p>
+                <div className="flex flex-wrap gap-2">
+                  {["100+ indicators", "12 ready-made strategies", "India / US / Crypto"].map(tag => (
+                    <span key={tag} className="px-3 py-1 surface-container rounded-full font-label text-label-sm text-on-surface-variant">{tag}</span>
+                  ))}
+                </div>
+              </a>
             </div>
           </div>
         </div>

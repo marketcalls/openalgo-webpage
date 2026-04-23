@@ -105,12 +105,12 @@ export default function MCPPage() {
   ]
 
   const capabilities = [
-    { icon: MessageSquare, title: "Trade by Talking", desc: "\"Buy 100 RELIANCE at market.\" That's the whole interface. No forms, no clicking — just instructions." },
-    { icon: Brain, title: "AI-Native Workflows", desc: "Chain market data, order placement, and position checks in a single prompt. The model picks the right tools." },
-    { icon: Activity, title: "Live Market Access", desc: "Quotes, depth, and historical bars flow into the conversation. Ask questions, get answers with real numbers." },
-    { icon: Shield, title: "Runs On Your Machine", desc: "The MCP server runs locally against your OpenAlgo instance. Your API key never leaves your computer." },
-    { icon: Layers, title: "Multi-Broker, One Interface", desc: "Works with every broker OpenAlgo supports. Switch brokers without changing how you talk to your AI." },
-    { icon: Workflow, title: "25+ Tools, One Server", desc: "Orders, positions, holdings, funds, quotes, historical data, instrument search — all exposed to the LLM." },
+    { icon: MessageSquare, title: "Talk, Don't Click", desc: "\"Buy 100 RELIANCE at market.\" That's it. No forms, no menus &mdash; just tell your AI what to do." },
+    { icon: Brain, title: "One Instruction, Many Steps", desc: "Say \"check my positions and close the losers\" and your AI does both in one go." },
+    { icon: Activity, title: "Live Prices On Demand", desc: "Ask for quotes, market depth, or historical charts right inside your chat. Real numbers, real time." },
+    { icon: Shield, title: "Your Data Stays With You", desc: "Everything runs on your own computer. Your API key and trades never leave your machine." },
+    { icon: Layers, title: "Same Chat, Any Broker", desc: "Works with every broker OpenAlgo supports. Switch brokers without learning anything new." },
+    { icon: Workflow, title: "25+ Built-In Actions", desc: "Place orders, check funds, track trades, search symbols &mdash; your AI already knows how." },
   ]
 
   const prompts = [
@@ -127,89 +127,88 @@ export default function MCPPage() {
   const flowSteps = [
     {
       icon: Bot,
-      title: "You",
-      desc: "\"Show my open positions and square off the losers.\"",
+      title: "You Ask",
+      desc: "\"Show my open positions and close the losing ones.\"",
       accent: "text-primary",
     },
     {
       icon: Brain,
-      title: "AI Client",
-      desc: "Claude, Cursor, Windsurf, or ChatGPT picks the right MCP tools to call.",
+      title: "AI Understands",
+      desc: "Claude, Cursor, Windsurf, or ChatGPT figures out what you want.",
       accent: "text-secondary",
     },
     {
       icon: Server,
-      title: "OpenAlgo MCP",
-      desc: "Translates the call into OpenAlgo API requests running locally.",
+      title: "OpenAlgo Acts",
+      desc: "Your OpenAlgo running on your computer handles the request.",
       accent: "text-tertiary",
     },
     {
       icon: TrendingUp,
-      title: "Your Broker",
-      desc: "Orders hit the exchange via your existing OpenAlgo broker connection.",
+      title: "Broker Executes",
+      desc: "The order goes to your broker and hits the exchange &mdash; same as always.",
       accent: "text-primary",
     },
   ]
 
   const toolGroups = [
     {
-      title: "Order Management",
+      title: "Placing & Managing Orders",
       icon: ListOrdered,
       tools: [
-        { name: "place_order", desc: "Place market or limit orders" },
-        { name: "place_smart_order", desc: "Position-aware order placement" },
-        { name: "place_basket_order", desc: "Place multiple orders in one call" },
-        { name: "place_split_order", desc: "Slice large orders into chunks" },
-        { name: "modify_order", desc: "Modify an existing order" },
-        { name: "cancel_order", desc: "Cancel a specific order" },
-        { name: "cancel_all_orders", desc: "Cancel all orders for a strategy" },
+        { label: "Place an order", desc: "Market, limit, or stop-loss — regular or intraday" },
+        { label: "Smart order", desc: "Automatically adjusts to your existing position size" },
+        { label: "Basket orders", desc: "Send multiple orders in one go (like option spreads)" },
+        { label: "Split big orders", desc: "Break a large order into smaller slices to get better fills" },
+        { label: "Modify an order", desc: "Change price or quantity of a pending order" },
+        { label: "Cancel orders", desc: "One at a time, or all of them at once" },
       ],
     },
     {
       title: "Positions & Holdings",
       icon: Target,
       tools: [
-        { name: "get_open_position", desc: "Current position for an instrument" },
-        { name: "close_all_positions", desc: "Square off all positions for a strategy" },
-        { name: "get_position_book", desc: "View all current positions" },
-        { name: "get_holdings", desc: "View long-term holdings" },
-        { name: "get_funds", desc: "Funds and margins available" },
+        { label: "Check open position", desc: "Your current position in any stock or contract" },
+        { label: "Square off all", desc: "Close every open intraday position at once" },
+        { label: "Position book", desc: "See everything you're currently holding" },
+        { label: "Long-term holdings", desc: "Your delivery / demat holdings" },
+        { label: "Funds & margins", desc: "Cash balance and margin available to trade" },
       ],
     },
     {
-      title: "Order Status & Tracking",
+      title: "Orders & Trades Summary",
       icon: Activity,
       tools: [
-        { name: "get_order_status", desc: "Status of a specific order" },
-        { name: "get_order_book", desc: "All orders placed today" },
-        { name: "get_trade_book", desc: "All executed trades" },
+        { label: "Order status", desc: "See if a specific order was filled, pending, or rejected" },
+        { label: "Today's order book", desc: "All orders placed during the day" },
+        { label: "Trade book", desc: "All orders that actually got filled" },
       ],
     },
     {
-      title: "Market Data",
+      title: "Live Market Data",
       icon: BarChart3,
       tools: [
-        { name: "get_quote", desc: "Current LTP, bid, ask, OHLC" },
-        { name: "get_market_depth", desc: "Level 5 order book" },
-        { name: "get_historical_data", desc: "Historical candles by interval" },
+        { label: "Live quote", desc: "Current price, bid, ask, and day's high/low" },
+        { label: "Market depth", desc: "Top 5 buy/sell levels in the order book" },
+        { label: "Historical charts", desc: "Past candles for any timeframe — daily, hourly, 5-min, etc." },
       ],
     },
     {
-      title: "Instrument Search",
+      title: "Finding Instruments",
       icon: Search,
       tools: [
-        { name: "search_instruments", desc: "Search across all exchanges" },
-        { name: "get_symbol_info", desc: "Full contract details" },
-        { name: "get_expiry_dates", desc: "Derivative expiry calendar" },
-        { name: "get_available_intervals", desc: "Supported candle intervals" },
+        { label: "Search any symbol", desc: "Across NSE, BSE, F&O, commodity — all exchanges" },
+        { label: "Symbol details", desc: "Lot size, tick size, expiry, strike, and more" },
+        { label: "Expiry dates", desc: "Upcoming expiries for options and futures" },
+        { label: "Available intervals", desc: "Which chart timeframes your broker supports" },
       ],
     },
     {
-      title: "Utilities",
+      title: "Helpful Extras",
       icon: Info,
       tools: [
-        { name: "get_openalgo_version", desc: "Installed OpenAlgo version" },
-        { name: "validate_order_constants", desc: "Valid order parameters" },
+        { label: "OpenAlgo version", desc: "Which version is running on your computer" },
+        { label: "Valid order types", desc: "Quickly check what your broker accepts" },
       ],
     },
   ]
@@ -241,23 +240,23 @@ export default function MCPPage() {
           <div className="absolute inset-0 obsidian-grid opacity-30 -z-10" />
           <div className="flex items-center justify-center gap-3 mb-6 flex-wrap">
             <span className="px-3 py-1.5 rounded-full font-label text-label-md text-tertiary bg-tertiary/10">Open Source</span>
-            <span className="px-3 py-1.5 rounded-full font-label text-label-md text-secondary bg-secondary/10">Model Context Protocol</span>
-            <span className="px-3 py-1.5 rounded-full font-label text-label-md text-primary bg-primary/10">AI Native</span>
+            <span className="px-3 py-1.5 rounded-full font-label text-label-md text-secondary bg-secondary/10">Works With Claude &amp; ChatGPT</span>
+            <span className="px-3 py-1.5 rounded-full font-label text-label-md text-primary bg-primary/10">Runs On Your Computer</span>
           </div>
 
           <h1 className="text-display-lg sm:text-[4rem] leading-[1.05] mb-6 tracking-tight">
-            <span className="block text-on-surface">Trade with</span>
+            <span className="block text-on-surface">Trade Just By</span>
             <span className="bg-clip-text text-transparent bg-gradient-to-r from-primary via-secondary to-tertiary animate-gradient">
-              Natural Language
+              Asking Your AI
             </span>
           </h1>
 
           <p className="text-lg text-on-surface-variant max-w-2xl mx-auto mb-3 leading-relaxed">
-            OpenAlgo MCP turns your AI assistant into a trading desk. Place orders, manage positions,
-            pull market data, and run complete trading workflows — just by asking.
+            OpenAlgo MCP connects your AI chat app &mdash; Claude, Cursor, Windsurf, or ChatGPT &mdash;
+            to your OpenAlgo trading account. Place orders, check positions, and pull live prices by simply talking to it.
           </p>
           <p className="text-base text-on-surface-variant max-w-2xl mx-auto mb-10">
-            It runs locally against your OpenAlgo server and works with Claude, Cursor, Windsurf, and ChatGPT.
+            No dashboards. No clicking. Just type what you want, and your AI gets it done through your broker.
           </p>
 
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
@@ -283,7 +282,7 @@ export default function MCPPage() {
         <div className="mb-20">
           <h2 className="text-headline-md mb-2 text-center text-on-surface">What It Feels Like</h2>
           <p className="text-center text-on-surface-variant mb-10 max-w-2xl mx-auto">
-            Instead of navigating dashboards, you hold a conversation with your trading platform.
+            Here&apos;s a real exchange between a trader and their AI. Notice you never touched a dashboard.
           </p>
           <div className="obsidian-card rounded-2xl p-6 md:p-8 ghost-border max-w-3xl mx-auto">
             <div className="space-y-5">
@@ -300,12 +299,12 @@ export default function MCPPage() {
                   <Sparkles className="h-4 w-4 text-tertiary" />
                 </div>
                 <div className="flex-1 surface-container rounded-xl rounded-tr-sm p-4">
-                  <p className="text-sm text-on-surface mb-3">On it. Calling <code className="text-xs surface-high px-1.5 py-0.5 rounded font-label text-primary">get_position_book</code> to find your BANKNIFTY MIS positions...</p>
+                  <p className="text-sm text-on-surface mb-3">On it. Let me pull up your BANKNIFTY MIS positions first...</p>
                   <div className="space-y-1.5 text-xs font-mono text-on-surface-variant surface-high p-3 rounded-lg">
                     <div>→ BANKNIFTY 52000 CE: +50 @ ₹185 (MIS)</div>
                     <div>→ BANKNIFTY 51800 PE: -50 @ ₹142 (MIS)</div>
                   </div>
-                  <p className="text-sm text-on-surface mt-3 mb-2">Closing both via <code className="text-xs surface-high px-1.5 py-0.5 rounded font-label text-primary">close_all_positions</code>...</p>
+                  <p className="text-sm text-on-surface mt-3 mb-2">Closing both now...</p>
                   <div className="flex items-center gap-2 text-sm">
                     <Check className="h-4 w-4 text-tertiary" />
                     <span className="text-on-surface">Done. Realised P&L today: <span className="font-semibold text-tertiary">+ ₹4,250</span></span>
@@ -315,15 +314,15 @@ export default function MCPPage() {
             </div>
           </div>
           <p className="text-center font-label text-label-sm text-on-surface-variant mt-4">
-            Example interaction. Your AI picks the right MCP tools and OpenAlgo executes them on your broker.
+            Example conversation. Your AI does the lookup and executes &mdash; you just confirm and watch.
           </p>
         </div>
 
         {/* Capabilities */}
         <div className="mb-20">
-          <h2 className="text-headline-md mb-2 text-center text-on-surface">Why Traders Use It</h2>
+          <h2 className="text-headline-md mb-2 text-center text-on-surface">Why Traders Like It</h2>
           <p className="text-center text-on-surface-variant mb-10 max-w-2xl mx-auto">
-            Built for traders who'd rather describe the trade than click through seven screens.
+            Made for traders who&apos;d rather just say what they want than click through seven screens.
           </p>
           <div className="grid md:grid-cols-3 gap-4">
             {capabilities.map(({ icon: Icon, title, desc }) => (
@@ -342,7 +341,7 @@ export default function MCPPage() {
         <div className="mb-20">
           <h2 className="text-headline-md mb-2 text-center text-on-surface">How It Works</h2>
           <p className="text-center text-on-surface-variant mb-10 max-w-2xl mx-auto">
-            MCP is a standard protocol for giving LLMs tools. OpenAlgo MCP exposes your trading stack as tools.
+            You talk, your AI acts, OpenAlgo runs it, your broker executes. Four steps &mdash; and you only handle the first one.
           </p>
           <div className="grid md:grid-cols-4 gap-4 relative">
             {flowSteps.map(({ icon: Icon, title, desc, accent }, i) => (
@@ -371,7 +370,7 @@ export default function MCPPage() {
         <div className="mb-20">
           <h2 className="text-headline-md mb-2 text-center text-on-surface">Things You Can Just Ask</h2>
           <p className="text-center text-on-surface-variant mb-10 max-w-2xl mx-auto">
-            Any of these prompts work out of the box once MCP is configured.
+            Any of these work straight away once you&apos;ve set things up. No special phrasing required &mdash; speak naturally.
           </p>
           <div className="grid sm:grid-cols-2 gap-3">
             {prompts.map(({ icon: Icon, text }, i) => (
@@ -387,9 +386,9 @@ export default function MCPPage() {
 
         {/* Available Tools */}
         <div className="mb-20">
-          <h2 className="text-headline-md mb-2 text-center text-on-surface">25+ Tools Exposed to Your AI</h2>
+          <h2 className="text-headline-md mb-2 text-center text-on-surface">Everything You Can Do</h2>
           <p className="text-center text-on-surface-variant mb-10 max-w-2xl mx-auto">
-            Everything OpenAlgo can do, your AI can do — grouped by what traders actually need.
+            Anything OpenAlgo can do, your AI can now do for you. Grouped the way traders actually think.
           </p>
           <div className="grid md:grid-cols-2 gap-4">
             {toolGroups.map(({ title, icon: Icon, tools }) => (
@@ -400,14 +399,18 @@ export default function MCPPage() {
                   </div>
                   <h3 className="font-semibold text-on-surface">{title}</h3>
                 </div>
-                <div className="space-y-2.5">
-                  {tools.map(({ name, desc }) => (
-                    <div key={name} className="flex items-start gap-3">
-                      <code className="text-xs font-mono surface-high px-2 py-0.5 rounded text-primary flex-shrink-0 mt-0.5">{name}</code>
-                      <span className="text-xs text-on-surface-variant">{desc}</span>
-                    </div>
+                <ul className="space-y-2.5">
+                  {tools.map(({ label, desc }) => (
+                    <li key={label} className="flex items-start gap-3">
+                      <span className="w-1.5 h-1.5 rounded-full bg-primary mt-2 flex-shrink-0" />
+                      <div className="text-sm leading-relaxed">
+                        <span className="text-on-surface font-medium">{label}</span>
+                        <span className="text-on-surface-variant"> — </span>
+                        <span className="text-on-surface-variant">{desc}</span>
+                      </div>
+                    </li>
                   ))}
-                </div>
+                </ul>
               </div>
             ))}
           </div>
@@ -415,9 +418,9 @@ export default function MCPPage() {
 
         {/* Supported Clients */}
         <div className="mb-20">
-          <h2 className="text-headline-md mb-2 text-center text-on-surface">Works with Your AI of Choice</h2>
+          <h2 className="text-headline-md mb-2 text-center text-on-surface">Works With Your Favourite AI</h2>
           <p className="text-center text-on-surface-variant mb-10 max-w-2xl mx-auto">
-            Any MCP-compatible client. Your conversation stays in the tool you're already using.
+            Use the chat app you already like. No need to switch or learn a new tool.
           </p>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             {clients.map(({ name, desc }) => (
@@ -434,9 +437,9 @@ export default function MCPPage() {
 
         {/* Quickstart */}
         <div id="quickstart" className="mb-20 scroll-mt-20">
-          <h2 className="text-headline-md mb-2 text-center text-on-surface">Quickstart</h2>
+          <h2 className="text-headline-md mb-2 text-center text-on-surface">Getting Started</h2>
           <p className="text-center text-on-surface-variant mb-10 max-w-2xl mx-auto">
-            Three steps: have OpenAlgo running, grab an API key, drop a config snippet into your AI client.
+            Three quick steps &mdash; a one-time setup, and you&apos;re talking to your trading account.
           </p>
 
           <div className="space-y-6">
@@ -444,24 +447,20 @@ export default function MCPPage() {
             <div className="obsidian-card rounded-xl p-6 ghost-border">
               <div className="flex items-center gap-3 mb-4">
                 <span className="flex items-center justify-center h-8 w-8 rounded-full gradient-cta text-primary-foreground text-sm font-bold">1</span>
-                <h3 className="text-lg font-semibold text-on-surface">Run OpenAlgo &amp; Get Your API Key</h3>
+                <h3 className="text-lg font-semibold text-on-surface">Have OpenAlgo Running With Your Broker</h3>
               </div>
               <ul className="space-y-2.5 text-sm text-on-surface-variant mb-4">
                 <li className="flex items-start gap-3">
                   <span className="w-1.5 h-1.5 rounded-full bg-primary mt-2 flex-shrink-0" />
-                  <span>Start your OpenAlgo server (default: <code className="text-xs surface-container px-1.5 py-0.5 rounded font-label">http://127.0.0.1:5000</code>).</span>
+                  <span>Make sure OpenAlgo is running on your computer and your broker is logged in.</span>
                 </li>
                 <li className="flex items-start gap-3">
                   <span className="w-1.5 h-1.5 rounded-full bg-primary mt-2 flex-shrink-0" />
-                  <span>Make sure your broker is authenticated inside OpenAlgo.</span>
+                  <span>Open OpenAlgo, go to <span className="text-on-surface font-medium">Settings → API Keys</span>, and copy your key. Keep it handy.</span>
                 </li>
                 <li className="flex items-start gap-3">
                   <span className="w-1.5 h-1.5 rounded-full bg-primary mt-2 flex-shrink-0" />
-                  <span>In the OpenAlgo web UI go to <span className="text-on-surface font-medium">Settings → API Keys</span> and copy your key.</span>
-                </li>
-                <li className="flex items-start gap-3">
-                  <span className="w-1.5 h-1.5 rounded-full bg-primary mt-2 flex-shrink-0" />
-                  <span>Install Node.js (required by some MCP clients) and clone the MCP server repo.</span>
+                  <span>Download the MCP setup files from GitHub. The full setup guide walks through this in under a minute.</span>
                 </li>
               </ul>
               <Button variant="outline" size="sm" asChild>
@@ -475,10 +474,11 @@ export default function MCPPage() {
             <div className="obsidian-card rounded-xl p-6 ghost-border">
               <div className="flex items-center gap-3 mb-4">
                 <span className="flex items-center justify-center h-8 w-8 rounded-full gradient-cta text-primary-foreground text-sm font-bold">2</span>
-                <h3 className="text-lg font-semibold text-on-surface">Add the MCP Server Config</h3>
+                <h3 className="text-lg font-semibold text-on-surface">Tell Your AI About OpenAlgo</h3>
               </div>
               <p className="text-sm text-on-surface-variant mb-4">
-                Pick your OS and paste the config into your AI client's MCP settings file. Replace paths and API key.
+                Pick your operating system below, copy the settings, and paste them into your AI app&apos;s config file.
+                Replace the paths and API key with your own.
               </p>
 
               {/* OS Tabs */}
@@ -504,7 +504,7 @@ export default function MCPPage() {
               </CodeBlock>
 
               <div className="mt-5">
-                <p className="font-label text-label-lg text-on-surface-variant mb-3">Config file locations:</p>
+                <p className="font-label text-label-lg text-on-surface-variant mb-3">Where the settings file lives:</p>
                 <div className="space-y-2">
                   {CONFIG_PATHS[os].map(({ app, path }) => (
                     <div key={app} className="flex flex-col sm:flex-row sm:items-center gap-1.5 sm:gap-3 text-sm">
@@ -513,6 +513,12 @@ export default function MCPPage() {
                     </div>
                   ))}
                 </div>
+                <p className="text-xs text-on-surface-variant mt-3">
+                  Need help with the exact paths?{" "}
+                  <a href="https://docs.openalgo.in/mcp" target="_blank" rel="noopener noreferrer" className="underline underline-offset-4 hover:text-primary transition-colors">
+                    See the detailed setup guide
+                  </a>.
+                </p>
               </div>
             </div>
 
@@ -520,11 +526,11 @@ export default function MCPPage() {
             <div className="obsidian-card rounded-xl p-6 ghost-border">
               <div className="flex items-center gap-3 mb-4">
                 <span className="flex items-center justify-center h-8 w-8 rounded-full gradient-cta text-primary-foreground text-sm font-bold">3</span>
-                <h3 className="text-lg font-semibold text-on-surface">Restart Your AI Client &amp; Start Trading</h3>
+                <h3 className="text-lg font-semibold text-on-surface">Restart Your AI App and Start Trading</h3>
               </div>
               <p className="text-sm text-on-surface-variant mb-4">
-                Restart Claude Desktop, Cursor, or Windsurf. The <code className="text-xs surface-container px-1.5 py-0.5 rounded font-label">openalgo</code> tools
-                will show up in the MCP panel. Try one of the prompts above.
+                Close and reopen Claude Desktop, Cursor, or Windsurf. OpenAlgo will be connected automatically.
+                Try asking something simple first:
               </p>
               <CodeBlock copyText={'"Show me my funds and open positions"'}>
                 <span className="text-on-surface-variant/50">you &gt;</span>{" "}
@@ -536,9 +542,9 @@ export default function MCPPage() {
 
         {/* Exchanges */}
         <div className="mb-20">
-          <h2 className="text-headline-md mb-2 text-center text-on-surface">Supported Exchanges</h2>
+          <h2 className="text-headline-md mb-2 text-center text-on-surface">Exchanges You Can Trade</h2>
           <p className="text-center text-on-surface-variant mb-10 max-w-2xl mx-auto">
-            Everything your broker supports through OpenAlgo is available in MCP.
+            Whatever your broker lets you trade through OpenAlgo, you can trade by chat.
           </p>
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
             {exchanges.map(({ code, name }) => (
@@ -558,19 +564,19 @@ export default function MCPPage() {
                 <ShieldCheck className="h-6 w-6 text-secondary" />
               </div>
               <div className="flex-1">
-                <h3 className="font-semibold text-on-surface mb-2">Security Notes</h3>
+                <h3 className="font-semibold text-on-surface mb-2">A Few Things To Know</h3>
                 <ul className="space-y-2 text-sm text-on-surface-variant">
                   <li className="flex items-start gap-3">
                     <span className="w-1.5 h-1.5 rounded-full bg-secondary mt-2 flex-shrink-0" />
-                    <span>The MCP server runs on your machine and talks to OpenAlgo over localhost.</span>
+                    <span>Everything runs on your own computer. Your orders and account info never leave your machine.</span>
                   </li>
                   <li className="flex items-start gap-3">
                     <span className="w-1.5 h-1.5 rounded-full bg-secondary mt-2 flex-shrink-0" />
-                    <span>Your API key is read from local args — not stored in the cloud.</span>
+                    <span>Your API key stays local &mdash; it&apos;s never uploaded or shared.</span>
                   </li>
                   <li className="flex items-start gap-3">
                     <AlertTriangle className="w-4 h-4 text-secondary mt-0.5 flex-shrink-0" />
-                    <span>LLMs can hallucinate. Review order parameters before confirming, especially with broker auto-execute enabled.</span>
+                    <span>AI can sometimes make mistakes. Always read what it&apos;s about to do before you say yes &mdash; especially for orders.</span>
                   </li>
                 </ul>
               </div>
@@ -582,7 +588,7 @@ export default function MCPPage() {
         <div className="text-center">
           <h2 className="text-headline-md mb-4 text-on-surface">Let your AI handle the clicks.</h2>
           <p className="text-on-surface-variant mb-8 max-w-xl mx-auto">
-            Set up once. Trade from any MCP-aware assistant. Your broker, your strategies, your control.
+            Set it up once. After that, just talk. Your broker, your strategies, completely under your control.
           </p>
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
             <Button size="lg" asChild>
