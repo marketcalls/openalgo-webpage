@@ -19,15 +19,28 @@ import {
   TrendingUp,
   FileSpreadsheet,
   Download,
-  Star
+  Star,
+  Layers,
+  LineChart,
+  Activity,
+  Target,
+  BarChart3,
+  Gauge,
+  Box,
+  Sigma,
+  Zap,
+  Wallet,
+  PieChart,
+  Wand2,
+  Bot
 } from "lucide-react"
 
 export default function Home() {
   const highlights = [
     {
-      icon: Shield,
-      title: "India's First Community-Driven Platform",
-      description: "Built by traders, for traders. Open source and transparent.",
+      icon: LineChart,
+      title: "Options & Strategy Analytics",
+      description: "12 built-in tools: strategy builder, option chain, Greeks, OI, max pain, vol surface, GEX.",
     },
     {
       icon: Server,
@@ -77,7 +90,9 @@ export default function Home() {
     { title: "Backtrader", description: "Python Library for backtesting", icon: "component", iconComponent: TrendingUp, url: "https://github.com/p2c2e/openalgo-backtrader" },
     { title: "PineTS", description: "TradingView indicators integration", iconValue: "⚡", url: "https://github.com/marketcalls/openalgo-pinets" },
     { title: "AlgoMirror", description: "Multi Account OpenAlgo Orchestrator", iconValue: "🔄", url: "https://github.com/marketcalls/algomirror" },
-    { title: "MCP / AI Agents", description: "Model Context Protocol integration", iconValue: "🤖", url: "https://github.com/marketcalls/openalgo-mcp", docs: "https://docs.openalgo.in/mcp" },
+    { title: "MCP / AI Agents", description: "Model Context Protocol integration", iconValue: "🤖", url: "/mcp", docs: "https://docs.openalgo.in/mcp" },
+    { title: "Indicator Skills", description: "AI agent skills for 100+ indicators, charts & scanners", iconValue: "📊", url: "/skills", docs: "https://docs.openalgo.in/skills/indicators" },
+    { title: "Backtesting Skills", description: "VectorBT backtesting skills for Claude Code, Cursor, Codex", iconValue: "🧪", url: "/skills", docs: "https://docs.openalgo.in/skills/backtesting" },
     { title: "OpenAlgo Mobile", description: "Flutter Mobile Trading App", iconValue: "📱", url: "https://github.com/marketcalls/openalgo-mobile" },
     { title: "Web Portal", description: "NextJS + ShadcnUI web interface", iconValue: "🌐", url: "https://github.com/marketcalls/openalgo-webpage" },
     { title: "Chrome Plugin", description: "Browser extension for OpenAlgo", iconValue: "🧩", url: "https://github.com/marketcalls/openalgo-chrome" },
@@ -99,28 +114,31 @@ export default function Home() {
           <div className="inline-flex items-center gap-2 px-4 py-2 mb-10 rounded-full surface-low ghost-border">
             <div className="w-2 h-2 rounded-full bg-tertiary pulse-live" />
             <span className="font-label text-label-md uppercase tracking-wider">
-              <span className="text-primary">OpenAlgo V2</span>
-              <span className="text-on-surface-variant"> &mdash; Static IP Compliant</span>
+              <span className="text-primary">New in V2</span>
+              <span className="text-on-surface-variant"> &mdash; 12-Tool Options Analytics Suite</span>
             </span>
             <ArrowRight className="w-3 h-3 text-primary" />
           </div>
 
           {/* Main Headline */}
           <h1 className="text-display-lg sm:text-[4.5rem] leading-[1.05] mb-6 tracking-tight">
-            <span className="block text-on-surface">Your Personal</span>
+            <span className="block text-on-surface">Algo Trading.</span>
             <span className="bg-clip-text text-transparent bg-gradient-to-r from-primary via-secondary to-tertiary animate-gradient">
-              Algo Trading Platform
+              Options Analytics &amp; Execution.
             </span>
+            <span className="block text-on-surface">All In One Place.</span>
           </h1>
 
           {/* Tagline */}
           <p className="text-headline-sm font-semibold text-primary mb-6">
-            Community Driven Algo Trading Platform
+            Self-Hosted. Broker-Agnostic. Community-Driven.
           </p>
 
           {/* Description */}
           <p className="text-lg text-on-surface-variant max-w-2xl mx-auto mb-12 leading-relaxed">
-            Test and Execute your Trading ideas, Connect your favorite Trading Platforms, AI Driven Strategy Development across 30+ Brokers.
+            OpenAlgo is no longer just an algo platform. Build strategies, analyse the options chain,
+            run Greeks &amp; IV studies, and execute baskets &mdash; all from one self-hosted app,
+            across 30+ brokers.
           </p>
 
           {/* Stats */}
@@ -208,6 +226,155 @@ export default function Home() {
                   <span className="font-label text-label-lg text-on-surface">{indicator}</span>
                 </div>
               ))}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Options & Strategy Analytics Suite */}
+      <div className="py-24">
+        <div className="container mx-auto px-4">
+          <div className="max-w-6xl mx-auto">
+            <div className="text-center mb-14">
+              <div className="inline-flex items-center gap-2 px-3 py-1.5 mb-5 rounded-full bg-primary/10">
+                <Sparkles className="w-3.5 h-3.5 text-primary" />
+                <span className="font-label text-label-md uppercase tracking-wider text-primary">Built-In Suite</span>
+              </div>
+              <h2 className="text-display-sm mb-4 text-on-surface">
+                Options &amp; Strategy Analytics Suite
+              </h2>
+              <p className="text-lg text-on-surface-variant max-w-3xl mx-auto leading-relaxed">
+                Twelve professional-grade analytical tools &mdash; strategy builder, option chain, Greeks, OI,
+                max pain, vol surface, GEX &mdash; all streaming live from your broker&apos;s WebSocket feed.
+                <span className="block mt-2 font-medium text-on-surface">No third-party data vendors. No extra subscriptions.</span>
+              </p>
+            </div>
+
+            <div className="grid gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 mb-10">
+              {[
+                { icon: Wand2, title: "Strategy Builder", desc: "Multi-leg construction with live Greeks, payoff diagram, and one-click basket execution." },
+                { icon: Box, title: "Strategy Portfolio", desc: "MyTrades and Simulation watchlists for your saved strategies." },
+                { icon: Layers, title: "Option Chain", desc: "Live Greeks per strike with inline click-to-trade." },
+                { icon: Gauge, title: "Option Greeks", desc: "Historical IV, Delta, Theta, Vega, Gamma for ATM options." },
+                { icon: Activity, title: "OI Tracker", desc: "CE/PE OI bars, PCR overlay, ATM strike marker." },
+                { icon: Target, title: "Max Pain", desc: "Live max pain strike with pain distribution chart." },
+                { icon: LineChart, title: "Straddle Chart", desc: "Dynamic ATM straddle with synthetic futures overlay." },
+                { icon: BarChart3, title: "Straddle PnL", desc: "Intraday straddle simulation with auto N-point adjustments." },
+                { icon: Box, title: "Vol Surface", desc: "3D implied volatility surface across strikes &amp; expiries." },
+                { icon: Sigma, title: "GEX Dashboard", desc: "OI walls, net GEX per strike, top gamma strikes." },
+                { icon: PieChart, title: "IV Smile", desc: "Call and Put IV curves with skew analysis." },
+                { icon: Wallet, title: "OI Profile", desc: "Futures candles with OI butterfly overlay." },
+              ].map(({ icon: Icon, title, desc }) => (
+                <div key={title} className="obsidian-card rounded-xl p-5 ghost-border hover-lift">
+                  <div className="inline-flex p-2 rounded-lg surface-container mb-3">
+                    <Icon className="h-5 w-5 text-primary" />
+                  </div>
+                  <h3 className="font-semibold text-sm text-on-surface mb-1.5">{title}</h3>
+                  <p className="text-xs text-on-surface-variant leading-relaxed">{desc}</p>
+                </div>
+              ))}
+            </div>
+
+            <div className="rounded-2xl surface-low p-6 md:p-8 ghost-border">
+              <div className="grid md:grid-cols-3 gap-6 text-center">
+                <div>
+                  <Zap className="h-5 w-5 text-primary mx-auto mb-2" />
+                  <p className="font-semibold text-on-surface mb-1 text-sm">Live, Not Delayed</p>
+                  <p className="text-xs text-on-surface-variant">Streams from your broker&apos;s unified WebSocket feed.</p>
+                </div>
+                <div>
+                  <GitBranch className="h-5 w-5 text-primary mx-auto mb-2" />
+                  <p className="font-semibold text-on-surface mb-1 text-sm">Broker Agnostic</p>
+                  <p className="text-xs text-on-surface-variant">Same tools work across every supported broker.</p>
+                </div>
+                <div>
+                  <TrendingUp className="h-5 w-5 text-primary mx-auto mb-2" />
+                  <p className="font-semibold text-on-surface mb-1 text-sm">Analyse &amp; Execute</p>
+                  <p className="text-xs text-on-surface-variant">Build a strategy, fire it as a basket &mdash; in the same screen.</p>
+                </div>
+              </div>
+            </div>
+
+            <div className="mt-10 text-center">
+              <Button asChild size="lg">
+                <a href="/features" className="flex items-center">
+                  Explore All Features
+                  <ArrowRight className="w-4 h-4 ml-2" />
+                </a>
+              </Button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* AI-Native Trading */}
+      <div className="py-24 surface-low">
+        <div className="container mx-auto px-4">
+          <div className="max-w-6xl mx-auto">
+            <div className="text-center mb-12">
+              <div className="inline-flex items-center gap-2 px-3 py-1.5 mb-5 rounded-full bg-tertiary/10">
+                <Sparkles className="w-3.5 h-3.5 text-tertiary" />
+                <span className="font-label text-label-md uppercase tracking-wider text-tertiary">Made For AI</span>
+              </div>
+              <h2 className="text-display-sm mb-4 text-on-surface">
+                Trade &amp; Research With Your AI
+              </h2>
+              <p className="text-lg text-on-surface-variant max-w-3xl mx-auto leading-relaxed">
+                Two simple ways to bring AI into your trading &mdash; talk to your account like a trading desk,
+                or give your AI a toolkit to chart, scan, and backtest for you.
+              </p>
+            </div>
+
+            <div className="grid md:grid-cols-2 gap-6">
+              {/* MCP */}
+              <a href="/mcp" className="obsidian-card rounded-2xl p-8 ghost-border hover-lift group block">
+                <div className="flex items-start gap-4 mb-4">
+                  <div className="inline-flex p-3 rounded-xl bg-primary/10 flex-shrink-0">
+                    <Bot className="h-6 w-6 text-primary" />
+                  </div>
+                  <div className="flex-1">
+                    <div className="flex items-center gap-2 mb-1">
+                      <h3 className="text-headline-sm text-on-surface">OpenAlgo MCP</h3>
+                      <ArrowRight className="h-4 w-4 text-on-surface-variant group-hover:text-primary group-hover:translate-x-1 transition-all" />
+                    </div>
+                    <p className="font-label text-label-sm text-on-surface-variant uppercase tracking-wider">Trade by chatting</p>
+                  </div>
+                </div>
+                <p className="text-sm text-on-surface-variant leading-relaxed mb-4">
+                  Connect your OpenAlgo account to Claude, Cursor, Windsurf, or ChatGPT. Place orders,
+                  check positions, and pull live prices by simply asking &mdash; no dashboards, no clicks.
+                </p>
+                <div className="flex flex-wrap gap-2">
+                  {["25+ built-in actions", "Claude / Cursor / Windsurf / ChatGPT", "Runs on your computer"].map(tag => (
+                    <span key={tag} className="px-3 py-1 surface-container rounded-full font-label text-label-sm text-on-surface-variant">{tag}</span>
+                  ))}
+                </div>
+              </a>
+
+              {/* Skills */}
+              <a href="/skills" className="obsidian-card rounded-2xl p-8 ghost-border hover-lift group block">
+                <div className="flex items-start gap-4 mb-4">
+                  <div className="inline-flex p-3 rounded-xl bg-tertiary/10 flex-shrink-0">
+                    <Wand2 className="h-6 w-6 text-tertiary" />
+                  </div>
+                  <div className="flex-1">
+                    <div className="flex items-center gap-2 mb-1">
+                      <h3 className="text-headline-sm text-on-surface">OpenAlgo Skills</h3>
+                      <ArrowRight className="h-4 w-4 text-on-surface-variant group-hover:text-primary group-hover:translate-x-1 transition-all" />
+                    </div>
+                    <p className="font-label text-label-sm text-on-surface-variant uppercase tracking-wider">Chart, scan &amp; backtest</p>
+                  </div>
+                </div>
+                <p className="text-sm text-on-surface-variant leading-relaxed mb-4">
+                  Ready-made trading abilities you can drop into your AI assistant &mdash; charts, scanners,
+                  custom indicators, and backtests with real brokerage costs. Works with 40+ AI apps.
+                </p>
+                <div className="flex flex-wrap gap-2">
+                  {["100+ indicators", "12 ready-made strategies", "India / US / Crypto"].map(tag => (
+                    <span key={tag} className="px-3 py-1 surface-container rounded-full font-label text-label-sm text-on-surface-variant">{tag}</span>
+                  ))}
+                </div>
+              </a>
             </div>
           </div>
         </div>

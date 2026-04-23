@@ -5,26 +5,43 @@ import {
   Bot, Package, Github, Network, Link2, FileSpreadsheet, SplitSquareHorizontal,
   MessageCircle, LayoutDashboard, Terminal, Webhook, Activity, TrendingUp,
   BarChart3, Gauge, FileJson, Brain, Search, Clock, GitMerge, Key, ShieldCheck,
-  AlertCircle, User, Mail, Smartphone, History, Container
+  AlertCircle, User, Mail, Smartphone, History, Container,
+  Wand2, Layers, Target, Box, Sigma, PieChart, Wallet
 } from "lucide-react"
 
 const features = [
+  { title: "Strategy Builder", description: "Build multi-leg option strategies, see live Greeks and payoff, test what-ifs, and fire the full basket to your broker in one click", icon: Wand2, category: "Options Analytics" },
+  { title: "Strategy Portfolio", description: "Save your favourite strategies for live tracking or paper-trading, and reopen any of them in seconds", icon: Box, category: "Options Analytics" },
+  { title: "Option Chain", description: "Live option chain with Greeks, open interest, volume, and bid/ask - click any strike to trade instantly", icon: Layers, category: "Options Analytics" },
+  { title: "Option Greeks Chart", description: "See how IV, Delta, Theta, Vega and Gamma have moved over time for the at-the-money strike", icon: Gauge, category: "Options Analytics" },
+  { title: "OI Tracker", description: "Side-by-side call and put open interest with PCR and a marker showing where the spot is right now", icon: Activity, category: "Options Analytics" },
+  { title: "Max Pain", description: "Where price is most likely to settle at expiry, shown visually across all strikes", icon: Target, category: "Options Analytics" },
+  { title: "Straddle Chart", description: "Combined price of the at-the-money call and put, with automatic strike roll as spot moves", icon: LineChart, category: "Options Analytics" },
+  { title: "Straddle PnL Simulator", description: "Simulate how a straddle would have played out intraday with automated adjustments and a full trade log", icon: BarChart3, category: "Options Analytics" },
+  { title: "Volatility Surface", description: "Live 3D view of implied volatility across every strike and expiry - spot skew and term structure at a glance", icon: Box, category: "Options Analytics" },
+  { title: "GEX Dashboard", description: "See where market makers are positioned - find the biggest gamma walls acting as support and resistance", icon: Sigma, category: "Options Analytics" },
+  { title: "IV Smile", description: "Call and put implied volatility curves with the at-the-money marker, so you can read skew instantly", icon: PieChart, category: "Options Analytics" },
+  { title: "OI Profile", description: "Futures candles with a call vs put open-interest butterfly and daily OI change - price action and positioning in one view", icon: Wallet, category: "Options Analytics" },
   { title: "Smart Order Execution", description: "Intelligent order routing and execution management for complex trading strategies", icon: TrendingUp, category: "Trading Engine" },
   { title: "Host Python Strategies", description: "Run your Python code directly inside OpenAlgo without external servers - complete strategy autonomy", icon: Code2, category: "Strategy Execution" },
   { title: "Common WebSocket Layer", description: "Single, normalized real-time stream for quotes and LTP across all supported brokers", icon: Zap, category: "Real-Time Data" },
-  { title: "Unified API Layer", description: "One API (/api/v1/) that works across 23+ brokers - write once, trade everywhere", icon: Globe, category: "API Infrastructure" },
+  { title: "Unified API Layer", description: "One API (/api/v1/) that works across 30+ brokers - write once, trade everywhere", icon: Globe, category: "API Infrastructure" },
   { title: "API Analyzer", description: "Mini sandbox environment to test strategies before going live - catch errors before they cost money", icon: Search, category: "Testing & Debug" },
-  { title: "20+ Simplified APIs", description: "Comprehensive API suite covering Account, Data, and Order operations with simplified structure", icon: Terminal, category: "API Infrastructure" },
+  { title: "40+ API Endpoints", description: "Comprehensive API suite covering Account, Orders, Market Data, Options, Analytics, and Admin operations with a simplified structure", icon: Terminal, category: "API Infrastructure" },
   { title: "Historify Integration", description: "3rd party data platform built by OpenAlgo for fetching and organizing real-time historical data", icon: History, category: "Data Management" },
   { title: "Browser-Level Security", description: "CSP headers, CORS rules, CSRF protection, rate limiting, and monthly security audits", icon: ShieldCheck, category: "Security" },
   { title: "Single User System", description: "Designed for individual traders - first user is always admin with full control", icon: User, category: "User Management" },
   { title: "TOTP Password Reset", description: "Time-based one-time password support for secure password recovery", icon: Smartphone, category: "Security" },
   { title: "Gmail SMTP Reset", description: "Password reset functionality via Gmail SMTP integration", icon: Mail, category: "Security" },
   { title: "One Account Per User", description: "Each user connects to one broker account for focused trading management", icon: Key, category: "User Management" },
-  { title: "23+ Broker Support", description: "Connect seamlessly with India's top broking platforms including Definedge Securities", icon: Network, category: "Integration" },
+  { title: "30+ Broker Support", description: "Connect seamlessly with India's top broking platforms across discount, full-service, and emerging brokers", icon: Network, category: "Integration" },
   { title: "Multi-Platform Trading", description: "Trade from Amibroker, TradingView, Python, MetaTrader, Excel, Google Sheets", icon: Link2, category: "Integration" },
   { title: "Chartink Integration", description: "Native support for Chartink scanners and strategy execution", icon: LineChart, category: "Integration" },
   { title: "TradingView Webhooks", description: "Direct webhook support for TradingView alerts and Pine Script strategies", icon: Webhook, category: "Integration" },
+  { title: "Trade By Chatting (MCP)", description: "Connect your OpenAlgo account to Claude, Cursor, Windsurf, or ChatGPT and place orders, check positions, and pull live prices just by asking", icon: Bot, category: "Integration" },
+  { title: "AI Skills for Indicators & Charts", description: "Ready-made abilities for your AI assistant - chart any indicator, scan stocks, build custom indicators, and stream live prices with one instruction", icon: Wand2, category: "AI & Skills" },
+  { title: "AI Skills for Backtesting", description: "Test strategies on past data with real brokerage and taxes built in for Indian, US, and crypto markets - get full reports in plain English", icon: Brain, category: "AI & Skills" },
+  { title: "Works With 40+ AI Apps", description: "Install OpenAlgo skills into Claude Code, Cursor, Codex, Windsurf, Cline, Copilot, Gemini and more - the installer picks the right spot automatically", icon: Terminal, category: "AI & Skills" },
   { title: "Intelligent Order Splitting", description: "Automatically split large orders for better execution and reduced market impact", icon: SplitSquareHorizontal, category: "Order Management" },
   { title: "Sequential Basket Orders", description: "Execute basket orders with buy-side legs first, followed by sell-side for optimal execution", icon: Package, category: "Order Management" },
   { title: "Raw WebSocket Implementation", description: "Direct broker API integration using raw WebSockets, not SDKs, for maximum performance and control", icon: Zap, category: "Real-Time Data" },
@@ -60,6 +77,8 @@ const features = [
 ]
 
 const categories = [
+  { name: "Options Analytics", color: "text-primary bg-primary/10" },
+  { name: "AI & Skills", color: "text-tertiary bg-tertiary/10" },
   { name: "Trading Engine", color: "text-secondary bg-secondary/10" },
   { name: "Strategy Execution", color: "text-primary bg-primary/10" },
   { name: "Real-Time Data", color: "text-tertiary bg-tertiary/10" },
@@ -87,8 +106,9 @@ export default function FeaturesPage() {
               Platform Features
             </h1>
             <p className="text-lg text-on-surface-variant max-w-3xl mx-auto leading-relaxed">
-              OpenAlgo is a comprehensive single-user algorithmic trading platform designed
-              for individual traders who want complete control over their trading infrastructure.
+              OpenAlgo is a complete self-hosted stack for algo trading and options analytics &mdash;
+              a 12-tool options suite, a unified execution engine, and integrations across 30+ brokers,
+              built for individual traders who want full control of their infrastructure.
             </p>
           </div>
 
