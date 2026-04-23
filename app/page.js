@@ -115,7 +115,7 @@ export default function Home() {
             <div className="w-2 h-2 rounded-full bg-tertiary pulse-live" />
             <span className="font-label text-label-md uppercase tracking-wider">
               <span className="text-primary">New in V2</span>
-              <span className="text-on-surface-variant"> &mdash; 12-Tool Options Analytics Suite</span>
+              <span className="text-on-surface-variant"> - 12-Tool Options Analytics Suite</span>
             </span>
             <ArrowRight className="w-3 h-3 text-primary" />
           </div>
@@ -241,8 +241,8 @@ export default function Home() {
                 Options &amp; Strategy Analytics Suite
               </h2>
               <p className="text-lg text-on-surface-variant max-w-3xl mx-auto leading-relaxed">
-                Twelve professional-grade analytical tools &mdash; strategy builder, option chain, Greeks, OI,
-                max pain, vol surface, GEX &mdash; all streaming live from your broker&apos;s WebSocket feed.
+                Twelve professional-grade analytical tools - strategy builder, option chain, Greeks, OI,
+                max pain, vol surface, GEX - all streaming live from your broker&apos;s WebSocket feed.
                 <span className="block mt-2 font-medium text-on-surface">No third-party data vendors. No extra subscriptions.</span>
               </p>
             </div>
@@ -287,7 +287,7 @@ export default function Home() {
                 <div>
                   <TrendingUp className="h-5 w-5 text-primary mx-auto mb-2" />
                   <p className="font-semibold text-on-surface mb-1 text-sm">Analyse &amp; Execute</p>
-                  <p className="text-xs text-on-surface-variant">Build a strategy, fire it as a basket &mdash; in the same screen.</p>
+                  <p className="text-xs text-on-surface-variant">Build a strategy, fire it as a basket - in the same screen.</p>
                 </div>
               </div>
             </div>
@@ -317,7 +317,7 @@ export default function Home() {
                 Trade &amp; Research With Your AI
               </h2>
               <p className="text-lg text-on-surface-variant max-w-3xl mx-auto leading-relaxed">
-                Two simple ways to bring AI into your trading &mdash; talk to your account like a trading desk,
+                Two simple ways to bring AI into your trading - talk to your account like a trading desk,
                 or give your AI a toolkit to chart, scan, and backtest for you.
               </p>
             </div>
@@ -339,7 +339,7 @@ export default function Home() {
                 </div>
                 <p className="text-sm text-on-surface-variant leading-relaxed mb-4">
                   Connect your OpenAlgo account to Claude, Cursor, Windsurf, or ChatGPT. Place orders,
-                  check positions, and pull live prices by simply asking &mdash; no dashboards, no clicks.
+                  check positions, and pull live prices by simply asking - no dashboards, no clicks.
                 </p>
                 <div className="flex flex-wrap gap-2">
                   {["25+ built-in actions", "Claude / Cursor / Windsurf / ChatGPT", "Runs on your computer"].map(tag => (
@@ -363,7 +363,7 @@ export default function Home() {
                   </div>
                 </div>
                 <p className="text-sm text-on-surface-variant leading-relaxed mb-4">
-                  Ready-made trading abilities you can drop into your AI assistant &mdash; charts, scanners,
+                  Ready-made trading abilities you can drop into your AI assistant - charts, scanners,
                   custom indicators, and backtests with real brokerage costs. Works with 40+ AI apps.
                 </p>
                 <div className="flex flex-wrap gap-2">

@@ -41,15 +41,15 @@ const INDICATOR_COMMANDS = [
   { cmd: "/indicator-chart", icon: LineChart, title: "Chart any indicator", desc: "Ask for an EMA, RSI, Supertrend or any other indicator on any stock or index. You get a clean dark-themed chart with buy/sell markers." },
   { cmd: "/custom-indicator", icon: Wand2, title: "Build your own indicator", desc: "Describe a new indicator in plain English. Your AI writes the code, draws a chart, and checks its speed." },
   { cmd: "/indicator-dashboard", icon: LayoutDashboard, title: "Make a live dashboard", desc: "A proper web dashboard with your favourite indicators, refreshing live from the market." },
-  { cmd: "/indicator-scanner", icon: Search, title: "Scan the market", desc: "Find stocks from NIFTY 50 or BANKNIFTY that match your conditions — RSI oversold, EMA crossover, volume spike, and more." },
-  { cmd: "/live-feed", icon: Radio, title: "Watch live prices", desc: "Stream live prices into your screen with indicators computed on the fly — no browser refresh needed." },
+  { cmd: "/indicator-scanner", icon: Search, title: "Scan the market", desc: "Find stocks from NIFTY 50 or BANKNIFTY that match your conditions - RSI oversold, EMA crossover, volume spike, and more." },
+  { cmd: "/live-feed", icon: Radio, title: "Watch live prices", desc: "Stream live prices into your screen with indicators computed on the fly - no browser refresh needed." },
 ]
 
 const BACKTEST_COMMANDS = [
   { cmd: "/setup", icon: Rocket, title: "First-time setup", desc: "Prepares everything needed to run backtests on your machine. Run once." },
   { cmd: "/backtest", icon: BarChart3, title: "Backtest a strategy", desc: "Run any strategy on past data with realistic brokerage and taxes. Get a full report in plain English, plus a pro-grade PDF-style tearsheet." },
   { cmd: "/optimize", icon: Gauge, title: "Find the best settings", desc: "Test many combinations of a strategy's settings and highlight the best ones on a visual heatmap." },
-  { cmd: "/quick-stats", icon: Activity, title: "Quick sanity check", desc: "A fast read of a strategy's return, drawdown, and how it compares to the index — no files created." },
+  { cmd: "/quick-stats", icon: Activity, title: "Quick sanity check", desc: "A fast read of a strategy's return, drawdown, and how it compares to the index - no files created." },
   { cmd: "/strategy-compare", icon: Layers, title: "Compare strategies", desc: "Run two or more strategies on the same stock and put their equity curves side by side." },
 ]
 
@@ -108,7 +108,7 @@ export default function SkillsPage() {
           </h1>
 
           <p className="text-lg text-on-surface-variant max-w-2xl mx-auto mb-3 leading-relaxed">
-            OpenAlgo Skills add ready-made trading knowledge to your AI assistant &mdash; charts,
+            OpenAlgo Skills add ready-made trading knowledge to your AI assistant - charts,
             scanners, custom indicators, and full backtests with realistic brokerage costs.
           </p>
           <p className="text-base text-on-surface-variant max-w-2xl mx-auto mb-10">
@@ -142,13 +142,13 @@ export default function SkillsPage() {
         <div className="mb-20">
           <h2 className="text-headline-md mb-2 text-center text-on-surface">What Is a Skill?</h2>
           <p className="text-center text-on-surface-variant mb-10 max-w-2xl mx-auto">
-            Think of a skill like a plug-in for your AI. Install it once and your AI picks up new abilities &mdash;
+            Think of a skill like a plug-in for your AI. Install it once and your AI picks up new abilities -
             like charting an indicator, scanning stocks, or running a full backtest, all in one instruction.
           </p>
           <div className="grid md:grid-cols-3 gap-4">
             {[
               { icon: Sparkles, title: "Ready on Day One", desc: "No long prompts, no copy-pasting code from tutorials. Just ask, and your AI already knows how." },
-              { icon: CheckCircle2, title: "Tested Recipes", desc: "Every skill ships with reliable, ready-to-use building blocks &mdash; the same ones experienced traders use." },
+              { icon: CheckCircle2, title: "Tested Recipes", desc: "Every skill ships with reliable, ready-to-use building blocks - the same ones experienced traders use." },
               { icon: Terminal, title: "Simple Commands", desc: "Quick shortcuts like /backtest or /indicator-chart kick off each task. Your AI handles the rest." },
             ].map(({ icon: Icon, title, desc }) => (
               <div key={title} className="obsidian-card rounded-xl p-6 hover-lift ghost-border">
@@ -219,7 +219,7 @@ export default function SkillsPage() {
                     <h3 className="text-headline-sm text-on-surface mb-1">Indicator &amp; Charting Skills</h3>
                     <p className="text-sm text-on-surface-variant mb-3">
                       Chart any indicator on any symbol, build custom indicators, scan for setups, and stream live
-                      prices &mdash; all driven by plain-English requests to your AI.
+                      prices - all driven by plain-English requests to your AI.
                     </p>
                     <CodeBlock copyText="npx skills add marketcalls/openalgo-indicator-skills">
                       <span className="text-on-surface-variant/50">$</span> npx skills add marketcalls/openalgo-indicator-skills
@@ -257,7 +257,7 @@ export default function SkillsPage() {
                   100+ Indicators Built-In
                 </h4>
                 <p className="text-sm text-on-surface-variant mb-4">
-                  Every popular indicator is already included &mdash; from the classics to advanced ones professionals use.
+                  Every popular indicator is already included - from the classics to advanced ones professionals use.
                 </p>
                 <div className="grid sm:grid-cols-2 md:grid-cols-4 gap-3">
                   {INDICATOR_CATEGORIES.map(({ name, count, example }) => (
@@ -308,7 +308,7 @@ export default function SkillsPage() {
                     <h3 className="text-headline-sm text-on-surface mb-1">Backtesting Skills</h3>
                     <p className="text-sm text-on-surface-variant mb-3">
                       Test trading ideas on real past data. Fees, taxes, and slippage are already baked in for
-                      Indian, US, and crypto markets &mdash; so the results reflect what you&apos;d actually see in your account.
+                      Indian, US, and crypto markets - so the results reflect what you&apos;d actually see in your account.
                     </p>
                     <CodeBlock copyText="npx skills add marketcalls/vectorbt-backtesting-skills">
                       <span className="text-on-surface-variant/50">$</span> npx skills add marketcalls/vectorbt-backtesting-skills
@@ -346,7 +346,7 @@ export default function SkillsPage() {
                   12 Ready-Made Strategies
                 </h4>
                 <p className="text-sm text-on-surface-variant mb-4">
-                  Start with a working strategy and tweak it to match your style &mdash; faster than building from scratch.
+                  Start with a working strategy and tweak it to match your style - faster than building from scratch.
                 </p>
                 <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
                   {STRATEGY_TEMPLATES.map(({ name, type }) => (
@@ -445,7 +445,7 @@ export default function SkillsPage() {
         <div className="mb-20">
           <h2 className="text-headline-md mb-2 text-center text-on-surface">Install Options</h2>
           <p className="text-center text-on-surface-variant mb-10 max-w-2xl mx-auto">
-            Pick the level that suits you. Paste a line in your terminal &mdash; that&apos;s it.
+            Pick the level that suits you. Paste a line in your terminal - that&apos;s it.
           </p>
           <div className="grid md:grid-cols-2 gap-4">
             {[
@@ -474,7 +474,7 @@ export default function SkillsPage() {
         <div className="text-center">
           <h2 className="text-headline-md mb-4 text-on-surface">Let your AI do the heavy lifting.</h2>
           <p className="text-on-surface-variant mb-8 max-w-xl mx-auto">
-            Install once. Ask in plain English. Get charts, scanners, and backtests in seconds &mdash; on Indian, US, or crypto markets.
+            Install once. Ask in plain English. Get charts, scanners, and backtests in seconds - on Indian, US, or crypto markets.
           </p>
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
             <Button size="lg" asChild>

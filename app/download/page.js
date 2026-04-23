@@ -80,7 +80,7 @@ export default function DownloadPage() {
                   <h4 className="font-semibold text-on-surface">OpenAlgo Core</h4>
                   <ExternalLink className="h-4 w-4 text-on-surface-variant group-hover:text-primary transition-colors" />
                 </div>
-                <p className="text-sm text-on-surface-variant">Central heartbeat of the ecosystem — powering the API service, authentication, routing, and platform logic. All SDKs, libraries, and integrations interact with the API endpoints exposed by OpenAlgo Core.</p>
+                <p className="text-sm text-on-surface-variant">Central heartbeat of the ecosystem - powering the API service, authentication, routing, and platform logic. All SDKs, libraries, and integrations interact with the API endpoints exposed by OpenAlgo Core.</p>
               </a>
             </div>
           </div>
@@ -92,7 +92,7 @@ export default function DownloadPage() {
               <span className="font-label text-label-lg uppercase tracking-wider text-on-surface-variant">SDKs</span>
             </h3>
             <p className="text-sm text-on-surface-variant mb-5">
-              Official client packages for application development. Built against <strong className="text-on-surface">API v1</strong> — stable, backward-compatible, and recommended for production use.
+              Official client packages for application development. Built against <strong className="text-on-surface">API v1</strong> - stable, backward-compatible, and recommended for production use.
             </p>
             <div className="grid gap-4 md:grid-cols-3 lg:grid-cols-5">
               {sdks.map((sdk, index) => (

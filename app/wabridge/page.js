@@ -57,7 +57,7 @@ export default function WABridgePage() {
             A lightweight WhatsApp HTTP Bridge.
           </p>
           <p className="text-base text-on-surface-variant max-w-xl mx-auto leading-relaxed">
-            Link your WhatsApp via CLI, then send messages through a simple REST API. Supports text, images, video, audio, documents — to individuals, groups, and channels.
+            Link your WhatsApp via CLI, then send messages through a simple REST API. Supports text, images, video, audio, documents - to individuals, groups, and channels.
           </p>
 
           <div className="max-w-md mx-auto mt-8">
@@ -135,7 +135,7 @@ export default function WABridgePage() {
                       <span className="text-on-surface-variant/50">$</span> wabridge --code{"\n"}
                       <span className="text-on-surface-variant/50"># Enter your phone number and get an 8-digit pairing code</span>
                     </CodeBlock>
-                    <p className="text-sm text-on-surface-variant">Auth is saved to <code className="text-xs surface-container px-1.5 py-0.5 rounded font-label">~/.wabridge/</code> — you only need to link once.</p>
+                    <p className="text-sm text-on-surface-variant">Auth is saved to <code className="text-xs surface-container px-1.5 py-0.5 rounded font-label">~/.wabridge/</code> - you only need to link once.</p>
                   </div>
                 )
               },
@@ -234,7 +234,7 @@ export default function WABridgePage() {
                 </thead>
                 <tbody>
                   {[
-                    { field: "message", type: "string", extra: "—", desc: "Text message" },
+                    { field: "message", type: "string", extra: "-", desc: "Text message" },
                     { field: "image", type: "URL or file path", extra: "caption?", desc: "Image with optional caption" },
                     { field: "video", type: "URL or file path", extra: "caption?", desc: "Video with optional caption" },
                     { field: "audio", type: "URL or file path", extra: "ptt? (default: true)", desc: "Voice note or audio file" },
