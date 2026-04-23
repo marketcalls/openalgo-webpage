@@ -1,11 +1,11 @@
 export const defaultMetadata = {
   metadataBase: new URL('https://openalgo.in'),
   title: {
-    default: 'OpenAlgo - Your Personal Algo Trading Platform',
+    default: 'OpenAlgo - Algo Trading, Options Analytics & Execution Platform',
     template: '%s | OpenAlgo'
   },
-  description: 'OpenAlgo is a powerful algorithmic trading platform for Indian markets, offering seamless integration with multiple trading platforms and brokers.',
-  keywords: ['algo trading', 'algorithmic trading', 'trading platform', 'Indian markets', 'Amibroker', 'TradingView', 'Python trading'],
+  description: 'OpenAlgo is a self-hosted algo trading and options analytics platform for Indian markets. Strategy builder, option chain, Greeks, OI, vol surface, GEX, and one-click basket execution across 30+ brokers.',
+  keywords: ['algo trading', 'algorithmic trading', 'options analytics', 'options trading', 'strategy builder', 'option chain', 'Greeks', 'open interest', 'max pain', 'vol surface', 'GEX', 'trading platform', 'Indian markets', 'Amibroker', 'TradingView', 'Python trading'],
   authors: [{ name: 'OpenAlgo' }],
   creator: 'OpenAlgo',
   publisher: 'OpenAlgo',
@@ -18,26 +18,26 @@ export const defaultMetadata = {
     type: 'website',
     locale: 'en_US',
     url: 'https://openalgo.in',
-    title: 'OpenAlgo - Your Personal Algo Trading Platform',
-    description: 'OpenAlgo is a powerful algorithmic trading platform for Indian markets, offering seamless integration with multiple trading platforms and brokers.',
+    title: 'OpenAlgo - Algo Trading, Options Analytics & Execution Platform',
+    description: 'OpenAlgo is a self-hosted algo trading and options analytics platform for Indian markets. Strategy builder, option chain, Greeks, OI, vol surface, GEX, and one-click basket execution across 30+ brokers.',
     siteName: 'OpenAlgo',
     images: [{
       url: 'https://openalgo.in/assets/images/og-image.png',
       width: 1200,
       height: 630,
-      alt: 'OpenAlgo - Your Personal Algo Trading Platform',
+      alt: 'OpenAlgo - Algo Trading, Options Analytics & Execution Platform',
       type: 'image/png'
     }]
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'OpenAlgo - Your Personal Algo Trading Platform',
-    description: 'OpenAlgo is a powerful algorithmic trading platform for Indian markets, offering seamless integration with multiple trading platforms and brokers.',
+    title: 'OpenAlgo - Algo Trading, Options Analytics & Execution Platform',
+    description: 'OpenAlgo is a self-hosted algo trading and options analytics platform for Indian markets. Strategy builder, option chain, Greeks, OI, vol surface, GEX, and one-click basket execution across 30+ brokers.',
     images: {
       url: 'https://openalgo.in/assets/images/og-image.png',
       width: 1200,
       height: 630,
-      alt: 'OpenAlgo - Your Personal Algo Trading Platform'
+      alt: 'OpenAlgo - Algo Trading, Options Analytics & Execution Platform'
     },
     creator: '@openalgoHQ',
     site: '@openalgoHQ'
