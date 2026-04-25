@@ -7,7 +7,7 @@ import {
   TrendingUp, Activity, BarChart3, Search, Wallet, ListOrdered,
   Target, Layers, Split, Edit3, XCircle, Ban, LogOut, LineChart, BookOpen,
   Calendar, Clock, Info, ShieldCheck, AlertTriangle, MonitorSmartphone,
-  Laptop, Apple, Cpu, Workflow, MessageCircle
+  Laptop, Apple, Cpu, Workflow, MessageCircle, Sigma
 } from "lucide-react"
 import { useState } from "react"
 
@@ -42,9 +42,9 @@ const CONFIG_SAMPLES = {
   windows: `{
   "mcpServers": {
     "openalgo": {
-      "command": "D:\\\\openalgo-mcp\\\\openalgo\\\\.venv\\\\Scripts\\\\python.exe",
+      "command": "D:\\\\openalgo\\\\.venv\\\\Scripts\\\\python.exe",
       "args": [
-        "D:\\\\openalgo-mcp\\\\openalgo\\\\mcp\\\\mcpserver.py",
+        "D:\\\\openalgo\\\\mcp\\\\mcpserver.py",
         "YOUR_API_KEY_HERE",
         "http://127.0.0.1:5000"
       ]
@@ -110,7 +110,7 @@ export default function MCPPage() {
     { icon: Activity, title: "Live Prices On Demand", desc: "Ask for quotes, market depth, or historical charts right inside your chat. Real numbers, real time." },
     { icon: Shield, title: "Your Data Stays With You", desc: "Everything runs on your own computer. Your API key and trades never leave your machine." },
     { icon: Layers, title: "Same Chat, Any Broker", desc: "Works with every broker OpenAlgo supports. Switch brokers without learning anything new." },
-    { icon: Workflow, title: "25+ Built-In Actions", desc: "Place orders, check funds, track trades, search symbols - your AI already knows how." },
+    { icon: Workflow, title: "40+ Built-In Actions", desc: "Place orders, trade options, check funds, pull Greeks, search symbols - your AI already knows how." },
   ]
 
   const prompts = [
@@ -165,6 +165,18 @@ export default function MCPPage() {
       ],
     },
     {
+      title: "Options Trading & Greeks",
+      icon: Sigma,
+      tools: [
+        { label: "Single-leg options order", desc: "Specify the strike by ATM/ITM/OTM offset - no need to look up symbols" },
+        { label: "Multi-leg strategies", desc: "Iron condors, spreads, butterflies, straddles - all in one request" },
+        { label: "Live option chain", desc: "Real-time quotes across every strike for an expiry" },
+        { label: "Option Greeks", desc: "Delta, gamma, theta, vega, rho for any strike" },
+        { label: "Synthetic future price", desc: "Compute the put-call-parity implied future for any expiry" },
+        { label: "Resolve option symbol", desc: "Get the exact broker symbol for a strike and expiry" },
+      ],
+    },
+    {
       title: "Positions & Holdings",
       icon: Target,
       tools: [
@@ -173,6 +185,7 @@ export default function MCPPage() {
         { label: "Position book", desc: "See everything you're currently holding" },
         { label: "Long-term holdings", desc: "Your delivery / demat holdings" },
         { label: "Funds & margins", desc: "Cash balance and margin available to trade" },
+        { label: "Calculate margin", desc: "Work out margin needed before placing an order" },
       ],
     },
     {
@@ -189,6 +202,7 @@ export default function MCPPage() {
       icon: BarChart3,
       tools: [
         { label: "Live quote", desc: "Current price, bid, ask, and day's high/low" },
+        { label: "Multiple quotes at once", desc: "Pull LTP for a basket of symbols in a single ask" },
         { label: "Market depth", desc: "Top 5 buy/sell levels in the order book" },
         { label: "Historical charts", desc: "Past candles for any timeframe - daily, hourly, 5-min, etc." },
       ],
@@ -200,15 +214,21 @@ export default function MCPPage() {
         { label: "Search any symbol", desc: "Across NSE, BSE, F&O, commodity - all exchanges" },
         { label: "Symbol details", desc: "Lot size, tick size, expiry, strike, and more" },
         { label: "Expiry dates", desc: "Upcoming expiries for options and futures" },
+        { label: "Index symbols", desc: "Common index codes for NSE and BSE in one call" },
+        { label: "Full instrument list", desc: "Download every contract for an exchange" },
         { label: "Available intervals", desc: "Which chart timeframes your broker supports" },
       ],
     },
     {
-      title: "Helpful Extras",
+      title: "Sandbox, Alerts & Extras",
       icon: Info,
       tools: [
+        { label: "Toggle analyzer mode", desc: "Switch between live trading and Rs. 1 Cr sandbox without leaving chat" },
+        { label: "Send Telegram alert", desc: "Fire a custom message to your configured Telegram bot" },
+        { label: "Trading holidays", desc: "Get NSE/BSE/MCX holidays for the year - or check a specific date" },
+        { label: "Exchange timings", desc: "Market open/close for any exchange on any date" },
         { label: "OpenAlgo version", desc: "Which version is running on your computer" },
-        { label: "Valid order types", desc: "Quickly check what your broker accepts" },
+        { label: "Valid order constants", desc: "Quickly check what product and order types your broker accepts" },
       ],
     },
   ]
@@ -266,7 +286,7 @@ export default function MCPPage() {
               </a>
             </Button>
             <Button size="lg" variant="outline" asChild>
-              <a href="https://github.com/marketcalls/openalgo-mcp" target="_blank" rel="noopener noreferrer" className="flex items-center gap-2">
+              <a href="https://github.com/marketcalls/openalgo/tree/main/mcp" target="_blank" rel="noopener noreferrer" className="flex items-center gap-2">
                 <Github className="h-5 w-5" /> View on GitHub <ExternalLink className="h-4 w-4" />
               </a>
             </Button>
@@ -592,7 +612,7 @@ export default function MCPPage() {
           </p>
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
             <Button size="lg" asChild>
-              <a href="https://github.com/marketcalls/openalgo-mcp" target="_blank" rel="noopener noreferrer" className="flex items-center gap-2">
+              <a href="https://github.com/marketcalls/openalgo/tree/main/mcp" target="_blank" rel="noopener noreferrer" className="flex items-center gap-2">
                 <Github className="h-5 w-5" /> Get OpenAlgo MCP <ArrowRight className="h-4 w-4" />
               </a>
             </Button>

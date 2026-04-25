@@ -21,7 +21,7 @@ export default function DownloadPage() {
     { title: "Backtrader Integration", icon: "🔁", url: "https://github.com/p2c2e/openalgo-backtrader" },
     { title: "PineTS", icon: "⚡", url: "https://github.com/marketcalls/openalgo-pinets" },
     { title: "AlgoMirror", icon: "🪞", url: "https://github.com/marketcalls/algomirror" },
-    { title: "MCP / AI Agents", icon: "🤖", url: "https://github.com/marketcalls/openalgo-mcp", docs: "https://docs.openalgo.in/mcp" },
+    { title: "MCP / AI Agents", icon: "🤖", url: "https://github.com/marketcalls/openalgo/tree/main/mcp", docs: "https://docs.openalgo.in/mcp" },
     { title: "OpenAlgo Mobile", icon: "📱", url: "https://github.com/marketcalls/openalgo-mobile" },
     { title: "Web Portal", icon: "🌐", url: "https://github.com/marketcalls/openalgo-webpage" },
     { title: "Chrome Plugin", icon: "🧩", url: "https://github.com/marketcalls/openalgo-chrome" },
