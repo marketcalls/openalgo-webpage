@@ -143,7 +143,7 @@ export default function Home() {
             {[
               { icon: Download, value: "1,65,000+", label: "Downloads", color: "text-secondary" },
               { icon: Code2, value: "100%", label: "Open Source", color: "text-tertiary" },
-              { icon: Star, value: "1,800+", label: "GitHub Stars", color: "text-primary" },
+              { icon: Star, value: "1,900+", label: "GitHub Stars", color: "text-primary" },
             ].map(({ icon: Icon, value, label, color }) => (
               <div key={label} className="flex items-center gap-3">
                 <Icon className={`w-5 h-5 ${color}`} />
