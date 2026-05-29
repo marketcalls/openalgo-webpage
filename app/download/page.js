@@ -25,7 +25,8 @@ export default function DownloadPage() {
     { title: "OpenAlgo Mobile", icon: "📱", url: "https://github.com/marketcalls/openalgo-mobile" },
     { title: "Web Portal", icon: "🌐", url: "https://github.com/marketcalls/openalgo-webpage" },
     { title: "Chrome Plugin", icon: "🧩", url: "https://github.com/marketcalls/openalgo-chrome" },
-    { title: "Fast Scalper", icon: "🚄", url: "https://github.com/marketcalls/fastscalper-tauri" }
+    { title: "Fast Scalper", icon: "🚄", url: "https://github.com/marketcalls/fastscalper-tauri" },
+    { title: "OpenBull", icon: "🐂", url: "https://github.com/marketcalls/openbull" }
   ]
 
   const platformTabs = [
