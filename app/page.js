@@ -101,7 +101,7 @@ export default function Home() {
     { title: "Historify", description: "Fullstack Stock Market Data Management Platform", iconValue: "📚", url: "https://github.com/marketcalls/historify" },
     { title: "OpenQuest", description: "Realtime Stock Data Aggregator with TradingView Charts", iconValue: "📈", url: "https://github.com/marketcalls/openquest" },
     { title: "OpenAlgo Chart", description: "TradingView Lightweight Charts", iconValue: "🕯️", url: "https://github.com/crypt0inf0/openalgo-chart" },
-    { title: "OpenAlgo Docs", description: "Official Documentation", iconValue: "📖", url: "https://github.com/marketcalls/openalgo-docs" },
+    { title: "Marginism", description: "Offline SPAN margin calculator", iconValue: "🧮", url: "https://github.com/marketcalls/marginism" },
     { title: "Wars", description: "WhatsApp client for Python, powered by Rust. A thin PyO3 wrapper over whatsapp-rust", iconValue: "💬", url: "https://github.com/marketcalls/wars" },
     { title: "OpenGreeks", description: "Fast options pricing & Greeks for Python", icon: "component", iconComponent: Sigma, url: "https://github.com/marketcalls/opengreeks" },
     { title: "OpenBull", description: "Self Hostable Options Trading Platform", iconValue: "🐂", url: "https://github.com/marketcalls/openbull" }
