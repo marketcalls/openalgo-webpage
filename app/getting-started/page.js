@@ -31,7 +31,16 @@ import {
   Layers,
   ToggleLeft,
   Search,
-  Bot
+  Bot,
+  Hexagon,
+  Coffee,
+  Hash,
+  Wind,
+  Cog,
+  FileSpreadsheet,
+  Gauge,
+  CandlestickChart,
+  Workflow
 } from "lucide-react"
 import { useState } from "react"
 
@@ -94,13 +103,15 @@ export default function BeginnerPage() {
     { name: "Google Sheets", desc: "Sheet-based trading" },
   ]
 
+  const sdkAccents = ["text-primary", "text-secondary", "text-tertiary"]
+
   const sdks = [
-    { lang: "Python", emoji: "🐍" },
-    { lang: "Node.js", emoji: "🟢" },
-    { lang: "Java", emoji: "☕" },
-    { lang: ".NET", emoji: "🔷" },
-    { lang: "Go", emoji: "🔵" },
-    { lang: "Rust", emoji: "🦀" },
+    { lang: "Python", icon: Code2 },
+    { lang: "Node.js", icon: Hexagon },
+    { lang: "Java", icon: Coffee },
+    { lang: ".NET", icon: Hash },
+    { lang: "Go", icon: Wind },
+    { lang: "Rust", icon: Cog },
   ]
 
   return (
@@ -545,9 +556,9 @@ export default function BeginnerPage() {
               you&apos;re comfortable with, and it works across all 30+ brokers.
             </p>
             <div className="grid grid-cols-3 sm:grid-cols-6 gap-2 sm:gap-3">
-              {sdks.map(s => (
+              {sdks.map((s, index) => (
                 <div key={s.lang} className="rounded-lg sm:rounded-xl surface-container p-3 sm:p-4 text-center hover-lift transition-all">
-                  <span className="text-xl sm:text-2xl">{s.emoji}</span>
+                  <s.icon className={`h-5 w-5 sm:h-6 sm:w-6 mx-auto ${sdkAccents[index % sdkAccents.length]}`} />
                   <p className="font-label text-label-sm sm:text-label-md text-on-surface mt-1 sm:mt-2">{s.lang}</p>
                 </div>
               ))}
@@ -843,18 +854,20 @@ export default function BeginnerPage() {
 
           <div className="grid grid-cols-2 md:grid-cols-3 gap-3 sm:gap-4">
             {[
-              { emoji: "📊", name: "Excel Add-in", desc: "Trade from spreadsheets" },
-              { emoji: "📱", name: "Mobile App", desc: "Flutter-based trading terminal" },
-              { emoji: "🚄", name: "Fast Scalper", desc: "High-speed Rust + Tauri app" },
-              { emoji: "🔄", name: "AlgoMirror", desc: "Multi-account orchestrator" },
-              { emoji: "🤖", name: "MCP / AI Agents", desc: "AI-powered trading" },
-              { emoji: "📈", name: "OpenAlgo Chart", desc: "TradingView lightweight charts" },
-              { emoji: "🔀", name: "OpenAlgo Flow", desc: "N8N workflow automation" },
-              { emoji: "📚", name: "Historify", desc: "Historical data platform" },
-              { emoji: "🧩", name: "Chrome Plugin", desc: "Browser extension" },
-            ].map(tool => (
+              { icon: FileSpreadsheet, name: "Excel Add-in", desc: "Trade from spreadsheets" },
+              { icon: Smartphone, name: "Mobile App", desc: "Flutter-based trading terminal" },
+              { icon: Gauge, name: "Fast Scalper", desc: "High-speed Rust + Tauri app" },
+              { icon: Layers, name: "AlgoMirror", desc: "Multi-account orchestrator" },
+              { icon: Bot, name: "MCP / AI Agents", desc: "AI-powered trading" },
+              { icon: CandlestickChart, name: "OpenAlgo Chart", desc: "TradingView lightweight charts" },
+              { icon: Workflow, name: "OpenAlgo Flow", desc: "N8N workflow automation" },
+              { icon: Database, name: "Historify", desc: "Historical data platform" },
+              { icon: Puzzle, name: "Chrome Plugin", desc: "Browser extension" },
+            ].map((tool, index) => (
               <div key={tool.name} className="obsidian-card rounded-lg sm:rounded-xl p-3 sm:p-4 ghost-border hover-lift text-center">
-                <span className="text-xl sm:text-2xl">{tool.emoji}</span>
+                <div className={`inline-flex p-2 rounded-lg ${["bg-primary/10", "bg-secondary/10", "bg-tertiary/10"][index % 3]}`}>
+                  <tool.icon className={`h-5 w-5 ${sdkAccents[index % 3]}`} />
+                </div>
                 <p className="font-semibold text-xs sm:text-sm text-on-surface mt-1.5 sm:mt-2">{tool.name}</p>
                 <p className="text-xs text-on-surface-variant mt-1">{tool.desc}</p>
               </div>

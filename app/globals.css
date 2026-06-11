@@ -5,57 +5,8 @@
 @tailwind utilities;
 
 @layer base {
+  /* Obsidian dark theme - the only theme */
   :root {
-    /* Light mode - inverted obsidian for accessibility */
-    --background: 0 0% 97%;
-    --foreground: 0 0% 12%;
-
-    --card: 0 0% 100%;
-    --card-foreground: 0 0% 12%;
-
-    --popover: 0 0% 100%;
-    --popover-foreground: 0 0% 12%;
-
-    --primary: 267 100% 87%;
-    --primary-foreground: 267 40% 20%;
-
-    --secondary: 220 100% 84%;
-    --secondary-foreground: 220 40% 20%;
-
-    --tertiary: 140 72% 53%;
-    --tertiary-foreground: 140 40% 12%;
-
-    --muted: 0 0% 93%;
-    --muted-foreground: 0 0% 40%;
-
-    --accent: 267 30% 92%;
-    --accent-foreground: 267 40% 20%;
-
-    --destructive: 0 84% 60%;
-    --destructive-foreground: 0 0% 98%;
-
-    --border: 0 0% 88%;
-    --input: 0 0% 88%;
-    --ring: 267 100% 87%;
-
-    --radius: 0.5rem;
-
-    --surface: 0 0% 97%;
-    --surface-container-lowest: 0 0% 100%;
-    --surface-container-low: 0 0% 95%;
-    --surface-container: 0 0% 93%;
-    --surface-container-high: 0 0% 90%;
-    --surface-container-highest: 0 0% 87%;
-    --surface-bright: 0 0% 85%;
-    --on-surface: 0 0% 12%;
-    --on-surface-variant: 0 0% 40%;
-    --outline-variant: 0 0% 75%;
-    --primary-container: 267 60% 90%;
-    --tertiary-container: 140 40% 90%;
-    --error-container: 0 60% 90%;
-  }
-
-  .dark {
     --background: 0 0% 7.5%;
     --foreground: 0 0% 89%;
 
@@ -86,6 +37,8 @@
     --border: 0 0% 15%;
     --input: 0 0% 15%;
     --ring: 267 100% 87%;
+
+    --radius: 0.5rem;
 
     --surface: 0 0% 7.5%;
     --surface-container-lowest: 0 0% 5%;

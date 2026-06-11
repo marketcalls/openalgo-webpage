@@ -1,8 +1,6 @@
 import { ImageResponse } from 'next/og'
 import { OpenGraphImage } from '@/components/OpenGraphImage'
 
-export const runtime = 'edge'
-
 export async function GET() {
   try {
     const title = 'OpenAlgo - Your Personal Algo Trading Platform'

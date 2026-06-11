@@ -1,32 +1,47 @@
 "use client"
 
 import { Button } from "@/components/ui/button"
-import { Download, Laptop, Monitor, Terminal, ExternalLink, Github, Package, Chrome, FileSpreadsheet, GitBranch, BookOpen } from "lucide-react"
+import { Download, Laptop, Monitor, Terminal, ExternalLink, Github, Package, Chrome, FileSpreadsheet, GitBranch, BookOpen, Brain, Code2, Hexagon, Coffee, Hash, Wind, Plug, History, Zap, Layers, Bot, Smartphone, Globe, Puzzle, Gauge, TrendingUp } from "lucide-react"
 import { useState } from "react"
+
+const iconAccents = [
+  { tile: "bg-primary/10", glyph: "text-primary" },
+  { tile: "bg-secondary/10", glyph: "text-secondary" },
+  { tile: "bg-tertiary/10", glyph: "text-tertiary" },
+]
+
+function ProjectIcon({ icon: Icon, index = 0 }) {
+  const accent = iconAccents[index % iconAccents.length]
+  return (
+    <div className={`inline-flex p-2 rounded-lg ${accent.tile}`}>
+      <Icon className={`h-5 w-5 ${accent.glyph}`} />
+    </div>
+  )
+}
 
 export default function DownloadPage() {
   const [activePlatform, setActivePlatform] = useState("mac")
 
   const sdks = [
-    { title: "Python", icon: "🐍", url: "https://github.com/marketcalls/openalgo-python-library", docs: "https://docs.openalgo.in/trading-platform/python" },
-    { title: "Node.js", icon: "🟢", url: "https://github.com/marketcalls/openalgo-node", docs: "https://docs.openalgo.in/trading-platform/nodejs" },
-    { title: "Java", icon: "☕", url: "https://github.com/marketcalls/openalgo-java", docs: "https://docs.openalgo.in/trading-platform/java" },
-    { title: ".NET / C#", icon: "🔷", url: "https://github.com/marketcalls/openalgo.NET", docs: "https://docs.openalgo.in/trading-platform/.net" },
-    { title: "Go", icon: "🔵", url: "https://github.com/marketcalls/openalgo-go", docs: "https://docs.openalgo.in/trading-platform/go" }
+    { title: "Python", icon: Code2, url: "https://github.com/marketcalls/openalgo-python-library", docs: "https://docs.openalgo.in/trading-platform/python" },
+    { title: "Node.js", icon: Hexagon, url: "https://github.com/marketcalls/openalgo-node", docs: "https://docs.openalgo.in/trading-platform/nodejs" },
+    { title: "Java", icon: Coffee, url: "https://github.com/marketcalls/openalgo-java", docs: "https://docs.openalgo.in/trading-platform/java" },
+    { title: ".NET / C#", icon: Hash, url: "https://github.com/marketcalls/openalgo.NET", docs: "https://docs.openalgo.in/trading-platform/.net" },
+    { title: "Go", icon: Wind, url: "https://github.com/marketcalls/openalgo-go", docs: "https://docs.openalgo.in/trading-platform/go" }
   ]
 
   const integrations = [
-    { title: "Excel Add-in", icon: "📊", url: "https://github.com/marketcalls/OpenAlgo-Excel", docs: "https://docs.openalgo.in/trading-platform/excel" },
-    { title: "Amibroker Plugin", icon: "📉", url: "https://github.com/marketcalls/OpenAlgoPlugin", docs: "https://docs.openalgo.in/trading-platform/amibroker/amibroker-plugin" },
-    { title: "Backtrader Integration", icon: "🔁", url: "https://github.com/p2c2e/openalgo-backtrader" },
-    { title: "PineTS", icon: "⚡", url: "https://github.com/marketcalls/openalgo-pinets" },
-    { title: "AlgoMirror", icon: "🪞", url: "https://github.com/marketcalls/algomirror" },
-    { title: "MCP / AI Agents", icon: "🤖", url: "https://github.com/marketcalls/openalgo/tree/main/mcp", docs: "https://docs.openalgo.in/mcp" },
-    { title: "OpenAlgo Mobile", icon: "📱", url: "https://github.com/marketcalls/openalgo-mobile" },
-    { title: "Web Portal", icon: "🌐", url: "https://github.com/marketcalls/openalgo-webpage" },
-    { title: "Chrome Plugin", icon: "🧩", url: "https://github.com/marketcalls/openalgo-chrome" },
-    { title: "Fast Scalper", icon: "🚄", url: "https://github.com/marketcalls/fastscalper-tauri" },
-    { title: "OpenBull", icon: "🐂", url: "https://github.com/marketcalls/openbull" }
+    { title: "Excel Add-in", icon: FileSpreadsheet, url: "https://github.com/marketcalls/OpenAlgo-Excel", docs: "https://docs.openalgo.in/trading-platform/excel" },
+    { title: "Amibroker Plugin", icon: Plug, url: "https://github.com/marketcalls/OpenAlgoPlugin", docs: "https://docs.openalgo.in/trading-platform/amibroker/amibroker-plugin" },
+    { title: "Backtrader Integration", icon: History, url: "https://github.com/p2c2e/openalgo-backtrader" },
+    { title: "PineTS", icon: Zap, url: "https://github.com/marketcalls/openalgo-pinets" },
+    { title: "AlgoMirror", icon: Layers, url: "https://github.com/marketcalls/algomirror" },
+    { title: "MCP / AI Agents", icon: Bot, url: "https://github.com/marketcalls/openalgo/tree/main/mcp", docs: "https://docs.openalgo.in/mcp" },
+    { title: "OpenAlgo Mobile", icon: Smartphone, url: "https://github.com/marketcalls/openalgo-mobile" },
+    { title: "Web Portal", icon: Globe, url: "https://github.com/marketcalls/openalgo-webpage" },
+    { title: "Chrome Plugin", icon: Puzzle, url: "https://github.com/marketcalls/openalgo-chrome" },
+    { title: "Fast Scalper", icon: Gauge, url: "https://github.com/marketcalls/fastscalper-tauri" },
+    { title: "OpenBull", icon: TrendingUp, url: "https://github.com/marketcalls/openbull" }
   ]
 
   const platformTabs = [
@@ -71,7 +86,7 @@ export default function DownloadPage() {
           {/* Core Project */}
           <div className="mb-12">
             <h3 className="text-lg font-semibold mb-5 flex items-center justify-center gap-2">
-              <span className="text-xl">🧠</span>
+              <Brain className="h-5 w-5 text-primary" />
               <span className="font-label text-label-lg uppercase tracking-wider text-on-surface-variant">Core Project</span>
             </h3>
             <div className="flex justify-center">
@@ -100,7 +115,7 @@ export default function DownloadPage() {
                 <a key={index} href={sdk.url} target="_blank" rel="noopener noreferrer"
                    className="obsidian-card p-5 rounded-xl hover-lift group ghost-border">
                   <div className="flex items-start justify-between mb-3">
-                    <span className="text-2xl">{sdk.icon}</span>
+                    <ProjectIcon icon={sdk.icon} index={index} />
                     <ExternalLink className="h-4 w-4 text-on-surface-variant group-hover:text-primary transition-colors" />
                   </div>
                   <h4 className="font-semibold mb-1 text-on-surface">{sdk.title}</h4>
@@ -129,7 +144,7 @@ export default function DownloadPage() {
                 <a key={index} href={item.url} target="_blank" rel="noopener noreferrer"
                    className="obsidian-card p-5 rounded-xl hover-lift group ghost-border">
                   <div className="flex items-start justify-between mb-3">
-                    <span className="text-2xl">{item.icon}</span>
+                    <ProjectIcon icon={item.icon} index={index} />
                     <ExternalLink className="h-4 w-4 text-on-surface-variant group-hover:text-primary transition-colors" />
                   </div>
                   <h4 className="font-semibold text-sm mb-1 text-on-surface">{item.title}</h4>
@@ -155,17 +170,17 @@ export default function DownloadPage() {
             </p>
             <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-4">
               {[
-                { emoji: "🐍", label: "Python Docs", url: "https://docs.openalgo.in/trading-platform/python" },
-                { emoji: "🟢", label: "Node.js Docs", url: "https://docs.openalgo.in/trading-platform/nodejs" },
-                { emoji: "☕", label: "Java Docs", url: "https://docs.openalgo.in/trading-platform/java" },
-                { emoji: "🔷", label: ".NET Docs", url: "https://docs.openalgo.in/trading-platform/.net" },
-                { emoji: "🔵", label: "Go Docs", url: "https://docs.openalgo.in/trading-platform/go" },
-                { emoji: "📊", label: "Excel Docs", url: "https://docs.openalgo.in/trading-platform/excel" },
-                { emoji: "📉", label: "Amibroker Docs", url: "https://docs.openalgo.in/trading-platform/amibroker/amibroker-plugin" },
-                { emoji: "🤖", label: "MCP / AI Docs", url: "https://docs.openalgo.in/mcp" },
-              ].map(({ emoji, label, url }) => (
+                { icon: Code2, label: "Python Docs", url: "https://docs.openalgo.in/trading-platform/python" },
+                { icon: Hexagon, label: "Node.js Docs", url: "https://docs.openalgo.in/trading-platform/nodejs" },
+                { icon: Coffee, label: "Java Docs", url: "https://docs.openalgo.in/trading-platform/java" },
+                { icon: Hash, label: ".NET Docs", url: "https://docs.openalgo.in/trading-platform/.net" },
+                { icon: Wind, label: "Go Docs", url: "https://docs.openalgo.in/trading-platform/go" },
+                { icon: FileSpreadsheet, label: "Excel Docs", url: "https://docs.openalgo.in/trading-platform/excel" },
+                { icon: Plug, label: "Amibroker Docs", url: "https://docs.openalgo.in/trading-platform/amibroker/amibroker-plugin" },
+                { icon: Bot, label: "MCP / AI Docs", url: "https://docs.openalgo.in/mcp" },
+              ].map(({ icon: Icon, label, url }) => (
                 <a key={label} href={url} target="_blank" rel="noopener noreferrer" className="text-sm text-primary hover:underline flex items-center gap-2 font-label">
-                  <span>{emoji}</span> {label}
+                  <Icon className="h-4 w-4" /> {label}
                 </a>
               ))}
             </div>

@@ -6,7 +6,6 @@ import { Home, HelpCircle, Book, Menu, GitBranch, Github, X, ArrowDownToLine, Me
 import { Button } from './ui/button'
 import { clsx } from 'clsx'
 import { useState, useEffect } from 'react'
-import { ThemeToggle } from './theme-toggle'
 
 export function Navbar() {
   const pathname = usePathname()
@@ -106,8 +105,6 @@ export function Navbar() {
               className="h-5"
             />
           </a>
-
-          <ThemeToggle />
 
           <Button
             variant="ghost"

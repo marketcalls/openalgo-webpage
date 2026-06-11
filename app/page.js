@@ -32,8 +32,39 @@ import {
   Wallet,
   PieChart,
   Wand2,
-  Bot
+  Bot,
+  Brain,
+  Hexagon,
+  Coffee,
+  Hash,
+  Wind,
+  Cog,
+  Plug,
+  History,
+  FlaskConical,
+  Smartphone,
+  Puzzle,
+  Workflow,
+  Database,
+  CandlestickChart,
+  Calculator,
+  MessageCircle
 } from "lucide-react"
+
+const iconAccents = [
+  { tile: "bg-primary/10", glyph: "text-primary" },
+  { tile: "bg-secondary/10", glyph: "text-secondary" },
+  { tile: "bg-tertiary/10", glyph: "text-tertiary" },
+]
+
+function ProjectIcon({ icon: Icon, index = 0, size = "h-5 w-5" }) {
+  const accent = iconAccents[index % iconAccents.length]
+  return (
+    <div className={`inline-flex p-2 rounded-lg ${accent.tile}`}>
+      <Icon className={`${size} ${accent.glyph}`} />
+    </div>
+  )
+}
 
 export default function Home() {
   const highlights = [
@@ -71,40 +102,40 @@ export default function Home() {
   const coreProject = {
     title: "OpenAlgo Core",
     description: "Central API service, authentication, routing, and platform logic",
-    iconValue: "🧠",
+    icon: Brain,
     url: "https://github.com/marketcalls/openalgo"
   }
 
   const sdks = [
-    { title: "Python SDK", description: "Official Python SDK for OpenAlgo API", iconValue: "🔶", url: "https://github.com/marketcalls/openalgo-python-library", docs: "https://docs.openalgo.in/trading-platform/python" },
-    { title: "Node.js SDK", description: "JavaScript/TypeScript SDK", iconValue: "🟢", url: "https://github.com/marketcalls/openalgo-node", docs: "https://docs.openalgo.in/trading-platform/nodejs" },
-    { title: "Java SDK", description: "Official Java SDK for OpenAlgo", iconValue: "☕", url: "https://github.com/marketcalls/openalgo-java", docs: "https://docs.openalgo.in/trading-platform/java" },
-    { title: ".NET SDK", description: "C# / .NET SDK for OpenAlgo", iconValue: "🔷", url: "https://github.com/marketcalls/openalgo.NET", docs: "https://docs.openalgo.in/trading-platform/.net" },
-    { title: "Go SDK", description: "Golang SDK for OpenAlgo", iconValue: "🔵", url: "https://github.com/marketcalls/openalgo-go", docs: "https://docs.openalgo.in/trading-platform/go" },
-    { title: "Rust SDK", description: "Official Rust SDK for OpenAlgo", iconValue: "🦀", url: "https://github.com/marketcalls/openalgo-rust" }
+    { title: "Python SDK", description: "Official Python SDK for OpenAlgo API", icon: Code2, url: "https://github.com/marketcalls/openalgo-python-library", docs: "https://docs.openalgo.in/trading-platform/python" },
+    { title: "Node.js SDK", description: "JavaScript/TypeScript SDK", icon: Hexagon, url: "https://github.com/marketcalls/openalgo-node", docs: "https://docs.openalgo.in/trading-platform/nodejs" },
+    { title: "Java SDK", description: "Official Java SDK for OpenAlgo", icon: Coffee, url: "https://github.com/marketcalls/openalgo-java", docs: "https://docs.openalgo.in/trading-platform/java" },
+    { title: ".NET SDK", description: "C# / .NET SDK for OpenAlgo", icon: Hash, url: "https://github.com/marketcalls/openalgo.NET", docs: "https://docs.openalgo.in/trading-platform/.net" },
+    { title: "Go SDK", description: "Golang SDK for OpenAlgo", icon: Wind, url: "https://github.com/marketcalls/openalgo-go", docs: "https://docs.openalgo.in/trading-platform/go" },
+    { title: "Rust SDK", description: "Official Rust SDK for OpenAlgo", icon: Cog, url: "https://github.com/marketcalls/openalgo-rust" }
   ]
 
   const integrations = [
-    { title: "Excel Add-in", description: "Trade from Excel spreadsheets", icon: "component", iconComponent: FileSpreadsheet, url: "https://github.com/marketcalls/OpenAlgo-Excel", docs: "https://docs.openalgo.in/trading-platform/excel" },
-    { title: "Amibroker Plugin", description: "OpenAlgo Plugin for Amibroker", iconValue: "🔌", url: "https://github.com/marketcalls/OpenAlgoPlugin", docs: "https://docs.openalgo.in/trading-platform/amibroker/amibroker-plugin" },
-    { title: "Backtrader", description: "Python Library for backtesting", icon: "component", iconComponent: TrendingUp, url: "https://github.com/p2c2e/openalgo-backtrader" },
-    { title: "PineTS", description: "TradingView indicators integration", iconValue: "⚡", url: "https://github.com/marketcalls/openalgo-pinets" },
-    { title: "AlgoMirror", description: "Multi Account OpenAlgo Orchestrator", iconValue: "🔄", url: "https://github.com/marketcalls/algomirror" },
-    { title: "MCP / AI Agents", description: "Model Context Protocol integration", iconValue: "🤖", url: "/mcp", docs: "https://docs.openalgo.in/mcp" },
-    { title: "Indicator Skills", description: "AI agent skills for 100+ indicators, charts & scanners", iconValue: "📊", url: "/skills", docs: "https://docs.openalgo.in/skills/indicators" },
-    { title: "Backtesting Skills", description: "VectorBT backtesting skills for Claude Code, Cursor, Codex", iconValue: "🧪", url: "/skills", docs: "https://docs.openalgo.in/skills/backtesting" },
-    { title: "OpenAlgo Mobile", description: "Flutter Mobile Trading App", iconValue: "📱", url: "https://github.com/marketcalls/openalgo-mobile" },
-    { title: "Web Portal", description: "NextJS + ShadcnUI web interface", iconValue: "🌐", url: "https://github.com/marketcalls/openalgo-webpage" },
-    { title: "Chrome Plugin", description: "Browser extension for OpenAlgo", iconValue: "🧩", url: "https://github.com/marketcalls/openalgo-chrome" },
-    { title: "Fast Scalper", description: "High-performance app (Rust + Tauri)", iconValue: "🚄", url: "https://github.com/marketcalls/fastscalper-tauri" },
-    { title: "OpenAlgo Flow", description: "N8N for Traders/Investors", iconValue: "🔀", url: "https://github.com/marketcalls/openalgo-flow" },
-    { title: "Historify", description: "Fullstack Stock Market Data Management Platform", iconValue: "📚", url: "https://github.com/marketcalls/historify" },
-    { title: "OpenQuest", description: "Realtime Stock Data Aggregator with TradingView Charts", iconValue: "📈", url: "https://github.com/marketcalls/openquest" },
-    { title: "OpenAlgo Chart", description: "TradingView Lightweight Charts", iconValue: "🕯️", url: "https://github.com/crypt0inf0/openalgo-chart" },
-    { title: "Marginism", description: "Offline SPAN margin calculator", iconValue: "🧮", url: "https://github.com/marketcalls/marginism" },
-    { title: "Wars", description: "WhatsApp client for Python, powered by Rust. A thin PyO3 wrapper over whatsapp-rust", iconValue: "💬", url: "https://github.com/marketcalls/wars" },
-    { title: "OpenGreeks", description: "Fast options pricing & Greeks for Python", icon: "component", iconComponent: Sigma, url: "https://github.com/marketcalls/opengreeks" },
-    { title: "OpenBull", description: "Self Hostable Options Trading Platform", iconValue: "🐂", url: "https://github.com/marketcalls/openbull" }
+    { title: "Excel Add-in", description: "Trade from Excel spreadsheets", icon: FileSpreadsheet, url: "https://github.com/marketcalls/OpenAlgo-Excel", docs: "https://docs.openalgo.in/trading-platform/excel" },
+    { title: "Amibroker Plugin", description: "OpenAlgo Plugin for Amibroker", icon: Plug, url: "https://github.com/marketcalls/OpenAlgoPlugin", docs: "https://docs.openalgo.in/trading-platform/amibroker/amibroker-plugin" },
+    { title: "Backtrader", description: "Python Library for backtesting", icon: History, url: "https://github.com/p2c2e/openalgo-backtrader" },
+    { title: "PineTS", description: "TradingView indicators integration", icon: Zap, url: "https://github.com/marketcalls/openalgo-pinets" },
+    { title: "AlgoMirror", description: "Multi Account OpenAlgo Orchestrator", icon: Layers, url: "https://github.com/marketcalls/algomirror" },
+    { title: "MCP / AI Agents", description: "Model Context Protocol integration", icon: Bot, url: "/mcp", docs: "https://docs.openalgo.in/mcp" },
+    { title: "Indicator Skills", description: "AI agent skills for 100+ indicators, charts & scanners", icon: BarChart3, url: "/skills", docs: "https://docs.openalgo.in/skills/indicators" },
+    { title: "Backtesting Skills", description: "VectorBT backtesting skills for Claude Code, Cursor, Codex", icon: FlaskConical, url: "/skills", docs: "https://docs.openalgo.in/skills/backtesting" },
+    { title: "OpenAlgo Mobile", description: "Flutter Mobile Trading App", icon: Smartphone, url: "https://github.com/marketcalls/openalgo-mobile" },
+    { title: "Web Portal", description: "NextJS + ShadcnUI web interface", icon: Globe, url: "https://github.com/marketcalls/openalgo-webpage" },
+    { title: "Chrome Plugin", description: "Browser extension for OpenAlgo", icon: Puzzle, url: "https://github.com/marketcalls/openalgo-chrome" },
+    { title: "Fast Scalper", description: "High-performance app (Rust + Tauri)", icon: Gauge, url: "https://github.com/marketcalls/fastscalper-tauri" },
+    { title: "OpenAlgo Flow", description: "N8N for Traders/Investors", icon: Workflow, url: "https://github.com/marketcalls/openalgo-flow" },
+    { title: "Historify", description: "Fullstack Stock Market Data Management Platform", icon: Database, url: "https://github.com/marketcalls/historify" },
+    { title: "OpenQuest", description: "Realtime Stock Data Aggregator with TradingView Charts", icon: Activity, url: "https://github.com/marketcalls/openquest" },
+    { title: "OpenAlgo Chart", description: "TradingView Lightweight Charts", icon: CandlestickChart, url: "https://github.com/crypt0inf0/openalgo-chart" },
+    { title: "Marginism", description: "Offline SPAN margin calculator", icon: Calculator, url: "https://github.com/marketcalls/marginism" },
+    { title: "Wars", description: "WhatsApp client for Python, powered by Rust. A thin PyO3 wrapper over whatsapp-rust", icon: MessageCircle, url: "https://github.com/marketcalls/wars" },
+    { title: "OpenGreeks", description: "Fast options pricing & Greeks for Python", icon: Sigma, url: "https://github.com/marketcalls/opengreeks" },
+    { title: "OpenBull", description: "Self Hostable Options Trading Platform", icon: TrendingUp, url: "https://github.com/marketcalls/openbull" }
   ]
 
   return (
@@ -144,7 +175,7 @@ export default function Home() {
           {/* Stats */}
           <div className="flex flex-wrap items-center justify-center gap-8 sm:gap-12 mb-12">
             {[
-              { icon: Download, value: "1,80,000+", label: "Downloads", color: "text-secondary" },
+              { icon: Download, value: "1,95,000+", label: "Downloads", color: "text-secondary" },
               { icon: Code2, value: "100%", label: "Open Source", color: "text-tertiary" },
               { icon: Star, value: "2,000+", label: "GitHub Stars", color: "text-primary" },
             ].map(({ icon: Icon, value, label, color }) => (
@@ -397,7 +428,7 @@ export default function Home() {
             {/* Core Project */}
             <div className="mb-10">
               <h3 className="text-headline-sm mb-5 flex items-center justify-center gap-2">
-                <span className="text-xl">🧠</span>
+                <Brain className="h-5 w-5 text-primary" />
                 <span className="font-label text-label-lg uppercase tracking-wider text-on-surface-variant">Core Project</span>
               </h3>
               <div className="flex justify-center">
@@ -408,7 +439,10 @@ export default function Home() {
                   className="obsidian-card p-6 rounded-xl hover-lift group block max-w-md ghost-border"
                 >
                   <div className="flex items-start justify-between mb-3">
-                    <h4 className="font-semibold text-on-surface">{coreProject.title}</h4>
+                    <div className="flex items-center gap-3">
+                      <ProjectIcon icon={coreProject.icon} />
+                      <h4 className="font-semibold text-on-surface">{coreProject.title}</h4>
+                    </div>
                     <ExternalLink className="h-4 w-4 text-on-surface-variant group-hover:text-primary transition-colors" />
                   </div>
                   <p className="text-sm text-on-surface-variant">{coreProject.description}</p>
@@ -432,7 +466,7 @@ export default function Home() {
                     className="obsidian-card p-5 rounded-xl hover-lift group ghost-border"
                   >
                     <div className="flex items-start justify-between mb-3">
-                      <span className="text-2xl">{sdk.iconValue}</span>
+                      <ProjectIcon icon={sdk.icon} index={index} />
                       <ExternalLink className="h-3 w-3 text-on-surface-variant group-hover:text-primary transition-colors" />
                     </div>
                     <h4 className="font-semibold text-sm mb-1 text-on-surface">{sdk.title}</h4>
@@ -449,31 +483,22 @@ export default function Home() {
                 <span className="font-label text-label-lg uppercase tracking-wider text-on-surface-variant">Libraries & Platform Integrations</span>
               </h3>
               <div className="grid gap-4 md:grid-cols-3 lg:grid-cols-5">
-                {integrations.map((project, index) => {
-                  const IconComponent = project.iconComponent
-                  return (
-                    <a
-                      key={index}
-                      href={project.url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="obsidian-card p-4 rounded-xl hover-lift group ghost-border"
-                    >
-                      <div className="flex items-start justify-between mb-2">
-                        {project.icon === 'component' ? (
-                          <div className="p-1.5 rounded-lg surface-container">
-                            <IconComponent className="h-5 w-5 text-primary" />
-                          </div>
-                        ) : (
-                          <span className="text-2xl">{project.iconValue}</span>
-                        )}
-                        <ExternalLink className="h-3 w-3 text-on-surface-variant group-hover:text-primary transition-colors" />
-                      </div>
-                      <h4 className="font-semibold text-sm mb-1 text-on-surface">{project.title}</h4>
-                      <p className="text-xs text-on-surface-variant">{project.description}</p>
-                    </a>
-                  )
-                })}
+                {integrations.map((project, index) => (
+                  <a
+                    key={index}
+                    href={project.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="obsidian-card p-4 rounded-xl hover-lift group ghost-border"
+                  >
+                    <div className="flex items-start justify-between mb-2">
+                      <ProjectIcon icon={project.icon} index={index} />
+                      <ExternalLink className="h-3 w-3 text-on-surface-variant group-hover:text-primary transition-colors" />
+                    </div>
+                    <h4 className="font-semibold text-sm mb-1 text-on-surface">{project.title}</h4>
+                    <p className="text-xs text-on-surface-variant">{project.description}</p>
+                  </a>
+                ))}
               </div>
             </div>
 

@@ -6,7 +6,9 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "preview": "opennextjs-cloudflare build && opennextjs-cloudflare preview",
+    "deploy": "opennextjs-cloudflare build && opennextjs-cloudflare deploy"
   },
   "dependencies": {
     "@radix-ui/react-accordion": "^1.1.2",
@@ -21,7 +23,6 @@
     "clsx": "^2.1.0",
     "lucide-react": "^0.475.0",
     "next": "^15.4.8",
-    "next-themes": "^0.4.4",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "tailwind-merge": "^2.2.1",
@@ -29,6 +30,7 @@
     "three": "^0.182.0"
   },
   "devDependencies": {
+    "@opennextjs/cloudflare": "^1.19.11",
     "@types/node": "^20.11.24",
     "@types/react": "^19.0.0",
     "@types/react-dom": "^19.0.0",
@@ -37,6 +39,7 @@
     "eslint-config-next": "^15.4.8",
     "postcss": "^8.4.35",
     "tailwindcss": "^3.4.1",
-    "typescript": "^5.3.3"
+    "typescript": "^5.3.3",
+    "wrangler": "^4.100.0"
   }
 }
