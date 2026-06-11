@@ -87,8 +87,8 @@ export default function BeginnerPage() {
 
   const brokerPlatforms = [
     "Zerodha", "Angel One", "Fyers", "Upstox", "Dhan", "Groww",
-    "Kotak", "5paisa", "Shoonya", "Flattrade", "Firstock",
-    "Aliceblue", "IIFL", "INDMoney", "Pocketful", "Zebu",
+    "Kotak", "5paisa", "Arrow", "Shoonya", "Flattrade", "Firstock",
+    "Aliceblue", "IIFL Capital", "IIFL (XTS)", "INDMoney", "Pocketful", "Zebu",
     "Definedge", "and more..."
   ]
 
