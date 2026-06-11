@@ -143,9 +143,12 @@ export default function Home() {
       {/* Hero Section */}
       <div className="min-h-[calc(100vh-4rem)] flex flex-col items-center justify-center px-4 py-16 relative overflow-hidden">
         <div className="absolute inset-0 obsidian-grid" />
+        <div className="glow-orb w-[640px] h-[320px] bg-primary/15 top-[12%] left-1/2 -translate-x-1/2" />
+        <div className="glow-orb w-[400px] h-[240px] bg-secondary/10 bottom-[18%] left-[12%]" />
+        <div className="glow-orb w-[320px] h-[220px] bg-tertiary/10 bottom-[10%] right-[10%]" />
         <div className="text-center max-w-4xl mx-auto relative z-10">
           {/* V2 Release Badge */}
-          <div className="inline-flex items-center gap-2 px-4 py-2 mb-10 rounded-full surface-low ghost-border">
+          <div className="reveal reveal-1 inline-flex items-center gap-2 px-4 py-2 mb-10 rounded-full surface-low ghost-border">
             <div className="w-2 h-2 rounded-full bg-tertiary pulse-live" />
             <span className="font-label text-label-md uppercase tracking-wider">
               <span className="text-primary">New in V2</span>
@@ -155,7 +158,7 @@ export default function Home() {
           </div>
 
           {/* Main Headline */}
-          <h1 className="text-display-lg sm:text-[4.5rem] leading-[1.05] mb-6 tracking-tight">
+          <h1 className="reveal reveal-2 text-display-lg sm:text-[4.5rem] leading-[1.05] mb-6 tracking-tight">
             <span className="block text-on-surface">Your Personal</span>
             <span className="bg-clip-text text-transparent bg-gradient-to-r from-primary via-secondary to-tertiary animate-gradient">
               Algo Trading Platform
@@ -163,17 +166,17 @@ export default function Home() {
           </h1>
 
           {/* Tagline */}
-          <p className="text-headline-sm font-semibold text-primary mb-6">
+          <p className="reveal reveal-3 text-headline-sm font-semibold text-primary mb-6">
             Community Driven Algo Trading Platform
           </p>
 
           {/* Description */}
-          <p className="text-lg text-on-surface-variant max-w-2xl mx-auto mb-12 leading-relaxed">
+          <p className="reveal reveal-4 text-lg text-on-surface-variant max-w-2xl mx-auto mb-12 leading-relaxed">
             Test and Execute your Trading ideas, Connect your favorite Trading Platforms, AI Driven Strategy Development with a built-in Options Analytics Suite across 30+ Brokers.
           </p>
 
           {/* Stats */}
-          <div className="flex flex-wrap items-center justify-center gap-8 sm:gap-12 mb-12">
+          <div className="reveal reveal-5 flex flex-wrap items-center justify-center gap-8 sm:gap-12 mb-12">
             {[
               { icon: Download, value: "1,95,000+", label: "Downloads", color: "text-secondary" },
               { icon: Code2, value: "100%", label: "Open Source", color: "text-tertiary" },
@@ -188,7 +191,7 @@ export default function Home() {
           </div>
 
           {/* CTA Buttons */}
-          <div className="flex flex-col sm:flex-row gap-4 justify-center mb-16">
+          <div className="reveal reveal-6 flex flex-col sm:flex-row gap-4 justify-center mb-16">
             <Button asChild size="lg">
               <a href="/getting-started" className="flex items-center">
                 Get Started
@@ -204,7 +207,7 @@ export default function Home() {
           </div>
 
           {/* Platform Integrations */}
-          <div>
+          <div className="reveal reveal-7">
             <p className="font-label text-label-md text-on-surface-variant mb-4 uppercase tracking-widest">Integrates With</p>
             <div className="flex flex-wrap justify-center gap-2 max-w-3xl mx-auto">
               {[

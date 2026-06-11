@@ -15,8 +15,9 @@ module.exports = {
     },
     extend: {
       fontFamily: {
-        sans: ['Inter', 'ui-sans-serif', 'system-ui', 'sans-serif'],
-        label: ['"Space Grotesk"', 'ui-monospace', 'monospace'],
+        sans: ['Manrope', 'ui-sans-serif', 'system-ui', 'sans-serif'],
+        display: ['Sora', 'ui-sans-serif', 'system-ui', 'sans-serif'],
+        label: ['"IBM Plex Mono"', 'ui-monospace', 'monospace'],
       },
       fontSize: {
         'display-lg': ['3.5rem', { lineHeight: '1.1', letterSpacing: '-0.02em', fontWeight: '700' }],

@@ -45,7 +45,7 @@ export function Navbar() {
       <header className={navClasses}>
         <div className="container flex h-16 items-center justify-between">
           <Link href="/" className="flex items-center space-x-2">
-            <span className="text-lg font-bold text-on-surface">OpenAlgo</span>
+            <span className="font-display text-lg font-bold text-on-surface">OpenAlgo</span>
           </Link>
         </div>
       </header>
@@ -56,7 +56,7 @@ export function Navbar() {
     <header className={navClasses}>
       <div className="container flex h-16 items-center justify-between">
         <Link href="/" className="flex items-center space-x-2 group">
-          <span className="text-lg font-bold text-on-surface group-hover:text-primary transition-colors">
+          <span className="font-display text-lg font-bold text-on-surface group-hover:text-primary transition-colors">
             OpenAlgo
           </span>
         </Link>
