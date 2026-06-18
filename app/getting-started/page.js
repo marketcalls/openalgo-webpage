@@ -177,7 +177,7 @@ export default function BeginnerPage() {
                 {[
                   "Single-user application: one instance, one broker",
                   "No inbuilt strategies: you bring your own ideas",
-                  "30+ Indian brokers supported (and growing)",
+                  "33+ Indian brokers supported (and growing)",
                   "You can vibe code your strategies using AI tools",
                   "100% free, 100% open source (AGPL-3.0)",
                   "Runs on Windows, Mac, Linux, even Raspberry Pi"
@@ -518,7 +518,7 @@ export default function BeginnerPage() {
           <div className="mb-8 sm:mb-10">
             <h3 className="text-lg sm:text-headline-sm mb-4 sm:mb-5 text-on-surface flex items-center gap-2">
               <Network className="w-4 h-4 sm:w-5 sm:h-5 text-primary" />
-              30+ Supported Brokers
+              33+ Supported Brokers
             </h3>
             <div className="flex flex-wrap gap-2">
               {brokerPlatforms.map(name => (
@@ -553,7 +553,7 @@ export default function BeginnerPage() {
             </h3>
             <p className="text-on-surface-variant mb-5">
               Most brokers offer SDKs in 1 or 2 languages. OpenAlgo gives you SDKs in 6. Use whichever language
-              you&apos;re comfortable with, and it works across all 30+ brokers.
+              you&apos;re comfortable with, and it works across all 33+ brokers.
             </p>
             <div className="grid grid-cols-3 sm:grid-cols-6 gap-2 sm:gap-3">
               {sdks.map((s, index) => (

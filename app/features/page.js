@@ -39,7 +39,7 @@ const features = [
   { title: "Chartink Integration", description: "Convert any Chartink scanner into an auto-trading strategy - stocks that match the filter get traded for you", icon: LineChart, category: "Integration" },
   { title: "GoCharting Integration", description: "GoCharting alerts and indicators can trigger live orders through OpenAlgo - Indian-market-native charting meets automation", icon: LineChart, category: "Integration" },
   { title: "Multi-Platform Trading", description: "Trade from Amibroker, TradingView, Python, MetaTrader, Excel, or Google Sheets - OpenAlgo is the bridge to your broker", icon: Link2, category: "Integration" },
-  { title: "30+ Broker Support", description: "Connect seamlessly with India's top broking platforms across discount, full-service, and emerging brokers", icon: Network, category: "Integration" },
+  { title: "33+ Broker Support", description: "Connect seamlessly with India's top broking platforms across discount, full-service, and emerging brokers", icon: Network, category: "Integration" },
   { title: "Trade By Chatting (MCP)", description: "Connect your OpenAlgo account to Claude, Cursor, Windsurf, or ChatGPT and place orders, check positions, and pull live prices just by asking", icon: Bot, category: "Integration" },
   { title: "AI Skills for Indicators & Charts", description: "Ready-made abilities for your AI assistant - chart any indicator, scan stocks, build custom indicators, and stream live prices with one instruction", icon: Wand2, category: "AI & Skills" },
   { title: "AI Skills for Backtesting", description: "Test strategies on past data with real brokerage and taxes built in for Indian, US, and crypto markets - get full reports in plain English", icon: Brain, category: "AI & Skills" },
@@ -114,7 +114,7 @@ export default function FeaturesPage() {
             </h1>
             <p className="text-lg text-on-surface-variant max-w-3xl mx-auto leading-relaxed">
               OpenAlgo is a complete self-hosted stack for algo trading and options analytics -
-              a 12-tool options suite, a unified execution engine, and integrations across 30+ brokers,
+              a 12-tool options suite, a unified execution engine, and integrations across 33+ brokers,
               built for individual traders who want full control of their infrastructure.
             </p>
           </div>

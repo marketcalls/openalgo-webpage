@@ -4,11 +4,11 @@ The official website for [OpenAlgo](https://openalgo.in) - India's first communi
 
 ## About OpenAlgo
 
-OpenAlgo is a self-hostable algorithmic trading platform built by traders, for traders. It offers seamless integration with 30+ Indian brokers through a unified API, enabling automation from platforms like TradingView, Amibroker, Python, Excel, MetaTrader, and more. Deploy it on your own server - your strategies, your data, your infrastructure.
+OpenAlgo is a self-hostable algorithmic trading platform built by traders, for traders. It offers seamless integration with 33+ Indian brokers through a unified API, enabling automation from platforms like TradingView, Amibroker, Python, Excel, MetaTrader, and more. Deploy it on your own server - your strategies, your data, your infrastructure.
 
 ## Key Features
 
-- **30+ Broker Integrations** - Unified API across all major Indian brokers with a common symbol format
+- **33+ Broker Integrations** - Unified API across all major Indian brokers with a common symbol format
 - **16+ Platform Integrations** - Amibroker, TradingView, Python, MetaTrader, Excel, Chrome Extension, and more
 - **6 Official SDKs** - Python, Node.js, Java, .NET/C#, Go, Rust
 - **Self-Hosted & Private** - Deploy on your own infrastructure with complete data privacy

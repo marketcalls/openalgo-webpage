@@ -86,7 +86,7 @@ export default function Home() {
     {
       icon: Code2,
       title: "Multi-Platform Support",
-      description: "Integrate with 30+ brokers. Use from Python, TradingView, Excel, and more.",
+      description: "Integrate with 33+ brokers. Use from Python, TradingView, Excel, and more.",
     }
   ]
 
@@ -172,15 +172,15 @@ export default function Home() {
 
           {/* Description */}
           <p className="reveal reveal-4 text-lg text-on-surface-variant max-w-2xl mx-auto mb-12 leading-relaxed">
-            Test and Execute your Trading ideas, Connect your favorite Trading Platforms, AI Driven Strategy Development with a built-in Options Analytics Suite across 30+ Brokers.
+            Test and Execute your Trading ideas, Connect your favorite Trading Platforms, AI Driven Strategy Development with a built-in Options Analytics Suite across 33+ Brokers.
           </p>
 
           {/* Stats */}
           <div className="reveal reveal-5 flex flex-wrap items-center justify-center gap-8 sm:gap-12 mb-12">
             {[
-              { icon: Download, value: "1,95,000+", label: "Downloads", color: "text-secondary" },
+              { icon: Download, value: "2,00,000+", label: "Downloads", color: "text-secondary" },
               { icon: Code2, value: "100%", label: "Open Source", color: "text-tertiary" },
-              { icon: Star, value: "2,000+", label: "GitHub Stars", color: "text-primary" },
+              { icon: Star, value: "2,100+", label: "GitHub Stars", color: "text-primary" },
             ].map(({ icon: Icon, value, label, color }) => (
               <div key={label} className="flex items-center gap-3">
                 <Icon className={`w-5 h-5 ${color}`} />
@@ -535,7 +535,7 @@ export default function Home() {
                   Your strategies work everywhere. One API, multiple brokers.
                 </p>
                 <ul className="space-y-3 text-sm">
-                  {["Unified API across 30+ brokers", "Strategy portability guaranteed", "No proprietary formats or protocols"].map(item => (
+                  {["Unified API across 33+ brokers", "Strategy portability guaranteed", "No proprietary formats or protocols"].map(item => (
                     <li key={item} className="flex items-start gap-3">
                       <ArrowRight className="w-4 h-4 text-primary mt-0.5 flex-shrink-0" />
                       <span className="text-on-surface">{item}</span>
