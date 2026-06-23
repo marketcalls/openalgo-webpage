@@ -3,12 +3,14 @@
   "version": "2.0.1.4",
   "private": true,
   "scripts": {
-    "dev": "next dev",
+    "gen:python": "node scripts/gen-python-content.mjs",
+    "dev": "node scripts/gen-python-content.mjs && next dev",
+    "prebuild": "node scripts/gen-python-content.mjs",
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "preview": "opennextjs-cloudflare build && opennextjs-cloudflare preview",
-    "deploy": "opennextjs-cloudflare build && opennextjs-cloudflare deploy"
+    "preview": "node scripts/gen-python-content.mjs && opennextjs-cloudflare build && opennextjs-cloudflare preview",
+    "deploy": "node scripts/gen-python-content.mjs && opennextjs-cloudflare build && opennextjs-cloudflare deploy"
   },
   "dependencies": {
     "@radix-ui/react-accordion": "^1.1.2",

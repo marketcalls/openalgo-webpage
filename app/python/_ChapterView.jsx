@@ -5,19 +5,13 @@ import { notFound } from "next/navigation";
 import { CHAPTERS, TAG_CLASS, chapterBySlug } from "@/lib/pythonCurriculum";
 import { loadChapter } from "@/lib/pythonContent";
 
-import LessonClient from "../LessonClient";
-
-export const dynamicParams = false;
-
-export function generateStaticParams() {
-  return CHAPTERS.map((c) => ({ chapter: c.slug }));
-}
+import LessonClient from "./LessonClient";
 
 const OG_IMAGE = "https://openalgo.in/assets/images/og-image.png";
 
-export async function generateMetadata({ params }) {
-  const { chapter } = await params;
-  const ch = chapterBySlug(chapter);
+// Build per-chapter SEO metadata. Imported by each static chapter page.
+export function chapterMeta(slug) {
+  const ch = chapterBySlug(slug);
   if (!ch) return {};
   const url = `https://openalgo.in/python/${ch.slug}`;
   const title = `${ch.title} - Algo Trading with Python | OpenAlgo`;
@@ -51,9 +45,10 @@ export async function generateMetadata({ params }) {
   };
 }
 
-export default async function ChapterPage({ params }) {
-  const { chapter } = await params;
-  const ch = chapterBySlug(chapter);
+// Shared chapter renderer. Each /python/<slug> route is a thin static page that
+// renders this with its slug, so every chapter is emitted as a static asset.
+export default function ChapterView({ slug }) {
+  const ch = chapterBySlug(slug);
   if (!ch) notFound();
 
   const { html, toc, hasContent } = loadChapter(ch.n);
