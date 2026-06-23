@@ -1,0 +1,12 @@
+ta.psar returns a Series
+             close      SAR
+timestamp                  
+2026-06-17  1332.7  1257.79
+2026-06-18  1328.1  1262.36
+2026-06-19  1309.5  1266.66
+2026-06-22  1326.5  1272.38
+2026-06-23  1306.0  1279.63
+
+Close: 1306.00   SAR: 1279.63
+Position: LONG (price above SAR)
+Trailing stop sits at 1279.63.

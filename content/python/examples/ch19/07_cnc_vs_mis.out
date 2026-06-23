@@ -1,0 +1,7 @@
+Equity strategy products at a glance:
+  CNC   Cash & Carry -- delivery. Shares settle into your demat; hold for days, weeks or years.
+  MIS   Margin Intraday Square-off -- auto-closed the same session; for day trades only.
+  NRML  Normal -- the carry product for F&O positions held overnight.
+
+A golden-cross trade may hold for months, so it MUST use product='CNC'.
+Using 'MIS' would square off the position automatically at the close -- wrong tool.

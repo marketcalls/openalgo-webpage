@@ -1,0 +1,6 @@
+ta.rising returns a ndarray of dtype bool
+
+Bars where price has risen 3 sessions : 38
+Bars where BOTH price AND volume rising: 19
+Latest bar: no confirmed up-move
+Price falling now? True

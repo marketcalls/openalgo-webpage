@@ -1,0 +1,10 @@
+Breakout days (close > prev close + 1.0 ATR): 9
+             close  trigger
+timestamp                  
+2026-02-03  1389.7  1379.10
+2026-03-10  1311.9  1307.14
+2026-04-08  1309.2  1275.86
+2026-04-10  1321.9  1315.69
+2026-05-25  1291.8  1289.07
+
+Sizing the trigger in ATRs adapts the strategy to each stock's own volatility.

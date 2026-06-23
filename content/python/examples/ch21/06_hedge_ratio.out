@@ -1,0 +1,10 @@
+Hedge ratio (beta): 0.597
+Meaning: to be market-neutral, hold ~0.60 units of HDFCBANK for every 1 of ICICIBANK.
+
+Beta-neutral spread -- mean 820.89, std 37.96
+            spread
+timestamp         
+2026-06-18  865.60
+2026-06-19  881.26
+2026-06-22  883.22
+2026-06-23  874.38

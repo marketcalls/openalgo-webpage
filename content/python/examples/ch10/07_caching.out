@@ -1,0 +1,2 @@
+This is a Streamlit app. Run it with:  streamlit run 07_caching.py
+First call: 0.075s | second (cached): 0.000s

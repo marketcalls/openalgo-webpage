@@ -1,0 +1,6 @@
+GOLDM 15m candles: 389
+Close      :  144410.0
+SMA20      :  144409.8  (every candle counts equally)
+VWMA20     :  144440.7  (high-volume candles count more)
+KAMA       :  144391.4  (adapts to volatility)
+Volume tilt: up (+30.9 points vs plain SMA)

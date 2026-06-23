@@ -1,0 +1,3 @@
+Chosen on training: EMA 30/60
+In-sample return  :  15.90 %  (what we tuned for)
+Out-of-sample     :  -4.57 %  (the only number that counts)

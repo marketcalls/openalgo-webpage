@@ -1,0 +1,11 @@
+Signal today vs position held (note the one-day lag):
+              close  signal  position
+timestamp                            
+2026-06-16  1015.30       0       0.0
+2026-06-17  1026.50       1       0.0
+2026-06-18  1042.70       1       1.0
+2026-06-19  1035.10       1       1.0
+2026-06-22  1040.75       1       1.0
+2026-06-23  1023.60       1       1.0
+
+Without shift(1) you would be 'buying the close you already saw' - a classic look-ahead bug that fakes great results.

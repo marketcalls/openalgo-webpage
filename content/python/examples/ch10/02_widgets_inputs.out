@@ -1,0 +1,3 @@
+This is a Streamlit app. Run it with:  streamlit run 02_widgets_inputs.py
+Widgets defined: text_input(Symbol) and selectbox(Exchange).
+Default selection -> RELIANCE on NSE

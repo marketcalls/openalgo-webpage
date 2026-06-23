@@ -1,0 +1,3 @@
+Tuned on 427 in-sample bars.
+Best combo by Sharpe: EMA 30/60
+In-sample Sharpe    : 0.71  (looks great -- but it SHOULD)

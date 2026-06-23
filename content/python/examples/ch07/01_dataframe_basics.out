@@ -1,0 +1,11 @@
+Type      : DataFrame
+Shape     : (28, 6)
+Columns   : ['close', 'high', 'low', 'oi', 'open', 'volume']
+Index name: timestamp
+
+First 3 rows:
+             close    high     low  oi    open    volume
+timestamp                                               
+2026-05-14  1361.8  1378.0  1358.4   0  1365.2  17303059
+2026-05-15  1336.4  1364.8  1329.2   0  1356.8  19976192
+2026-05-18  1335.9  1342.0  1318.7   0  1334.0  13022473

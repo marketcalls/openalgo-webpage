@@ -1,0 +1,4 @@
+Symbol      : SBIN
+Invested    : 609300.0
+Live P&L    : 4200.0
+All fields  : ['symbol', 'exchange', 'qty', 'avg_price', 'ltp', 'pnl']

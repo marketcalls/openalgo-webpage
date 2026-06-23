@@ -1,0 +1,6 @@
+Best combo with NO costs  : EMA 5/30
+Best combo WITH costs     : EMA 5/40
+
+For the trade-heavy EMA 5/30:
+  return no-cost :   4.23 %
+  return costed  :   1.76 %  <- fees punish churn

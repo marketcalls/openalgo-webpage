@@ -1,0 +1,7 @@
+Start cash        : 100,000
+Strategy end value: 112,710
+Buy & hold value  : 128,755
+Strategy return   : 12.71%
+Buy & hold return : 28.75%
+
+Note: this hand-rolled curve ignores trading costs - we add those next with VectorBT.

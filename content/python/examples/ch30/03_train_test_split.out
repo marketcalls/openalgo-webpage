@@ -1,0 +1,4 @@
+Train rows: 447  (2024-01-25 -> 2025-11-13)
+Test rows : 149  (2025-11-14 -> 2026-06-23)
+
+The model learns on train and is graded on test -- data it never saw.

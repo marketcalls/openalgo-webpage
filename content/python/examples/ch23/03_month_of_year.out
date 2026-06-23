@@ -1,0 +1,18 @@
+Average NIFTY return by calendar month (%):
+timestamp
+Jan   -1.84
+Feb   -1.75
+Mar   -1.15
+Apr    4.06
+May   -0.16
+Jun    3.57
+Jul    0.49
+Aug   -0.12
+Sep    1.52
+Oct   -0.85
+Nov    0.78
+Dec   -1.15
+Name: close, dtype: float64
+
+Historically strongest month: Apr
+Historically weakest month:   Jan

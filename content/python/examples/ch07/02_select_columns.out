@@ -1,0 +1,11 @@
+close is a Series
+Latest close : 2060.0
+Highest close: 2446.9
+Average close: 2232.11
+
+High/Low table (last 3 rows):
+              high     low
+timestamp                 
+2026-06-19  2138.0  2059.9
+2026-06-22  2157.0  2121.0
+2026-06-23  2114.0  2055.0

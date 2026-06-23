@@ -1,0 +1,3 @@
+SBIN                   NSE  lot=1     tick=0.05
+BANKNIFTY30JUN26FUT    NFO  lot=30    tick=0.2
+CRUDEOIL20JUL26FUT     MCX  lot=1     tick=1.0

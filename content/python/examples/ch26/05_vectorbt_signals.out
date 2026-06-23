@@ -1,0 +1,3 @@
+Entry signals (crossovers) : 6
+Exit signals (crossunders) : 6
+VectorBT holds the position between an entry and the next exit for you.

@@ -1,0 +1,4 @@
+Hand Sharpe : -0.61   vs VectorBT -0.73
+Hand CAGR   : -9.58%  vs VectorBT -13.57%
+Same ballpark - small gaps come from library conventions (how open trades
+and the exact day-count are handled). The point: there is no magic here.

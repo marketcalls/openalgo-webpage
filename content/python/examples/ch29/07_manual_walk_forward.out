@@ -1,0 +1,6 @@
+window 1: tuned EMA 20/60 -> OOS  -9.08 %
+window 2: tuned EMA 10/60 -> OOS  -1.94 %
+window 3: tuned EMA 20/60 -> OOS  -4.38 %
+
+Average out-of-sample return per window: -5.13 %
+This stitched out-of-sample record is the honest expectation -- not the in-sample dream.

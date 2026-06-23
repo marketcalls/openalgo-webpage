@@ -1,0 +1,12 @@
+Rolling 30-day return correlation:
+timestamp
+2026-06-16    0.668
+2026-06-17    0.664
+2026-06-18    0.616
+2026-06-19    0.582
+2026-06-22    0.561
+2026-06-23    0.603
+Name: correl_30, dtype: float64
+
+Lowest it dropped to: -0.097
+When rolling correlation collapses, the pair has 'broken' -- stand aside until it recovers.

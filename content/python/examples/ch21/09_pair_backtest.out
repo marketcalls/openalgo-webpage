@@ -1,0 +1,6 @@
+Z-score reversion on ICICIBANK leg (entry |z|>2, exit near 0)
+Trades       : 6
+Total return : -3.18 %
+
+Market-neutral: the matching HDFCBANK short leg would cancel most market risk,
+so you profit from the SPREAD closing -- not from the market's direction.

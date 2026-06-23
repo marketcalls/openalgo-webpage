@@ -1,0 +1,5 @@
+Long straddle on NIFTY 30JUN26 | overall: success
+  CE leg: BUY NIFTY30JUN2623800CE    -> success
+  PE leg: BUY NIFTY30JUN2623800PE    -> success
+
+Max loss is the combined premium; profit grows once price moves past it.

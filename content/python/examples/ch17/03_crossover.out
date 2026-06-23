@@ -1,0 +1,9 @@
+Type returned by ta.crossover: ndarray
+Bullish crosses in the window: 4
+Dates of those crosses:
+timestamp
+2025-10-23    1496.1
+2026-01-16    1654.0
+2026-04-08    1317.7
+2026-06-02    1243.9
+Name: close, dtype: float64

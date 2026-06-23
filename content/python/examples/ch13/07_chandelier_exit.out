@@ -1,0 +1,4 @@
+GOLDM close       : 144424
+Long-trade stop   : 152857.4 (exit a long if price closes below this)
+Short-trade stop  : 151482.6 (exit a short if price closes above this)
+Trade side        : short -- cushion 7058.6 points before the stop triggers

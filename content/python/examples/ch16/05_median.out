@@ -1,0 +1,11 @@
+close   MEDIAN     MEAN
+timestamp                            
+2026-06-17  1026.50  1017.15  1016.10
+2026-06-18  1042.70  1020.85  1024.50
+2026-06-19  1035.10  1026.50  1028.09
+2026-06-22  1040.75  1035.10  1032.07
+2026-06-23  1023.60  1035.10  1033.73
+
+Latest 5-day median: 1035.10
+Latest 5-day mean  : 1033.73
+The median sits near the typical price even when a single day spikes.

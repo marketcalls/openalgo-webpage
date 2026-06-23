@@ -1,0 +1,11 @@
+close    TSI  TSI_Signal
+timestamp                            
+2026-06-17  1332.7 -16.47      -19.36
+2026-06-18  1328.1 -13.75      -18.56
+2026-06-19  1309.5 -12.85      -17.74
+2026-06-22  1326.5 -10.59      -16.72
+2026-06-23  1306.0 -10.27      -15.80
+
+Latest TSI: -10.27   Signal: -15.80
+Bias: bearish (TSI below zero)
+Trigger: TSI above signal (long)

@@ -1,0 +1,7 @@
+Orders today: 192
+  completed: 171  open: 3  rejected: 1
+  BUY  SBIN             LIMIT   qty 1 -> cancelled
+  BUY  GOLDM03JUL26FUT  MARKET  qty 1 -> complete
+  BUY  GOLDM03JUL26FUT  MARKET  qty 2 -> complete
+  BUY  GOLDM03JUL26FUT  MARKET  qty 2 -> complete
+  SELL INFY             MARKET  qty 1 -> complete

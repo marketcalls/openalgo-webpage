@@ -1,0 +1,9 @@
+Order status: success
+Order id     : 26062327903016
+
+Product codes you will use intraday:
+  MIS  -> intraday, higher leverage, auto square-off (this strategy)
+  CNC  -> delivery / overnight equity
+  NRML -> futures & options carried overnight
+
+Note: equity MIS orders are blocked after 15:15 IST -- the broker enforces square-off for you.

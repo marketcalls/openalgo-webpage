@@ -1,0 +1,8 @@
+Total NSE instruments: 9717
+Columns: ['brexchange', 'brsymbol', 'exchange', 'expiry', 'instrumenttype', 'lotsize', 'name', 'strike', 'symbol', 'tick_size', 'token']
+        symbol                       name  lotsize
+0  GOLDSTAR-SM             GOLDSTAR POWER    11250
+1   21STCENMGM  21ST CENTURY MGMT SERVICE        1
+2     AARTIIND           AARTI INDUSTRIES        1
+3          ABB                  ABB INDIA        1
+4   656KA30-SG          SDL KA 6.56% 2030      100

@@ -1,0 +1,7 @@
+ta.valuewhen returns a ndarray
+
+Price at the last EMA buy cross: 784.90
+Current price                  : 772.90
+Open trade P&L                 : -1.53%
+
+valuewhen is how a strategy remembers its entry to size stops and targets.

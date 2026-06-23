@@ -1,0 +1,11 @@
+Price ratio ICICIBANK / HDFCBANK:
+            ICICIBANK  HDFCBANK  ratio
+timestamp                             
+2026-06-17     1336.8     787.1  1.698
+2026-06-18     1342.3     799.0  1.680
+2026-06-19     1346.5     779.8  1.727
+2026-06-22     1352.4     786.4  1.720
+2026-06-23     1335.5     772.9  1.728
+
+Ratio mean over the window: 1.496
+Ratio min / max:            1.341 / 1.769

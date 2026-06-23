@@ -1,0 +1,10 @@
+GOLDM close 144280   ATR 2835   (1.96% of price)
+Breakout days in window: 4
+             close   trigger
+timestamp                   
+2026-01-27  183027  181990.0
+2026-01-28  191576  188723.0
+2026-01-29  198661  197881.0
+2026-05-13  163824  158990.0
+
+Commodities like gold and crude carry their own volatility -- ATR adapts automatically.

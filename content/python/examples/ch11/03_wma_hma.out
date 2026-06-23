@@ -1,0 +1,5 @@
+INFY close: 1029.0
+SMA20 =  1139.18  (slowest, smoothest)
+WMA20 =  1121.53  (recent-weighted)
+HMA20 =  1084.88  (lowest lag, hugs price)
+Closest to price: HMA

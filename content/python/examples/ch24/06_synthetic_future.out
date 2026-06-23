@@ -1,0 +1,8 @@
+Expiry              : 30JUN26
+Spot (NIFTY index)  : 23824.1
+ATM strike          : 23800.0
+Synthetic future    : 23813.9
+Basis (fair - spot) : -10.2 points
+
+Basis = the cost of carry to expiry; close to flat near expiry, and it
+can flip slightly negative once near-term carry and dividends net out.

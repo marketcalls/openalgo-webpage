@@ -1,0 +1,6 @@
+Raw buy signals   : 2
+Cleaned buy signals: 1  (duplicates removed)
+Raw sell signals   : 6
+Cleaned sell signals: 1
+
+exrem stops you from buying again while you are already 'in'.

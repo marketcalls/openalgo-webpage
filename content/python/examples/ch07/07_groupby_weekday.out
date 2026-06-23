@@ -1,0 +1,10 @@
+Average daily return by weekday (%):
+weekday
+Monday       0.030
+Tuesday      0.309
+Wednesday    0.569
+Thursday    -0.074
+Friday      -0.394
+Name: ret, dtype: float64
+
+Best weekday on average: Wednesday

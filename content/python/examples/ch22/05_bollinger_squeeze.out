@@ -1,0 +1,11 @@
+close  bbwidth  squeeze
+timestamp                           
+2026-06-16  2199.0   0.1443    False
+2026-06-17  2223.0   0.1412    False
+2026-06-18  2203.3   0.1380    False
+2026-06-19  2125.0   0.1400    False
+2026-06-22  2127.8   0.1405    False
+2026-06-23  2060.0   0.1489    False
+
+Squeeze days in the window: 11
+Quiet bands tend to precede big moves -- arm a breakout order when a squeeze appears.

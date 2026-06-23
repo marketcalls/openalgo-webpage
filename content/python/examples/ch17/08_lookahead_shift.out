@@ -1,0 +1,9 @@
+close  signal_today  tradable_next_bar
+timestamp                                          
+2026-06-16  150985         False              False
+2026-06-17  151747         False              False
+2026-06-18  147424         False              False
+2026-06-19  145221         False              False
+2026-06-22  146125         False              False
+2026-06-23  144287         False              False
+Acting on 'tradable_next_bar' avoids buying at a price you couldn't have known yet.

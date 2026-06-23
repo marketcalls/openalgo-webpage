@@ -1,0 +1,8 @@
+Built 5 features over 596 usable bars.
+
+Last 3 rows of the feature table:
+                rsi    ret1    ret5      atr  ema_dist
+timestamp                                             
+2026-06-19  46.1465 -0.0140  0.0128  26.7868   -0.0051
+2026-06-22  50.9139  0.0130  0.0149  27.4020    0.0071
+2026-06-23  45.6642 -0.0155 -0.0172  27.5162   -0.0077

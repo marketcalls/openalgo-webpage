@@ -1,0 +1,8 @@
+Feature importance (higher = the model leaned on it more):
+ret5        16.4 %
+ret1        17.1 %
+ema_dist    18.2 %
+rsi         20.6 %
+atr         27.7 %
+dtype: object
+Saved 06_feature_importance.png

@@ -1,0 +1,10 @@
+EMA        in-sample %  out-sample %     gap
+5/30            -11.89         -6.86    -5.0
+5/50             -3.03         -7.06     4.0
+10/30           -17.24         -7.40    -9.8
+10/50            -7.06         -9.18     2.1
+20/30            -5.75        -10.88     5.1
+20/50            -5.26         -8.11     2.8
+
+A combo that shines in-sample but collapses out-of-sample is OVERFIT.
+Trust the setting whose two columns stay closest together.

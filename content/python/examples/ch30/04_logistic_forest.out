@@ -1,0 +1,5 @@
+Naive baseline      : 54.4%
+Logistic Regression : 47.0%
+Random Forest       : 47.7%
+
+Next-bar direction is HARD: scores near the baseline are the honest norm.

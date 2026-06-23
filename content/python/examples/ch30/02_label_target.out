@@ -1,0 +1,5 @@
+Rows: 596   up days: 296   down days: 300
+Base rate (share of up days): 49.7%
+
+That base rate is the score to beat -- always guessing 'up' would hit it.
+A model is only useful if it beats this naive baseline out-of-sample.

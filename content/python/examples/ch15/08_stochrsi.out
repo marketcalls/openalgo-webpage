@@ -1,0 +1,11 @@
+close  StochRSI_K  StochRSI_D
+timestamp                                 
+2026-06-17  1336.8        88.8        91.8
+2026-06-18  1342.3        92.1        90.9
+2026-06-19  1346.5        95.0        92.0
+2026-06-22  1352.4        97.8        95.0
+2026-06-23  1335.5        89.0        93.9
+
+Latest %K: 89.0   %D: 93.9
+Zone: overbought (>80)
+Short-term: %K below %D (bearish)

@@ -1,0 +1,10 @@
+5m bars more than 0.40% below VWAP (buy-the-dip candidates): 112
+                            close      vwap   dist
+timestamp                                         
+2026-06-16 14:40:00+05:30  1329.6  1336.431 -0.511
+2026-06-16 14:45:00+05:30  1330.4  1336.311 -0.442
+2026-06-23 15:15:00+05:30  1335.3  1342.340 -0.524
+2026-06-23 15:20:00+05:30  1334.6  1342.276 -0.572
+2026-06-23 15:25:00+05:30  1335.5  1342.236 -0.502
+
+Mean-reversion assumes the gap closes. It works in range days, NOT in strong trends.

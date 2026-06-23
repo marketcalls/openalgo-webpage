@@ -1,0 +1,13 @@
+GOLDM gold futures, 120 daily bars on MCX
+
+           return_%  sharpe
+fast slow                  
+5    30        3.68    0.48
+     50       -7.72   -0.41
+10   50       -8.21   -0.45
+     30       -8.82   -0.50
+20   30       -9.46   -0.55
+     50      -11.36   -0.70
+
+Note how the best settings here need not match RELIANCE -- never assume
+one parameter set is universal. Re-optimise per instrument.

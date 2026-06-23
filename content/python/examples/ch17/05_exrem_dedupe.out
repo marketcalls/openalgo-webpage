@@ -1,0 +1,4 @@
+raw   cleaned
+BUY              7         2
+SELL            47         3
+exrem collapsed each flurry to its FIRST signal -- buys and sells now alternate.

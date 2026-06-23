@@ -1,0 +1,40 @@
+                      Benchmark    Strategy
+Start Period         2025-05-26  2025-05-26
+End Period           2026-06-23  2026-06-23
+Risk-Free Rate                0           0
+Time in Market              1.0        0.34
+Cumulative Return         -0.04       -0.24
+CAGR%                     -0.04       -0.23
+Sharpe                    -0.25       -2.82
+Prob. Sharpe Ratio          0.4           0
+Sortino                   -0.35       -3.26
+Sortino/√2                -0.25        -2.3
+Omega                      0.96        0.43
+Max Drawdown              -0.15           -
+Max DD Date          2026-03-30           -
+Max DD Period Start  2026-01-05           -
+Max DD Period End    2026-06-23           -
+Longest DD Days               -           -
+Gain/Pain Ratio           -0.04       -0.57
+Gain/Pain (1M)            -0.16       -0.92
+Payoff Ratio               0.69        0.72
+Profit Factor              0.96        0.43
+Common Sense Ratio         0.82        0.17
+CPC Index                  0.34         0.1
+Tail Ratio                 0.86         0.4
+Outlier Win Ratio          3.23       17.33
+Outlier Loss Ratio         3.32         2.6
+MTD                        0.01        0.01
+3M                         0.03       -0.05
+6M                        -0.09       -0.13
+YTD                       -0.09       -0.13
+1Y                        -0.05       -0.21
+3Y (ann.)                 -0.04       -0.23
+5Y (ann.)                 -0.04       -0.23
+10Y (ann.)                -0.04       -0.23
+All-time (ann.)           -0.04       -0.23
+Avg. Drawdown             -0.03           -
+Avg. Drawdown Days            -           -
+Recovery Factor            0.23        1.08
+Ulcer Index                0.06        0.15
+Serenity Index            -0.04       -0.04

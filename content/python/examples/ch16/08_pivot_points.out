@@ -1,0 +1,11 @@
+close      S1   Pivot      R1
+timestamp                                
+2026-06-19   7262  7145.3  7216.7  7333.3
+2026-06-22   6983  6834.0  7108.0  7257.0
+2026-06-23   6949  6884.7  6967.3  7031.7
+
+Latest close: 6949.0
+  Resistance 1: 7031.7
+  Pivot       : 6967.3
+  Support 1   : 6884.7
+Bias: below pivot - bearish

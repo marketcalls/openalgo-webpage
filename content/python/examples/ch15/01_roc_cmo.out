@@ -1,0 +1,6 @@
+ta.roc returns a ndarray
+ta.cmo returns a Series
+
+Latest ROC(12): +1.16%   (unbounded - just a % change)
+Latest CMO(14): -3.59     (bounded -100..+100)
+CMO zone: neutral

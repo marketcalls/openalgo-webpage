@@ -1,0 +1,16 @@
+ta.flip returns a ndarray
+
+Bars held long: 67 out of 168
+Currently: FLAT
+
+Last 8 bars (1 = in position):
+             close  InPos
+timestamp                
+2026-06-12  1293.0      0
+2026-06-15  1307.0      0
+2026-06-16  1328.8      0
+2026-06-17  1332.7      0
+2026-06-18  1328.1      0
+2026-06-19  1309.5      0
+2026-06-22  1326.5      0
+2026-06-23  1306.0      0

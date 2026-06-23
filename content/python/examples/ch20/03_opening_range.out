@@ -1,0 +1,10 @@
+Opening range (first 15 min) per session:
+            or_high   or_low  width
+2026-06-17   1019.5  1014.55   4.95
+2026-06-18   1031.7  1025.05   6.65
+2026-06-19   1042.0  1036.65   5.35
+2026-06-22   1041.6  1036.05   5.55
+2026-06-23   1045.3  1037.80   7.50
+
+A breakout BUY triggers if a later bar closes ABOVE that day's or_high;
+a breakout SELL triggers if it closes BELOW that day's or_low.

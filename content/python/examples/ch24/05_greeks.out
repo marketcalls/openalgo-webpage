@@ -1,0 +1,8 @@
+Option        : NIFTY30JUN2623800CE
+Days to expiry: 6.9
+Implied vol % : 12.78
+
+Delta: 0.5168  (price move per 1 pt of NIFTY)
+Gamma: 0.000956 (how fast delta changes)
+Theta: -12.1244  (rupees lost to time decay per day)
+Vega : 13.0075  (price move per 1% change in IV)

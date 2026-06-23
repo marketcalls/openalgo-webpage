@@ -1,0 +1,5 @@
+window 1: accuracy 49.0%  vs baseline 51.0%
+window 2: accuracy 50.0%  vs baseline 50.0%
+
+Average out-of-sample accuracy: 49.5%
+Consistently beating the baseline across windows is the bar for a real edge.

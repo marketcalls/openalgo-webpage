@@ -1,0 +1,3 @@
+Bull call spread on NIFTY 30JUN26 | overall: success
+  leg 1: BUY  NIFTY30JUN2623800CE    -> success
+  leg 2: SELL NIFTY30JUN2623950CE    -> success

@@ -1,0 +1,5 @@
+Total daily bars : 610
+In-sample (train): 427 bars  2024-01-05 -> 2025-09-23
+Out-of-sample    : 183 bars  2025-09-24 -> 2026-06-23
+
+We tune ONLY on the in-sample. The out-of-sample is a sealed exam paper.

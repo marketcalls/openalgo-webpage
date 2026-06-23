@@ -1,0 +1,4 @@
+RELIANCE           NATR(14) =  2.11%  -> price swings ~2.11% in a typical day
+GOLDM03JUL26FUT    NATR(14) =  1.96%  -> price swings ~1.96% in a typical day
+
+Idea: the higher the NATR, the SMALLER the position, so rupee-risk stays steady.

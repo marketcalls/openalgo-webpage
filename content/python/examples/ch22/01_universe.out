@@ -1,0 +1,8 @@
+Universe: 8 stocks, 273 common trading days
+            RELIANCE     TCS    INFY  ...    SBIN  HINDUNILVR    ITC
+timestamp                             ...                           
+2026-06-19    1309.5  2125.0  1051.4  ...  1035.1      2194.6  292.5
+2026-06-22    1326.5  2127.8  1065.4  ...  1040.8      2184.9  291.2
+2026-06-23    1306.0  2060.0  1029.0  ...  1023.6      2160.0  290.0
+
+[3 rows x 8 columns]

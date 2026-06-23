@@ -1,0 +1,5 @@
+Square-off window starts at 15:10 IST.
+New entries blocked after cutoff: 0 (we ignore late signals)
+Bars in the square-off window per session: 4
+
+Intraday rule: never carry an MIS position into the close -- the broker auto-squares it for you.

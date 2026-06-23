@@ -1,0 +1,9 @@
+Bars where price is above EMA20: 24 of 80
+Most recent answer: False
+timestamp
+2026-06-17     True
+2026-06-18     True
+2026-06-19    False
+2026-06-22     True
+2026-06-23    False
+dtype: bool

@@ -1,0 +1,2 @@
+Valid symbol  : 1309.5
+Unknown symbol: error: HTTP 400: {"message":"Symbol 'NOTASYMBOL' not found for exchange 'NSE'. Please verify the symbol name and ensure master contracts are downloaded.","status":"error"}

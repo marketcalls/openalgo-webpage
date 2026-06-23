@@ -1,0 +1,12 @@
+Daily return summary (%):
+count    79.000
+mean     -0.208
+std       1.884
+min      -5.320
+25%      -1.588
+50%      -0.266
+75%       0.985
+max       5.712
+Name: ret_pct, dtype: float64
+
+Annualised volatility: 29.9 %

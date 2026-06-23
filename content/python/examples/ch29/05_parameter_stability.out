@@ -1,0 +1,8 @@
+Best combo chosen in each rolling training window:
+  window 1: EMA 30/60
+  window 2: EMA 30/60
+  window 3: EMA 30/60
+  window 4: EMA 10/40
+
+Distinct picks across 4 windows: 2
+Few distinct picks -> STABLE and trustworthy. Jumping around -> noise-fitting.

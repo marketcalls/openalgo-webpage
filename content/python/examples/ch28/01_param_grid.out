@@ -1,0 +1,11 @@
+Fast options : [10, 20, 30, 40]
+Slow options : [20, 30, 40, 50]
+Raw combos   : 16
+Valid combos : 10  (kept only fast < slow)
+
+First few combos to test:
+  EMA 10 crossing EMA 20
+  EMA 10 crossing EMA 30
+  EMA 10 crossing EMA 40
+  EMA 10 crossing EMA 50
+  EMA 20 crossing EMA 30

@@ -1,0 +1,151 @@
+/* ============================================================
+   Algo Trading with Python - learning portal
+   Scoped styles for lesson content rendered from markdown.
+   Uses the site's obsidian theme tokens for a native feel.
+   ============================================================ */
+
+/* ---------- lesson typography ---------- */
+.lesson { max-width: 50rem; font-size: 1.05rem; line-height: 1.78; color: hsl(var(--on-surface)); }
+.lesson > p { margin: 1em 0; }
+.lesson h2 {
+  font-size: 1.6rem; margin: 2.4rem 0 .7rem; padding-top: .4rem; color: #fff; scroll-margin-top: 6rem;
+}
+.lesson h3 {
+  font-size: 1.18rem; margin: 1.9rem 0 .5rem; color: hsl(0 0% 95%); scroll-margin-top: 6rem;
+}
+.lesson strong { color: #fff; font-weight: 600; }
+.lesson a { color: hsl(var(--secondary)); text-decoration: underline; text-underline-offset: 3px; }
+.lesson a:hover { color: hsl(var(--primary)); }
+.lesson ul, .lesson ol { margin: .8em 0; padding-left: 1.4em; }
+.lesson li { margin: .35em 0; }
+.lesson li::marker { color: hsl(var(--primary) / 0.7); }
+.lesson blockquote {
+  margin: 1.3em 0; padding: .3em 1.1em; border-left: 3px solid hsl(var(--primary-container));
+  color: hsl(var(--on-surface-variant));
+}
+.lesson :not(pre) > code {
+  background: hsl(var(--surface-container-high)); color: #ffd9b0; font-family: 'IBM Plex Mono', monospace;
+  font-size: .85em; padding: .12em .42em; border-radius: 6px; border: 1px solid hsl(var(--border));
+}
+.lesson table { display: block; width: 100%; max-width: 100%; overflow-x: auto; border-collapse: collapse; margin: 1.4em 0; font-size: .92rem; }
+.lesson th, .lesson td { border: 1px solid hsl(var(--border)); padding: .55rem .8rem; text-align: left; }
+.lesson th { background: hsl(var(--surface-container)); color: #fff; font-family: 'Sora', sans-serif; font-size: .82rem; }
+.lesson tr:nth-child(even) td { background: hsl(0 0% 100% / 0.015); }
+
+/* prose code fences (```python ... ```) */
+.lesson pre {
+  background: hsl(0 0% 4.5%); border: 1px solid hsl(var(--border)); border-radius: 12px;
+  padding: 1rem 1.1rem; overflow-x: auto; margin: 1.3em 0; font-size: .86rem; line-height: 1.6;
+}
+.lesson pre code { font-family: 'IBM Plex Mono', monospace; background: none; border: 0; padding: 0; color: #dfe3ea; }
+
+/* ---------- example cards (the signature element) ---------- */
+.ex {
+  margin: 1.8rem 0; border-radius: 14px; overflow: hidden; border: 1px solid hsl(var(--border));
+  background: hsl(var(--surface-container-low)); box-shadow: 0 10px 40px rgba(0,0,0,.35);
+}
+.ex-head {
+  display: flex; align-items: center; gap: .7rem; flex-wrap: wrap;
+  padding: .7rem 1rem; background: hsl(var(--surface-container)); border-bottom: 1px solid hsl(var(--border));
+}
+.ex-badge {
+  font-family: 'IBM Plex Mono', monospace; font-size: .68rem; font-weight: 600; letter-spacing: .03em;
+  color: hsl(var(--primary-foreground)); background: hsl(var(--primary)); padding: .2rem .5rem; border-radius: 6px;
+}
+.ex-title { font-family: 'Sora', sans-serif; font-weight: 600; font-size: .96rem; color: #fff; }
+.ex-file { margin-left: auto; font-family: 'IBM Plex Mono', monospace; font-size: .72rem; color: hsl(var(--on-surface-variant) / 0.7); }
+.ex-tag {
+  font-family: 'IBM Plex Mono', monospace; font-size: .64rem; font-weight: 600; letter-spacing: .03em;
+  padding: .15rem .45rem; border-radius: 5px; border: 1px solid transparent;
+}
+.tag-nse { color: hsl(var(--tertiary)); background: hsl(140 72% 53% / .1); border-color: hsl(140 72% 53% / .3); }
+.tag-nfo { color: hsl(var(--secondary)); background: hsl(220 100% 84% / .1); border-color: hsl(220 100% 84% / .3); }
+.tag-mcx { color: #ffd479; background: hsl(43 100% 73% / .1); border-color: hsl(43 100% 73% / .3); }
+.tag-idx { color: hsl(var(--primary)); background: hsl(267 100% 87% / .1); border-color: hsl(267 100% 87% / .3); }
+
+.ex-code { position: relative; }
+.ex-code pre { margin: 0; padding: 1.1rem 1.15rem; overflow-x: auto; background: hsl(0 0% 4%); }
+.ex-code code { font-family: 'IBM Plex Mono', monospace; font-size: .83rem; line-height: 1.62; white-space: pre; }
+.ex-copy {
+  position: absolute; top: .6rem; right: .6rem; z-index: 2; cursor: pointer;
+  font-family: 'IBM Plex Mono', monospace; font-size: .68rem; color: hsl(var(--on-surface-variant));
+  background: hsl(var(--surface-container-high)); border: 1px solid hsl(var(--border));
+  border-radius: 6px; padding: .25rem .55rem; opacity: 0; transition: opacity .15s, color .15s, border-color .15s;
+}
+.ex:hover .ex-copy { opacity: 1; }
+.ex-copy:hover { color: #fff; border-color: hsl(var(--outline-variant)); }
+.ex-copy.copied { color: hsl(var(--tertiary)); border-color: hsl(var(--tertiary)); }
+
+.ex-out { border-top: 1px dashed hsl(var(--border)); background: hsl(0 0% 3.5%); }
+.ex-out-label {
+  font-family: 'IBM Plex Mono', monospace; font-size: .64rem; letter-spacing: .12em; text-transform: uppercase;
+  color: hsl(var(--tertiary)); padding: .6rem 1.15rem .1rem; display: flex; align-items: center; gap: .4rem;
+}
+.ex-out-label::before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: hsl(var(--tertiary)); box-shadow: 0 0 8px hsl(var(--tertiary)); }
+.ex-out pre {
+  margin: 0; padding: .4rem 1.15rem 1rem; overflow: auto; max-height: 24rem;
+  font-family: 'IBM Plex Mono', monospace; font-size: .78rem; line-height: 1.55; color: hsl(0 0% 80%); white-space: pre;
+}
+.ex-chart { border-top: 1px solid hsl(var(--border)); padding: 1rem; text-align: center; background: hsl(0 0% 4%); }
+.ex-chart img { max-width: 100%; border-radius: 8px; border: 1px solid hsl(var(--border)); }
+
+/* ---------- callouts ---------- */
+.callout {
+  display: flex; gap: .85rem; margin: 1.5rem 0; padding: .9rem 1.1rem; border-radius: 12px;
+  border: 1px solid hsl(var(--border)); background: hsl(var(--surface-container-low));
+}
+.callout > div > :first-child { margin-top: 0; }
+.callout > div > :last-child { margin-bottom: 0; }
+.callout-tag {
+  flex-shrink: 0; height: fit-content; font-family: 'IBM Plex Mono', monospace; font-size: .66rem;
+  font-weight: 600; letter-spacing: .04em; text-transform: uppercase; padding: .2rem .5rem; border-radius: 6px; white-space: nowrap;
+}
+.callout.tip { border-color: hsl(140 72% 53% / .28); } .callout.tip .callout-tag { color: hsl(var(--tertiary)); background: hsl(140 72% 53% / .12); }
+.callout.warn { border-color: hsl(43 100% 73% / .28); } .callout.warn .callout-tag { color: #ffd479; background: hsl(43 100% 73% / .12); }
+.callout.info { border-color: hsl(220 100% 84% / .28); } .callout.info .callout-tag { color: hsl(var(--secondary)); background: hsl(220 100% 84% / .12); }
+.callout.key { border-color: hsl(267 100% 87% / .28); } .callout.key .callout-tag { color: hsl(var(--primary)); background: hsl(267 100% 87% / .12); }
+
+/* ---------- table of contents ---------- */
+.toc-link { display: block; padding: .25rem 0 .25rem .8rem; border-left: 2px solid transparent; color: hsl(var(--on-surface-variant)); font-size: .84rem; line-height: 1.45; transition: color .15s, border-color .15s; }
+.toc-link:hover { color: hsl(var(--on-surface)); }
+.toc-link.lvl-3 { padding-left: 1.6rem; font-size: .8rem; }
+.toc-link.active { color: hsl(var(--primary)); border-left-color: hsl(var(--primary)); }
+
+/* ---------- syllabus rail ---------- */
+.syllabus-link { display: flex; gap: .6rem; align-items: baseline; padding: .4rem .7rem; border-radius: 8px; color: hsl(var(--on-surface-variant)); font-size: .875rem; line-height: 1.35; transition: background .15s, color .15s; }
+.syllabus-link:hover { background: hsl(var(--surface-container)); color: hsl(var(--on-surface)); }
+.syllabus-link .num { font-family: 'IBM Plex Mono', monospace; font-size: .72rem; color: hsl(var(--on-surface-variant) / 0.6); min-width: 1.3rem; }
+.syllabus-link.active { background: linear-gradient(90deg, hsl(var(--primary) / 0.14), transparent); color: #fff; box-shadow: inset 2px 0 0 hsl(var(--primary)); }
+.syllabus-link.active .num { color: hsl(var(--primary)); }
+
+/* ---------- highlight.js theme (obsidian-tuned) ---------- */
+.hljs { color: #dfe3ea; background: transparent; }
+.hljs-comment, .hljs-quote { color: #6b7280; font-style: italic; }
+.hljs-keyword, .hljs-selector-tag, .hljs-literal, .hljs-section { color: hsl(var(--primary)); }
+.hljs-built_in, .hljs-class .hljs-title, .hljs-type { color: hsl(var(--secondary)); }
+.hljs-string, .hljs-regexp, .hljs-addition { color: hsl(var(--tertiary)); }
+.hljs-number, .hljs-meta { color: #ffd479; }
+.hljs-title, .hljs-title.function_, .hljs-name { color: hsl(var(--secondary)); }
+.hljs-params { color: hsl(var(--on-surface)); }
+.hljs-attr, .hljs-attribute, .hljs-variable { color: #e6c07b; }
+.hljs-operator, .hljs-punctuation { color: hsl(var(--on-surface-variant)); }
+.hljs-comment .hljs-doctag { color: hsl(var(--primary)); }
+
+/* ---------- responsive tuning (mobile / tablet) ---------- */
+@media (max-width: 640px) {
+  .lesson { font-size: 1rem; line-height: 1.7; }
+  .lesson h2 { font-size: 1.35rem; }
+  .lesson h3 { font-size: 1.08rem; }
+  .ex-code pre, .ex-out pre { font-size: 0.76rem; }
+  .ex-code pre { padding: 0.9rem; }
+  .ex-file { display: none; }            /* hide long path on tiny screens */
+  .ex-head { gap: 0.5rem; padding: 0.6rem 0.75rem; }
+  .callout { flex-direction: column; gap: 0.5rem; padding: 0.8rem 0.9rem; }
+  .ex-out pre { max-height: 18rem; }
+}
+@media (min-width: 641px) and (max-width: 1023px) {
+  .lesson { font-size: 1.02rem; }
+}
+/* Always let a too-wide code block scroll rather than stretch the page */
+.ex-code, .ex-out { max-width: 100%; }
+

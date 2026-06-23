@@ -1,0 +1,5 @@
+Protected long on NIFTY 30JUN26 | overall: success
+  NIFTY30JUN2623800CE    BUY  -> success  upside (long call)
+  NIFTY30JUN2623550PE    BUY  -> success  insurance (long put)
+
+The OTM put caps your loss below its strike, for the cost of its premium.

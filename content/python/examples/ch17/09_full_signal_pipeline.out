@@ -1,0 +1,9 @@
+Final tradable entries: 3 | exits: 4
+These two boolean arrays are exactly what a backtester (Chapter 26) consumes.
+             close  entry   exit
+timestamp                       
+2025-10-01  1368.7  False   True
+2025-10-20  1466.8   True  False
+2026-01-19  1413.6  False   True
+2026-05-08  1435.2   True  False
+2026-05-14  1361.8  False   True

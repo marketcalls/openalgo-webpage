@@ -1,0 +1,4 @@
+Naive baseline : 54.4%
+Neural net (MLP): 49.0%
+
+More layers can fit more complex patterns -- and overfit faster. Bigger is not safer.

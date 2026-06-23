@@ -1,0 +1,10 @@
+Spot (underlying LTP): 23824.1 | ATM strike: 23800.0
+
+  Strike   CE ltp  CE lbl   PE ltp  PE lbl
+   23650    262.9    ITM3       99    OTM3
+   23700      233    ITM2   115.95    OTM2
+   23750    203.6    ITM1      137    OTM1
+   23800   173.35     ATM   159.45     ATM
+   23850    150.2    OTM1    185.4    ITM1
+   23900      127    OTM2    213.6    ITM2
+   23950   107.95    OTM3   242.55    ITM3

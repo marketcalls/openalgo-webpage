@@ -1,0 +1,9 @@
+ta.crossover returns a ndarray of dtype bool
+
+Buy crosses (10 EMA over 20 EMA): 4
+Sell crosses (10 EMA under 20 EMA): 4
+
+Most recent BUY cross dates:
+  2025-12-12  close 1556.50
+  2026-02-12  close 1448.90
+  2026-04-29  close 1425.40
