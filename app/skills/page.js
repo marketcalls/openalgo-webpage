@@ -102,7 +102,7 @@ export default function SkillsPage() {
 
           <h1 className="text-display-lg sm:text-[4rem] leading-[1.05] mb-6 tracking-tight">
             <span className="block text-on-surface">Teach Your AI</span>
-            <span className="bg-clip-text text-transparent bg-gradient-to-r from-primary via-secondary to-tertiary animate-gradient">
+            <span className="bg-clip-text text-transparent bg-linear-to-r from-primary via-secondary to-tertiary animate-gradient">
               To Trade &amp; Build
             </span>
           </h1>
@@ -212,7 +212,7 @@ export default function SkillsPage() {
             <div className="space-y-8">
               <div className="obsidian-card rounded-2xl p-6 md:p-8 ghost-border">
                 <div className="flex items-start gap-4 mb-6">
-                  <div className="inline-flex p-3 rounded-xl bg-primary/10 flex-shrink-0">
+                  <div className="inline-flex p-3 rounded-xl bg-primary/10 shrink-0">
                     <LineChart className="h-6 w-6 text-primary" />
                   </div>
                   <div className="flex-1">
@@ -238,7 +238,7 @@ export default function SkillsPage() {
                   {INDICATOR_COMMANDS.map(({ cmd, icon: Icon, title, desc }) => (
                     <div key={cmd} className="obsidian-card rounded-xl p-5 ghost-border hover-lift">
                       <div className="flex items-center gap-3 mb-2">
-                        <Icon className="h-4 w-4 text-primary flex-shrink-0" />
+                        <Icon className="h-4 w-4 text-primary shrink-0" />
                         <div>
                           <p className="font-semibold text-sm text-on-surface">{title}</p>
                           <code className="text-xs font-mono text-primary">{cmd}</code>
@@ -301,7 +301,7 @@ export default function SkillsPage() {
             <div className="space-y-8">
               <div className="obsidian-card rounded-2xl p-6 md:p-8 ghost-border">
                 <div className="flex items-start gap-4 mb-6">
-                  <div className="inline-flex p-3 rounded-xl bg-primary/10 flex-shrink-0">
+                  <div className="inline-flex p-3 rounded-xl bg-primary/10 shrink-0">
                     <BarChart3 className="h-6 w-6 text-primary" />
                   </div>
                   <div className="flex-1">
@@ -327,7 +327,7 @@ export default function SkillsPage() {
                   {BACKTEST_COMMANDS.map(({ cmd, icon: Icon, title, desc }) => (
                     <div key={cmd} className="obsidian-card rounded-xl p-5 ghost-border hover-lift">
                       <div className="flex items-center gap-3 mb-2">
-                        <Icon className="h-4 w-4 text-primary flex-shrink-0" />
+                        <Icon className="h-4 w-4 text-primary shrink-0" />
                         <div>
                           <p className="font-semibold text-sm text-on-surface">{title}</p>
                           <code className="text-xs font-mono text-primary">{cmd}</code>

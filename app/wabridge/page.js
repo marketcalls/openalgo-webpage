@@ -267,7 +267,7 @@ export default function WABridgePage() {
             ].map(({ icon: Icon, title, code }) => (
               <div key={title} className="obsidian-card rounded-xl p-5 ghost-border">
                 <div className="flex items-center gap-3 mb-3">
-                  <Icon className="h-5 w-5 text-primary flex-shrink-0" />
+                  <Icon className="h-5 w-5 text-primary shrink-0" />
                   <h3 className="font-semibold text-on-surface">{title}</h3>
                 </div>
                 <CodeBlock copyText={code}>
@@ -283,14 +283,14 @@ export default function WABridgePage() {
           <h3 className="font-semibold mb-4 text-on-surface">Requirements</h3>
           <div className="grid sm:grid-cols-2 gap-4 text-sm">
             <div className="flex items-start gap-3">
-              <Server className="h-4 w-4 text-primary mt-0.5 flex-shrink-0" />
+              <Server className="h-4 w-4 text-primary mt-0.5 shrink-0" />
               <div>
                 <p className="font-medium text-on-surface">Node.js &gt;= 20.0.0</p>
                 <p className="text-on-surface-variant">For the WABridge server</p>
               </div>
             </div>
             <div className="flex items-start gap-3">
-              <Code2 className="h-4 w-4 text-primary mt-0.5 flex-shrink-0" />
+              <Code2 className="h-4 w-4 text-primary mt-0.5 shrink-0" />
               <div>
                 <p className="font-medium text-on-surface">Python &gt;= 3.8</p>
                 <p className="text-on-surface-variant">For the Python SDK (optional)</p>

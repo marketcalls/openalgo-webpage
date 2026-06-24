@@ -5,10 +5,10 @@ import { CHAPTERS, PARTS, TAG_CLASS } from "@/lib/pythonCurriculum";
 
 const OG_IMAGE = "https://openalgo.in/assets/images/og-image.png";
 const LANDING_DESC =
-  "Learn algorithmic trading with Python from scratch. A free, hands-on 30-chapter course covering NumPy, Pandas, 80+ technical indicators, backtesting with VectorBT, optimisation, walk-forward testing and machine learning - every example is tested live and powered by the OpenAlgo Python SDK across NSE, NFO and MCX.";
+  "Learn algorithmic trading with Python from scratch. A free, hands-on 32-chapter course covering NumPy, Pandas, 80+ technical indicators, backtesting with VectorBT, optimisation, walk-forward testing, machine learning, real-time WebSocket trading and risk-based position sizing - every example is tested live and powered by the OpenAlgo Python SDK across NSE, NFO and MCX.";
 
 export const metadata = {
-  title: { absolute: "Algo Trading with Python - Free 30-Chapter Course for Traders | OpenAlgo" },
+  title: { absolute: "Algo Trading with Python - Free 32-Chapter Course for Traders | OpenAlgo" },
   description: LANDING_DESC,
   keywords: [
     "algorithmic trading with python", "algo trading python course", "learn algo trading",
@@ -21,14 +21,14 @@ export const metadata = {
   openGraph: {
     type: "website",
     url: "https://openalgo.in/python",
-    title: "Algo Trading with Python - Free 30-Chapter Course for Traders",
+    title: "Algo Trading with Python - Free 32-Chapter Course for Traders",
     description: LANDING_DESC,
     siteName: "OpenAlgo",
     images: [{ url: OG_IMAGE, width: 1200, height: 630, alt: "Algo Trading with Python course by OpenAlgo", type: "image/png" }],
   },
   twitter: {
     card: "summary_large_image",
-    title: "Algo Trading with Python - Free 30-Chapter Course",
+    title: "Algo Trading with Python - Free 32-Chapter Course",
     description: LANDING_DESC,
     images: [OG_IMAGE],
     creator: "@openalgoHQ",
@@ -77,11 +77,11 @@ export default function PythonCourseHome() {
         <div className="relative px-6 sm:px-10 lg:px-14 py-16 sm:py-20">
           <span className="reveal reveal-1 inline-flex items-center gap-2 rounded-full border border-border surface-low px-4 py-1.5 font-label text-xs tracking-wide text-on-surface-variant">
             <BookOpen className="h-3.5 w-3.5 text-primary" />
-            30 chapters · 200+ runnable examples · NSE · NFO · MCX
+            32 chapters · 200+ runnable examples · NSE · NFO · MCX
           </span>
           <h1 className="reveal reveal-2 mt-6 max-w-3xl text-4xl sm:text-5xl lg:text-6xl font-bold leading-[1.05] tracking-tight text-on-surface">
             Learn{" "}
-            <span className="bg-gradient-to-r from-primary via-secondary to-tertiary bg-clip-text text-transparent">
+            <span className="bg-linear-to-r from-primary via-secondary to-tertiary bg-clip-text text-transparent">
               algorithmic trading
             </span>{" "}
             with Python
@@ -107,13 +107,13 @@ export default function PythonCourseHome() {
           </div>
           <div className="reveal reveal-5 mt-12 flex flex-wrap gap-x-10 gap-y-4">
             {[
-              ["30", "Chapters"],
-              ["8", "Modules"],
+              ["32", "Chapters"],
+              ["9", "Modules"],
               ["80+", "Indicators"],
               ["100%", "OpenAlgo SDK"],
             ].map(([v, k]) => (
               <div key={k}>
-                <div className="text-3xl font-bold bg-gradient-to-r from-primary to-tertiary bg-clip-text text-transparent">
+                <div className="text-3xl font-bold bg-linear-to-r from-primary to-tertiary bg-clip-text text-transparent">
                   {v}
                 </div>
                 <div className="font-label text-xs uppercase tracking-wider text-on-surface-variant/70">{k}</div>

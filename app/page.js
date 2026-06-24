@@ -160,7 +160,7 @@ export default function Home() {
           {/* Main Headline */}
           <h1 className="reveal reveal-2 text-display-lg sm:text-[4.5rem] leading-[1.05] mb-6 tracking-tight">
             <span className="block text-on-surface">Your Personal</span>
-            <span className="bg-clip-text text-transparent bg-gradient-to-r from-primary via-secondary to-tertiary animate-gradient">
+            <span className="bg-clip-text text-transparent bg-linear-to-r from-primary via-secondary to-tertiary animate-gradient">
               Algo Trading Platform
             </span>
           </h1>
@@ -363,7 +363,7 @@ export default function Home() {
               {/* MCP */}
               <a href="/mcp" className="obsidian-card rounded-2xl p-8 ghost-border hover-lift group block">
                 <div className="flex items-start gap-4 mb-4">
-                  <div className="inline-flex p-3 rounded-xl bg-primary/10 flex-shrink-0">
+                  <div className="inline-flex p-3 rounded-xl bg-primary/10 shrink-0">
                     <Bot className="h-6 w-6 text-primary" />
                   </div>
                   <div className="flex-1">
@@ -388,7 +388,7 @@ export default function Home() {
               {/* Skills */}
               <a href="/skills" className="obsidian-card rounded-2xl p-8 ghost-border hover-lift group block">
                 <div className="flex items-start gap-4 mb-4">
-                  <div className="inline-flex p-3 rounded-xl bg-tertiary/10 flex-shrink-0">
+                  <div className="inline-flex p-3 rounded-xl bg-tertiary/10 shrink-0">
                     <Wand2 className="h-6 w-6 text-tertiary" />
                   </div>
                   <div className="flex-1">
@@ -537,7 +537,7 @@ export default function Home() {
                 <ul className="space-y-3 text-sm">
                   {["Unified API across 33+ brokers", "Strategy portability guaranteed", "No proprietary formats or protocols"].map(item => (
                     <li key={item} className="flex items-start gap-3">
-                      <ArrowRight className="w-4 h-4 text-primary mt-0.5 flex-shrink-0" />
+                      <ArrowRight className="w-4 h-4 text-primary mt-0.5 shrink-0" />
                       <span className="text-on-surface">{item}</span>
                     </li>
                   ))}
@@ -556,7 +556,7 @@ export default function Home() {
                 <ul className="space-y-3 text-sm">
                   {["Active Discord community", "Regular virtual meetups", "Open development on GitHub"].map(item => (
                     <li key={item} className="flex items-start gap-3">
-                      <ArrowRight className="w-4 h-4 text-primary mt-0.5 flex-shrink-0" />
+                      <ArrowRight className="w-4 h-4 text-primary mt-0.5 shrink-0" />
                       <span className="text-on-surface">{item}</span>
                     </li>
                   ))}
@@ -611,7 +611,7 @@ export default function Home() {
               Join thousands of traders who've chosen freedom over convenience
             </p>
             <div className="rounded-2xl p-10 mb-10 ghost-border surface-container relative overflow-hidden">
-              <div className="absolute inset-0 bg-gradient-to-r from-primary/5 via-secondary/5 to-tertiary/5" />
+              <div className="absolute inset-0 bg-linear-to-r from-primary/5 via-secondary/5 to-tertiary/5" />
               <div className="relative z-10">
                 <p className="text-xl font-semibold mb-4 text-on-surface">
                   Your strategies remain yours. Your services remain proprietary.

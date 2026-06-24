@@ -129,7 +129,7 @@ export default function BeginnerPage() {
 
           <h1 className="text-display-md sm:text-display-lg md:text-[4rem] leading-[1.1] mb-4 sm:mb-6 tracking-tight">
             <span className="block text-on-surface">OpenAlgo</span>
-            <span className="bg-clip-text text-transparent bg-gradient-to-r from-primary via-secondary to-tertiary animate-gradient">
+            <span className="bg-clip-text text-transparent bg-linear-to-r from-primary via-secondary to-tertiary animate-gradient">
               Explained Simply
             </span>
           </h1>

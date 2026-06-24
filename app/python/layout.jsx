@@ -4,7 +4,7 @@ import "./python-portal.css";
 export const metadata = {
   title: "Algo Trading with Python - Learn with OpenAlgo",
   description:
-    "A hands-on, 30-chapter series for traders new to Python. Learn NumPy, Pandas, indicators, backtesting, optimisation and machine learning - built entirely on the OpenAlgo Python SDK.",
+    "A hands-on, 32-chapter series for traders new to Python. Learn NumPy, Pandas, indicators, backtesting, optimisation, machine learning, real-time WebSocket trading and risk-based position sizing - built entirely on the OpenAlgo Python SDK.",
 };
 
 export default function PythonLayout({ children }) {

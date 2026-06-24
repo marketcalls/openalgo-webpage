@@ -78,10 +78,10 @@ export default function WhatsNextPage() {
         <div className="glow-orb" style={{ width: 420, height: 420, top: -130, left: "30%", background: "hsl(140 72% 53% / 0.16)" }} aria-hidden="true" />
         <div className="relative px-6 sm:px-10 lg:px-14 py-16 sm:py-20 text-center">
           <span className="reveal reveal-1 inline-flex items-center gap-2 rounded-full border border-border surface-low px-4 py-1.5 font-label text-xs tracking-wide text-tertiary">
-            <Check className="h-3.5 w-3.5" /> Course complete - all 30 chapters
+            <Check className="h-3.5 w-3.5" /> Course complete - all 32 chapters
           </span>
           <h1 className="reveal reveal-2 mx-auto mt-6 max-w-3xl text-4xl sm:text-5xl lg:text-6xl font-bold leading-[1.05] tracking-tight">
-            <span className="bg-gradient-to-r from-primary via-secondary to-tertiary bg-clip-text text-transparent">Congratulations.</span>
+            <span className="bg-linear-to-r from-primary via-secondary to-tertiary bg-clip-text text-transparent">Congratulations.</span>
             <br />You made it to the end.
           </h1>
           <p className="reveal reveal-3 mx-auto mt-5 max-w-2xl text-lg text-on-surface-variant">
@@ -96,7 +96,7 @@ export default function WhatsNextPage() {
           <div className="mt-5 grid gap-3 sm:grid-cols-2">
             {CAN_NOW.map((c) => (
               <div key={c} className="flex gap-3 obsidian-card ghost-border rounded-xl p-4">
-                <Check className="h-5 w-5 flex-shrink-0 text-tertiary" />
+                <Check className="h-5 w-5 shrink-0 text-tertiary" />
                 <span className="text-on-surface-variant">{c}</span>
               </div>
             ))}
@@ -109,7 +109,7 @@ export default function WhatsNextPage() {
           <ol className="space-y-4">
             {NEXT_STEPS.map((s, i) => (
               <li key={s.h} className="flex gap-4 obsidian-card ghost-border rounded-2xl p-5 hover-lift">
-                <span className="flex-shrink-0 font-label text-lg font-bold bg-gradient-to-br from-primary to-tertiary bg-clip-text text-transparent">{String(i + 1).padStart(2, "0")}</span>
+                <span className="shrink-0 font-label text-lg font-bold bg-linear-to-br from-primary to-tertiary bg-clip-text text-transparent">{String(i + 1).padStart(2, "0")}</span>
                 <div>
                   <h3 className="font-semibold text-on-surface">{s.h}</h3>
                   <p className="mt-1 text-sm leading-relaxed text-on-surface-variant">{s.p}</p>
@@ -125,7 +125,7 @@ export default function WhatsNextPage() {
             <ul className="space-y-3">
               {PRINCIPLES.map((p) => (
                 <li key={p} className="flex gap-3">
-                  <Check className="h-5 w-5 flex-shrink-0 text-primary" />
+                  <Check className="h-5 w-5 shrink-0 text-primary" />
                   <span className="text-on-surface">{p}</span>
                 </li>
               ))}

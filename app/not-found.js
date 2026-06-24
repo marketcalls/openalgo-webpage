@@ -11,7 +11,7 @@ export default function NotFound() {
         {/* Animated 404 display */}
         <div className="relative mb-10">
           <div className="text-[8rem] sm:text-[10rem] font-bold leading-none tracking-tighter">
-            <span className="bg-clip-text text-transparent bg-gradient-to-r from-primary via-secondary to-tertiary animate-gradient">
+            <span className="bg-clip-text text-transparent bg-linear-to-r from-primary via-secondary to-tertiary animate-gradient">
               404
             </span>
           </div>

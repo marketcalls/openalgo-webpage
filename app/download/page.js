@@ -188,7 +188,7 @@ export default function DownloadPage() {
 
           {/* Philosophy */}
           <div className="text-center p-8 rounded-xl surface-low ghost-border relative overflow-hidden">
-            <div className="absolute inset-0 bg-gradient-to-r from-primary/5 via-secondary/5 to-tertiary/5" />
+            <div className="absolute inset-0 bg-linear-to-r from-primary/5 via-secondary/5 to-tertiary/5" />
             <div className="relative z-10">
               <p className="text-on-surface-variant mb-5 max-w-2xl mx-auto">
                 The Mini FOSS Universe reflects OpenAlgo's core philosophy: <strong className="text-on-surface">open standards, transparent design, and tools that adapt to how traders actually work.</strong>
@@ -220,7 +220,7 @@ export default function DownloadPage() {
               "Active broker connection configured in OpenAlgo"
             ].map(item => (
               <li key={item} className="flex items-start gap-3">
-                <span className="w-1.5 h-1.5 rounded-full bg-primary mt-2 flex-shrink-0" />
+                <span className="w-1.5 h-1.5 rounded-full bg-primary mt-2 shrink-0" />
                 <span>{item}</span>
               </li>
             ))}
@@ -294,7 +294,7 @@ export default function DownloadPage() {
                   <ul className="space-y-2 text-on-surface-variant">
                     {items.map(item => (
                       <li key={item} className="flex items-start gap-3">
-                        <span className="w-1.5 h-1.5 rounded-full bg-tertiary mt-2 flex-shrink-0" />
+                        <span className="w-1.5 h-1.5 rounded-full bg-tertiary mt-2 shrink-0" />
                         <span className="text-sm">{item}</span>
                       </li>
                     ))}
@@ -328,7 +328,7 @@ export default function DownloadPage() {
                 <ul className="space-y-2 text-on-surface-variant">
                   {["Quick order placement from any webpage", "Secure API key storage", "Support for all OpenAlgo-compatible brokers", "Real-time order status updates"].map(item => (
                     <li key={item} className="flex items-start gap-3">
-                      <span className="w-1.5 h-1.5 rounded-full bg-tertiary mt-2 flex-shrink-0" />
+                      <span className="w-1.5 h-1.5 rounded-full bg-tertiary mt-2 shrink-0" />
                       <span className="text-sm">{item}</span>
                     </li>
                   ))}
@@ -382,7 +382,7 @@ export default function DownloadPage() {
                 <ul className="space-y-2 text-on-surface-variant">
                   {["Place orders directly from Excel cells", "Real-time position and order tracking", "Custom formulas for trading automation", "Portfolio management in spreadsheets", "Works with Excel 2016 and later"].map(item => (
                     <li key={item} className="flex items-start gap-3">
-                      <span className="w-1.5 h-1.5 rounded-full bg-tertiary mt-2 flex-shrink-0" />
+                      <span className="w-1.5 h-1.5 rounded-full bg-tertiary mt-2 shrink-0" />
                       <span className="text-sm">{item}</span>
                     </li>
                   ))}
@@ -408,7 +408,7 @@ export default function DownloadPage() {
                     <ul className="space-y-1.5">
                       {["Microsoft Excel 2016 or later", "Windows 10/11 or macOS", "OpenAlgo instance running", "Valid API credentials"].map(item => (
                         <li key={item} className="flex items-start gap-3">
-                          <span className="w-1.5 h-1.5 rounded-full bg-primary mt-2 flex-shrink-0" />
+                          <span className="w-1.5 h-1.5 rounded-full bg-primary mt-2 shrink-0" />
                           <span>{item}</span>
                         </li>
                       ))}

@@ -218,7 +218,7 @@ export default function FAQPage() {
 
           <h1 className="reveal reveal-2 text-display-md sm:text-display-lg mb-5 tracking-tight">
             <span className="block text-on-surface">Questions,</span>
-            <span className="bg-clip-text text-transparent bg-gradient-to-r from-primary via-secondary to-tertiary animate-gradient">
+            <span className="bg-clip-text text-transparent bg-linear-to-r from-primary via-secondary to-tertiary animate-gradient">
               Answered
             </span>
           </h1>
@@ -235,7 +235,7 @@ export default function FAQPage() {
               value={query}
               onChange={(e) => setQuery(e.target.value)}
               placeholder="Search questions, brokers, licensing..."
-              className="w-full pl-11 pr-4 py-3 rounded-xl surface-container ghost-border text-sm text-on-surface placeholder:text-on-surface-variant focus:outline-none focus:ring-2 focus:ring-primary/40 transition-shadow"
+              className="w-full pl-11 pr-4 py-3 rounded-xl surface-container ghost-border text-sm text-on-surface placeholder:text-on-surface-variant focus:outline-hidden focus:ring-2 focus:ring-primary/40 transition-shadow"
             />
             {q && (
               <span className="absolute right-4 top-1/2 -translate-y-1/2 font-label text-label-sm text-on-surface-variant">
@@ -359,7 +359,7 @@ export default function FAQPage() {
 
             {/* CTA */}
             <div className="text-center rounded-2xl surface-low p-10 ghost-border relative overflow-hidden">
-              <div className="absolute inset-0 bg-gradient-to-r from-primary/5 via-secondary/5 to-tertiary/5" />
+              <div className="absolute inset-0 bg-linear-to-r from-primary/5 via-secondary/5 to-tertiary/5" />
               <div className="relative z-10">
                 <p className="text-on-surface font-semibold mb-2">Question not covered here?</p>
                 <p className="text-sm text-on-surface-variant mb-6">

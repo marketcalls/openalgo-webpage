@@ -266,7 +266,7 @@ export default function MCPPage() {
 
           <h1 className="text-display-lg sm:text-[4rem] leading-[1.05] mb-6 tracking-tight">
             <span className="block text-on-surface">Trade Just By</span>
-            <span className="bg-clip-text text-transparent bg-gradient-to-r from-primary via-secondary to-tertiary animate-gradient">
+            <span className="bg-clip-text text-transparent bg-linear-to-r from-primary via-secondary to-tertiary animate-gradient">
               Asking Your AI
             </span>
           </h1>
@@ -307,7 +307,7 @@ export default function MCPPage() {
           <div className="obsidian-card rounded-2xl p-6 md:p-8 ghost-border max-w-3xl mx-auto">
             <div className="space-y-5">
               <div className="flex items-start gap-3">
-                <div className="flex-shrink-0 h-8 w-8 rounded-full bg-primary/10 flex items-center justify-center">
+                <div className="shrink-0 h-8 w-8 rounded-full bg-primary/10 flex items-center justify-center">
                   <Bot className="h-4 w-4 text-primary" />
                 </div>
                 <div className="flex-1 surface-low rounded-xl rounded-tl-sm p-4">
@@ -315,7 +315,7 @@ export default function MCPPage() {
                 </div>
               </div>
               <div className="flex items-start gap-3 flex-row-reverse">
-                <div className="flex-shrink-0 h-8 w-8 rounded-full bg-tertiary/10 flex items-center justify-center">
+                <div className="shrink-0 h-8 w-8 rounded-full bg-tertiary/10 flex items-center justify-center">
                   <Sparkles className="h-4 w-4 text-tertiary" />
                 </div>
                 <div className="flex-1 surface-container rounded-xl rounded-tr-sm p-4">
@@ -395,7 +395,7 @@ export default function MCPPage() {
           <div className="grid sm:grid-cols-2 gap-3">
             {prompts.map(({ icon: Icon, text }, i) => (
               <div key={i} className="obsidian-card rounded-xl p-4 ghost-border flex items-start gap-3 hover-lift">
-                <div className="flex-shrink-0 h-8 w-8 rounded-lg surface-container flex items-center justify-center">
+                <div className="shrink-0 h-8 w-8 rounded-lg surface-container flex items-center justify-center">
                   <Icon className="h-4 w-4 text-primary" />
                 </div>
                 <p className="text-sm text-on-surface leading-relaxed pt-1">&ldquo;{text}&rdquo;</p>
@@ -422,7 +422,7 @@ export default function MCPPage() {
                 <ul className="space-y-2.5">
                   {tools.map(({ label, desc }) => (
                     <li key={label} className="flex items-start gap-3">
-                      <span className="w-1.5 h-1.5 rounded-full bg-primary mt-2 flex-shrink-0" />
+                      <span className="w-1.5 h-1.5 rounded-full bg-primary mt-2 shrink-0" />
                       <div className="text-sm leading-relaxed">
                         <span className="text-on-surface font-medium">{label}</span>
                         <span className="text-on-surface-variant"> - </span>
@@ -471,15 +471,15 @@ export default function MCPPage() {
               </div>
               <ul className="space-y-2.5 text-sm text-on-surface-variant mb-4">
                 <li className="flex items-start gap-3">
-                  <span className="w-1.5 h-1.5 rounded-full bg-primary mt-2 flex-shrink-0" />
+                  <span className="w-1.5 h-1.5 rounded-full bg-primary mt-2 shrink-0" />
                   <span>Make sure OpenAlgo is running on your computer and your broker is logged in.</span>
                 </li>
                 <li className="flex items-start gap-3">
-                  <span className="w-1.5 h-1.5 rounded-full bg-primary mt-2 flex-shrink-0" />
+                  <span className="w-1.5 h-1.5 rounded-full bg-primary mt-2 shrink-0" />
                   <span>Open OpenAlgo, go to <span className="text-on-surface font-medium">Settings → API Keys</span>, and copy your key. Keep it handy.</span>
                 </li>
                 <li className="flex items-start gap-3">
-                  <span className="w-1.5 h-1.5 rounded-full bg-primary mt-2 flex-shrink-0" />
+                  <span className="w-1.5 h-1.5 rounded-full bg-primary mt-2 shrink-0" />
                   <span>Download the MCP setup files from GitHub. The full setup guide walks through this in under a minute.</span>
                 </li>
               </ul>
@@ -528,7 +528,7 @@ export default function MCPPage() {
                 <div className="space-y-2">
                   {CONFIG_PATHS[os].map(({ app, path }) => (
                     <div key={app} className="flex flex-col sm:flex-row sm:items-center gap-1.5 sm:gap-3 text-sm">
-                      <span className="font-medium text-on-surface sm:w-36 flex-shrink-0">{app}</span>
+                      <span className="font-medium text-on-surface sm:w-36 shrink-0">{app}</span>
                       <code className="text-xs font-mono surface-container px-2 py-1 rounded text-on-surface-variant break-all">{path}</code>
                     </div>
                   ))}
@@ -580,22 +580,22 @@ export default function MCPPage() {
         <div className="mb-20">
           <div className="obsidian-card rounded-xl p-6 ghost-border">
             <div className="flex items-start gap-4">
-              <div className="flex-shrink-0 inline-flex p-2.5 rounded-lg bg-secondary/10">
+              <div className="shrink-0 inline-flex p-2.5 rounded-lg bg-secondary/10">
                 <ShieldCheck className="h-6 w-6 text-secondary" />
               </div>
               <div className="flex-1">
                 <h3 className="font-semibold text-on-surface mb-2">A Few Things To Know</h3>
                 <ul className="space-y-2 text-sm text-on-surface-variant">
                   <li className="flex items-start gap-3">
-                    <span className="w-1.5 h-1.5 rounded-full bg-secondary mt-2 flex-shrink-0" />
+                    <span className="w-1.5 h-1.5 rounded-full bg-secondary mt-2 shrink-0" />
                     <span>Everything runs on your own computer. Your orders and account info never leave your machine.</span>
                   </li>
                   <li className="flex items-start gap-3">
-                    <span className="w-1.5 h-1.5 rounded-full bg-secondary mt-2 flex-shrink-0" />
+                    <span className="w-1.5 h-1.5 rounded-full bg-secondary mt-2 shrink-0" />
                     <span>Your API key stays local - it&apos;s never uploaded or shared.</span>
                   </li>
                   <li className="flex items-start gap-3">
-                    <AlertTriangle className="w-4 h-4 text-secondary mt-0.5 flex-shrink-0" />
+                    <AlertTriangle className="w-4 h-4 text-secondary mt-0.5 shrink-0" />
                     <span>AI can sometimes make mistakes. Always read what it&apos;s about to do before you say yes - especially for orders.</span>
                   </li>
                 </ul>

@@ -37,7 +37,7 @@ export function Navbar() {
     "sticky top-0 z-50 w-full transition-all duration-300",
     scrolled
       ? "glass-float shadow-lg shadow-black/5"
-      : "bg-background/80 backdrop-blur-sm"
+      : "bg-background/80 backdrop-blur-xs"
   )
 
   if (!mounted) {

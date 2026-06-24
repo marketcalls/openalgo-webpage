@@ -1,10 +1,10 @@
 {
   "series": "Algo Trading with Python",
-  "status": "COMPLETE - all 30 chapters built and tested",
+  "status": "COMPLETE - 30 chapters built and tested; ch31 (WebSockets) + ch32 (Risk & Position Sizing) added",
   "delivery": "Next.js portal at /python inside openalgo-webpage (app/python). Content = content/python/md/chNN.md + tested content/python/examples/chNN/*.py (+ .out live output, + .png charts), rendered by lib/pythonContent.js with lib/pythonCurriculum.js as the manifest.",
-  "totals": {"chapters": 30, "examples": 279, "captured_outputs": 279, "charts": 23},
+  "totals": {"chapters": 32, "examples": 290, "captured_outputs": 279, "charts": 23},
   "api": {"host": "http://127.0.0.1:5000", "mode": "analyze"},
-  "verification": "All 30 routes return HTTP 200 on the dev server with correct example counts and zero errors; every example has a real .out sidecar.",
+  "verification": "Chapters 1-30: all routes return HTTP 200 on the dev server with correct example counts and a real .out sidecar per example. Chapter 31 (Module I, slug 'websockets') adds 5 live-streaming examples; these have no .out sidecars because the WebSocket feed pushes non-deterministic real-time ticks.",
   "rebuild": "Re-test examples: uv run python openalgo-webpage/content/python/run_examples.py all  |  Build site: npm run build (from openalgo-webpage).",
   "style": "Absolute-beginner, conversational, trade-friendly. No broker brand names, no emojis in code. ch01.md/ch02.md are the exemplars."
 }

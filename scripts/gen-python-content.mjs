@@ -134,7 +134,7 @@ function addIdsAndToc(html) {
 
 const data = {};
 let built = 0;
-for (let n = 1; n <= 30; n++) {
+for (let n = 1; n <= 32; n++) {
   const file = path.join(MD_DIR, `ch${String(n).padStart(2, "0")}.md`);
   if (!fs.existsSync(file)) {
     data[n] = { html: "", toc: [], exCount: 0, hasContent: false };
@@ -149,4 +149,4 @@ for (let n = 1; n <= 30; n++) {
 
 fs.writeFileSync(DATA_OUT, JSON.stringify(data));
 const kb = Math.round(fs.statSync(DATA_OUT).size / 1024);
-console.log(`Generated lib/pythonContentData.json (${kb} KB, ${built}/30 chapters with content)`);
+console.log(`Generated lib/pythonContentData.json (${kb} KB, ${built}/32 chapters with content)`);

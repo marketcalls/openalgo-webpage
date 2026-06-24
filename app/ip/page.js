@@ -100,7 +100,7 @@ export default function IPTrackerPage() {
                     value={ipAddress}
                     onChange={(e) => setIpAddress(e.target.value)}
                     placeholder="Enter IP address to lookup"
-                    className="w-full px-4 py-3 rounded-lg bg-transparent text-on-surface placeholder:text-on-surface-variant focus:outline-none focus:ring-2 focus:ring-primary/50 ghost-border transition-all focus:surface-container"
+                    className="w-full px-4 py-3 rounded-lg bg-transparent text-on-surface placeholder:text-on-surface-variant focus:outline-hidden focus:ring-2 focus:ring-primary/50 ghost-border transition-all focus:surface-container"
                   />
                   <Button type="submit" disabled={loading} className="w-full">
                     {loading ? (

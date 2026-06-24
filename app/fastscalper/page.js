@@ -49,7 +49,7 @@ export default function FastScalperPage() {
                 <ul className="space-y-2 text-on-surface-variant text-sm">
                   {items.map(item => (
                     <li key={item} className="flex items-start gap-3">
-                      <span className="w-1.5 h-1.5 rounded-full bg-tertiary mt-1.5 flex-shrink-0" />
+                      <span className="w-1.5 h-1.5 rounded-full bg-tertiary mt-1.5 shrink-0" />
                       <span>{item}</span>
                     </li>
                   ))}
@@ -71,7 +71,7 @@ export default function FastScalperPage() {
                   { icon: Settings, title: "Product Types", desc: "CNC (Cash & Carry), MIS (Intraday), NRML (Positional)" },
                 ].map(({ icon: Icon, title, desc }) => (
                   <div key={title} className="flex items-start gap-4">
-                    <Icon className="h-5 w-5 text-primary flex-shrink-0 mt-0.5" />
+                    <Icon className="h-5 w-5 text-primary shrink-0 mt-0.5" />
                     <div>
                       <p className="font-semibold text-sm text-on-surface">{title}</p>
                       <p className="text-sm text-on-surface-variant">{desc}</p>
@@ -88,7 +88,7 @@ export default function FastScalperPage() {
                   { icon: Webhook, title: "API Integration", desc: "Seamless connection with OpenAlgo for real-time trading" },
                 ].map(({ icon: Icon, title, desc }) => (
                   <div key={title} className="flex items-start gap-4">
-                    <Icon className="h-5 w-5 text-primary flex-shrink-0 mt-0.5" />
+                    <Icon className="h-5 w-5 text-primary shrink-0 mt-0.5" />
                     <div>
                       <p className="font-semibold text-sm text-on-surface">{title}</p>
                       <p className="text-sm text-on-surface-variant">{desc}</p>
@@ -109,7 +109,7 @@ export default function FastScalperPage() {
               <ul className="space-y-3 text-on-surface-variant text-sm">
                 {["OpenAlgo installed and running", "API key from OpenAlgo dashboard", "Compatible operating system"].map(item => (
                   <li key={item} className="flex items-start gap-3">
-                    <span className="w-1.5 h-1.5 rounded-full bg-primary mt-1.5 flex-shrink-0" />
+                    <span className="w-1.5 h-1.5 rounded-full bg-primary mt-1.5 shrink-0" />
                     <span>{item}</span>
                   </li>
                 ))}
@@ -120,7 +120,7 @@ export default function FastScalperPage() {
               <ul className="space-y-3 text-on-surface-variant text-sm">
                 {["Download & install FastScalper", "Configure API key and host URL", "Set up your trading preferences"].map(item => (
                   <li key={item} className="flex items-start gap-3">
-                    <span className="w-1.5 h-1.5 rounded-full bg-tertiary mt-1.5 flex-shrink-0" />
+                    <span className="w-1.5 h-1.5 rounded-full bg-tertiary mt-1.5 shrink-0" />
                     <span>{item}</span>
                   </li>
                 ))}
