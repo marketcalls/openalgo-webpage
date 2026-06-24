@@ -15,7 +15,7 @@ export function chapterMeta(slug) {
   if (!ch) return {};
   const url = `https://openalgo.in/quant/${ch.slug}`;
   const title = `${ch.title} - Quantitative Trading | OpenAlgo`;
-  const description = `${ch.summary} A hands-on, beginner-friendly chapter of the free OpenAlgo quant course, with live-tested examples on Indian markets.`;
+  const description = `${ch.summary} A hands-on, beginner-friendly chapter of the free OpenAlgo Quantitative Trading course, with live-tested examples on Indian markets.`;
   const keywords = [
     ch.title.toLowerCase(),
     ...ch.learn.map((l) => l.toLowerCase()),
