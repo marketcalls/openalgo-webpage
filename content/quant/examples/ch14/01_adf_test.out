@@ -1,0 +1,5 @@
+ADF test  (null = random walk):
+  NIFTY price   : stat  -1.49   p-value 0.538   -> NON-stationary (random walk)
+  NIFTY returns : stat -18.30   p-value 0.000   -> STATIONARY (mean-reverting)
+
+Price wanders with no anchor; returns are stationary - which is why quants model RETURNS, not price.

@@ -1,0 +1,7 @@
+NIFTY spot   : 24021.65
+NIFTY future : 24053.60
+Basis (future - spot): +31.95   (premium)
+As % of spot : +0.13%
+
+No-arbitrage ties them: future = spot + cost of carry.
+They MUST converge as expiry approaches - if they didn't, it would be free money.

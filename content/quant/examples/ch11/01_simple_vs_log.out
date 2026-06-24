@@ -1,0 +1,8 @@
+Last 5 simple returns: [0.00342, -0.00641, 0.00374, -0.01157, 0.00829]
+Last 5 log returns   : [0.00341, -0.00643, 0.00373, -0.01163, 0.00826]
+(almost identical for small daily moves)
+
+Sum of daily log returns : -0.04169
+Log of the whole move    : -0.04169   <- matches exactly
+Sum of simple returns    : -0.03324
+Actual compounded return : -0.04084   <- simple returns do NOT add

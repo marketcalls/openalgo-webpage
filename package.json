@@ -4,13 +4,15 @@
   "private": true,
   "scripts": {
     "gen:python": "node scripts/gen-python-content.mjs",
-    "dev": "node scripts/gen-python-content.mjs && next dev",
-    "prebuild": "node scripts/gen-python-content.mjs",
+    "gen:quant": "node scripts/gen-quant-content.mjs",
+    "gen": "node scripts/gen-python-content.mjs && node scripts/gen-quant-content.mjs",
+    "dev": "npm run gen && next dev",
+    "prebuild": "npm run gen",
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "preview": "node scripts/gen-python-content.mjs && opennextjs-cloudflare build && opennextjs-cloudflare preview",
-    "deploy": "node scripts/gen-python-content.mjs && opennextjs-cloudflare build && opennextjs-cloudflare deploy"
+    "preview": "npm run gen && opennextjs-cloudflare build && opennextjs-cloudflare preview",
+    "deploy": "npm run gen && opennextjs-cloudflare build && opennextjs-cloudflare deploy"
   },
   "dependencies": {
     "@radix-ui/react-accordion": "^1.1.2",

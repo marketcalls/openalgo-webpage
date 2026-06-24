@@ -1,0 +1,7 @@
+GARCH(1,1) fitted to Nifty daily returns:
+  alpha (reaction to yesterday's shock) : 0.103
+  beta  (persistence of past variance)  : 0.872
+  alpha + beta (total persistence)      : 0.975   (near 1 = vol clusters strongly)
+
+Forecast next-day volatility : 0.83%  (annualised ~13.2%)
+Unlike returns, volatility HAS memory - so it can genuinely be forecast.

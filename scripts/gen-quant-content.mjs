@@ -1,10 +1,10 @@
-// Build-time generator for the Python course content.
+// Build-time generator for the "Becoming a Quant" course content.
 // Renders every chapter's markdown + tested examples into a single JSON module
-// (lib/pythonContentData.json) so the Next pages need NO filesystem access at
+// (lib/quantContentData.json) so the Next pages need NO filesystem access at
 // runtime - critical on Cloudflare Workers where process.cwd() is not the bundle.
-// Also copies example chart PNGs into public/python/charts.
+// Also copies example chart PNGs into public/quant/charts.
 //
-// Runs automatically via the "prebuild" npm script and before deploy.
+// Mirrors scripts/gen-python-content.mjs. Runs via "prebuild" and before deploy.
 import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
@@ -14,10 +14,11 @@ import { Marked } from "marked";
 import { markedHighlight } from "marked-highlight";
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
-const MD_DIR = path.join(ROOT, "content", "python", "md");
-const EX_DIR = path.join(ROOT, "content", "python", "examples");
-const CHART_OUT = path.join(ROOT, "public", "python", "charts");
-const DATA_OUT = path.join(ROOT, "lib", "pythonContentData.json");
+const MD_DIR = path.join(ROOT, "content", "quant", "md");
+const EX_DIR = path.join(ROOT, "content", "quant", "examples");
+const CHART_OUT = path.join(ROOT, "public", "quant", "charts");
+const DATA_OUT = path.join(ROOT, "lib", "quantContentData.json");
+const CHAPTERS = 36;
 
 const TAG_CLASS = { NSE: "nse", NFO: "nfo", MCX: "mcx", INDEX: "idx", BSE: "nse", CDS: "idx" };
 
@@ -79,7 +80,7 @@ function renderExample(idx, spec) {
     fs.mkdirSync(CHART_OUT, { recursive: true });
     const name = `${relpath.replace(/[\\/]/g, "_").replace(/\.py$/, "")}.png`;
     fs.copyFileSync(pngPath, path.join(CHART_OUT, name));
-    html += `<div class="ex-chart"><img src="/python/charts/${name}" alt="${esc(title)} chart" loading="lazy"/></div>`;
+    html += `<div class="ex-chart"><img src="/quant/charts/${name}" alt="${esc(title)} chart" loading="lazy"/></div>`;
   }
   html += "</figure>";
   return html;
@@ -144,7 +145,7 @@ function addIdsAndToc(html) {
 
 const data = {};
 let built = 0;
-for (let n = 1; n <= 32; n++) {
+for (let n = 1; n <= CHAPTERS; n++) {
   const file = path.join(MD_DIR, `ch${String(n).padStart(2, "0")}.md`);
   if (!fs.existsSync(file)) {
     data[n] = { html: "", toc: [], exCount: 0, hasContent: false };
@@ -159,4 +160,4 @@ for (let n = 1; n <= 32; n++) {
 
 fs.writeFileSync(DATA_OUT, JSON.stringify(data));
 const kb = Math.round(fs.statSync(DATA_OUT).size / 1024);
-console.log(`Generated lib/pythonContentData.json (${kb} KB, ${built}/32 chapters with content)`);
+console.log(`Generated lib/quantContentData.json (${kb} KB, ${built}/${CHAPTERS} chapters with content)`);

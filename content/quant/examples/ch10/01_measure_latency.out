@@ -1,0 +1,7 @@
+Round trips : 20
+Fastest     : 32.2 ms
+Median      : 500.1 ms
+95th pct    : 2191.6 ms
+Slowest     : 2247.8 ms
+
+An HFT firm colocated at the exchange measures this in MICROSECONDS - thousands of times faster.

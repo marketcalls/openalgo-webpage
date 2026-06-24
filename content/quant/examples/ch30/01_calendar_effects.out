@@ -1,0 +1,9 @@
+DAY           AVG RET   VOLATILITY   DAYS
+Monday        -0.073%        1.41%    367
+Tuesday        0.172%        1.02%    371
+Wednesday      0.112%        0.95%    369
+Thursday       0.002%        1.03%    371
+Friday         0.039%        1.04%    366
+
+Weekly option expiry has long fallen mid-week - watch which day carries the highest volatility.
+Persistent, calendar-driven patterns like these are the seed of event-driven strategies.

@@ -1,0 +1,9 @@
+Rows                     : 1853
+Date range               : 2019-01-01 -> 2026-06-24
+Business days not present : 108  (holidays + any gaps)
+Zero-volume bars         : 0
+Duplicated timestamps    : 0
+Extreme moves (|ret|>20%): 0  (bad ticks or corporate actions?)
+NaNs in close            : 0
+
+Never feed raw data straight into a backtest - clean it, or your edge is a data artefact.

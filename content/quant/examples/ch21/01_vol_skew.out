@@ -1,0 +1,19 @@
+India VIX (the market's 30-day implied volatility): 13.39%
+
+  STRIKE     IV %
+   23400    14.59
+   23500    13.23
+   23600    12.33
+   23700    12.10
+   23800    11.59
+   23900    11.40
+   24000    11.15
+   24100    11.04
+   24200    10.83
+   24300    10.72
+   24400    10.76
+   24500    11.04
+   24600    11.31
+   24700    11.77
+
+Lower strikes carry HIGHER implied vol - the 'skew' - because crash insurance (puts) is dear.

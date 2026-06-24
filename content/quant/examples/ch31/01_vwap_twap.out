@@ -1,0 +1,7 @@
+RELIANCE intraday, 75 five-minute bars on 2026-06-24
+
+VWAP  : 1312.30   volume-weighted - more trades at a price, more weight (the benchmark)
+TWAP  : 1313.22   time-weighted  - every bar counts equally
+Open  : 1306.30    Close: 1313.40
+
+Beat VWAP and your execution desk earned its keep; lag it and you leaked money to the market.

@@ -1,0 +1,8 @@
+95% 1-day VaR (historical) : -1.51%   - lose at least this ~1 day in 20
+99% 1-day VaR (historical) : -2.98%   - ~1 day in 100
+99% 1-day VaR (normal model): -2.52%   - the bell curve UNDERSTATES the tail
+
+95% CVaR / expected shortfall: -2.58%   - the AVERAGE loss on the worst 5% of days
+Worst actual day             : -12.98%   - far beyond any VaR (COVID, Mar 2020)
+
+VaR is the line; CVaR is how bad it gets beyond it. Fat tails make 'beyond' ugly.

@@ -1,0 +1,5 @@
+Simulated 500,000 broken sticks.
+P(three pieces form a triangle) ~ 0.2497
+Exact answer                     = 0.2500  (1/4)
+
+When the maths is hard, a quant simulates - the same Monte Carlo tool from Chapter 12.

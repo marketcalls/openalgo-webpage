@@ -1,0 +1,12 @@
+Nifty daily edge: mean 0.044%, vol 0.90%
+Growth-optimal (full Kelly) leverage: 5.4x
+
+        BET SIZE  FINAL WEALTH (x)
+     0.25x Kelly              2.02
+0.5x Kelly (half Kelly)              3.33
+1.0x Kelly (full Kelly)              4.87
+      1.5x Kelly              2.99
+      2.0x Kelly              0.71
+      3.0x Kelly              0.00
+
+Growth peaks near FULL Kelly, then collapses - over-betting destroys wealth even with an edge.

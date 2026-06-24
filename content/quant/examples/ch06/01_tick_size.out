@@ -1,0 +1,7 @@
+INSTRUMENT                  TICK     LOT  TYPE
+RELIANCE                     0.1       1  EQ
+MRF                          5.0       1  EQ
+NIFTY                     0.0005       1  INDEX
+CRUDEOIL20JUL26FUT           1.0       1  FUT
+
+The tick is the smallest legal price step - the grid every quote must land on.

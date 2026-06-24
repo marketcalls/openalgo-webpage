@@ -1,0 +1,8 @@
+Spot LTP          : 24021.65
+ATM strike        : 24000
+Synthetic future  : 24058.30   (= strike + ATM call - ATM put)
+Actual future     : 24053.60
+Synthetic vs real : +4.70 difference
+
+The synthetic future, built purely from option prices, tracks the real future -
+and it is the FORWARD that Indian F&O Greeks are priced against (Black-76, next chapter).

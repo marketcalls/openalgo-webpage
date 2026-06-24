@@ -1,0 +1,6 @@
+Trend + vol-target + costs, NIFTY:
+  in-sample      Sharpe +0.87   CAGR +11.2%   MaxDD -20.1%
+  out-of-sample  Sharpe +0.23   CAGR  +2.3%   MaxDD -13.6%
+  buy & hold (OOS) Sharpe +0.71   CAGR  +8.9%   MaxDD -15.8%
+
+The out-of-sample line, net of costs, is the only verdict that counts.

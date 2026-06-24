@@ -1,0 +1,10 @@
+Option : NIFTY30JUN2624000CE   price 166.75
+Forward: 24058.30  (the synthetic future)   IV: 11.14%
+
+  Delta  +0.571   moves this much per 1 point of the forward
+  Gamma  0.00115   how fast delta itself changes
+  Vega   +11.99    gained per +1% in implied volatility
+  Theta  -11.36   lost every day to time decay
+  Rho    -0.027
+
+These are Black-76 Greeks - the correct model for Indian F&O, priced off the forward (not spot).

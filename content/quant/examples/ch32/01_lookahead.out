@@ -1,0 +1,4 @@
+With look-ahead (signal * today's return) : Sharpe +4.51   <- looks amazing
+Correctly lagged (signal.shift(1))        : Sharpe +0.16   <- the truth
+
+The entire 'edge' was a one-bar indexing error. Always lag your signal before the return.

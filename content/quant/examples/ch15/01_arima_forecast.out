@@ -1,0 +1,8 @@
+ARIMA(1,0,1) fitted to Nifty daily returns:
+  AR coefficient (weight on yesterday's return): +0.002
+  MA coefficient (weight on yesterday's shock)  : +0.002
+
+5-day forecast (%): [0.047, 0.044, 0.044, 0.044, 0.044]
+Mean daily return  : 0.044%
+
+The coefficients are tiny and the forecast collapses to the mean - returns barely autocorrelate.

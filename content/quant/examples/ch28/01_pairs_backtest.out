@@ -1,0 +1,6 @@
+Trades taken        : 46
+Total spread P&L     : 446 points
+Strategy Sharpe      : 0.47
+Correlation to market: +0.00   (near zero = market-neutral)
+
+Profit comes from the spread reverting - not from the market going up or down.

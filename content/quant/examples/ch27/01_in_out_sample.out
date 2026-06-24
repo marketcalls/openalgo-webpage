@@ -1,0 +1,4 @@
+Best in-sample SMA length : 35 days  ->  Sharpe 1.23  (looks great!)
+Same rule, out-of-sample  : Sharpe 0.57  (the honest verdict)
+
+The edge that shone in-sample mostly evaporates out-of-sample - the signature of overfitting.

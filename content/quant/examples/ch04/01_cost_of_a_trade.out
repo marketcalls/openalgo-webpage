@@ -1,0 +1,8 @@
+SEGMENT             ALL-IN COST   BREAKEVEN (pts)
+Delivery equity         1112.41              2.22
+Intraday equity          224.61              0.45
+F&O futures              329.97              0.66
+F&O options              166.24              0.33
+
+Delivery brokerage is ZERO, yet the trade still costs 1112 - STT alone is the giant.
+Flat Rs 20/order barely moves the needle; in India, STT dominates the bill.

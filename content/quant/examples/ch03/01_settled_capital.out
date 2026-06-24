@@ -1,0 +1,7 @@
+Available cash :  10,000,000.00
+Utilised       :           0.00
+Realised P&L   :           0.00
+Collateral     :           0.00
+
+This cash is exactly what flows through clearing and settles to/from your bank on T+1.
+A quant tracks settled vs available capital - it decides how much can actually be deployed.

@@ -1,0 +1,5 @@
+Train accuracy             : 69.1%
+Test accuracy (out-of-sample): 50.1%
+Baseline (always guess majority): 51.2%
+
+High train, ~coin-flip test = the model memorised noise. Direction resists ML prediction.

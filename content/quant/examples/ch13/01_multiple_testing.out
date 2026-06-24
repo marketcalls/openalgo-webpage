@@ -1,0 +1,6 @@
+Tested 1000 purely RANDOM strategies on 1356 days of Nifty.
+Mean Sharpe (should be ~0): +0.00
+Best  random Sharpe       : +1.36
+Worst random Sharpe       : -1.32
+
+The 'best' strategy has a Sharpe of 1.36 - and it is PURE LUCK. None has any edge.

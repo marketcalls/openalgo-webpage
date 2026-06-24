@@ -1,0 +1,8 @@
+  D   :    1 bars per day
+  1h  :    7 bars per day
+  15m :   25 bars per day
+  5m  :   75 bars per day
+  1m  :  375 bars per day
+  tick : thousands of bars per day (every trade) - the finest resolution
+
+From 1 daily bar to 375 one-minute bars - and tick is far more. Saved 02_resolution.png
