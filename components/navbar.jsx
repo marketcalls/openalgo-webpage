@@ -100,11 +100,8 @@ export function Navbar() {
             rel="noopener noreferrer"
             className="hidden md:flex items-center gap-2 px-3 py-1.5 text-sm text-on-surface-variant hover:text-on-surface transition-colors"
           >
-            <img
-              src="https://img.shields.io/github/stars/marketcalls/openalgo?style=social"
-              alt="GitHub stars"
-              className="h-5"
-            />
+            <Github className="h-4 w-4" />
+            <span className="font-label text-label-lg">Star</span>
           </a>
 
           <Button
@@ -164,12 +161,7 @@ export function Navbar() {
               onClick={() => setIsOpen(false)}
             >
               <Github className="h-4 w-4" />
-              <span className="font-label">GitHub</span>
-              <img
-                src="https://img.shields.io/github/stars/marketcalls/openalgo?style=social"
-                alt="GitHub stars"
-                className="h-5 ml-auto"
-              />
+              <span className="font-label">Star on GitHub</span>
             </a>
           </div>
         </div>

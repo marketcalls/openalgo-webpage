@@ -13,6 +13,15 @@ const securityHeaders = [
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  // Inline the page's CSS into the HTML to remove the render-blocking CSS request.
+  experimental: {
+    inlineCss: true,
+    optimizePackageImports: ['lucide-react'],
+  },
+  // Strip console.* (keep errors/warnings) from production bundles.
+  compiler: {
+    removeConsole: process.env.NODE_ENV === 'production' ? { exclude: ['error', 'warn'] } : false,
+  },
   async headers() {
     return [
       {

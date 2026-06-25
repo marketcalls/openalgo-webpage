@@ -1,7 +1,19 @@
+import { Sora, Manrope, IBM_Plex_Mono } from 'next/font/google'
+
 import { Navbar } from '@/components/navbar.jsx'
 import { Footer } from '@/components/footer.jsx'
 import { defaultMetadata } from './metadata'
 import './globals.css'
+
+// Self-hosted at build time - removes the render-blocking Google Fonts request.
+const sora = Sora({ subsets: ['latin'], variable: '--font-sora', display: 'swap' })
+const manrope = Manrope({ subsets: ['latin'], variable: '--font-manrope', display: 'swap' })
+const ibmPlexMono = IBM_Plex_Mono({
+  subsets: ['latin'],
+  weight: ['400', '500', '600'],
+  variable: '--font-ibm-mono',
+  display: 'swap',
+})
 
 export const metadata = {
   ...defaultMetadata,
@@ -14,12 +26,7 @@ export const metadata = {
 
 export default function RootLayout({ children }) {
   return (
-    <html lang="en">
-      <head>
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-        <link href="https://fonts.googleapis.com/css2?family=Sora:wght@600;700;800&family=Manrope:wght@300;400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
-      </head>
+    <html lang="en" className={`${sora.variable} ${manrope.variable} ${ibmPlexMono.variable}`}>
       <body className="font-sans antialiased">
         <div className="flex min-h-screen flex-col surface-lowest">
           <Navbar />

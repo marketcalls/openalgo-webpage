@@ -14,9 +14,9 @@
 }
 
 @theme {
-  --font-sans: Manrope, ui-sans-serif, system-ui, sans-serif;
-  --font-display: Sora, ui-sans-serif, system-ui, sans-serif;
-  --font-label: 'IBM Plex Mono', ui-monospace, monospace;
+  --font-sans: var(--font-manrope), ui-sans-serif, system-ui, sans-serif;
+  --font-display: var(--font-sora), ui-sans-serif, system-ui, sans-serif;
+  --font-label: var(--font-ibm-mono), 'IBM Plex Mono', ui-monospace, monospace;
 
   --text-display-lg: 3.5rem;
   --text-display-lg--line-height: 1.1;
@@ -419,7 +419,7 @@
     @apply bg-background text-foreground antialiased;
   }
   h1, h2, h3, h4, h5, h6 {
-    font-family: 'Sora', ui-sans-serif, system-ui, sans-serif;
+    font-family: var(--font-sora), ui-sans-serif, system-ui, sans-serif;
   }
   ::selection {
     background: hsl(var(--primary) / 0.3);
