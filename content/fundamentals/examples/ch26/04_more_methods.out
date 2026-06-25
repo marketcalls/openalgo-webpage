@@ -1,0 +1,8 @@
+running max   : [101.2, 103.5, 103.5, 104.1, 104.1, 106.3]
+day-on-day diff: [nan, 2.3, -3.7, 4.3, -5.6, 7.8]
+3-day average : [nan, nan, 101.5, 102.47, 100.8, 102.97]
+above 100     : [101.2, 103.5, 104.1, 106.3]
+top 2 closes  : [106.3, 104.1]
+between 99-104 : [101.2, 103.5, 99.8]
+directions    : ['up', 'down', 'up', 'down', 'up']
+up/down counts: {'up': 3, 'down': 2}
