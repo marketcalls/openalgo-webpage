@@ -9,7 +9,7 @@ export const metadata = {
     siteName: 'OpenAlgo',
     images: [
       {
-        url: '/api/og?title=Getting%20Started&subtitle=OpenAlgo%20Explained%20Simply',
+        url: 'https://openalgo.in/assets/images/og-image.png',
         width: 1200,
         height: 630,
         alt: 'Getting Started with OpenAlgo'
@@ -22,6 +22,6 @@ export const metadata = {
     card: 'summary_large_image',
     title: "Getting Started with OpenAlgo | OpenAlgo",
     description: 'Everything you need to know about OpenAlgo explained in simple terms.',
-    images: ['/api/og?title=Getting%20Started&subtitle=OpenAlgo%20Explained%20Simply']
+    images: ['https://openalgo.in/assets/images/og-image.png']
   }
 }

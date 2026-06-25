@@ -9,7 +9,7 @@ export const metadata = {
     siteName: 'OpenAlgo',
     images: [
       {
-        url: '/api/og?title=Static%20IP%20%26%20Hosting&subtitle=Server%20Deployment%20Guide',
+        url: 'https://openalgo.in/assets/images/og-image.png',
         width: 1200,
         height: 630,
         alt: 'OpenAlgo Static IP & Hosting Guide'
@@ -22,6 +22,6 @@ export const metadata = {
     card: 'summary_large_image',
     title: 'Static IP & Server Hosting Guide | OpenAlgo',
     description: 'Complete guide to static IP compliance, server deployment, and self-hosting OpenAlgo.',
-    images: ['/api/og?title=Static%20IP%20%26%20Hosting&subtitle=Server%20Deployment%20Guide']
+    images: ['https://openalgo.in/assets/images/og-image.png']
   }
 }
