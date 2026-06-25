@@ -9,7 +9,7 @@ export const metadata = {
     siteName: 'OpenAlgo',
     images: [
       {
-        url: 'https://openalgo.in/assets/images/og-image.png',
+        url: '/api/og?title=Why%20OpenAlgo%3F&subtitle=Features%20%26%20Licensing',
         width: 1200,
         height: 630,
         alt: 'OpenAlgo Features'
@@ -22,6 +22,6 @@ export const metadata = {
     card: 'summary_large_image',
     title: 'Features - Why OpenAlgo? | OpenAlgo',
     description: 'Self-hosted algo trading + options analytics platform. 12-tool options suite, multi-broker execution, and complete trading infrastructure.',
-    images: ['https://openalgo.in/assets/images/og-image.png']
+    images: ['/api/og?title=Why%20OpenAlgo%3F&subtitle=Features%20%26%20Licensing']
   }
 }

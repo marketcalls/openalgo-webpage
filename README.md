@@ -1,6 +1,6 @@
 # OpenAlgo Website
 
-The official website for [OpenAlgo](https://openalgo.in) - India's first community-driven, open-source algorithmic trading platform. Built with Next.js 16 and React 19, this site is the primary landing page, documentation hub, download portal, and **free learning academy** for the OpenAlgo ecosystem.
+The official website for [OpenAlgo](https://openalgo.in) - India's first community-driven, open-source algorithmic trading platform. Built with Next.js 15 and React 19, this site is the primary landing page, documentation hub, download portal, and **free learning academy** for the OpenAlgo ecosystem.
 
 ## About OpenAlgo
 
@@ -52,7 +52,7 @@ Course content lives as Markdown + tested Python examples under `content/`, rend
 
 ## Tech Stack
 
-- [Next.js 16](https://nextjs.org/) - React framework (App Router, Turbopack)
+- [Next.js 15](https://nextjs.org/) - React framework (App Router)
 - [React 19](https://react.dev/) - UI library
 - [TailwindCSS 4](https://tailwindcss.com/) - Utility-first CSS (CSS-first `@theme` config)
 - [Radix UI](https://www.radix-ui.com/) - Accessible UI primitives
@@ -108,14 +108,14 @@ middleware.js           # Rate limiting (200 req/hr per IP)
 ## Development
 
 ### Prerequisites
-- Node.js 20.9.0 or later (required by Next.js 16)
+- Node.js 18.18.0 or later
 - npm
 
 ### Common scripts
 ```bash
 npm run dev        # generate content + start the dev server
 npm run gen        # (re)generate all course content JSON from content/
-npm run build      # production build (Turbopack)
+npm run build      # production build
 npm run preview    # build and preview the Cloudflare Worker locally
 npm run deploy     # generate + build + deploy to Cloudflare Workers
 npm start          # serve the production build
