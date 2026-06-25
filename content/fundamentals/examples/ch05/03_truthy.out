@@ -1,0 +1,4 @@
+Is 0 truthy?     False
+Is 100 truthy?   True
+Empty text?      False
+Some text?       True

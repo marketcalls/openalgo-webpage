@@ -1,0 +1,8 @@
+Average daily return by weekday (%):
+Date
+Monday      -0.249
+Tuesday     -0.398
+Wednesday    0.558
+Thursday    -0.403
+Friday      -0.187
+Name: Close, dtype: float64

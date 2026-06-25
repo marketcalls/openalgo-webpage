@@ -62,6 +62,9 @@
 .tag-nfo { color: hsl(var(--secondary)); background: hsl(220 100% 84% / .1); border-color: hsl(220 100% 84% / .3); }
 .tag-mcx { color: #ffd479; background: hsl(43 100% 73% / .1); border-color: hsl(43 100% 73% / .3); }
 .tag-idx { color: hsl(var(--primary)); background: hsl(267 100% 87% / .1); border-color: hsl(267 100% 87% / .3); }
+.tag-py { color: hsl(210 90% 74%); background: hsl(210 90% 74% / .1); border-color: hsl(210 90% 74% / .3); }
+.tag-us { color: hsl(170 70% 60%); background: hsl(170 70% 60% / .1); border-color: hsl(170 70% 60% / .3); }
+.tag-live { color: hsl(8 90% 72%); background: hsl(8 90% 72% / .1); border-color: hsl(8 90% 72% / .3); }
 
 .ex-code { position: relative; }
 .ex-code pre { margin: 0; padding: 1.1rem 1.15rem; overflow-x: auto; background: hsl(0 0% 4%); }
@@ -104,6 +107,7 @@
 .callout.warn { border-color: hsl(43 100% 73% / .28); } .callout.warn .callout-tag { color: #ffd479; background: hsl(43 100% 73% / .12); }
 .callout.info { border-color: hsl(220 100% 84% / .28); } .callout.info .callout-tag { color: hsl(var(--secondary)); background: hsl(220 100% 84% / .12); }
 .callout.key { border-color: hsl(267 100% 87% / .28); } .callout.key .callout-tag { color: hsl(var(--primary)); background: hsl(267 100% 87% / .12); }
+.callout.fact { border-color: hsl(190 85% 62% / .28); } .callout.fact .callout-tag { color: hsl(190 85% 62%); background: hsl(190 85% 62% / .12); }
 
 /* ---------- table of contents ---------- */
 .toc-link { display: block; padding: .25rem 0 .25rem .8rem; border-left: 2px solid transparent; color: hsl(var(--on-surface-variant)); font-size: .84rem; line-height: 1.45; transition: color .15s, border-color .15s; }

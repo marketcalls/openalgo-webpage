@@ -1,0 +1,4 @@
+Result     : ['RELIANCE', 'TCS', 'INFY']
+Type        : list
+How many    : 3
+First item  : RELIANCE -> str

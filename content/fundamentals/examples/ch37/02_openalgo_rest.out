@@ -1,0 +1,4 @@
+Status code : 200
+Status      : success
+Fields      : ['ask', 'bid', 'high', 'low', 'ltp', 'oi', 'open', 'prev_close', 'volume']
+LTP (live)  : 1313.6

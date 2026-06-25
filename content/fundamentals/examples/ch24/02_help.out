@@ -1,0 +1,7 @@
+Help on method descriptor strip:
+
+strip(self, chars=None, /) unbound builtins.str method
+    Return a copy of the string with leading and trailing whitespace removed.
+
+    If chars is given and not None, remove characters in chars instead.
+

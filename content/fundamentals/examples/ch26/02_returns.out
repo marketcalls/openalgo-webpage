@@ -1,0 +1,10 @@
+Last 5 daily returns (%):
+2026-06-17   -1.10
+2026-06-18    0.70
+2026-06-22   -0.34
+2026-06-23   -0.91
+2026-06-24   -0.41
+Name: Close, dtype: float64
+
+Average daily return: -0.242 %
+Biggest move (abs)  : 3.64 %

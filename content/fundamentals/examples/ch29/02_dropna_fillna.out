@@ -1,0 +1,10 @@
+dropna() - remove rows with gaps:
+         Date   Close
+0  2026-06-23  1309.5
+1  2026-06-24  1313.6
+
+ffill() - carry the last value forward:
+         Date   Close
+0  2026-06-23  1309.5
+1  2026-06-24  1313.6
+2  2026-06-25  1313.6

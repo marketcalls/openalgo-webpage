@@ -1,0 +1,4 @@
+Pure Python loop :    468.2 ms
+NumPy (C core)   :     14.9 ms
+Same answer?       True
+NumPy is about 31x faster - you wrote less and waited less.

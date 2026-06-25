@@ -1,0 +1,20 @@
+Shape   : (124, 5)
+Columns : ['Open', 'High', 'Low', 'Close', 'Volume']
+
+Most recent rows:
+              Open    High     Low   Close    Volume
+Date                                                
+2026-06-22  1316.7  1344.9  1314.1  1326.5  12931213
+2026-06-23  1328.9  1333.0  1304.0  1309.5  15400184
+2026-06-24  1305.7  1322.0  1297.5  1313.6  11030917
+
+Close-price summary:
+count     124.00
+mean     1388.35
+std        69.07
+min      1258.80
+25%      1338.58
+50%      1384.30
+75%      1428.84
+max      1584.97
+Name: Close, dtype: float64

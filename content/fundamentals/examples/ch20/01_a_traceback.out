@@ -1,0 +1,9 @@
+Average: 102.5
+Traceback (most recent call last):
+  File "01_a_traceback.py", line 10, in <module>
+    print("Bad call:", average([]))      # ...this one divides by len([]) == 0
+                       ~~~~~~~^^^^
+  File "01_a_traceback.py", line 6, in average
+    return sum(values) / len(values)
+           ~~~~~~~~~~~~^~~~~~~~~~~~~
+ZeroDivisionError: division by zero

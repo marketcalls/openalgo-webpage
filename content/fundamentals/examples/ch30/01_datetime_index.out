@@ -1,0 +1,17 @@
+Index type: DatetimeIndex
+First date: 2025-12-24  Last: 2026-06-24
+
+May closes: 21 days
+May range : 1315.12 to 1456.86
+
+Early June closes:
+Date
+2026-06-01    1313.92
+2026-06-02    1308.55
+2026-06-03    1307.16
+2026-06-04    1297.70
+2026-06-05    1291.00
+2026-06-08    1263.30
+2026-06-09    1269.20
+2026-06-10    1258.80
+Name: Close, dtype: float64

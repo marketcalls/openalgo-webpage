@@ -1,0 +1,12 @@
+         Date   Close      Volume
+0  2026-06-22  1326.5  12931213.0
+1  2026-06-23  1309.5  15400184.0
+2  2026-06-24  1313.6  11030917.0
+3  2026-06-25     NaN         NaN
+
+Missing values per column:
+Date      0
+Close     1
+Volume    1
+dtype: int64
+Rows with any gap: 1

@@ -1,0 +1,5 @@
+Normal: 102.5
+Empty : 0.0
+'50' -> 50
+'fifty' -> not a number, skipping
+'75' -> 75

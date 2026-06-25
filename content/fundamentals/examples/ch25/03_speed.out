@@ -1,0 +1,4 @@
+Pure Python:    285.8 ms
+NumPy      :      8.0 ms
+Speed-up   : 36x faster, same answer
+Saved 03_speed.png

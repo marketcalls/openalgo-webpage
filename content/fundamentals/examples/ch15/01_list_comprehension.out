@@ -1,0 +1,3 @@
+Loop         : ['RELIANCE.NS', 'TCS.NS', 'INFY.NS', 'HDFCBANK.NS']
+Comprehension: ['RELIANCE.NS', 'TCS.NS', 'INFY.NS', 'HDFCBANK.NS']
+Identical?   : True

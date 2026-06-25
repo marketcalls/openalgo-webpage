@@ -1,0 +1,10 @@
+Daily return, last 3 days (%):
+Date
+2026-06-22    1.30
+2026-06-23   -1.28
+2026-06-24    0.31
+Name: Close, dtype: float64
+
+Buy-and-hold return : -15.31%
+Best day            : +3.36%
+Worst day           : -4.60%

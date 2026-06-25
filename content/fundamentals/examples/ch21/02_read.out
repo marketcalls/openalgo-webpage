@@ -1,0 +1,9 @@
+--- whole file ---
+RELIANCE,1313.60
+TCS,2109.00
+INFY,1056.60
+
+--- parsed ---
+RELIANCE     1313.60
+TCS          2109.00
+INFY         1056.60

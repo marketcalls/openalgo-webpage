@@ -1,0 +1,3 @@
+In both (intersection): ['HDFCBANK', 'INFY']
+Either list (union)   : ['HDFCBANK', 'INFY', 'ITC', 'RELIANCE', 'SBIN', 'TCS']
+Only mine (difference): ['RELIANCE', 'TCS']

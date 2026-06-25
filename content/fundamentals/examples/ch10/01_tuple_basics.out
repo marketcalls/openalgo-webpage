@@ -1,0 +1,5 @@
+The bar : (1300.0, 1318.4, 1297.2, 1313.6)
+Open    : 1300.0
+Close   : 1313.6
+Type    : tuple
+Cannot change: 'tuple' object does not support item assignment

@@ -5,7 +5,8 @@
   "scripts": {
     "gen:python": "node scripts/gen-python-content.mjs",
     "gen:quant": "node scripts/gen-quant-content.mjs",
-    "gen": "node scripts/gen-python-content.mjs && node scripts/gen-quant-content.mjs",
+    "gen:fundamentals": "node scripts/gen-fundamentals-content.mjs",
+    "gen": "node scripts/gen-python-content.mjs && node scripts/gen-quant-content.mjs && node scripts/gen-fundamentals-content.mjs",
     "dev": "npm run gen && next dev",
     "prebuild": "npm run gen",
     "build": "next build",

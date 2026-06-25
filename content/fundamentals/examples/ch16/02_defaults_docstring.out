@@ -1,0 +1,4 @@
+Small trade: 3.0
+Large trade: 20.0
+Custom rate: 10.0
+Docs       : Return the brokerage on a trade: a rate of turnover, capped at `cap` rupees.

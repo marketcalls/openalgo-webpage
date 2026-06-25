@@ -1,0 +1,14 @@
+{
+  "action": "subscribe",
+  "mode": "ltp",
+  "symbols": [
+    {
+      "symbol": "RELIANCE",
+      "exchange": "NSE"
+    },
+    {
+      "symbol": "TCS",
+      "exchange": "NSE"
+    }
+  ]
+}

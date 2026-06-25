@@ -1,0 +1,9 @@
+Close dtype before: object
+Close dtype after : float64
+
+After dropping duplicates:
+     Symbol   Close
+0  RELIANCE  1313.6
+1       TCS  2109.0
+3      INFY  1056.6
+Total close value: 4479.2

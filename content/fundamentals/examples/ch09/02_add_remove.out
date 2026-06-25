@@ -1,0 +1,3 @@
+After adding : ['NIFTY', 'RELIANCE', 'TCS', 'INFY', 'HDFCBANK']
+Popped off   : HDFCBANK
+Final list   : ['NIFTY', 'RELIANCE', 'INFY']

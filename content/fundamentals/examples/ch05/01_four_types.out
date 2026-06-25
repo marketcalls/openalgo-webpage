@@ -1,0 +1,4 @@
+50 -> <class 'int'>
+1313.6 -> <class 'float'>
+RELIANCE -> <class 'str'>
+True -> <class 'bool'>
