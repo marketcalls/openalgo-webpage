@@ -24,13 +24,13 @@ export function Navbar() {
 
   const menuItems = [
     { href: "/", icon: <Home className="h-4 w-4" />, label: "Home" },
-    { href: "/learn", icon: <GraduationCap className="h-4 w-4" />, label: "Learn" },
     { href: "/features", icon: <Sparkles className="h-4 w-4" />, label: "Features" },
     { href: "/download", icon: <ArrowDownToLine className="h-4 w-4" />, label: "Download" },
     { href: "/blog", icon: <PenTool className="h-4 w-4" />, label: "Blog" },
     { href: "/discord", icon: <MessageCircle className="h-4 w-4" />, label: "Discord" },
     { href: "/faq", icon: <HelpCircle className="h-4 w-4" />, label: "FAQ" },
     { href: "/roadmap", icon: <GitBranch className="h-4 w-4" />, label: "Roadmap" },
+    { href: "/learn", icon: <GraduationCap className="h-4 w-4" />, label: "Learn" },
     { href: "https://docs.openalgo.in", icon: <Book className="h-4 w-4" />, label: "Docs", external: true },
   ]
 
