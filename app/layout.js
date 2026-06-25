@@ -1,19 +1,15 @@
 import { Sora, Manrope, IBM_Plex_Mono } from 'next/font/google'
-
 import { Navbar } from '@/components/navbar.jsx'
 import { Footer } from '@/components/footer.jsx'
 import { defaultMetadata } from './metadata'
 import './globals.css'
 
-// Self-hosted at build time - removes the render-blocking Google Fonts request.
+// Self-host the fonts via next/font. This removes the render-blocking request to
+// fonts.googleapis.com and emits size-adjust fallback metrics, which fixes the
+// font-swap layout shift (CLS).
 const sora = Sora({ subsets: ['latin'], variable: '--font-sora', display: 'swap' })
 const manrope = Manrope({ subsets: ['latin'], variable: '--font-manrope', display: 'swap' })
-const ibmPlexMono = IBM_Plex_Mono({
-  subsets: ['latin'],
-  weight: ['400', '500', '600'],
-  variable: '--font-ibm-mono',
-  display: 'swap',
-})
+const ibmPlexMono = IBM_Plex_Mono({ subsets: ['latin'], weight: ['400', '500', '600'], variable: '--font-ibm-mono', display: 'swap' })
 
 export const metadata = {
   ...defaultMetadata,

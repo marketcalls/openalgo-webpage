@@ -1,7 +1,11 @@
+import path from 'node:path'
+import { fileURLToPath } from 'node:url'
 import { initOpenNextCloudflareForDev } from '@opennextjs/cloudflare'
 
 // Enables Cloudflare bindings (env, ctx, caches) during `next dev`; no-op in production builds
 initOpenNextCloudflareForDev()
+
+const projectRoot = path.dirname(fileURLToPath(import.meta.url))
 
 const securityHeaders = [
   { key: 'X-Content-Type-Options', value: 'nosniff' },
@@ -13,14 +17,30 @@ const securityHeaders = [
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  // Inline the page's CSS into the HTML to remove the render-blocking CSS request.
+  // NOTE: experimental.inlineCss is intentionally NOT enabled. It embeds the full
+  // CSS into the server bundle for runtime inlining, which adds ~760 KB (gzipped)
+  // to the Cloudflare Worker and pushes it past the free-plan 3 MiB limit. The
+  // saved render-blocking CSS request (~100 ms) is not worth losing deployability.
   experimental: {
-    inlineCss: true,
     optimizePackageImports: ['lucide-react'],
   },
   // Strip console.* (keep errors/warnings) from production bundles.
   compiler: {
     removeConsole: process.env.NODE_ENV === 'production' ? { exclude: ['error', 'warn'] } : false,
+  },
+  webpack: (config, { webpack }) => {
+    // Next.js unconditionally requires `polyfill-module` (Array.prototype.at/flat,
+    // Object.fromEntries/hasOwn) into the main bundle. Every browser in our
+    // browserslist target supports these natively, so the polyfills are dead
+    // weight that Lighthouse flags as "legacy JavaScript". Replace the module
+    // with an empty one so it is dropped from the bundle.
+    config.plugins.push(
+      new webpack.NormalModuleReplacementPlugin(
+        /[\\/]polyfills[\\/]polyfill-module(\.js)?$/,
+        path.join(projectRoot, 'lib', 'empty-module.js')
+      )
+    )
+    return config
   },
   async headers() {
     return [

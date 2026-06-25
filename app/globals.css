@@ -287,8 +287,8 @@
 }
 
 @utility font-label {
-  /* Label font - Space Grotesk */
-  font-family: 'Space Grotesk', monospace;
+  /* Label font - IBM Plex Mono (self-hosted via next/font) */
+  font-family: var(--font-ibm-mono), 'IBM Plex Mono', ui-monospace, monospace;
 }
 
 @utility pulse-live {
