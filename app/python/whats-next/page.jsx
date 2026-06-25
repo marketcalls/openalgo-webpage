@@ -3,13 +3,13 @@ import Link from "next/link";
 
 const OG_IMAGE = "https://openalgo.in/assets/images/og-image.png";
 const DESC =
-  "You finished the Algo Trading with Python course. Here's what to do next - paper trade, manage risk, validate honestly, and go live small - plus the principles that keep traders in the game.";
+  "You finished the Algo Trading with Python course. Here's what to do next - sandbox-trade in analyzer mode, manage risk, validate honestly, and go live small - plus the principles that keep traders in the game.";
 
 export const metadata = {
   title: { absolute: "Course Complete - What's Next | Algo Trading with Python | OpenAlgo" },
   description: DESC,
   keywords: [
-    "algo trading next steps", "paper trading", "trading risk management",
+    "algo trading next steps", "sandbox trading", "analyzer mode", "trading risk management",
     "go live trading bot", "python trading course", "openalgo",
   ],
   alternates: { canonical: "/python/whats-next" },
@@ -35,8 +35,8 @@ const CAN_NOW = [
 
 const NEXT_STEPS = [
   {
-    h: "Paper trade first, for longer than feels necessary",
-    p: "Keep OpenAlgo in analyze mode and run your strategy against the live market for weeks. Watching simulated fills in real time teaches you things no backtest can - slippage, partial fills, the emotional pull to override your rules.",
+    h: "Sandbox-trade first, for longer than feels necessary",
+    p: "Keep OpenAlgo in analyzer (sandbox) mode and run your strategy against the real-time market for weeks. Watching simulated fills as the market moves teaches you things no backtest can - slippage, partial fills, the emotional pull to override your rules.",
   },
   {
     h: "Pick one strategy and take it all the way",

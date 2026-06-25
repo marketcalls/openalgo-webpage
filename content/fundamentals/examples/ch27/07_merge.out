@@ -1,0 +1,11 @@
+concat - stack the rows:
+     Symbol   Close
+0  RELIANCE  1313.6
+1       TCS  2109.0
+2      INFY  1056.6
+3  HDFCBANK  1642.4
+
+merge on Symbol (inner):
+     Symbol   Close  Sector
+0  RELIANCE  1313.6  Energy
+1       TCS  2109.0      IT

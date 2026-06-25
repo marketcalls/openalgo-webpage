@@ -1,0 +1,3 @@
+first 3 by position  : [101, 103, 100]
+Tue..Thu by label    : [103, 100, 104]
+above 101 (boolean)  : [103, 104]

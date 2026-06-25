@@ -1,0 +1,12 @@
+first 2 rows, by position:
+               Open     High      Low    Close
+Date                                          
+2025-12-24  1565.46  1568.45  1546.45  1551.03
+2025-12-26  1547.54  1553.82  1547.15  1552.02
+
+a date range, columns Open..Close, by label:
+              Open    High     Low   Close
+Date                                      
+2026-06-22  1316.7  1344.9  1314.1  1326.5
+2026-06-23  1328.9  1333.0  1304.0  1309.5
+2026-06-24  1305.7  1322.0  1297.5  1313.6

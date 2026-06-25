@@ -5,7 +5,7 @@ import SyllabusRail from "./SyllabusRail";
 export const metadata = {
   title: "Python for Traders - A Free Beginner's Course in Python for Finance",
   description:
-    "A hands-on, 40-chapter course that takes an absolute beginner from zero to handling real market data in Python - variables, lists, functions, NumPy, pandas and charts, with live US data from yfinance and Indian data from OpenAlgo. No prior coding needed.",
+    "A hands-on, 40-chapter course that takes an absolute beginner from zero to handling real market data in Python - variables, lists, functions, NumPy, pandas and charts, with real US data from yfinance and Indian data from OpenAlgo. No prior coding needed.",
 };
 
 export default function FundamentalsLayout({ children }) {

@@ -1,0 +1,6 @@
+history() columns : ['Open', 'High', 'Low', 'Close', 'Volume']
+  hist['Close'] is a Series
+
+download() columns: [('Close', 'AAPL'), ('Close', 'MSFT'), ('High', 'AAPL'), ('High', 'MSFT')]
+  dl['Close'] is a DataFrame -> columns ['AAPL', 'MSFT']
+  one stock: dl['Close']['AAPL'].iloc[-1] = 293.08

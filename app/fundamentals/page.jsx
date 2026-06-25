@@ -5,7 +5,7 @@ import { CHAPTERS, PARTS, TAG_CLASS } from "@/lib/fundamentalsCurriculum";
 
 const OG_IMAGE = "https://openalgo.in/assets/images/og-image.png";
 const LANDING_DESC =
-  "A free, 40-chapter course that takes an absolute beginner from zero to handling real market data in Python. No prior coding needed - variables, lists and functions, then NumPy, pandas and charts, taught in plain English with runnable examples on live US (yfinance) and Indian (OpenAlgo) data.";
+  "A free, 40-chapter course that takes an absolute beginner from zero to handling real market data in Python. No prior coding needed - variables, lists and functions, then NumPy, pandas and charts, taught in plain English with runnable examples on real US (yfinance) and Indian (OpenAlgo) market data.";
 
 export const metadata = {
   title: { absolute: "Python for Traders - A Free 40-Chapter Beginner's Course in Python for Finance | OpenAlgo" },
@@ -107,7 +107,7 @@ export default function FundamentalsCourseHome() {
               ["40", "Chapters"],
               ["5", "Modules"],
               ["0", "Prior coding"],
-              ["Live", "Real market data"],
+              ["Real", "Market data"],
             ].map(([v, k]) => (
               <div key={k}>
                 <div className="text-3xl font-bold bg-linear-to-r from-primary to-tertiary bg-clip-text text-transparent">

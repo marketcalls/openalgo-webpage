@@ -11,7 +11,7 @@ import {
 
 const features = [
   { title: "Strategy Builder", description: "Build multi-leg option strategies, see live Greeks and payoff, test what-ifs, and fire the full basket to your broker in one click", icon: Wand2, category: "Options Analytics" },
-  { title: "Strategy Portfolio", description: "Save your favourite strategies for live tracking or paper-trading, and reopen any of them in seconds", icon: Box, category: "Options Analytics" },
+  { title: "Strategy Portfolio", description: "Save your favourite strategies for live tracking or sandbox trading, and reopen any of them in seconds", icon: Box, category: "Options Analytics" },
   { title: "Option Chain", description: "Live option chain with Greeks, open interest, volume, and bid/ask - click any strike to trade instantly", icon: Layers, category: "Options Analytics" },
   { title: "Option Greeks Chart", description: "See how IV, Delta, Theta, Vega and Gamma have moved over time for the at-the-money strike", icon: Gauge, category: "Options Analytics" },
   { title: "OI Tracker", description: "Side-by-side call and put open interest with PCR and a marker showing where the spot is right now", icon: Activity, category: "Options Analytics" },
