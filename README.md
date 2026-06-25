@@ -1,6 +1,6 @@
 # OpenAlgo Website
 
-The official website for [OpenAlgo](https://openalgo.in) - India's first community-driven, open-source algorithmic trading platform. Built with Next.js 15 and React 19, this site serves as the primary landing page, documentation hub, and download portal for the OpenAlgo ecosystem.
+The official website for [OpenAlgo](https://openalgo.in) - India's first community-driven, open-source algorithmic trading platform. Built with Next.js 16 and React 19, this site is the primary landing page, documentation hub, download portal, and **free learning academy** for the OpenAlgo ecosystem.
 
 ## About OpenAlgo
 
@@ -11,6 +11,7 @@ OpenAlgo is a self-hostable algorithmic trading platform built by traders, for t
 - **33+ Broker Integrations** - Unified API across all major Indian brokers with a common symbol format
 - **16+ Platform Integrations** - Amibroker, TradingView, Python, MetaTrader, Excel, Chrome Extension, and more
 - **6 Official SDKs** - Python, Node.js, Java, .NET/C#, Go, Rust
+- **3 Free Learning Courses** - 108 chapters from absolute beginner to expert quant, all on real market data (see below)
 - **Self-Hosted & Private** - Deploy on your own infrastructure with complete data privacy
 - **SmartOrder & Basket Orders** - Advanced order types including split orders and position management
 - **AI/LLM Integration** - MCP (Model Context Protocol) support for AI-driven trading
@@ -18,11 +19,27 @@ OpenAlgo is a self-hostable algorithmic trading platform built by traders, for t
 - **100% Open Source** - AGPL-3.0 licensed, community-driven, transparent development
 - **Static IP Compliant** - SEBI-compliant static IP deployment guides included
 
+## Learning Courses
+
+Three free, hands-on courses form a Beginner → Intermediate → Expert ladder, taught in plain English with runnable, live-tested examples on real Indian (OpenAlgo) and US (yfinance) market data. The [`/learn`](https://openalgo.in/learn) hub ties them together.
+
+| Course | Level | Chapters | What it covers |
+|--------|-------|----------|----------------|
+| [Python for Traders](https://openalgo.in/fundamentals) (`/fundamentals`) | Beginner | 40 | Python from zero - variables, data structures, NumPy, pandas, charts, then real market data. No prior coding needed. |
+| [Algo Trading with Python](https://openalgo.in/python) (`/python`) | Intermediate | 32 | Build, backtest and automate strategies with the OpenAlgo SDK - indicators, signals, orders, WebSockets, risk. |
+| [Quantitative Trading](https://openalgo.in/quant) (`/quant`) | Expert | 36 | Market microstructure, the mathematics of markets, derivatives and volatility, portfolio risk, and finding an edge. |
+
+Course content lives as Markdown + tested Python examples under `content/`, rendered to JSON at build time by the generators in `scripts/`. Strategies are tested in OpenAlgo's **analyzer (sandbox) mode** - never with claims of live data.
+
 ## Website Pages
 
 | Page | Description |
 |------|-------------|
 | `/` | Hero landing page with stats, ecosystem overview, and trust indicators |
+| `/learn` | Learning hub linking the three free courses (Beginner → Expert) |
+| `/fundamentals` | "Python for Traders" - 40-chapter beginner Python-for-finance course |
+| `/python` | "Algo Trading with Python" - 32-chapter intermediate course |
+| `/quant` | "Quantitative Trading" - 36-chapter expert course |
 | `/features` | 45+ features organized by category |
 | `/getting-started` | Step-by-step beginner's guide |
 | `/download` | Multi-platform downloads (macOS, Linux, Windows) and SDK links |
@@ -35,14 +52,14 @@ OpenAlgo is a self-hostable algorithmic trading platform built by traders, for t
 
 ## Tech Stack
 
-- [Next.js 15](https://nextjs.org/) - React framework (App Router)
+- [Next.js 16](https://nextjs.org/) - React framework (App Router, Turbopack)
 - [React 19](https://react.dev/) - UI library
-- [TailwindCSS 3.4](https://tailwindcss.com/) - Utility-first CSS
-- [shadcn/ui](https://ui.shadcn.com/) + [Radix UI](https://www.radix-ui.com/) - Accessible UI components
+- [TailwindCSS 4](https://tailwindcss.com/) - Utility-first CSS (CSS-first `@theme` config)
+- [Radix UI](https://www.radix-ui.com/) - Accessible UI primitives
 - [Lucide Icons](https://lucide.dev/) - Icon system
 - [Three.js](https://threejs.org/) + React Three Fiber - 3D graphics
-- [next-themes](https://github.com/pacocoursey/next-themes) - Dark/light mode
-- [Vercel](https://vercel.com) - Deployment (Mumbai region)
+- [marked](https://marked.js.org/) + [highlight.js](https://highlightjs.org/) - Course content rendering
+- [OpenNext](https://opennext.js.org/cloudflare) + [Cloudflare Workers](https://workers.cloudflare.com/) - Deployment
 
 ## Getting Started
 
@@ -57,7 +74,7 @@ cd openalgo-webpage
 npm install
 ```
 
-3. Run the development server:
+3. Run the development server (regenerates course content first):
 ```bash
 npm run dev
 ```
@@ -69,49 +86,42 @@ npm run dev
 ```
 app/                    # Next.js App Router pages
   api/                  # API routes (blog-feed, ip-lookup, OG image)
-  blog/                 # Blog section
-  download/             # Downloads page
-  faq/                  # FAQ page
-  fastscalper/          # FastScalper showcase
+  fundamentals/         # "Python for Traders" course (40 static chapter routes)
+  python/               # "Algo Trading with Python" course
+  quant/                # "Quantitative Trading" course
+  learn/                # Learning hub linking all three courses
   features/             # Features listing
   getting-started/      # Beginner's guide
-  roadmap/              # Development roadmap
-  static-ip/            # Static IP hosting guide
-  wabridge/             # WhatsApp Bridge docs
-  layout.js             # Root layout
+  roadmap/  faq/  blog/  download/  static-ip/  fastscalper/  wabridge/
+  layout.js             # Root layout (Navbar + Footer)
   page.js               # Home page
-  metadata.js           # SEO metadata
-  globals.css           # Global styles & design tokens
-components/             # Reusable React components
-  ui/                   # shadcn/ui components
-  navbar.jsx            # Navigation
-  footer.jsx            # Footer
-  theme-provider.jsx    # Theme management
-lib/                    # Utility functions
-public/                 # Static assets, favicons, sitemap
+  globals.css           # Global styles & design tokens (Tailwind v4 @theme)
+components/             # Reusable React components (navbar, footer, ui/)
+content/                # Course source: Markdown + tested Python examples
+  fundamentals/  python/  quant/   # md/, examples/ (.py + .out + .png), data/
+scripts/                # Build-time content generators (gen-*-content.mjs)
+lib/                    # *Curriculum.js (manifests) + *ContentData.json (generated)
+public/                 # Static assets, course charts, favicons, sitemap.xml
 middleware.js           # Rate limiting (200 req/hr per IP)
 ```
 
 ## Development
 
 ### Prerequisites
-- Node.js 18.x or later
-- npm or yarn
+- Node.js 20.9.0 or later (required by Next.js 16)
+- npm
 
-### Build
+### Common scripts
 ```bash
-npm run build
+npm run dev        # generate content + start the dev server
+npm run gen        # (re)generate all course content JSON from content/
+npm run build      # production build (Turbopack)
+npm run preview    # build and preview the Cloudflare Worker locally
+npm run deploy     # generate + build + deploy to Cloudflare Workers
+npm start          # serve the production build
 ```
 
-### Production
-```bash
-npm start
-```
-
-### Lint
-```bash
-npm run lint
-```
+The course pipeline renders each chapter's Markdown and its **live-tested** Python examples (with captured output and matplotlib/seaborn charts) into a bundled JSON module, so the pages need no filesystem access at runtime - essential on Cloudflare Workers.
 
 ## OpenAlgo Ecosystem
 
