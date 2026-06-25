@@ -134,6 +134,7 @@ export default function FundamentalsCourseHome() {
                 <Link
                   key={ch.n}
                   href={`/fundamentals/${ch.slug}`}
+                  prefetch={false}
                   className="group obsidian-card hover-lift ghost-border rounded-2xl p-5"
                 >
                   <div className="font-label text-xs text-on-surface-variant/70">Chapter {String(ch.n).padStart(2, "0")}</div>

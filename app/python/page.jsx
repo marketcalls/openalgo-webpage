@@ -137,6 +137,7 @@ export default function PythonCourseHome() {
                 <Link
                   key={ch.n}
                   href={`/python/${ch.slug}`}
+                  prefetch={false}
                   className="group obsidian-card hover-lift ghost-border rounded-2xl p-5"
                 >
                   <div className="font-label text-xs text-on-surface-variant/70">Chapter {String(ch.n).padStart(2, "0")}</div>

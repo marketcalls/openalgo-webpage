@@ -57,6 +57,7 @@ export default function SyllabusRail() {
               <Link
                 key={ch.n}
                 href={`/python/${ch.slug}`}
+                prefetch={false}
                 onClick={() => setOpen(false)}
                 className={`syllabus-link ${activeSlug === ch.slug ? "active" : ""}`}
               >

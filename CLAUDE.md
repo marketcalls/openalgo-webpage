@@ -52,6 +52,22 @@ Workers via OpenNext (`npm run deploy`). Three Varsity-style courses live under
   wc -c`. The 3 MiB limit is on this gzipped Worker SCRIPT, not the "Total
   Upload" figure (which includes static assets).
 
+## Worker CPU time limit ("Worker exceeded CPU time limit")
+
+Because course pages render in the Worker at runtime, each request runs the full
+Next.js server, and rendering a large chapter can exceed Cloudflare's per-request
+CPU limit. This is amplified by RSC prefetch: Next fires a `?_rsc=` request for
+every in-viewport `<Link>`, so a course index or the all-chapters SyllabusRail
+prefetches ~30 chapters at once - a burst of concurrent heavy renders that trips
+the CPU limit. Two mitigations are in place; keep both:
+- `enableCacheInterception: true` in `open-next.config.ts` - serves prerendered
+  responses from the cache BEFORE running the routing/render layer, so cached
+  pages cost little CPU. Safe here because there is no ISR (cache == build-time
+  prerender, never stale).
+- `prefetch={false}` on the chapter-list `<Link>`s (the three `SyllabusRail.jsx`
+  and the three course `page.jsx` landing grids). This stops the viewport-prefetch
+  burst. Prev/next nav links keep prefetch (only 2 links, useful UX, no burst).
+
 ## Deploy on Windows
 
 - Orphaned `workerd.exe` from a prior `preview` locks `.open-next\assets`,
