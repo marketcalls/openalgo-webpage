@@ -11,7 +11,7 @@ OpenAlgo is a self-hostable algorithmic trading platform built by traders, for t
 - **33+ Broker Integrations** - Unified API across all major Indian brokers with a common symbol format
 - **16+ Platform Integrations** - Amibroker, TradingView, Python, MetaTrader, Excel, Chrome Extension, and more
 - **6 Official SDKs** - Python, Node.js, Java, .NET/C#, Go, Rust
-- **9 Free Learning Courses** - 231 chapters from market basics and chart-reading through futures and options to expert quant and AmiBroker AFL, all on real market data (see below)
+- **9 Free Learning Courses** - 233 chapters from market basics and chart-reading through futures and options to expert quant and AmiBroker AFL, all on real market data (see below)
 - **Self-Hosted & Private** - Deploy on your own infrastructure with complete data privacy
 - **SmartOrder & Basket Orders** - Advanced order types including split orders and position management
 - **AI/LLM Integration** - MCP (Model Context Protocol) support for AI-driven trading
@@ -33,7 +33,7 @@ Nine free, hands-on courses cover beginner entry points (market basics, chart-re
 | [AmiBroker AFL](https://openalgo.in/amibroker) (`/amibroker`) | Beginner | 36 | AFL from scratch - indicators, scans, backtests, optimization, alerts, and OpenAlgo order automation. |
 | [Futures Trading](https://openalgo.in/futures) (`/futures`) | Beginner | 12 | Futures from zero - contracts, margin and leverage, mark-to-market, long/short, the payoff, basis, rollover, hedging, and the risks of leverage, on real Indian market examples. |
 | [Options Basics](https://openalgo.in/options-basics) (`/options-basics`) | Beginner | 14 | Options from absolute zero - calls and puts, premium/strike/expiry, moneyness, intrinsic and time value, the option chain, the four payoffs, the Greeks, and implied volatility, with real payoff charts. |
-| [Options Strategies](https://openalgo.in/options-strategies) (`/options-strategies`) | Beginner | 15 | Named strategies for beginners - spreads, straddles/strangles, iron condor, iron fly/butterfly, ratios, synthetics, covered call and jade lizard, plus margin and collateral for F&O, each with an authentic payoff diagram on real data. |
+| [Options Strategies](https://openalgo.in/options-strategies) (`/options-strategies`) | Beginner | 17 | Named strategies for beginners - spreads, straddles/strangles, iron condor, iron fly/butterfly, ratios, synthetics, covered call and jade lizard, plus margin and collateral, pledging, and margin penalties for F&O, each with an authentic payoff diagram on real data. |
 
 Course content lives as Markdown + tested Python examples under `content/`, rendered to JSON at build time by the generators in `scripts/`. Strategies are tested in OpenAlgo's **analyzer (sandbox) mode** - never with claims of live data.
 
@@ -51,7 +51,7 @@ Course content lives as Markdown + tested Python examples under `content/`, rend
 | `/amibroker` | "AmiBroker AFL" - 36-chapter chart-based AFL course |
 | `/futures` | "Futures Trading" - 12-chapter beginner futures course |
 | `/options-basics` | "Options Basics" - 14-chapter beginner options course |
-| `/options-strategies` | "Options Strategies" - 15-chapter beginner options-strategy course |
+| `/options-strategies` | "Options Strategies" - 17-chapter beginner options-strategy course |
 | `/features` | 45+ features organized by category |
 | `/getting-started` | Step-by-step beginner's guide |
 | `/download` | Multi-platform downloads (macOS, Linux, Windows) and SDK links |
@@ -106,7 +106,7 @@ app/                    # Next.js App Router pages
   amibroker/            # "AmiBroker AFL" course
   futures/              # "Futures Trading" course (12 static chapter routes)
   options-basics/       # "Options Basics" course (14 static chapter routes)
-  options-strategies/   # "Options Strategies" course (15 static chapter routes)
+  options-strategies/   # "Options Strategies" course (17 static chapter routes)
   learn/                # Learning hub linking all nine courses
   features/             # Features listing
   getting-started/      # Beginner's guide
