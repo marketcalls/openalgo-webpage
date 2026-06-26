@@ -11,7 +11,7 @@ OpenAlgo is a self-hostable algorithmic trading platform built by traders, for t
 - **33+ Broker Integrations** - Unified API across all major Indian brokers with a common symbol format
 - **16+ Platform Integrations** - Amibroker, TradingView, Python, MetaTrader, Excel, Chrome Extension, and more
 - **6 Official SDKs** - Python, Node.js, Java, .NET/C#, Go, Rust
-- **3 Free Learning Courses** - 108 chapters from absolute beginner to expert quant, all on real market data (see below)
+- **5 Free Learning Courses** - 162 chapters from market basics to expert quant and AmiBroker AFL, all on real market data (see below)
 - **Self-Hosted & Private** - Deploy on your own infrastructure with complete data privacy
 - **SmartOrder & Basket Orders** - Advanced order types including split orders and position management
 - **AI/LLM Integration** - MCP (Model Context Protocol) support for AI-driven trading
@@ -21,13 +21,15 @@ OpenAlgo is a self-hostable algorithmic trading platform built by traders, for t
 
 ## Learning Courses
 
-Three free, hands-on courses form a Beginner → Intermediate → Expert ladder, taught in plain English with runnable, live-tested examples on real Indian (OpenAlgo) and US (yfinance) market data. The [`/learn`](https://openalgo.in/learn) hub ties them together.
+Five free, hands-on courses cover two beginner entry points, a Python/algo/quant ladder, and a parallel AmiBroker AFL track, taught in plain English with runnable, live-tested examples on real Indian (OpenAlgo) and US (yfinance) market data. The [`/learn`](https://openalgo.in/learn) hub ties them together.
 
 | Course | Level | Chapters | What it covers |
 |--------|-------|----------|----------------|
+| [Stock Market Basics](https://openalgo.in/stocks) (`/stocks`) | Beginner | 18 | Shares, IPOs, indices, market plumbing, price-moving events, risk, scams, and getting started as an investor. |
 | [Python for Traders](https://openalgo.in/fundamentals) (`/fundamentals`) | Beginner | 40 | Python from zero - variables, data structures, NumPy, pandas, charts, then real market data. No prior coding needed. |
 | [Algo Trading with Python](https://openalgo.in/python) (`/python`) | Intermediate | 32 | Build, backtest and automate strategies with the OpenAlgo SDK - indicators, signals, orders, WebSockets, risk. |
 | [Quantitative Trading](https://openalgo.in/quant) (`/quant`) | Expert | 36 | Market microstructure, the mathematics of markets, derivatives and volatility, portfolio risk, and finding an edge. |
+| [AmiBroker AFL](https://openalgo.in/amibroker) (`/amibroker`) | Beginner | 36 | AFL from scratch - indicators, scans, backtests, optimization, alerts, and OpenAlgo order automation. |
 
 Course content lives as Markdown + tested Python examples under `content/`, rendered to JSON at build time by the generators in `scripts/`. Strategies are tested in OpenAlgo's **analyzer (sandbox) mode** - never with claims of live data.
 
@@ -36,10 +38,12 @@ Course content lives as Markdown + tested Python examples under `content/`, rend
 | Page | Description |
 |------|-------------|
 | `/` | Hero landing page with stats, ecosystem overview, and trust indicators |
-| `/learn` | Learning hub linking the three free courses (Beginner → Expert) |
+| `/learn` | Learning hub linking all five free courses |
+| `/stocks` | "Stock Market Basics" - 18-chapter beginner stock-market course |
 | `/fundamentals` | "Python for Traders" - 40-chapter beginner Python-for-finance course |
 | `/python` | "Algo Trading with Python" - 32-chapter intermediate course |
 | `/quant` | "Quantitative Trading" - 36-chapter expert course |
+| `/amibroker` | "AmiBroker AFL" - 36-chapter chart-based AFL course |
 | `/features` | 45+ features organized by category |
 | `/getting-started` | Step-by-step beginner's guide |
 | `/download` | Multi-platform downloads (macOS, Linux, Windows) and SDK links |
@@ -86,10 +90,12 @@ npm run dev
 ```
 app/                    # Next.js App Router pages
   api/                  # API routes (blog-feed, ip-lookup, OG image)
+  stocks/               # "Stock Market Basics" course (18 static chapter routes)
   fundamentals/         # "Python for Traders" course (40 static chapter routes)
   python/               # "Algo Trading with Python" course
   quant/                # "Quantitative Trading" course
-  learn/                # Learning hub linking all three courses
+  amibroker/            # "AmiBroker AFL" course
+  learn/                # Learning hub linking all five courses
   features/             # Features listing
   getting-started/      # Beginner's guide
   roadmap/  faq/  blog/  download/  static-ip/  fastscalper/  wabridge/
@@ -98,7 +104,7 @@ app/                    # Next.js App Router pages
   globals.css           # Global styles & design tokens (Tailwind v4 @theme)
 components/             # Reusable React components (navbar, footer, ui/)
 content/                # Course source: Markdown + tested Python examples
-  fundamentals/  python/  quant/   # md/, examples/ (.py + .out + .png), data/
+  stocks/  fundamentals/  python/  quant/  amibroker/   # md/, examples/ (.py + .out + .png), data/
 scripts/                # Build-time content generators (gen-*-content.mjs)
 lib/                    # *Curriculum.js (manifests) + *ContentData.json (generated)
 public/                 # Static assets, course charts, favicons, sitemap.xml

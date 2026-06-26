@@ -9,28 +9,28 @@ import { CHAPTERS as STOCKS } from "@/lib/stocksCurriculum";
 
 const OG_IMAGE = "https://openalgo.in/assets/images/og-image.png";
 const DESC =
-  "Five free, hands-on courses that take you from understanding your very first share to a real quantitative edge - Stock Market Basics (a no-jargon beginner intro to the Indian market), Python for Traders (beginner), Algo Trading with Python (intermediate), Quantitative Trading (expert), and AmiBroker AFL (chart-based system building, no Python needed) - all in plain English with real Indian and US market data.";
+  "Five free, hands-on courses that take you from understanding your very first share to a real quantitative edge - Stock Market Basics (a no-jargon beginner intro to the Indian market), Python for Traders (beginner), Algo Trading with Python (intermediate), Quantitative Trading (expert), and AmiBroker AFL (chart-based system building, no Python needed) - all in plain English with real market examples.";
 
 export const metadata = {
-  title: { absolute: "Learn - Free Python, Algo & Quant Trading Courses | OpenAlgo" },
+  title: { absolute: "Learn - Free Stock Market, Python, Algo, Quant & AFL Courses | OpenAlgo" },
   description: DESC,
   keywords: [
     "learn python trading", "algo trading course", "quant trading course", "python for traders",
     "free trading courses", "algorithmic trading python", "quantitative trading", "openalgo",
-    "learn to code trading", "indian stock market python",
+    "learn to code trading", "indian stock market python", "stock market basics course", "amibroker afl course",
   ],
   alternates: { canonical: "/learn" },
   openGraph: {
     type: "website",
     url: "https://openalgo.in/learn",
-    title: "Learn - Free Python, Algo & Quant Trading Courses",
+    title: "Learn - Free Stock Market, Python, Algo, Quant & AFL Courses",
     description: DESC,
     siteName: "OpenAlgo",
     images: [{ url: OG_IMAGE, width: 1200, height: 630, alt: "OpenAlgo learning paths", type: "image/png" }],
   },
   twitter: {
     card: "summary_large_image",
-    title: "Learn - Free Python, Algo & Quant Trading Courses",
+    title: "Learn - Free Stock Market, Python, Algo, Quant & AFL Courses",
     description: DESC,
     images: [OG_IMAGE],
     creator: "@openalgoHQ",
@@ -143,13 +143,13 @@ export default function LearnHub() {
           <h1 className="reveal reveal-2 mt-6 text-4xl sm:text-5xl lg:text-6xl font-bold leading-[1.05] tracking-tight text-on-surface">
             Learn{" "}
             <span className="bg-linear-to-r from-primary via-secondary to-tertiary bg-clip-text text-transparent">
-              Python, Algo &amp; Quant
+              Markets, Python, Algo &amp; Quant
             </span>{" "}
             trading
           </h1>
           <p className="reveal reveal-3 mt-5 max-w-2xl mx-auto text-lg text-on-surface-variant">
-            A free, hands-on path from your very first line of code to a real quantitative edge - taught in plain
-            English, with runnable examples on real Indian and US market data.
+            A free, hands-on academy from your first share to your first trading system and a real quantitative edge -
+            taught in plain English, with examples grounded in real markets.
           </p>
         </div>
       </section>
@@ -197,7 +197,11 @@ export default function LearnHub() {
         <div className="mt-12 rounded-2xl border border-border surface-low p-6 sm:p-8">
           <h2 className="text-lg font-bold text-on-surface">Not sure where to begin?</h2>
           <p className="mt-2 text-on-surface-variant">
-            The three courses form a ladder. If you're <strong>new to coding</strong>, start with{" "}
+            The academy has a market-basics entry point, a Python-to-quant ladder, and a parallel no-Python AFL track.
+            If you're <strong>new to markets</strong>,
+            start with{" "}
+            <Link href="/stocks" className="text-tertiary hover:underline">Stock Market Basics</Link>. If you're
+            ready to code but new to Python, start with{" "}
             <Link href="/fundamentals" className="text-primary hover:underline">Python for Traders</Link>. Once you can
             handle data confidently, move to{" "}
             <Link href="/python" className="text-secondary hover:underline">Algo Trading with Python</Link> to build and
