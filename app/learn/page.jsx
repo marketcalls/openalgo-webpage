@@ -9,11 +9,12 @@ import { CHAPTERS as OS } from "@/lib/optionsStrategiesCurriculum";
 import { CHAPTERS as PY } from "@/lib/pythonCurriculum";
 import { CHAPTERS as QUANT } from "@/lib/quantCurriculum";
 import { CHAPTERS as STOCKS } from "@/lib/stocksCurriculum";
+import { CHAPTERS as TAX } from "@/lib/taxationCurriculum";
 import { CHAPTERS as TECH } from "@/lib/technicalsCurriculum";
 
 const OG_IMAGE = "https://openalgo.in/assets/images/og-image.png";
 const DESC =
-  "Nine free, hands-on courses that take you from understanding your very first share to a real quantitative edge - Stock Market Basics (a no-jargon beginner intro to the Indian market), Technical Analysis (reading real NSE charts), Futures Trading, Options Basics and Options Strategies (derivatives from zero, with real payoff charts), Python for Traders (beginner), Algo Trading with Python (intermediate), Quantitative Trading (expert), and AmiBroker AFL (chart-based system building, no Python needed) - all in plain English with real market examples.";
+  "Ten free, hands-on courses that take you from understanding your very first share to a real quantitative edge - Stock Market Basics (a no-jargon beginner intro to the Indian market), Technical Analysis (reading real NSE charts), Futures Trading, Options Basics and Options Strategies (derivatives from zero, with real payoff charts), Taxation for Traders and Investors (plain-English tax on shares, F&O, US stocks and crypto), Python for Traders (beginner), Algo Trading with Python (intermediate), Quantitative Trading (expert), and AmiBroker AFL (chart-based system building, no Python needed) - all in plain English with real market examples.";
 
 export const metadata = {
   title: { absolute: "Learn - Free Stock Market, Python, Algo, Quant & AFL Courses | OpenAlgo" },
@@ -161,6 +162,19 @@ const COURSES = [
       "Combine calls and puts into real, named strategies. Spreads, straddles and strangles, the iron condor, butterfly, ratios, synthetics and the jade lizard - each with an authentic payoff diagram from OpenAlgo's strategy-builder maths on real market data.",
     points: ["Real strategy-builder payoffs", "Spreads to iron condors", "Defined risk first"],
   },
+  {
+    n: 9,
+    route: "/taxation",
+    title: "Taxation for Traders and Investors",
+    level: "Beginner",
+    count: TAX.length,
+    color: "text-tertiary",
+    ring: "hsl(140 72% 53% / 0.5)",
+    grad: "from-tertiary via-secondary to-primary",
+    blurb:
+      "Worried about tax on your trades? Learn it in plain English with real case studies - the income buckets and the two regimes, capital gains and STT on shares, why intraday is speculative, why F&O is business income (turnover, audit and loss set-off), tax on US stocks and Schedule FA, and crypto's flat 30 percent. Honest about the mistakes that bring a notice years later. Educational only, not tax advice.",
+    points: ["Plain English, real case studies", "Shares, F&O, US stocks & crypto", "Not tax advice - file with a CA"],
+  },
 ];
 
 const COURSE_LIST_LD = {
@@ -195,7 +209,7 @@ export default function LearnHub() {
         <div className="relative px-6 sm:px-10 lg:px-14 py-16 sm:py-20 max-w-5xl mx-auto text-center">
           <span className="reveal reveal-1 inline-flex items-center gap-2 rounded-full border border-border surface-low px-4 py-1.5 font-label text-xs tracking-wide text-on-surface-variant">
             <GraduationCap className="h-3.5 w-3.5 text-primary" />
-            Nine free courses &middot; {STOCKS.length + TECH.length + FUT.length + OB.length + OS.length + FUND.length + PY.length + QUANT.length + AMI.length} chapters &middot; real market data
+            Ten free courses &middot; {STOCKS.length + TECH.length + FUT.length + OB.length + OS.length + TAX.length + FUND.length + PY.length + QUANT.length + AMI.length} chapters &middot; real market data
           </span>
           <h1 className="reveal reveal-2 mt-6 text-4xl sm:text-5xl lg:text-6xl font-bold leading-[1.05] tracking-tight text-on-surface">
             Learn{" "}
