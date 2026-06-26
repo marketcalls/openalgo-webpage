@@ -5,10 +5,11 @@ import { CHAPTERS as AMI } from "@/lib/amibrokerCurriculum";
 import { CHAPTERS as FUND } from "@/lib/fundamentalsCurriculum";
 import { CHAPTERS as PY } from "@/lib/pythonCurriculum";
 import { CHAPTERS as QUANT } from "@/lib/quantCurriculum";
+import { CHAPTERS as STOCKS } from "@/lib/stocksCurriculum";
 
 const OG_IMAGE = "https://openalgo.in/assets/images/og-image.png";
 const DESC =
-  "Four free, hands-on courses that take you from your first line of code to a real quantitative edge - Python for Traders (beginner), Algo Trading with Python (intermediate), Quantitative Trading (expert), and AmiBroker AFL (chart-based system building for traders and investors, no Python needed) - all taught in plain English on real Indian and US market data.";
+  "Five free, hands-on courses that take you from understanding your very first share to a real quantitative edge - Stock Market Basics (a no-jargon beginner intro to the Indian market), Python for Traders (beginner), Algo Trading with Python (intermediate), Quantitative Trading (expert), and AmiBroker AFL (chart-based system building, no Python needed) - all in plain English with real Indian and US market data.";
 
 export const metadata = {
   title: { absolute: "Learn - Free Python, Algo & Quant Trading Courses | OpenAlgo" },
@@ -38,6 +39,19 @@ export const metadata = {
 };
 
 const COURSES = [
+  {
+    n: 0,
+    route: "/stocks",
+    title: "Stock Market Basics",
+    level: "Beginner",
+    count: STOCKS.length,
+    color: "text-tertiary",
+    ring: "hsl(140 72% 53% / 0.5)",
+    grad: "from-tertiary via-secondary to-primary",
+    blurb:
+      "Brand new to the market? Start here - before any code. Understand shares, IPOs, indices, what moves prices and how to spot scams, in plain English with clear diagrams and real Indian examples.",
+    points: ["Zero jargon assumed", "Understand the market, not code", "Modern, visual, India-first"],
+  },
   {
     n: 1,
     route: "/fundamentals",
@@ -124,7 +138,7 @@ export default function LearnHub() {
         <div className="relative px-6 sm:px-10 lg:px-14 py-16 sm:py-20 max-w-5xl mx-auto text-center">
           <span className="reveal reveal-1 inline-flex items-center gap-2 rounded-full border border-border surface-low px-4 py-1.5 font-label text-xs tracking-wide text-on-surface-variant">
             <GraduationCap className="h-3.5 w-3.5 text-primary" />
-            Four free courses &middot; {FUND.length + PY.length + QUANT.length + AMI.length} chapters &middot; real market data
+            Five free courses &middot; {STOCKS.length + FUND.length + PY.length + QUANT.length + AMI.length} chapters &middot; real market data
           </span>
           <h1 className="reveal reveal-2 mt-6 text-4xl sm:text-5xl lg:text-6xl font-bold leading-[1.05] tracking-tight text-on-surface">
             Learn{" "}
