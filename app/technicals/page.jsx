@@ -107,7 +107,6 @@ export default function TechnicalsCourseHome() {
             {[
               ["25", "Chapters"],
               ["6", "Modules"],
-              ["Real", "NSE data"],
               ["Daily", "Charts"],
             ].map(([v, k]) => (
               <div key={k}>
