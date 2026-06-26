@@ -1,13 +1,14 @@
 import { ArrowRight, GraduationCap } from "lucide-react";
 import Link from "next/link";
 
+import { CHAPTERS as AMI } from "@/lib/amibrokerCurriculum";
 import { CHAPTERS as FUND } from "@/lib/fundamentalsCurriculum";
 import { CHAPTERS as PY } from "@/lib/pythonCurriculum";
 import { CHAPTERS as QUANT } from "@/lib/quantCurriculum";
 
 const OG_IMAGE = "https://openalgo.in/assets/images/og-image.png";
 const DESC =
-  "Three free, hands-on courses that take you from your first line of Python to a real quantitative edge - Python for Traders (beginner), Algo Trading with Python (intermediate), and Quantitative Trading (expert) - all taught in plain English on real Indian and US market data.";
+  "Four free, hands-on courses that take you from your first line of code to a real quantitative edge - Python for Traders (beginner), Algo Trading with Python (intermediate), Quantitative Trading (expert), and AmiBroker AFL (chart-based system building for traders and investors, no Python needed) - all taught in plain English on real Indian and US market data.";
 
 export const metadata = {
   title: { absolute: "Learn - Free Python, Algo & Quant Trading Courses | OpenAlgo" },
@@ -76,6 +77,19 @@ const COURSES = [
       "Ready to go deep? Market microstructure, the mathematics of markets, derivatives and volatility, portfolio risk - and how to find an edge that survives real-world costs.",
     points: ["Market structure & the maths", "Options, volatility & factors", "Finding a real, tested edge"],
   },
+  {
+    n: 4,
+    route: "/amibroker",
+    title: "AmiBroker AFL",
+    level: "Beginner",
+    count: AMI.length,
+    color: "text-secondary",
+    ring: "hsl(190 85% 62% / 0.5)",
+    grad: "from-secondary via-primary to-tertiary",
+    blurb:
+      "For traders and investors who prefer charts to Python. Learn AmiBroker's AFL language from scratch - build indicators, scan the whole market, and turn ideas into backtested systems and live automation, on one of the fastest engines a retail user can own.",
+    points: ["No Python needed", "Indicators, scans & systems", "Backtest, optimise & automate"],
+  },
 ];
 
 const COURSE_LIST_LD = {
@@ -110,7 +124,7 @@ export default function LearnHub() {
         <div className="relative px-6 sm:px-10 lg:px-14 py-16 sm:py-20 max-w-5xl mx-auto text-center">
           <span className="reveal reveal-1 inline-flex items-center gap-2 rounded-full border border-border surface-low px-4 py-1.5 font-label text-xs tracking-wide text-on-surface-variant">
             <GraduationCap className="h-3.5 w-3.5 text-primary" />
-            Three free courses &middot; {FUND.length + PY.length + QUANT.length} chapters &middot; real market data
+            Four free courses &middot; {FUND.length + PY.length + QUANT.length + AMI.length} chapters &middot; real market data
           </span>
           <h1 className="reveal reveal-2 mt-6 text-4xl sm:text-5xl lg:text-6xl font-bold leading-[1.05] tracking-tight text-on-surface">
             Learn{" "}
@@ -133,7 +147,7 @@ export default function LearnHub() {
           <span className="font-label text-xs uppercase tracking-wider text-on-surface-variant/70">Beginner &rarr; Expert</span>
         </div>
 
-        <div className="grid gap-6 lg:grid-cols-3">
+        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {COURSES.map((c) => (
             <Link
               key={c.route}
@@ -174,8 +188,11 @@ export default function LearnHub() {
             handle data confidently, move to{" "}
             <Link href="/python" className="text-secondary hover:underline">Algo Trading with Python</Link> to build and
             automate strategies. When you want the layer beneath the charts - the market structure and the maths - take{" "}
-            <Link href="/quant" className="text-tertiary hover:underline">Quantitative Trading</Link>. Every course is
-            free, self-paced, and full of examples you can run yourself.
+            <Link href="/quant" className="text-tertiary hover:underline">Quantitative Trading</Link>. Prefer to
+            work in charts rather than Python? Take{" "}
+            <Link href="/amibroker" className="text-secondary hover:underline">AmiBroker AFL</Link> instead -
+            a parallel, no-Python track for traders and investors that teaches the AFL language from scratch, all the way
+            to backtested systems and live automation. Every course is free, self-paced, and full of examples you can run yourself.
           </p>
           <p className="mt-6 border-t border-border pt-4 text-center text-sm text-on-surface-variant/70">
             For education only - not investment advice. Practise in analyze mode.
