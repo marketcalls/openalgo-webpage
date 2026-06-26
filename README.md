@@ -11,7 +11,7 @@ OpenAlgo is a self-hostable algorithmic trading platform built by traders, for t
 - **33+ Broker Integrations** - Unified API across all major Indian brokers with a common symbol format
 - **16+ Platform Integrations** - Amibroker, TradingView, Python, MetaTrader, Excel, Chrome Extension, and more
 - **6 Official SDKs** - Python, Node.js, Java, .NET/C#, Go, Rust
-- **6 Free Learning Courses** - 187 chapters from market basics and chart-reading to expert quant and AmiBroker AFL, all on real market data (see below)
+- **6 Free Learning Courses** - 190 chapters from market basics and chart-reading to expert quant and AmiBroker AFL, all on real market data (see below)
 - **Self-Hosted & Private** - Deploy on your own infrastructure with complete data privacy
 - **SmartOrder & Basket Orders** - Advanced order types including split orders and position management
 - **AI/LLM Integration** - MCP (Model Context Protocol) support for AI-driven trading
@@ -26,7 +26,7 @@ Six free, hands-on courses cover beginner entry points (market basics and chart-
 | Course | Level | Chapters | What it covers |
 |--------|-------|----------|----------------|
 | [Stock Market Basics](https://openalgo.in/stocks) (`/stocks`) | Beginner | 18 | Shares, IPOs, indices, market plumbing, price-moving events, risk, scams, and getting started as an investor. |
-| [Technical Analysis](https://openalgo.in/technicals) (`/technicals`) | Beginner | 25 | Reading real NSE charts - candlesticks, trends, support/resistance, chart patterns, indicators (RSI, MACD, moving averages, Bollinger Bands), volume, risk and psychology. |
+| [Technical Analysis](https://openalgo.in/technicals) (`/technicals`) | Beginner | 28 | Reading real NSE charts: candlesticks, trends, support/resistance, chart patterns, and a broad indicator toolbox (moving averages, RSI and oscillators, MACD, ADX trend strength, Bollinger/ATR volatility, volume and money-flow, Supertrend and Ichimoku, plus OpenAlgo's 80+ library), risk and psychology. |
 | [Python for Traders](https://openalgo.in/fundamentals) (`/fundamentals`) | Beginner | 40 | Python from zero - variables, data structures, NumPy, pandas, charts, then real market data. No prior coding needed. |
 | [Algo Trading with Python](https://openalgo.in/python) (`/python`) | Intermediate | 32 | Build, backtest and automate strategies with the OpenAlgo SDK - indicators, signals, orders, WebSockets, risk. |
 | [Quantitative Trading](https://openalgo.in/quant) (`/quant`) | Expert | 36 | Market microstructure, the mathematics of markets, derivatives and volatility, portfolio risk, and finding an edge. |
@@ -41,7 +41,7 @@ Course content lives as Markdown + tested Python examples under `content/`, rend
 | `/` | Hero landing page with stats, ecosystem overview, and trust indicators |
 | `/learn` | Learning hub linking all six free courses |
 | `/stocks` | "Stock Market Basics" - 18-chapter beginner stock-market course |
-| `/technicals` | "Technical Analysis" - 25-chapter beginner chart-reading course |
+| `/technicals` | "Technical Analysis" - 28-chapter beginner chart-reading course |
 | `/fundamentals` | "Python for Traders" - 40-chapter beginner Python-for-finance course |
 | `/python` | "Algo Trading with Python" - 32-chapter intermediate course |
 | `/quant` | "Quantitative Trading" - 36-chapter expert course |
@@ -93,7 +93,7 @@ npm run dev
 app/                    # Next.js App Router pages
   api/                  # API routes (blog-feed, ip-lookup, OG image)
   stocks/               # "Stock Market Basics" course (18 static chapter routes)
-  technicals/           # "Technical Analysis" course (25 static chapter routes)
+  technicals/           # "Technical Analysis" course (28 static chapter routes)
   fundamentals/         # "Python for Traders" course (40 static chapter routes)
   python/               # "Algo Trading with Python" course
   quant/                # "Quantitative Trading" course
