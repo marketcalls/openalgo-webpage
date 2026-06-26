@@ -61,3 +61,7 @@ Thumbs.db
 
 # Internal build/authoring doc, not part of the site
 content/python/AGENT_BRIEF.md
+content/technicals/AGENT_BRIEF.md
+
+# Local market-data cache for Technical Analysis course research (gitignored, not deployed)
+/data/

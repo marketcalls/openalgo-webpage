@@ -6,10 +6,11 @@ import { CHAPTERS as FUND } from "@/lib/fundamentalsCurriculum";
 import { CHAPTERS as PY } from "@/lib/pythonCurriculum";
 import { CHAPTERS as QUANT } from "@/lib/quantCurriculum";
 import { CHAPTERS as STOCKS } from "@/lib/stocksCurriculum";
+import { CHAPTERS as TECH } from "@/lib/technicalsCurriculum";
 
 const OG_IMAGE = "https://openalgo.in/assets/images/og-image.png";
 const DESC =
-  "Five free, hands-on courses that take you from understanding your very first share to a real quantitative edge - Stock Market Basics (a no-jargon beginner intro to the Indian market), Python for Traders (beginner), Algo Trading with Python (intermediate), Quantitative Trading (expert), and AmiBroker AFL (chart-based system building, no Python needed) - all in plain English with real market examples.";
+  "Six free, hands-on courses that take you from understanding your very first share to a real quantitative edge - Stock Market Basics (a no-jargon beginner intro to the Indian market), Technical Analysis (reading real NSE charts), Python for Traders (beginner), Algo Trading with Python (intermediate), Quantitative Trading (expert), and AmiBroker AFL (chart-based system building, no Python needed) - all in plain English with real market examples.";
 
 export const metadata = {
   title: { absolute: "Learn - Free Stock Market, Python, Algo, Quant & AFL Courses | OpenAlgo" },
@@ -18,6 +19,7 @@ export const metadata = {
     "learn python trading", "algo trading course", "quant trading course", "python for traders",
     "free trading courses", "algorithmic trading python", "quantitative trading", "openalgo",
     "learn to code trading", "indian stock market python", "stock market basics course", "amibroker afl course",
+    "technical analysis course",
   ],
   alternates: { canonical: "/learn" },
   openGraph: {
@@ -54,6 +56,19 @@ const COURSES = [
   },
   {
     n: 1,
+    route: "/technicals",
+    title: "Technical Analysis",
+    level: "Beginner",
+    count: TECH.length,
+    color: "text-tertiary",
+    ring: "hsl(140 72% 53% / 0.5)",
+    grad: "from-tertiary via-primary to-secondary",
+    blurb:
+      "Want to read a chart, not just buy and hold? Learn technical analysis from the very first candle - trends, support and resistance, chart patterns, and indicators like RSI, MACD and moving averages - every concept shown on real NSE daily charts, honest about probability over certainty.",
+    points: ["Built on real NSE charts", "Candlesticks to indicators", "Probability, not prediction"],
+  },
+  {
+    n: 2,
     route: "/fundamentals",
     title: "Python for Traders",
     level: "Beginner",
@@ -66,7 +81,7 @@ const COURSES = [
     points: ["No prior coding needed", "Pure Python, NumPy & pandas", "Real yfinance & OpenAlgo data"],
   },
   {
-    n: 2,
+    n: 3,
     route: "/python",
     title: "Algo Trading with Python",
     level: "Intermediate",
@@ -79,7 +94,7 @@ const COURSES = [
     points: ["Assumes Python basics", "The OpenAlgo SDK", "Automated strategies, orders & risk"],
   },
   {
-    n: 3,
+    n: 4,
     route: "/quant",
     title: "Quantitative Trading",
     level: "Expert",
@@ -92,7 +107,7 @@ const COURSES = [
     points: ["Market structure & the maths", "Options, volatility & factors", "Finding a real, tested edge"],
   },
   {
-    n: 4,
+    n: 5,
     route: "/amibroker",
     title: "AmiBroker AFL",
     level: "Beginner",
@@ -138,7 +153,7 @@ export default function LearnHub() {
         <div className="relative px-6 sm:px-10 lg:px-14 py-16 sm:py-20 max-w-5xl mx-auto text-center">
           <span className="reveal reveal-1 inline-flex items-center gap-2 rounded-full border border-border surface-low px-4 py-1.5 font-label text-xs tracking-wide text-on-surface-variant">
             <GraduationCap className="h-3.5 w-3.5 text-primary" />
-            Five free courses &middot; {STOCKS.length + FUND.length + PY.length + QUANT.length + AMI.length} chapters &middot; real market data
+            Six free courses &middot; {STOCKS.length + TECH.length + FUND.length + PY.length + QUANT.length + AMI.length} chapters &middot; real market data
           </span>
           <h1 className="reveal reveal-2 mt-6 text-4xl sm:text-5xl lg:text-6xl font-bold leading-[1.05] tracking-tight text-on-surface">
             Learn{" "}
@@ -200,7 +215,9 @@ export default function LearnHub() {
             The academy has a market-basics entry point, a Python-to-quant ladder, and a parallel no-Python AFL track.
             If you're <strong>new to markets</strong>,
             start with{" "}
-            <Link href="/stocks" className="text-tertiary hover:underline">Stock Market Basics</Link>. If you're
+            <Link href="/stocks" className="text-tertiary hover:underline">Stock Market Basics</Link>. To learn to
+            read price charts, take{" "}
+            <Link href="/technicals" className="text-tertiary hover:underline">Technical Analysis</Link>. If you're
             ready to code but new to Python, start with{" "}
             <Link href="/fundamentals" className="text-primary hover:underline">Python for Traders</Link>. Once you can
             handle data confidently, move to{" "}
