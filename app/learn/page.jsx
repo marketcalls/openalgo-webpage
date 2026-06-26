@@ -3,6 +3,9 @@ import Link from "next/link";
 
 import { CHAPTERS as AMI } from "@/lib/amibrokerCurriculum";
 import { CHAPTERS as FUND } from "@/lib/fundamentalsCurriculum";
+import { CHAPTERS as FUT } from "@/lib/futuresCurriculum";
+import { CHAPTERS as OB } from "@/lib/optionsBasicsCurriculum";
+import { CHAPTERS as OS } from "@/lib/optionsStrategiesCurriculum";
 import { CHAPTERS as PY } from "@/lib/pythonCurriculum";
 import { CHAPTERS as QUANT } from "@/lib/quantCurriculum";
 import { CHAPTERS as STOCKS } from "@/lib/stocksCurriculum";
@@ -10,7 +13,7 @@ import { CHAPTERS as TECH } from "@/lib/technicalsCurriculum";
 
 const OG_IMAGE = "https://openalgo.in/assets/images/og-image.png";
 const DESC =
-  "Six free, hands-on courses that take you from understanding your very first share to a real quantitative edge - Stock Market Basics (a no-jargon beginner intro to the Indian market), Technical Analysis (reading real NSE charts), Python for Traders (beginner), Algo Trading with Python (intermediate), Quantitative Trading (expert), and AmiBroker AFL (chart-based system building, no Python needed) - all in plain English with real market examples.";
+  "Nine free, hands-on courses that take you from understanding your very first share to a real quantitative edge - Stock Market Basics (a no-jargon beginner intro to the Indian market), Technical Analysis (reading real NSE charts), Futures Trading, Options Basics and Options Strategies (derivatives from zero, with real payoff charts), Python for Traders (beginner), Algo Trading with Python (intermediate), Quantitative Trading (expert), and AmiBroker AFL (chart-based system building, no Python needed) - all in plain English with real market examples.";
 
 export const metadata = {
   title: { absolute: "Learn - Free Stock Market, Python, Algo, Quant & AFL Courses | OpenAlgo" },
@@ -119,6 +122,45 @@ const COURSES = [
       "For traders and investors who prefer charts to Python. Learn AmiBroker's AFL language from scratch - build indicators, scan the whole market, and turn ideas into backtested systems and live automation, on one of the fastest engines a retail user can own.",
     points: ["No Python needed", "Indicators, scans & systems", "Backtest, optimise & automate"],
   },
+  {
+    n: 6,
+    route: "/futures",
+    title: "Futures Trading",
+    level: "Beginner",
+    count: FUT.length,
+    color: "text-tertiary",
+    ring: "hsl(140 72% 53% / 0.5)",
+    grad: "from-tertiary via-secondary to-primary",
+    blurb:
+      "New to derivatives? Start with futures. Understand what a contract really is, then margin and leverage, mark-to-market, going long and short, the payoff, rollover and hedging - in plain English with real Indian market examples, honest about the leverage that cuts both ways.",
+    points: ["Never traded a contract", "Margin, leverage & payoff", "Honest about the risks"],
+  },
+  {
+    n: 7,
+    route: "/options-basics",
+    title: "Options Basics",
+    level: "Beginner",
+    count: OB.length,
+    color: "text-secondary",
+    ring: "hsl(220 100% 84% / 0.5)",
+    grad: "from-secondary via-primary to-tertiary",
+    blurb:
+      "Calls and puts from absolute zero. Premium, strike and expiry, moneyness, the option chain, the four single-leg payoffs, the Greeks and implied volatility - every term defined, every payoff a real chart, honest about why most option buyers lose.",
+    points: ["Zero options jargon assumed", "Real payoff charts", "Buyer vs seller, honestly"],
+  },
+  {
+    n: 8,
+    route: "/options-strategies",
+    title: "Options Strategies",
+    level: "Beginner",
+    count: OS.length,
+    color: "text-primary",
+    ring: "hsl(267 100% 87% / 0.5)",
+    grad: "from-primary via-tertiary to-secondary",
+    blurb:
+      "Combine calls and puts into real, named strategies. Spreads, straddles and strangles, the iron condor, butterfly, ratios, synthetics and the jade lizard - each with an authentic payoff diagram from OpenAlgo's strategy-builder maths on real market data.",
+    points: ["Real strategy-builder payoffs", "Spreads to iron condors", "Defined risk first"],
+  },
 ];
 
 const COURSE_LIST_LD = {
@@ -153,7 +195,7 @@ export default function LearnHub() {
         <div className="relative px-6 sm:px-10 lg:px-14 py-16 sm:py-20 max-w-5xl mx-auto text-center">
           <span className="reveal reveal-1 inline-flex items-center gap-2 rounded-full border border-border surface-low px-4 py-1.5 font-label text-xs tracking-wide text-on-surface-variant">
             <GraduationCap className="h-3.5 w-3.5 text-primary" />
-            Six free courses &middot; {STOCKS.length + TECH.length + FUND.length + PY.length + QUANT.length + AMI.length} chapters &middot; real market data
+            Nine free courses &middot; {STOCKS.length + TECH.length + FUT.length + OB.length + OS.length + FUND.length + PY.length + QUANT.length + AMI.length} chapters &middot; real market data
           </span>
           <h1 className="reveal reveal-2 mt-6 text-4xl sm:text-5xl lg:text-6xl font-bold leading-[1.05] tracking-tight text-on-surface">
             Learn{" "}
