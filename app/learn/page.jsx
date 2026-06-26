@@ -153,14 +153,14 @@ const COURSES = [
     n: 8,
     route: "/options-strategies",
     title: "Options Strategies",
-    level: "Beginner",
+    level: "Intermediate",
     count: OS.length,
     color: "text-primary",
     ring: "hsl(267 100% 87% / 0.5)",
     grad: "from-primary via-tertiary to-secondary",
     blurb:
-      "Combine calls and puts into real, named strategies. Spreads, straddles and strangles, the iron condor, butterfly, ratios, synthetics and the jade lizard - each with an authentic payoff diagram from OpenAlgo's strategy-builder maths on real market data.",
-    points: ["Real strategy-builder payoffs", "Spreads to iron condors", "Defined risk first"],
+      "All 38 strategies in the OpenAlgo strategy builder, each with an authentic payoff chart and the full nine-metric panel (max profit, max loss, POP, risk to reward, margin) built on live NIFTY data. Spreads, straddles, iron condors and flies, ratios, jade lizards, batman, calendars, plus margin, pledging and adjustments.",
+    points: ["All 38 builder strategies", "Live NIFTY nine-metric panels", "Defined risk first"],
   },
   {
     n: 9,

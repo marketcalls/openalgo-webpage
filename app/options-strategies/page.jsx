@@ -5,10 +5,10 @@ import { CHAPTERS, PARTS, TAG_CLASS } from "@/lib/optionsStrategiesCurriculum";
 
 const OG_IMAGE = "https://openalgo.in/assets/images/og-image.png";
 const LANDING_DESC =
-  "A free, modern, beginner-friendly 14-chapter course on options strategies. Combine calls and puts into real, named strategies, each explained for a beginner with an authentic payoff diagram built from OpenAlgo's own strategy-builder maths on real market data. Learn to read breakeven, max profit and max loss, then the directional spreads, straddles and strangles, the iron condor, iron fly and butterfly, ratio and back spreads, synthetics, the covered call, the jade lizard, and how to choose and manage a strategy. No prior knowledge assumed.";
+  "A free, modern course on options strategies for the developing trader. Build all 38 strategies in the OpenAlgo strategy builder, each with an authentic payoff chart and the full nine-metric panel (max profit, max loss, probability of profit, risk to reward, margin and more) drawn from the builder's own maths on live NIFTY data. Read the directional spreads, straddles and strangles, the iron condor, iron fly and butterfly, ratio and back spreads, synthetics, the jade lizard, batman, calendars and diagonals, plus margin, collateral, pledging, penalties and options adjustments, and learn to choose and manage a trade. Some options basics assumed.";
 
 export const metadata = {
-  title: { absolute: "Options Strategies - A Free Beginner's Course | OpenAlgo" },
+  title: { absolute: "Options Strategies - A Free Course for Traders | OpenAlgo" },
   description: LANDING_DESC,
   keywords: [
     "options strategies", "options strategies for beginners", "options strategies course", "option spreads",
@@ -19,14 +19,14 @@ export const metadata = {
   openGraph: {
     type: "website",
     url: "https://openalgo.in/options-strategies",
-    title: "Options Strategies - A Free Beginner's Course",
+    title: "Options Strategies - A Free Course for Traders",
     description: LANDING_DESC,
     siteName: "OpenAlgo",
     images: [{ url: OG_IMAGE, width: 1200, height: 630, alt: "Options Strategies course by OpenAlgo", type: "image/png" }],
   },
   twitter: {
     card: "summary_large_image",
-    title: "Options Strategies - A Free Beginner's Course",
+    title: "Options Strategies - A Free Course for Traders",
     description: LANDING_DESC,
     images: [OG_IMAGE],
     creator: "@openalgoHQ",
@@ -84,10 +84,10 @@ export default function OptionsStrategiesCourseHome() {
             Strategies
           </h1>
           <p className="reveal reveal-3 mt-5 max-w-2xl text-lg text-on-surface-variant">
-            Ready to combine calls and puts into real, named strategies? A modern, visual, beginner-first course where
-            every strategy comes with an authentic payoff diagram built from OpenAlgo&apos;s own strategy-builder maths
-            on real market data - so you see exactly where you profit, where you lose, and where you break even, from
-            simple spreads to the iron condor and beyond.
+            Ready to combine calls and puts into real, named strategies? A modern, visual course where every one of the
+            38 strategies comes with an authentic payoff diagram and the full nine-metric panel, built from
+            OpenAlgo&apos;s own strategy-builder maths on live NIFTY data, so you see exactly where you profit, where you
+            lose, and where you break even, from simple spreads to the iron condor and beyond.
           </p>
           <div className="reveal reveal-4 mt-8 flex flex-wrap gap-3">
             <Link
@@ -127,10 +127,10 @@ export default function OptionsStrategiesCourseHome() {
           <h2 className="text-lg font-bold text-on-surface">Why this course?</h2>
           <p className="mt-2 max-w-3xl text-on-surface-variant">
             Most options-strategy material throws named structures at you with textbook diagrams that never match a
-            real trade. This one is different: every strategy is explained for a beginner and drawn with an authentic
-            payoff diagram from OpenAlgo&apos;s own strategy-builder maths on real market data. It is honest about the
-            risk on each structure - defined or unlimited - and stresses defined risk first. The goal is to make you
-            read any payoff with clear eyes and match a strategy to your view, so you can make your own informed decisions.
+            real trade. This one is different: every strategy is drawn with an authentic payoff diagram and its nine
+            numbers from OpenAlgo&apos;s own strategy-builder maths on live NIFTY data. It is honest about the risk on
+            each structure, defined or unlimited, and stresses defined risk first. The goal is to make you read any
+            payoff with clear eyes and match a strategy to your view, so you can make your own informed decisions.
           </p>
         </div>
       </div>
@@ -168,7 +168,7 @@ export default function OptionsStrategiesCourseHome() {
           </section>
         ))}
         <p className="mt-14 border-t border-border pt-6 text-center text-sm text-on-surface-variant/70">
-          For education only - not investment advice. {CHAPTERS.length} chapters, built on real payoff charts for beginners.
+          For education only - not investment advice. {CHAPTERS.length} chapters, built on real payoff charts from live NIFTY data.
         </p>
       </div>
     </div>

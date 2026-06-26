@@ -6,7 +6,7 @@ import {
   MessageCircle, LayoutDashboard, Terminal, Webhook, Activity,
   BarChart3, Gauge, FileJson, Brain, Search, Clock, GitMerge, Key, ShieldCheck,
   AlertCircle, User, Mail, Smartphone, History, Container,
-  Wand2, Layers, Target, Box, Sigma, PieChart, Wallet
+  Wand2, Layers, Target, Box, Sigma, PieChart, Wallet, Waves, ArrowLeftRight
 } from "lucide-react"
 
 const features = [
@@ -15,13 +15,16 @@ const features = [
   { title: "Option Chain", description: "Live option chain with Greeks, open interest, volume, and bid/ask - click any strike to trade instantly", icon: Layers, category: "Options Analytics" },
   { title: "Option Greeks Chart", description: "See how IV, Delta, Theta, Vega and Gamma have moved over time for the at-the-money strike", icon: Gauge, category: "Options Analytics" },
   { title: "OI Tracker", description: "Side-by-side call and put open interest with PCR and a marker showing where the spot is right now", icon: Activity, category: "Options Analytics" },
+  { title: "OI Range", description: "Open interest by strike across a custom range, with at-the-money quick selectors and optional one-minute auto-refresh", icon: BarChart3, category: "Options Analytics" },
   { title: "Max Pain", description: "Where price is most likely to settle at expiry, shown visually across all strikes", icon: Target, category: "Options Analytics" },
   { title: "Straddle Chart", description: "Combined price of the at-the-money call and put, with automatic strike roll as spot moves", icon: LineChart, category: "Options Analytics" },
   { title: "Straddle PnL Simulator", description: "Simulate how a straddle would have played out intraday with automated adjustments and a full trade log", icon: BarChart3, category: "Options Analytics" },
   { title: "Volatility Surface", description: "Live 3D view of implied volatility across every strike and expiry - spot skew and term structure at a glance", icon: Box, category: "Options Analytics" },
   { title: "GEX Dashboard", description: "See where market makers are positioned - find the biggest gamma walls acting as support and resistance", icon: Sigma, category: "Options Analytics" },
+  { title: "Gamma Density", description: "Gamma times open interest density and convexity zones, with intraday and to-expiry views, ATM IV, and one and two sigma expected-move bands", icon: Waves, category: "Options Analytics" },
   { title: "IV Smile", description: "Call and put implied volatility curves with the at-the-money marker, so you can read skew instantly", icon: PieChart, category: "Options Analytics" },
   { title: "OI Profile", description: "Futures candles with a call vs put open-interest butterfly and daily OI change - price action and positioning in one view", icon: Wallet, category: "Options Analytics" },
+  { title: "Arbitrage Scanner", description: "Realtime futures calendar-spread scanner across NFO and MCX, ranked by executable bid/ask spread, with one-click two-leg orders", icon: ArrowLeftRight, category: "Options Analytics" },
   { title: "Smart Orders", description: "Tell OpenAlgo the position you want and it works out the math - no more tracking holdings or calculating reverse quantities by hand", icon: Brain, category: "Order Management" },
   { title: "Basket Orders", description: "Fire multiple orders across symbols in one request - perfect for hedge pairs, spreads, or rebalancing a portfolio in one shot", icon: Package, category: "Order Management" },
   { title: "All Order Types", description: "Market, Limit, Stop-Loss and Stop-Loss Market orders across CNC, MIS, NRML - everything you need to place any trade", icon: FileJson, category: "Order Management" },
@@ -114,7 +117,7 @@ export default function FeaturesPage() {
             </h1>
             <p className="text-lg text-on-surface-variant max-w-3xl mx-auto leading-relaxed">
               OpenAlgo is a complete self-hosted stack for algo trading and options analytics -
-              a 12-tool options suite, a unified execution engine, and integrations across 33+ brokers,
+              a 15-tool options suite, a unified execution engine, and integrations across 33+ brokers,
               built for individual traders who want full control of their infrastructure.
             </p>
           </div>

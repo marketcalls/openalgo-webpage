@@ -71,7 +71,7 @@ export default function Home() {
     {
       icon: LineChart,
       title: "Options & Strategy Analytics",
-      description: "12 built-in tools: strategy builder, option chain, Greeks, OI, max pain, vol surface, GEX.",
+      description: "15 built-in tools: strategy builder, option chain, Greeks, OI tracker and range, max pain, straddles, vol surface, GEX, gamma density, IV smile, and a futures arbitrage scanner.",
     },
     {
       icon: Server,
@@ -152,7 +152,7 @@ export default function Home() {
             <div className="w-2 h-2 rounded-full bg-tertiary pulse-live" />
             <span className="font-label text-label-md uppercase tracking-wider">
               <span className="text-primary">New in V2</span>
-              <span className="text-on-surface-variant"> - 12-Tool Options Analytics Suite</span>
+              <span className="text-on-surface-variant"> - 15-Tool Options Analytics Suite</span>
             </span>
             <ArrowRight className="w-3 h-3 text-primary" />
           </div>
