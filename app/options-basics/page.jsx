@@ -107,7 +107,6 @@ export default function OptionsBasicsCourseHome() {
             {[
               [String(CHAPTERS.length), "Chapters"],
               [String(PARTS.length), "Modules"],
-              ["Real", "NSE data"],
               ["Real", "Payoff charts"],
             ].map(([v, k]) => (
               <div key={k}>

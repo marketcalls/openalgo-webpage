@@ -107,8 +107,8 @@ export default function OptionsStrategiesCourseHome() {
             {[
               [String(CHAPTERS.length), "Chapters"],
               [String(PARTS.length), "Modules"],
-              ["Real", "NSE data"],
-              ["Real", "Payoff charts"],
+              ["38", "Strategies"],
+              ["Real", "NIFTY charts"],
             ].map(([v, k]) => (
               <div key={k}>
                 <div className="text-3xl font-bold bg-linear-to-r from-tertiary to-secondary bg-clip-text text-transparent">
