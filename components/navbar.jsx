@@ -30,7 +30,7 @@ export function Navbar() {
     { href: "/discord", icon: <MessageCircle className="h-4 w-4" />, label: "Discord" },
     { href: "/faq", icon: <HelpCircle className="h-4 w-4" />, label: "FAQ" },
     { href: "/roadmap", icon: <GitBranch className="h-4 w-4" />, label: "Roadmap" },
-    { href: "/learn", icon: <GraduationCap className="h-4 w-4" />, label: "Learn" },
+    { href: "/learn", icon: <GraduationCap className="h-4 w-4" />, label: "Open Varsity" },
     { href: "https://docs.openalgo.in", icon: <Book className="h-4 w-4" />, label: "Docs", external: true },
   ]
 
