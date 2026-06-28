@@ -1,6 +1,6 @@
 # In F&O you trade fixed LOTS, not single shares. Contract value = price x lot size.
 # (Lot sizes are illustrative - exchanges revise them periodically.)
-lots = {"NIFTY": 75, "BANKNIFTY": 35, "RELIANCE": 500, "TCS": 175}
+lots = {"NIFTY": 65, "BANKNIFTY": 30, "RELIANCE": 500, "TCS": 175}
 prices = {"NIFTY": 24021.65, "BANKNIFTY": 52000.00, "RELIANCE": 1313.60, "TCS": 2109.00}
 
 print(f"{'Symbol':<12}{'Lot':>6}{'Price':>12}{'Contract value':>18}")

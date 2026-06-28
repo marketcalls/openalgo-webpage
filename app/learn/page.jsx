@@ -159,8 +159,8 @@ const COURSES = [
     ring: "hsl(267 100% 87% / 0.5)",
     grad: "from-primary via-tertiary to-secondary",
     blurb:
-      "All 38 strategies in the OpenAlgo strategy builder, each with an authentic payoff chart and the full nine-metric panel (max profit, max loss, POP, risk to reward, margin) built on live NIFTY data. Spreads, straddles, iron condors and flies, ratios, jade lizards, batman, calendars, plus margin, pledging and adjustments.",
-    points: ["All 38 builder strategies", "Live NIFTY nine-metric panels", "Defined risk first"],
+      "All 38 strategies in the OpenAlgo strategy builder, each with an authentic payoff chart and the full nine-metric panel (max profit, max loss, POP, risk to reward, margin) built on real NIFTY data. Spreads, straddles, iron condors and flies, ratios, jade lizards, batman, calendars, plus margin, pledging and adjustments.",
+    points: ["All 38 builder strategies", "Real NIFTY nine-metric panels", "Defined risk first"],
   },
   {
     n: 9,
