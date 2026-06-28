@@ -1,0 +1,5 @@
+trade: HDFCBANK/KOTAKBANK, short the spread, entered 2020-10-07
+  STOPPED OUT on 2020-10-09 for -6.4%  (1-unit spread P&L)
+  had we HELD to the reversion on 2021-01-05: +21.4%
+  the stop cost 27.9% of missed reversion -- and yet, on a pair that truly breaks,
+  that same stop is the only thing standing between you and an unbounded loss. That is the dilemma.

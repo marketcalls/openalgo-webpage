@@ -1,0 +1,2 @@
+pair market betas: {'M&M/MARUTI': np.float64(-1.11), 'INFY/TCS': np.float64(-0.17), 'TCS/HCLTECH': np.float64(0.19), 'HDFCBANK/KOTAKBANK': np.float64(-0.02), 'TATASTEEL/JSWSTEEL': np.float64(-0.0), 'HINDALCO/TATASTEEL': np.float64(0.27)}
+book beta(t): mean +0.008  sd 0.095  peak |0.28|  -> a "market-neutral" book can quietly carry market risk when a high-hedge-ratio pair is on.

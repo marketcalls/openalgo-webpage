@@ -1,0 +1,9 @@
+per-pair leverage (train):
+M&M/MARUTI            0.14
+INFY/TCS              0.28
+TCS/HCLTECH           0.41
+HDFCBANK/KOTAKBANK    0.33
+TATASTEEL/JSWSTEEL    0.29
+HINDALCO/TATASTEEL    0.29
+
+naive book Sharpe 1.10  vs  vol-targeted 1.34   (equalizing risk stops one pair owning the book)

@@ -1,0 +1,3 @@
+cells in the 20-point grid that beat the static OOS net Sharpe of +0.76: 0
+The result is a landscape with hills and pits, not a number. Picking the best cell after the
+fact is curve-fitting; an honest forward test would have to fix delta and R *before* seeing OOS.

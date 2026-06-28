@@ -1,0 +1,4 @@
+Every one of these AR(1) series is stationary by construction, yet power collapses as phi -> 1:
+at phi=0.99 ADF correctly rejects only ~61% of the time (vs ~100% at phi=0.80).
+'Failed to reject' often means 'too little data', not 'unit root' - the single most important
+caveat in applied cointegration work.

@@ -1,0 +1,10 @@
+fraction of time each pair is LIVE by this rule:
+M&M/MARUTI            0.06
+INFY/TCS              0.02
+TCS/HCLTECH           0.13
+HDFCBANK/KOTAKBANK    0.07
+TATASTEEL/JSWSTEEL    0.06
+HINDALCO/TATASTEEL    0.10
+
+median live pairs: 0 of 6.  The honest reading: these relationships pass a rolling
+cointegration screen only a minority of the time -- a static six-pair book is mostly running on faith.

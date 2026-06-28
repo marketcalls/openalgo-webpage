@@ -1,0 +1,12 @@
+roll = rets[[A, B]].dropna()
+rc   = roll[A].rolling(252).corr(roll[B])
+fig, ax = plt.subplots(figsize=(11, 4.4))
+ax.plot(rc.index, rc, color=C['teal'], lw=1.4)
+ax.axhline(rc.mean(), color='w', lw=1, ls='--', label=f'mean {rc.mean():.2f}')
+ax.fill_between(rc.index, rc.min(), rc, alpha=0.08, color=C['teal'])
+ax.set_title(f'Rolling 1-year return correlation of {A} vs {B}: the "relationship" wanders from '
+             f'{rc.min():.2f} to {rc.max():.2f}')
+ax.set_ylabel('252-day correlation'); ax.legend(loc='lower left')
+plt.tight_layout(); plt.show()
+print(f'correlation ranged {rc.min():.2f} -> {rc.max():.2f} over the window; std {rc.std():.2f}.')
+print('A pair that is "cointegrated on average" can be uncorrelated for quarters at a time -- exactly when a position is open.')

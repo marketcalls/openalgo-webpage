@@ -1,0 +1,11 @@
+fig, ax = plt.subplots(figsize=(12, 5.0))
+ax.plot(rb.index, rb.values, color=C['grey'], lw=1.0, alpha=0.9, label='rolling 120d OLS beta (jumpy)')
+ax.plot(kf.index, kf['beta'].values, color=C['teal'], lw=2.0, label=f'Kalman beta (delta={DELTA:.0e}, smooth)')
+ax.axhline(beta_static, color=C['amber'], ls='--', lw=1.8, label=f'static IS OLS beta = {beta_static:.3f}')
+ax.axhline(0, color=C['red'], lw=0.8, ls=':')
+ax.axvspan(pd.Timestamp(OOS0), pd.Timestamp(OOS1), color=C['blue'], alpha=0.06, label='out-of-sample')
+ax.set_title(f'Hedge ratio over time: static vs rolling-OLS vs Kalman   ({A_name} on {B_name})')
+ax.set_ylabel('hedge ratio beta'); ax.legend(fontsize=8.5, ncol=2, loc='upper right')
+plt.tight_layout(); plt.show()
+print(f'The static line is flat at {beta_static:.3f}; the market spent most of the sample nearer '
+      f'{kf["beta"].iloc[60:].median():.2f}. A single IS number can be wrong about the whole rest of the series.')

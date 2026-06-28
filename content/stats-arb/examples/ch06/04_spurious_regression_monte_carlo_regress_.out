@@ -1,0 +1,5 @@
+Out of 3000 pairs of INDEPENDENT random walks (seeded):
+  'statistically significant' slope (|t|>1.96): 90.1%   (a correct test would give ~5%)
+  R-squared above 0.5                         : 16.6%
+  median |t-stat|                             : 10.0
+This is why a correlation/regression screen on raw prices invents relationships. Cointegration is the antidote.

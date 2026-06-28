@@ -1,0 +1,4 @@
+same-bar net -64% (Sharpe -0.70)   vs   next-bar net +135% (Sharpe 0.77)
+Note the direction: for a MEAN-REVERSION entry, the same-bar "cheat" is actually WORSE, because it
+books the very move that triggered the entry against you. The lesson is not "look-ahead always flatters";
+it is that the fill assumption DOMINATES the P&L -- get it wrong either way and the backtest is fiction.

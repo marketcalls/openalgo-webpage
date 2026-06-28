@@ -1,0 +1,5 @@
+Verdict FLIPS between the two halves (cointegrated in one, not the other):
+  MARUTI/M&M           first half p=0.012  ->  second half p=0.096
+  INFY/HCLTECH         first half p=0.007  ->  second half p=0.861
+
+Every 'cointegrated' label in this series is true ONLY in its window. There is no permanent tether.

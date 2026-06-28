@@ -1,0 +1,2 @@
+book vol @ weights (annualized):  equal 2.77%   min-var 2.55%   ERC 2.60%
+min-variance gives the lowest vol by construction; ERC trades a touch of vol for balanced risk.

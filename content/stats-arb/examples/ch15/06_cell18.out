@@ -1,0 +1,3 @@
+OUT-OF-SAMPLE Sharpe 0.34   95% bootstrap CI [-0.47, 1.15]   P(Sharpe<0) = 20%
+zero is INSIDE the interval -- we cannot reject "no edge" at 5%.
+even the full-sample CI [0.30, 1.31] is wide: the point Sharpe is far less certain than it looks.

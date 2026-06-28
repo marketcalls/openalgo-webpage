@@ -1,0 +1,5 @@
+walk-forward full      : Sharpe 0.62   +82.1%
+walk-forward pre-2024  : Sharpe 0.62
+walk-forward 2024->now : Sharpe 0.62   +22.3%  (the only part that is truly recent)
+refitting the hedge ratio recovers some of the frozen-OOS loss, but it lands far below the
+in-sample 1.01 -- and every refit is another chance to overfit. No free lunch.

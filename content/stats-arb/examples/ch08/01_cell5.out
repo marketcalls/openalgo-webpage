@@ -1,0 +1,4 @@
+panel: (3195, 50) | 2016-01-01 -> 2026-06-25
+Blind scan would test C(50,2) = 1225 pairs.
+Same-sector prior tests only 78 pairs (6.4% of the blind universe).
+At p<0.05, expected pure-chance 'winners':  blind ~ 61,  prior ~ 4.

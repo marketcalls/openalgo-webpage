@@ -1,0 +1,15 @@
+# the same split as distributions: prices pile up near p=1, returns at p=0
+fig, ax = plt.subplots(1, 2, figsize=(13, 4.4))
+sns.histplot(res['adf_price'],  bins=12, color=C['red'],   ax=ax[0])
+ax[0].axvline(0.05, color=C['amber'], ls='--', lw=1.5, label='5% threshold')
+ax[0].set_title('ADF p-value on LOG PRICES (piles up high = unit root)'); ax[0].set_xlabel('p-value'); ax[0].legend()
+sns.histplot(res['adf_return'], bins=12, color=C['green'], ax=ax[1])
+ax[1].axvline(0.05, color=C['amber'], ls='--', lw=1.5, label='5% threshold')
+ax[1].set_title('ADF p-value on LOG RETURNS (piles up at ~0 = stationary)'); ax[1].set_xlabel('p-value'); ax[1].legend()
+plt.tight_layout(); plt.show()
+
+# KPSS cross-check, summarised (opposite null: small p = reject stationarity)
+kpss_px_reject  = (res['kpss_price']  <= 0.05).mean()
+kpss_ret_reject = (res['kpss_return'] <= 0.05).mean()
+print(f"KPSS cross-check (null = stationary): {kpss_px_reject:.0%} of names REJECT stationarity on PRICE,")
+print(f"and only {kpss_ret_reject:.0%} reject it on RETURNS. ADF and KPSS tell the same story from opposite ends.")

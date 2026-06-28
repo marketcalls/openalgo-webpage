@@ -1,0 +1,4 @@
+best of 64 trials: daily SR 0.070 (ann 1.11), skew +1.54, kurtosis 18.0, T=2347
+against ZERO the result looks rock-solid: PSR = 1.000.
+but the expected-max Sharpe from 64 lucky trials is 0.56 (ann); deflating against THAT,
+the Deflated Sharpe drops to 0.962. Try a few hundred configs and it falls through 0.95 entirely.

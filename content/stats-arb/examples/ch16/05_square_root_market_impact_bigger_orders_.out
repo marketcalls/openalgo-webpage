@@ -1,0 +1,4 @@
+at   1% participation -> impact ~  8.3 bps
+at   5% participation -> impact ~ 18.5 bps
+at  10% participation -> impact ~ 26.1 bps
+Impact is convex-down: doubling size does NOT double impact, but it never stops growing either.

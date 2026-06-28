@@ -1,0 +1,16 @@
+sessions in the NIFTY calendar (window): 2477
+symbols with zero internal gaps: 10 of 50
+worst-case internal gaps for any single name: 3 sessions
+
+most gaps (a handful is normal: trading halts, suspensions, calendar edge effects):
+HDFCBANK      3
+AXISBANK      3
+WIPRO         3
+KOTAKBANK     3
+BAJFINANCE    3
+BAJAJFINSV    3
+SHRIRAMFIN    3
+HINDALCO      3
+TCS           3
+HCLTECH       3
+dtype: int64

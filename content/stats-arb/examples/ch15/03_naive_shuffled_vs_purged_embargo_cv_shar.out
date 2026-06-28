@@ -1,0 +1,4 @@
+naive shuffled-CV Sharpe  0.78   ->   purged+embargo CV Sharpe  0.50   (55% inflation removed)
+the leak enters through the SHUFFLE (near-duplicate neighbours land in both train and test); moving to
+contiguous blocks and then purging + embargoing the overlap progressively removes it -- and the purge
+matters more the longer positions are held (here H=39d).

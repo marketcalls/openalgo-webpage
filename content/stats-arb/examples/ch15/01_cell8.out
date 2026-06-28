@@ -1,0 +1,3 @@
+anchored: folds 14   median +0.47   IQR [+0.29, +1.10]   frac>0 93%   worst -0.96   best +3.30
+rolling : folds 14   median +0.57   IQR [+0.10, +1.67]   frac>0 86%   worst -0.95   best +3.07
+the in-sample 1.01 sits ABOVE almost every fold: a single backtest reports the best case, not the typical one.

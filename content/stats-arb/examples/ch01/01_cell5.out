@@ -1,0 +1,3 @@
+ADF p-value on price X     :  0.465  (high -> cannot reject random walk -> NON-stationary)
+ADF p-value on the spread  :  0.000  (low  -> reject random walk -> STATIONARY)
+spread half-life           :    8.3 days

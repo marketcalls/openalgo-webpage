@@ -1,0 +1,3 @@
+TOTAL round-trip cost ~ 123 bps  (1.23% of one leg's notional).
+Break-even: your average winning trade must net MORE than 123 bps just to pay the market.
+If your backtested edge per trade is, say, 30-50 bps, this single number decides whether it lives.

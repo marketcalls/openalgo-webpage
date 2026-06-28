@@ -1,0 +1,13 @@
+Kalman net Sharpe by delta:
+delta  IS_net_sharpe  OOS_net_sharpe
+1e-06          -0.26           -0.12
+3e-06          -0.50           -0.08
+1e-05          -0.60           -0.84
+3e-05          -0.76           -1.12
+1e-04          -0.53           -1.50
+3e-04          -0.87           -1.27
+1e-03          -0.61           -1.05
+3e-03          -0.55           -1.19
+
+Note: as delta -> 0 the Kalman freezes into the static beta and recovers toward it;
+as delta grows it chases noise and decays. No setting clears the static OOS bar of +0.76.

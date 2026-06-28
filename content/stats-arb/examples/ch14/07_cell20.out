@@ -1,0 +1,2 @@
+gross exposure: mean 1.08x   max 2.80x   (leverage you actually trade & margin)
+net   exposure: mean +0.017x   sd 0.141   (small, because each pair is internally hedged)

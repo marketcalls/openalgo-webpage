@@ -1,0 +1,2 @@
+random walk : mean=-31.88  std=24.16  (level moments are meaningless - they depend on the window)
+AR(1) phi=0.85: mean=-0.40  std=1.74  (a real, stable centre of gravity at 0)

@@ -1,0 +1,3 @@
+slippage_bps(1%)  = 10.4 bps/fill   slippage_bps(10%) = 27.3 bps/fill
+Read: a tight cap protects your price but lengthens your exit - and a long exit is exactly
+when a circuit, a gap or a recall can trap you. The cap is a trade-off, not a free safety.

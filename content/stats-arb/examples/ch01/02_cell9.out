@@ -1,0 +1,6 @@
+Pair chosen by the data : BAJFINANCE  vs  BAJAJFINSV   (sector: NBFC_Fin)
+window                  : 2016-06-28 -> 2026-06-25  (2473 days)
+daily-return corr       : 0.824
+OLS hedge ratio beta    : 1.153   (units of log BAJAJFINSV per unit log BAJFINANCE)
+ADF p-value on spread   : 0.199   (CANNOT reject random walk -- not clean)
+spread half-life        : 104 days

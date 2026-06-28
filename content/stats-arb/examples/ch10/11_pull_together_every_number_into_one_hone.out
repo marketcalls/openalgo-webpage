@@ -1,0 +1,7 @@
+Sharpe  ann_vol  total_pct  maxDD_pct
+view                                                         
+IN-SAMPLE  gross          1.14     16.4      134.2      -20.5
+IN-SAMPLE  net            1.01     16.4      110.5      -20.9
+OUT-OF-SAMPLE  gross      0.46     17.8       17.5      -13.8
+OUT-OF-SAMPLE  net        0.34     17.8       11.5      -13.8
+WALK-FORWARD 2024+ net    0.62     15.1       22.3      -13.3

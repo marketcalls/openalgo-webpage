@@ -1,0 +1,4 @@
+source="db"  median    54.7 ms   (min 44.0 ms)
+source="api" median   346.0 ms   (min 173.3 ms)
+
+--> in this run, db is 6.3x faster than api on a 10-year daily series

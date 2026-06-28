@@ -1,0 +1,3 @@
+base config net Sharpe 0.82; its 3x3 neighbourhood mean 0.79 (sd 0.08).
+96% of all swept cells have positive net Sharpe -- a broad, low ridge rather than one bright spike.
+verdict: PLATEAU-like (robust to small changes), but a low one -- robustness of a marginal edge is still a marginal edge.

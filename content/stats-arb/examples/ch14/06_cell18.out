@@ -1,0 +1,2 @@
+book round-trip cost ~ 47 bps/leg-notional  |  net Sharpe full 0.94  net OOS 0.43
+net out-of-sample: total +9.0%   max drawdown -10.0%   (six pairs are steadier than the single pair of nb 07, but the OOS haircut is real)

@@ -1,0 +1,3 @@
+half-life (notebook 04 method) = 29.3 days  ->  rolling z-score window Z_WIN = 29 days
+z (mean/std): mean +0.06  sd 1.30   |   z_robust (median/MAD): mean +0.11  sd 1.57
+correlation between the two z-scores: 0.948  (close, but the robust one is calmer through gaps)

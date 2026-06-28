@@ -1,0 +1,13 @@
+fig, ax = plt.subplots(figsize=(9.5, 6.2))
+sns.scatterplot(data=sel, x='adf_p_IS', y='adf_p_OOS', hue='k', size='k',
+                palette='viridis', sizes=(60, 160), ax=ax)
+ax.axvline(0.05, color=C['green'], ls='--', lw=1.3); ax.axhline(0.05, color=C['green'], ls='--', lw=1.3)
+ax.axhspan(0, 0.05, color=C['green'], alpha=0.05)
+ax.text(0.052, 0.9, 'in-sample stationary -> ', color=C['green'], fontsize=9)
+ax.text(0.5, 0.052, 'survives out-of-sample (the empty corner)', color=C['green'], fontsize=9)
+ax.set_title('Basket selection overfits: in-sample stationarity does not carry out-of-sample')
+ax.set_xlabel('ADF p-value  in-sample'); ax.set_ylabel('ADF p-value  out-of-sample')
+ax.legend(title='legs', fontsize=8)
+plt.tight_layout(); plt.show()
+print('points hug the LEFT (great in-sample) but spread across the TOP (dead out-of-sample).')
+print('the bottom-left "survives both" corner is nearly empty -- exactly the overfit we warned about.')

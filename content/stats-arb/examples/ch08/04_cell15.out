@@ -1,0 +1,5 @@
+m = 73 same-sector tests on the common in-sample window.
+  Naive     (p<0.05)          : 16 pairs
+  Bonferroni (p<0.00068)    : 1 pairs survive
+  BH-FDR    (q=0.05, cut p<=0.0048): 7 pairs survive
+Notice how many 'winners' were really just the cost of running a big scan.

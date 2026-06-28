@@ -1,0 +1,8 @@
+split at 2021-07-01
+           full window  1st half  2nd half
+HDFCBANK         1.000     1.000     1.000
+ICICIBANK       -0.166     0.621    -6.912
+KOTAKBANK       -0.518    -1.250    -4.981
+AXISBANK        -0.115     0.581    -0.713
+SBIN            -0.017    -0.797     8.564
+legs whose SIGN flips between the two halves: 3 of 4 free legs  -- a sign flip means long becomes short: catastrophic for a live book

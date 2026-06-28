@@ -1,0 +1,4 @@
+rolling b: min -0.312  max 1.744  mean 0.649  sd 0.417
+it swings 317% of its own mean, and the frozen TRAIN b sits
++63% away from the TEST-period average -- so out of sample
+the spread we trade is mis-hedged by construction, leaking directional risk that has nothing to do with reversion.

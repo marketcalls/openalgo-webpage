@@ -1,0 +1,6 @@
+measured 5m return vol = 13.1 bps  ->  per-second vol = 0.757 bps
+spread-only floor  :   5.2 bps
+median legged entry:   7.8 bps
+95th-pct legged    :  16.2 bps  (a bad-gap fill)
+share of entries costing > 2x the spread floor: 24%
+And this is ENTRY only - the exit legs the same way, doubling the legging drag over a round trip.

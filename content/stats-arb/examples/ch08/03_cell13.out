@@ -1,0 +1,5 @@
+Monte Carlo: 6000 independent random-walk pairs (length T=1484), seed=20260629.
+  False-positive RATE at p<0.05 = 5.25%   (the test's size; nominal 5%).
+  Expected spurious 'cointegrated' pairs in a scan of m=73: 3.8.
+  Real same-sector scan found 16  ->  about 12.2 above the noise floor.
+So a chunk of the naive winners are statistically indistinguishable from coin flips.

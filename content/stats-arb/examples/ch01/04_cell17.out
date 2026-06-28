@@ -1,0 +1,2 @@
+correlation ranged 0.71 -> 0.92 over the window; std 0.05.
+A pair that is "cointegrated on average" can be uncorrelated for quarters at a time -- exactly when a position is open.

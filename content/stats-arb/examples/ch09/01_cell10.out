@@ -1,0 +1,3 @@
+ADF  log price ratio   (beta=1 implied) : stat = -3.324   p = 0.0138
+ADF  cointegrating spread (beta=1.055) : stat = -3.519   p = 0.0075
+-> the estimated spread reverts at least as cleanly (lower p = stronger reversion)

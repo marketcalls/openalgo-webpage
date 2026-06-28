@@ -1,0 +1,5 @@
+Survivors of the full disciplined pipeline (BH-FDR AND out-of-sample):
+  NONE this window: nothing that survives correction also confirms out-of-sample.
+
+Stage counts (live): candidates=73, naive=16, Bonferroni=1, BH-FDR=7, OOS-confirmed=0.
+On a different in-sample/out-of-sample split these counts change - that fragility is the lesson.

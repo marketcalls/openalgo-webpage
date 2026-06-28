@@ -1,0 +1,3 @@
+static            : Sharpe 0.94  vol 9.8%  maxDD -10.0%  total +89%
+drawdown-throttled: Sharpe 0.76  vol 9.0%  maxDD -8.6%  total +60%
+the tail shrinks, but so does the return -- drawdown control is a deliberate trade, not a free upgrade.

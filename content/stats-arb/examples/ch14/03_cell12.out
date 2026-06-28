@@ -1,0 +1,4 @@
+condition number, full train window : sample   4.7   Ledoit-Wolf   4.1
+condition number, 63-day windows med : sample   6.9   Ledoit-Wolf   2.3
+condition number, 63-day windows max : sample  16.7   Ledoit-Wolf   8.2
+higher condition number = closer to singular = the optimizer amplifies noise. Shrinkage keeps it tame.

@@ -1,0 +1,4 @@
+CSCV: S=8 blocks, 70 symmetric splits, N=64 configs.
+Probability of Backtest Overfitting  PBO = 54%.
+median OOS Sharpe of the IS-best config: +0.66  (vs its median IS Sharpe +1.25).
+a PBO this high says: picking the best in-sample config is barely better than picking one at random.

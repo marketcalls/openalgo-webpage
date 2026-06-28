@@ -8,13 +8,14 @@ import { CHAPTERS as OB } from "@/lib/optionsBasicsCurriculum";
 import { CHAPTERS as OS } from "@/lib/optionsStrategiesCurriculum";
 import { CHAPTERS as PY } from "@/lib/pythonCurriculum";
 import { CHAPTERS as QUANT } from "@/lib/quantCurriculum";
+import { CHAPTERS as SARB } from "@/lib/statsArbCurriculum";
 import { CHAPTERS as STOCKS } from "@/lib/stocksCurriculum";
 import { CHAPTERS as TAX } from "@/lib/taxationCurriculum";
 import { CHAPTERS as TECH } from "@/lib/technicalsCurriculum";
 
 const OG_IMAGE = "https://openalgo.in/assets/images/og-image.png";
 const DESC =
-  "Open Varsity is OpenAlgo's free learning academy. Ten free, hands-on courses that take you from understanding your very first share to a real quantitative edge - Stock Market Basics (a no-jargon beginner intro to the Indian market), Technical Analysis (reading real NSE charts), Futures Trading, Options Basics and Options Strategies (derivatives from zero, with real payoff charts), Taxation for Traders and Investors (plain-English tax on shares, F&O, US stocks and crypto), Python for Traders (beginner), Algo Trading with Python (intermediate), Quantitative Trading (expert), and AmiBroker AFL (chart-based system building, no Python needed) - all in plain English with real market examples.";
+  "Open Varsity is OpenAlgo's free learning academy. Eleven free, hands-on courses that take you from understanding your very first share to a real quantitative edge - Stock Market Basics (a no-jargon beginner intro to the Indian market), Technical Analysis (reading real NSE charts), Futures Trading, Options Basics and Options Strategies (derivatives from zero, with real payoff charts), Taxation for Traders and Investors (plain-English tax on shares, F&O, US stocks and crypto), Python for Traders (beginner), Algo Trading with Python (intermediate), Quantitative Trading and Statistical Arbitrage (expert), and AmiBroker AFL (chart-based system building, no Python needed) - all in plain English with real market examples.";
 
 export const metadata = {
   title: { absolute: "Open Varsity - Free Stock Market, Python, Algo, Quant & AFL Courses | OpenAlgo" },
@@ -109,6 +110,19 @@ const COURSES = [
     blurb:
       "A full quant career curriculum: the Indian market's structure and plumbing, the mathematics of markets, market microstructure and the technology of HFT and execution, time series, derivatives and volatility, alpha research, honest backtesting and machine learning, and taking a strategy to production - every example run on real market data.",
     points: ["Microstructure, HFT & execution", "Maths, time series & derivatives", "Alpha, backtesting & production"],
+  },
+  {
+    n: 11,
+    route: "/stats-arb",
+    title: "Statistical Arbitrage",
+    level: "Expert",
+    count: SARB.length,
+    color: "text-secondary",
+    ring: "hsl(190 85% 55% / 0.5)",
+    grad: "from-secondary via-tertiary to-primary",
+    blurb:
+      "The real thing, brutally honest: stationarity and cointegration, pairs and baskets, dynamic hedge ratios with the Kalman filter, and market-neutral books on NSE equities. Every result computed on real OpenAlgo data, gross and net, in-sample and out-of-sample, with an honest line between a statistical relationship and a tradable edge.",
+    points: ["Cointegration, pairs & baskets", "Kalman, factor-neutral & risk", "Honest backtesting & costs"],
   },
   {
     n: 5,
@@ -209,7 +223,7 @@ export default function LearnHub() {
         <div className="relative px-6 sm:px-10 lg:px-14 py-16 sm:py-20 max-w-5xl mx-auto text-center">
           <span className="reveal reveal-1 inline-flex items-center gap-2 rounded-full border border-border surface-low px-4 py-1.5 font-label text-xs tracking-wide text-on-surface-variant">
             <GraduationCap className="h-3.5 w-3.5 text-primary" />
-            Open source &middot; Ten free courses &middot; {STOCKS.length + TECH.length + FUT.length + OB.length + OS.length + TAX.length + FUND.length + PY.length + QUANT.length + AMI.length} chapters
+            Open source &middot; Eleven free courses &middot; {STOCKS.length + TECH.length + FUT.length + OB.length + OS.length + TAX.length + FUND.length + PY.length + QUANT.length + AMI.length + SARB.length} chapters
           </span>
           <h1 className="reveal reveal-2 mt-6 text-4xl sm:text-5xl lg:text-6xl font-bold leading-[1.05] tracking-tight text-on-surface">
             Open{" "}

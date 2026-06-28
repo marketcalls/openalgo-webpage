@@ -1,0 +1,2 @@
+The daily high-low range is a usable LAST-RESORT proxy when intraday is missing, but it bundles
+the whole day's volatility into 'spread' and is wrong by an order of magnitude. Prefer real bars.

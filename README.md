@@ -11,7 +11,7 @@ OpenAlgo is a self-hostable algorithmic trading platform built by traders, for t
 - **33+ Broker Integrations** - Unified API across all major Indian brokers with a common symbol format
 - **16+ Platform Integrations** - Amibroker, TradingView, Python, MetaTrader, Excel, Chrome Extension, and more
 - **6 Official SDKs** - Python, Node.js, Java, .NET/C#, Go, Rust
-- **10 Free Learning Courses** - 331 chapters from market basics and chart-reading through futures, options and taxation to expert quant and AmiBroker AFL, all on real market data (see below)
+- **11 Free Learning Courses** - 348 chapters from market basics and chart-reading through futures, options and taxation to expert quant, statistical arbitrage and AmiBroker AFL, all on real market data (see below)
 - **Self-Hosted & Private** - Deploy on your own infrastructure with complete data privacy
 - **SmartOrder & Basket Orders** - Advanced order types including split orders and position management
 - **AI/LLM Integration** - MCP (Model Context Protocol) support for AI-driven trading
@@ -21,7 +21,7 @@ OpenAlgo is a self-hostable algorithmic trading platform built by traders, for t
 
 ## Learning Courses
 
-Ten free, hands-on courses cover beginner entry points (market basics, chart-reading, derivatives and taxation), a Python/algo/quant ladder, and a parallel AmiBroker AFL track, taught in plain English with runnable, live-tested examples on real Indian (OpenAlgo) and US (yfinance) market data. The [`/learn`](https://openalgo.in/learn) hub ties them together.
+Eleven free, hands-on courses cover beginner entry points (market basics, chart-reading, derivatives and taxation), a Python/algo/quant ladder, an expert statistical-arbitrage track, and a parallel AmiBroker AFL track, taught in plain English with runnable, tested examples on real Indian (OpenAlgo) and US (yfinance) market data. The [`/learn`](https://openalgo.in/learn) hub (Open Varsity) ties them together.
 
 | Course | Level | Chapters | What it covers |
 |--------|-------|----------|----------------|
@@ -30,6 +30,7 @@ Ten free, hands-on courses cover beginner entry points (market basics, chart-rea
 | [Python for Traders](https://openalgo.in/fundamentals) (`/fundamentals`) | Beginner | 40 | Python from zero - variables, data structures, NumPy, pandas, charts, then real market data. No prior coding needed. |
 | [Algo Trading with Python](https://openalgo.in/python) (`/python`) | Intermediate | 32 | Build, backtest and automate strategies with the OpenAlgo SDK - indicators, signals, orders, WebSockets, risk. |
 | [Quantitative Trading](https://openalgo.in/quant) (`/quant`) | Expert | 78 | A full quant career curriculum: Indian market structure and plumbing, quant maths and statistics, market microstructure, HFT and execution technology, time series, derivatives and volatility, alpha research, backtesting and ML, and production. |
+| [Statistical Arbitrage](https://openalgo.in/stats-arb) (`/stats-arb`) | Expert | 17 | A brutally honest stat-arb course on NSE equities: stationarity and cointegration, correlation vs cointegration, pairs and the spread/z-score signal, the out-of-sample and cost reality check, dynamic hedge ratios with the Kalman filter, Johansen baskets, cross-sectional factor-neutral books, risk and portfolio construction, honest validation (deflated Sharpe, PBO), and implementation pathways. Every result computed on real OpenAlgo data, gross and net, in-sample and out-of-sample. |
 | [AmiBroker AFL](https://openalgo.in/amibroker) (`/amibroker`) | Beginner | 36 | AFL from scratch - indicators, scans, backtests, optimization, alerts, and OpenAlgo order automation. |
 | [Futures Trading](https://openalgo.in/futures) (`/futures`) | Beginner | 27 | Futures from zero - contracts, orders and liquidity, margin and leverage, mark-to-market, costs and taxation, basis, rollover and calendar spreads, settlement, open interest, position limits and the F&O ban, corporate-action adjustments, price bands and halts, hedging, position sizing and the risks of leverage, on real Indian market examples. |
 | [Options Basics](https://openalgo.in/options-basics) (`/options-basics`) | Beginner | 26 | Options from absolute zero AND the mechanics most courses skip - calls and puts, premium/strike/expiry, index vs stock options and settlement, expiry/exercise/assignment, payoff at expiry vs live P&L, the option chain, bid/ask and liquidity, the four payoffs, the Greeks, implied vs historical volatility and the expected move, open interest and PCR, choosing a strike and expiry, seller margin and transaction costs, event risk, risk management and classic mistakes, and a bridge to spreads with a pre-trade checklist. |
@@ -43,7 +44,8 @@ Course content lives as Markdown + tested Python examples under `content/`, rend
 | Page | Description |
 |------|-------------|
 | `/` | Hero landing page with stats, ecosystem overview, and trust indicators |
-| `/learn` | Learning hub linking all ten free courses |
+| `/learn` | Open Varsity learning hub linking all eleven free courses |
+| `/stats-arb` | "Statistical Arbitrage" - 17-chapter expert course (NSE equities, brutally honest) |
 | `/stocks` | "Stock Market Basics" - 18-chapter beginner stock-market course |
 | `/technicals` | "Technical Analysis" - 28-chapter beginner chart-reading course |
 | `/fundamentals` | "Python for Traders" - 40-chapter beginner Python-for-finance course |

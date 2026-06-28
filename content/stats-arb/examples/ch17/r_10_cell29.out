@@ -1,0 +1,4 @@
+HDFCBANK/KOTAKBANK:  IS net Sharpe 1.01 (rank 1 of 10 in-sample)  ->  OOS net Sharpe 0.34
+5 of 10 bank pairs actually LOSE money net out-of-sample.
+We did not find a good pair; we ran a beauty contest in-sample and crowned a winner. Out of sample,
+the crown is worth little -- and the pairs that broke (and the names that delisted entirely) are invisible here.

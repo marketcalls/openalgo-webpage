@@ -1,0 +1,2 @@
+points hug the LEFT (great in-sample) but spread across the TOP (dead out-of-sample).
+the bottom-left "survives both" corner is nearly empty -- exactly the overfit we warned about.

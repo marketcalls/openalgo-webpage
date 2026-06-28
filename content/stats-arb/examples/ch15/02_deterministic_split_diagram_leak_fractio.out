@@ -1,0 +1,4 @@
+avg fraction of TEST days with a TRAIN neighbour inside +/-39d (the leak):
+  shuffled k-fold       : 100.0%   (near-duplicates everywhere)
+  blocked  k-fold       : 16.6%   (only at fold edges)
+  purged + embargo      : 0.0%   (cut by construction)

@@ -1,0 +1,23 @@
+IS_Sharpe  OOS_Sharpe full_total OOS_maxDD  trips
+setting                                                      
+entry=1.5        0.89        0.28      +188%      -15%     56
+entry=2.0        1.01        0.34      +206%      -14%     43
+entry=2.5        1.15        0.39      +170%      -14%     26
+entry=3.0        0.65        0.44       +88%      -13%     18
+exit=-0.5        1.21        0.60      +267%      -14%     39
+exit=0.0         1.01        0.34      +206%      -14%     43
+exit=0.5         1.04        0.67      +190%      -11%     49
+exit=1.0         0.87        0.20       +85%      -14%     53
+stop=3.0         0.95        0.19      +140%      -15%     61
+stop=4.0         1.01        0.34      +206%      -14%     43
+stop=5.0         1.01        0.36      +209%      -14%     41
+window=20        0.84        0.49      +193%      -18%     87
+window=40        0.92        0.62      +232%      -17%     58
+window=60        1.01        0.34      +206%      -14%     43
+window=90        1.42        0.99      +367%      -13%     32
+window=120       1.29        0.34      +228%      -15%     27
+cost x0.5        1.07        0.40      +239%      -14%     43
+cost x1.0        1.01        0.34      +206%      -14%     43
+cost x1.5        0.94        0.28      +176%      -14%     43
+cost x2.0        0.87        0.22      +149%      -15%     43
+several knobs push the OOS Sharpe across zero -- the result is contingent on choices, not robust to them.

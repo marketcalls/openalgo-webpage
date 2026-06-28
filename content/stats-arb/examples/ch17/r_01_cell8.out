@@ -1,0 +1,2 @@
+IN-SAMPLE 2019-01-01..2023-12-31:  gross Sharpe 1.14   net Sharpe 1.01   net total +110.5%   max drawdown -20.9%   round trips 22
+This is the chart that gets a strategy funded. Now we take it apart, one leak at a time.

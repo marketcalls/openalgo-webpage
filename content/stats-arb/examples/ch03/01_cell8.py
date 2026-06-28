@@ -1,0 +1,7 @@
+first_valid = px.apply(lambda s: s.first_valid_index())
+hist_years = ((px.index.max() - first_valid).dt.days / 365.25).sort_values()
+fig, ax = plt.subplots(figsize=(11, 9))
+sns.barplot(x=hist_years.values, y=hist_years.index, hue=hist_years.index, palette='crest', legend=False, ax=ax)
+ax.set_title('Years of daily history available per name'); ax.set_xlabel('years'); ax.set_ylabel('')
+plt.tight_layout(); plt.show()
+print('shortest histories:'); print(hist_years.head(5).round(1))

@@ -1,0 +1,2 @@
+in-sample  net Sharpe 1.01  ->  out-of-sample net Sharpe 0.34   (66% of the edge gone)
+out-of-sample: 11 round trips, net total +11.5% over 2.5 years, max drawdown -13.8%
