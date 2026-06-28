@@ -5,10 +5,10 @@ import { CHAPTERS, PARTS, TAG_CLASS } from "@/lib/quantCurriculum";
 
 const OG_IMAGE = "https://openalgo.in/assets/images/og-image.png";
 const LANDING_DESC =
-  "A free, professional 36-chapter course on quantitative trading for Indian markets - market structure and microstructure, the mathematics of markets, derivatives and volatility, portfolio risk, and how to find a real edge. Even the hard maths explained in plain words, with charts, on live OpenAlgo data.";
+  `A free, professional ${CHAPTERS.length}-chapter course on quantitative trading for Indian markets - market structure and microstructure, HFT and execution technology, the mathematics of markets, time series, derivatives and volatility, alpha research, backtesting and machine learning, and production. Even the hard maths explained in plain words, with charts, on real OpenAlgo data.`;
 
 export const metadata = {
-  title: { absolute: "Quantitative Trading - A Free 36-Chapter Professional Course for Indian Markets | OpenAlgo" },
+  title: { absolute: `Quantitative Trading - A Free ${CHAPTERS.length}-Chapter Professional Course for Indian Markets | OpenAlgo` },
   description: LANDING_DESC,
   keywords: [
     "quantitative trading", "quantitative trading course", "quant trading india", "learn quant finance",
@@ -20,14 +20,14 @@ export const metadata = {
   openGraph: {
     type: "website",
     url: "https://openalgo.in/quant",
-    title: "Quantitative Trading - A Free 36-Chapter Professional Course for Indian Markets",
+    title: `Quantitative Trading - A Free ${CHAPTERS.length}-Chapter Professional Course for Indian Markets`,
     description: LANDING_DESC,
     siteName: "OpenAlgo",
     images: [{ url: OG_IMAGE, width: 1200, height: 630, alt: "Quantitative Trading course by OpenAlgo", type: "image/png" }],
   },
   twitter: {
     card: "summary_large_image",
-    title: "Quantitative Trading - A Free 36-Chapter Course for Indian Markets",
+    title: `Quantitative Trading - A Free ${CHAPTERS.length}-Chapter Course for Indian Markets`,
     description: LANDING_DESC,
     images: [OG_IMAGE],
     creator: "@openalgoHQ",
@@ -76,7 +76,7 @@ export default function QuantCourseHome() {
         <div className="relative px-6 sm:px-10 lg:px-14 py-16 sm:py-20">
           <span className="reveal reveal-1 inline-flex items-center gap-2 rounded-full border border-border surface-low px-4 py-1.5 font-label text-xs tracking-wide text-on-surface-variant">
             <LineChart className="h-3.5 w-3.5 text-secondary" />
-            36 chapters &middot; market structure to alpha &middot; Indian markets
+            {CHAPTERS.length} chapters &middot; market structure to alpha &middot; Indian markets
           </span>
           <h1 className="reveal reveal-2 mt-6 max-w-3xl text-4xl sm:text-5xl lg:text-6xl font-bold leading-[1.05] tracking-tight text-on-surface">
             <span className="bg-linear-to-r from-secondary via-primary to-tertiary bg-clip-text text-transparent">
@@ -105,8 +105,8 @@ export default function QuantCourseHome() {
           </div>
           <div className="reveal reveal-5 mt-12 flex flex-wrap gap-x-10 gap-y-4">
             {[
-              ["36", "Chapters"],
-              ["8", "Modules"],
+              [String(CHAPTERS.length), "Chapters"],
+              [String(PARTS.length), "Modules"],
               ["India", "Market focus"],
               ["100%", "OpenAlgo data"],
             ].map(([v, k]) => (

@@ -1,11 +1,13 @@
 import "../python/python-portal.css";
 
+import { CHAPTERS } from "@/lib/quantCurriculum";
+
 import SyllabusRail from "./SyllabusRail";
 
 export const metadata = {
   title: "Quantitative Trading - A Professional Course with OpenAlgo",
   description:
-    "A hands-on, 36-chapter course taking traders into quantitative trading: Indian market structure, microstructure, the mathematics of markets, derivatives, portfolio risk and finding a real edge - built on the OpenAlgo SDK.",
+    `A hands-on, ${CHAPTERS.length}-chapter course taking traders into quantitative trading: Indian market structure and microstructure, HFT and execution technology, the mathematics of markets, time series, derivatives, alpha research, backtesting and machine learning, and production - built on the OpenAlgo SDK.`,
 };
 
 export default function QuantLayout({ children }) {
