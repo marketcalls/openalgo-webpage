@@ -133,7 +133,7 @@ const COURSES = [
     ring: "hsl(140 72% 53% / 0.5)",
     grad: "from-tertiary via-secondary to-primary",
     blurb:
-      "New to derivatives? Start with futures. Understand what a contract really is, then margin and leverage, mark-to-market, going long and short, the payoff, rollover and hedging - in plain English with real Indian market examples, honest about the leverage that cuts both ways.",
+      "New to derivatives? Start with futures. Understand what a contract really is, then margin and leverage, mark-to-market, long and short, the payoff, liquidity, rollover, settlement, costs and taxation, open interest, hedging and position sizing, all in plain English with real Indian market examples, honest about the leverage that cuts both ways.",
     points: ["Never traded a contract", "Margin, leverage & payoff", "Honest about the risks"],
   },
   {

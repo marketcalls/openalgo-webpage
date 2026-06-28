@@ -11,7 +11,7 @@ OpenAlgo is a self-hostable algorithmic trading platform built by traders, for t
 - **33+ Broker Integrations** - Unified API across all major Indian brokers with a common symbol format
 - **16+ Platform Integrations** - Amibroker, TradingView, Python, MetaTrader, Excel, Chrome Extension, and more
 - **6 Official SDKs** - Python, Node.js, Java, .NET/C#, Go, Rust
-- **10 Free Learning Courses** - 273 chapters from market basics and chart-reading through futures, options and taxation to expert quant and AmiBroker AFL, all on real market data (see below)
+- **10 Free Learning Courses** - 285 chapters from market basics and chart-reading through futures, options and taxation to expert quant and AmiBroker AFL, all on real market data (see below)
 - **Self-Hosted & Private** - Deploy on your own infrastructure with complete data privacy
 - **SmartOrder & Basket Orders** - Advanced order types including split orders and position management
 - **AI/LLM Integration** - MCP (Model Context Protocol) support for AI-driven trading
@@ -31,7 +31,7 @@ Ten free, hands-on courses cover beginner entry points (market basics, chart-rea
 | [Algo Trading with Python](https://openalgo.in/python) (`/python`) | Intermediate | 32 | Build, backtest and automate strategies with the OpenAlgo SDK - indicators, signals, orders, WebSockets, risk. |
 | [Quantitative Trading](https://openalgo.in/quant) (`/quant`) | Expert | 36 | Market microstructure, the mathematics of markets, derivatives and volatility, portfolio risk, and finding an edge. |
 | [AmiBroker AFL](https://openalgo.in/amibroker) (`/amibroker`) | Beginner | 36 | AFL from scratch - indicators, scans, backtests, optimization, alerts, and OpenAlgo order automation. |
-| [Futures Trading](https://openalgo.in/futures) (`/futures`) | Beginner | 12 | Futures from zero - contracts, margin and leverage, mark-to-market, long/short, the payoff, basis, rollover, hedging, and the risks of leverage, on real Indian market examples. |
+| [Futures Trading](https://openalgo.in/futures) (`/futures`) | Beginner | 24 | Futures from zero - contracts, orders and liquidity, margin and leverage, mark-to-market, costs and taxation, basis, rollover and calendar spreads, settlement, open interest, hedging, position sizing and the risks of leverage, on real Indian market examples. |
 | [Options Basics](https://openalgo.in/options-basics) (`/options-basics`) | Beginner | 26 | Options from absolute zero AND the mechanics most courses skip - calls and puts, premium/strike/expiry, index vs stock options and settlement, expiry/exercise/assignment, payoff at expiry vs live P&L, the option chain, bid/ask and liquidity, the four payoffs, the Greeks, implied vs historical volatility and the expected move, open interest and PCR, choosing a strike and expiry, seller margin and transaction costs, event risk, risk management and classic mistakes, and a bridge to spreads with a pre-trade checklist. |
 | [Options Strategies](https://openalgo.in/options-strategies) (`/options-strategies`) | Intermediate | 26 | All 38 strategies in the OpenAlgo strategy builder, each with an authentic payoff chart and the full nine-metric panel (max profit/loss, POP, risk to reward, margin and more) built from the builder's own maths on real NIFTY data: spreads, straddles, strangles, iron condors and flies, butterflies, ratios, jade lizards, batman, calendars and synthetics, plus margin/collateral/pledging/penalties and options adjustments. |
 | [Taxation for Traders and Investors](https://openalgo.in/taxation) (`/taxation`) | Beginner | 19 | Tax in plain English with real case studies - the income buckets, old vs new regime, advance tax and deadlines, capital gains and STT, intraday, F&O business income (turnover, audit, loss set-off), US stocks and Schedule FA, crypto tax, and choosing your ITR. Educational only, not tax advice. |
@@ -50,7 +50,7 @@ Course content lives as Markdown + tested Python examples under `content/`, rend
 | `/python` | "Algo Trading with Python" - 32-chapter intermediate course |
 | `/quant` | "Quantitative Trading" - 36-chapter expert course |
 | `/amibroker` | "AmiBroker AFL" - 36-chapter chart-based AFL course |
-| `/futures` | "Futures Trading" - 12-chapter beginner futures course |
+| `/futures` | "Futures Trading" - 24-chapter beginner futures course |
 | `/options-basics` | "Options Basics" - 26-chapter beginner options course |
 | `/options-strategies` | "Options Strategies" - 26-chapter intermediate options-strategy course |
 | `/taxation` | "Taxation for Traders and Investors" - 19-chapter beginner tax course |
@@ -106,7 +106,7 @@ app/                    # Next.js App Router pages
   python/               # "Algo Trading with Python" course
   quant/                # "Quantitative Trading" course
   amibroker/            # "AmiBroker AFL" course
-  futures/              # "Futures Trading" course (12 static chapter routes)
+  futures/              # "Futures Trading" course (24 static chapter routes)
   options-basics/       # "Options Basics" course (26 static chapter routes)
   options-strategies/   # "Options Strategies" course (26 static chapter routes)
   taxation/             # "Taxation for Traders and Investors" course (19 static chapter routes)
