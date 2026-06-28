@@ -1,0 +1,15 @@
+DATE            CLOSE   dPRICE   OI(lots)    dOI%  SIGNAL
+2026-06-10     1270.9    -13.8     30,132   12.0%  Short build-up
+2026-06-11     1273.7      2.8     31,614    4.9%  Long build-up
+2026-06-12     1307.1     33.4     32,280    2.1%  Long build-up
+2026-06-15     1319.0     11.9     33,720    4.5%  Long build-up
+2026-06-16     1337.4     18.4     33,918    0.6%  Long build-up
+2026-06-17     1341.6      4.2     35,342    4.2%  Long build-up
+2026-06-18     1338.6     -3.0     37,269    5.5%  Short build-up
+2026-06-19     1321.0    -17.6     46,511   24.8%  Short build-up
+2026-06-22     1334.2     13.2     52,658   13.2%  Long build-up
+2026-06-23     1316.2    -18.0     65,624   24.6%  Short build-up
+2026-06-24     1322.2      6.0    108,876   65.9%  Long build-up
+2026-06-25     1323.6      1.4    154,018   41.5%  Long build-up
+
+Over 37 sessions: 14 long build-up days (price up, OI up) vs 22 short build-up days (price down, OI up). Latest: Long build-up.

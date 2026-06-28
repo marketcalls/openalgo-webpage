@@ -1,0 +1,10 @@
+CRUDEOIL20JUL26FUT  [reconstructed (book closed; depth seeded from real 1m flow)]
+  best bid 6569   spread 1   tick 1   lot 100
+  resting ahead of you at the best bid : 60 lots
+  your passive BUY joins the back      : 5 lots
+  sell flow hitting the bid (real)     : 15.0 lots/min (median 30 lots/min traded)
+  expected wait to reach the front     : 4.0 min
+  expected wait to fully fill          : 4.3 min
+  P(full fill within 5 min)            : 89%
+  a good queue spot is worth           : Rs 50/lot (Rs 250 on 5 lots)
+SUMMARY CRUDEOIL20JUL26FUT: 60 lots ahead, ~4.0 min to the front, ~89% full fill in 5 min, queue spot worth Rs 50/lot.

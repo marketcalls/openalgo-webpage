@@ -1,0 +1,15 @@
+NIFTY trading day 2026-06-25   (375 one-minute bars)
+
+First bar  09:15:00  -> continuous session opens; this opening print
+           comes out of the 09:00-09:15 pre-open call auction
+Opening print : 24,125.85
+Last bar   15:29:00  -> last continuous minute before the 15:30 bell
+Closing print : 24,052.95
+
+Day open 24,125.85  high 24,261.60  low 24,039.00  close 24,052.95
+
+The Indian equity day, mapped:
+  09:00-09:15  pre-open call auction (order collection + price discovery)
+  09:15-15:30  continuous trading (price-time matching)
+  15:30-15:40  buffer before the closing session
+  15:40-16:00  post-close / closing-price session

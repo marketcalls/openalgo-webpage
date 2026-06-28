@@ -1,0 +1,9 @@
+date         sentiment   NIFTY %  headline
+2026-02-02       +1.00     +1.06  RBI holds rates steady, signals strong growth; markets
+2026-03-17       +1.00     +0.74  FII inflows surge as rupee firms, banks rally on buyin
+2026-04-07       +1.00     +0.68  Earnings beat lifts IT majors, broad buying returns
+2026-05-12       -1.00     -1.83  Global selloff deepens, weak monsoon fear hits sentime
+2026-06-02       -0.33     +0.43  Auto sales miss, profit booking caps gains, indices sl
+2026-06-24       +1.00     +0.83  GDP tops estimates, demand outlook strong, indices cli
+
+Toy sentiment-vs-same-day-return correlation over 6 headlines: +0.87 (real signals need thousands of dated items, not six).

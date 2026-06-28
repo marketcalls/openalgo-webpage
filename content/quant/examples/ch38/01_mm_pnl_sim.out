@@ -1,0 +1,15 @@
+RELIANCE NSE 1m  2026-06-25  375 bars  open 1321.50  close 1316.50  (-0.38%)
+Quote mid +/- Rs 0.20, clip 100 shares
+
+Inventory-skewed maker (skew Rs 0.01/clip)
+  fills           : 519  (262 buys, 257 sells, 152 round trips)
+  spread captured : Rs +10,285
+  inventory m2m   : Rs -14,110
+  net P&L         : Rs -3,825   ending inventory +500 shares
+Naive maker (no skew)
+  fills           : 547  (302 buys, 245 sells, 175 round trips)
+  spread captured : Rs +10,940
+  inventory m2m   : Rs -42,680
+  net P&L         : Rs -31,740   ending inventory +5,700 shares
+
+Spread income is similar (Rs 10,285 vs 10,940); skewing cut the inventory loss from Rs -42,680 to Rs -14,110 and net from Rs -31,740 to Rs -3,825 on a -0.38% day.

@@ -18,7 +18,7 @@ const MD_DIR = path.join(ROOT, "content", "quant", "md");
 const EX_DIR = path.join(ROOT, "content", "quant", "examples");
 const CHART_OUT = path.join(ROOT, "public", "quant", "charts");
 const DATA_OUT = path.join(ROOT, "lib", "quantContentData.json");
-const CHAPTERS = 36;
+const CHAPTERS = 78;
 
 const TAG_CLASS = { NSE: "nse", NFO: "nfo", MCX: "mcx", INDEX: "idx", BSE: "nse", CDS: "idx" };
 

@@ -1,0 +1,12 @@
+NIFTY horizons in numbers
+----------------------------------------------------------
+                minute bar     daily bar
+typ move            1.4 bps       0.50 %
+typ range           3.1 bps       0.91 %
+bars/day               375             1
+signals/day          16.00         0.043
+~hold/trade        23 min        23 days
+----------------------------------------------------------
+Daily vol is 23x minute vol (sqrt(375) rule says 19x).
+Minute scale: tiny ~1.4 bps moves, ~375 a day - the high-frequency end (HFT goes finer still, sub-second).
+Day scale: a fat ~0.50 % move once a day, signal flips every ~23 days - the systematic end.

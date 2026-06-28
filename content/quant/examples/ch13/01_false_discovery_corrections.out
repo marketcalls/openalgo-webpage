@@ -1,0 +1,7 @@
+Tested 200 ZERO-edge signals on 2100 days of Nifty (2018 to date).
+Naive p<0.05            :  11 'discoveries'  (expected by luck ~10)
+Bonferroni (FWER 5%)    :   0 survive   threshold p<0.00025
+Holm step-down (FWER 5%):   0 survive
+Benjamini-Hochberg FDR  :   0 survive
+
+11 fake edges passed the naive test; corrections killed all but 0 of them.

@@ -1,0 +1,6 @@
+Session 2026-06-25  symbol RELIANCE (NSE)
+Internal position : +1000 sh  net cost Rs 1,322,000.00  (4 fills)
+Broker position   : +1500 sh  net cost Rs 1,982,700.00  (5 fills)
+RECONCILE BREAK   :  +500 sh  Rs   660,700.00  -> HALT new orders, investigate
+
+A 500-share break means one real fill never reached our books - flatten on the broker number, not ours.

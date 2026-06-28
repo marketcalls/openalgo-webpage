@@ -1,0 +1,10 @@
+20/50 momentum-sign forecast on NIFTY, split 2022-07-14
+                           in-sample   out-of-sample
+directional accuracy          53.19%          51.53%
+miss rate (error)             46.81%          48.47%
+edge over coin flip          +3.19pt         +1.53pt
+z vs 50%                        2.72            0.96
+p-value (one-sided)           0.0032          0.1687
+ann. signed return            11.70%           3.92%
+
+Edge real in-sample (p=0.0032); out-of-sample it is a coin flip (p=0.169) - the model decayed.

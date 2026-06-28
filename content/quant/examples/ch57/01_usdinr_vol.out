@@ -1,0 +1,9 @@
+Contract             : USDINR29JUL26FUT (CDS)
+USD-INR last close   : 94.7000
+Last day's range     : 0.3750  (0.40% of level)
+Annualised vol       : 5.54%   (219 daily bars)
+NIFTY annualised vol : 13.14%
+Equity vol / FX vol  : 2.4x
+
+The rupee is a managed, low-vol macro variable: USD-INR realises a fraction
+of equity-index volatility, which is why it is hedged rather than chased.

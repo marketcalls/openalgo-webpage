@@ -1,0 +1,13 @@
+RELIANCE LTP Rs 1318.10 | caps: exposure <= Rs 2,000,000, loss <= Rs 25,000, rate <= 4/10s
+
+ t  order      day_pnl   result   reason
+ 0  BUY   500         0   PASS    accepted, pos -> 500
+ 1  BUY   500      2000   PASS    accepted, pos -> 1000
+ 2  BUY   600      1500   BLOCK   position cap (Rs 2,108,960)
+ 3  BUY   400      -500   PASS    accepted, pos -> 1400
+ 4  BUY   100      -300   PASS    accepted, pos -> 1500
+ 5  SELL  200      -200   BLOCK   rate limit (4/10s)
+18  BUY   200    -26000   BLOCK   kill switch - daily loss limit
+20  BUY   100    -26000   BLOCK   kill switch - daily loss limit
+
+4 of 8 proposed orders passed the gate; final position 1500 shares; kill switch TRIPPED.

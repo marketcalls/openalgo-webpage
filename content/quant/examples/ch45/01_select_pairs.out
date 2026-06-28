@@ -1,0 +1,7 @@
+Engle-Granger pair screen (NSE daily, 2021-01-01 to today)
+pair                     corr   coint p   hedge  verdict
+KOTAKBANK/HDFCBANK       0.72     0.001    0.22  COINTEGRATED
+HDFCBANK/ICICIBANK       0.78     0.142    0.26  correlated, not cointegrated
+TCS/INFY                 0.80     0.477    1.94  correlated, not cointegrated
+
+Tradeable pair: KOTAKBANK/HDFCBANK (p = 0.001, corr 0.72). The most correlated pairs are NOT the cointegrated ones.

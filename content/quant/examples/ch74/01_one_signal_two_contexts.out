@@ -1,0 +1,9 @@
+NIFTY daily 2023-01-02 -> 2026-06-25  (862 bars)
+Signal: 20/50 SMA cross  (one signal() function)
+  Backtest position changes : 14
+  Backtest last bar decision: SHORT  @ 24056.00
+  Live  (trailing 250) decision: SHORT
+  Decisions match           : True
+  Last 120 bars match too   : True
+
+Same code, same data, same answer - backtest-live parity by construction.

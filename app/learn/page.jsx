@@ -107,8 +107,8 @@ const COURSES = [
     ring: "hsl(140 72% 53% / 0.5)",
     grad: "from-tertiary via-secondary to-primary",
     blurb:
-      "Ready to go deep? Market microstructure, the mathematics of markets, derivatives and volatility, portfolio risk - and how to find an edge that survives real-world costs.",
-    points: ["Market structure & the maths", "Options, volatility & factors", "Finding a real, tested edge"],
+      "A full quant career curriculum: the Indian market's structure and plumbing, the mathematics of markets, market microstructure and the technology of HFT and execution, time series, derivatives and volatility, alpha research, honest backtesting and machine learning, and taking a strategy to production - every example run on real market data.",
+    points: ["Microstructure, HFT & execution", "Maths, time series & derivatives", "Alpha, backtesting & production"],
   },
   {
     n: 5,

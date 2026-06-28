@@ -1,0 +1,12 @@
+Minimum-variance weights (long-only QP):
+  RELIANCE   14.2%
+  HDFCBANK   25.2%
+  INFY       16.8%
+  ITC        35.1%
+  SBIN        8.7%
+
+Portfolio volatility   : 13.33% per year
+Equal-weight volatility: 13.87% per year
+Closed-form min-var vol : 13.33%  (weights 14%, 25%, 17%, 35%, 9%)
+
+861 trading days, 5 stocks. Optimiser converged: True

@@ -1,0 +1,9 @@
+time      price    fast    slow  signal  ->  intent       qty
+14:08   1321.8  1321.6  1321.6    up   ->  BUY (enter)  60
+14:13   1319.3  1321.2  1321.4    dn   ->  SELL (exit)  60
+14:37   1319.9  1319.7  1319.7    up   ->  BUY (enter)  60
+14:38   1319.1  1319.6  1319.7    dn   ->  SELL (exit)  60
+14:53   1319.7  1318.5  1318.4    up   ->  BUY (enter)  60
+15:15   1318.3  1319.2  1319.2    dn   ->  SELL (exit)  60
+
+6 signals in the last 90 bars; 3 risk-capped; final state: FLAT. (sandbox-safe, no orders placed)

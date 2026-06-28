@@ -1,0 +1,13 @@
+NIFTY 28-Jul-2026 options   forward (synthetic future) = 24180.70
+
+leg                price    IV%    delta      gamma     vega    theta      rho
+ATM 24200 Call    342.95  12.72   +0.499   0.000452   +27.70    -5.85   -0.283
+ATM 24200 Put     361.75  12.70   -0.501   0.000452   +27.70    -5.85   -0.298
+
+Position Greeks - short 1 ATM straddle (sell call + sell put):
+  net delta  +0.003      delta-neutral at inception
+  net gamma  -0.000904   short gamma - any large move hurts
+  net vega   -55.40      short vega - profits if IV falls
+  net theta  +11.70 pts/day = Rs 760.6/day collected (x lot 65)
+
+Short ATM straddle: delta-neutral, short gamma and vega, banks Rs 760.6/day of theta - the trade is short volatility.

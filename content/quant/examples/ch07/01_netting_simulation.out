@@ -1,0 +1,6 @@
+RELIANCE 2026-06-25: 25 gross trades simulated from real 15m bars
+  Bought 1100 sh for Rs 1,455,110 | Sold 1400 sh for Rs 1,849,120
+  Gross turnover that crossed the tape: Rs 3,304,230
+  Settled trade-by-trade that is 25 separate obligations
+  After multilateral netting: deliver/receive -300 shares, RECEIVE Rs 394,010 - ONE obligation
+Netting compressed Rs 3,304,230 of gross flow into a single Rs 394,010 settlement (11.9% of gross).

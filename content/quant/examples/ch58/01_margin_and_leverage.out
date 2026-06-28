@@ -1,0 +1,10 @@
+NIFTY28JUL26FUT  (65 qty = 1 lot)
+Last price          : Rs 24,170.50
+Notional controlled : Rs 1,571,082  (= 24,170.50 x 65)
+Rough SPAN band     : Rs 172,819  (~11% eyeball)
+SPAN margin (real)  : Rs 146,626
+Exposure margin     : Rs 31,422
+Total margin        : Rs 178,047  (11.3% of notional)
+Implied leverage    : 8.82x
+
+One NIFTY lot controls Rs 1,571,082 of index on Rs 178,047 of margin - 8.8x leverage.

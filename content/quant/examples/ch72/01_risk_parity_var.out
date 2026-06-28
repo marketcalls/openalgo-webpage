@@ -1,0 +1,13 @@
+Risk-parity (inverse-vol) weights:
+  RELIANCE  :  21.0%
+  HDFCBANK  :  22.4%
+  INFY      :  17.4%
+  ITC       :  23.3%
+  TATASTEEL :  15.8%
+
+Portfolio annualised vol  : 14.1%
+Historical 1-day 95% VaR  : -1.42%
+Historical 1-day 95% CVaR : -2.04%
+Worst single day in window: -5.24%
+
+On 19 days in 20 the book loses under 1.42%; when it breaches, it averages 2.04%.

@@ -1,0 +1,14 @@
+CRUDEOIL20JUL26FUT  LTP 6570   [illustrative ladder around the REAL last price 6570 (live book empty off-hours)]
+
+L1  - top of book, all most feeds give you for free:
+     best bid 6570 x 3   |   best ask 6571 x 9   spread 1
+
+L2  - the full 5-deep ladder, the queue behind the touch:
+  BID qty      BID   |   ASK      ASK qty  
+        3     6570   |   6571     9        
+       12     6569   |   6572     14       
+       18     6568   |   6573     11       
+       25     6567   |   6574     20       
+       31     6566   |   6575     28       
+
+L1 shows 3 lots bid; L2 reveals 89 resting below the touch - 86 lots L1 hides.

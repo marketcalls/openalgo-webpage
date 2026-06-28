@@ -1,0 +1,5 @@
+NIFTY realized vs close-to-close volatility  (77 sessions, ~74 five-min returns/day)
+  Realized vol (5m intraday, open-to-close) :  11.2%  annualised
+  Close-to-close vol (daily)                :  18.7%  annualised
+  Gap (overnight + sampling difference)     :  +7.5 pts
+SUMMARY: 5m realized vol 11.2% vs close-to-close 18.7% annualised (77 sessions); the +7.5 pt gap is risk the intraday measure misses.

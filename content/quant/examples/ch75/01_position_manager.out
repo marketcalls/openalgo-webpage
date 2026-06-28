@@ -1,0 +1,9 @@
+ # side  qty     price  position       avg    realised
+ 1  BUY  100   1328.10       100   1328.10        0.00
+ 2  BUY  100   1309.50       200   1318.80        0.00
+ 3 SELL  150   1326.50        50   1318.80     1155.00
+ 4 SELL   50   1309.50         0      0.00      690.00
+ 5  BUY  200   1313.60       200   1313.60      690.00
+ 6 SELL  200   1318.10         0      0.00     1590.00
+
+Final position 0 | realised P&L Rs 1590.00 | unrealised Rs 0.00 | total Rs 1590.00

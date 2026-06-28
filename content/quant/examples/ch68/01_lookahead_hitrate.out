@@ -1,0 +1,4 @@
+Leaked  (scored on same bar) : hit rate  61.1%   avg  +22.3 bp/day   <- fantasy
+Honest  (prior bars only)    : hit rate  53.0%   avg   +2.1 bp/day   <- reality
+
+One .shift(1) erased 8.1 points of hit rate. The 'edge' was the leak.

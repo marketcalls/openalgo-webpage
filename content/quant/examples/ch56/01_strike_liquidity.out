@@ -1,0 +1,20 @@
+NIFTY 28-Jul-2026 chain   spot 24056   ATM strike 24050
+
+ strike     CE OI     PE OI   total OI  CE spread
+  23750     13065     28145      41210  book shut
+  23800    167310    596180     763490  book shut
+  23850     18070     35425      53495  book shut
+  23900    282750    539175     821925  book shut
+  23950     21450     35035      56485  book shut
+  24000   4392635   4310670    8703305  book shut  round
+  24050     62140    159705     221845  book shut  <- ATM
+  24100    902850    879710    1782560  book shut
+  24150     55380     46670     102050  book shut
+  24200   1312350   1208025    2520375  book shut
+  24250    231205    215150     446355  book shut
+  24300    698815    427375    1126190  book shut
+  24350     63830     63505     127335  book shut
+
+(Quoted bid/ask are flat off-hours, so OI is the liquidity read here.)
+
+Liquidity piles at round strikes: 24000 carries 8,703,305 contracts of OI, far above the thin half-strikes between the hundreds.

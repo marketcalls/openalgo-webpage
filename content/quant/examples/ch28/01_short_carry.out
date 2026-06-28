@@ -1,0 +1,5 @@
+As of 2026-06-25   spot 1,318.1   RELIANCE28JUL26FUT 1,323.6
+Basis (future - spot): +5.50 pts  (+0.42%),  33 days to expiry
+Avg basis over window: +13.55 pts
+Implied annualised carry: +4.61%
+A short via the future sells the +0.42% premium, so the short has positive carry - it earns ~4.61% annualised as the future converges to spot.

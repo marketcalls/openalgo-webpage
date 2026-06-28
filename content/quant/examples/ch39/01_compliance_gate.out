@@ -1,0 +1,7 @@
+OpenAlgo execution mode : LIVE  (sandbox=False, 66 orders in the log)
+
+Pre-flight compliance gate (rate ceiling = 10/sec):
+  mean-reversion bot CLEARED : registered algo ID=y  static IP set=y  rate within limit=y  kill switch wired=y
+  rushed scalper     BLOCKED : registered algo ID=n  static IP set=y  rate within limit=n  kill switch wired=n
+
+1/2 bots cleared the gate; server is in LIVE mode (orders would reach the broker).

@@ -1,0 +1,7 @@
+Signal half-life from spread autocorrelation decay: HDFCBANK vs KOTAKBANK
+  hedge ratio (OLS)      : 2.28
+  autocorrelation decay  : lag1=0.982  lag5=0.912  lag10=0.839  lag20=0.733  lag40=0.564
+  OU mean-reversion beta : -0.0194 per day
+  HALF-LIFE              : 35.8 trading days  (~7 weeks)
+
+The edge halves in 36 days, so the signal tolerates only ~7 round trips a year before it is just churning costs.

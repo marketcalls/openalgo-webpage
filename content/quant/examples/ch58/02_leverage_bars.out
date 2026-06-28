@@ -1,0 +1,7 @@
+Implied leverage (notional / total margin), one lot each:
+  NIFTY        8.82x
+  BANKNIFTY    8.73x
+  RELIANCE     5.65x
+  SBIN         5.68x
+
+Index futures ~8.8x vs single-stock futures ~5.7x - higher stock volatility means higher SPAN, so less leverage.

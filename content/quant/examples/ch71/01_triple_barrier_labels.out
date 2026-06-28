@@ -1,0 +1,6 @@
+RELIANCE NSE daily  events=1329  PT=2.0xvol  SL=2.0xvol  horizon=10 bars
+  profit-take (+1)  :  640  (48.2%)
+  stop (-1)         :  567  (42.7%)
+  time barrier (0)  :  122  ( 9.2%)
+  features used      : ret1, vol20, rsi14
+SUMMARY: 1329 vol-scaled events, 48.2% resolved at the profit-take barrier first.

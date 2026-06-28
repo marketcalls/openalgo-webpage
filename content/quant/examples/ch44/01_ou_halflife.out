@@ -1,0 +1,6 @@
+Ornstein-Uhlenbeck fit: RELIANCE log-deviation from its own 20-day average
+  ADF p-value     : 0.0000  -> stationary, it truly reverts
+  reversion speed : kappa = 0.086 per day
+  long-run mean   : theta = +0.0026  (log-deviation, ~0 = price sits on its average)
+  half-life       : 8.0 days  (time to close half the gap back to the mean)
+SUMMARY: deviation reverts with kappa=0.086/day, half-life 8.0 days, ADF p=0.000.

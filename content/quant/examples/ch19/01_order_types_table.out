@@ -1,0 +1,10 @@
+RELIANCE  NSE   LTP 1318.10   (tick 0.05)
+
+Order type    Side     Trigger     Price   Behaviour
+MARKET        BUY            -   1318.10   fills now at best available, pays the spread
+LIMIT         BUY            -   1314.15   rests in book, fills only at <= limit
+SL            SELL     1304.90   1304.40   protective stop, wakes at trigger then limit
+SL-M          SELL     1304.90    market   protective stop, wakes at trigger then market
+TARGET (LIMIT)SELL           -   1344.45   books profit, fills only at >= price
+
+Limit entry 1314.15: risk/share 9.75, reward/share 30.30, reward-to-risk 3.11 to 1

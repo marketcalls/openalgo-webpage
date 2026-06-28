@@ -1,0 +1,5 @@
+Returns matrix R: 334 days x 8 stocks
+Annualised vol %: {'RELIANCE': 21.4, 'HDFCBANK': 19.8, 'ICICIBANK': 19.0, 'INFY': 28.3, 'TCS': 24.3, 'SBIN': 22.4, 'ITC': 19.0, 'LT': 25.2}
+Variance share per component %: [41.6, 22.7, 8.3, 7.8, 6.5, 6.3, 3.4, 3.3]
+PC1 loadings (the market factor): {'RELIANCE': 0.31, 'HDFCBANK': 0.31, 'ICICIBANK': 0.25, 'INFY': 0.48, 'TCS': 0.42, 'SBIN': 0.31, 'ITC': 0.18, 'LT': 0.45}
+PC1 explains 41.6% of all variance - the single market factor these 8 stocks share.

@@ -1,6 +1,0 @@
-Engle-Granger cointegration: RELIANCE vs ONGC
-  p-value          : 0.011  -> COINTEGRATED (spread mean-reverts)
-  hedge ratio      : 2.58   (1 RELIANCE hedged with 2.58 ONGC)
-  spread z-score   : -0.36   (near fair value)
-
-Correlation says they move together; cointegration says their SPREAD reliably comes back.

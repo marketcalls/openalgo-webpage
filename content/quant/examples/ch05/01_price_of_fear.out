@@ -1,0 +1,6 @@
+Window: 244 trading days, 2025-07-01 to 2026-06-25
+India VIX latest close   : 13.05  (annualised expected move)
+Corr(NIFTY ret, VIX chg) : -0.731   <- the inverse 'price of fear'
+Sensitivity              : a -1% NIFTY day lifts VIX by ~0.899 pts
+Avg VIX change, red days : +0.443 pts
+Avg VIX change, green days: -0.413 pts   <- fear rises faster than it falls

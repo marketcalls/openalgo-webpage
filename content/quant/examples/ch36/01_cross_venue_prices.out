@@ -1,0 +1,6 @@
+SYMBOL           NSE       BSE   GAP Rs  GAP bps   BUY @   SELL @
+RELIANCE     1318.10   1318.25    -0.15     -1.1   NSE     BSE
+TCS          2094.70   2095.60    -0.90     -4.3   NSE     BSE
+HDFCBANK      796.30    796.05    +0.25     +3.1   BSE     NSE
+
+RELIANCE: NSE 1318.1 vs BSE 1318.25. A smart router buys on NSE (cheaper) and sells on BSE (dearer); gap 0.15 Rs (1.1 bps).

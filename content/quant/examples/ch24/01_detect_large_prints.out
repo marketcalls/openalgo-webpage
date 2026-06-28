@@ -1,0 +1,13 @@
+SBIN NSE: 494 sessions, 7 candidate bulk/block days (volume > 3x 60-day median)
+
+            volume_mn  x_median  day_ret_pct
+timestamp                                   
+2024-09-06       40.2       3.0        -4.43
+2025-02-06       32.7       3.1        -1.80
+2025-02-07       37.2       3.5        -2.00
+2025-09-29       22.6       3.1         1.61
+2026-02-09       40.9       5.0         7.46
+2026-02-11       29.5       3.4         3.39
+2026-02-12       33.2       3.8         0.80
+
+Heaviest print: 2026-02-09 at 40.9mn shares (5.0x median) on a +7.46% day

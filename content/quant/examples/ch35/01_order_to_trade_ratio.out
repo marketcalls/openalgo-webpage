@@ -1,0 +1,4 @@
+RELIANCE 1m tape : 1125 bars, 1006 mid moves, 311 fills
+Order messages   : 2012   Trades : 311
+Order-to-trade   : 6.5 : 1   (illustrative penalty band starts near 50:1)
+Status: within limits - room for 7.7x more order messages per fill before the band trips.
