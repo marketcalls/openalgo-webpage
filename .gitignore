@@ -61,6 +61,7 @@ Thumbs.db
 
 # Internal build/authoring doc, not part of the site
 LEARN_DEVIATION_TRACKER.md
+COURSE_DATA_METHODOLOGY.md
 content/python/AGENT_BRIEF.md
 content/technicals/AGENT_BRIEF.md
 content/futures/AGENT_BRIEF.md
