@@ -7,7 +7,7 @@ import SyllabusRail from "./SyllabusRail";
 export const metadata = {
   title: "Statistical Arbitrage - A Professional Course with OpenAlgo",
   description:
-    `An expert, brutally honest ${CHAPTERS.length}-chapter course on statistical arbitrage with NSE equities: stationarity and cointegration, pairs and baskets, dynamic hedges and market-neutral books, honest backtesting and the path to real trading - every result computed on real OpenAlgo data, gross and net, in-sample and out-of-sample.`,
+    `An expert, brutally honest ${CHAPTERS.length}-chapter course on statistical arbitrage with NSE equities: stationarity and cointegration, pairs and baskets, dynamic hedges and market-neutral books, honest backtesting and the path to real trading - every result computed on real market data pulled via OpenAlgo from the connected broker, gross and net, in-sample and out-of-sample.`,
 };
 
 export default function StatsArbLayout({ children }) {

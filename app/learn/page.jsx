@@ -160,7 +160,7 @@ const COURSES = [
     ring: "hsl(190 85% 55% / 0.5)",
     grad: "from-secondary via-tertiary to-primary",
     blurb:
-      "The real thing, brutally honest: stationarity and cointegration, pairs and baskets, dynamic hedge ratios with the Kalman filter, and market-neutral books on NSE equities. Every result computed on real OpenAlgo data, gross and net, in-sample and out-of-sample, with an honest line between a statistical relationship and a tradable edge.",
+      "The real thing, brutally honest: stationarity and cointegration, pairs and baskets, dynamic hedge ratios with the Kalman filter, and market-neutral books on NSE equities. Every result computed on real market data pulled via OpenAlgo from the connected broker, gross and net, in-sample and out-of-sample, with an honest line between a statistical relationship and a tradable edge.",
     points: ["Cointegration, pairs & baskets", "Kalman, factor-neutral & risk", "Honest backtesting & costs"],
   },
   {
