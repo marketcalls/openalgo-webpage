@@ -14,13 +14,13 @@ export function chapterMeta(slug) {
   const ch = chapterBySlug(slug);
   if (!ch) return {};
   const url = `https://openalgo.in/stats-arb/${ch.slug}`;
-  const title = `${ch.title} - Quantitative Trading | OpenAlgo`;
-  const description = `${ch.summary} A hands-on, beginner-friendly chapter of the free OpenAlgo Quantitative Trading course, with live-tested examples on Indian markets.`;
+  const title = `${ch.title} - Statistical Arbitrage | OpenAlgo`;
+  const description = `${ch.summary} A hands-on chapter of the free OpenAlgo Statistical Arbitrage course, with tested examples on real Indian market data.`;
   const keywords = [
     ch.title.toLowerCase(),
     ...ch.learn.map((l) => l.toLowerCase()),
-    "quantitative trading", "quantitative trading course", "indian stock market quant",
-    "market microstructure", "algorithmic trading india", "openalgo",
+    "statistical arbitrage", "pairs trading", "cointegration", "mean reversion",
+    "market neutral", "algorithmic trading india", "openalgo",
   ];
   return {
     title: { absolute: title },
@@ -68,7 +68,7 @@ export default function ChapterView({ slug }) {
     image: OG_IMAGE,
     author: { "@type": "Organization", name: "OpenAlgo" },
     publisher: { "@type": "Organization", name: "OpenAlgo", url: "https://openalgo.in" },
-    isPartOf: { "@type": "Course", name: "Quantitative Trading", url: "https://openalgo.in/quant" },
+    isPartOf: { "@type": "Course", name: "Statistical Arbitrage", url: "https://openalgo.in/stats-arb" },
     articleSection: ch.partName,
     keywords: ch.learn.join(", "),
   };
@@ -77,7 +77,7 @@ export default function ChapterView({ slug }) {
     "@type": "BreadcrumbList",
     itemListElement: [
       { "@type": "ListItem", position: 1, name: "OpenAlgo", item: "https://openalgo.in" },
-      { "@type": "ListItem", position: 2, name: "Quantitative Trading", item: "https://openalgo.in/quant" },
+      { "@type": "ListItem", position: 2, name: "Statistical Arbitrage", item: "https://openalgo.in/stats-arb" },
       { "@type": "ListItem", position: 3, name: ch.title, item: url },
     ],
   };

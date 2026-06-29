@@ -17,6 +17,11 @@ export default function LessonClient() {
             btn.textContent = "Copy";
             btn.classList.remove("copied");
           }, 1500);
+        }).catch(() => {
+          btn.textContent = "Copy failed";
+          setTimeout(() => {
+            btn.textContent = "Copy";
+          }, 1500);
         });
       };
       btn.addEventListener("click", onClick);

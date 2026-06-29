@@ -1,8 +1,8 @@
-// Build-time generator for the "Becoming a Quant" course content.
+// Build-time generator for the "Statistical Arbitrage" course content.
 // Renders every chapter's markdown + tested examples into a single JSON module
 // (lib/statsArbContentData.json) so the Next pages need NO filesystem access at
 // runtime - critical on Cloudflare Workers where process.cwd() is not the bundle.
-// Also copies example chart PNGs into public/quant/charts.
+// Also copies example chart PNGs into public/stats-arb/charts.
 //
 // Mirrors scripts/gen-python-content.mjs. Runs via "prebuild" and before deploy.
 import fs from "node:fs";
