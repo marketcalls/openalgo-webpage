@@ -108,7 +108,6 @@ export default function StatsArbCourseHome() {
               [String(CHAPTERS.length), "Chapters"],
               [String(PARTS.length), "Modules"],
               ["NSE", "Equity data"],
-              ["100%", "OpenAlgo data"],
             ].map(([v, k]) => (
               <div key={k}>
                 <div className="text-3xl font-bold bg-linear-to-r from-secondary to-tertiary bg-clip-text text-transparent">
