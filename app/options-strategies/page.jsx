@@ -3,7 +3,7 @@ import Link from "next/link";
 
 import { CHAPTERS, PARTS, TAG_CLASS } from "@/lib/optionsStrategiesCurriculum";
 
-const OG_IMAGE = "https://openalgo.in/assets/images/og-image.png";
+const OG_IMAGE = "https://openalgo.in/assets/og/options-strategies.png";
 const LANDING_DESC =
   "A free, modern course on options strategies for the developing trader. Build all 38 strategies in the OpenAlgo strategy builder, each with an authentic payoff chart and the full nine-metric panel (max profit, max loss, probability of profit, risk to reward, margin and more) drawn from the builder's own maths on real NIFTY data. Read the directional spreads, straddles and strangles, the iron condor, iron fly and butterfly, ratio and back spreads, synthetics, the jade lizard, batman, calendars and diagonals, plus margin, collateral, pledging, penalties and options adjustments, and learn to choose and manage a trade. Some options basics assumed.";
 

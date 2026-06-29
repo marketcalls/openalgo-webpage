@@ -3,7 +3,7 @@ import Link from "next/link";
 
 import { CHAPTERS, PARTS, TAG_CLASS } from "@/lib/fundamentalsCurriculum";
 
-const OG_IMAGE = "https://openalgo.in/assets/images/og-image.png";
+const OG_IMAGE = "https://openalgo.in/assets/og/fundamentals.png";
 const LANDING_DESC =
   "A free, 40-chapter course that takes an absolute beginner from zero to handling real market data in Python. No prior coding needed - variables, lists and functions, then NumPy, pandas and charts, taught in plain English with runnable examples on real US (yfinance) and Indian (OpenAlgo) market data.";
 

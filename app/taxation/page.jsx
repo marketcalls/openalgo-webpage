@@ -3,7 +3,7 @@ import Link from "next/link";
 
 import { CHAPTERS, PARTS, TAG_CLASS } from "@/lib/taxationCurriculum";
 
-const OG_IMAGE = "https://openalgo.in/assets/images/og-image.png";
+const OG_IMAGE = "https://openalgo.in/assets/og/taxation.png";
 const LANDING_DESC =
   "A free, modern, beginner-friendly 19-chapter course on tax for anyone who trades or invests in India - in plain English, with real case studies. Learn the three income buckets, the old and new regimes, advance tax and the deadlines, capital gains and STT on shares, why intraday is speculative, why F&O is business income (and how turnover, audit and loss set-off actually work), tax on US stocks and the Schedule FA disclosure most people miss, crypto's flat 30 percent and its derivatives grey area, and how to choose the right ITR. Every rule is shown with a worked example. Educational only, not tax advice - always confirm with a qualified chartered accountant before you file.";
 

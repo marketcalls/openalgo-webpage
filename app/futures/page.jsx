@@ -3,7 +3,7 @@ import Link from "next/link";
 
 import { CHAPTERS, PARTS, TAG_CLASS } from "@/lib/futuresCurriculum";
 
-const OG_IMAGE = "https://openalgo.in/assets/images/og-image.png";
+const OG_IMAGE = "https://openalgo.in/assets/og/futures.png";
 const LANDING_DESC =
   "A free, modern, beginner-friendly 12-chapter course on futures trading - for someone who has never traded a contract. Learn what a futures contract really is, why futures exist, how to read a contract's specs, and the mechanics that matter: margin and leverage, mark-to-market, going long and short, and the straight-line payoff. Then pricing (basis, cost of carry, rollover), index versus stock futures, hedging a portfolio, and the honest risks of leverage. Every term is defined in plain English with real Indian market examples. No prior knowledge assumed.";
 

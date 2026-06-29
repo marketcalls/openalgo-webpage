@@ -3,7 +3,7 @@ import Link from "next/link";
 
 import { CHAPTERS, PARTS, TAG_CLASS } from "@/lib/psychologyCurriculum";
 
-const OG_IMAGE = "https://openalgo.in/assets/images/og-image.png";
+const OG_IMAGE = "https://openalgo.in/assets/og/trading-psychology.png";
 const LANDING_DESC =
   "A free, beginner-first 24-chapter course on trading psychology and practical risk playbooks for the Indian markets - why your brain sabotages your trades and how to build discipline as a system, when to hedge and when not to, the option-seller and hedger playbook, and a complete risk plan for investors, stock traders, intraday traders, futures traders, option buyers, option sellers and hedgers. Plain English, real Indian examples, checklists.";
 

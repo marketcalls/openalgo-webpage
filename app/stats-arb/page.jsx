@@ -3,7 +3,7 @@ import Link from "next/link";
 
 import { CHAPTERS, PARTS, TAG_CLASS } from "@/lib/statsArbCurriculum";
 
-const OG_IMAGE = "https://openalgo.in/assets/images/og-image.png";
+const OG_IMAGE = "https://openalgo.in/assets/og/stats-arb.png";
 const LANDING_DESC =
   `A free, expert, brutally honest ${CHAPTERS.length}-chapter course on statistical arbitrage with NSE equities. Stationarity and cointegration, pairs and baskets, dynamic hedge ratios with the Kalman filter, market-neutral books, honest backtesting and the path to real trading. Every result computed on real market data pulled via OpenAlgo from the connected broker, gross and net, in-sample and out-of-sample, with an honest line between a statistical relationship and a tradable edge.`;
 

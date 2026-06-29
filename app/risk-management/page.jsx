@@ -3,7 +3,7 @@ import Link from "next/link";
 
 import { CHAPTERS, PARTS, TAG_CLASS } from "@/lib/riskCurriculum";
 
-const OG_IMAGE = "https://openalgo.in/assets/images/og-image.png";
+const OG_IMAGE = "https://openalgo.in/assets/og/risk-management.png";
 const LANDING_DESC =
   "A free, beginner-first 30-chapter course on risk management for the Indian markets - what risk really is, the money-safety system every beginner needs, investor and trader risk, leverage and execution risk, and F&O risk. Plain English, clear diagrams, real Indian examples, checklists and rules. The one skill that keeps you in the game.";
 

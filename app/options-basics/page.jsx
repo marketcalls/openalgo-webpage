@@ -3,7 +3,7 @@ import Link from "next/link";
 
 import { CHAPTERS, PARTS, TAG_CLASS } from "@/lib/optionsBasicsCurriculum";
 
-const OG_IMAGE = "https://openalgo.in/assets/images/og-image.png";
+const OG_IMAGE = "https://openalgo.in/assets/og/options-basics.png";
 const LANDING_DESC =
   "A free, modern, beginner-friendly 14-chapter course on options from absolute zero. If the words call, put and premium mean nothing to you yet, start here: learn what an option is, the two building blocks (calls and puts), premium, strike and expiry, moneyness, intrinsic and time value, and how to read an option chain. Then the four single-leg payoffs drawn as real charts, the Greeks, implied volatility, and the honest risks. Every term is defined in plain English with real Indian market examples. No prior knowledge assumed.";
 

@@ -3,7 +3,7 @@ import Link from "next/link";
 
 import { CHAPTERS, PARTS, TAG_CLASS } from "@/lib/pythonCurriculum";
 
-const OG_IMAGE = "https://openalgo.in/assets/images/og-image.png";
+const OG_IMAGE = "https://openalgo.in/assets/og/python.png";
 const LANDING_DESC =
   "Learn algorithmic trading with Python from scratch. A free, hands-on 32-chapter course covering NumPy, Pandas, 80+ technical indicators, backtesting with VectorBT, optimisation, walk-forward testing, machine learning, real-time WebSocket trading and risk-based position sizing - every example is tested live and powered by the OpenAlgo Python SDK across NSE, NFO and MCX.";
 

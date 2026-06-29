@@ -3,7 +3,7 @@ import Link from "next/link";
 
 import { CHAPTERS, PARTS, TAG_CLASS } from "@/lib/amibrokerCurriculum";
 
-const OG_IMAGE = "https://openalgo.in/assets/images/og-image.png";
+const OG_IMAGE = "https://openalgo.in/assets/og/amibroker.png";
 const LANDING_DESC =
   "A free, hands-on 36-chapter course in AmiBroker Formula Language (AFL) - from your first plotted indicator to scanners, complete trading systems, backtesting, optimisation and live order automation. Beginner to intermediate, in plain English, with real AFL code and charts. No heavy programming needed.";
 

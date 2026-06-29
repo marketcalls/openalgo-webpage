@@ -3,7 +3,7 @@ import Link from "next/link";
 
 import { CHAPTERS, PARTS, TAG_CLASS } from "@/lib/stocksCurriculum";
 
-const OG_IMAGE = "https://openalgo.in/assets/images/og-image.png";
+const OG_IMAGE = "https://openalgo.in/assets/og/stocks.png";
 const LANDING_DESC =
   "A free, modern, beginner-friendly 18-chapter course on the Indian stock market - why you must invest, what a share really is, IPOs, how indices like the Nifty are built, what moves prices, and how to spot scams. Plain English, clear diagrams, real charts and recent Indian examples. No jargon assumed.";
 

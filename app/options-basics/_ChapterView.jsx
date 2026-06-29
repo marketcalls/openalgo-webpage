@@ -7,7 +7,7 @@ import { loadChapter } from "@/lib/optionsBasicsContent";
 
 import LessonClient from "./LessonClient";
 
-const OG_IMAGE = "https://openalgo.in/assets/images/og-image.png";
+const OG_IMAGE = "https://openalgo.in/assets/og/options-basics.png";
 
 // Build per-chapter SEO metadata. Imported by each static chapter page.
 export function chapterMeta(slug) {

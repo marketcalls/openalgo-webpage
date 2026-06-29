@@ -3,7 +3,7 @@ import Link from "next/link";
 
 import { CHAPTERS, PARTS, TAG_CLASS } from "@/lib/quantCurriculum";
 
-const OG_IMAGE = "https://openalgo.in/assets/images/og-image.png";
+const OG_IMAGE = "https://openalgo.in/assets/og/quant.png";
 const LANDING_DESC =
   `A free, professional ${CHAPTERS.length}-chapter course on quantitative trading for Indian markets - market structure and microstructure, HFT and execution technology, the mathematics of markets, time series, derivatives and volatility, alpha research, backtesting and machine learning, and production. Even the hard maths explained in plain words, with charts, on real OpenAlgo data.`;
 

@@ -7,7 +7,7 @@ import { loadChapter } from "@/lib/quantContent";
 
 import LessonClient from "./LessonClient";
 
-const OG_IMAGE = "https://openalgo.in/assets/images/og-image.png";
+const OG_IMAGE = "https://openalgo.in/assets/og/quant.png";
 
 // Build per-chapter SEO metadata. Imported by the dynamic chapter route.
 export function chapterMeta(slug) {

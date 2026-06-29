@@ -3,7 +3,7 @@ import Link from "next/link";
 
 import { CHAPTERS, PARTS, TAG_CLASS } from "@/lib/technicalsCurriculum";
 
-const OG_IMAGE = "https://openalgo.in/assets/images/og-image.png";
+const OG_IMAGE = "https://openalgo.in/assets/og/technicals.png";
 const LANDING_DESC =
   "A free, modern, beginner-friendly 25-chapter course on technical analysis - learn to read real NSE charts the way a professional does. From candlesticks, trends and support/resistance to chart patterns, indicators (RSI, MACD, moving averages, Bollinger Bands), volume, risk management and trading psychology. Built entirely on real Indian daily charts, in plain English with honest facts and stats - not textbook theory. No prior knowledge assumed.";
 
