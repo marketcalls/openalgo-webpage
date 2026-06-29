@@ -48,16 +48,4 @@ export const defaultMetadata = {
   verification: {
     google: 'your-google-verification-code', // Add if you have one
   },
-  other: {
-    'og:url': 'https://openalgo.in',
-    'og:image': 'https://openalgo.in/assets/images/og-image.png',
-    'og:image:secure_url': 'https://openalgo.in/assets/images/og-image.png',
-    'og:image:width': '1200',
-    'og:image:height': '630',
-    'og:image:type': 'image/png',
-    'og:type': 'website',
-    'og:locale': 'en_US',
-    'twitter:url': 'https://openalgo.in',
-    'twitter:image': 'https://openalgo.in/assets/images/og-image.png'
-  }
 }
