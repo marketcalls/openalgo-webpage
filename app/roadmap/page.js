@@ -2,7 +2,7 @@
 
 import { Button } from "@/components/ui/button"
 import {
-  Keyboard, Network, Zap, Bell, GitMerge, Monitor, Globe, Workflow,
+  Keyboard, Network, Zap, GraduationCap, GitMerge, Monitor, Globe, Workflow,
   ArrowUpCircle, FlaskConical, Sliders, LayoutDashboard, Shield, Bot,
   Code2, Library, Smartphone
 } from "lucide-react"
@@ -11,7 +11,7 @@ const features = [
   { title: "OpenAlgo Rust Desktop", description: "Build a high performance native desktop application using Rust, delivering blazing fast execution, minimal resource usage, and a seamless cross platform trading experience.", icon: Monitor, category: "Platform", priority: "top" },
   { title: "Pure Trading Terminal", description: "Transform OpenAlgo into a complete trading terminal with advanced charting, order management, market depth, and realtime analytics in one unified interface.", icon: LayoutDashboard, category: "Platform" },
   { title: "Flutter Mobile App", description: "Build a Flutter mobile application for traders to manage their algorithmic trading strategies, monitor positions, and control trades directly from their mobile devices.", icon: Smartphone, category: "Platform" },
-  { title: "ATM Trade Management", description: "Advanced Trade Management modules with simple Target, Stoploss, and Trailing Stoploss orders. Includes risk management controls, position sizing, and comprehensive position management.", icon: Shield, category: "Trading" },
+  { title: "Chart Based Trade Management", description: "Manage trades directly from the chart with simple Target, Stoploss and Trailing Stoploss orders, plus risk-management controls, position sizing and comprehensive position management.", icon: Shield, category: "Trading" },
   { title: "Bracket, Cover Orders & MTF/AMO Support", description: "Bringing advanced order types including Bracket Orders, Cover Orders, and supporting Margin Trading Facility (MTF) and After Market Orders (AMO) product types.", icon: GitMerge, category: "Trading" },
   { title: "New Broker Integrations On Demand", description: "Rapidly integrate new brokers based on community demand, expanding connectivity to meet user requirements efficiently.", icon: Network, category: "Integration" },
   { title: "Realtime Trade Updates via WebSockets", description: "Building realtime trade updates and position changes through OpenAlgo Common WebSockets for instant push based notifications.", icon: Zap, category: "Performance" },
@@ -20,7 +20,7 @@ const features = [
   { title: "Pure Realtime Sandbox Mode", description: "Making Sandbox Mode purely realtime to test algo trading strategies efficiently with live market simulation and instant feedback.", icon: FlaskConical, category: "Developer Experience" },
   { title: "Simple Execution Algorithms", description: "Building a simple execution algorithms workflow to enable TWAP, VWAP, and other execution strategies for optimal order placement.", icon: Sliders, category: "Trading" },
   { title: "Version Notifications & Easy Upgrades", description: "Notify users on major version releases and simplify the OpenAlgo upgrade process with single click updates and migration assistance.", icon: ArrowUpCircle, category: "Developer Experience" },
-  { title: "Price Alert Orders", description: "Automatically place orders when the market reaches your specified price thresholds.", icon: Bell, category: "Trading" },
+  { title: "Open Source Trading Education", description: "Free, open-source trading education through Open Varsity - structured courses spanning market basics, technical analysis, Python and quant, derivatives, taxation, risk management and trading psychology, all in plain English on real Indian-market data.", icon: GraduationCap, category: "Education" },
   { title: "Global Expansion: US Brokers & Crypto", description: "Build OpenAlgo support for US brokers and cryptocurrency exchanges, expanding the platform globally to serve traders worldwide.", icon: Globe, category: "Global Expansion" },
   { title: "Execution Algorithmic Controls", description: "Build simple execution algorithmic controls for managing order flow, position sizing, and risk parameters through an intuitive interface.", icon: Sliders, category: "Trading" },
   { title: "LLM & AI Agentic Trading", description: "Integrate Large Language Models and AI Agentic solutions for intelligent trade decision making, strategy optimization, and autonomous trading workflows.", icon: Bot, category: "AI & Automation" },
@@ -35,7 +35,8 @@ const categories = [
   { name: "Performance", color: "text-tertiary bg-tertiary/10" },
   { name: "Developer Experience", color: "text-primary bg-primary/10" },
   { name: "AI & Automation", color: "text-secondary bg-secondary/10" },
-  { name: "Global Expansion", color: "text-tertiary bg-tertiary/10" }
+  { name: "Global Expansion", color: "text-tertiary bg-tertiary/10" },
+  { name: "Education", color: "text-secondary bg-secondary/10" }
 ]
 
 export default function RoadmapPage() {

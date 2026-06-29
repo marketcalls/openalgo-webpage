@@ -71,11 +71,11 @@ const COURSES = [
     desc: "For traders who want the real thing, not the pitch. Cointegration and pairs, baskets, dynamic hedges and market-neutral books on NSE equities - gross and net, in and out of sample.",
     s3: ["NSE", "Equity data"], s4: ["Expert", "Level"] },
   { slug: "risk-management", title: "Risk Management", grad: [G, B, P],
-    badge: "how not to get destroyed  ·  built for India", ch: 30, mod: 6,
+    badge: "how not to get destroyed  ·  built for India", ch: 33, mod: 7,
     desc: "The market rewards the one still standing. Survival first: the money-safety system, position sizing and stop-losses, leverage and execution risk, and F&O risk - with real examples.",
     s3: ["Survival", "First"], s4: ["India", "Focus"] },
   { slug: "trading-psychology", title: "Trading Psychology & Risk Playbooks", grad: [B, P, T],
-    badge: "master your mind  ·  hedging  ·  risk plans", ch: 24, mod: 4,
+    badge: "master your mind  ·  hedging  ·  risk plans", ch: 26, mod: 5,
     desc: "Most traders lose to themselves. Discipline as a system, when to hedge and when not, the option-seller playbook, and a ready-to-use risk plan for every type of participant.",
     s3: ["Plans", "Every trader"], s4: ["India", "Focus"] },
 ];
