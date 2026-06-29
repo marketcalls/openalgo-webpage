@@ -8,6 +8,7 @@ import { CHAPTERS as OB } from "@/lib/optionsBasicsCurriculum";
 import { CHAPTERS as OS } from "@/lib/optionsStrategiesCurriculum";
 import { CHAPTERS as PY } from "@/lib/pythonCurriculum";
 import { CHAPTERS as QUANT } from "@/lib/quantCurriculum";
+import { CHAPTERS as PSYCH } from "@/lib/psychologyCurriculum";
 import { CHAPTERS as RISK } from "@/lib/riskCurriculum";
 import { CHAPTERS as SARB } from "@/lib/statsArbCurriculum";
 import { CHAPTERS as STOCKS } from "@/lib/stocksCurriculum";
@@ -16,7 +17,7 @@ import { CHAPTERS as TECH } from "@/lib/technicalsCurriculum";
 
 const OG_IMAGE = "https://openalgo.in/assets/images/og-image.png";
 const DESC =
-  "Open Varsity is OpenAlgo's free learning academy. Twelve free, hands-on courses that take you from understanding your very first share to a real quantitative edge - Stock Market Basics (a no-jargon beginner intro to the Indian market), Technical Analysis (reading real NSE charts), Futures Trading, Options Basics and Options Strategies (derivatives from zero, with real payoff charts), Taxation for Traders and Investors (plain-English tax on shares, F&O, US stocks and crypto), Python for Traders (beginner), Algo Trading with Python (intermediate), Quantitative Trading and Statistical Arbitrage (expert), AmiBroker AFL (chart-based system building, no Python needed), and Risk Management (the one skill that keeps you in the game) - all in plain English with real market examples.";
+  "Open Varsity is OpenAlgo's free learning academy. Thirteen free, hands-on courses that take you from understanding your very first share to a real quantitative edge - Stock Market Basics (a no-jargon beginner intro to the Indian market), Technical Analysis (reading real NSE charts), Futures Trading, Options Basics and Options Strategies (derivatives from zero, with real payoff charts), Taxation for Traders and Investors (plain-English tax on shares, F&O, US stocks and crypto), Python for Traders (beginner), Algo Trading with Python (intermediate), Quantitative Trading and Statistical Arbitrage (expert), AmiBroker AFL (chart-based system building, no Python needed), and Risk Management (the one skill that keeps you in the game) and Trading Psychology & Risk Playbooks (mastering your mind, hedging, and ready-to-use risk plans) - all in plain English with real market examples.";
 
 export const metadata = {
   title: { absolute: "Open Varsity - Free Stock Market, Python, Algo, Quant & AFL Courses | OpenAlgo" },
@@ -203,6 +204,19 @@ const COURSES = [
       "The market does not reward the smartest trader - it rewards the one still standing. Learn the one skill that keeps you in the game: what risk really is, the beginner money-safety system, investor and trader risk, position sizing and stop-losses, leverage and execution risk, and F&O risk - in plain English with real Indian examples, clear diagrams and checklists.",
     points: ["Survival first, profit second", "Sizing, stops & risk limits", "For investors, traders & F&O beginners"],
   },
+  {
+    n: 13,
+    route: "/trading-psychology",
+    title: "Trading Psychology & Risk Playbooks",
+    level: "Beginner",
+    count: PSYCH.length,
+    color: "text-secondary",
+    ring: "hsl(267 100% 87% / 0.5)",
+    grad: "from-secondary via-primary to-tertiary",
+    blurb:
+      "Most traders do not lose to the market - they lose to themselves. The second half of staying alive: master your own mind (fear, greed, loss aversion, FOMO, discipline as a system, journaling), learn when to hedge and when not to, the option-seller and hedger playbook, and a complete, ready-to-use risk plan for every type of participant.",
+    points: ["Discipline as a system", "Hedging done honestly", "A risk plan for every trader"],
+  },
 ];
 
 const COURSE_LIST_LD = {
@@ -237,7 +251,7 @@ export default function LearnHub() {
         <div className="relative px-6 sm:px-10 lg:px-14 py-16 sm:py-20 max-w-5xl mx-auto text-center">
           <span className="reveal reveal-1 inline-flex items-center gap-2 rounded-full border border-border surface-low px-4 py-1.5 font-label text-xs tracking-wide text-on-surface-variant">
             <GraduationCap className="h-3.5 w-3.5 text-primary" />
-            Open source &middot; Twelve free courses &middot; {STOCKS.length + TECH.length + FUT.length + OB.length + OS.length + TAX.length + FUND.length + PY.length + QUANT.length + AMI.length + SARB.length + RISK.length} chapters
+            Open source &middot; Thirteen free courses &middot; {STOCKS.length + TECH.length + FUT.length + OB.length + OS.length + TAX.length + FUND.length + PY.length + QUANT.length + AMI.length + SARB.length + RISK.length + PSYCH.length} chapters
           </span>
           <h1 className="reveal reveal-2 mt-6 text-4xl sm:text-5xl lg:text-6xl font-bold leading-[1.05] tracking-tight text-on-surface">
             Open{" "}
