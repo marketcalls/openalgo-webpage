@@ -11,7 +11,7 @@ OpenAlgo is a self-hostable algorithmic trading platform built by traders, for t
 - **33+ Broker Integrations** - Unified API across all major Indian brokers with a common symbol format
 - **16+ Platform Integrations** - Amibroker, TradingView, Python, MetaTrader, Excel, Chrome Extension, and more
 - **6 Official SDKs** - Python, Node.js, Java, .NET/C#, Go, Rust
-- **11 Free Learning Courses** - 348 chapters from market basics and chart-reading through futures, options and taxation to expert quant, statistical arbitrage and AmiBroker AFL, all on real market data (see below)
+- **12 Free Learning Courses** - 378 chapters from market basics and chart-reading through futures, options, taxation and risk management to expert quant, statistical arbitrage and AmiBroker AFL, all on real market data (see below)
 - **Self-Hosted & Private** - Deploy on your own infrastructure with complete data privacy
 - **SmartOrder & Basket Orders** - Advanced order types including split orders and position management
 - **AI/LLM Integration** - MCP (Model Context Protocol) support for AI-driven trading
@@ -21,7 +21,7 @@ OpenAlgo is a self-hostable algorithmic trading platform built by traders, for t
 
 ## Learning Courses
 
-Eleven free, hands-on courses cover beginner entry points (market basics, chart-reading, derivatives and taxation), a Python/algo/quant ladder, an expert statistical-arbitrage track, and a parallel AmiBroker AFL track, taught in plain English with runnable, tested examples on real Indian (OpenAlgo) and US (yfinance) market data. The [`/learn`](https://openalgo.in/learn) hub (Open Varsity) ties them together.
+Twelve free, hands-on courses cover beginner entry points (market basics, chart-reading, derivatives, taxation and risk management), a Python/algo/quant ladder, an expert statistical-arbitrage track, and a parallel AmiBroker AFL track, taught in plain English with runnable, tested examples on real Indian (OpenAlgo) and US (yfinance) market data. The [`/learn`](https://openalgo.in/learn) hub (Open Varsity) ties them together.
 
 | Course | Level | Chapters | What it covers |
 |--------|-------|----------|----------------|
@@ -36,6 +36,7 @@ Eleven free, hands-on courses cover beginner entry points (market basics, chart-
 | [Options Basics](https://openalgo.in/options-basics) (`/options-basics`) | Beginner | 26 | Options from absolute zero AND the mechanics most courses skip - calls and puts, premium/strike/expiry, index vs stock options and settlement, expiry/exercise/assignment, payoff at expiry vs live P&L, the option chain, bid/ask and liquidity, the four payoffs, the Greeks, implied vs historical volatility and the expected move, open interest and PCR, choosing a strike and expiry, seller margin and transaction costs, event risk, risk management and classic mistakes, and a bridge to spreads with a pre-trade checklist. |
 | [Options Strategies](https://openalgo.in/options-strategies) (`/options-strategies`) | Intermediate | 27 | All 38 strategies in the OpenAlgo strategy builder, each with an authentic payoff chart and the full nine-metric panel (max profit/loss, POP, risk to reward, margin and more) built from the builder's own maths on real NIFTY data: spreads, straddles, strangles, iron condors and flies, butterflies, ratios, jade lizards, batman, calendars and synthetics, plus margin/collateral/pledging/penalties, position Greeks and the volatility regime, and options adjustments. |
 | [Taxation for Traders and Investors](https://openalgo.in/taxation) (`/taxation`) | Beginner | 19 | Tax in plain English with real case studies - the income buckets, old vs new regime, advance tax and deadlines, capital gains and STT, intraday, F&O business income (turnover, audit, loss set-off), US stocks and Schedule FA, crypto tax, and choosing your ITR. Educational only, not tax advice. |
+| [Risk Management](https://openalgo.in/risk-management) (`/risk-management`) | Beginner | 30 | The one skill that keeps you in the game, for investors, stock traders, intraday traders and F&O beginners: what risk really is, the money-safety system (emergency fund, capital buckets, time horizon, risk capacity), investor risk (allocation, diversification, SIPs, rebalancing, concentration), trader risk (position sizing, stop-losses, expectancy, drawdowns, risk limits), leverage and execution risk (margin calls, slippage, gaps), and F&O risk (futures, option buyer/seller, the Greeks as risk, expiry day). Plain English, real Indian examples, SVG diagrams and checklists. |
 
 Course content lives as Markdown + tested Python examples under `content/`, rendered to JSON at build time by the generators in `scripts/`. Strategies are tested in OpenAlgo's **analyzer (sandbox) mode** - never with claims of real data.
 
@@ -44,7 +45,7 @@ Course content lives as Markdown + tested Python examples under `content/`, rend
 | Page | Description |
 |------|-------------|
 | `/` | Hero landing page with stats, ecosystem overview, and trust indicators |
-| `/learn` | Open Varsity learning hub linking all eleven free courses |
+| `/learn` | Open Varsity learning hub linking all twelve free courses |
 | `/stats-arb` | "Statistical Arbitrage" - 17-chapter expert course (NSE equities, brutally honest) |
 | `/stocks` | "Stock Market Basics" - 18-chapter beginner stock-market course |
 | `/technicals` | "Technical Analysis" - 28-chapter beginner chart-reading course |
@@ -55,6 +56,7 @@ Course content lives as Markdown + tested Python examples under `content/`, rend
 | `/futures` | "Futures Trading" - 27-chapter beginner futures course |
 | `/options-basics` | "Options Basics" - 26-chapter beginner options course |
 | `/options-strategies` | "Options Strategies" - 27-chapter intermediate options-strategy course |
+| `/risk-management` | "Risk Management" - 30-chapter beginner risk-management course |
 | `/taxation` | "Taxation for Traders and Investors" - 19-chapter beginner tax course |
 | `/features` | 45+ features organized by category |
 | `/getting-started` | Step-by-step beginner's guide |
@@ -112,7 +114,7 @@ app/                    # Next.js App Router pages
   options-basics/       # "Options Basics" course (26 static chapter routes)
   options-strategies/   # "Options Strategies" course (27 static chapter routes)
   taxation/             # "Taxation for Traders and Investors" course (19 static chapter routes)
-  learn/                # Learning hub linking all ten courses
+  learn/                # Learning hub linking all twelve courses
   features/             # Features listing
   getting-started/      # Beginner's guide
   roadmap/  faq/  blog/  download/  static-ip/  fastscalper/  wabridge/

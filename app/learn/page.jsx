@@ -8,6 +8,7 @@ import { CHAPTERS as OB } from "@/lib/optionsBasicsCurriculum";
 import { CHAPTERS as OS } from "@/lib/optionsStrategiesCurriculum";
 import { CHAPTERS as PY } from "@/lib/pythonCurriculum";
 import { CHAPTERS as QUANT } from "@/lib/quantCurriculum";
+import { CHAPTERS as RISK } from "@/lib/riskCurriculum";
 import { CHAPTERS as SARB } from "@/lib/statsArbCurriculum";
 import { CHAPTERS as STOCKS } from "@/lib/stocksCurriculum";
 import { CHAPTERS as TAX } from "@/lib/taxationCurriculum";
@@ -15,7 +16,7 @@ import { CHAPTERS as TECH } from "@/lib/technicalsCurriculum";
 
 const OG_IMAGE = "https://openalgo.in/assets/images/og-image.png";
 const DESC =
-  "Open Varsity is OpenAlgo's free learning academy. Eleven free, hands-on courses that take you from understanding your very first share to a real quantitative edge - Stock Market Basics (a no-jargon beginner intro to the Indian market), Technical Analysis (reading real NSE charts), Futures Trading, Options Basics and Options Strategies (derivatives from zero, with real payoff charts), Taxation for Traders and Investors (plain-English tax on shares, F&O, US stocks and crypto), Python for Traders (beginner), Algo Trading with Python (intermediate), Quantitative Trading and Statistical Arbitrage (expert), and AmiBroker AFL (chart-based system building, no Python needed) - all in plain English with real market examples.";
+  "Open Varsity is OpenAlgo's free learning academy. Twelve free, hands-on courses that take you from understanding your very first share to a real quantitative edge - Stock Market Basics (a no-jargon beginner intro to the Indian market), Technical Analysis (reading real NSE charts), Futures Trading, Options Basics and Options Strategies (derivatives from zero, with real payoff charts), Taxation for Traders and Investors (plain-English tax on shares, F&O, US stocks and crypto), Python for Traders (beginner), Algo Trading with Python (intermediate), Quantitative Trading and Statistical Arbitrage (expert), AmiBroker AFL (chart-based system building, no Python needed), and Risk Management (the one skill that keeps you in the game) - all in plain English with real market examples.";
 
 export const metadata = {
   title: { absolute: "Open Varsity - Free Stock Market, Python, Algo, Quant & AFL Courses | OpenAlgo" },
@@ -189,6 +190,19 @@ const COURSES = [
       "Worried about tax on your trades? Learn it in plain English with real case studies - the income buckets and the two regimes, capital gains and STT on shares, why intraday is speculative, why F&O is business income (turnover, audit and loss set-off), tax on US stocks and Schedule FA, and crypto's flat 30 percent. Honest about the mistakes that bring a notice years later. Educational only, not tax advice.",
     points: ["Plain English, real case studies", "Shares, F&O, US stocks & crypto", "Not tax advice - file with a CA"],
   },
+  {
+    n: 12,
+    route: "/risk-management",
+    title: "Risk Management",
+    level: "Beginner",
+    count: RISK.length,
+    color: "text-tertiary",
+    ring: "hsl(140 72% 53% / 0.5)",
+    grad: "from-tertiary via-secondary to-primary",
+    blurb:
+      "The market does not reward the smartest trader - it rewards the one still standing. Learn the one skill that keeps you in the game: what risk really is, the beginner money-safety system, investor and trader risk, position sizing and stop-losses, leverage and execution risk, and F&O risk - in plain English with real Indian examples, clear diagrams and checklists.",
+    points: ["Survival first, profit second", "Sizing, stops & risk limits", "For investors, traders & F&O beginners"],
+  },
 ];
 
 const COURSE_LIST_LD = {
@@ -223,7 +237,7 @@ export default function LearnHub() {
         <div className="relative px-6 sm:px-10 lg:px-14 py-16 sm:py-20 max-w-5xl mx-auto text-center">
           <span className="reveal reveal-1 inline-flex items-center gap-2 rounded-full border border-border surface-low px-4 py-1.5 font-label text-xs tracking-wide text-on-surface-variant">
             <GraduationCap className="h-3.5 w-3.5 text-primary" />
-            Open source &middot; Eleven free courses &middot; {STOCKS.length + TECH.length + FUT.length + OB.length + OS.length + TAX.length + FUND.length + PY.length + QUANT.length + AMI.length + SARB.length} chapters
+            Open source &middot; Twelve free courses &middot; {STOCKS.length + TECH.length + FUT.length + OB.length + OS.length + TAX.length + FUND.length + PY.length + QUANT.length + AMI.length + SARB.length + RISK.length} chapters
           </span>
           <h1 className="reveal reveal-2 mt-6 text-4xl sm:text-5xl lg:text-6xl font-bold leading-[1.05] tracking-tight text-on-surface">
             Open{" "}
