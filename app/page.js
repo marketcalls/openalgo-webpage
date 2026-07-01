@@ -45,7 +45,6 @@ import {
   FlaskConical,
   Smartphone,
   Puzzle,
-  Database,
   Calculator,
   MessageCircle
 } from "lucide-react"
@@ -130,7 +129,6 @@ export default function Home() {
     { title: "OpenAlgo Charts", description: "Dependency-free HTML5 canvas charting engine (<50KB Brotli)", icon: LineChart, url: "https://github.com/marketcalls/openalgo-charts" },
     { title: "OpenStatz", description: "Portfolio analytics for quants - Quant Tearsheets", icon: PieChart, url: "https://github.com/marketcalls/openstatz" },
     { title: "OpenAlgo Heatmap", description: "Finviz-style market heatmap (React Component)", icon: LayoutGrid, url: "https://github.com/marketcalls/openalgo-heatmap" },
-    { title: "Historify", description: "Fullstack Stock Market Data Management Platform", icon: Database, url: "https://github.com/marketcalls/historify" },
     { title: "OpenQuest", description: "Realtime Stock Data Aggregator with TradingView Charts", icon: Activity, url: "https://github.com/marketcalls/openquest" },
     { title: "Marginism", description: "Offline SPAN margin calculator", icon: Calculator, url: "https://github.com/marketcalls/marginism" },
     { title: "Wars", description: "WhatsApp client for Python, powered by Rust. A thin PyO3 wrapper over whatsapp-rust", icon: MessageCircle, url: "https://github.com/marketcalls/wars" },
