@@ -78,7 +78,7 @@ export default function StatsArbCourseHome() {
             {CHAPTERS.length} chapters &middot; pairs to market-neutral &middot; real NSE data
           </span>
           <h1 className="reveal reveal-2 mt-6 max-w-3xl text-4xl sm:text-5xl lg:text-6xl font-bold leading-[1.05] tracking-tight text-on-surface">
-            <span className="bg-linear-to-r from-secondary via-primary to-tertiary bg-clip-text text-transparent">
+            <span className="text-on-surface ">
               Statistical
             </span>{" "}
             Arbitrage
@@ -110,7 +110,7 @@ export default function StatsArbCourseHome() {
               ["NSE", "Equity data"],
             ].map(([v, k]) => (
               <div key={k}>
-                <div className="text-3xl font-bold bg-linear-to-r from-secondary to-tertiary bg-clip-text text-transparent">
+                <div className="text-on-surface text-3xl font-bold">
                   {v}
                 </div>
                 <div className="font-label text-xs uppercase tracking-wider text-on-surface-variant/70">{k}</div>

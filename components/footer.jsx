@@ -2,20 +2,23 @@
 
 import { GitHubLogoIcon, DiscordLogoIcon } from '@radix-ui/react-icons'
 import { Twitter, Youtube } from 'lucide-react'
+import { useI18n } from './i18n/LanguageProvider'
 
 export function Footer() {
+  const { t } = useI18n()
+
   return (
-    <footer className="py-10 surface-low">
+    <footer className="border-t bg-background py-12">
       <div className="container mx-auto px-4">
         <div className="flex flex-col md:flex-row items-center justify-center gap-4 text-sm text-on-surface-variant">
           <div className="flex items-center gap-3">
             <span className="font-label text-label-md uppercase tracking-widest">
-              Copyright {new Date().getFullYear()}
+              {t('footer.copyright')} {new Date().getFullYear()}
             </span>
             <span className="hidden md:inline text-outline-variant">|</span>
             <a
               href="https://www.openalgo.in"
-              className="text-on-surface hover:text-primary transition-colors"
+              className="font-medium text-on-surface transition-colors hover:text-on-surface-variant"
               target="_blank"
               rel="noopener noreferrer"
             >
@@ -23,17 +26,17 @@ export function Footer() {
             </a>
           </div>
           <span className="hidden md:inline text-outline-variant">|</span>
-          <span>Open Source Algo Platform for Everyone</span>
+          <span>{t('footer.tagline')}</span>
           <span className="hidden md:inline text-outline-variant">|</span>
           <a
             href="/privacy-policy"
-            className="text-on-surface hover:text-primary transition-colors"
+            className="font-medium text-on-surface transition-colors hover:text-on-surface-variant"
           >
-            Privacy Policy
+            {t('footer.privacy')}
           </a>
           <span className="hidden md:inline text-outline-variant">|</span>
-          <span className="font-label text-label-md px-3 py-1 rounded-full surface-high text-on-surface-variant">
-            v2.0.1.4
+          <span className="rounded-full border px-3 py-1 font-label text-label-md text-on-surface-variant">
+            v2.0.16
           </span>
         </div>
 
@@ -49,10 +52,10 @@ export function Footer() {
               href={href}
               target="_blank"
               rel="noopener noreferrer"
-              className="p-2 rounded-lg text-on-surface-variant hover:text-primary hover:surface-high transition-all"
+              className="rounded-full border p-2.5 text-on-surface-variant transition-all hover:border-outline-variant hover:text-on-surface"
               aria-label={label}
             >
-              <Icon className="h-5 w-5" />
+              <Icon className="h-4 w-4" />
               <span className="sr-only">{label}</span>
             </a>
           ))}

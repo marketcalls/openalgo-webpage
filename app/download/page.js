@@ -1,6 +1,7 @@
 "use client"
 
 import { Button } from "@/components/ui/button"
+import { useI18n } from "@/components/i18n/LanguageProvider"
 import { Download, Laptop, Monitor, Terminal, ExternalLink, Github, Package, Chrome, FileSpreadsheet, GitBranch, BookOpen, Brain, Code2, Hexagon, Coffee, Hash, Wind, Plug, History, Zap, Layers, Bot, Smartphone, Globe, Puzzle, Gauge, TrendingUp } from "lucide-react"
 import { useState } from "react"
 
@@ -20,6 +21,7 @@ function ProjectIcon({ icon: Icon, index = 0 }) {
 }
 
 export default function DownloadPage() {
+  const { t } = useI18n()
   const [activePlatform, setActivePlatform] = useState("mac")
 
   const sdks = [
@@ -52,33 +54,33 @@ export default function DownloadPage() {
 
   const downloads = {
     mac: [
-      { platform: "Mac Universal", version: "v0.1.0", url: "https://github.com/marketcalls/fastscalper-tauri/releases/download/v0.1.0/fastscalper_0.1.0_universal.dmg", label: "Download DMG" },
-      { platform: "Mac Universal (Portable)", version: "v0.1.0", url: "https://github.com/marketcalls/fastscalper-tauri/releases/download/v0.1.0/fastscalper_0.1.0_universal_mac.zip", label: "Download ZIP" },
+      { platform: "Mac Universal", version: "v0.1.0", url: "https://github.com/marketcalls/fastscalper-tauri/releases/download/v0.1.0/fastscalper_0.1.0_universal.dmg", label: t('dl.downloadFmt').replace('{x}', "DMG") },
+      { platform: "Mac Universal (Portable)", version: "v0.1.0", url: "https://github.com/marketcalls/fastscalper-tauri/releases/download/v0.1.0/fastscalper_0.1.0_universal_mac.zip", label: t('dl.downloadFmt').replace('{x}', "ZIP") },
     ],
     linux: [
-      { platform: "Ubuntu / Debian", version: "v0.1.0", url: "https://github.com/marketcalls/fastscalper-tauri/releases/download/v0.1.0/fastscalper_0.1.0_amd64.deb", label: "Download DEB" },
-      { platform: "Fedora / Red Hat", version: "v0.1.0", url: "https://github.com/marketcalls/fastscalper-tauri/releases/download/v0.1.0/fastscalper-0.1.0-1.x86_64.rpm", label: "Download RPM" },
-      { platform: "AppImage", version: "v0.1.0", url: "https://github.com/marketcalls/fastscalper-tauri/releases/download/v0.1.0/fastscalper_0.1.0_amd64.AppImage", label: "Download AppImage" },
+      { platform: "Ubuntu / Debian", version: "v0.1.0", url: "https://github.com/marketcalls/fastscalper-tauri/releases/download/v0.1.0/fastscalper_0.1.0_amd64.deb", label: t('dl.downloadFmt').replace('{x}', "DEB") },
+      { platform: "Fedora / Red Hat", version: "v0.1.0", url: "https://github.com/marketcalls/fastscalper-tauri/releases/download/v0.1.0/fastscalper-0.1.0-1.x86_64.rpm", label: t('dl.downloadFmt').replace('{x}', "RPM") },
+      { platform: "AppImage", version: "v0.1.0", url: "https://github.com/marketcalls/fastscalper-tauri/releases/download/v0.1.0/fastscalper_0.1.0_amd64.AppImage", label: t('dl.downloadFmt').replace('{x}', "AppImage") },
     ],
     windows: [
-      { platform: "Windows (MSI)", version: "v0.1.0", url: "https://github.com/marketcalls/fastscalper-tauri/releases/download/v0.1.0/fastscalper_0.1.0_x64_en-US.msi", label: "Download MSI" },
-      { platform: "Windows (EXE)", version: "v0.1.0", url: "https://github.com/marketcalls/fastscalper-tauri/releases/download/v0.1.0/fastscalper_0.1.0_x64-setup.exe", label: "Download EXE" },
+      { platform: "Windows (MSI)", version: "v0.1.0", url: "https://github.com/marketcalls/fastscalper-tauri/releases/download/v0.1.0/fastscalper_0.1.0_x64_en-US.msi", label: t('dl.downloadFmt').replace('{x}', "MSI") },
+      { platform: "Windows (EXE)", version: "v0.1.0", url: "https://github.com/marketcalls/fastscalper-tauri/releases/download/v0.1.0/fastscalper_0.1.0_x64-setup.exe", label: t('dl.downloadFmt').replace('{x}', "EXE") },
     ]
   }
 
   return (
     <div className="container mx-auto px-4 py-16">
       <div className="max-w-6xl mx-auto">
-        <h1 className="text-display-md text-center mb-14 text-on-surface">Downloads</h1>
+        <h1 className="text-display-md text-center mb-14 text-on-surface">{t('dl.title')}</h1>
 
         {/* Mini FOSS Universe Section */}
         <div className="mb-20">
-          <h2 className="text-display-sm mb-3 text-center text-on-surface">Mini FOSS Universe</h2>
+          <h2 className="text-display-sm mb-3 text-center text-on-surface">{t('dl.fossTitle')}</h2>
           <p className="text-center text-on-surface-variant mb-6 max-w-3xl mx-auto">
-            A curated collection of open-source projects, SDKs, libraries, and integrations that extend the OpenAlgo ecosystem across languages, platforms, and workflows.
+            {t('dl.fossSub')}
           </p>
           <div className="flex flex-wrap justify-center gap-3 mb-10">
-            {["Modular", "Extensible", "Language-agnostic", "Production-ready"].map(tag => (
+            {[t('dl.tag1'), t('dl.tag2'), t('dl.tag3'), t('dl.tag4')].map(tag => (
               <span key={tag} className="px-4 py-1.5 surface-low rounded-full font-label text-label-md text-on-surface-variant">{tag}</span>
             ))}
           </div>
@@ -87,7 +89,7 @@ export default function DownloadPage() {
           <div className="mb-12">
             <h3 className="text-lg font-semibold mb-5 flex items-center justify-center gap-2">
               <Brain className="h-5 w-5 text-primary" />
-              <span className="font-label text-label-lg uppercase tracking-wider text-on-surface-variant">Core Project</span>
+              <span className="font-label text-label-lg uppercase tracking-wider text-on-surface-variant">{t('dl.coreLabel')}</span>
             </h3>
             <div className="flex justify-center">
               <a href="https://github.com/marketcalls/openalgo" target="_blank" rel="noopener noreferrer"
@@ -96,7 +98,7 @@ export default function DownloadPage() {
                   <h4 className="font-semibold text-on-surface">OpenAlgo Core</h4>
                   <ExternalLink className="h-4 w-4 text-on-surface-variant group-hover:text-primary transition-colors" />
                 </div>
-                <p className="text-sm text-on-surface-variant">Central heartbeat of the ecosystem - powering the API service, authentication, routing, and platform logic. All SDKs, libraries, and integrations interact with the API endpoints exposed by OpenAlgo Core.</p>
+                <p className="text-sm text-on-surface-variant">{t('dl.coreDesc')}</p>
               </a>
             </div>
           </div>
@@ -105,15 +107,16 @@ export default function DownloadPage() {
           <div className="mb-12">
             <h3 className="text-lg font-semibold mb-2 flex items-center gap-2">
               <Package className="h-5 w-5 text-primary" />
-              <span className="font-label text-label-lg uppercase tracking-wider text-on-surface-variant">SDKs</span>
+              <span className="font-label text-label-lg uppercase tracking-wider text-on-surface-variant">{t('dl.sdkLabel')}</span>
             </h3>
             <p className="text-sm text-on-surface-variant mb-5">
-              Official client packages for application development. Built against <strong className="text-on-surface">API v1</strong> - stable, backward-compatible, and recommended for production use.
+              {t('dl.sdkDescPre')} <strong className="text-on-surface">API v1</strong> {t('dl.sdkDescPost')}
             </p>
             <div className="grid gap-4 md:grid-cols-3 lg:grid-cols-5">
               {sdks.map((sdk, index) => (
-                <a key={index} href={sdk.url} target="_blank" rel="noopener noreferrer"
-                   className="obsidian-card p-5 rounded-xl hover-lift group ghost-border">
+                <div key={index} className="obsidian-card p-5 rounded-xl hover-lift group ghost-border relative">
+                  <a href={sdk.url} target="_blank" rel="noopener noreferrer"
+                     className="absolute inset-0 rounded-xl" aria-label={sdk.title} />
                   <div className="flex items-start justify-between mb-3">
                     <ProjectIcon icon={sdk.icon} index={index} />
                     <ExternalLink className="h-4 w-4 text-on-surface-variant group-hover:text-primary transition-colors" />
@@ -121,11 +124,11 @@ export default function DownloadPage() {
                   <h4 className="font-semibold mb-1 text-on-surface">{sdk.title}</h4>
                   {sdk.docs && (
                     <a href={sdk.docs} target="_blank" rel="noopener noreferrer"
-                       className="text-xs text-primary hover:underline font-label" onClick={(e) => e.stopPropagation()}>
-                      View Docs &rarr;
+                       className="relative z-10 text-xs text-primary hover:underline font-label">
+                      {t('dl.viewDocs')} &rarr;
                     </a>
                   )}
-                </a>
+                </div>
               ))}
             </div>
           </div>
@@ -134,15 +137,16 @@ export default function DownloadPage() {
           <div className="mb-12">
             <h3 className="text-lg font-semibold mb-2 flex items-center gap-2">
               <GitBranch className="h-5 w-5 text-primary" />
-              <span className="font-label text-label-lg uppercase tracking-wider text-on-surface-variant">Libraries & Platform Integrations</span>
+              <span className="font-label text-label-lg uppercase tracking-wider text-on-surface-variant">{t('dl.intLabel')}</span>
             </h3>
             <p className="text-sm text-on-surface-variant mb-5">
-              Tools that extend OpenAlgo support to popular trading platforms, analysis tools, and user interfaces.
+              {t('dl.intDesc')}
             </p>
             <div className="grid gap-4 md:grid-cols-3 lg:grid-cols-5">
               {integrations.map((item, index) => (
-                <a key={index} href={item.url} target="_blank" rel="noopener noreferrer"
-                   className="obsidian-card p-5 rounded-xl hover-lift group ghost-border">
+                <div key={index} className="obsidian-card p-5 rounded-xl hover-lift group ghost-border relative">
+                  <a href={item.url} target="_blank" rel="noopener noreferrer"
+                     className="absolute inset-0 rounded-xl" aria-label={item.title} />
                   <div className="flex items-start justify-between mb-3">
                     <ProjectIcon icon={item.icon} index={index} />
                     <ExternalLink className="h-4 w-4 text-on-surface-variant group-hover:text-primary transition-colors" />
@@ -150,11 +154,11 @@ export default function DownloadPage() {
                   <h4 className="font-semibold text-sm mb-1 text-on-surface">{item.title}</h4>
                   {item.docs && (
                     <a href={item.docs} target="_blank" rel="noopener noreferrer"
-                       className="text-xs text-primary hover:underline font-label" onClick={(e) => e.stopPropagation()}>
-                      View Docs &rarr;
+                       className="relative z-10 text-xs text-primary hover:underline font-label">
+                      {t('dl.viewDocs')} &rarr;
                     </a>
                   )}
-                </a>
+                </div>
               ))}
             </div>
           </div>
@@ -163,24 +167,24 @@ export default function DownloadPage() {
           <div className="mb-12 p-8 rounded-xl surface-low ghost-border">
             <h3 className="text-lg font-semibold mb-5 flex items-center gap-2">
               <BookOpen className="h-5 w-5 text-primary" />
-              <span className="text-on-surface">Documentation & Examples</span>
+              <span className="text-on-surface">{t('dl.docsTitle')}</span>
             </h3>
             <p className="text-sm text-on-surface-variant mb-5">
-              Each SDK and integration has dedicated documentation with installation steps, configuration guidance, and working examples.
+              {t('dl.docsDesc')}
             </p>
             <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-4">
               {[
-                { icon: Code2, label: "Python Docs", url: "https://docs.openalgo.in/trading-platform/python" },
-                { icon: Hexagon, label: "Node.js Docs", url: "https://docs.openalgo.in/trading-platform/nodejs" },
-                { icon: Coffee, label: "Java Docs", url: "https://docs.openalgo.in/trading-platform/java" },
-                { icon: Hash, label: ".NET Docs", url: "https://docs.openalgo.in/trading-platform/.net" },
-                { icon: Wind, label: "Go Docs", url: "https://docs.openalgo.in/trading-platform/go" },
-                { icon: FileSpreadsheet, label: "Excel Docs", url: "https://docs.openalgo.in/trading-platform/excel" },
-                { icon: Plug, label: "Amibroker Docs", url: "https://docs.openalgo.in/trading-platform/amibroker/amibroker-plugin" },
-                { icon: Bot, label: "MCP / AI Docs", url: "https://docs.openalgo.in/mcp" },
-              ].map(({ icon: Icon, label, url }) => (
-                <a key={label} href={url} target="_blank" rel="noopener noreferrer" className="text-sm text-primary hover:underline flex items-center gap-2 font-label">
-                  <Icon className="h-4 w-4" /> {label}
+                { icon: Code2, name: "Python", url: "https://docs.openalgo.in/trading-platform/python" },
+                { icon: Hexagon, name: "Node.js", url: "https://docs.openalgo.in/trading-platform/nodejs" },
+                { icon: Coffee, name: "Java", url: "https://docs.openalgo.in/trading-platform/java" },
+                { icon: Hash, name: ".NET", url: "https://docs.openalgo.in/trading-platform/.net" },
+                { icon: Wind, name: "Go", url: "https://docs.openalgo.in/trading-platform/go" },
+                { icon: FileSpreadsheet, name: "Excel", url: "https://docs.openalgo.in/trading-platform/excel" },
+                { icon: Plug, name: "Amibroker", url: "https://docs.openalgo.in/trading-platform/amibroker/amibroker-plugin" },
+                { icon: Bot, name: "MCP / AI", url: "https://docs.openalgo.in/mcp" },
+              ].map(({ icon: Icon, name, url }) => (
+                <a key={name} href={url} target="_blank" rel="noopener noreferrer" className="text-sm text-primary hover:underline flex items-center gap-2 font-label">
+                  <Icon className="h-4 w-4" /> {t('dl.docsLinkLabel').replace('{x}', name)}
                 </a>
               ))}
             </div>
@@ -191,12 +195,12 @@ export default function DownloadPage() {
             <div className="absolute inset-0 bg-linear-to-r from-primary/5 via-secondary/5 to-tertiary/5" />
             <div className="relative z-10">
               <p className="text-on-surface-variant mb-5 max-w-2xl mx-auto">
-                The Mini FOSS Universe reflects OpenAlgo's core philosophy: <strong className="text-on-surface">open standards, transparent design, and tools that adapt to how traders actually work.</strong>
+                {t('dl.philLead')} <strong className="text-on-surface">{t('dl.philStrong')}</strong>
               </p>
               <Button variant="outline" size="lg" asChild>
                 <a href="https://github.com/marketcalls" target="_blank" rel="noopener noreferrer">
                   <Github className="mr-2 h-4 w-4" />
-                  Explore All Projects on GitHub
+                  {t('dl.exploreGithub')}
                 </a>
               </Button>
             </div>
@@ -207,17 +211,17 @@ export default function DownloadPage() {
         <div className="mb-16 p-8 rounded-xl surface-container ghost-border">
           <h3 className="text-lg font-semibold mb-3 flex items-center text-on-surface">
             <ExternalLink className="h-5 w-5 mr-2 text-primary" />
-            Important Requirements
+            {t('dl.reqTitle')}
           </h3>
           <p className="text-on-surface mb-4">
-            <strong>FastScalper, Chrome Plugin, and Excel Add-ins require:</strong>
+            <strong>{t('dl.reqLead')}</strong>
           </p>
           <ul className="space-y-2 text-on-surface-variant">
             {[
-              "A running OpenAlgo instance (self-hosted or cloud)",
-              "Valid API key generated from your OpenAlgo dashboard",
-              "Proper host URL configuration pointing to your OpenAlgo instance",
-              "Active broker connection configured in OpenAlgo"
+              t('dl.req1'),
+              t('dl.req2'),
+              t('dl.req3'),
+              t('dl.req4')
             ].map(item => (
               <li key={item} className="flex items-start gap-3">
                 <span className="w-1.5 h-1.5 rounded-full bg-primary mt-2 shrink-0" />
@@ -226,22 +230,21 @@ export default function DownloadPage() {
             ))}
           </ul>
           <p className="mt-4 text-sm text-on-surface-variant">
-            Make sure OpenAlgo is running and accessible before using these tools.
-            You can generate API keys from Settings &rarr; API Key Management in your OpenAlgo dashboard.
+            {t('dl.reqNote')}
           </p>
         </div>
 
         {/* FastScalper Section */}
         <div className="mb-16">
           <h2 className="text-display-sm text-center mb-10 text-on-surface">
-            FastScalper <span className="text-primary">Desktop</span>
+            FastScalper <span className="text-primary">{t('dl.fsDesktop')}</span>
           </h2>
 
           <div className="rounded-xl surface-low p-8 ghost-border">
             <div className="flex justify-between items-center mb-8">
-              <h3 className="text-headline-sm text-on-surface">Available Downloads</h3>
+              <h3 className="text-headline-sm text-on-surface">{t('dl.fsAvailable')}</h3>
               <span className="font-label text-label-md px-3 py-1.5 rounded-full surface-container text-on-surface-variant">
-                Version 0.1.0
+                {t('dl.versionLabel').replace('{n}', "0.1.0")}
               </span>
             </div>
 
@@ -281,13 +284,13 @@ export default function DownloadPage() {
 
           {/* FastScalper Features */}
           <div className="mt-12">
-            <h3 className="text-headline-md mb-8 text-on-surface">FastScalper Features</h3>
+            <h3 className="text-headline-md mb-8 text-on-surface">{t('dl.fsFeatures')}</h3>
             <div className="grid md:grid-cols-2 gap-6">
               {[
-                { title: "Cross-Platform Compatibility", items: ["Windows: Multiple instances for tracking various instruments", "macOS: Compatible with Intel and Apple Silicon", "Linux: Available for Ubuntu, Debian, and Fedora"] },
-                { title: "Robust Order Management", items: ["Support for CNC, MIS, and NRML product types", "Easy-to-use controls (L, LX, SE, SX)", "Voice alerts for order confirmation"] },
-                { title: "Seamless Integration", items: ["Connects to OpenAlgo via API key", "Real-time order monitoring", "Compatible with all trading terminals"] },
-                { title: "Customizable Settings", items: ["API key and host URL configuration", "Exchange and product setup options", "Configurable voice alerts"] },
+                { title: t('dl.fsF1t'), items: [t('dl.fsF1i1'), t('dl.fsF1i2'), t('dl.fsF1i3')] },
+                { title: t('dl.fsF2t'), items: [t('dl.fsF2i1'), t('dl.fsF2i2'), t('dl.fsF2i3')] },
+                { title: t('dl.fsF3t'), items: [t('dl.fsF3i1'), t('dl.fsF3i2'), t('dl.fsF3i3')] },
+                { title: t('dl.fsF4t'), items: [t('dl.fsF4i1'), t('dl.fsF4i2'), t('dl.fsF4i3')] },
               ].map(({ title, items }) => (
                 <div key={title} className="obsidian-card p-6 rounded-xl ghost-border">
                   <h4 className="text-lg font-semibold mb-4 text-on-surface">{title}</h4>
@@ -304,7 +307,7 @@ export default function DownloadPage() {
             </div>
             <div className="mt-10 text-center">
               <Button size="lg" asChild>
-                <a href="/fastscalper">Learn More About FastScalper</a>
+                <a href="/fastscalper">{t('dl.fsLearnMore')}</a>
               </Button>
             </div>
           </div>
@@ -314,19 +317,18 @@ export default function DownloadPage() {
         <div className="mb-16">
           <h2 className="text-display-sm text-center mb-10 text-on-surface">
             <Chrome className="inline h-8 w-8 mr-3 text-primary" />
-            Chrome Plugin
+            {t('dl.chromeTitle')}
           </h2>
 
           <div className="rounded-xl surface-low p-8 ghost-border">
             <div className="grid md:grid-cols-7 gap-10">
               <div className="md:col-span-4">
-                <h3 className="text-lg font-semibold mb-4 text-on-surface">About Chrome Plugin</h3>
+                <h3 className="text-lg font-semibold mb-4 text-on-surface">{t('dl.chromeAbout')}</h3>
                 <p className="text-on-surface-variant mb-5 leading-relaxed">
-                  The OpenAlgo Chrome Plugin allows you to trade directly from your browser.
-                  Perfect for quick order placement while analyzing charts or reading market news.
+                  {t('dl.chromeDesc')}
                 </p>
                 <ul className="space-y-2 text-on-surface-variant">
-                  {["Quick order placement from any webpage", "Secure API key storage", "Support for all OpenAlgo-compatible brokers", "Real-time order status updates"].map(item => (
+                  {[t('dl.chromeB1'), t('dl.chromeB2'), t('dl.chromeB3'), t('dl.chromeB4')].map(item => (
                     <li key={item} className="flex items-start gap-3">
                       <span className="w-1.5 h-1.5 rounded-full bg-tertiary mt-2 shrink-0" />
                       <span className="text-sm">{item}</span>
@@ -335,27 +337,27 @@ export default function DownloadPage() {
                 </ul>
               </div>
               <div className="md:col-span-3">
-                <h3 className="text-lg font-semibold mb-4 text-on-surface">Download & Installation</h3>
+                <h3 className="text-lg font-semibold mb-4 text-on-surface">{t('dl.chromeDlTitle')}</h3>
                 <div className="space-y-5">
                   <div className="p-5 rounded-xl surface-container">
                     <div className="flex items-center justify-between mb-3">
-                      <span className="font-label text-label-lg text-on-surface">Version 1.0</span>
-                      <span className="font-label text-label-md text-tertiary">Latest</span>
+                      <span className="font-label text-label-lg text-on-surface">{t('dl.versionLabel').replace('{n}', "1.0")}</span>
+                      <span className="font-label text-label-md text-tertiary">{t('dl.latest')}</span>
                     </div>
                     <Button className="w-full" asChild>
                       <a href="https://github.com/marketcalls/openalgo-chrome/releases/tag/v1.0" target="_blank" rel="noopener noreferrer">
                         <Download className="mr-2 h-4 w-4" />
-                        Download Chrome Extension
+                        {t('dl.chromeDlBtn')}
                       </a>
                     </Button>
                   </div>
                   <div className="text-sm text-on-surface-variant">
-                    <p className="mb-2 font-label text-label-lg text-on-surface">Installation Steps:</p>
+                    <p className="mb-2 font-label text-label-lg text-on-surface">{t('dl.chromeStepsTitle')}</p>
                     <ol className="list-decimal list-inside space-y-1.5">
-                      <li>Download the extension package</li>
-                      <li>Open Chrome Extensions (chrome://extensions/)</li>
-                      <li>Enable Developer Mode</li>
-                      <li>Load unpacked extension</li>
+                      <li>{t('dl.chromeS1')}</li>
+                      <li>{t('dl.chromeS2')}</li>
+                      <li>{t('dl.chromeS3')}</li>
+                      <li>{t('dl.chromeS4')}</li>
                     </ol>
                   </div>
                 </div>
@@ -368,19 +370,18 @@ export default function DownloadPage() {
         <div>
           <h2 className="text-display-sm text-center mb-10 text-on-surface">
             <FileSpreadsheet className="inline h-8 w-8 mr-3 text-primary" />
-            Excel Add-in
+            {t('dl.excelTitle')}
           </h2>
 
           <div className="rounded-xl surface-low p-8 ghost-border">
             <div className="grid md:grid-cols-7 gap-10">
               <div className="md:col-span-4">
-                <h3 className="text-lg font-semibold mb-4 text-on-surface">About Excel Add-in</h3>
+                <h3 className="text-lg font-semibold mb-4 text-on-surface">{t('dl.excelAbout')}</h3>
                 <p className="text-on-surface-variant mb-5 leading-relaxed">
-                  Trade directly from Microsoft Excel with the OpenAlgo Excel Add-in.
-                  Perfect for traders who prefer spreadsheet-based trading and analysis.
+                  {t('dl.excelDesc')}
                 </p>
                 <ul className="space-y-2 text-on-surface-variant">
-                  {["Place orders directly from Excel cells", "Real-time position and order tracking", "Custom formulas for trading automation", "Portfolio management in spreadsheets", "Works with Excel 2016 and later"].map(item => (
+                  {[t('dl.excelB1'), t('dl.excelB2'), t('dl.excelB3'), t('dl.excelB4'), t('dl.excelB5')].map(item => (
                     <li key={item} className="flex items-start gap-3">
                       <span className="w-1.5 h-1.5 rounded-full bg-tertiary mt-2 shrink-0" />
                       <span className="text-sm">{item}</span>
@@ -389,24 +390,24 @@ export default function DownloadPage() {
                 </ul>
               </div>
               <div className="md:col-span-3">
-                <h3 className="text-lg font-semibold mb-4 text-on-surface">Download & Setup</h3>
+                <h3 className="text-lg font-semibold mb-4 text-on-surface">{t('dl.excelDlTitle')}</h3>
                 <div className="space-y-5">
                   <div className="p-5 rounded-xl surface-container">
                     <div className="flex items-center justify-between mb-3">
-                      <span className="font-label text-label-lg text-on-surface">Version 1.0.1</span>
-                      <span className="font-label text-label-md text-tertiary">Latest</span>
+                      <span className="font-label text-label-lg text-on-surface">{t('dl.versionLabel').replace('{n}', "1.0.1")}</span>
+                      <span className="font-label text-label-md text-tertiary">{t('dl.latest')}</span>
                     </div>
                     <Button className="w-full" asChild>
                       <a href="https://github.com/marketcalls/OpenAlgo-Excel/releases/tag/v1.0.1" target="_blank" rel="noopener noreferrer">
                         <Download className="mr-2 h-4 w-4" />
-                        Download Excel Add-in
+                        {t('dl.excelDlBtn')}
                       </a>
                     </Button>
                   </div>
                   <div className="text-sm text-on-surface-variant">
-                    <p className="mb-2 font-label text-label-lg text-on-surface">Requirements:</p>
+                    <p className="mb-2 font-label text-label-lg text-on-surface">{t('dl.excelReqTitle')}</p>
                     <ul className="space-y-1.5">
-                      {["Microsoft Excel 2016 or later", "Windows 10/11 or macOS", "OpenAlgo instance running", "Valid API credentials"].map(item => (
+                      {[t('dl.excelR1'), t('dl.excelR2'), t('dl.excelR3'), t('dl.excelR4')].map(item => (
                         <li key={item} className="flex items-start gap-3">
                           <span className="w-1.5 h-1.5 rounded-full bg-primary mt-2 shrink-0" />
                           <span>{item}</span>

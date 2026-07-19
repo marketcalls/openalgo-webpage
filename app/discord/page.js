@@ -1,8 +1,10 @@
 "use client"
 
 import { useEffect } from "react"
+import { useI18n } from "@/components/i18n/LanguageProvider"
 
 export default function DiscordRedirect() {
+  const { t } = useI18n()
   const DISCORD_URL = "https://discord.com/invite/UPh7QPsNhP"
 
   useEffect(() => {
@@ -12,10 +14,10 @@ export default function DiscordRedirect() {
   return (
     <div className="flex min-h-screen items-center justify-center">
       <div className="text-center">
-        <h1 className="text-headline-md mb-4 text-on-surface">Redirecting to Discord...</h1>
+        <h1 className="text-headline-md mb-4 text-on-surface">{t('disc.redirecting')}</h1>
         <p className="text-on-surface-variant">
-          If you are not redirected automatically,{" "}
-          <a href={DISCORD_URL} className="text-primary hover:underline">click here</a>
+          {t('disc.fallback')}{" "}
+          <a href={DISCORD_URL} className="text-primary hover:underline">{t('disc.clickHere')}</a>
         </p>
       </div>
     </div>

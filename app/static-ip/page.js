@@ -1,6 +1,7 @@
 "use client"
 
 import { Button } from "@/components/ui/button"
+import { useI18n } from "@/components/i18n/LanguageProvider"
 import {
   ArrowRight,
   CheckCircle2,
@@ -59,20 +60,22 @@ function ExpandableCard({ title, icon: Icon, children, defaultOpen = false }) {
 }
 
 export default function StaticIPPage() {
+  const { t } = useI18n()
+
   const vpsProviders = [
-    { name: "Vultr", type: "VPS", note: "Hourly billing, Mumbai datacenter available" },
-    { name: "DigitalOcean", type: "VPS", note: "Droplets, good documentation" },
-    { name: "Contabo", type: "VPS", note: "Very cheap, shared CPU" },
-    { name: "Hostinger", type: "VPS", note: "Budget friendly, monthly billing" },
-    { name: "Linode", type: "VPS", note: "Reliable, developer friendly" },
-    { name: "OVH", type: "VPS", note: "European provider, good pricing" },
+    { name: "Vultr", type: "VPS", note: t('sip.srv.vultrNote') },
+    { name: "DigitalOcean", type: "VPS", note: t('sip.srv.doNote') },
+    { name: "Contabo", type: "VPS", note: t('sip.srv.contaboNote') },
+    { name: "Hostinger", type: "VPS", note: t('sip.srv.hostingerNote') },
+    { name: "Linode", type: "VPS", note: t('sip.srv.linodeNote') },
+    { name: "OVH", type: "VPS", note: t('sip.srv.ovhNote') },
   ]
 
   const cloudProviders = [
-    { name: "Amazon AWS", note: "Use Elastic IP for static IPv4.", cost: "~$3.60/month", detail: "Charged at $0.005/hr whether attached or not. First Elastic IP on a running instance was previously free but now incurs charges." },
-    { name: "Google Cloud", note: "Reserve an External Static IP via VPC Network.", cost: "~$3.65/month", detail: "Charged at $0.005/hr when attached to a running VM. Unused reserved IPs cost $0.01/hr (~$7.30/month)." },
-    { name: "Microsoft Azure", note: "Use a Static Public IP address resource.", cost: "~$3.72/month", detail: "Standard SKU at $0.005/hr. Charged regardless of whether the resource is active or not." },
-    { name: "Oracle Cloud", note: "Use a Reserved Public IP.", cost: "Free", detail: "Reserved public IPs are free. Always-free tier includes 1 reserved public IP + free ARM VM shapes." },
+    { name: "Amazon AWS", note: t('sip.srv.awsNote'), cost: t('sip.srv.awsCost'), detail: t('sip.srv.awsDetail') },
+    { name: "Google Cloud", note: t('sip.srv.gcpNote'), cost: t('sip.srv.gcpCost'), detail: t('sip.srv.gcpDetail') },
+    { name: "Microsoft Azure", note: t('sip.srv.azureNote'), cost: t('sip.srv.azureCost'), detail: t('sip.srv.azureDetail') },
+    { name: "Oracle Cloud", note: t('sip.srv.oracleNote'), cost: t('sip.srv.oracleCost'), detail: t('sip.srv.oracleDetail'), free: true },
   ]
 
   return (
@@ -84,24 +87,23 @@ export default function StaticIPPage() {
           <div className="inline-flex items-center gap-2 px-3 sm:px-4 py-1.5 sm:py-2 mb-6 sm:mb-8 rounded-full surface-low ghost-border">
             <Network className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-primary" />
             <span className="font-label text-label-sm sm:text-label-md uppercase tracking-wider text-on-surface-variant">
-              Infrastructure Guide
+              {t('sip.hero.badge')}
             </span>
           </div>
 
           <h1 className="text-display-md sm:text-display-lg md:text-[4rem] leading-[1.1] mb-4 sm:mb-6 tracking-tight">
-            <span className="block text-on-surface">Static IP &</span>
-            <span className="bg-clip-text text-transparent bg-linear-to-r from-primary via-secondary to-tertiary animate-gradient">
-              Server Hosting
+            <span className="block text-on-surface">{t('sip.hero.h1a')}</span>
+            <span className="text-on-surface ">
+              {t('sip.hero.h1b')}
             </span>
           </h1>
 
           <p className="text-base sm:text-lg text-on-surface-variant max-w-2xl mx-auto mb-8 sm:mb-10 leading-relaxed">
-            Everything you need to know about SEBI&apos;s static IP compliance,
-            deploying OpenAlgo on your own server, and securing your trading infrastructure.
+            {t('sip.hero.desc')}
           </p>
 
           <div className="flex flex-wrap justify-center gap-2 sm:gap-3">
-            {["SEBI compliance ready", "Step by step server setup", "Security best practices"].map(tag => (
+            {[t('sip.hero.tag1'), t('sip.hero.tag2'), t('sip.hero.tag3')].map(tag => (
               <span key={tag} className="px-3 sm:px-4 py-1.5 sm:py-2 surface-low rounded-full font-label text-label-sm sm:text-label-md text-on-surface-variant ghost-border">
                 <CheckCircle2 className="w-3 h-3 sm:w-3.5 sm:h-3.5 inline mr-1 sm:mr-1.5 text-tertiary" />
                 {tag}
@@ -115,28 +117,26 @@ export default function StaticIPPage() {
       <div className="py-12 sm:py-16 md:py-20 surface-low">
         <div className="container max-w-4xl px-4 sm:px-6">
           <div className="text-center mb-10 sm:mb-14">
-            <h2 className="text-headline-lg sm:text-display-sm mb-3 sm:mb-4 text-on-surface">What is Static IP Compliance?</h2>
+            <h2 className="text-headline-lg sm:text-display-sm mb-3 sm:mb-4 text-on-surface">{t('sip.s1.title')}</h2>
             <p className="text-base sm:text-lg text-on-surface-variant max-w-2xl mx-auto">
-              SEBI requires all retail algo traders to route orders through a fixed IP address.
+              {t('sip.s1.sub')}
             </p>
           </div>
 
           <div className="obsidian-card rounded-xl sm:rounded-2xl p-5 sm:p-8 md:p-10 ghost-border mb-8 sm:mb-10">
             <p className="text-base sm:text-lg leading-relaxed text-on-surface mb-4 sm:mb-6">
-              From <strong className="text-primary">1st April 2026</strong>, every retail algo trader using broker APIs
-              must ensure their orders originate from a whitelisted static IP address. This applies to anyone
-              managing their own strategies, bots, or trading infrastructure.
+              {t('sip.s1.introA')}{" "}<strong className="text-primary">{t('sip.s1.introDate')}</strong>{t('sip.s1.introB')}
             </p>
             <div className="rounded-lg sm:rounded-xl surface-container p-4 sm:p-6 mb-6">
-              <p className="font-label text-label-md sm:text-label-lg text-primary mb-3 sm:mb-4 uppercase tracking-wider">Key Rules</p>
+              <p className="font-label text-label-md sm:text-label-lg text-primary mb-3 sm:mb-4 uppercase tracking-wider">{t('sip.s1.keyRules')}</p>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 {[
-                  "Orders must originate from a whitelisted static IP",
-                  "Brokers provide primary + secondary IP slots",
-                  "IPs can only be changed once per week",
-                  "10 orders per second limit for retail traders",
-                  "Daily login required (tokens expire nightly)",
-                  "Manual trading via broker app/web is unaffected",
+                  t('sip.s1.rule1'),
+                  t('sip.s1.rule2'),
+                  t('sip.s1.rule3'),
+                  t('sip.s1.rule4'),
+                  t('sip.s1.rule5'),
+                  t('sip.s1.rule6'),
                 ].map(rule => (
                   <div key={rule} className="flex items-start gap-2">
                     <CheckCircle2 className="w-4 h-4 text-tertiary mt-1 shrink-0" />
@@ -148,17 +148,16 @@ export default function StaticIPPage() {
 
             <div className="grid sm:grid-cols-2 gap-4">
               <div className="rounded-xl surface-container p-4 sm:p-5">
-                <p className="font-semibold text-on-surface mb-2 text-sm sm:text-base">Transactional APIs</p>
+                <p className="font-semibold text-on-surface mb-2 text-sm sm:text-base">{t('sip.s1.txnTitle')}</p>
                 <p className="text-xs sm:text-sm text-on-surface-variant">
-                  Placing, modifying, cancelling orders, basket orders, split orders.
-                  <strong className="text-on-surface"> Static IP mandatory.</strong>
+                  {t('sip.s1.txnDesc')}
+                  <strong className="text-on-surface"> {t('sip.s1.txnMandatory')}</strong>
                 </p>
               </div>
               <div className="rounded-xl surface-container p-4 sm:p-5">
-                <p className="font-semibold text-on-surface mb-2 text-sm sm:text-base">Non-Transactional APIs</p>
+                <p className="font-semibold text-on-surface mb-2 text-sm sm:text-base">{t('sip.s1.nonTxnTitle')}</p>
                 <p className="text-xs sm:text-sm text-on-surface-variant">
-                  Market data, funds, order book, positions, holdings.
-                  Rules vary by broker. Some require static IP, some don&apos;t.
+                  {t('sip.s1.nonTxnDesc')}
                 </p>
               </div>
             </div>
@@ -168,20 +167,19 @@ export default function StaticIPPage() {
           <div className="obsidian-card rounded-xl sm:rounded-2xl p-5 sm:p-8 ghost-border mb-8 sm:mb-10">
             <h3 className="text-base sm:text-lg font-semibold text-on-surface mb-3 flex items-center gap-2">
               <Monitor className="w-4 h-4 sm:w-5 sm:h-5 text-primary" />
-              Who is a &quot;Tech-Savvy Trader&quot;?
+              {t('sip.tech.title')}
             </h3>
             <p className="text-sm text-on-surface-variant leading-relaxed mb-4">
-              SEBI classifies retail algo traders who manage their own infrastructure as &quot;tech-savvy investors.&quot;
-              This applies to you if:
+              {t('sip.tech.intro')}
             </p>
             <div className="grid sm:grid-cols-2 gap-2 mb-4">
               {[
-                "You manage your own trading bots or strategies",
-                "You run code from Python, TradingView, Amibroker, etc.",
-                "You use a broker API to place orders programmatically",
-                "You host your own application on a server or desktop",
-                "You use tools like OpenAlgo for order routing",
-                "You maintain your own source code and infrastructure",
+                t('sip.tech.i1'),
+                t('sip.tech.i2'),
+                t('sip.tech.i3'),
+                t('sip.tech.i4'),
+                t('sip.tech.i5'),
+                t('sip.tech.i6'),
               ].map(item => (
                 <div key={item} className="flex items-start gap-2 text-sm">
                   <CheckCircle2 className="w-3.5 h-3.5 text-tertiary mt-0.5 shrink-0" />
@@ -190,9 +188,7 @@ export default function StaticIPPage() {
               ))}
             </div>
             <p className="text-xs text-on-surface-variant">
-              As long as your orders stay under 10 per second, you don&apos;t need exchange registration.
-              Beyond that threshold, you need to register with the exchange and get an algo ID assigned.
-              Most brokers handle the algo ID assignment on your behalf.
+              {t('sip.tech.note')}
             </p>
           </div>
 
@@ -203,26 +199,16 @@ export default function StaticIPPage() {
                 <Key className="h-5 w-5 sm:h-6 sm:w-6 text-primary" />
               </div>
               <div>
-                <h3 className="text-base sm:text-lg font-semibold text-on-surface mb-2">How Broker Whitelisting Works</h3>
+                <h3 className="text-base sm:text-lg font-semibold text-on-surface mb-2">{t('sip.wl.title')}</h3>
                 <p className="text-sm sm:text-base text-on-surface-variant leading-relaxed mb-3">
-                  When creating API keys in your broker&apos;s developer portal, you attach your static IP.
-                  The broker only accepts orders arriving from that IP. Each broker&apos;s interface is slightly
-                  different, but the concept is the same: API key + API secret + whitelisted IP.
+                  {t('sip.wl.p1')}
                 </p>
                 <p className="text-sm text-on-surface-variant leading-relaxed mb-3">
-                  Most brokers allow only <strong className="text-on-surface">one API key</strong> with a
-                  primary and secondary IP slot. Only a few selected brokers allow multiple API key generation
-                  at their developer portal, but even then, only primary and secondary IPs are supported.
-                  Once set, you can only change your static IP <strong className="text-on-surface">after one week</strong>.
-                  Plan your infrastructure carefully before whitelisting.
+                  {t('sip.wl.p2a')}{" "}<strong className="text-on-surface">{t('sip.wl.p2b')}</strong>{" "}{t('sip.wl.p2c')}{" "}<strong className="text-on-surface">{t('sip.wl.p2d')}</strong>{t('sip.wl.p2e')}
                 </p>
                 <div className="rounded-xl bg-destructive/5 p-4 border-l-4 border-l-destructive mt-3">
                   <p className="text-sm text-on-surface-variant">
-                    <strong className="text-on-surface">Avoid dynamic IPs.</strong> Your home internet likely uses a
-                    dynamic IP that changes without notice. It may work temporarily, but you never know when
-                    it will change. A single IP change means your orders get rejected by the broker until you
-                    update and wait a week. Talk to your ISP and get a static IP, or switch to an ISP that
-                    supports static IP. Using a VPS server is the most reliable option as static IPs are included by default.
+                    <strong className="text-on-surface">{t('sip.wl.warnTitle')}</strong>{" "}{t('sip.wl.warnDesc')}
                   </p>
                 </div>
               </div>
@@ -238,13 +224,12 @@ export default function StaticIPPage() {
             <div className="inline-flex items-center gap-2 px-3 sm:px-4 py-1.5 sm:py-2 mb-4 sm:mb-6 rounded-full surface-low ghost-border">
               <Play className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-primary" />
               <span className="font-label text-label-sm sm:text-label-md uppercase tracking-wider text-on-surface-variant">
-                Video Walkthrough
+                {t('sip.video.badge')}
               </span>
             </div>
-            <h2 className="text-headline-lg sm:text-display-sm mb-3 sm:mb-4 text-on-surface">Watch the Full Setup Guide</h2>
+            <h2 className="text-headline-lg sm:text-display-sm mb-3 sm:mb-4 text-on-surface">{t('sip.video.title')}</h2>
             <p className="text-base sm:text-lg text-on-surface-variant max-w-2xl mx-auto">
-              A complete walkthrough covering static IP compliance, server deployment,
-              Cloudflare setup, and OpenAlgo installation on Ubuntu.
+              {t('sip.video.sub')}
             </p>
           </div>
 
@@ -253,29 +238,29 @@ export default function StaticIPPage() {
               <iframe
                 className="absolute inset-0 w-full h-full"
                 src="https://www.youtube.com/embed/RhCzFg5FMmA"
-                title="OpenAlgo Static IP & Server Hosting Guide"
+                title={t('sip.video.iframeTitle')}
                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
                 allowFullScreen
               />
             </div>
             <div className="p-4 sm:p-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-4">
               <div>
-                <p className="font-semibold text-sm sm:text-base text-on-surface">Static IP, Server Hosting & SEBI Compliance</p>
+                <p className="font-semibold text-sm sm:text-base text-on-surface">{t('sip.video.cardTitle')}</p>
                 <p className="text-xs sm:text-sm text-on-surface-variant mt-1">
-                  Full session: domain setup, Cloudflare, VPS deployment, OpenAlgo installation & more
+                  {t('sip.video.cardSub')}
                 </p>
               </div>
               <div className="flex gap-2 sm:gap-3 shrink-0">
                 <Button variant="outline" size="sm" asChild>
                   <a href="https://docs.openalgo.in/getting-started" target="_blank" rel="noopener noreferrer">
                     <BookOpen className="w-3.5 h-3.5 sm:w-4 sm:h-4 mr-1.5" />
-                    Docs
+                    {t('sip.video.docs')}
                   </a>
                 </Button>
                 <Button variant="outline" size="sm" asChild>
                   <a href="https://github.com/marketcalls/openalgo" target="_blank" rel="noopener noreferrer">
                     <Github className="w-3.5 h-3.5 sm:w-4 sm:h-4 mr-1.5" />
-                    GitHub
+                    {t('sip.video.github')}
                   </a>
                 </Button>
               </div>
@@ -288,9 +273,9 @@ export default function StaticIPPage() {
       <div className="py-12 sm:py-16 md:py-20 surface-low">
         <div className="container max-w-4xl px-4 sm:px-6">
           <div className="text-center mb-10 sm:mb-14">
-            <h2 className="text-headline-lg sm:text-display-sm mb-3 sm:mb-4 text-on-surface">Ways to Get a Static IP</h2>
+            <h2 className="text-headline-lg sm:text-display-sm mb-3 sm:mb-4 text-on-surface">{t('sip.ways.title')}</h2>
             <p className="text-base sm:text-lg text-on-surface-variant max-w-2xl mx-auto">
-              Three approaches depending on your setup and budget.
+              {t('sip.ways.sub')}
             </p>
           </div>
 
@@ -298,27 +283,27 @@ export default function StaticIPPage() {
             {[
               {
                 icon: Server,
-                title: "VPS / Cloud Server",
-                desc: "Deploy a server with a VPS provider. Static IP included by default. Best for reliability and 24/7 uptime.",
-                tag: "Recommended",
+                title: t('sip.ways.o1Title'),
+                desc: t('sip.ways.o1Desc'),
+                tag: t('sip.ways.o1Tag'),
                 tagColor: "bg-tertiary/10 text-tertiary",
-                items: ["Static IP included free", "24/7 uptime", "Mumbai datacenter options", "Starting from ~\u20B9500/month"]
+                items: [t('sip.ways.o1i1'), t('sip.ways.o1i2'), t('sip.ways.o1i3'), t('sip.ways.o1i4')]
               },
               {
                 icon: Wifi,
-                title: "Home ISP",
-                desc: "Request a static IP from your internet service provider (Jio, Airtel, ACT, Tata, etc). Good if you run OpenAlgo on your desktop.",
-                tag: "Desktop Users",
+                title: t('sip.ways.o2Title'),
+                desc: t('sip.ways.o2Desc'),
+                tag: t('sip.ways.o2Tag'),
                 tagColor: "bg-secondary/10 text-secondary",
-                items: ["Contact your ISP", "Monthly fee varies", "Run on desktop/laptop", "No server management needed"]
+                items: [t('sip.ways.o2i1'), t('sip.ways.o2i2'), t('sip.ways.o2i3'), t('sip.ways.o2i4')]
               },
               {
                 icon: Cloud,
-                title: "Cloud Hyperscalers",
-                desc: "AWS, Google Cloud, Azure, Oracle. More powerful but static IP may be charged separately.",
-                tag: "Advanced",
+                title: t('sip.ways.o3Title'),
+                desc: t('sip.ways.o3Desc'),
+                tag: t('sip.ways.o3Tag'),
                 tagColor: "bg-primary/10 text-primary",
-                items: ["Free tier available", "Static IP charged extra", "Enterprise grade infra", "More complex setup"]
+                items: [t('sip.ways.o3i1'), t('sip.ways.o3i2'), t('sip.ways.o3i3'), t('sip.ways.o3i4')]
               },
             ].map((option, i) => (
               <div key={i} className="obsidian-card rounded-xl p-5 sm:p-6 ghost-border hover-lift">
@@ -342,9 +327,8 @@ export default function StaticIPPage() {
 
           <div className="mt-6 sm:mt-8 rounded-xl bg-primary/5 p-4 border-l-4 border-l-primary">
             <p className="text-sm text-on-surface-variant">
-              <strong className="text-on-surface">Check your current IP:</strong> Visit{" "}
-              <a href="/ip" className="text-primary hover:underline">openalgo.in/ip</a> to see your current IP address.
-              If it changes frequently, you need a static IP.
+              <strong className="text-on-surface">{t('sip.ways.checkTitle')}</strong>{" "}{t('sip.ways.checkA')}{" "}
+              <a href="/ip" className="text-primary hover:underline">openalgo.in/ip</a>{" "}{t('sip.ways.checkB')}
             </p>
           </div>
         </div>
@@ -354,9 +338,9 @@ export default function StaticIPPage() {
       <div className="py-12 sm:py-16 md:py-20">
         <div className="container max-w-4xl px-4 sm:px-6">
           <div className="text-center mb-10 sm:mb-14">
-            <h2 className="text-headline-lg sm:text-display-sm mb-3 sm:mb-4 text-on-surface">Choosing a Server</h2>
+            <h2 className="text-headline-lg sm:text-display-sm mb-3 sm:mb-4 text-on-surface">{t('sip.srv.title')}</h2>
             <p className="text-base sm:text-lg text-on-surface-variant max-w-2xl mx-auto">
-              Shared vs Dedicated CPU, pricing, and what to look for.
+              {t('sip.srv.sub')}
             </p>
           </div>
 
@@ -365,17 +349,16 @@ export default function StaticIPPage() {
             <div className="obsidian-card rounded-xl p-5 sm:p-6 ghost-border">
               <h3 className="text-base sm:text-lg font-semibold text-on-surface mb-3 flex items-center gap-2">
                 <Users className="w-4 h-4 sm:w-5 sm:h-5 text-on-surface-variant" />
-                Shared CPU
+                {t('sip.srv.sharedTitle')}
               </h3>
               <p className="text-xs sm:text-sm text-on-surface-variant mb-4">
-                Like a shared apartment. Resources are split between multiple users.
-                Cheaper but performance varies.
+                {t('sip.srv.sharedDesc')}
               </p>
               <div className="space-y-2 text-xs sm:text-sm">
                 {[
-                  { label: "Latency", value: "300 to 600ms" },
-                  { label: "Price", value: "$5 to $12/month" },
-                  { label: "Best for", value: "Testing, small capital" },
+                  { label: t('sip.srv.latency'), value: t('sip.srv.sharedLatency') },
+                  { label: t('sip.srv.price'), value: t('sip.srv.sharedPrice') },
+                  { label: t('sip.srv.bestFor'), value: t('sip.srv.sharedBest') },
                 ].map(item => (
                   <div key={item.label} className="flex justify-between">
                     <span className="text-on-surface-variant">{item.label}</span>
@@ -387,17 +370,16 @@ export default function StaticIPPage() {
             <div className="obsidian-card rounded-xl p-5 sm:p-6 ghost-border border-l-4 border-l-tertiary">
               <h3 className="text-base sm:text-lg font-semibold text-on-surface mb-3 flex items-center gap-2">
                 <HardDrive className="w-4 h-4 sm:w-5 sm:h-5 text-tertiary" />
-                Dedicated CPU
+                {t('sip.srv.dedTitle')}
               </h3>
               <p className="text-xs sm:text-sm text-on-surface-variant mb-4">
-                Like your own private villa. Resources are exclusively yours.
-                Faster and more consistent performance.
+                {t('sip.srv.dedDesc')}
               </p>
               <div className="space-y-2 text-xs sm:text-sm">
                 {[
-                  { label: "Latency", value: "30 to 120ms" },
-                  { label: "Price", value: "$30 to $50/month" },
-                  { label: "Best for", value: "Live trading, larger capital" },
+                  { label: t('sip.srv.latency'), value: t('sip.srv.dedLatency') },
+                  { label: t('sip.srv.price'), value: t('sip.srv.dedPrice') },
+                  { label: t('sip.srv.bestFor'), value: t('sip.srv.dedBest') },
                 ].map(item => (
                   <div key={item.label} className="flex justify-between">
                     <span className="text-on-surface-variant">{item.label}</span>
@@ -412,7 +394,7 @@ export default function StaticIPPage() {
           <div className="mb-8 sm:mb-10">
             <h3 className="text-lg sm:text-headline-sm mb-4 sm:mb-5 text-on-surface flex items-center gap-2">
               <Server className="w-4 h-4 sm:w-5 sm:h-5 text-primary" />
-              VPS Providers
+              {t('sip.srv.vpsTitle')}
             </h3>
             <div className="grid grid-cols-2 md:grid-cols-3 gap-3 sm:gap-4">
               {vpsProviders.map(p => (
@@ -428,14 +410,14 @@ export default function StaticIPPage() {
           <div className="mb-6 sm:mb-8">
             <h3 className="text-lg sm:text-headline-sm mb-4 sm:mb-5 text-on-surface flex items-center gap-2">
               <Cloud className="w-4 h-4 sm:w-5 sm:h-5 text-primary" />
-              Cloud Hyperscalers
+              {t('sip.srv.cloudTitle')}
             </h3>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 mb-5">
               {cloudProviders.map(p => (
                 <div key={p.name} className="obsidian-card rounded-lg sm:rounded-xl p-4 sm:p-5 ghost-border hover-lift">
                   <div className="flex items-center justify-between mb-2">
                     <p className="font-semibold text-on-surface text-sm">{p.name}</p>
-                    <span className={`font-label text-label-md px-2 py-0.5 rounded-full ${p.cost === "Free" ? "bg-tertiary/10 text-tertiary" : "bg-primary/10 text-primary"}`}>{p.cost}</span>
+                    <span className={`font-label text-label-md px-2 py-0.5 rounded-full ${p.free ? "bg-tertiary/10 text-tertiary" : "bg-primary/10 text-primary"}`}>{p.cost}</span>
                   </div>
                   <p className="text-xs text-on-surface-variant mb-1">{p.note}</p>
                   <p className="text-xs text-on-surface-variant">{p.detail}</p>
@@ -446,24 +428,21 @@ export default function StaticIPPage() {
             <div className="obsidian-card rounded-xl p-5 sm:p-6 ghost-border border-l-4 border-l-primary">
               <h4 className="text-sm sm:text-base font-semibold text-on-surface mb-3 flex items-center gap-2">
                 <Shield className="w-4 h-4 text-primary" />
-                Firewall Configuration for Hyperscalers
+                {t('sip.srv.fwTitle')}
               </h4>
               <p className="text-xs sm:text-sm text-on-surface-variant leading-relaxed mb-4">
-                If you are using a hyperscaler, you must configure <strong className="text-on-surface">ingress firewall rules</strong> to
-                allow traffic on ports 80 and 443. Port 80 is required initially for Let&apos;s Encrypt SSL certificate
-                verification. Port 443 provides HTTPS access for your custom domain
-                (e.g., <code className="px-1 py-0.5 rounded surface-high text-xs">https://algo.yourdomain.com</code>).
-                Without opening these ports, your OpenAlgo instance will not be accessible.
+                {t('sip.srv.fwP1a')}{" "}<strong className="text-on-surface">{t('sip.srv.fwP1b')}</strong>{" "}{t('sip.srv.fwP1c')}{" "}
+                <code className="px-1 py-0.5 rounded surface-high text-xs">https://algo.yourdomain.com</code>{t('sip.srv.fwP1d')}
               </p>
               <p className="text-xs sm:text-sm text-on-surface-variant leading-relaxed mb-4">
-                Each provider uses a different name for this, but the concept is the same:
+                {t('sip.srv.fwP2')}
               </p>
               <div className="space-y-2 mb-4">
                 {[
-                  { provider: "AWS", term: "Security Group inbound rules (ingress rules)" },
-                  { provider: "Google Cloud", term: "VPC firewall rules (allow traffic by protocol/port/source)" },
-                  { provider: "Azure", term: "Network Security Group (NSG) inbound security rules" },
-                  { provider: "Oracle Cloud", term: "Security List or Network Security Group ingress rules" },
+                  { provider: "AWS", term: t('sip.srv.fwAws') },
+                  { provider: "Google Cloud", term: t('sip.srv.fwGcp') },
+                  { provider: "Azure", term: t('sip.srv.fwAzure') },
+                  { provider: "Oracle Cloud", term: t('sip.srv.fwOracle') },
                 ].map(item => (
                   <div key={item.provider} className="flex items-start gap-2 text-xs sm:text-sm">
                     <span className="font-semibold text-on-surface min-w-[110px] shrink-0">{item.provider}:</span>
@@ -472,18 +451,16 @@ export default function StaticIPPage() {
                 ))}
               </div>
               <p className="text-xs sm:text-sm text-on-surface-variant leading-relaxed">
-                Also ensure <strong className="text-on-surface">server level hardening</strong> is in place to prevent
-                basic attacks. Disable unused ports, restrict SSH access, and keep your OS packages updated.
+                {t('sip.srv.fwP3a')}{" "}<strong className="text-on-surface">{t('sip.srv.fwP3b')}</strong>{" "}{t('sip.srv.fwP3c')}
               </p>
             </div>
           </div>
 
           <div className="rounded-xl bg-tertiary/5 p-4 border-l-4 border-l-tertiary mb-6">
             <p className="text-sm text-on-surface-variant">
-              <strong className="text-on-surface">Recommendation:</strong> For OpenAlgo, 2 GB RAM is the minimum.
-              4 GB is comfortable for daily use. Use 1 vCPU (2 vCPU if multitasking).
-              Always choose a <strong className="text-on-surface">Mumbai datacenter</strong> for lowest latency to Indian exchanges.
-              Ensure you get an <strong className="text-on-surface">IPv4 address</strong> as brokers don&apos;t support IPv6 whitelisting yet.
+              <strong className="text-on-surface">{t('sip.srv.recTitle')}</strong>{" "}{t('sip.srv.recA')}{" "}
+              <strong className="text-on-surface">{t('sip.srv.recB')}</strong>{" "}{t('sip.srv.recC')}{" "}
+              <strong className="text-on-surface">{t('sip.srv.recD')}</strong>{" "}{t('sip.srv.recE')}
             </p>
           </div>
         </div>
@@ -493,39 +470,36 @@ export default function StaticIPPage() {
       <div className="py-12 sm:py-16 md:py-20 surface-low">
         <div className="container max-w-4xl px-4 sm:px-6">
           <div className="text-center mb-10 sm:mb-14">
-            <h2 className="text-headline-lg sm:text-display-sm mb-3 sm:mb-4 text-on-surface">Setup Guide</h2>
+            <h2 className="text-headline-lg sm:text-display-sm mb-3 sm:mb-4 text-on-surface">{t('sip.setup.title')}</h2>
             <p className="text-base sm:text-lg text-on-surface-variant max-w-2xl mx-auto">
-              From zero to a running OpenAlgo instance on your own server.
+              {t('sip.setup.sub')}
             </p>
           </div>
 
           <div className="space-y-4">
-            <ExpandableCard title="Step 1: Get a Domain" icon={Globe} defaultOpen={true}>
+            <ExpandableCard title={t('sip.setup.s1Title')} icon={Globe} defaultOpen={true}>
               <div className="space-y-4 text-on-surface-variant">
                 <p>
-                  Purchase a domain from any registrar. Common options: GoDaddy, BigRock, Namecheap, Hostinger.
-                  A <code className="px-1.5 py-0.5 rounded surface-high text-xs text-on-surface">.in</code> or{" "}
-                  <code className="px-1.5 py-0.5 rounded surface-high text-xs text-on-surface">.com</code> domain
-                  typically costs &#8377;700 to &#8377;900 per year.
+                  {t('sip.setup.s1P1a')}{" "}<code className="px-1.5 py-0.5 rounded surface-high text-xs text-on-surface">.in</code>{" "}{t('sip.setup.s1P1b')}{" "}
+                  <code className="px-1.5 py-0.5 rounded surface-high text-xs text-on-surface">.com</code>{" "}{t('sip.setup.s1P1c')}
                 </p>
                 <div className="rounded-lg sm:rounded-xl surface-container p-4">
-                  <p className="text-sm"><strong className="text-on-surface">Example:</strong> myalgotrading.in, myalgo.com, or use a subdomain like algo.yourdomain.in</p>
+                  <p className="text-sm"><strong className="text-on-surface">{t('sip.setup.s1ExTitle')}</strong>{" "}{t('sip.setup.s1ExDesc')}</p>
                 </div>
               </div>
             </ExpandableCard>
 
-            <ExpandableCard title="Step 2: Setup Cloudflare (Free)" icon={ShieldCheck}>
+            <ExpandableCard title={t('sip.setup.s2Title')} icon={ShieldCheck}>
               <div className="space-y-4 text-on-surface-variant">
                 <p>
-                  Register a free Cloudflare account and add your domain. Point your domain registrar&apos;s
-                  nameservers to Cloudflare. This gives you DNS management, free SSL, and security protection.
+                  {t('sip.setup.s2P1')}
                 </p>
                 <div className="space-y-3">
                   {[
-                    "Create a free Cloudflare account",
-                    "Add your domain and update nameservers at your registrar",
-                    "Go to SSL/TLS settings and set mode to Full (Strict)",
-                    "Create an A record pointing your domain to your server IP",
+                    t('sip.setup.s2Step1'),
+                    t('sip.setup.s2Step2'),
+                    t('sip.setup.s2Step3'),
+                    t('sip.setup.s2Step4'),
                   ].map((step, i) => (
                     <div key={i} className="flex items-start gap-3">
                       <div className="flex items-center justify-center w-6 h-6 rounded-full bg-primary/10 text-primary font-bold text-xs shrink-0 mt-0.5">{i + 1}</div>
@@ -535,25 +509,22 @@ export default function StaticIPPage() {
                 </div>
                 <div className="rounded-xl bg-tertiary/5 p-4 border-l-4 border-l-tertiary">
                   <p className="text-sm">
-                    <strong className="text-on-surface">Why Cloudflare?</strong> Without it, your server IP is
-                    exposed publicly. Cloudflare acts as a shield. 95% of bot attacks are blocked.
-                    Your real server IP stays hidden.
+                    <strong className="text-on-surface">{t('sip.setup.s2WhyTitle')}</strong>{" "}{t('sip.setup.s2WhyDesc')}
                   </p>
                 </div>
               </div>
             </ExpandableCard>
 
-            <ExpandableCard title="Step 3: Deploy a Server" icon={Server}>
+            <ExpandableCard title={t('sip.setup.s3Title')} icon={Server}>
               <div className="space-y-4 text-on-surface-variant">
                 <p>
-                  Spin up a server with your chosen provider. Select Ubuntu (latest version),
-                  choose a Mumbai location, and pick your plan.
+                  {t('sip.setup.s3P1')}
                 </p>
                 <div className="grid sm:grid-cols-3 gap-3">
                   {[
-                    { label: "OS", value: "Ubuntu 24/25 (latest)" },
-                    { label: "Location", value: "Mumbai (closest to exchange)" },
-                    { label: "IP Version", value: "IPv4 (mandatory for brokers)" },
+                    { label: t('sip.setup.s3L1'), value: t('sip.setup.s3V1') },
+                    { label: t('sip.setup.s3L2'), value: t('sip.setup.s3V2') },
+                    { label: t('sip.setup.s3L3'), value: t('sip.setup.s3V3') },
                   ].map(item => (
                     <div key={item.label} className="rounded-lg surface-container p-3">
                       <p className="font-label text-label-md text-primary">{item.label}</p>
@@ -562,32 +533,27 @@ export default function StaticIPPage() {
                   ))}
                 </div>
                 <p className="text-sm">
-                  Once deployed, you&apos;ll receive a public IPv4 address and a root password.
-                  Go back to Cloudflare and update your A record with this IP.
+                  {t('sip.setup.s3P2')}
                 </p>
               </div>
             </ExpandableCard>
 
-            <ExpandableCard title="Step 4: Whitelist IP at Broker" icon={Key}>
+            <ExpandableCard title={t('sip.setup.s4Title')} icon={Key}>
               <div className="space-y-4 text-on-surface-variant">
                 <p>
-                  Go to your broker&apos;s developer portal and create or edit your API app.
-                  Attach your server&apos;s static IP as the primary IP.
+                  {t('sip.setup.s4P1')}
                 </p>
                 <div className="rounded-lg sm:rounded-xl surface-container p-4">
                   <p className="text-sm">
-                    <strong className="text-on-surface">Each broker is different:</strong> Some brokers have a
-                    separate IP whitelisting section in their developer portal. Others require IP attachment
-                    during API app creation itself. Check your specific broker&apos;s developer documentation
-                    for the exact steps.
+                    <strong className="text-on-surface">{t('sip.setup.s4NoteTitle')}</strong>{" "}{t('sip.setup.s4NoteDesc')}
                   </p>
                 </div>
               </div>
             </ExpandableCard>
 
-            <ExpandableCard title="Step 5: Install OpenAlgo" icon={Terminal}>
+            <ExpandableCard title={t('sip.setup.s5Title')} icon={Terminal}>
               <div className="space-y-4 text-on-surface-variant">
-                <p>SSH into your server and run the installation script:</p>
+                <p>{t('sip.setup.s5P1')}</p>
                 <div className="rounded-lg surface-container p-3 sm:p-4 font-mono text-xs sm:text-sm overflow-x-auto space-y-2">
                   <p className="text-on-surface-variant"># Connect to your server</p>
                   <p className="text-primary">ssh root@your-server-ip</p>
@@ -595,15 +561,15 @@ export default function StaticIPPage() {
                   <p className="text-primary">mkdir openalgo-install && cd openalgo-install && curl -O https://raw.githubusercontent.com/marketcalls/openalgo/main/installation/install.sh && chmod +x install.sh</p>
                   <p className="text-primary">sudo ./install.sh</p>
                 </div>
-                <p className="text-sm">The script will ask for your domain, broker name, API key, and API secret. It handles everything else automatically:</p>
+                <p className="text-sm">{t('sip.setup.s5P2')}</p>
                 <div className="grid grid-cols-2 gap-2">
                   {[
-                    "Firewall configuration",
-                    "Nginx reverse proxy",
-                    "Free SSL via Let's Encrypt",
-                    "Python virtual environment",
-                    "All 177+ libraries",
-                    "Systemd service (24/7 uptime)",
+                    t('sip.setup.s5i1'),
+                    t('sip.setup.s5i2'),
+                    t('sip.setup.s5i3'),
+                    t('sip.setup.s5i4'),
+                    t('sip.setup.s5i5'),
+                    t('sip.setup.s5i6'),
                   ].map(item => (
                     <div key={item} className="flex items-start gap-2 text-xs sm:text-sm">
                       <CheckCircle2 className="w-3.5 h-3.5 text-tertiary mt-0.5 shrink-0" />
@@ -613,20 +579,17 @@ export default function StaticIPPage() {
                 </div>
                 <div className="rounded-xl bg-primary/5 p-4 border-l-4 border-l-primary">
                   <p className="text-sm">
-                    <strong className="text-on-surface">Multiple accounts?</strong> Use{" "}
-                    <code className="px-1 py-0.5 rounded surface-high text-xs">install/install-multi.sh</code> instead
-                    to run multiple OpenAlgo instances on one server. Ensure all accounts belong to you or
-                    your family as per SEBI guidelines.
+                    <strong className="text-on-surface">{t('sip.setup.s5MultiTitle')}</strong>{" "}{t('sip.setup.s5MultiA')}{" "}
+                    <code className="px-1 py-0.5 rounded surface-high text-xs">install/install-multi.sh</code>{" "}{t('sip.setup.s5MultiB')}
                   </p>
                 </div>
               </div>
             </ExpandableCard>
 
-            <ExpandableCard title="Step 6: Login & Verify" icon={CheckCircle2}>
+            <ExpandableCard title={t('sip.setup.s6Title')} icon={CheckCircle2}>
               <div className="space-y-4 text-on-surface-variant">
                 <p>
-                  Open your domain (e.g., myalgo.yourdomain.in) in a browser. Register your account immediately
-                  (first user becomes admin). Connect your broker and verify the master contract downloads.
+                  {t('sip.setup.s6P1')}
                 </p>
                 <div className="rounded-lg surface-container p-3 sm:p-4 font-mono text-xs sm:text-sm overflow-x-auto">
                   <p className="text-on-surface-variant"># Check if OpenAlgo is running</p>
@@ -642,9 +605,9 @@ export default function StaticIPPage() {
       <div className="py-12 sm:py-16 md:py-20">
         <div className="container max-w-4xl px-4 sm:px-6">
           <div className="text-center mb-10 sm:mb-14">
-            <h2 className="text-headline-lg sm:text-display-sm mb-3 sm:mb-4 text-on-surface">Server Architecture</h2>
+            <h2 className="text-headline-lg sm:text-display-sm mb-3 sm:mb-4 text-on-surface">{t('sip.arch.title')}</h2>
             <p className="text-base sm:text-lg text-on-surface-variant max-w-2xl mx-auto">
-              What gets installed and how the pieces fit together.
+              {t('sip.arch.sub')}
             </p>
           </div>
 
@@ -652,11 +615,11 @@ export default function StaticIPPage() {
             {/* Architecture Flow */}
             <div className="flex flex-col items-center gap-3 sm:gap-4 mb-6 sm:mb-8">
               {[
-                { label: "Your Browser", sub: "HTTPS via Cloudflare", color: "bg-secondary/10 text-secondary" },
-                { label: "Cloudflare", sub: "DNS, SSL, DDoS protection", color: "bg-tertiary/10 text-tertiary" },
-                { label: "Nginx", sub: "Reverse proxy on your server", color: "bg-primary/10 text-primary" },
-                { label: "OpenAlgo", sub: "Running via systemd (24/7)", color: "bg-secondary/10 text-secondary" },
-                { label: "Broker API", sub: "Orders from your static IP", color: "bg-tertiary/10 text-tertiary" },
+                { label: t('sip.arch.f1L'), sub: t('sip.arch.f1S'), color: "bg-secondary/10 text-secondary" },
+                { label: "Cloudflare", sub: t('sip.arch.f2S'), color: "bg-tertiary/10 text-tertiary" },
+                { label: "Nginx", sub: t('sip.arch.f3S'), color: "bg-primary/10 text-primary" },
+                { label: "OpenAlgo", sub: t('sip.arch.f4S'), color: "bg-secondary/10 text-secondary" },
+                { label: t('sip.arch.f5L'), sub: t('sip.arch.f5S'), color: "bg-tertiary/10 text-tertiary" },
               ].map((step, i) => (
                 <div key={step.label} className="w-full max-w-xs">
                   <div className={`rounded-xl p-4 text-center ${step.color}`}>
@@ -674,10 +637,10 @@ export default function StaticIPPage() {
 
             <div className="grid sm:grid-cols-2 gap-4">
               {[
-                { icon: Shield, title: "UFW Firewall", desc: "Only ports 22 (SSH), 80 (HTTP), and 443 (HTTPS) are open. Everything else is blocked." },
-                { icon: Settings, title: "Nginx", desc: "Reverse proxy that routes browser requests to OpenAlgo. Handles SSL termination." },
-                { icon: Lock, title: "Let's Encrypt", desc: "Free SSL certificate. Auto-renewed. Provides HTTPS encryption end to end." },
-                { icon: RefreshCw, title: "Systemd Service", desc: "Keeps OpenAlgo running 24/7. Auto-restarts on crashes. Manages logs." },
+                { icon: Shield, title: t('sip.arch.c1T'), desc: t('sip.arch.c1D') },
+                { icon: Settings, title: "Nginx", desc: t('sip.arch.c2D') },
+                { icon: Lock, title: "Let's Encrypt", desc: t('sip.arch.c3D') },
+                { icon: RefreshCw, title: t('sip.arch.c4T'), desc: t('sip.arch.c4D') },
               ].map((item, i) => (
                 <div key={i} className="rounded-xl surface-container p-4">
                   <div className="flex items-center gap-2 mb-2">
@@ -694,18 +657,16 @@ export default function StaticIPPage() {
           <div className="obsidian-card rounded-xl sm:rounded-2xl p-5 sm:p-8 ghost-border border-l-4 border-l-secondary">
             <h3 className="text-base sm:text-lg font-semibold text-on-surface mb-3 flex items-center gap-2">
               <Layers className="w-4 h-4 sm:w-5 sm:h-5 text-secondary" />
-              Signal Routing: Where Do Orders Come From?
+              {t('sip.arch.sigTitle')}
             </h3>
             <p className="text-sm text-on-surface-variant mb-4">
-              Even if your strategies run from home (Amibroker, Python, TradingView), the signals are sent
-              to your server. OpenAlgo on the server processes them and places orders. The broker only sees
-              your server&apos;s static IP, not your home IP.
+              {t('sip.arch.sigDesc')}
             </p>
             <div className="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4">
               {[
-                { label: "Your Home/Office", sub: "Strategies & signals" },
-                { label: "Your Server", sub: "OpenAlgo + Static IP" },
-                { label: "Broker", sub: "Sees only server IP" },
+                { label: t('sip.arch.sig1L'), sub: t('sip.arch.sig1S') },
+                { label: t('sip.arch.sig2L'), sub: t('sip.arch.sig2S') },
+                { label: t('sip.arch.sig3L'), sub: t('sip.arch.sig3S') },
               ].map((step, i) => (
                 <div key={step.label} className="flex items-center gap-3 sm:gap-4">
                   <div className="rounded-lg surface-container p-3 text-center min-w-[130px]">
@@ -725,14 +686,14 @@ export default function StaticIPPage() {
       <div className="py-12 sm:py-16 md:py-20 surface-low">
         <div className="container max-w-4xl px-4 sm:px-6">
           <div className="text-center mb-10 sm:mb-14">
-            <h2 className="text-headline-lg sm:text-display-sm mb-3 sm:mb-4 text-on-surface">Upgrading & Maintenance</h2>
+            <h2 className="text-headline-lg sm:text-display-sm mb-3 sm:mb-4 text-on-surface">{t('sip.up.title')}</h2>
             <p className="text-base sm:text-lg text-on-surface-variant max-w-2xl mx-auto">
-              How to keep your OpenAlgo instance up to date on the server.
+              {t('sip.up.sub')}
             </p>
           </div>
 
           <div className="obsidian-card rounded-xl sm:rounded-2xl p-5 sm:p-8 ghost-border mb-8 sm:mb-10">
-            <h3 className="text-base sm:text-lg font-semibold text-on-surface mb-4">Upgrade Steps</h3>
+            <h3 className="text-base sm:text-lg font-semibold text-on-surface mb-4">{t('sip.up.stepsTitle')}</h3>
             <div className="rounded-lg surface-container p-3 sm:p-4 font-mono text-xs sm:text-sm overflow-x-auto space-y-2 mb-4">
               <p className="text-on-surface-variant"># 1. Pull latest changes</p>
               <p className="text-primary">cd /path/to/openalgo && git pull</p>
@@ -744,25 +705,23 @@ export default function StaticIPPage() {
             </div>
             <div className="rounded-xl bg-primary/5 p-4 border-l-4 border-l-primary">
               <p className="text-sm text-on-surface-variant">
-                <strong className="text-on-surface">Note:</strong> Upgrades overwrite core OpenAlgo files. Your custom
-                strategies inside the strategies folder are preserved. If your .env file gets replaced, restore your
-                API key, API secret, and redirect URL from your backup.
+                <strong className="text-on-surface">{t('sip.up.noteTitle')}</strong>{" "}{t('sip.up.noteDesc')}
               </p>
             </div>
           </div>
 
           {/* Useful Commands */}
           <div className="obsidian-card rounded-xl sm:rounded-2xl p-5 sm:p-8 ghost-border">
-            <h3 className="text-base sm:text-lg font-semibold text-on-surface mb-4">Useful Server Commands</h3>
+            <h3 className="text-base sm:text-lg font-semibold text-on-surface mb-4">{t('sip.up.cmdTitle')}</h3>
             <div className="space-y-3">
               {[
-                { cmd: "sudo systemctl status openalgo-*", desc: "Check if OpenAlgo is running" },
-                { cmd: "sudo systemctl restart openalgo-*", desc: "Restart OpenAlgo service" },
-                { cmd: "sudo ufw status", desc: "View firewall rules" },
-                { cmd: "htop", desc: "Live system monitor (CPU, RAM usage)" },
-                { cmd: "df -h", desc: "Check disk space" },
-                { cmd: "free -m", desc: "Check memory usage" },
-                { cmd: "nproc", desc: "Check number of CPU cores" },
+                { cmd: "sudo systemctl status openalgo-*", desc: t('sip.up.cmd1') },
+                { cmd: "sudo systemctl restart openalgo-*", desc: t('sip.up.cmd2') },
+                { cmd: "sudo ufw status", desc: t('sip.up.cmd3') },
+                { cmd: "htop", desc: t('sip.up.cmd4') },
+                { cmd: "df -h", desc: t('sip.up.cmd5') },
+                { cmd: "free -m", desc: t('sip.up.cmd6') },
+                { cmd: "nproc", desc: t('sip.up.cmd7') },
               ].map(item => (
                 <div key={item.cmd} className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-4">
                   <code className="px-2 py-1 rounded surface-container text-xs font-mono text-primary shrink-0">{item.cmd}</code>
@@ -772,9 +731,9 @@ export default function StaticIPPage() {
             </div>
             <div className="mt-4 rounded-xl bg-tertiary/5 p-4 border-l-4 border-l-tertiary">
               <p className="text-sm text-on-surface-variant">
-                <strong className="text-on-surface">Pro tip:</strong> If your SSH session disconnects after being idle, use{" "}
+                <strong className="text-on-surface">{t('sip.up.tipTitle')}</strong>{" "}{t('sip.up.tipA')}{" "}
                 <code className="px-1 py-0.5 rounded surface-high text-xs">ssh -o ServerAliveInterval=60 root@your-ip</code>{" "}
-                to keep the connection alive.
+                {t('sip.up.tipB')}
               </p>
             </div>
           </div>
@@ -785,9 +744,9 @@ export default function StaticIPPage() {
       <div className="py-12 sm:py-16 md:py-20">
         <div className="container max-w-4xl px-4 sm:px-6">
           <div className="text-center mb-10 sm:mb-14">
-            <h2 className="text-headline-lg sm:text-display-sm mb-3 sm:mb-4 text-on-surface">Security Best Practices</h2>
+            <h2 className="text-headline-lg sm:text-display-sm mb-3 sm:mb-4 text-on-surface">{t('sip.sec.title')}</h2>
             <p className="text-base sm:text-lg text-on-surface-variant max-w-2xl mx-auto">
-              Protecting your trading infrastructure.
+              {t('sip.sec.sub')}
             </p>
           </div>
 
@@ -795,33 +754,33 @@ export default function StaticIPPage() {
             {[
               {
                 icon: ShieldCheck,
-                title: "Always use Cloudflare",
-                desc: "Never expose your server IP directly. Cloudflare hides your real IP. Even a ping to your domain only reveals Cloudflare's IP. This blocks 95% of bot attacks.",
+                title: t('sip.sec.t1'),
+                desc: t('sip.sec.d1'),
               },
               {
                 icon: Lock,
-                title: "Keep the firewall tight",
-                desc: "Only open ports you need (22, 80, 443). The installation script configures this by default. Don't add extra ports unless absolutely necessary.",
+                title: t('sip.sec.t2'),
+                desc: t('sip.sec.d2'),
               },
               {
                 icon: Shield,
-                title: "SSL/TLS Full Strict mode",
-                desc: "In Cloudflare, set SSL mode to Full (Strict). This encrypts traffic from browser to Cloudflare and from Cloudflare to your server. End to end protection.",
+                title: t('sip.sec.t3'),
+                desc: t('sip.sec.d3'),
               },
               {
                 icon: Settings,
-                title: "Security headers enabled",
-                desc: "OpenAlgo's Nginx config includes security headers by default. You can verify at securityheaders.com. OpenAlgo scores A or A+ grade.",
+                title: t('sip.sec.t4'),
+                desc: t('sip.sec.d4'),
               },
               {
                 icon: RefreshCw,
-                title: "Enable automatic backups",
-                desc: "Most VPS providers offer auto-backup for a small fee. If your server crashes, you can restore everything including databases and trading logs.",
+                title: t('sip.sec.t5'),
+                desc: t('sip.sec.d5'),
               },
               {
                 icon: Key,
-                title: "Register immediately after setup",
-                desc: "OpenAlgo is single-user. The first person to register becomes admin. Register right after installation to secure your instance.",
+                title: t('sip.sec.t6'),
+                desc: t('sip.sec.d6'),
               },
             ].map((tip, i) => (
               <div key={i} className="obsidian-card rounded-xl p-4 sm:p-6 ghost-border flex items-start gap-3 sm:gap-4">
@@ -842,25 +801,24 @@ export default function StaticIPPage() {
       <div className="py-12 sm:py-16 md:py-20 surface-low">
         <div className="container max-w-4xl px-4 sm:px-6">
           <div className="text-center mb-10 sm:mb-14">
-            <h2 className="text-headline-lg sm:text-display-sm mb-3 sm:mb-4 text-on-surface">Understanding Latency</h2>
+            <h2 className="text-headline-lg sm:text-display-sm mb-3 sm:mb-4 text-on-surface">{t('sip.lat.title')}</h2>
             <p className="text-base sm:text-lg text-on-surface-variant max-w-2xl mx-auto">
-              How fast do orders travel from your server to the exchange?
+              {t('sip.lat.sub')}
             </p>
           </div>
 
           <div className="obsidian-card rounded-xl sm:rounded-2xl p-5 sm:p-8 ghost-border mb-8 sm:mb-10">
-            <h3 className="text-base sm:text-lg font-semibold text-on-surface mb-4">The Order Journey</h3>
+            <h3 className="text-base sm:text-lg font-semibold text-on-surface mb-4">{t('sip.lat.journeyTitle')}</h3>
             <p className="text-sm text-on-surface-variant mb-6">
-              When you place an order, it travels through several hops. Each hop adds latency.
-              Here&apos;s what a typical end to end journey looks like on a dedicated server in Mumbai:
+              {t('sip.lat.journeyDesc')}
             </p>
 
             <div className="space-y-3 mb-6">
               {[
-                { from: "Your Home (Bangalore)", to: "Your Server (Mumbai)", time: "~20ms", note: "Internet hop" },
-                { from: "OpenAlgo Processing", to: "", time: "~5 to 10ms", note: "Symbol lookup, validation, caching" },
-                { from: "Server", to: "Broker API", time: "~35 to 80ms", note: "Varies by broker" },
-                { from: "Broker OMS", to: "Exchange", time: "~6 to 50ms", note: "Broker's internal checks (130+ validations)" },
+                { from: t('sip.lat.h1From'), to: t('sip.lat.h1To'), time: "~20ms", note: t('sip.lat.h1Note') },
+                { from: t('sip.lat.h2From'), to: "", time: t('sip.lat.h2Time'), note: t('sip.lat.h2Note') },
+                { from: t('sip.lat.h3From'), to: t('sip.lat.h3To'), time: t('sip.lat.h3Time'), note: t('sip.lat.h3Note') },
+                { from: t('sip.lat.h4From'), to: t('sip.lat.h4To'), time: t('sip.lat.h4Time'), note: t('sip.lat.h4Note') },
               ].map((hop, i) => (
                 <div key={i} className="flex items-center gap-3 rounded-lg surface-container p-3">
                   <div className="flex items-center justify-center w-7 h-7 rounded-full bg-primary/10 text-primary font-bold text-xs shrink-0">{i + 1}</div>
@@ -874,68 +832,62 @@ export default function StaticIPPage() {
             </div>
 
             <div className="rounded-xl surface-container p-4 sm:p-5 text-center mb-6">
-              <p className="font-label text-label-lg text-on-surface-variant uppercase tracking-wider mb-2">Typical End to End Latency</p>
+              <p className="font-label text-label-lg text-on-surface-variant uppercase tracking-wider mb-2">{t('sip.lat.typTitle')}</p>
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <p className="text-xl sm:text-2xl font-bold text-primary">100 to 200ms</p>
-                  <p className="text-xs text-on-surface-variant mt-1">Dedicated CPU (recommended)</p>
+                  <p className="text-xl sm:text-2xl font-bold text-primary">{t('sip.lat.typ1')}</p>
+                  <p className="text-xs text-on-surface-variant mt-1">{t('sip.lat.typ1Sub')}</p>
                 </div>
                 <div>
-                  <p className="text-xl sm:text-2xl font-bold text-secondary">300 to 600ms</p>
-                  <p className="text-xs text-on-surface-variant mt-1">Shared CPU (budget option)</p>
+                  <p className="text-xl sm:text-2xl font-bold text-secondary">{t('sip.lat.typ2')}</p>
+                  <p className="text-xs text-on-surface-variant mt-1">{t('sip.lat.typ2Sub')}</p>
                 </div>
               </div>
             </div>
 
             <div className="rounded-xl bg-primary/5 p-4 border-l-4 border-l-primary">
               <p className="text-sm text-on-surface-variant">
-                <strong className="text-on-surface">Measure it yourself:</strong> OpenAlgo has a built-in latency
-                dashboard under Logs → Latency. It measures the time from your server to the broker API for every
-                order, including OpenAlgo&apos;s processing overhead.
+                <strong className="text-on-surface">{t('sip.lat.measureTitle')}</strong>{" "}{t('sip.lat.measureDesc')}
               </p>
             </div>
           </div>
 
           {/* Cloudflare Latency Myth */}
           <div className="obsidian-card rounded-xl sm:rounded-2xl p-5 sm:p-8 ghost-border border-l-4 border-l-tertiary mb-8 sm:mb-10">
-            <h3 className="text-base sm:text-lg font-semibold text-on-surface mb-3">Does Cloudflare Add Latency to Orders?</h3>
+            <h3 className="text-base sm:text-lg font-semibold text-on-surface mb-3">{t('sip.lat.cfTitle')}</h3>
             <p className="text-sm text-on-surface-variant mb-3">
-              <strong className="text-on-surface">No.</strong> This is a common misconception. Cloudflare only sits
-              between your browser and the server (for accessing the web dashboard). Your trading orders go directly
-              from OpenAlgo on the server to the broker API. Cloudflare is not in that path at all.
+              <strong className="text-on-surface">{t('sip.lat.cfNo')}</strong>{" "}{t('sip.lat.cfP1')}
             </p>
             <p className="text-sm text-on-surface-variant">
-              Even if Cloudflare has an outage, your strategies keep running and orders keep firing.
-              You just won&apos;t be able to access the OpenAlgo web dashboard until Cloudflare recovers.
+              {t('sip.lat.cfP2')}
             </p>
           </div>
 
           {/* Live vs Analyzer Mode */}
           <div className="obsidian-card rounded-xl sm:rounded-2xl p-5 sm:p-8 ghost-border">
-            <h3 className="text-base sm:text-lg font-semibold text-on-surface mb-4">Live Mode vs Analyzer Mode Latency</h3>
+            <h3 className="text-base sm:text-lg font-semibold text-on-surface mb-4">{t('sip.lat.modeTitle')}</h3>
             <div className="grid sm:grid-cols-2 gap-4">
               <div className="rounded-xl surface-container p-4">
                 <p className="font-semibold text-sm text-on-surface mb-2 flex items-center gap-2">
-                  <Zap className="w-4 h-4 text-tertiary" /> Live Mode
+                  <Zap className="w-4 h-4 text-tertiary" /> {t('sip.lat.liveTitle')}
                 </p>
                 <p className="text-xs text-on-surface-variant mb-3">
-                  Orders go directly to the broker. No LTP checks, no local database writes. Fastest possible execution.
+                  {t('sip.lat.liveDesc')}
                 </p>
-                <p className="font-label text-label-lg text-tertiary">40 to 150ms</p>
+                <p className="font-label text-label-lg text-tertiary">{t('sip.lat.liveTime')}</p>
               </div>
               <div className="rounded-xl surface-container p-4">
                 <p className="font-semibold text-sm text-on-surface mb-2 flex items-center gap-2">
-                  <Shield className="w-4 h-4 text-secondary" /> Analyzer Mode
+                  <Shield className="w-4 h-4 text-secondary" /> {t('sip.lat.anaTitle')}
                 </p>
                 <p className="text-xs text-on-surface-variant mb-3">
-                  Fetches LTP, checks bid/ask, writes to local SQLite database. More overhead but safe for testing.
+                  {t('sip.lat.anaDesc')}
                 </p>
-                <p className="font-label text-label-lg text-secondary">200 to 400ms</p>
+                <p className="font-label text-label-lg text-secondary">{t('sip.lat.anaTime')}</p>
               </div>
             </div>
             <p className="text-xs text-on-surface-variant mt-4">
-              Always test strategies in Analyzer mode first. Once validated, flip to Live mode for production execution.
-              The latency difference exists because Analyzer mode simulates execution locally while Live mode hits the broker directly.
+              {t('sip.lat.modeNote')}
             </p>
           </div>
         </div>
@@ -945,25 +897,23 @@ export default function StaticIPPage() {
       <div className="py-12 sm:py-16 md:py-20">
         <div className="container max-w-4xl px-4 sm:px-6">
           <div className="text-center mb-10 sm:mb-14">
-            <h2 className="text-headline-lg sm:text-display-sm mb-3 sm:mb-4 text-on-surface">Running on Desktop?</h2>
+            <h2 className="text-headline-lg sm:text-display-sm mb-3 sm:mb-4 text-on-surface">{t('sip.desk.title')}</h2>
             <p className="text-base sm:text-lg text-on-surface-variant max-w-2xl mx-auto">
-              You don&apos;t need a server. Here&apos;s how static IP works from your home.
+              {t('sip.desk.sub')}
             </p>
           </div>
 
           <div className="obsidian-card rounded-xl sm:rounded-2xl p-5 sm:p-8 ghost-border mb-8 sm:mb-10">
             <p className="text-sm sm:text-base text-on-surface-variant leading-relaxed mb-6">
-              If you run OpenAlgo on your desktop or laptop, you need a static IP from your ISP (Internet Service Provider).
-              Your ISP provides you a public facing IP that your broker sees when orders are placed.
-              By default, this IP is dynamic (changes periodically). A static IP ensures it never changes.
+              {t('sip.desk.intro')}
             </p>
 
             <div className="space-y-4 mb-6">
               {[
-                { step: "Contact your ISP", desc: "Call Jio, Airtel, ACT, Tata, BSNL, etc. Ask for a static IP. Most charge a small monthly fee." },
-                { step: "Whitelist at broker", desc: "Enter your static IP in the broker's developer portal, same as the server method." },
-                { step: "Use localhost for OpenAlgo", desc: "Your redirect URL stays as 127.0.0.1:5000. Only the order-originating IP matters to the broker." },
-                { step: "Setup a firewall", desc: "A static IP makes your machine discoverable. Install a firewall (Windows Firewall, UFW on Linux, or pf on Mac) to block all incoming traffic except what you explicitly allow. This guards against external security attacks, port scans, and unauthorized access." },
+                { step: t('sip.desk.d1S'), desc: t('sip.desk.d1D') },
+                { step: t('sip.desk.d2S'), desc: t('sip.desk.d2D') },
+                { step: t('sip.desk.d3S'), desc: t('sip.desk.d3D') },
+                { step: t('sip.desk.d4S'), desc: t('sip.desk.d4D') },
               ].map((item, i) => (
                 <div key={i} className="flex items-start gap-3">
                   <div className="flex items-center justify-center w-7 h-7 rounded-full bg-primary/10 text-primary font-bold text-xs shrink-0 mt-0.5">{i + 1}</div>
@@ -977,9 +927,7 @@ export default function StaticIPPage() {
 
             <div className="rounded-xl bg-primary/5 p-4 border-l-4 border-l-primary">
               <p className="text-sm text-on-surface-variant">
-                <strong className="text-on-surface">Important:</strong> Running on desktop means OpenAlgo is only
-                available when your computer is on. If you shut down or your internet drops, strategies stop.
-                For 24/7 reliability, a VPS server is recommended.
+                <strong className="text-on-surface">{t('sip.desk.impTitle')}</strong>{" "}{t('sip.desk.impDesc')}
               </p>
             </div>
           </div>
@@ -988,19 +936,16 @@ export default function StaticIPPage() {
           <div className="obsidian-card rounded-xl sm:rounded-2xl p-5 sm:p-8 ghost-border border-l-4 border-l-secondary mb-8 sm:mb-10">
             <h3 className="text-base sm:text-lg font-semibold text-on-surface mb-3 flex items-center gap-2">
               <Users className="w-4 h-4 sm:w-5 sm:h-5 text-secondary" />
-              Multiple Broker Accounts
+              {t('sip.multi.title')}
             </h3>
             <p className="text-sm text-on-surface-variant mb-3">
-              OpenAlgo is single-user: one instance connects to one broker. To run multiple accounts
-              (your own accounts across different brokers, or family accounts), use the multi-instance installer:
+              {t('sip.multi.desc')}
             </p>
             <div className="rounded-lg surface-container p-3 sm:p-4 font-mono text-xs sm:text-sm overflow-x-auto">
               <p className="text-primary">sudo ./install/install-multi.sh</p>
             </div>
             <p className="text-xs text-on-surface-variant mt-3">
-              This runs multiple OpenAlgo instances on the same server with the same static IP.
-              Each instance gets its own subdomain, systemd service, and database.
-              Ensure all accounts belong to you or your family as per SEBI guidelines.
+              {t('sip.multi.note')}
             </p>
           </div>
 
@@ -1008,25 +953,21 @@ export default function StaticIPPage() {
           <div className="obsidian-card rounded-xl sm:rounded-2xl p-5 sm:p-8 ghost-border mb-8 sm:mb-10">
             <h3 className="text-base sm:text-lg font-semibold text-on-surface mb-4 flex items-center gap-2">
               <Users className="w-4 h-4 sm:w-5 sm:h-5 text-primary" />
-              Static IP Family Sharing
+              {t('sip.fam.title')}
             </h3>
             <p className="text-sm sm:text-base text-on-surface-variant leading-relaxed mb-4">
-              This applies if you are <strong className="text-on-surface">hosting multiple OpenAlgo instances for
-              family accounts on a single static IP</strong>. By default, each static IP can only be assigned
-              to one trading account at a time. If you run OpenAlgo for your own account and your family
-              member&apos;s account from the same server or home network, you need to request the broker to
-              allow the same static IP across both accounts. This is called{" "}
-              <strong className="text-on-surface">Static IP Family Sharing</strong>.
+              {t('sip.fam.introA')}{" "}<strong className="text-on-surface">{t('sip.fam.introB')}</strong>{t('sip.fam.introC')}{" "}
+              <strong className="text-on-surface">{t('sip.fam.introD')}</strong>.
             </p>
 
             <div className="rounded-lg sm:rounded-xl surface-container p-4 sm:p-6 mb-5">
-              <p className="font-label text-label-md sm:text-label-lg text-primary mb-3 uppercase tracking-wider">Who is Eligible?</p>
+              <p className="font-label text-label-md sm:text-label-lg text-primary mb-3 uppercase tracking-wider">{t('sip.fam.eligTitle')}</p>
               <div className="space-y-2 mb-4">
                 {[
-                  "Both accounts must have active API access with the broker",
-                  "The family member must be your Spouse, Parent, or Child (adult, 18+)",
-                  "Both must be on the same shared network infrastructure (e.g., same home broadband)",
-                  "The IP addresses must be static and registered under your name or shared network",
+                  t('sip.fam.e1'),
+                  t('sip.fam.e2'),
+                  t('sip.fam.e3'),
+                  t('sip.fam.e4'),
                 ].map(item => (
                   <div key={item} className="flex items-start gap-2 text-sm">
                     <CheckCircle2 className="w-3.5 h-3.5 text-tertiary mt-0.5 shrink-0" />
@@ -1036,27 +977,24 @@ export default function StaticIPPage() {
               </div>
               <div className="rounded-lg bg-destructive/5 p-3 border-l-4 border-l-destructive">
                 <p className="text-xs sm:text-sm text-on-surface-variant">
-                  <strong className="text-on-surface">Not eligible:</strong> Siblings, cousins, in-laws, and all other
-                  relationships are not covered under this facility as per the SEBI circular
-                  (SEBI/HO/MIRSD/MIRSD-PoD1/P/CIR/2024/169 dated December 03, 2024).
-                  Only Spouse, Parent, and Child (adult) relationships are permitted.
+                  <strong className="text-on-surface">{t('sip.fam.notEligTitle')}</strong>{" "}{t('sip.fam.notEligDesc')}
                 </p>
               </div>
             </div>
 
             <div className="mb-5">
-              <p className="font-label text-label-md sm:text-label-lg text-primary mb-3 uppercase tracking-wider">Typical Process</p>
+              <p className="font-label text-label-md sm:text-label-lg text-primary mb-3 uppercase tracking-wider">{t('sip.fam.procTitle')}</p>
               <p className="text-sm text-on-surface-variant mb-4">
-                Different brokers have different processes for family IP sharing. The general steps are:
+                {t('sip.fam.procDesc')}
               </p>
               <div className="space-y-3">
                 {[
-                  { step: "Submit a formal request", desc: "Send an email or fill a form with your broker's API support team requesting static IP registration and family sharing activation." },
-                  { step: "Provide account details", desc: "Include your client ID, registered name, email, mobile, and your family member's client ID, name, email, and relationship." },
-                  { step: "Provide IP details", desc: "Include your primary static IP address and secondary IP (optional). The same IP set will be shared across both accounts." },
-                  { step: "Family member confirms consent", desc: "Your family member must independently confirm consent, typically by replying from their own registered email address." },
-                  { step: "Broker verifies and activates", desc: "The broker verifies both requests and activates the IP mapping, usually within 1 business day." },
-                  { step: "Both receive confirmation", desc: "Both you and your family member receive confirmation once the shared IP mapping is active." },
+                  { step: t('sip.fam.p1S'), desc: t('sip.fam.p1D') },
+                  { step: t('sip.fam.p2S'), desc: t('sip.fam.p2D') },
+                  { step: t('sip.fam.p3S'), desc: t('sip.fam.p3D') },
+                  { step: t('sip.fam.p4S'), desc: t('sip.fam.p4D') },
+                  { step: t('sip.fam.p5S'), desc: t('sip.fam.p5D') },
+                  { step: t('sip.fam.p6S'), desc: t('sip.fam.p6D') },
                 ].map((item, i) => (
                   <div key={i} className="flex items-start gap-3">
                     <div className="flex items-center justify-center w-7 h-7 rounded-full bg-primary/10 text-primary font-bold text-xs shrink-0 mt-0.5">{i + 1}</div>
@@ -1070,21 +1008,20 @@ export default function StaticIPPage() {
             </div>
 
             <div className="mb-5">
-              <p className="font-label text-label-md sm:text-label-lg text-primary mb-3 uppercase tracking-wider">Before You Begin Checklist</p>
+              <p className="font-label text-label-md sm:text-label-lg text-primary mb-3 uppercase tracking-wider">{t('sip.fam.chkTitle')}</p>
               <p className="text-sm text-on-surface-variant mb-3">
-                Ensure all of the following are in place before sending your request. Incomplete requests
-                will be returned and will delay activation.
+                {t('sip.fam.chkDesc')}
               </p>
               <div className="space-y-2">
                 {[
-                  "You know your own client/account ID with the broker",
-                  "You know your family member's client/account ID with the same or different broker",
-                  "You are sending the request from your registered email address (the one used when opening the account)",
-                  "Your family member's registered email address is available for confirmation",
-                  "You have a confirmed static IP address (not a dynamic/changing IP). Your ISP or VPS provider has verified this",
-                  "You know whether you need a secondary (backup) IP in addition to your primary IP",
-                  "Your family member is aware of the request and is ready to reply from their own registered email",
-                  "Your family member's relationship is Spouse, Parent, or Child (18 years or older)",
+                  t('sip.fam.c1'),
+                  t('sip.fam.c2'),
+                  t('sip.fam.c3'),
+                  t('sip.fam.c4'),
+                  t('sip.fam.c5'),
+                  t('sip.fam.c6'),
+                  t('sip.fam.c7'),
+                  t('sip.fam.c8'),
                 ].map(item => (
                   <div key={item} className="flex items-start gap-2 text-xs sm:text-sm">
                     <div className="w-4 h-4 rounded border border-outline-variant/40 mt-0.5 shrink-0" />
@@ -1095,17 +1032,17 @@ export default function StaticIPPage() {
             </div>
 
             <div className="mb-5">
-              <p className="font-label text-label-md sm:text-label-lg text-primary mb-3 uppercase tracking-wider">Declaration Requirements</p>
+              <p className="font-label text-label-md sm:text-label-lg text-primary mb-3 uppercase tracking-wider">{t('sip.fam.decTitle')}</p>
               <p className="text-sm text-on-surface-variant mb-3">
-                When requesting family sharing, you typically need to declare:
+                {t('sip.fam.decDesc')}
               </p>
               <div className="space-y-2">
                 {[
-                  "The IP addresses listed are static and registered under your name or shared network infrastructure",
-                  "The family member qualifies under SEBI's definition of 'family' (Spouse / Parent / Child)",
-                  "The same IP set will be shared across both accounts and does not constitute separate or independent access",
-                  "IP addresses can be updated at most once per calendar week",
-                  "You take full responsibility for all API activity originating from the shared IP",
+                  t('sip.fam.dc1'),
+                  t('sip.fam.dc2'),
+                  t('sip.fam.dc3'),
+                  t('sip.fam.dc4'),
+                  t('sip.fam.dc5'),
                 ].map(item => (
                   <div key={item} className="flex items-start gap-2 text-xs sm:text-sm">
                     <CheckCircle2 className="w-3.5 h-3.5 text-on-surface-variant mt-0.5 shrink-0" />
@@ -1117,10 +1054,7 @@ export default function StaticIPPage() {
 
             <div className="rounded-xl bg-primary/5 p-4 border-l-4 border-l-primary">
               <p className="text-sm text-on-surface-variant">
-                <strong className="text-on-surface">Important:</strong> The process varies significantly between
-                brokers. Some brokers handle this via email, some through their developer portal, and some may
-                require additional documentation. If you manage multiple family accounts on the same IP, always
-                check with your specific broker for their exact procedure and approval requirements before setting up.
+                <strong className="text-on-surface">{t('sip.fam.impTitle')}</strong>{" "}{t('sip.fam.impDesc')}
               </p>
             </div>
           </div>
@@ -1129,41 +1063,20 @@ export default function StaticIPPage() {
           <div className="obsidian-card rounded-xl sm:rounded-2xl p-5 sm:p-8 ghost-border border-l-4 border-l-primary">
             <h3 className="text-base sm:text-lg font-semibold text-on-surface mb-4 flex items-center gap-2">
               <AlertTriangle className="w-4 h-4 sm:w-5 sm:h-5 text-primary" />
-              Static IP Policies &amp; Restrictions to Be Aware Of
+              {t('sip.pol.title')}
             </h3>
             <p className="text-sm text-on-surface-variant leading-relaxed mb-4">
-              Each broker implements static IP policies differently. Stay informed and proactive:
+              {t('sip.pol.desc')}
             </p>
             <div className="space-y-3">
               {[
-                {
-                  title: "One API key per account (most brokers)",
-                  desc: "Most brokers allow only one API key creation per account with primary and secondary IP slots. Only a few selected brokers allow multiple API keys, but still with the same IP restrictions."
-                },
-                {
-                  title: "IP change cooldown period",
-                  desc: "Once you set your static IP, changes are typically allowed only once per calendar week. Plan your infrastructure migration carefully. A wrong IP means no orders for up to 7 days."
-                },
-                {
-                  title: "Check broker announcements regularly",
-                  desc: "Brokers send email announcements about static IP policy changes, new requirements, and deadline extensions. Read these carefully. Policies are evolving and may change without much notice."
-                },
-                {
-                  title: "Family sharing requires permission",
-                  desc: "If multiple family members use the same static IP from the same broker, you likely need explicit approval. The process, documentation, and timeline vary by broker."
-                },
-                {
-                  title: "Cross-broker family accounts",
-                  desc: "If family members use different brokers, each broker needs to be contacted separately. One broker's approval does not apply to another."
-                },
-                {
-                  title: "Static IP must match exactly",
-                  desc: "The IP from which your orders originate must exactly match the whitelisted IP. If your ISP changes your IP (dynamic IP), orders will be silently rejected. There is no fallback or grace period."
-                },
-                {
-                  title: "Keep records of all approvals",
-                  desc: "Save all email confirmations, ticket numbers, and approval references. If there is a dispute or audit, these records serve as proof of compliance."
-                },
+                { title: t('sip.pol.p1T'), desc: t('sip.pol.p1D') },
+                { title: t('sip.pol.p2T'), desc: t('sip.pol.p2D') },
+                { title: t('sip.pol.p3T'), desc: t('sip.pol.p3D') },
+                { title: t('sip.pol.p4T'), desc: t('sip.pol.p4D') },
+                { title: t('sip.pol.p5T'), desc: t('sip.pol.p5D') },
+                { title: t('sip.pol.p6T'), desc: t('sip.pol.p6D') },
+                { title: t('sip.pol.p7T'), desc: t('sip.pol.p7D') },
               ].map((item, i) => (
                 <div key={i} className="rounded-lg surface-container p-3 sm:p-4">
                   <p className="text-sm font-semibold text-on-surface mb-1">{item.title}</p>
@@ -1179,46 +1092,22 @@ export default function StaticIPPage() {
       <div className="py-12 sm:py-16 md:py-20 surface-low">
         <div className="container max-w-4xl px-4 sm:px-6">
           <div className="text-center mb-10 sm:mb-14">
-            <h2 className="text-headline-lg sm:text-display-sm mb-3 sm:mb-4 text-on-surface">Frequently Asked Questions</h2>
+            <h2 className="text-headline-lg sm:text-display-sm mb-3 sm:mb-4 text-on-surface">{t('sip.faq.title')}</h2>
             <p className="text-base sm:text-lg text-on-surface-variant max-w-2xl mx-auto">
-              Common questions from the community about static IP and hosting.
+              {t('sip.faq.sub')}
             </p>
           </div>
 
           <div className="space-y-4">
             {[
-              {
-                q: "Can I shut down my server after market hours to save costs?",
-                a: "You can stop the server, but you'll still be billed for the reserved IP, storage, and backups. Only fully deleting the server stops billing entirely, but then you lose your IP and have to reconfigure everything. For most traders, the monthly cost of keeping it running is worth the convenience."
-              },
-              {
-                q: "What if my server IP changes?",
-                a: "VPS static IPs don't change unless you destroy and recreate the server. If you migrate servers, update the new IP in both Cloudflare (A record) and your broker's developer portal. Brokers allow IP changes once per week."
-              },
-              {
-                q: "Do I need a static IP for manual trading?",
-                a: "No. Static IP is only required for API-based algo trading. If you trade manually through your broker's website or mobile app, no static IP is needed."
-              },
-              {
-                q: "Can I use IPv6?",
-                a: "Not yet. Indian brokers currently only support IPv4 whitelisting. Always ensure your server provides an IPv4 address."
-              },
-              {
-                q: "Where should I host for lowest latency?",
-                a: "Mumbai datacenters are closest to the NSE/BSE exchange servers. Bangalore and Delhi add 10 to 20ms extra. International locations work but add more latency. For most retail traders, anywhere in India is fine."
-              },
-              {
-                q: "Can I run strategies from home but use a server for orders?",
-                a: "Yes. Run Amibroker, Python, or TradingView from home. Signals go to your server's OpenAlgo via the API. OpenAlgo processes and forwards orders to the broker from the server's static IP. The broker only sees the server IP."
-              },
-              {
-                q: "How many strategies can I run on one server?",
-                a: "Depends on how strategies fetch data. WebSocket-based strategies are lighter. If fetching historical data per strategy, broker rate limits become the bottleneck. Typically 5 to 10 strategies on a standard server."
-              },
-              {
-                q: "What happens if Cloudflare goes down?",
-                a: "Your OpenAlgo web dashboard becomes inaccessible, but your server and strategies keep running. Orders continue to fire normally because Cloudflare is only in the browser access path, not the order execution path."
-              },
+              { q: t('sip.faq.q1'), a: t('sip.faq.a1') },
+              { q: t('sip.faq.q2'), a: t('sip.faq.a2') },
+              { q: t('sip.faq.q3'), a: t('sip.faq.a3') },
+              { q: t('sip.faq.q4'), a: t('sip.faq.a4') },
+              { q: t('sip.faq.q5'), a: t('sip.faq.a5') },
+              { q: t('sip.faq.q6'), a: t('sip.faq.a6') },
+              { q: t('sip.faq.q7'), a: t('sip.faq.a7') },
+              { q: t('sip.faq.q8'), a: t('sip.faq.a8') },
             ].map((faq, i) => (
               <ExpandableCard key={i} title={faq.q} icon={MessageCircle}>
                 <p className="text-sm text-on-surface-variant leading-relaxed">{faq.a}</p>
@@ -1232,21 +1121,21 @@ export default function StaticIPPage() {
       <div className="py-12 sm:py-16 md:py-20 surface-low">
         <div className="container max-w-4xl px-4 sm:px-6">
           <div className="text-center mb-10 sm:mb-14">
-            <h2 className="text-headline-lg sm:text-display-sm mb-3 sm:mb-4 text-on-surface">Cost Summary</h2>
+            <h2 className="text-headline-lg sm:text-display-sm mb-3 sm:mb-4 text-on-surface">{t('sip.cost.title')}</h2>
             <p className="text-base sm:text-lg text-on-surface-variant max-w-2xl mx-auto">
-              What to expect for running your own trading server.
+              {t('sip.cost.sub')}
             </p>
           </div>
 
           <div className="obsidian-card rounded-xl sm:rounded-2xl p-5 sm:p-8 ghost-border">
             <div className="space-y-4">
               {[
-                { item: "Domain", cost: "\u20B9700 to \u20B9900/year", note: ".in or .com domain" },
-                { item: "Cloudflare", cost: "Free", note: "Free plan is sufficient" },
-                { item: "VPS (Shared CPU)", cost: "\u20B9500 to \u20B91,000/month", note: "Good for starting out" },
-                { item: "VPS (Dedicated CPU)", cost: "\u20B92,500 to \u20B94,000/month", note: "Recommended for live trading" },
-                { item: "SSL Certificate", cost: "Free", note: "Via Let's Encrypt" },
-                { item: "OpenAlgo", cost: "Free forever", note: "Open source (AGPL-3.0)" },
+                { item: t('sip.cost.r1I'), cost: t('sip.cost.r1C'), note: t('sip.cost.r1N') },
+                { item: "Cloudflare", cost: t('sip.cost.free'), note: t('sip.cost.r2N') },
+                { item: t('sip.cost.r3I'), cost: t('sip.cost.r3C'), note: t('sip.cost.r3N') },
+                { item: t('sip.cost.r4I'), cost: t('sip.cost.r4C'), note: t('sip.cost.r4N') },
+                { item: t('sip.cost.r5I'), cost: t('sip.cost.free'), note: t('sip.cost.r5N') },
+                { item: "OpenAlgo", cost: t('sip.cost.r6C'), note: t('sip.cost.r6N') },
               ].map((row, i) => (
                 <div key={i} className="flex flex-col sm:flex-row sm:items-center justify-between gap-1 sm:gap-4 py-3 border-b border-outline-variant/10 last:border-0">
                   <div className="flex items-center gap-3">
@@ -1262,9 +1151,8 @@ export default function StaticIPPage() {
             </div>
             <div className="mt-6 rounded-xl surface-container p-4 text-center">
               <p className="text-sm text-on-surface-variant">
-                <strong className="text-on-surface">Total estimated cost:</strong> Starting from approximately{" "}
-                <strong className="text-primary">&#8377;1,500 to &#8377;2,000 per month</strong> for a basic setup
-                with domain + VPS. OpenAlgo, Cloudflare, and SSL are all free.
+                <strong className="text-on-surface">{t('sip.cost.totTitle')}</strong>{" "}{t('sip.cost.totA')}{" "}
+                <strong className="text-primary">{t('sip.cost.totB')}</strong>{" "}{t('sip.cost.totC')}
               </p>
             </div>
           </div>
@@ -1274,27 +1162,27 @@ export default function StaticIPPage() {
       {/* CTA */}
       <div className="py-16 sm:py-20 md:py-24">
         <div className="container max-w-3xl px-4 sm:px-6 text-center">
-          <h2 className="text-headline-lg sm:text-display-sm mb-3 sm:mb-4 text-on-surface">Ready to Deploy?</h2>
+          <h2 className="text-headline-lg sm:text-display-sm mb-3 sm:mb-4 text-on-surface">{t('sip.cta.title')}</h2>
           <p className="text-base sm:text-lg text-on-surface-variant mb-8 sm:mb-10">
-            Follow the documentation for detailed installation instructions.
+            {t('sip.cta.sub')}
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Button asChild size="lg">
               <a href="https://docs.openalgo.in/getting-started" target="_blank" rel="noopener noreferrer">
-                Installation Docs
+                {t('sip.cta.docs')}
                 <ArrowRight className="ml-2 h-4 w-4" />
               </a>
             </Button>
             <Button variant="outline" size="lg" asChild>
               <a href="https://github.com/marketcalls/openalgo" target="_blank" rel="noopener noreferrer">
                 <Github className="mr-2 h-4 w-4" />
-                View Source Code
+                {t('sip.cta.source')}
               </a>
             </Button>
             <Button variant="outline" size="lg" asChild>
               <a href="/discord">
                 <MessageCircle className="mr-2 h-4 w-4" />
-                Join Community
+                {t('sip.cta.community')}
               </a>
             </Button>
           </div>

@@ -1,8 +1,43 @@
 # OpenAlgo Webpage — Project Notes
 
 Next.js 15 (App Router, React 19, JSX) + Tailwind v4, deployed to Cloudflare
-Workers via OpenNext (`npm run deploy`). Three Varsity-style courses live under
-`/fundamentals`, `/python`, `/quant`, indexed by `/learn`.
+Workers via OpenNext (`npm run deploy`). Thirteen Varsity-style courses live
+under `/fundamentals`, `/python`, `/quant`, etc., indexed by `/learn`.
+
+## Theme (monochrome, light-first)
+
+- The site is a strict black-and-white theme modeled on openship.ip: white
+  page, near-black ink, gray muted text, hairline borders, pill buttons and
+  pill nav. There is NO dark/light toggle. All colors flow through the HSL
+  tokens in `app/globals.css` (`--background`, `--on-surface`, `--surface-*`,
+  etc.). Never reintroduce hued colors; grays only.
+- Dark sections: wrap any block in the `scheme-dark` class - it re-declares
+  every token so the same components render inverted (see the homepage's inset
+  rounded shell and final CTA). IMPORTANT Tailwind v4 gotcha: the theme's
+  `--color-*` variables are registered with `@property` and resolve their
+  `hsl(var(--x))` indirection AT `:root`, so a scoped override of raw `--x`
+  never reaches compiled utilities like `bg-background`. `.scheme-dark` must
+  (and does) override the `--color-*` tokens directly as well - keep both
+  lists in sync when adding tokens.
+- Course lesson pages keep DARK code panels on the light page (the
+  inset-dark-surface signature). Syntax highlighting is monochrome-on-dark
+  via shade + weight (see `*-portal.css` `.hljs` rules).
+- Fonts: Manrope for everything (body + display + labels), IBM Plex Mono for
+  code only. Sora was removed.
+
+## i18n (UI-layer only)
+
+- 16 languages via `components/i18n/` - `LanguageProvider` (client context,
+  localStorage key `openalgo.lang`, sets `<html lang>`/`dir`, RTL for ur/ar)
+  + `LanguageSwitcher` in the navbar + per-locale dictionaries in
+  `components/i18n/dictionaries/*.js` (flat keys, `en.js` is the master and
+  runtime fallback).
+- Non-English dictionaries load via dynamic `import()` so they ship as client
+  chunks and are NOT in the Worker bundle (verified: worker.js contains no
+  dictionary text). Course long-form content stays English - bundling 16
+  translations of course JSON would blow the 3 MiB Worker limit.
+- When adding UI strings: add the key to `en.js` first, then every locale
+  file (missing keys silently fall back to English).
 
 ## Git safety (do not repeat past mistakes)
 
@@ -51,6 +86,13 @@ Workers via OpenNext (`npm run deploy`). Three Varsity-style courses live under
   `wrangler deploy --dry-run --outdir=/tmp/wb` then `gzip -c /tmp/wb/worker.js |
   wc -c`. The 3 MiB limit is on this gzipped Worker SCRIPT, not the "Total
   Upload" figure (which includes static assets).
+- Measured 2026-07-19: the Worker is ~3.60 MiB gzipped - ALREADY over the
+  free-plan 3 MiB limit, purely from course-content growth (a clean build of
+  HEAD measures ~3.61 MiB; the monochrome-theme + i18n changes shrank it
+  slightly). Recent deploys apparently succeeded, which implies the account is
+  no longer constrained to the free-plan cap - but verify plan status before
+  relying on it, and treat any new server-bundle weight with the same caution
+  as before.
 
 ## Worker CPU time limit ("Worker exceeded CPU time limit")
 

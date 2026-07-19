@@ -91,7 +91,7 @@ export default function ChapterView({ slug }) {
           <div className="font-label text-xs uppercase tracking-[0.1em] text-primary">
             Module {ch.part} &middot; {ch.partName} - Chapter {String(ch.n).padStart(2, "0")}
           </div>
-          <h1 className="mt-2 text-3xl sm:text-4xl font-bold leading-tight bg-linear-to-r from-primary via-secondary to-tertiary bg-clip-text text-transparent">
+          <h1 className="text-on-surface mt-2 text-3xl sm:text-4xl font-bold leading-tight">
             {ch.title}
           </h1>
           <p className="mt-3 max-w-2xl text-lg text-on-surface-variant">{ch.summary}</p>

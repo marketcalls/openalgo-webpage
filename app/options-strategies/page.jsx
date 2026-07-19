@@ -78,7 +78,7 @@ export default function OptionsStrategiesCourseHome() {
             {CHAPTERS.length} chapters &middot; real payoff charts &middot; zero jargon assumed
           </span>
           <h1 className="reveal reveal-2 mt-6 max-w-3xl text-4xl sm:text-5xl lg:text-6xl font-bold leading-[1.05] tracking-tight text-on-surface">
-            <span className="bg-linear-to-r from-tertiary via-secondary to-primary bg-clip-text text-transparent">
+            <span className="text-on-surface ">
               Options
             </span>{" "}
             Strategies
@@ -111,7 +111,7 @@ export default function OptionsStrategiesCourseHome() {
               ["Real", "NIFTY charts"],
             ].map(([v, k]) => (
               <div key={k}>
-                <div className="text-3xl font-bold bg-linear-to-r from-tertiary to-secondary bg-clip-text text-transparent">
+                <div className="text-on-surface text-3xl font-bold">
                   {v}
                 </div>
                 <div className="font-label text-xs uppercase tracking-wider text-on-surface-variant/70">{k}</div>

@@ -10,8 +10,10 @@ import {
   Laptop, Apple, Cpu, Workflow, MessageCircle, Sigma
 } from "lucide-react"
 import { useState } from "react"
+import { useI18n } from "@/components/i18n/LanguageProvider"
 
 function CopyButton({ text }) {
+  const { t } = useI18n()
   const [copied, setCopied] = useState(false)
   const handleCopy = () => {
     navigator.clipboard.writeText(text)
@@ -22,7 +24,7 @@ function CopyButton({ text }) {
     <button
       onClick={handleCopy}
       className="absolute top-3 right-3 p-1.5 rounded-lg surface-high hover:surface-highest transition-colors"
-      aria-label="Copy to clipboard"
+      aria-label={t('mcp.copy')}
     >
       {copied ? <Check className="h-3.5 w-3.5 text-tertiary" /> : <Copy className="h-3.5 w-3.5 text-on-surface-variant" />}
     </button>
@@ -96,6 +98,7 @@ const CONFIG_PATHS = {
 }
 
 export default function MCPPage() {
+  const { t } = useI18n()
   const [os, setOs] = useState("windows")
 
   const osTabs = [
@@ -105,150 +108,150 @@ export default function MCPPage() {
   ]
 
   const capabilities = [
-    { icon: MessageSquare, title: "Talk, Don't Click", desc: "\"Buy 100 RELIANCE at market.\" That's it. No forms, no menus - just tell your AI what to do." },
-    { icon: Brain, title: "One Instruction, Many Steps", desc: "Say \"check my positions and close the losers\" and your AI does both in one go." },
-    { icon: Activity, title: "Live Prices On Demand", desc: "Ask for quotes, market depth, or historical charts right inside your chat. Real numbers, real time." },
-    { icon: Shield, title: "Your Data Stays With You", desc: "Everything runs on your own computer. Your API key and trades never leave your machine." },
-    { icon: Layers, title: "Same Chat, Any Broker", desc: "Works with every broker OpenAlgo supports. Switch brokers without learning anything new." },
-    { icon: Workflow, title: "40+ Built-In Actions", desc: "Place orders, trade options, check funds, pull Greeks, search symbols - your AI already knows how." },
+    { icon: MessageSquare, title: t('mcp.cap1t'), desc: t('mcp.cap1d') },
+    { icon: Brain, title: t('mcp.cap2t'), desc: t('mcp.cap2d') },
+    { icon: Activity, title: t('mcp.cap3t'), desc: t('mcp.cap3d') },
+    { icon: Shield, title: t('mcp.cap4t'), desc: t('mcp.cap4d') },
+    { icon: Layers, title: t('mcp.cap5t'), desc: t('mcp.cap5d') },
+    { icon: Workflow, title: t('mcp.cap6t'), desc: t('mcp.cap6d') },
   ]
 
   const prompts = [
-    { icon: Target, text: "Place a buy order for 100 shares of RELIANCE at market price" },
-    { icon: ListOrdered, text: "Show me my current positions and today's P&L" },
-    { icon: TrendingUp, text: "What's the latest quote for NIFTY?" },
-    { icon: Ban, text: "Cancel all my pending orders" },
-    { icon: Wallet, text: "How much margin do I have available?" },
-    { icon: LineChart, text: "Get 5-minute historical data for BANKNIFTY for the last trading day" },
-    { icon: Search, text: "Find all weekly NIFTY options expiring this Thursday" },
-    { icon: LogOut, text: "Close all my MIS positions before 3:15 PM" },
+    { icon: Target, text: t('mcp.prompt1') },
+    { icon: ListOrdered, text: t('mcp.prompt2') },
+    { icon: TrendingUp, text: t('mcp.prompt3') },
+    { icon: Ban, text: t('mcp.prompt4') },
+    { icon: Wallet, text: t('mcp.prompt5') },
+    { icon: LineChart, text: t('mcp.prompt6') },
+    { icon: Search, text: t('mcp.prompt7') },
+    { icon: LogOut, text: t('mcp.prompt8') },
   ]
 
   const flowSteps = [
     {
       icon: Bot,
-      title: "You Ask",
-      desc: "\"Show my open positions and close the losing ones.\"",
+      title: t('mcp.flow1t'),
+      desc: t('mcp.flow1d'),
       accent: "text-primary",
     },
     {
       icon: Brain,
-      title: "AI Understands",
-      desc: "Claude, Cursor, Windsurf, or ChatGPT figures out what you want.",
+      title: t('mcp.flow2t'),
+      desc: t('mcp.flow2d'),
       accent: "text-secondary",
     },
     {
       icon: Server,
-      title: "OpenAlgo Acts",
-      desc: "Your OpenAlgo running on your computer handles the request.",
+      title: t('mcp.flow3t'),
+      desc: t('mcp.flow3d'),
       accent: "text-tertiary",
     },
     {
       icon: TrendingUp,
-      title: "Broker Executes",
-      desc: "The order goes to your broker and hits the exchange - same as always.",
+      title: t('mcp.flow4t'),
+      desc: t('mcp.flow4d'),
       accent: "text-primary",
     },
   ]
 
   const toolGroups = [
     {
-      title: "Placing & Managing Orders",
+      title: t('mcp.tg1.title'),
       icon: ListOrdered,
       tools: [
-        { label: "Place an order", desc: "Market, limit, or stop-loss - regular or intraday" },
-        { label: "Smart order", desc: "Automatically adjusts to your existing position size" },
-        { label: "Basket orders", desc: "Send multiple orders in one go (like option spreads)" },
-        { label: "Split big orders", desc: "Break a large order into smaller slices to get better fills" },
-        { label: "Modify an order", desc: "Change price or quantity of a pending order" },
-        { label: "Cancel orders", desc: "One at a time, or all of them at once" },
+        { label: t('mcp.tg1.i1l'), desc: t('mcp.tg1.i1d') },
+        { label: t('mcp.tg1.i2l'), desc: t('mcp.tg1.i2d') },
+        { label: t('mcp.tg1.i3l'), desc: t('mcp.tg1.i3d') },
+        { label: t('mcp.tg1.i4l'), desc: t('mcp.tg1.i4d') },
+        { label: t('mcp.tg1.i5l'), desc: t('mcp.tg1.i5d') },
+        { label: t('mcp.tg1.i6l'), desc: t('mcp.tg1.i6d') },
       ],
     },
     {
-      title: "Options Trading & Greeks",
+      title: t('mcp.tg2.title'),
       icon: Sigma,
       tools: [
-        { label: "Single-leg options order", desc: "Specify the strike by ATM/ITM/OTM offset - no need to look up symbols" },
-        { label: "Multi-leg strategies", desc: "Iron condors, spreads, butterflies, straddles - all in one request" },
-        { label: "Live option chain", desc: "Real-time quotes across every strike for an expiry" },
-        { label: "Option Greeks", desc: "Delta, gamma, theta, vega, rho for any strike" },
-        { label: "Synthetic future price", desc: "Compute the put-call-parity implied future for any expiry" },
-        { label: "Resolve option symbol", desc: "Get the exact broker symbol for a strike and expiry" },
+        { label: t('mcp.tg2.i1l'), desc: t('mcp.tg2.i1d') },
+        { label: t('mcp.tg2.i2l'), desc: t('mcp.tg2.i2d') },
+        { label: t('mcp.tg2.i3l'), desc: t('mcp.tg2.i3d') },
+        { label: t('mcp.tg2.i4l'), desc: t('mcp.tg2.i4d') },
+        { label: t('mcp.tg2.i5l'), desc: t('mcp.tg2.i5d') },
+        { label: t('mcp.tg2.i6l'), desc: t('mcp.tg2.i6d') },
       ],
     },
     {
-      title: "Positions & Holdings",
+      title: t('mcp.tg3.title'),
       icon: Target,
       tools: [
-        { label: "Check open position", desc: "Your current position in any stock or contract" },
-        { label: "Square off all", desc: "Close every open intraday position at once" },
-        { label: "Position book", desc: "See everything you're currently holding" },
-        { label: "Long-term holdings", desc: "Your delivery / demat holdings" },
-        { label: "Funds & margins", desc: "Cash balance and margin available to trade" },
-        { label: "Calculate margin", desc: "Work out margin needed before placing an order" },
+        { label: t('mcp.tg3.i1l'), desc: t('mcp.tg3.i1d') },
+        { label: t('mcp.tg3.i2l'), desc: t('mcp.tg3.i2d') },
+        { label: t('mcp.tg3.i3l'), desc: t('mcp.tg3.i3d') },
+        { label: t('mcp.tg3.i4l'), desc: t('mcp.tg3.i4d') },
+        { label: t('mcp.tg3.i5l'), desc: t('mcp.tg3.i5d') },
+        { label: t('mcp.tg3.i6l'), desc: t('mcp.tg3.i6d') },
       ],
     },
     {
-      title: "Orders & Trades Summary",
+      title: t('mcp.tg4.title'),
       icon: Activity,
       tools: [
-        { label: "Order status", desc: "See if a specific order was filled, pending, or rejected" },
-        { label: "Today's order book", desc: "All orders placed during the day" },
-        { label: "Trade book", desc: "All orders that actually got filled" },
+        { label: t('mcp.tg4.i1l'), desc: t('mcp.tg4.i1d') },
+        { label: t('mcp.tg4.i2l'), desc: t('mcp.tg4.i2d') },
+        { label: t('mcp.tg4.i3l'), desc: t('mcp.tg4.i3d') },
       ],
     },
     {
-      title: "Live Market Data",
+      title: t('mcp.tg5.title'),
       icon: BarChart3,
       tools: [
-        { label: "Live quote", desc: "Current price, bid, ask, and day's high/low" },
-        { label: "Multiple quotes at once", desc: "Pull LTP for a basket of symbols in a single ask" },
-        { label: "Market depth", desc: "Top 5 buy/sell levels in the order book" },
-        { label: "Historical charts", desc: "Past candles for any timeframe - daily, hourly, 5-min, etc." },
+        { label: t('mcp.tg5.i1l'), desc: t('mcp.tg5.i1d') },
+        { label: t('mcp.tg5.i2l'), desc: t('mcp.tg5.i2d') },
+        { label: t('mcp.tg5.i3l'), desc: t('mcp.tg5.i3d') },
+        { label: t('mcp.tg5.i4l'), desc: t('mcp.tg5.i4d') },
       ],
     },
     {
-      title: "Finding Instruments",
+      title: t('mcp.tg6.title'),
       icon: Search,
       tools: [
-        { label: "Search any symbol", desc: "Across NSE, BSE, F&O, commodity - all exchanges" },
-        { label: "Symbol details", desc: "Lot size, tick size, expiry, strike, and more" },
-        { label: "Expiry dates", desc: "Upcoming expiries for options and futures" },
-        { label: "Index symbols", desc: "Common index codes for NSE and BSE in one call" },
-        { label: "Full instrument list", desc: "Download every contract for an exchange" },
-        { label: "Available intervals", desc: "Which chart timeframes your broker supports" },
+        { label: t('mcp.tg6.i1l'), desc: t('mcp.tg6.i1d') },
+        { label: t('mcp.tg6.i2l'), desc: t('mcp.tg6.i2d') },
+        { label: t('mcp.tg6.i3l'), desc: t('mcp.tg6.i3d') },
+        { label: t('mcp.tg6.i4l'), desc: t('mcp.tg6.i4d') },
+        { label: t('mcp.tg6.i5l'), desc: t('mcp.tg6.i5d') },
+        { label: t('mcp.tg6.i6l'), desc: t('mcp.tg6.i6d') },
       ],
     },
     {
-      title: "Sandbox, Alerts & Extras",
+      title: t('mcp.tg7.title'),
       icon: Info,
       tools: [
-        { label: "Toggle analyzer mode", desc: "Switch between live trading and Rs. 1 Cr sandbox without leaving chat" },
-        { label: "Send Telegram alert", desc: "Fire a custom message to your configured Telegram bot" },
-        { label: "Trading holidays", desc: "Get NSE/BSE/MCX holidays for the year - or check a specific date" },
-        { label: "Exchange timings", desc: "Market open/close for any exchange on any date" },
-        { label: "OpenAlgo version", desc: "Which version is running on your computer" },
-        { label: "Valid order constants", desc: "Quickly check what product and order types your broker accepts" },
+        { label: t('mcp.tg7.i1l'), desc: t('mcp.tg7.i1d') },
+        { label: t('mcp.tg7.i2l'), desc: t('mcp.tg7.i2d') },
+        { label: t('mcp.tg7.i3l'), desc: t('mcp.tg7.i3d') },
+        { label: t('mcp.tg7.i4l'), desc: t('mcp.tg7.i4d') },
+        { label: t('mcp.tg7.i5l'), desc: t('mcp.tg7.i5d') },
+        { label: t('mcp.tg7.i6l'), desc: t('mcp.tg7.i6d') },
       ],
     },
   ]
 
   const clients = [
-    { name: "Claude Desktop", desc: "Anthropic's native MCP-first desktop app." },
-    { name: "Cursor", desc: "Trade from within your editor." },
-    { name: "Windsurf", desc: "MCP-enabled AI IDE from Codeium." },
-    { name: "ChatGPT", desc: "Works wherever MCP is supported." },
+    { name: "Claude Desktop", desc: t('mcp.client1d') },
+    { name: "Cursor", desc: t('mcp.client2d') },
+    { name: "Windsurf", desc: t('mcp.client3d') },
+    { name: "ChatGPT", desc: t('mcp.client4d') },
   ]
 
   const exchanges = [
-    { code: "NSE", name: "NSE Equity" },
-    { code: "NFO", name: "NSE F&O" },
-    { code: "CDS", name: "NSE Currency" },
-    { code: "BSE", name: "BSE Equity" },
-    { code: "BFO", name: "BSE F&O" },
-    { code: "BCD", name: "BSE Currency" },
-    { code: "MCX", name: "Commodity" },
-    { code: "NCDEX", name: "NCDEX" },
+    { code: "NSE", name: t('mcp.exch.nse') },
+    { code: "NFO", name: t('mcp.exch.nfo') },
+    { code: "CDS", name: t('mcp.exch.cds') },
+    { code: "BSE", name: t('mcp.exch.bse') },
+    { code: "BFO", name: t('mcp.exch.bfo') },
+    { code: "BCD", name: t('mcp.exch.bcd') },
+    { code: "MCX", name: t('mcp.exch.mcx') },
+    { code: "NCDEX", name: t('mcp.exch.ncdex') },
   ]
 
   return (
@@ -259,40 +262,39 @@ export default function MCPPage() {
         <div className="text-center mb-20 relative">
           <div className="absolute inset-0 obsidian-grid opacity-30 -z-10" />
           <div className="flex items-center justify-center gap-3 mb-6 flex-wrap">
-            <span className="px-3 py-1.5 rounded-full font-label text-label-md text-tertiary bg-tertiary/10">Open Source</span>
-            <span className="px-3 py-1.5 rounded-full font-label text-label-md text-secondary bg-secondary/10">Works With Claude &amp; ChatGPT</span>
-            <span className="px-3 py-1.5 rounded-full font-label text-label-md text-primary bg-primary/10">Runs On Your Computer</span>
+            <span className="px-3 py-1.5 rounded-full font-label text-label-md text-tertiary bg-tertiary/10">{t('mcp.hero.badge1')}</span>
+            <span className="px-3 py-1.5 rounded-full font-label text-label-md text-secondary bg-secondary/10">{t('mcp.hero.badge2')}</span>
+            <span className="px-3 py-1.5 rounded-full font-label text-label-md text-primary bg-primary/10">{t('mcp.hero.badge3')}</span>
           </div>
 
           <h1 className="text-display-lg sm:text-[4rem] leading-[1.05] mb-6 tracking-tight">
-            <span className="block text-on-surface">Trade Just By</span>
-            <span className="bg-clip-text text-transparent bg-linear-to-r from-primary via-secondary to-tertiary animate-gradient">
-              Asking Your AI
+            <span className="block text-on-surface">{t('mcp.hero.h1a')}</span>
+            <span className="text-on-surface ">
+              {t('mcp.hero.h1b')}
             </span>
           </h1>
 
           <p className="text-lg text-on-surface-variant max-w-2xl mx-auto mb-3 leading-relaxed">
-            OpenAlgo MCP connects your AI chat app - Claude, Cursor, Windsurf, or ChatGPT -
-            to your OpenAlgo trading account. Place orders, check positions, and pull live prices by simply talking to it.
+            {t('mcp.hero.desc')}
           </p>
           <p className="text-base text-on-surface-variant max-w-2xl mx-auto mb-10">
-            No dashboards. No clicking. Just type what you want, and your AI gets it done through your broker.
+            {t('mcp.hero.sub')}
           </p>
 
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
             <Button size="lg" asChild>
               <a href="#quickstart" className="flex items-center gap-2">
-                <Sparkles className="h-5 w-5" /> Quickstart <ArrowRight className="h-4 w-4" />
+                <Sparkles className="h-5 w-5" /> {t('mcp.hero.ctaQuickstart')} <ArrowRight className="h-4 w-4" />
               </a>
             </Button>
             <Button size="lg" variant="outline" asChild>
               <a href="https://github.com/marketcalls/openalgo/tree/main/mcp" target="_blank" rel="noopener noreferrer" className="flex items-center gap-2">
-                <Github className="h-5 w-5" /> View on GitHub <ExternalLink className="h-4 w-4" />
+                <Github className="h-5 w-5" /> {t('mcp.hero.ctaGithub')} <ExternalLink className="h-4 w-4" />
               </a>
             </Button>
             <Button size="lg" variant="outline" asChild>
               <a href="https://docs.openalgo.in/mcp" target="_blank" rel="noopener noreferrer" className="flex items-center gap-2">
-                <BookOpen className="h-5 w-5" /> Docs
+                <BookOpen className="h-5 w-5" /> {t('mcp.hero.ctaDocs')}
               </a>
             </Button>
           </div>
@@ -300,9 +302,9 @@ export default function MCPPage() {
 
         {/* Example Conversation */}
         <div className="mb-20">
-          <h2 className="text-headline-md mb-2 text-center text-on-surface">What It Feels Like</h2>
+          <h2 className="text-headline-md mb-2 text-center text-on-surface">{t('mcp.chat.title')}</h2>
           <p className="text-center text-on-surface-variant mb-10 max-w-2xl mx-auto">
-            Here&apos;s a real exchange between a trader and their AI. Notice you never touched a dashboard.
+            {t('mcp.chat.sub')}
           </p>
           <div className="obsidian-card rounded-2xl p-6 md:p-8 ghost-border max-w-3xl mx-auto">
             <div className="space-y-5">
@@ -311,7 +313,7 @@ export default function MCPPage() {
                   <Bot className="h-4 w-4 text-primary" />
                 </div>
                 <div className="flex-1 surface-low rounded-xl rounded-tl-sm p-4">
-                  <p className="text-sm text-on-surface">I'm seeing weakness in banking. Square off my MIS positions in BANKNIFTY options and show me the P&L.</p>
+                  <p className="text-sm text-on-surface">{t('mcp.chat.user')}</p>
                 </div>
               </div>
               <div className="flex items-start gap-3 flex-row-reverse">
@@ -319,30 +321,30 @@ export default function MCPPage() {
                   <Sparkles className="h-4 w-4 text-tertiary" />
                 </div>
                 <div className="flex-1 surface-container rounded-xl rounded-tr-sm p-4">
-                  <p className="text-sm text-on-surface mb-3">On it. Let me pull up your BANKNIFTY MIS positions first...</p>
+                  <p className="text-sm text-on-surface mb-3">{t('mcp.chat.ai1')}</p>
                   <div className="space-y-1.5 text-xs font-mono text-on-surface-variant surface-high p-3 rounded-lg">
                     <div>→ BANKNIFTY 52000 CE: +50 @ ₹185 (MIS)</div>
                     <div>→ BANKNIFTY 51800 PE: -50 @ ₹142 (MIS)</div>
                   </div>
-                  <p className="text-sm text-on-surface mt-3 mb-2">Closing both now...</p>
+                  <p className="text-sm text-on-surface mt-3 mb-2">{t('mcp.chat.ai2')}</p>
                   <div className="flex items-center gap-2 text-sm">
                     <Check className="h-4 w-4 text-tertiary" />
-                    <span className="text-on-surface">Done. Realised P&L today: <span className="font-semibold text-tertiary">+ ₹4,250</span></span>
+                    <span className="text-on-surface">{t('mcp.chat.done')} <span className="font-semibold text-tertiary">+ ₹4,250</span></span>
                   </div>
                 </div>
               </div>
             </div>
           </div>
           <p className="text-center font-label text-label-sm text-on-surface-variant mt-4">
-            Example conversation. Your AI does the lookup and executes - you just confirm and watch.
+            {t('mcp.chat.note')}
           </p>
         </div>
 
         {/* Capabilities */}
         <div className="mb-20">
-          <h2 className="text-headline-md mb-2 text-center text-on-surface">Why Traders Like It</h2>
+          <h2 className="text-headline-md mb-2 text-center text-on-surface">{t('mcp.why.title')}</h2>
           <p className="text-center text-on-surface-variant mb-10 max-w-2xl mx-auto">
-            Made for traders who&apos;d rather just say what they want than click through seven screens.
+            {t('mcp.why.sub')}
           </p>
           <div className="grid md:grid-cols-3 gap-4">
             {capabilities.map(({ icon: Icon, title, desc }) => (
@@ -359,9 +361,9 @@ export default function MCPPage() {
 
         {/* How It Works */}
         <div className="mb-20">
-          <h2 className="text-headline-md mb-2 text-center text-on-surface">How It Works</h2>
+          <h2 className="text-headline-md mb-2 text-center text-on-surface">{t('mcp.how.title')}</h2>
           <p className="text-center text-on-surface-variant mb-10 max-w-2xl mx-auto">
-            You talk, your AI acts, OpenAlgo runs it, your broker executes. Four steps - and you only handle the first one.
+            {t('mcp.how.sub')}
           </p>
           <div className="grid md:grid-cols-4 gap-4 relative">
             {flowSteps.map(({ icon: Icon, title, desc, accent }, i) => (
@@ -371,7 +373,7 @@ export default function MCPPage() {
                     <div className="inline-flex h-9 w-9 items-center justify-center rounded-lg surface-container">
                       <Icon className={`h-5 w-5 ${accent}`} />
                     </div>
-                    <span className="font-label text-label-sm uppercase tracking-wider text-on-surface-variant">Step {i + 1}</span>
+                    <span className="font-label text-label-sm uppercase tracking-wider text-on-surface-variant">{t('mcp.how.step').replace('{n}', String(i + 1))}</span>
                   </div>
                   <h3 className="font-semibold text-on-surface mb-1.5">{title}</h3>
                   <p className="text-sm text-on-surface-variant leading-relaxed">{desc}</p>
@@ -388,9 +390,9 @@ export default function MCPPage() {
 
         {/* Example Prompts */}
         <div className="mb-20">
-          <h2 className="text-headline-md mb-2 text-center text-on-surface">Things You Can Just Ask</h2>
+          <h2 className="text-headline-md mb-2 text-center text-on-surface">{t('mcp.prompts.title')}</h2>
           <p className="text-center text-on-surface-variant mb-10 max-w-2xl mx-auto">
-            Any of these work straight away once you&apos;ve set things up. No special phrasing required - speak naturally.
+            {t('mcp.prompts.sub')}
           </p>
           <div className="grid sm:grid-cols-2 gap-3">
             {prompts.map(({ icon: Icon, text }, i) => (
@@ -406,9 +408,9 @@ export default function MCPPage() {
 
         {/* Available Tools */}
         <div className="mb-20">
-          <h2 className="text-headline-md mb-2 text-center text-on-surface">Everything You Can Do</h2>
+          <h2 className="text-headline-md mb-2 text-center text-on-surface">{t('mcp.tools.title')}</h2>
           <p className="text-center text-on-surface-variant mb-10 max-w-2xl mx-auto">
-            Anything OpenAlgo can do, your AI can now do for you. Grouped the way traders actually think.
+            {t('mcp.tools.sub')}
           </p>
           <div className="grid md:grid-cols-2 gap-4">
             {toolGroups.map(({ title, icon: Icon, tools }) => (
@@ -438,9 +440,9 @@ export default function MCPPage() {
 
         {/* Supported Clients */}
         <div className="mb-20">
-          <h2 className="text-headline-md mb-2 text-center text-on-surface">Works With Your Favourite AI</h2>
+          <h2 className="text-headline-md mb-2 text-center text-on-surface">{t('mcp.clients.title')}</h2>
           <p className="text-center text-on-surface-variant mb-10 max-w-2xl mx-auto">
-            Use the chat app you already like. No need to switch or learn a new tool.
+            {t('mcp.clients.sub')}
           </p>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             {clients.map(({ name, desc }) => (
@@ -457,9 +459,9 @@ export default function MCPPage() {
 
         {/* Quickstart */}
         <div id="quickstart" className="mb-20 scroll-mt-20">
-          <h2 className="text-headline-md mb-2 text-center text-on-surface">Getting Started</h2>
+          <h2 className="text-headline-md mb-2 text-center text-on-surface">{t('mcp.quickstart.title')}</h2>
           <p className="text-center text-on-surface-variant mb-10 max-w-2xl mx-auto">
-            Three quick steps - a one-time setup, and you&apos;re talking to your trading account.
+            {t('mcp.quickstart.sub')}
           </p>
 
           <div className="space-y-6">
@@ -467,25 +469,25 @@ export default function MCPPage() {
             <div className="obsidian-card rounded-xl p-6 ghost-border">
               <div className="flex items-center gap-3 mb-4">
                 <span className="flex items-center justify-center h-8 w-8 rounded-full gradient-cta text-primary-foreground text-sm font-bold">1</span>
-                <h3 className="text-lg font-semibold text-on-surface">Have OpenAlgo Running With Your Broker</h3>
+                <h3 className="text-lg font-semibold text-on-surface">{t('mcp.qs1.title')}</h3>
               </div>
               <ul className="space-y-2.5 text-sm text-on-surface-variant mb-4">
                 <li className="flex items-start gap-3">
                   <span className="w-1.5 h-1.5 rounded-full bg-primary mt-2 shrink-0" />
-                  <span>Make sure OpenAlgo is running on your computer and your broker is logged in.</span>
+                  <span>{t('mcp.qs1.b1')}</span>
                 </li>
                 <li className="flex items-start gap-3">
                   <span className="w-1.5 h-1.5 rounded-full bg-primary mt-2 shrink-0" />
-                  <span>Open OpenAlgo, go to <span className="text-on-surface font-medium">Settings → API Keys</span>, and copy your key. Keep it handy.</span>
+                  <span>{t('mcp.qs1.b2a')}<span className="text-on-surface font-medium">{t('mcp.qs1.b2b')}</span>{t('mcp.qs1.b2c')}</span>
                 </li>
                 <li className="flex items-start gap-3">
                   <span className="w-1.5 h-1.5 rounded-full bg-primary mt-2 shrink-0" />
-                  <span>Download the MCP setup files from GitHub. The full setup guide walks through this in under a minute.</span>
+                  <span>{t('mcp.qs1.b3')}</span>
                 </li>
               </ul>
               <Button variant="outline" size="sm" asChild>
                 <a href="/getting-started" className="flex items-center gap-2">
-                  New to OpenAlgo? Start here <ArrowRight className="h-3.5 w-3.5" />
+                  {t('mcp.qs1.cta')} <ArrowRight className="h-3.5 w-3.5" />
                 </a>
               </Button>
             </div>
@@ -494,11 +496,10 @@ export default function MCPPage() {
             <div className="obsidian-card rounded-xl p-6 ghost-border">
               <div className="flex items-center gap-3 mb-4">
                 <span className="flex items-center justify-center h-8 w-8 rounded-full gradient-cta text-primary-foreground text-sm font-bold">2</span>
-                <h3 className="text-lg font-semibold text-on-surface">Tell Your AI About OpenAlgo</h3>
+                <h3 className="text-lg font-semibold text-on-surface">{t('mcp.qs2.title')}</h3>
               </div>
               <p className="text-sm text-on-surface-variant mb-4">
-                Pick your operating system below, copy the settings, and paste them into your AI app&apos;s config file.
-                Replace the paths and API key with your own.
+                {t('mcp.qs2.desc')}
               </p>
 
               {/* OS Tabs */}
@@ -524,7 +525,7 @@ export default function MCPPage() {
               </CodeBlock>
 
               <div className="mt-5">
-                <p className="font-label text-label-lg text-on-surface-variant mb-3">Where the settings file lives:</p>
+                <p className="font-label text-label-lg text-on-surface-variant mb-3">{t('mcp.qs2.pathsLabel')}</p>
                 <div className="space-y-2">
                   {CONFIG_PATHS[os].map(({ app, path }) => (
                     <div key={app} className="flex flex-col sm:flex-row sm:items-center gap-1.5 sm:gap-3 text-sm">
@@ -534,9 +535,9 @@ export default function MCPPage() {
                   ))}
                 </div>
                 <p className="text-xs text-on-surface-variant mt-3">
-                  Need help with the exact paths?{" "}
+                  {t('mcp.qs2.helpPre')}{" "}
                   <a href="https://docs.openalgo.in/mcp" target="_blank" rel="noopener noreferrer" className="underline underline-offset-4 hover:text-primary transition-colors">
-                    See the detailed setup guide
+                    {t('mcp.qs2.helpLink')}
                   </a>.
                 </p>
               </div>
@@ -546,15 +547,14 @@ export default function MCPPage() {
             <div className="obsidian-card rounded-xl p-6 ghost-border">
               <div className="flex items-center gap-3 mb-4">
                 <span className="flex items-center justify-center h-8 w-8 rounded-full gradient-cta text-primary-foreground text-sm font-bold">3</span>
-                <h3 className="text-lg font-semibold text-on-surface">Restart Your AI App and Start Trading</h3>
+                <h3 className="text-lg font-semibold text-on-surface">{t('mcp.qs3.title')}</h3>
               </div>
               <p className="text-sm text-on-surface-variant mb-4">
-                Close and reopen Claude Desktop, Cursor, or Windsurf. OpenAlgo will be connected automatically.
-                Try asking something simple first:
+                {t('mcp.qs3.desc')}
               </p>
-              <CodeBlock copyText={'"Show me my funds and open positions"'}>
-                <span className="text-on-surface-variant/50">you &gt;</span>{" "}
-                <span className="text-on-surface">&ldquo;Show me my funds and open positions&rdquo;</span>
+              <CodeBlock copyText={'"' + t('mcp.qs3.prompt') + '"'}>
+                <span className="text-on-surface-variant/50">{t('mcp.qs3.you')}</span>{" "}
+                <span className="text-on-surface">&ldquo;{t('mcp.qs3.prompt')}&rdquo;</span>
               </CodeBlock>
             </div>
           </div>
@@ -562,9 +562,9 @@ export default function MCPPage() {
 
         {/* Exchanges */}
         <div className="mb-20">
-          <h2 className="text-headline-md mb-2 text-center text-on-surface">Exchanges You Can Trade</h2>
+          <h2 className="text-headline-md mb-2 text-center text-on-surface">{t('mcp.exch.title')}</h2>
           <p className="text-center text-on-surface-variant mb-10 max-w-2xl mx-auto">
-            Whatever your broker lets you trade through OpenAlgo, you can trade by chat.
+            {t('mcp.exch.sub')}
           </p>
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
             {exchanges.map(({ code, name }) => (
@@ -584,19 +584,19 @@ export default function MCPPage() {
                 <ShieldCheck className="h-6 w-6 text-secondary" />
               </div>
               <div className="flex-1">
-                <h3 className="font-semibold text-on-surface mb-2">A Few Things To Know</h3>
+                <h3 className="font-semibold text-on-surface mb-2">{t('mcp.sec.title')}</h3>
                 <ul className="space-y-2 text-sm text-on-surface-variant">
                   <li className="flex items-start gap-3">
                     <span className="w-1.5 h-1.5 rounded-full bg-secondary mt-2 shrink-0" />
-                    <span>Everything runs on your own computer. Your orders and account info never leave your machine.</span>
+                    <span>{t('mcp.sec.b1')}</span>
                   </li>
                   <li className="flex items-start gap-3">
                     <span className="w-1.5 h-1.5 rounded-full bg-secondary mt-2 shrink-0" />
-                    <span>Your API key stays local - it&apos;s never uploaded or shared.</span>
+                    <span>{t('mcp.sec.b2')}</span>
                   </li>
                   <li className="flex items-start gap-3">
                     <AlertTriangle className="w-4 h-4 text-secondary mt-0.5 shrink-0" />
-                    <span>AI can sometimes make mistakes. Always read what it&apos;s about to do before you say yes - especially for orders.</span>
+                    <span>{t('mcp.sec.b3')}</span>
                   </li>
                 </ul>
               </div>
@@ -606,24 +606,24 @@ export default function MCPPage() {
 
         {/* CTA */}
         <div className="text-center">
-          <h2 className="text-headline-md mb-4 text-on-surface">Let your AI handle the clicks.</h2>
+          <h2 className="text-headline-md mb-4 text-on-surface">{t('mcp.cta.title')}</h2>
           <p className="text-on-surface-variant mb-8 max-w-xl mx-auto">
-            Set it up once. After that, just talk. Your broker, your strategies, completely under your control.
+            {t('mcp.cta.sub')}
           </p>
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
             <Button size="lg" asChild>
               <a href="https://github.com/marketcalls/openalgo/tree/main/mcp" target="_blank" rel="noopener noreferrer" className="flex items-center gap-2">
-                <Github className="h-5 w-5" /> Get OpenAlgo MCP <ArrowRight className="h-4 w-4" />
+                <Github className="h-5 w-5" /> {t('mcp.cta.get')} <ArrowRight className="h-4 w-4" />
               </a>
             </Button>
             <Button size="lg" variant="outline" asChild>
               <a href="https://docs.openalgo.in/mcp" target="_blank" rel="noopener noreferrer" className="flex items-center gap-2">
-                <BookOpen className="h-5 w-5" /> Read the Docs
+                <BookOpen className="h-5 w-5" /> {t('mcp.cta.docs')}
               </a>
             </Button>
             <Button size="lg" variant="outline" asChild>
               <a href="/discord" className="flex items-center gap-2">
-                <MessageCircle className="h-5 w-5" /> Join Discord
+                <MessageCircle className="h-5 w-5" /> {t('mcp.cta.discord')}
               </a>
             </Button>
           </div>

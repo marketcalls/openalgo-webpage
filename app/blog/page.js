@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { Button } from "@/components/ui/button"
+import { useI18n } from "@/components/i18n/LanguageProvider"
 import { Calendar, ExternalLink, User, Clock, BookOpen, Rss } from "lucide-react"
 
 async function fetchRSSFeed() {
@@ -16,6 +17,8 @@ async function fetchRSSFeed() {
 }
 
 function BlogCard({ post }) {
+  const { t } = useI18n()
+
   const formatDate = (dateString) => {
     return new Date(dateString).toLocaleDateString('en-US', {
       year: 'numeric', month: 'long', day: 'numeric'
@@ -24,11 +27,11 @@ function BlogCard({ post }) {
 
   const getReadingTime = (content) => {
     const words = content.replace(/<[^>]*>/g, '').split(/\s+/).length
-    return `${Math.ceil(words / 200)} min read`
+    return t('blog.minRead').replace('{n}', String(Math.ceil(words / 200)))
   }
 
   const getBlogCategory = (categories) => {
-    if (!categories || categories.length === 0) return 'General'
+    if (!categories || categories.length === 0) return t('blog.categoryGeneral')
     return categories[0]
   }
 
@@ -43,7 +46,7 @@ function BlogCard({ post }) {
       <div className="text-xs text-on-surface-variant mb-4 space-y-1.5">
         <div className="flex items-center gap-2">
           <User className="w-3 h-3" />
-          <span className="font-label">By {post.author || 'OpenAlgo'}</span>
+          <span className="font-label">{t('blog.by').replace('{n}', post.author || 'OpenAlgo')}</span>
         </div>
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
@@ -63,7 +66,7 @@ function BlogCard({ post }) {
       <div className="mt-auto">
         <Button variant="outline" size="sm" asChild className="w-full">
           <a href={post.link} target="_blank" rel="noopener noreferrer" className="flex items-center justify-center gap-2">
-            Read More
+            {t('blog.readMore')}
             <ExternalLink className="w-4 h-4" />
           </a>
         </Button>
@@ -79,6 +82,7 @@ function BlogCard({ post }) {
 }
 
 export default function BlogPage() {
+  const { t } = useI18n()
   const [posts, setPosts] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
@@ -104,7 +108,7 @@ export default function BlogPage() {
         <div className="container max-w-7xl py-16">
           <div className="text-center">
             <div className="w-12 h-12 rounded-full surface-container mx-auto mb-4 animate-pulse glow-primary" />
-            <p className="text-on-surface-variant font-label">Loading blog posts...</p>
+            <p className="text-on-surface-variant font-label">{t('blog.loading')}</p>
           </div>
         </div>
       </div>
@@ -116,8 +120,8 @@ export default function BlogPage() {
       <div className="min-h-screen">
         <div className="container max-w-7xl py-16">
           <div className="text-center">
-            <p className="text-destructive mb-5">{error}</p>
-            <Button onClick={() => window.location.reload()}>Try Again</Button>
+            <p className="text-destructive mb-5">{t('blog.error')}</p>
+            <Button onClick={() => window.location.reload()}>{t('blog.tryAgain')}</Button>
           </div>
         </div>
       </div>
@@ -129,9 +133,9 @@ export default function BlogPage() {
       <div className="container max-w-7xl py-16">
         <div className="space-y-10">
           <div className="space-y-4 text-center">
-            <h1 className="text-display-md text-on-surface">OpenAlgo Blog</h1>
+            <h1 className="text-display-md text-on-surface">{t('blog.title')}</h1>
             <p className="text-lg text-on-surface-variant max-w-3xl mx-auto leading-relaxed">
-              Stay updated with the latest insights, tutorials, and developments in algorithmic trading.
+              {t('blog.desc')}
             </p>
           </div>
 
@@ -143,27 +147,27 @@ export default function BlogPage() {
             </div>
           ) : (
             <div className="text-center py-16">
-              <p className="text-on-surface-variant mb-5">No blog posts found</p>
+              <p className="text-on-surface-variant mb-5">{t('blog.empty')}</p>
               <Button variant="outline" asChild>
                 <a href="https://blog.openalgo.in" target="_blank" rel="noopener noreferrer">
-                  Visit Blog Website
+                  {t('blog.visitBlog')}
                 </a>
               </Button>
             </div>
           )}
 
           <div className="text-center space-y-5">
-            <p className="text-on-surface-variant">Want to stay updated with our latest posts?</p>
+            <p className="text-on-surface-variant">{t('blog.stayUpdated')}</p>
             <div className="flex justify-center gap-4">
               <Button variant="outline" asChild>
                 <a href="https://blog.openalgo.in" target="_blank" rel="noopener noreferrer">
-                  Visit Full Blog
+                  {t('blog.visitFullBlog')}
                 </a>
               </Button>
               <Button asChild>
                 <a href="https://medium.com/feed/@openalgo" target="_blank" rel="noopener noreferrer">
                   <Rss className="w-4 h-4 mr-2" />
-                  RSS Feed
+                  {t('blog.rssFeed')}
                 </a>
               </Button>
             </div>

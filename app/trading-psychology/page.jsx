@@ -78,7 +78,7 @@ export default function PsychologyCourseHome() {
             24 chapters &middot; beginner-first &middot; built for India
           </span>
           <h1 className="reveal reveal-2 mt-6 max-w-3xl text-4xl sm:text-5xl lg:text-6xl font-bold leading-[1.05] tracking-tight text-on-surface">
-            <span className="bg-linear-to-r from-secondary via-primary to-tertiary bg-clip-text text-transparent">
+            <span className="text-on-surface ">
               Trading Psychology
             </span>{" "}
             &amp; Risk Playbooks
@@ -111,7 +111,7 @@ export default function PsychologyCourseHome() {
               ["India", "Market focus"],
             ].map(([v, k]) => (
               <div key={k}>
-                <div className="text-3xl font-bold bg-linear-to-r from-secondary to-tertiary bg-clip-text text-transparent">
+                <div className="text-on-surface text-3xl font-bold">
                   {v}
                 </div>
                 <div className="font-label text-xs uppercase tracking-wider text-on-surface-variant/70">{k}</div>

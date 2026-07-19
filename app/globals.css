@@ -15,42 +15,45 @@
 
 @theme {
   --font-sans: var(--font-manrope), ui-sans-serif, system-ui, sans-serif;
-  --font-display: var(--font-sora), ui-sans-serif, system-ui, sans-serif;
-  --font-label: var(--font-ibm-mono), 'IBM Plex Mono', ui-monospace, monospace;
+  --font-display: var(--font-manrope), ui-sans-serif, system-ui, sans-serif;
+  --font-label: var(--font-manrope), ui-sans-serif, system-ui, sans-serif;
 
   --text-display-lg: 3.5rem;
-  --text-display-lg--line-height: 1.1;
-  --text-display-lg--letter-spacing: -0.02em;
-  --text-display-lg--font-weight: 700;
+  --text-display-lg--line-height: 1.06;
+  --text-display-lg--letter-spacing: -0.03em;
+  --text-display-lg--font-weight: 800;
   --text-display-md: 2.75rem;
-  --text-display-md--line-height: 1.15;
-  --text-display-md--letter-spacing: -0.02em;
-  --text-display-md--font-weight: 700;
+  --text-display-md--line-height: 1.1;
+  --text-display-md--letter-spacing: -0.025em;
+  --text-display-md--font-weight: 800;
   --text-display-sm: 2.25rem;
-  --text-display-sm--line-height: 1.2;
-  --text-display-sm--letter-spacing: -0.01em;
-  --text-display-sm--font-weight: 600;
+  --text-display-sm--line-height: 1.15;
+  --text-display-sm--letter-spacing: -0.02em;
+  --text-display-sm--font-weight: 700;
   --text-headline-lg: 2rem;
   --text-headline-lg--line-height: 1.25;
-  --text-headline-lg--font-weight: 600;
+  --text-headline-lg--letter-spacing: -0.015em;
+  --text-headline-lg--font-weight: 700;
   --text-headline-md: 1.75rem;
   --text-headline-md--line-height: 1.3;
-  --text-headline-md--font-weight: 600;
+  --text-headline-md--letter-spacing: -0.01em;
+  --text-headline-md--font-weight: 700;
   --text-headline-sm: 1.5rem;
   --text-headline-sm--line-height: 1.35;
-  --text-headline-sm--font-weight: 600;
+  --text-headline-sm--letter-spacing: -0.01em;
+  --text-headline-sm--font-weight: 700;
   --text-label-lg: 0.875rem;
   --text-label-lg--line-height: 1.4;
-  --text-label-lg--font-weight: 500;
+  --text-label-lg--font-weight: 600;
   --text-label-lg--letter-spacing: 0.02em;
   --text-label-md: 0.75rem;
   --text-label-md--line-height: 1.4;
-  --text-label-md--font-weight: 500;
-  --text-label-md--letter-spacing: 0.04em;
+  --text-label-md--font-weight: 600;
+  --text-label-md--letter-spacing: 0.08em;
   --text-label-sm: 0.6875rem;
   --text-label-sm--line-height: 1.4;
-  --text-label-sm--font-weight: 500;
-  --text-label-sm--letter-spacing: 0.05em;
+  --text-label-sm--font-weight: 600;
+  --text-label-sm--letter-spacing: 0.1em;
 
   --color-border: hsl(var(--border));
   --color-input: hsl(var(--input));
@@ -100,8 +103,8 @@
   --color-error-container: hsl(var(--error-container));
 
   --radius-lg: var(--radius);
-  --radius-md: calc(var(--radius) - 2px);
-  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 4px);
+  --radius-sm: calc(var(--radius) - 8px);
   --radius-full: 9999px;
 
   --animate-accordion-down: accordion-down 0.2s ease-out;
@@ -140,9 +143,6 @@
   The default border color has changed to `currentcolor` in Tailwind CSS v4,
   so we've added these compatibility styles to make sure everything still
   looks the same as it did with Tailwind CSS v3.
-
-  If we ever want to remove these styles, we need to add an explicit border
-  color utility to any element that depends on these defaults.
 */
 @layer base {
   *,
@@ -150,23 +150,22 @@
   ::before,
   ::backdrop,
   ::file-selector-button {
-    border-color: var(--color-gray-200, currentcolor);
+    border-color: hsl(var(--border));
   }
 }
 
 @utility animate-gradient {
-  /* Obsidian gradient animation */
-  background-size: 200% 200%;
-  animation: gradient 8s ease infinite;
+  /* Legacy hook - gradients were removed with the monochrome theme */
+  background-size: 100% 100%;
 }
 
 @utility obsidian-grid {
-  /* Obsidian grid pattern - fades out radially so it feels like depth, not wallpaper */
+  /* Hairline grid texture - fades out radially so it reads as depth */
   background-image:
-    linear-gradient(hsl(var(--outline-variant) / 0.08) 1px, transparent 1px),
+    linear-gradient(hsl(var(--outline-variant) / 0.35) 1px, transparent 1px),
     linear-gradient(
       90deg,
-      hsl(var(--outline-variant) / 0.08) 1px,
+      hsl(var(--outline-variant) / 0.35) 1px,
       transparent 1px
     );
   background-size: 40px 40px;
@@ -183,73 +182,62 @@
 }
 
 @utility glow-orb {
-  /* Aurora glow orbs - layered behind heroes for atmosphere */
-  position: absolute;
-  border-radius: 9999px;
-  pointer-events: none;
-  filter: blur(120px);
+  /* Retired atmosphere effect from the previous dark theme */
+  display: none;
 }
 
 @utility glass-panel {
-  /* Glass panel effect */
-  background: hsl(var(--surface-bright) / 0.4);
+  background: hsl(var(--surface-bright) / 0.7);
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
 }
 
 @utility glass-float {
-  /* Glassmorphism for floating panels */
-  background: hsl(var(--surface-container-high) / 0.6);
+  background: hsl(var(--background) / 0.85);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
 }
 
 @utility ghost-border {
-  /* Ghost border - barely-there guide */
-  box-shadow: inset 0 0 0 1px hsl(var(--outline-variant) / 0.15);
+  /* Hairline border */
+  box-shadow: inset 0 0 0 1px hsl(var(--border));
 }
 
 @utility ambient-shadow {
-  /* Ambient shadow - tinted purple */
-  box-shadow: 0 8px 40px hsl(267 30% 15% / 0.06);
+  box-shadow: 0 8px 40px hsl(0 0% 0% / 0.06);
 }
 
 @utility ambient-shadow-lg {
-  box-shadow: 0 16px 60px hsl(267 30% 15% / 0.1);
+  box-shadow: 0 16px 60px hsl(0 0% 0% / 0.1);
 }
 
 @utility glow-primary {
-  /* Glow effects */
-  box-shadow: 0 0 15px 0px hsl(267 100% 87% / 0.2);
+  /* Monochrome soft shadow (kept name for compatibility) */
+  box-shadow: 0 2px 12px hsl(0 0% 0% / 0.1);
 }
 
 @utility glow-tertiary {
-  box-shadow: 0 0 15px 0px rgba(74, 225, 118, 0.2);
+  box-shadow: 0 2px 12px hsl(0 0% 0% / 0.1);
 }
 
 @utility glow-primary-intense {
-  box-shadow: 0 0 25px 0px hsl(267 100% 87% / 0.35);
+  box-shadow: 0 4px 20px hsl(0 0% 0% / 0.18);
 }
 
 @utility glow-tertiary-intense {
-  box-shadow: 0 0 25px 0px rgba(74, 225, 118, 0.35);
+  box-shadow: 0 4px 20px hsl(0 0% 0% / 0.18);
 }
 
 @utility gradient-cta {
-  /* Gradient CTA */
-  background: linear-gradient(
-    135deg,
-    hsl(var(--primary)),
-    hsl(var(--primary-container))
-  );
+  /* Solid ink CTA (kept name for compatibility) */
+  background: hsl(var(--primary));
 
   &:hover {
-    box-shadow: 0 0 20px 0px hsl(267 100% 87% / 0.3);
+    background: hsl(var(--primary) / 0.88);
   }
 }
 
 @utility surface-lowest {
-  /* Surface utilities */
   background: hsl(var(--surface-container-lowest));
 }
 
@@ -278,7 +266,6 @@
 }
 
 @utility text-on-surface {
-  /* Text utilities */
   color: hsl(var(--on-surface));
 }
 
@@ -287,17 +274,15 @@
 }
 
 @utility font-label {
-  /* Label font - IBM Plex Mono (self-hosted via next/font) */
-  font-family: var(--font-ibm-mono), 'IBM Plex Mono', ui-monospace, monospace;
+  font-family: var(--font-manrope), ui-sans-serif, system-ui, sans-serif;
 }
 
 @utility pulse-live {
-  /* Subtle pulse for live indicators */
+  /* Subtle opacity pulse for live indicators */
   animation: pulseLive 2s ease-in-out infinite alternate;
 }
 
 @utility hover-lift {
-  /* Smooth hover lift */
   transition:
     transform 0.3s ease,
     box-shadow 0.3s ease;
@@ -308,15 +293,14 @@
 }
 
 @utility obsidian-card {
-  /* Obsidian card - no border, surface shift */
-  background: hsl(var(--surface-container-low));
+  /* Card - white surface, hairline border, quiet hover */
+  background: hsl(var(--surface-bright));
+  border: 1px solid hsl(var(--border));
   transition: all 0.3s ease;
 
   &:hover {
-    background: hsl(var(--surface-container));
-    box-shadow:
-      0 8px 40px hsl(267 30% 15% / 0.08),
-      inset 0 0 0 1px hsl(var(--primary) / 0.2);
+    border-color: hsl(var(--outline-variant));
+    box-shadow: 0 12px 32px hsl(0 0% 0% / 0.07);
   }
 }
 
@@ -360,54 +344,147 @@
 }
 
 @layer base {
-  /* Obsidian dark theme - the only theme */
+  /* Monochrome light theme - paper white, near-black ink */
   :root {
-    --background: 0 0% 7.5%;
-    --foreground: 0 0% 89%;
+    --background: 0 0% 99%;
+    --foreground: 0 0% 8%;
 
-    --card: 0 0% 10%;
-    --card-foreground: 0 0% 89%;
+    --card: 0 0% 100%;
+    --card-foreground: 0 0% 8%;
 
-    --popover: 0 0% 10%;
-    --popover-foreground: 0 0% 89%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 0 0% 8%;
 
-    --primary: 267 100% 87%;
-    --primary-foreground: 0 0% 7.5%;
+    --primary: 0 0% 9%;
+    --primary-foreground: 0 0% 99%;
 
-    --secondary: 220 100% 84%;
-    --secondary-foreground: 0 0% 7.5%;
+    --secondary: 0 0% 26%;
+    --secondary-foreground: 0 0% 99%;
 
-    --tertiary: 140 72% 53%;
-    --tertiary-foreground: 0 0% 7.5%;
+    --tertiary: 0 0% 42%;
+    --tertiary-foreground: 0 0% 99%;
 
-    --muted: 0 0% 12%;
-    --muted-foreground: 0 0% 63%;
+    --muted: 0 0% 94.5%;
+    --muted-foreground: 0 0% 42%;
 
-    --accent: 0 0% 15%;
-    --accent-foreground: 0 0% 89%;
+    --accent: 0 0% 93%;
+    --accent-foreground: 0 0% 9%;
 
-    --destructive: 0 62% 30%;
+    --destructive: 0 0% 20%;
     --destructive-foreground: 0 0% 98%;
 
-    --border: 0 0% 15%;
-    --input: 0 0% 15%;
-    --ring: 267 100% 87%;
+    --border: 0 0% 89.5%;
+    --input: 0 0% 89.5%;
+    --ring: 0 0% 9%;
 
-    --radius: 0.5rem;
+    --radius: 1rem;
 
-    --surface: 0 0% 7.5%;
-    --surface-container-lowest: 0 0% 5%;
-    --surface-container-low: 0 0% 10%;
-    --surface-container: 0 0% 12%;
-    --surface-container-high: 0 0% 15%;
-    --surface-container-highest: 0 0% 18%;
-    --surface-bright: 0 0% 23%;
-    --on-surface: 0 0% 89%;
-    --on-surface-variant: 0 0% 63%;
-    --outline-variant: 0 0% 27%;
-    --primary-container: 267 30% 28%;
-    --tertiary-container: 140 30% 16%;
-    --error-container: 0 50% 15%;
+    --surface: 0 0% 99%;
+    --surface-container-lowest: 0 0% 99%;
+    --surface-container-low: 0 0% 97%;
+    --surface-container: 0 0% 94.5%;
+    --surface-container-high: 0 0% 92%;
+    --surface-container-highest: 0 0% 89.5%;
+    --surface-bright: 0 0% 100%;
+    --on-surface: 0 0% 10%;
+    --on-surface-variant: 0 0% 41%;
+    --outline-variant: 0 0% 85%;
+    --primary-container: 0 0% 30%;
+    --tertiary-container: 0 0% 84%;
+    --error-container: 0 0% 91%;
+  }
+
+  /* Inverted scope - wrap any section in .scheme-dark for a near-black panel.
+     Every token flips, so the same components render correctly inside.
+     NOTE: Tailwind v4 registers the theme's --color-* variables with
+     @property, which resolves hsl(var(--x)) indirection at :root - so the
+     scoped raw --x overrides below never reach compiled utilities like
+     bg-background or text-on-surface. The --color-* tokens must therefore
+     be overridden here directly as well. */
+  .scheme-dark {
+    --background: 0 0% 4.5%;
+    --foreground: 0 0% 95%;
+
+    --card: 0 0% 7%;
+    --card-foreground: 0 0% 95%;
+
+    --popover: 0 0% 7%;
+    --popover-foreground: 0 0% 95%;
+
+    --primary: 0 0% 98%;
+    --primary-foreground: 0 0% 6%;
+
+    --secondary: 0 0% 78%;
+    --secondary-foreground: 0 0% 6%;
+
+    --tertiary: 0 0% 62%;
+    --tertiary-foreground: 0 0% 6%;
+
+    --muted: 0 0% 10%;
+    --muted-foreground: 0 0% 62%;
+
+    --accent: 0 0% 12%;
+    --accent-foreground: 0 0% 95%;
+
+    --destructive: 0 0% 80%;
+    --destructive-foreground: 0 0% 6%;
+
+    --border: 0 0% 14.5%;
+    --input: 0 0% 14.5%;
+    --ring: 0 0% 98%;
+
+    --surface: 0 0% 4.5%;
+    --surface-container-lowest: 0 0% 3%;
+    --surface-container-low: 0 0% 6.5%;
+    --surface-container: 0 0% 8.5%;
+    --surface-container-high: 0 0% 11%;
+    --surface-container-highest: 0 0% 14%;
+    --surface-bright: 0 0% 8%;
+    --on-surface: 0 0% 95%;
+    --on-surface-variant: 0 0% 61%;
+    --outline-variant: 0 0% 20%;
+    --primary-container: 0 0% 75%;
+    --tertiary-container: 0 0% 22%;
+    --error-container: 0 0% 15%;
+
+    --color-background: hsl(0 0% 4.5%);
+    --color-foreground: hsl(0 0% 95%);
+    --color-card: hsl(0 0% 7%);
+    --color-card-foreground: hsl(0 0% 95%);
+    --color-popover: hsl(0 0% 7%);
+    --color-popover-foreground: hsl(0 0% 95%);
+    --color-primary: hsl(0 0% 98%);
+    --color-primary-foreground: hsl(0 0% 6%);
+    --color-primary-container: hsl(0 0% 75%);
+    --color-secondary: hsl(0 0% 78%);
+    --color-secondary-foreground: hsl(0 0% 6%);
+    --color-tertiary: hsl(0 0% 62%);
+    --color-tertiary-foreground: hsl(0 0% 6%);
+    --color-tertiary-container: hsl(0 0% 22%);
+    --color-muted: hsl(0 0% 10%);
+    --color-muted-foreground: hsl(0 0% 62%);
+    --color-accent: hsl(0 0% 12%);
+    --color-accent-foreground: hsl(0 0% 95%);
+    --color-destructive: hsl(0 0% 80%);
+    --color-destructive-foreground: hsl(0 0% 6%);
+    --color-border: hsl(0 0% 14.5%);
+    --color-input: hsl(0 0% 14.5%);
+    --color-ring: hsl(0 0% 98%);
+    --color-surface: hsl(0 0% 4.5%);
+    --color-surface-lowest: hsl(0 0% 3%);
+    --color-surface-low: hsl(0 0% 6.5%);
+    --color-surface-container: hsl(0 0% 8.5%);
+    --color-surface-high: hsl(0 0% 11%);
+    --color-surface-highest: hsl(0 0% 14%);
+    --color-surface-bright: hsl(0 0% 8%);
+    --color-on-surface: hsl(0 0% 95%);
+    --color-on-surface-variant: hsl(0 0% 61%);
+    --color-outline-variant: hsl(0 0% 20%);
+    --color-error-container: hsl(0 0% 15%);
+
+    color-scheme: dark;
+    background-color: hsl(var(--background));
+    color: hsl(var(--foreground));
   }
 }
 
@@ -415,39 +492,33 @@
   * {
     @apply border-border;
   }
+  html {
+    color-scheme: light;
+  }
   body {
     @apply bg-background text-foreground antialiased;
   }
   h1, h2, h3, h4, h5, h6 {
-    font-family: var(--font-sora), ui-sans-serif, system-ui, sans-serif;
+    font-family: var(--font-manrope), ui-sans-serif, system-ui, sans-serif;
+    letter-spacing: -0.02em;
   }
   ::selection {
-    background: hsl(var(--primary) / 0.3);
-    color: hsl(var(--on-surface));
+    background: hsl(var(--foreground));
+    color: hsl(var(--background));
   }
   ::-webkit-scrollbar {
     width: 10px;
   }
   ::-webkit-scrollbar-track {
-    background: hsl(var(--surface-container-lowest));
+    background: hsl(var(--surface-container-low));
   }
   ::-webkit-scrollbar-thumb {
     background: hsl(var(--surface-container-highest));
     border-radius: 5px;
-    border: 2px solid hsl(var(--surface-container-lowest));
+    border: 2px solid hsl(var(--surface-container-low));
   }
   ::-webkit-scrollbar-thumb:hover {
     background: hsl(var(--outline-variant));
-  }
-  /* Film grain over everything - kills flat-black banding */
-  body::after {
-    content: "";
-    position: fixed;
-    inset: 0;
-    z-index: 9999;
-    pointer-events: none;
-    opacity: 0.03;
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
   }
 }
 
@@ -459,8 +530,8 @@
   }
 
   @keyframes pulseLive {
-    from { box-shadow: 0 0 5px rgba(74, 225, 118, 0.2); }
-    to { box-shadow: 0 0 15px rgba(74, 225, 118, 0.4); }
+    from { opacity: 0.35; }
+    to { opacity: 1; }
   }
 
   @keyframes riseIn {

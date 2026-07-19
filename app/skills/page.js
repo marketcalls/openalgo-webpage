@@ -1,6 +1,7 @@
 "use client"
 
 import { Button } from "@/components/ui/button"
+import { useI18n } from "@/components/i18n/LanguageProvider"
 import {
   ArrowRight, Github, Terminal, Sparkles, Copy, Check, BookOpen,
   Bot, LineChart, BarChart3, Search, Layers, LayoutDashboard, Radio,
@@ -10,6 +11,7 @@ import {
 import { useState } from "react"
 
 function CopyButton({ text }) {
+  const { t } = useI18n()
   const [copied, setCopied] = useState(false)
   const handleCopy = () => {
     navigator.clipboard.writeText(text)
@@ -20,7 +22,7 @@ function CopyButton({ text }) {
     <button
       onClick={handleCopy}
       className="absolute top-3 right-3 p-1.5 rounded-lg surface-high hover:surface-highest transition-colors"
-      aria-label="Copy to clipboard"
+      aria-label={t('skill.copyAria')}
     >
       {copied ? <Check className="h-3.5 w-3.5 text-tertiary" /> : <Copy className="h-3.5 w-3.5 text-on-surface-variant" />}
     </button>
@@ -36,56 +38,59 @@ function CodeBlock({ children, copyText }) {
   )
 }
 
-const INDICATOR_COMMANDS = [
-  { cmd: "/indicator-setup", icon: Rocket, title: "First-time setup", desc: "Installs everything your AI needs on your machine. Run this once and you're ready." },
-  { cmd: "/indicator-chart", icon: LineChart, title: "Chart any indicator", desc: "Ask for an EMA, RSI, Supertrend or any other indicator on any stock or index. You get a clean dark-themed chart with buy/sell markers." },
-  { cmd: "/custom-indicator", icon: Wand2, title: "Build your own indicator", desc: "Describe a new indicator in plain English. Your AI writes the code, draws a chart, and checks its speed." },
-  { cmd: "/indicator-dashboard", icon: LayoutDashboard, title: "Make a live dashboard", desc: "A proper web dashboard with your favourite indicators, refreshing live from the market." },
-  { cmd: "/indicator-scanner", icon: Search, title: "Scan the market", desc: "Find stocks from NIFTY 50 or BANKNIFTY that match your conditions - RSI oversold, EMA crossover, volume spike, and more." },
-  { cmd: "/live-feed", icon: Radio, title: "Watch live prices", desc: "Stream live prices into your screen with indicators computed on the fly - no browser refresh needed." },
-]
-
-const BACKTEST_COMMANDS = [
-  { cmd: "/setup", icon: Rocket, title: "First-time setup", desc: "Prepares everything needed to run backtests on your machine. Run once." },
-  { cmd: "/backtest", icon: BarChart3, title: "Backtest a strategy", desc: "Run any strategy on past data with realistic brokerage and taxes. Get a full report in plain English, plus a pro-grade PDF-style tearsheet." },
-  { cmd: "/optimize", icon: Gauge, title: "Find the best settings", desc: "Test many combinations of a strategy's settings and highlight the best ones on a visual heatmap." },
-  { cmd: "/quick-stats", icon: Activity, title: "Quick sanity check", desc: "A fast read of a strategy's return, drawdown, and how it compares to the index - no files created." },
-  { cmd: "/strategy-compare", icon: Layers, title: "Compare strategies", desc: "Run two or more strategies on the same stock and put their equity curves side by side." },
-]
-
-const INDICATOR_CATEGORIES = [
-  { name: "Trend", count: 20, example: "EMA, Supertrend, Ichimoku, HMA" },
-  { name: "Momentum", count: 9, example: "RSI, MACD, Stochastic, CCI" },
-  { name: "Volatility", count: 16, example: "ATR, Bollinger, Keltner, Donchian" },
-  { name: "Volume", count: 14, example: "OBV, VWAP, MFI, CMF" },
-  { name: "Oscillators", count: 20, example: "CMO, TRIX, Aroon, Vortex" },
-  { name: "Statistical", count: 9, example: "Linear Regression, Beta, Variance" },
-  { name: "Hybrid", count: 6, example: "ADX, DMI, Parabolic SAR" },
-  { name: "Helpers", count: 11, example: "Crossover, Highest, Lowest, Rising" },
-]
-
-const STRATEGY_TEMPLATES = [
-  { name: "EMA Crossover", type: "Trend" },
-  { name: "RSI", type: "Mean-Reversion" },
-  { name: "Donchian Breakout", type: "Breakout" },
-  { name: "Supertrend", type: "Intraday Trend" },
-  { name: "MACD", type: "Trend + Breakout" },
-  { name: "SDA2", type: "Moving Average + Bands" },
-  { name: "Double Momentum", type: "Momentum" },
-  { name: "Dual Momentum", type: "ETF Rotation" },
-  { name: "Buy & Hold", type: "Passive" },
-  { name: "RSI Accumulation", type: "Weekly Accumulation" },
-  { name: "Walk-Forward", type: "Out-of-Sample Test" },
-  { name: "Cost Comparison", type: "Fee Analysis" },
-]
-
 const AGENTS = [
   "Claude Code", "Cursor", "Codex", "OpenCode", "Cline", "Windsurf",
-  "GitHub Copilot", "Gemini CLI", "Roo Code", "+ 30 more",
+  "GitHub Copilot", "Gemini CLI", "Roo Code",
 ]
 
 export default function SkillsPage() {
+  const { t } = useI18n()
   const [tab, setTab] = useState("indicators")
+
+  const indicatorCommands = [
+    { cmd: "/indicator-setup", icon: Rocket, title: t('skill.ic1t'), desc: t('skill.ic1d') },
+    { cmd: "/indicator-chart", icon: LineChart, title: t('skill.ic2t'), desc: t('skill.ic2d') },
+    { cmd: "/custom-indicator", icon: Wand2, title: t('skill.ic3t'), desc: t('skill.ic3d') },
+    { cmd: "/indicator-dashboard", icon: LayoutDashboard, title: t('skill.ic4t'), desc: t('skill.ic4d') },
+    { cmd: "/indicator-scanner", icon: Search, title: t('skill.ic5t'), desc: t('skill.ic5d') },
+    { cmd: "/live-feed", icon: Radio, title: t('skill.ic6t'), desc: t('skill.ic6d') },
+  ]
+
+  const backtestCommands = [
+    { cmd: "/setup", icon: Rocket, title: t('skill.bc1t'), desc: t('skill.bc1d') },
+    { cmd: "/backtest", icon: BarChart3, title: t('skill.bc2t'), desc: t('skill.bc2d') },
+    { cmd: "/optimize", icon: Gauge, title: t('skill.bc3t'), desc: t('skill.bc3d') },
+    { cmd: "/quick-stats", icon: Activity, title: t('skill.bc4t'), desc: t('skill.bc4d') },
+    { cmd: "/strategy-compare", icon: Layers, title: t('skill.bc5t'), desc: t('skill.bc5d') },
+  ]
+
+  const indicatorCategories = [
+    { name: t('skill.cat1n'), count: 20, example: t('skill.cat1e') },
+    { name: t('skill.cat2n'), count: 9, example: t('skill.cat2e') },
+    { name: t('skill.cat3n'), count: 16, example: t('skill.cat3e') },
+    { name: t('skill.cat4n'), count: 14, example: t('skill.cat4e') },
+    { name: t('skill.cat5n'), count: 20, example: t('skill.cat5e') },
+    { name: t('skill.cat6n'), count: 9, example: t('skill.cat6e') },
+    { name: t('skill.cat7n'), count: 6, example: t('skill.cat7e') },
+    { name: t('skill.cat8n'), count: 11, example: t('skill.cat8e') },
+  ]
+
+  const strategyTemplates = [
+    { name: t('skill.st1n'), type: t('skill.st1t') },
+    { name: t('skill.st2n'), type: t('skill.st2t') },
+    { name: t('skill.st3n'), type: t('skill.st3t') },
+    { name: t('skill.st4n'), type: t('skill.st4t') },
+    { name: t('skill.st5n'), type: t('skill.st5t') },
+    { name: t('skill.st6n'), type: t('skill.st6t') },
+    { name: t('skill.st7n'), type: t('skill.st7t') },
+    { name: t('skill.st8n'), type: t('skill.st8t') },
+    { name: t('skill.st9n'), type: t('skill.st9t') },
+    { name: t('skill.st10n'), type: t('skill.st10t') },
+    { name: t('skill.st11n'), type: t('skill.st11t') },
+    { name: t('skill.st12n'), type: t('skill.st12t') },
+  ]
+
+  const agents = [...AGENTS, t('skill.agentsMore')]
 
   return (
     <div className="container mx-auto px-4 py-16">
@@ -95,24 +100,23 @@ export default function SkillsPage() {
         <div className="text-center mb-20 relative">
           <div className="absolute inset-0 obsidian-grid opacity-30 -z-10" />
           <div className="flex items-center justify-center gap-3 mb-6 flex-wrap">
-            <span className="px-3 py-1.5 rounded-full font-label text-label-md text-tertiary bg-tertiary/10">Open Source</span>
-            <span className="px-3 py-1.5 rounded-full font-label text-label-md text-secondary bg-secondary/10">Works With 40+ AI Tools</span>
-            <span className="px-3 py-1.5 rounded-full font-label text-label-md text-primary bg-primary/10">One-Line Install</span>
+            <span className="px-3 py-1.5 rounded-full font-label text-label-md text-tertiary bg-tertiary/10">{t('skill.badgeOpenSource')}</span>
+            <span className="px-3 py-1.5 rounded-full font-label text-label-md text-secondary bg-secondary/10">{t('skill.badgeWorksWith')}</span>
+            <span className="px-3 py-1.5 rounded-full font-label text-label-md text-primary bg-primary/10">{t('skill.badgeOneLine')}</span>
           </div>
 
           <h1 className="text-display-lg sm:text-[4rem] leading-[1.05] mb-6 tracking-tight">
-            <span className="block text-on-surface">Teach Your AI</span>
-            <span className="bg-clip-text text-transparent bg-linear-to-r from-primary via-secondary to-tertiary animate-gradient">
-              To Trade &amp; Build
+            <span className="block text-on-surface">{t('skill.h1a')}</span>
+            <span className="text-on-surface ">
+              {t('skill.h1b')}
             </span>
           </h1>
 
           <p className="text-lg text-on-surface-variant max-w-2xl mx-auto mb-3 leading-relaxed">
-            OpenAlgo Skills add ready-made trading knowledge to your AI assistant - charts,
-            scanners, custom indicators, and full backtests with realistic brokerage costs.
+            {t('skill.heroDesc')}
           </p>
           <p className="text-base text-on-surface-variant max-w-2xl mx-auto mb-10">
-            No coding experience needed. Just tell your AI what you want in plain English and it does the work.
+            {t('skill.heroDesc2')}
           </p>
 
           <div className="max-w-xl mx-auto mb-8">
@@ -120,19 +124,19 @@ export default function SkillsPage() {
               <span className="text-on-surface-variant/50">$</span> npx skills add marketcalls/openalgo-indicator-skills
             </CodeBlock>
             <p className="text-xs text-on-surface-variant mt-2">
-              Paste this once in your terminal. Your AI tool picks it up automatically.
+              {t('skill.heroInstallNote')}
             </p>
           </div>
 
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
             <Button size="lg" asChild>
               <a href="#collections" className="flex items-center gap-2">
-                <Sparkles className="h-5 w-5" /> See What You Can Do <ArrowRight className="h-4 w-4" />
+                <Sparkles className="h-5 w-5" /> {t('skill.ctaSee')} <ArrowRight className="h-4 w-4" />
               </a>
             </Button>
             <Button size="lg" variant="outline" asChild>
               <a href="https://docs.openalgo.in/skills/indicators" target="_blank" rel="noopener noreferrer" className="flex items-center gap-2">
-                <BookOpen className="h-5 w-5" /> Full Docs
+                <BookOpen className="h-5 w-5" /> {t('skill.ctaDocs')}
               </a>
             </Button>
           </div>
@@ -140,16 +144,15 @@ export default function SkillsPage() {
 
         {/* What are Skills */}
         <div className="mb-20">
-          <h2 className="text-headline-md mb-2 text-center text-on-surface">What Is a Skill?</h2>
+          <h2 className="text-headline-md mb-2 text-center text-on-surface">{t('skill.whatTitle')}</h2>
           <p className="text-center text-on-surface-variant mb-10 max-w-2xl mx-auto">
-            Think of a skill like a plug-in for your AI. Install it once and your AI picks up new abilities -
-            like charting an indicator, scanning stocks, or running a full backtest, all in one instruction.
+            {t('skill.whatSub')}
           </p>
           <div className="grid md:grid-cols-3 gap-4">
             {[
-              { icon: Sparkles, title: "Ready on Day One", desc: "No long prompts, no copy-pasting code from tutorials. Just ask, and your AI already knows how." },
-              { icon: CheckCircle2, title: "Tested Recipes", desc: "Every skill ships with reliable, ready-to-use building blocks - the same ones experienced traders use." },
-              { icon: Terminal, title: "Simple Commands", desc: "Quick shortcuts like /backtest or /indicator-chart kick off each task. Your AI handles the rest." },
+              { icon: Sparkles, title: t('skill.w1t'), desc: t('skill.w1d') },
+              { icon: CheckCircle2, title: t('skill.w2t'), desc: t('skill.w2d') },
+              { icon: Terminal, title: t('skill.w3t'), desc: t('skill.w3d') },
             ].map(({ icon: Icon, title, desc }) => (
               <div key={title} className="obsidian-card rounded-xl p-6 hover-lift ghost-border">
                 <div className="inline-flex p-2.5 rounded-lg surface-container mb-4">
@@ -164,12 +167,12 @@ export default function SkillsPage() {
 
         {/* Supported Agents */}
         <div className="mb-20">
-          <h2 className="text-headline-md mb-2 text-center text-on-surface">Works With Your AI Tool</h2>
+          <h2 className="text-headline-md mb-2 text-center text-on-surface">{t('skill.agentsTitle')}</h2>
           <p className="text-center text-on-surface-variant mb-8 max-w-2xl mx-auto">
-            Whichever AI coding app you use, Skills drop right in. The one-line install figures out the right place to put them.
+            {t('skill.agentsSub')}
           </p>
           <div className="flex flex-wrap justify-center gap-2 mb-4">
-            {AGENTS.map(agent => (
+            {agents.map(agent => (
               <span key={agent} className="px-4 py-1.5 surface-low rounded-full font-label text-label-md text-on-surface-variant hover:surface-container hover:text-primary transition-all">
                 {agent}
               </span>
@@ -179,9 +182,9 @@ export default function SkillsPage() {
 
         {/* Two Collections */}
         <div id="collections" className="mb-16 scroll-mt-20">
-          <h2 className="text-headline-md mb-2 text-center text-on-surface">Two Skill Packs</h2>
+          <h2 className="text-headline-md mb-2 text-center text-on-surface">{t('skill.packsTitle')}</h2>
           <p className="text-center text-on-surface-variant mb-10 max-w-2xl mx-auto">
-            Pick the one you need, or install both. Both are free and open source.
+            {t('skill.packsSub')}
           </p>
 
           {/* Tabs */}
@@ -194,7 +197,7 @@ export default function SkillsPage() {
                 }`}
               >
                 <LineChart className="h-4 w-4" />
-                Indicators &amp; Charts
+                {t('skill.tabIndicators')}
               </button>
               <button
                 onClick={() => setTab("backtesting")}
@@ -203,7 +206,7 @@ export default function SkillsPage() {
                 }`}
               >
                 <BarChart3 className="h-4 w-4" />
-                Backtesting
+                {t('skill.tabBacktesting')}
               </button>
             </div>
           </div>
@@ -216,10 +219,9 @@ export default function SkillsPage() {
                     <LineChart className="h-6 w-6 text-primary" />
                   </div>
                   <div className="flex-1">
-                    <h3 className="text-headline-sm text-on-surface mb-1">Indicator &amp; Charting Skills</h3>
+                    <h3 className="text-headline-sm text-on-surface mb-1">{t('skill.indTitle')}</h3>
                     <p className="text-sm text-on-surface-variant mb-3">
-                      Chart any indicator on any symbol, build custom indicators, scan for setups, and stream live
-                      prices - all driven by plain-English requests to your AI.
+                      {t('skill.indDesc')}
                     </p>
                     <CodeBlock copyText="npx skills add marketcalls/openalgo-indicator-skills">
                       <span className="text-on-surface-variant/50">$</span> npx skills add marketcalls/openalgo-indicator-skills
@@ -232,10 +234,10 @@ export default function SkillsPage() {
               <div>
                 <h4 className="text-lg font-semibold text-on-surface mb-4 flex items-center gap-2">
                   <Terminal className="h-5 w-5 text-primary" />
-                  What You Can Ask
+                  {t('skill.askTitle')}
                 </h4>
                 <div className="grid md:grid-cols-2 gap-3">
-                  {INDICATOR_COMMANDS.map(({ cmd, icon: Icon, title, desc }) => (
+                  {indicatorCommands.map(({ cmd, icon: Icon, title, desc }) => (
                     <div key={cmd} className="obsidian-card rounded-xl p-5 ghost-border hover-lift">
                       <div className="flex items-center gap-3 mb-2">
                         <Icon className="h-4 w-4 text-primary shrink-0" />
@@ -254,13 +256,13 @@ export default function SkillsPage() {
               <div>
                 <h4 className="text-lg font-semibold text-on-surface mb-1 flex items-center gap-2">
                   <LineChart className="h-5 w-5 text-primary" />
-                  100+ Indicators Built-In
+                  {t('skill.indBuiltTitle')}
                 </h4>
                 <p className="text-sm text-on-surface-variant mb-4">
-                  Every popular indicator is already included - from the classics to advanced ones professionals use.
+                  {t('skill.indBuiltSub')}
                 </p>
                 <div className="grid sm:grid-cols-2 md:grid-cols-4 gap-3">
-                  {INDICATOR_CATEGORIES.map(({ name, count, example }) => (
+                  {indicatorCategories.map(({ name, count, example }) => (
                     <div key={name} className="obsidian-card rounded-xl p-4 ghost-border">
                       <div className="flex items-baseline justify-between mb-1.5">
                         <span className="font-semibold text-sm text-on-surface">{name}</span>
@@ -276,16 +278,16 @@ export default function SkillsPage() {
               <div>
                 <h4 className="text-lg font-semibold text-on-surface mb-4 flex items-center gap-2">
                   <Sparkles className="h-5 w-5 text-primary" />
-                  Try These In Your AI
+                  {t('skill.tryTitle')}
                 </h4>
                 <div className="grid sm:grid-cols-2 gap-3">
                   {[
-                    { cmd: "/indicator-chart supertrend NIFTY NSE_INDEX 15m", plain: "Chart Supertrend on 15-min NIFTY" },
-                    { cmd: "/indicator-chart rsi RELIANCE NSE D", plain: "Plot daily RSI on RELIANCE" },
-                    { cmd: "/custom-indicator zscore", plain: "Build a Z-Score indicator from scratch" },
-                    { cmd: "/indicator-dashboard multi-timeframe SBIN", plain: "Multi-timeframe dashboard for SBIN" },
-                    { cmd: "/indicator-scanner rsi-oversold", plain: "Scan NIFTY 50 for oversold stocks" },
-                    { cmd: "/live-feed NIFTY NSE_INDEX", plain: "Stream live NIFTY prices with indicators" },
+                    { cmd: "/indicator-chart supertrend NIFTY NSE_INDEX 15m", plain: t('skill.ie1') },
+                    { cmd: "/indicator-chart rsi RELIANCE NSE D", plain: t('skill.ie2') },
+                    { cmd: "/custom-indicator zscore", plain: t('skill.ie3') },
+                    { cmd: "/indicator-dashboard multi-timeframe SBIN", plain: t('skill.ie4') },
+                    { cmd: "/indicator-scanner rsi-oversold", plain: t('skill.ie5') },
+                    { cmd: "/live-feed NIFTY NSE_INDEX", plain: t('skill.ie6') },
                   ].map(({ cmd, plain }) => (
                     <div key={cmd} className="surface-low rounded-lg px-4 py-3 ghost-border">
                       <code className="text-xs font-mono text-primary break-all block">{cmd}</code>
@@ -305,10 +307,9 @@ export default function SkillsPage() {
                     <BarChart3 className="h-6 w-6 text-primary" />
                   </div>
                   <div className="flex-1">
-                    <h3 className="text-headline-sm text-on-surface mb-1">Backtesting Skills</h3>
+                    <h3 className="text-headline-sm text-on-surface mb-1">{t('skill.btTitle')}</h3>
                     <p className="text-sm text-on-surface-variant mb-3">
-                      Test trading ideas on real past data. Fees, taxes, and slippage are already baked in for
-                      Indian, US, and crypto markets - so the results reflect what you&apos;d actually see in your account.
+                      {t('skill.btDesc')}
                     </p>
                     <CodeBlock copyText="npx skills add marketcalls/vectorbt-backtesting-skills">
                       <span className="text-on-surface-variant/50">$</span> npx skills add marketcalls/vectorbt-backtesting-skills
@@ -321,10 +322,10 @@ export default function SkillsPage() {
               <div>
                 <h4 className="text-lg font-semibold text-on-surface mb-4 flex items-center gap-2">
                   <Terminal className="h-5 w-5 text-primary" />
-                  What You Can Ask
+                  {t('skill.askTitle')}
                 </h4>
                 <div className="grid md:grid-cols-2 gap-3">
-                  {BACKTEST_COMMANDS.map(({ cmd, icon: Icon, title, desc }) => (
+                  {backtestCommands.map(({ cmd, icon: Icon, title, desc }) => (
                     <div key={cmd} className="obsidian-card rounded-xl p-5 ghost-border hover-lift">
                       <div className="flex items-center gap-3 mb-2">
                         <Icon className="h-4 w-4 text-primary shrink-0" />
@@ -343,13 +344,13 @@ export default function SkillsPage() {
               <div>
                 <h4 className="text-lg font-semibold text-on-surface mb-1 flex items-center gap-2">
                   <Box className="h-5 w-5 text-primary" />
-                  12 Ready-Made Strategies
+                  {t('skill.stratTitle')}
                 </h4>
                 <p className="text-sm text-on-surface-variant mb-4">
-                  Start with a working strategy and tweak it to match your style - faster than building from scratch.
+                  {t('skill.stratSub')}
                 </p>
                 <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
-                  {STRATEGY_TEMPLATES.map(({ name, type }) => (
+                  {strategyTemplates.map(({ name, type }) => (
                     <div key={name} className="obsidian-card rounded-xl p-4 ghost-border">
                       <div className="font-semibold text-sm text-on-surface mb-0.5">{name}</div>
                       <div className="font-label text-label-sm text-on-surface-variant">{type}</div>
@@ -362,16 +363,16 @@ export default function SkillsPage() {
               <div>
                 <h4 className="text-lg font-semibold text-on-surface mb-1 flex items-center gap-2">
                   <Calculator className="h-5 w-5 text-primary" />
-                  Real-World Fees Built In
+                  {t('skill.feesTitle')}
                 </h4>
                 <p className="text-sm text-on-surface-variant mb-4">
-                  Backtests use actual brokerage, taxes, and slippage so the numbers reflect reality. Change brokers? Update one line.
+                  {t('skill.feesSub')}
                 </p>
                 <div className="grid md:grid-cols-3 gap-3">
                   {[
-                    { market: "India", ref: "Zerodha defaults", segments: "Delivery, Intraday, Futures, and Options charges included", benchmark: "NIFTY 50" },
-                    { market: "US", ref: "IBKR defaults", segments: "Stock, options, and futures commissions built in", benchmark: "S&P 500" },
-                    { market: "Crypto", ref: "Binance defaults", segments: "Spot and futures fees, plus funding costs", benchmark: "Bitcoin" },
+                    { market: t('skill.fm1m'), ref: t('skill.fm1r'), segments: t('skill.fm1s'), benchmark: t('skill.fm1b') },
+                    { market: t('skill.fm2m'), ref: t('skill.fm2r'), segments: t('skill.fm2s'), benchmark: t('skill.fm2b') },
+                    { market: t('skill.fm3m'), ref: t('skill.fm3r'), segments: t('skill.fm3s'), benchmark: t('skill.fm3b') },
                   ].map(({ market, ref, segments, benchmark }) => (
                     <div key={market} className="obsidian-card rounded-xl p-5 ghost-border">
                       <div className="flex items-baseline justify-between mb-2">
@@ -380,7 +381,7 @@ export default function SkillsPage() {
                       </div>
                       <p className="text-xs text-on-surface-variant leading-relaxed mb-3">{segments}</p>
                       <div className="font-label text-label-sm">
-                        <span className="text-on-surface-variant">Compared against: </span>
+                        <span className="text-on-surface-variant">{t('skill.comparedAgainst')}{" "}</span>
                         <span className="text-primary">{benchmark}</span>
                       </div>
                     </div>
@@ -392,16 +393,16 @@ export default function SkillsPage() {
               <div>
                 <h4 className="text-lg font-semibold text-on-surface mb-4 flex items-center gap-2">
                   <Sparkles className="h-5 w-5 text-primary" />
-                  Try These In Your AI
+                  {t('skill.tryTitle')}
                 </h4>
                 <div className="grid sm:grid-cols-2 gap-3">
                   {[
-                    { cmd: "/backtest ema-crossover SBIN NSE D", plain: "Backtest EMA crossover on daily SBIN" },
-                    { cmd: "/backtest supertrend NIFTY NFO 5m", plain: "Intraday Supertrend on NIFTY futures" },
-                    { cmd: "/optimize rsi AAPL", plain: "Find the best RSI settings for AAPL" },
-                    { cmd: "/quick-stats BTC-USD", plain: "Quick return + drawdown on Bitcoin" },
-                    { cmd: "/strategy-compare RELIANCE ema-crossover rsi donchian", plain: "Compare 3 strategies on RELIANCE" },
-                    { cmd: "/backtest ema-crossover BTC-USD", plain: "Test EMA crossover on Bitcoin" },
+                    { cmd: "/backtest ema-crossover SBIN NSE D", plain: t('skill.be1') },
+                    { cmd: "/backtest supertrend NIFTY NFO 5m", plain: t('skill.be2') },
+                    { cmd: "/optimize rsi AAPL", plain: t('skill.be3') },
+                    { cmd: "/quick-stats BTC-USD", plain: t('skill.be4') },
+                    { cmd: "/strategy-compare RELIANCE ema-crossover rsi donchian", plain: t('skill.be5') },
+                    { cmd: "/backtest ema-crossover BTC-USD", plain: t('skill.be6') },
                   ].map(({ cmd, plain }) => (
                     <div key={cmd} className="surface-low rounded-lg px-4 py-3 ghost-border">
                       <code className="text-xs font-mono text-primary break-all block">{cmd}</code>
@@ -416,15 +417,15 @@ export default function SkillsPage() {
 
         {/* Markets Supported */}
         <div className="mb-20">
-          <h2 className="text-headline-md mb-2 text-center text-on-surface">Markets Covered</h2>
+          <h2 className="text-headline-md mb-2 text-center text-on-surface">{t('skill.marketsTitle')}</h2>
           <p className="text-center text-on-surface-variant mb-10 max-w-2xl mx-auto">
-            Whether you trade Indian markets, US stocks, or crypto, the same commands work. Your AI picks the right data source based on the symbol.
+            {t('skill.marketsSub')}
           </p>
           <div className="grid md:grid-cols-3 gap-4">
             {[
-              { icon: TrendingUp, market: "India", source: "OpenAlgo (your broker)", tickers: "SBIN, RELIANCE, NIFTY, BANKNIFTY, NIFTY futures" },
-              { icon: Globe, market: "US / Global", source: "Free public data", tickers: "AAPL, MSFT, SPY, S&P 500, NIFTY index" },
-              { icon: Activity, market: "Crypto", source: "Free public data", tickers: "BTC, ETH, and major pairs" },
+              { icon: TrendingUp, market: t('skill.mk1m'), source: t('skill.mk1s'), tickers: t('skill.mk1t') },
+              { icon: Globe, market: t('skill.mk2m'), source: t('skill.mk2s'), tickers: t('skill.mk2t') },
+              { icon: Activity, market: t('skill.mk3m'), source: t('skill.mk3s'), tickers: t('skill.mk3t') },
             ].map(({ icon: Icon, market, source, tickers }) => (
               <div key={market} className="obsidian-card rounded-xl p-6 ghost-border">
                 <div className="flex items-center gap-3 mb-3">
@@ -432,10 +433,10 @@ export default function SkillsPage() {
                   <h3 className="font-semibold text-on-surface">{market}</h3>
                 </div>
                 <p className="text-sm text-on-surface mb-1">
-                  <span className="font-label text-label-sm text-on-surface-variant uppercase tracking-wider">Data: </span>
+                  <span className="font-label text-label-sm text-on-surface-variant uppercase tracking-wider">{t('skill.dataLabel')}{" "}</span>
                   {source}
                 </p>
-                <p className="text-xs text-on-surface-variant leading-relaxed">Examples: {tickers}</p>
+                <p className="text-xs text-on-surface-variant leading-relaxed">{t('skill.examplesLabel').replace('{x}', tickers)}</p>
               </div>
             ))}
           </div>
@@ -443,16 +444,16 @@ export default function SkillsPage() {
 
         {/* Install Options */}
         <div className="mb-20">
-          <h2 className="text-headline-md mb-2 text-center text-on-surface">Install Options</h2>
+          <h2 className="text-headline-md mb-2 text-center text-on-surface">{t('skill.installTitle')}</h2>
           <p className="text-center text-on-surface-variant mb-10 max-w-2xl mx-auto">
-            Pick the level that suits you. Paste a line in your terminal - that&apos;s it.
+            {t('skill.installSub')}
           </p>
           <div className="grid md:grid-cols-2 gap-4">
             {[
-              { title: "Install the full pack", code: "npx skills add marketcalls/openalgo-indicator-skills" },
-              { title: "Install just one skill", code: "npx skills add marketcalls/openalgo-indicator-skills -s indicator-chart" },
-              { title: "Make it available everywhere", code: "npx skills add marketcalls/openalgo-indicator-skills -g" },
-              { title: "See what's inside first", code: "npx skills add marketcalls/openalgo-indicator-skills -l" },
+              { title: t('skill.in1'), code: "npx skills add marketcalls/openalgo-indicator-skills" },
+              { title: t('skill.in2'), code: "npx skills add marketcalls/openalgo-indicator-skills -s indicator-chart" },
+              { title: t('skill.in3'), code: "npx skills add marketcalls/openalgo-indicator-skills -g" },
+              { title: t('skill.in4'), code: "npx skills add marketcalls/openalgo-indicator-skills -l" },
             ].map(({ title, code }) => (
               <div key={title} className="obsidian-card rounded-xl p-5 ghost-border">
                 <p className="font-label text-label-lg text-on-surface-variant mb-3">{title}</p>
@@ -463,38 +464,38 @@ export default function SkillsPage() {
             ))}
           </div>
           <p className="text-center text-xs text-on-surface-variant mt-6">
-            Need detailed setup help?{" "}
+            {t('skill.docsHelp')}{" "}
             <a href="https://docs.openalgo.in/skills/indicators" target="_blank" rel="noopener noreferrer" className="underline underline-offset-4 hover:text-primary transition-colors">
-              Read the full docs
+              {t('skill.docsHelpLink')}
             </a>.
           </p>
         </div>
 
         {/* CTA */}
         <div className="text-center">
-          <h2 className="text-headline-md mb-4 text-on-surface">Let your AI do the heavy lifting.</h2>
+          <h2 className="text-headline-md mb-4 text-on-surface">{t('skill.ctaTitle')}</h2>
           <p className="text-on-surface-variant mb-8 max-w-xl mx-auto">
-            Install once. Ask in plain English. Get charts, scanners, and backtests in seconds - on Indian, US, or crypto markets.
+            {t('skill.ctaSub')}
           </p>
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
             <Button size="lg" asChild>
               <a href="https://github.com/marketcalls/openalgo-indicator-skills" target="_blank" rel="noopener noreferrer" className="flex items-center gap-2">
-                <Github className="h-5 w-5" /> Indicator Skills
+                <Github className="h-5 w-5" /> {t('skill.ctaIndicator')}
               </a>
             </Button>
             <Button size="lg" variant="outline" asChild>
               <a href="https://github.com/marketcalls/vectorbt-backtesting-skills" target="_blank" rel="noopener noreferrer" className="flex items-center gap-2">
-                <Github className="h-5 w-5" /> Backtesting Skills
+                <Github className="h-5 w-5" /> {t('skill.ctaBacktesting')}
               </a>
             </Button>
             <Button size="lg" variant="outline" asChild>
               <a href="/discord" className="flex items-center gap-2">
-                <MessageCircle className="h-5 w-5" /> Ask on Discord
+                <MessageCircle className="h-5 w-5" /> {t('skill.ctaDiscord')}
               </a>
             </Button>
           </div>
           <p className="font-label text-label-sm text-on-surface-variant mt-6">
-            Prefer trading through a chat? See{" "}
+            {t('skill.mcpNote')}{" "}
             <a href="/mcp" className="underline underline-offset-4 hover:text-primary transition-colors">OpenAlgo MCP</a>.
           </p>
         </div>

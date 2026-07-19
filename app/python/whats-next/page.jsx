@@ -81,7 +81,7 @@ export default function WhatsNextPage() {
             <Check className="h-3.5 w-3.5" /> Course complete - all 32 chapters
           </span>
           <h1 className="reveal reveal-2 mx-auto mt-6 max-w-3xl text-4xl sm:text-5xl lg:text-6xl font-bold leading-[1.05] tracking-tight">
-            <span className="bg-linear-to-r from-primary via-secondary to-tertiary bg-clip-text text-transparent">Congratulations.</span>
+            <span className="text-on-surface ">Congratulations.</span>
             <br />You made it to the end.
           </h1>
           <p className="reveal reveal-3 mx-auto mt-5 max-w-2xl text-lg text-on-surface-variant">
@@ -109,7 +109,7 @@ export default function WhatsNextPage() {
           <ol className="space-y-4">
             {NEXT_STEPS.map((s, i) => (
               <li key={s.h} className="flex gap-4 obsidian-card ghost-border rounded-2xl p-5 hover-lift">
-                <span className="shrink-0 font-label text-lg font-bold bg-linear-to-br from-primary to-tertiary bg-clip-text text-transparent">{String(i + 1).padStart(2, "0")}</span>
+                <span className="text-on-surface shrink-0 font-label text-lg font-bold">{String(i + 1).padStart(2, "0")}</span>
                 <div>
                   <h3 className="font-semibold text-on-surface">{s.h}</h3>
                   <p className="mt-1 text-sm leading-relaxed text-on-surface-variant">{s.p}</p>

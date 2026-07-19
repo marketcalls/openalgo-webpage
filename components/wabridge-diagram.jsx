@@ -4,9 +4,10 @@ import { useRef, useMemo, useEffect, useState } from "react"
 import { Canvas, useFrame, useThree } from "@react-three/fiber"
 import { Text } from "@react-three/drei"
 import * as THREE from "three"
+import { useI18n } from "@/components/i18n/LanguageProvider"
 
 // Dashed line between two 3D points with animated dash offset
-function DashedLine({ start, end, color = "#f87171", speed = 1 }) {
+function DashedLine({ start, end, color = "#171717", speed = 1 }) {
   const ref = useRef()
   const materialRef = useRef()
 
@@ -40,7 +41,7 @@ function DashedLine({ start, end, color = "#f87171", speed = 1 }) {
 }
 
 // Animated dot that travels from start to end repeatedly
-function FlowParticle({ start, end, color = "#fbbf24", speed = 0.6, delay = 0, size = 0.08 }) {
+function FlowParticle({ start, end, color = "#525252", speed = 0.6, delay = 0, size = 0.08 }) {
   const ref = useRef()
 
   useFrame((state) => {
@@ -63,7 +64,7 @@ function FlowParticle({ start, end, color = "#fbbf24", speed = 0.6, delay = 0, s
 }
 
 // Rounded rectangle border drawn as a dashed line loop
-function RoundedRectBorder({ width, height, radius = 0.15, color = "#f87171", opacity = 0.6 }) {
+function RoundedRectBorder({ width, height, radius = 0.15, color = "#171717", opacity = 0.6 }) {
   const geometry = useMemo(() => {
     const w = width / 2
     const h = height / 2
@@ -120,7 +121,7 @@ function RoundedRectBorder({ width, height, radius = 0.15, color = "#f87171", op
 }
 
 // Block node with dashed rounded rectangle border, optional glow, and text label
-function BlockNode({ position, width, height, label, color = "#f87171", isCenter = false }) {
+function BlockNode({ position, width, height, label, color = "#171717", isCenter = false }) {
   const glowRef = useRef()
 
   const glowShape = useMemo(() => {
@@ -177,7 +178,7 @@ function BlockNode({ position, width, height, label, color = "#f87171", isCenter
 }
 
 // Small triangle arrow head
-function ArrowHead({ position, rotation = 0, color = "#f87171" }) {
+function ArrowHead({ position, rotation = 0, color = "#171717" }) {
   return (
     <group position={position} rotation={[0, 0, rotation]}>
       <mesh>
@@ -188,12 +189,12 @@ function ArrowHead({ position, rotation = 0, color = "#f87171" }) {
   )
 }
 
-function Scene() {
+function Scene({ yourAppLabel }) {
   const { viewport } = useThree()
 
   const scale = Math.min(viewport.width / 10, viewport.height / 4, 1)
 
-  const c = "#f87171"
+  const c = "#171717"
 
   // Three nodes in a horizontal line: Your App -> WABridge -> WhatsApp
   const nodes = {
@@ -211,7 +212,7 @@ function Scene() {
   return (
     <group scale={[scale, scale, 1]}>
       {/* Your App */}
-      <BlockNode position={nodes.yourApp} width={2.2} height={0.9} label="Your App" color={c} />
+      <BlockNode position={nodes.yourApp} width={2.2} height={0.9} label={yourAppLabel} color={c} />
 
       {/* WABridge (center, highlighted) */}
       <BlockNode position={nodes.wabridge} width={2.2} height={1.0} label="WABridge" color={c} isCenter />
@@ -228,15 +229,16 @@ function Scene() {
       <ArrowHead position={[2.2, 0, 0]} rotation={-Math.PI / 2} color={c} />
 
       {/* Animated flow particles */}
-      <FlowParticle start={connections.appToWa.start} end={connections.appToWa.end} color="#fbbf24" speed={0.6} delay={0} />
-      <FlowParticle start={connections.appToWa.start} end={connections.appToWa.end} color="#fbbf24" speed={0.6} delay={1.5} />
-      <FlowParticle start={connections.waToWhatsapp.start} end={connections.waToWhatsapp.end} color="#34d399" speed={0.6} delay={0.5} />
-      <FlowParticle start={connections.waToWhatsapp.start} end={connections.waToWhatsapp.end} color="#34d399" speed={0.6} delay={2} />
+      <FlowParticle start={connections.appToWa.start} end={connections.appToWa.end} color="#525252" speed={0.6} delay={0} />
+      <FlowParticle start={connections.appToWa.start} end={connections.appToWa.end} color="#525252" speed={0.6} delay={1.5} />
+      <FlowParticle start={connections.waToWhatsapp.start} end={connections.waToWhatsapp.end} color="#737373" speed={0.6} delay={0.5} />
+      <FlowParticle start={connections.waToWhatsapp.start} end={connections.waToWhatsapp.end} color="#737373" speed={0.6} delay={2} />
     </group>
   )
 }
 
 export default function WABridgeDiagram() {
+  const { t } = useI18n()
   const [mounted, setMounted] = useState(false)
 
   useEffect(() => {
@@ -246,7 +248,7 @@ export default function WABridgeDiagram() {
   if (!mounted) {
     return (
       <div className="w-full h-[300px] md:h-[350px] bg-card/50 rounded-lg border border-dashed border-muted-foreground/20 flex items-center justify-center">
-        <p className="text-muted-foreground text-sm">Loading diagram...</p>
+        <p className="text-muted-foreground text-sm">{t('wab.diagramLoading')}</p>
       </div>
     )
   }
@@ -259,7 +261,7 @@ export default function WABridgeDiagram() {
         gl={{ antialias: true, alpha: true }}
         style={{ background: "transparent" }}
       >
-        <Scene />
+        <Scene yourAppLabel={t('wab.diagramYourApp')} />
       </Canvas>
     </div>
   )
