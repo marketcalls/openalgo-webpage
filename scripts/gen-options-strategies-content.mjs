@@ -21,9 +21,20 @@ import { markedHighlight } from "marked-highlight";
 import { CHAPTERS } from "../lib/optionsStrategiesCurriculum.js";
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
-const MD_DIR = path.join(ROOT, "content", "options-strategies", "md");
+
+// Optional --locale=xx flag (or LOCALE=xx env var) generates a translated
+// content JSON from content/options-strategies/md-<locale>/ instead of the English
+// content/options-strategies/md/, writing to lib/content-i18n/options-strategies/<locale>.js
+// instead of lib/optionsStrategiesContentData.json. English output/behavior is
+// unchanged when no locale is passed.
+const LOCALE = (process.argv.find((a) => a.startsWith("--locale=")))?.split("=")[1] || process.env.LOCALE || "en";
+const MD_DIR = LOCALE === "en"
+  ? path.join(ROOT, "content", "options-strategies", "md")
+  : path.join(ROOT, "content", "options-strategies", `md-${LOCALE}`);
 const IMG_DIR = path.join(ROOT, "public", "options-strategies", "images");
-const DATA_OUT = path.join(ROOT, "lib", "optionsStrategiesContentData.json");
+const DATA_OUT = LOCALE === "en"
+  ? path.join(ROOT, "lib", "optionsStrategiesContentData.json")
+  : path.join(ROOT, "lib", "content-i18n", "options-strategies", `${LOCALE}.js`);
 
 const marked = new Marked(
   markedHighlight({
@@ -133,9 +144,13 @@ function addCopyButtons(html) {
 
 function addIdsAndToc(html) {
   const toc = [];
+  let headingIndex = 0;
   const withIds = html.replace(/<h([23])>([\s\S]*?)<\/h\1>/g, (_full, lvl, inner) => {
     const txt = decodeEntities(inner.replace(/<[^>]+>/g, "").trim());
-    const id = slugify(txt);
+    // slugify() strips non-ASCII, so non-Latin-script headings (Hindi, Tamil,
+    // Arabic, etc.) would otherwise collide on the same empty id="". Fall back
+    // to a positional id, unique per chapter, for those scripts.
+    const id = slugify(txt) || `heading-${++headingIndex}`;
     toc.push({ level: Number(lvl), text: txt, id });
     return `<h${lvl} id="${id}">${inner}</h${lvl}>`;
   });
@@ -160,6 +175,10 @@ for (let n = 1; n <= MAX; n++) {
 }
 
 fs.mkdirSync(path.dirname(DATA_OUT), { recursive: true });
-fs.writeFileSync(DATA_OUT, JSON.stringify(data));
+const outContent = LOCALE === "en"
+  ? JSON.stringify(data)
+  : `export default ${JSON.stringify(data)}\n`;
+fs.writeFileSync(DATA_OUT, outContent);
 const kb = Math.round(fs.statSync(DATA_OUT).size / 1024);
-console.log(`Generated lib/optionsStrategiesContentData.json (${kb} KB, ${built}/${MAX} chapters with content)`);
+const outLabel = path.relative(ROOT, DATA_OUT).replace(/\\/g, "/");
+console.log(`Generated ${outLabel} (${kb} KB, ${built}/${MAX} chapters with content)${LOCALE !== "en" ? ` [${LOCALE}]` : ""}`);

@@ -14,10 +14,21 @@ import { Marked } from "marked";
 import { markedHighlight } from "marked-highlight";
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
-const MD_DIR = path.join(ROOT, "content", "quant", "md");
+
+// Optional --locale=xx flag (or LOCALE=xx env var) generates a translated
+// content JSON from content/quant/md-<locale>/ instead of the English
+// content/quant/md/, writing to lib/content-i18n/quant/<locale>.js
+// instead of lib/quantContentData.json. English output/behavior is
+// unchanged when no locale is passed.
+const LOCALE = (process.argv.find((a) => a.startsWith("--locale=")))?.split("=")[1] || process.env.LOCALE || "en";
+const MD_DIR = LOCALE === "en"
+  ? path.join(ROOT, "content", "quant", "md")
+  : path.join(ROOT, "content", "quant", `md-${LOCALE}`);
 const EX_DIR = path.join(ROOT, "content", "quant", "examples");
 const CHART_OUT = path.join(ROOT, "public", "quant", "charts");
-const DATA_OUT = path.join(ROOT, "lib", "quantContentData.json");
+const DATA_OUT = LOCALE === "en"
+  ? path.join(ROOT, "lib", "quantContentData.json")
+  : path.join(ROOT, "lib", "content-i18n", "quant", `${LOCALE}.js`);
 const CHAPTERS = 78;
 
 const TAG_CLASS = { NSE: "nse", NFO: "nfo", MCX: "mcx", INDEX: "idx", BSE: "nse", CDS: "idx" };
@@ -134,9 +145,13 @@ function renderBody(text) {
 
 function addIdsAndToc(html) {
   const toc = [];
+  let headingIndex = 0;
   const withIds = html.replace(/<h([23])>([\s\S]*?)<\/h\1>/g, (_full, lvl, inner) => {
     const txt = decodeEntities(inner.replace(/<[^>]+>/g, "").trim());
-    const id = slugify(txt);
+    // slugify() strips non-ASCII, so non-Latin-script headings (Hindi, Tamil,
+    // Arabic, etc.) would otherwise collide on the same empty id="". Fall back
+    // to a positional id, unique per chapter, for those scripts.
+    const id = slugify(txt) || `heading-${++headingIndex}`;
     toc.push({ level: Number(lvl), text: txt, id });
     return `<h${lvl} id="${id}">${inner}</h${lvl}>`;
   });
@@ -158,6 +173,11 @@ for (let n = 1; n <= CHAPTERS; n++) {
   built++;
 }
 
-fs.writeFileSync(DATA_OUT, JSON.stringify(data));
+fs.mkdirSync(path.dirname(DATA_OUT), { recursive: true });
+const outContent = LOCALE === "en"
+  ? JSON.stringify(data)
+  : `export default ${JSON.stringify(data)}\n`;
+fs.writeFileSync(DATA_OUT, outContent);
 const kb = Math.round(fs.statSync(DATA_OUT).size / 1024);
-console.log(`Generated lib/quantContentData.json (${kb} KB, ${built}/${CHAPTERS} chapters with content)`);
+const outLabel = path.relative(ROOT, DATA_OUT).replace(/\\/g, "/");
+console.log(`Generated ${outLabel} (${kb} KB, ${built}/${CHAPTERS} chapters with content)${LOCALE !== "en" ? ` [${LOCALE}]` : ""}`);

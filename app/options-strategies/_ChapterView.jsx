@@ -5,6 +5,8 @@ import { notFound } from "next/navigation";
 import { CHAPTERS, TAG_CLASS, chapterBySlug } from "@/lib/optionsStrategiesCurriculum";
 import { loadChapter } from "@/lib/optionsStrategiesContent";
 
+import { LocalizedLesson } from "@/components/course/LocalizedLesson";
+import { LocalizedToc } from "@/components/course/LocalizedToc";
 import LessonClient from "./LessonClient";
 
 const OG_IMAGE = "https://openalgo.in/assets/og/options-strategies.png";
@@ -114,16 +116,7 @@ export default function ChapterView({ slug }) {
           </div>
         </header>
 
-        {hasContent ? (
-          <div className="lesson" dangerouslySetInnerHTML={{ __html: html }} />
-        ) : (
-          <div className="callout info">
-            <span className="callout-tag">Note</span>
-            <div>
-              <p>This chapter is being written and will appear here soon. In the meantime, start from the chapters already published in the sidebar.</p>
-            </div>
-          </div>
-        )}
+        <LocalizedLesson course="options-strategies" chapterN={ch.n} html={html} toc={toc} hasContent={hasContent} />
 
         <nav className="mt-14 grid gap-4 border-t border-border pt-7 sm:grid-cols-2">
           {prev ? (
@@ -153,22 +146,7 @@ export default function ChapterView({ slug }) {
         </nav>
       </article>
 
-      {toc.length > 0 && (
-        <aside className="hidden xl:block">
-          <div className="sticky top-20">
-            <div className="font-label text-xs uppercase tracking-[0.13em] text-on-surface-variant/70 mb-3">
-              On this page
-            </div>
-            <nav>
-              {toc.map((h) => (
-                <a key={h.id} href={`#${h.id}`} className={`toc-link lvl-${h.level}`}>
-                  {h.text}
-                </a>
-              ))}
-            </nav>
-          </div>
-        </aside>
-      )}
+      <LocalizedToc course="options-strategies" chapterN={ch.n} html={html} toc={toc} hasContent={hasContent} />
 
       <LessonClient />
     </div>
