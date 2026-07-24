@@ -34,6 +34,7 @@ const brokers = [
   "Flattrade",
   "Fyers",
   "Groww",
+  "HDFC Sky",
   "IIFL Capital",
   "IIFL (XTS)",
   "IndiaBulls Securities (XTS)",

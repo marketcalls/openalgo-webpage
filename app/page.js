@@ -153,7 +153,7 @@ export default function Home() {
 
           <div className="reveal reveal-4 mb-12 flex flex-wrap items-center justify-center gap-x-12 gap-y-6">
             {[
-              { icon: Download, value: "2,80,000+", label: t('hero.statDownloads') },
+              { icon: Download, value: "2,90,000+", label: t('hero.statDownloads') },
               { icon: Code2, value: "100%", label: t('hero.statOpenSource') },
               { icon: Star, value: "2,400+", label: t('hero.statStars') },
             ].map(({ icon: Icon, value, label }) => (
