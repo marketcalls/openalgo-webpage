@@ -1,0 +1,616 @@
+{
+  "course": "risk-management",
+  "locale": "ta",
+  "parts": [
+    {
+      "id": "A",
+      "name": "அபாயம் என்பது பணத்தை மட்டும் இழப்பது அல்ல",
+      "desc": "அபாயத்தின் உண்மையான பொருள், லாபத்திற்கு முன் உயிர்வாழ்வது ஏன் முக்கியம், சந்தைக்குள் ஒருபோதும் செல்லக்கூடாத பணம் எது என்பவற்றைப் புரிந்துகொள்ளுங்கள்.",
+      "chapters": [
+        {
+          "n": 1,
+          "slug": "what-risk-really-means",
+          "title": "அபாயம் என்பதன் உண்மையான பொருள்",
+          "summary": "அபாயம் என்பது திரையில் தோன்றும் ஒரு எண் மட்டும் அல்ல. மூலதனம், தூக்கம், ஒழுக்கம், நேரம் ஆகியவற்றை இழப்பதும், மோசமான நேரத்தில் விற்கத் தள்ளப்படுவதும் அபாயமே. உயிர்வாழ்பவர்கள் அபாயத்தை எப்படிப் பார்க்கிறார்கள் என்பதை முதலில் கற்போம்.",
+          "learn": [
+            "அபாயம் volatility-ஐ விட அதிகம்",
+            "இழப்பின் பல முகங்கள்",
+            "நிரந்தர இழப்பு மற்றும் தற்காலிக இழப்பு",
+            "கட்டாய விற்பனையாளராக மாறுதல்",
+            "காணக்கூடிய மற்றும் புறக்கணிக்கும் அபாயங்கள்",
+            "தொடக்கநிலையினர் அபாயத்தை ஏன் தவறாக மதிப்பிடுகிறார்கள்"
+          ],
+          "tags": [
+            "மனநிலை"
+          ]
+        },
+        {
+          "n": 2,
+          "slug": "survive-first",
+          "title": "முதல் விதி: உயிர்வாழுங்கள்",
+          "summary": "லாபம் விருப்பமானது; உயிர்வாழ்வது கட்டாயம். ஒரு மோசமான trade பல ஆண்டுகளின் லாபத்தை எப்படித் துடைக்கலாம், risk of ruin-ஐ எளிய எண்களில் புரிந்துகொள்வது எப்படி, தொடக்கநிலையினரின் இலக்கு ஏன் game-ல் தொடர்வதே என்பவற்றைப் பார்ப்போம்.",
+          "learn": [
+            "லாபத்திற்கு முன் உயிர்வாழ்வு",
+            "Risk of ruin-ஐ எளிமையாகப் புரிந்துகொள்வது",
+            "இழப்புகள் ஏன் உங்களுக்கு எதிராக compound ஆகின்றன",
+            "சமநிலைக்குத் திரும்பும் கணிதம்",
+            "ஒரே trade கணக்கை எப்படிக் காலி செய்யும்",
+            "game-ல் தொடர்வது"
+          ],
+          "tags": [
+            "மனநிலை"
+          ]
+        },
+        {
+          "n": 3,
+          "slug": "risk-vs-reward",
+          "title": "Risk vs Reward: எளிய விளக்கம்",
+          "summary": "அதிக returns எப்போதும் மறைந்த அபாயத்தைக் கொண்டிருக்கும்; அதை நீங்கள் காண்கிறீர்களா என்பதே கேள்வி. தெரிந்த risk, தெரியாத risk, அமைதியாக இல்லை என்று நீங்கள் நடிக்கும் risk ஆகியவற்றின் வித்தியாசம்.",
+          "learn": [
+            "return மற்றும் risk ஏன் ஒன்றாகச் செல்கின்றன",
+            "தெரிந்த மற்றும் தெரியாத risk",
+            "safe bets-ல் மறைந்திருக்கும் risk",
+            "free-lunch trap",
+            "risk-reward-ஐ நேர்மையாகப் படித்தல்",
+            "உண்மையான இந்திய உதாரணங்கள்"
+          ],
+          "tags": [
+            "மனநிலை"
+          ]
+        },
+        {
+          "n": 4,
+          "slug": "the-risk-pyramid",
+          "title": "Risk Pyramid",
+          "summary": "சந்தையில் பணம் செலுத்துவதற்கு முன் அடித்தளத்தை அமைக்கவும்: emergency fund, insurance, debt control. அதன் மேல் investing capital, trading capital, speculation capital; சந்தைக்குள் செல்லவே கூடாத பணத்தையும் தனியாக வைத்திருங்கள்.",
+          "learn": [
+            "Risk pyramid-ஐ அடுக்கடுக்காகப் புரிந்துகொள்வது",
+            "முதலில் emergency fund",
+            "Insurance மற்றும் debt மூலம் risk control",
+            "Investing, trading, speculation capital",
+            "சந்தைக்குள் செல்லக்கூடாத பணம்",
+            "ஒவ்வொரு அடுக்கின் அளவு"
+          ],
+          "tags": [
+            "பணம்"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "B",
+      "name": "தொடக்கநிலையினருக்கான பணப் பாதுகாப்பு அமைப்பு",
+      "desc": "சந்தை risk, சந்தைக்கு வெளியிலிருந்தே தொடங்குகிறது. உங்கள் அடித்தளத்தைச் சரிசெய்து, பணத்தைப் பிரித்து, உங்கள் உண்மையான வாழ்க்கைக்கு ஏற்றவாறு risk-ஐத் தேர்ந்தெடுக்கவும்.",
+      "chapters": [
+        {
+          "n": 5,
+          "slug": "fix-your-base",
+          "title": "Invest செய்வதற்கு முன்: அடித்தளத்தைச் சரிசெய்யுங்கள்",
+          "summary": "Emergency fund, health insurance, term insurance, high-interest debt மற்றும் வருமான நிலைத்தன்மை ஆகியவை ஏன் முதல் order-ஐ இடுவதற்கு முன்பே தொடங்கும் உண்மையான risk management ஆகும்.",
+          "learn": [
+            "Investing-க்கு முன் checklist",
+            "Emergency fund எவ்வளவு இருக்க வேண்டும்",
+            "Health மற்றும் term insurance அடிப்படைகள்",
+            "High-interest debt ஏன் முதலில் தீர்க்கப்பட வேண்டும்",
+            "வருமான நிலைத்தன்மை ஒரு cushion ஆக",
+            "சந்தைக்கு வெளியிலிருந்தே market risk தொடங்குகிறது"
+          ],
+          "tags": [
+            "பணம்"
+          ]
+        },
+        {
+          "n": 6,
+          "slug": "capital-buckets",
+          "title": "??????? ???????",
+          "summary": "Long-term investing money, short-term goal money, trading money, F&O money மற்றும் learning money ஆகியவற்றைப் பிரிக்கவும்; ஒரு bucket-இன் இழப்பு முழுப் படகையும் மூழ்கடிக்காதபடி இது உதவும்.",
+          "learn": [
+            "ஒரே pool ஏன் ஆபத்தானது",
+            "ஐந்து money buckets",
+            "Goal money மற்றும் risk money",
+            "தனியான learning bucket",
+            "Buckets-ஐ ஒருபோதும் கலக்காதீர்கள்",
+            "எளிய bucket plan"
+          ],
+          "tags": [
+            "பணம்"
+          ]
+        },
+        {
+          "n": 7,
+          "slug": "time-horizon-is-risk",
+          "title": "Time Horizon என்பதே Risk Management",
+          "summary": "ஆறு மாதப் பணம், மூன்று ஆண்டுப் பணம், இருபது ஆண்டுப் பணம் ஆகியவற்றை முற்றிலும் வேறுபட்ட முறையில் கையாள வேண்டும். நீங்கள் பொறுப்புடன் எவ்வளவு risk எடுக்கலாம் என்பதை time horizon எவ்வாறு தீர்மானிக்கிறது என்பதை அறியுங்கள்.",
+          "learn": [
+            "Horizon ஏன் எல்லாவற்றையும் மாற்றுகிறது",
+            "Short-term money விதிகள்",
+            "Medium-term money விதிகள்",
+            "Long-term money மற்றும் volatility",
+            "Assets-ஐ horizon-க்கு பொருத்துதல்",
+            "தொடக்கநிலையினர் செய்யும் horizon தவறுகள்"
+          ],
+          "tags": [
+            "பணம்"
+          ]
+        },
+        {
+          "n": 8,
+          "slug": "risk-capacity-vs-tolerance",
+          "title": "உண்மையில் நீங்கள் எவ்வளவு Risk எடுக்க முடியும்?",
+          "summary": "Risk capacity (உங்கள் நிதி தாங்கக்கூடியது) என்பது risk tolerance (உங்கள் உணர்வுகள் தாங்கக்கூடியது) அல்ல. சம்பளப் பணியாளர், ஓய்வுபெற்றவர், தொழில் உரிமையாளர், trader, இல்லத்தரசி, மாணவர் ஆகியோருக்கான worked examples இதில் உள்ளன.",
+          "learn": [
+            "Capacity மற்றும் tolerance",
+            "உங்கள் உண்மையான capacity-ஐ அளவிடுதல்",
+            "உங்கள் emotional limit-ஐ அறிதல்",
+            "இரண்டும் ஒத்துப்போகாதபோது என்ன செய்வது",
+            "ஆறு real-life profiles",
+            "உங்கள் தனிப்பட்ட risk budget-ஐ அமைத்தல்"
+          ],
+          "tags": [
+            "பணம்"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "C",
+      "name": "???????????? risk management",
+      "desc": "Long-term investors-க்காக: allocation, diversification, market falls-இல் நடத்தை, புத்திசாலித்தனமாகத் தோன்றும் தவறுகள்.",
+      "chapters": [
+        {
+          "n": 9,
+          "slug": "asset-allocation",
+          "title": "Asset Allocation: மிகப்பெரிய முடிவு",
+          "summary": "Equity, debt, gold, cash மற்றும் real estate-இல் பணத்தை எப்படிப் பிரிக்கிறீர்கள் என்பது எந்த stock-ஐத் தேர்ந்தெடுக்கிறீர்கள் என்பதைவிட ஏன் முக்கியமானது, எளிய allocation உங்கள் உண்மையான risk-ஐ எப்படிக் கட்டுப்படுத்துகிறது என்பதைக் கற்போம்.",
+          "learn": [
+            "Asset allocation என்றால் என்ன",
+            "Stock-picking-ஐ விட இது ஏன் சிறந்தது",
+            "முக்கிய asset classes",
+            "எளிய starter allocation",
+            "Allocation risk-ஐ எவ்வாறு கட்டுப்படுத்துகிறது",
+            "இந்திய உதாரணங்கள் மற்றும் falls"
+          ],
+          "tags": [
+            "முதலீட்டாளர்"
+          ]
+        },
+        {
+          "n": 10,
+          "slug": "diversification",
+          "title": "அளவுக்கு மீறாமல் Diversification",
+          "summary": "ஒரு stock ஆபத்தானது; நூறு stocks தேவையற்றது. Companies முழுவதும் பரப்புவது single-company risk-ஐ எவ்வாறு குறைக்கிறது, mutual funds மற்றும் index funds அதை உங்களுக்காக எவ்வாறு செய்கின்றன என்பவற்றைப் புரிந்துகொள்ளுங்கள்.",
+          "learn": [
+            "ஒரு stock ஏன் risky",
+            "Diversification உண்மையில் எதைச் சரிசெய்கிறது",
+            "ஒரு அளவுக்குப் பிறகு குறையும் பலன்",
+            "Funds மற்றும் index funds",
+            "???????? ????? diversification (diworsification)",
+            "சரியான அளவிலான portfolio"
+          ],
+          "tags": [
+            "முதலீட்டாளர்"
+          ]
+        },
+        {
+          "n": 11,
+          "slug": "sip-lumpsum-falls",
+          "title": "SIP, Lumpsum மற்றும் Market Falls",
+          "summary": "SIP returns-ஐ விட உங்கள் behaviour-க்கு ஏன் அதிகம் உதவுகிறது, lumpsum எப்போது பொருத்தமானது, long-term investor-க்கு falling market ஏன் தானாகவே மோசமான செய்தி அல்ல என்பவற்றைக் கற்போம்.",
+          "learn": [
+            "SIP behaviour-ஐ எவ்வாறு கட்டுப்படுத்துகிறது",
+            "Rupee-cost averaging-ஐ நேர்மையாகப் புரிந்துகொள்வது",
+            "Lumpsum எப்போது பொருத்தமானது",
+            "Falls accumulators-க்கு ஏன் உதவுகின்றன",
+            "Crashes-இலும் invested-ஆக இருப்பது",
+            "உண்மையான NIFTY fall examples"
+          ],
+          "tags": [
+            "முதலீட்டாளர்"
+          ]
+        },
+        {
+          "n": 12,
+          "slug": "rebalancing",
+          "title": "Rebalancing: Winners-ஐ விற்று Losers-ஐ வாங்குதல்",
+          "summary": "Rebalancing, உயர்ந்த assets-ஐக் குறைத்து பின்தங்கிய assets-ஐச் சேர்க்கச் செய்கிறது. இது risk-ஐக் கட்டுப்படுத்தும் discipline; உணர்வுகளுக்கு ஏன் எதிராகத் தோன்றுகிறது, தொடக்கநிலையினர் எவ்வளவு அடிக்கடி செய்ய வேண்டும் என்பதையும் பார்ப்போம்.",
+          "learn": [
+            "Rebalancing என்ன செய்கிறது",
+            "இது risk-ஐ ஏன் கட்டுப்படுத்துகிறது",
+            "இது ஏன் எதிர்மாறாகத் தோன்றுகிறது",
+            "Threshold மற்றும் calendar rebalancing",
+            "எவ்வளவு அடிக்கடி போதுமானது",
+            "தொடக்கநிலையினருக்கான விதி"
+          ],
+          "tags": [
+            "முதலீட்டாளர்"
+          ]
+        },
+        {
+          "n": 13,
+          "slug": "concentrated-stock-risk",
+          "title": "??? ??????? ??????????? risk",
+          "summary": "Employee stock, family-business stock, favourite stock, IPO hype, multibagger obsession. Concentration எப்போது உண்மையான wealth-ஐ உருவாக்குகிறது, எப்போது அமைதியாக அழிக்கிறது என்பதை அறியுங்கள்.",
+          "learn": [
+            "Concentration risk என்றால் என்ன",
+            "Employee மற்றும் family-business stock",
+            "??????? ??????? ????? bias",
+            "IPO மற்றும் multibagger hype",
+            "Concentration எப்போது worth it",
+            "Concentration-ஐ பாதுகாப்பாகக் குறைத்தல்"
+          ],
+          "tags": [
+            "முதலீட்டாளர்"
+          ]
+        },
+        {
+          "n": 14,
+          "slug": "investor-mistakes",
+          "title": "புத்திசாலித்தனமாகத் தோன்றும் Investor Mistakes",
+          "summary": "கண்மூடித்தனமாக averaging down செய்தல், கடந்த returns-ஐத் துரத்துதல், crashes-இல் panic-exit செய்தல், price குறைந்ததால் மட்டும் வாங்குதல், dividend-ஐ safety என்று குழப்புதல் ஆகியவை அதிகம் செலவாகும் தவறுகள்.",
+          "learn": [
+            "?????????????? averaging down ???????",
+            "Past performance-ஐத் துரத்துதல்",
+            "Crashes-இல் panic-selling",
+            "'விலை குறைந்தது, அதனால் cheap' என்ற தவறு",
+            "Dividend-? safety ???? ??????? myth",
+            "உங்களை நீங்களே பிடித்துக்கொள்வது"
+          ],
+          "tags": [
+            "முதலீட்டாளர்"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "D",
+      "name": "Trader risk management",
+      "desc": "Trading என்பது வேறு விதிகளைக் கொண்ட வேறு game: exits, sizing, stops, expectancy மற்றும் கடுமையான risk limits.",
+      "chapters": [
+        {
+          "n": 15,
+          "slug": "trading-is-not-investing",
+          "title": "Trading என்பது Investing அல்ல",
+          "summary": "வேறு game, வேறு விதிகள். Investors போல traders நேரத்தையும் பொறுமையையும் நம்ப முடியாது; exits, position sizing, stop-losses, logs மற்றும் daily risk limits ஏன் கட்டாயம் என்பதை அறியுங்கள்.",
+          "learn": [
+            "Trading மற்றும் investing",
+            "Time ஒரு trade-ஐ ஏன் காப்பாற்றாது",
+            "Trader-ன் risk toolkit",
+            "Conviction அல்ல, edge",
+            "Prediction-ஐ விட process",
+            "பெரும்பாலான தொடக்கநிலையினர் ஏன் blow up ஆகிறார்கள்"
+          ],
+          "tags": [
+            "?????????"
+          ]
+        },
+        {
+          "n": 16,
+          "slug": "position-sizing",
+          "title": "Position Sizing எளிமையாக",
+          "summary": "மிக முக்கியமான single risk control: எத்தனை shares வாங்குவது. Fixed-rupee risk, percentage risk, stop distance மற்றும் ஒவ்வொரு trade-க்கும் பயன்படுத்தக்கூடிய beginner calculator.",
+          "learn": [
+            "Size என்பதே risk ஏன்",
+            "??????? rupee risk",
+            "??????????? percentage risk",
+            "Stop distance-இலிருந்து quantity",
+            "Beginner sizing calculator",
+            "பொதுவான sizing தவறுகள்"
+          ],
+          "tags": [
+            "?????????"
+          ]
+        },
+        {
+          "n": 17,
+          "slug": "stop-loss",
+          "title": "Stop-Loss: Insurance-ஆ அல்லது Illusion-ஆ?",
+          "summary": "Emotion உள்ளே வருவதற்கு முன்பே வைத்தால் மட்டுமே stop பாதுகாக்கும். Technical stops, volatility stops, time stops, mental stops மற்றும் disaster stop ஆகியவற்றையும், mental stops ஏன் பெரும்பாலும் தோல்வியடைகின்றன என்பதையும் கற்போம்.",
+          "learn": [
+            "Stop உண்மையில் என்ன",
+            "Technical மற்றும் volatility stops",
+            "Time மற்றும் disaster stops",
+            "Mental stops ஏன் தோல்வியடைகின்றன",
+            "Emotion வருவதற்கு முன் stop வைப்பது",
+            "Stops உதவ முடியாத நேரங்கள்"
+          ],
+          "tags": [
+            "?????????"
+          ]
+        },
+        {
+          "n": 18,
+          "slug": "risk-reward-win-rate",
+          "title": "Risk-Reward மற்றும் Win Rate",
+          "summary": "80% accuracy இருந்தும் ஏன் பணத்தை இழக்கலாம், 40% accuracy இருந்தும் ஏன் பணம் சம்பாதிக்கலாம். Simple Indian-rupee examples மூலம் expectancy-ஐப் புரிந்து, சரியாக இருப்பதைத் துரத்தாமல் profitable ஆக இருப்பதைத் துரத்துங்கள்.",
+          "learn": [
+            "Win rate என்பது edge அல்ல",
+            "Risk-reward ???????",
+            "Expectancy-ஐ எளிய rupees-ல்",
+            "High accuracy ஏன் இழப்பைத் தரலாம்",
+            "Low accuracy ஏன் லாபத்தைத் தரலாம்",
+            "Positive-expectancy trade வடிவமைத்தல்"
+          ],
+          "tags": [
+            "?????????"
+          ]
+        },
+        {
+          "n": 19,
+          "slug": "drawdowns-losing-streaks",
+          "title": "Drawdowns மற்றும் Losing Streaks",
+          "summary": "10%, 20%, 40% drawdown உண்மையில் எப்படி இருக்கும், தொடர்ந்து வரும் எத்தனை losses புள்ளிவிவரப்படி சாதாரணம், தவறான நேரத்தில் beginners ஏன் size-ஐ அதிகரிக்கிறார்கள் என்பவற்றைப் பார்ப்போம்.",
+          "learn": [
+            "Drawdown என்றால் என்ன",
+            "Recovery math எவ்வாறு செயல்படுகிறது",
+            "சாதாரண losing streaks",
+            "Drawdown-ன் emotional curve",
+            "தோல்வியின்போது beginners ஏன் size-ஐ உயர்த்துகிறார்கள்",
+            "Bad run-இல் உயிர்வாழ்தல்"
+          ],
+          "tags": [
+            "?????????"
+          ]
+        },
+        {
+          "n": 20,
+          "slug": "risk-limits",
+          "title": "Daily, Weekly மற்றும் Monthly Risk Limits",
+          "summary": "ஒவ்வொரு trade, நாள், வாரம், strategy ஆகியவற்றிற்கான max loss. நாளுக்கான trading-ஐ எப்போது நிறுத்துவது, மாதத்திற்கு எப்போது நிறுத்துவது, முன்கூட்டியே வைத்த limits ஏன் bad day-யையும் blown account-ஐயும் பிரிக்கின்றன என்பவற்றை அறியுங்கள்.",
+          "learn": [
+            "??????? trade-????? risk limit",
+            "Daily மற்றும் weekly stop",
+            "??????? strategy-????? limits",
+            "எப்போது விலகிச் செல்ல வேண்டும்",
+            "????????? circuit breaker",
+            "உங்கள் limit sheet-ஐ உருவாக்குதல்"
+          ],
+          "tags": [
+            "?????????"
+          ]
+        },
+        {
+          "n": 21,
+          "slug": "portfolio-heat",
+          "title": "Portfolio Heat: உங்கள் மொத்த Open Risk",
+          "summary": "ஒரு trade-க்கு 1% என்றாலும் அது சேர்ந்து பெரிதாகும். பல positions, குறிப்பாக correlated positions, இருக்கும்போது total risk 8% அல்லது அதற்கு மேல் அமைதியாகச் செல்லலாம். Portfolio heat-ஐ அளந்து கட்டுப்படுத்துவது எப்படி என்பதை கற்போம்.",
+          "learn": [
+            "Portfolio heat என்றால் என்ன",
+            "Per-trade risk மற்றும் total risk",
+            "Correlation மற்றும் மறைந்த concentration",
+            "Sector overlap (???? ????????)",
+            "Gross மற்றும் net exposure",
+            "Total-heat limit அமைத்தல்"
+          ],
+          "tags": [
+            "?????????"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "E",
+      "name": "Leverage, Margin மற்றும் Execution Risk",
+      "desc": "Borrowed money, forced exits, நீங்கள் காணும் price மற்றும் பெறும் price இடையிலான வித்தியாசம் ஆகியவை beginners-ஐ எவ்வாறு அழிக்கின்றன.",
+      "chapters": [
+        {
+          "n": 22,
+          "slug": "leverage",
+          "title": "Leverage: Control-ஐ இழக்கச் செய்யும் வேகமான வழி",
+          "summary": "Leverage லாபத்தையும் இழப்பையும் பெரிதாக்குகிறது. சிறிய price move பெரிய capital damage ஆகுவது, சரியாக இருப்பதற்கான நேரத்தை leverage எவ்வாறு குறைக்கிறது, அது எவ்வளவு வேகமாகப் பாதிக்கிறது என்பதைக் காட்டும் இந்திய எண்கள் ஆகியவற்றைப் பார்ப்போம்.",
+          "learn": [
+            "Leverage என்றால் என்ன",
+            "இது loss-ஐ எவ்வாறு பெரிதாக்குகிறது",
+            "சிறிய move, பெரிய damage",
+            "Leverage மற்றும் time pressure",
+            "உண்மையான margin examples",
+            "பாதுகாப்பான leverage தேர்வு"
+          ],
+          "tags": [
+            "Leverage (???? ?????????)"
+          ]
+        },
+        {
+          "n": 23,
+          "slug": "margin-calls",
+          "title": "Margin Calls மற்றும் Forced Exits",
+          "summary": "Margin என்றால் என்ன, broker ஏன் உங்களை square off செய்கிறார், forced exits ஏன் மோசமான prices-இல் நடக்கின்றன, available margin ஏன் usable capital அல்ல என்பவற்றை அறியுங்கள்.",
+          "learn": [
+            "Margin உண்மையில் என்ன",
+            "Brokers ஏன் force-close செய்கிறார்கள்",
+            "மோசமான prices-இல் forced exits",
+            "Available மற்றும் usable margin",
+            "Peak-margin ???????",
+            "Square-off-ஐத் தவிர்த்தல்"
+          ],
+          "tags": [
+            "Leverage (???? ?????????)"
+          ]
+        },
+        {
+          "n": 24,
+          "slug": "broker-rms-reality",
+          "title": "Broker-ன் Risk System",
+          "summary": "உங்கள் broker-ன் risk system (RMS), நீங்கள் எதிர்பார்ப்பதற்கு முன்பே positions-ஐ மூடலாம். Cash மற்றும் pledged collateral, pledge haircut, margin shortfall, auto square-off timing, cash-component rule, peak-margin penalties ஆகிய broker-side உண்மைகளை அறியுங்கள்.",
+          "learn": [
+            "RMS என்ன செய்கிறது",
+            "Cash மற்றும் pledged collateral",
+            "Pledge haircut",
+            "Margin shortfall மற்றும் square-off",
+            "Auto square-off ?????",
+            "Peak-margin penalties (???? margin ??????????)"
+          ],
+          "tags": [
+            "Leverage (???? ?????????)"
+          ]
+        },
+        {
+          "n": 25,
+          "slug": "slippage-liquidity-spread",
+          "title": "Slippage, Liquidity மற்றும் Spread",
+          "summary": "நீங்கள் காணும் price எப்போதும் கிடைக்கும் price அல்ல. Bid-ask spread, market மற்றும் limit orders, liquidity, impact cost ஆகிய அமைதியான taxes, வெற்றி பெறும் idea-ஐ losing trade ஆக மாற்றலாம்.",
+          "learn": [
+            "Bid-ask spread",
+            "Market மற்றும் limit orders",
+            "Liquidity என்றால் என்ன",
+            "Size-ன் impact cost",
+            "Fast markets-இல் slippage",
+            "Liquid instruments-ல் trading"
+          ],
+          "tags": [
+            "Leverage (???? ?????????)"
+          ]
+        },
+        {
+          "n": 26,
+          "slug": "gap-and-event-risk",
+          "title": "Gap Risk மற்றும் Event Risk",
+          "summary": "Results, RBI policy, elections, global shocks, overnight news ஆகியவை market மூடியிருக்கும்போது price-ஐ நகர்த்துகின்றன. Gap-க்கு எதிராக stop-loss ஏன் பாதுகாக்காது, surprises-க்காக size செய்வது எப்படி என்பவற்றைக் கற்போம்.",
+          "learn": [
+            "Gap என்றால் என்ன",
+            "Gaps-இல் stops ஏன் தோல்வியடைகின்றன",
+            "Overnight மற்றும் event risk",
+            "Results மற்றும் policy days",
+            "???????? shock ??????????",
+            "Surprises-க்காக sizing"
+          ],
+          "tags": [
+            "Leverage (???? ?????????)"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "F",
+      "name": "தொடக்கநிலையினருக்கான F&O Risk",
+      "desc": "Futures மற்றும் options மரியாதையை எதிர்பார்க்கின்றன; அலட்சியமான பங்கேற்பைத் தண்டிக்கின்றன. ஒவ்வொரு beginner-மும் முதலில் புரிந்துகொள்ள வேண்டிய risks.",
+      "chapters": [
+        {
+          "n": 27,
+          "slug": "why-fno-is-different",
+          "title": "F&O ஏன் வேறுபட்டது",
+          "summary": "Expiry, leverage, margin, mark-to-market, time decay மற்றும் lot size ஆகியவை சேர்ந்து அலட்சியமான பங்கேற்பைத் தண்டிக்கின்றன. F&O என்பது 'அதிக action கொண்ட stocks' அல்ல; முற்றிலும் வேறு risk world என்பதை அறியுங்கள்.",
+          "learn": [
+            "F&O-வை வேறுபடுத்துவது என்ன",
+            "Expiry மற்றும் lot size",
+            "Leverage மற்றும் margin",
+            "Mark-to-market pressure (?????? cash ????????)",
+            "Time decay அடிப்படைகள்",
+            "Casual F&O ஏன் தோல்வியடைகிறது"
+          ],
+          "tags": [
+            "F&O"
+          ]
+        },
+        {
+          "n": 28,
+          "slug": "futures-risk",
+          "title": "Futures risk",
+          "summary": "Futures எளிமையானவை, ஆனால் ஆபத்தானவை: linear profit and loss, daily mark-to-market, gap risk, rollover risk, basis risk மற்றும் தொடர்ந்த margin pressure. Futures position-ன் நேர்மையான risk profile.",
+          "learn": [
+            "Linear profit ??????? loss",
+            "?????? MTM cash flow",
+            "Gap மற்றும் overnight risk",
+            "Rollover மற்றும் basis risk",
+            "Margin pressure (margin ????????)",
+            "Futures trade-ஐ sizing செய்தல்"
+          ],
+          "tags": [
+            "F&O"
+          ]
+        },
+        {
+          "n": 29,
+          "slug": "option-buyer-risk",
+          "title": "Option buyer risk",
+          "summary": "Loss வரம்புடையது, ஆனால் வெற்றி பெறும் probability குறைவு. Premium decay, direction சரியாக இருந்தும் timing தவறுவது, IV crush, cheap options-ஐ overtrade செய்வதால் account மெதுவாகக் காலியாகுவது ஆகியவற்றைப் பார்ப்போம்.",
+          "learn": [
+            "????????? loss, ??????? odds",
+            "Premium time decay (premium-?? ???????????)",
+            "சரியான direction, தவறான timing",
+            "Events-க்குப் பிறகு IV crush",
+            "Cheap-option trap",
+            "Discipline-உடன் options வாங்குதல்"
+          ],
+          "tags": [
+            "Options (??????? ????????????)"
+          ]
+        },
+        {
+          "n": 30,
+          "slug": "option-seller-risk",
+          "title": "Option seller risk",
+          "summary": "சிறிய frequent profits மற்றும் அரிதான பெரிய losses. 'High probability' என்பது 'low risk' அல்ல; loss tail உண்மையில் எப்படி இருக்கும், option selling ஏன் மரியாதையைத் தேவைப்படுத்துகிறது என்பவற்றை கற்போம்.",
+          "learn": [
+            "Seller-ன் payoff shape",
+            "High probability vs low risk (???? ?????? ???????? low risk ????)",
+            "Fat loss tail",
+            "Margin மற்றும் assignment",
+            "Sellers ஏன் blow up ஆகிறார்கள்",
+            "Defined risk-உடன் selling"
+          ],
+          "tags": [
+            "Options (??????? ????????????)"
+          ]
+        },
+        {
+          "n": 31,
+          "slug": "greeks-as-risk",
+          "title": "Greeks-ஐ Risk Language ஆகப் புரிந்துகொள்வது",
+          "summary": "Delta, gamma, theta மற்றும் vega ஆகியவற்றை formulas ஆக அல்ல, risk tools ஆக விளக்குகிறோம். இன்று உங்களைப் பாதிக்கக்கூடியது, நாளைக்குள் சேரக்கூடியது, shock-இல் வெடிக்கக்கூடியது எது என்பதை அறியுங்கள்.",
+          "learn": [
+            "Greeks ஒரு risk dashboard ஆக",
+            "Delta: direction risk (???? risk)",
+            "Theta: time risk (??? risk)",
+            "Vega: volatility risk (volatility risk)",
+            "Gamma: acceleration risk (???????? risk)",
+            "உங்கள் position-ன் Greeks-ஐப் படித்தல்"
+          ],
+          "tags": [
+            "Options (??????? ????????????)"
+          ]
+        },
+        {
+          "n": 32,
+          "slug": "expiry-day-risk",
+          "title": "Expiry-day risk",
+          "summary": "Gamma spikes, liquidity traps, sudden moves, execution freezes மற்றும் adjustment panic. உண்மையான Indian expiry examples-உடன், expiry day ஏன் calendar-இல் beginners-க்கு மிகக் குறைவாக ஏற்ற நாளாகும் என்பதைப் புரிந்துகொள்ளுங்கள்.",
+          "learn": [
+            "Expiry ஏன் சிறப்பு",
+            "Expiry அருகே gamma spikes",
+            "Liquidity traps (liquidity ??????)",
+            "Execution freezes (????????????? ????????)",
+            "Adjustment panic (?????? ????????? panic)",
+            "Beginners ஏன் காத்திருக்க வேண்டும்"
+          ],
+          "tags": [
+            "Options (??????? ????????????)"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "G",
+      "name": "Reference மற்றும் Current-ஆக இருப்பது",
+      "desc": "இந்த course-இல் உள்ள ஒவ்வொரு live number-ம் - lot sizes, margins, charges, SEBI figures - காலத்துடன் மாறும். அவற்றை எங்கே verify செய்வது என்பதை இங்கே காணலாம்.",
+      "chapters": [
+        {
+          "n": 33,
+          "slug": "sources-and-staying-current",
+          "title": "Sources மற்றும் Current-ஆக இருப்பது",
+          "summary": "Lot sizes, expiry dates, margins, charges மற்றும் SEBI figures அனைத்தும் மாறுகின்றன. இந்த reference, course பயன்படுத்தும் ஒவ்வொரு live fact-ஐ எங்கே verify செய்வது, உங்கள் numbers stale ஆகாமல் தடுக்கும் எளிய 'as of date' habit ஆகியவற்றைக் காட்டுகிறது.",
+          "learn": [
+            "NSE lot sizes மற்றும் specs-ஐ எங்கே check செய்வது",
+            "Expiry calendar-? ????????????? sources",
+            "SEBI F&O studies",
+            "Margin மற்றும் settlement rules",
+            "'as of date' habit",
+            "Fact-to-source table"
+          ],
+          "tags": [
+            "பணம்"
+          ]
+        }
+      ]
+    }
+  ]
+}
