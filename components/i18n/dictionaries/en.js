@@ -1765,6 +1765,11 @@ const en = {
   'courseNav.whatYouWillLearn': "What you'll learn",
   'courseNav.previous': "Previous",
   'courseNav.next': "Next",
+  'courseNav.onThisPage': "On this page",
+  'courseNav.copy': "Copy",
+  'courseNav.copied': "Copied",
+  'courseNav.unavailableTitle': "Note",
+  'courseNav.unavailableBody': "This chapter is being written and will appear here soon. In the meantime, start from the chapters already published in the sidebar.",
 }
 
 export default en

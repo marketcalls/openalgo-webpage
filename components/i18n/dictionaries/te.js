@@ -1771,6 +1771,11 @@ const dict = {
   'courseNav.whatYouWillLearn': "మీరు నేర్చుకునేవి",
   'courseNav.previous': "మునుపటి",
   'courseNav.next': "తదుపరి",
+  'courseNav.onThisPage': "ఈ పేజీలో",
+  'courseNav.copy': "కాపీ చేయండి",
+  'courseNav.copied': "కాపీ అయింది",
+  'courseNav.unavailableTitle': "గమనిక",
+  'courseNav.unavailableBody': "ఈ అధ్యాయం ప్రస్తుతం రాయబడుతోంది, త్వరలో ఇక్కడ కనిపిస్తుంది. ఈలోగా, పక్క పట్టీలో ఇప్పటికే ప్రచురించిన అధ్యాయాలతో ప్రారంభించండి.",
 }
 
 export default dict

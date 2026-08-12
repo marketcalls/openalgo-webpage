@@ -1757,6 +1757,11 @@ const dict = {
   'courseNav.whatYouWillLearn': "ما ستتعلمه",
   'courseNav.previous': "السابق",
   'courseNav.next': "التالي",
+  'courseNav.onThisPage': "في هذه الصفحة",
+  'courseNav.copy': "نسخ",
+  'courseNav.copied': "تم النسخ",
+  'courseNav.unavailableTitle': "ملاحظة",
+  'courseNav.unavailableBody': "هذا الفصل قيد الكتابة وسيظهر هنا قريباً. في هذه الأثناء، ابدأ بالفصول المنشورة بالفعل في الشريط الجانبي.",
 }
 
 export default dict

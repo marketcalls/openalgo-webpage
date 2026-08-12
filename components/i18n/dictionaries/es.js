@@ -1752,6 +1752,11 @@ const dict = {
   'courseNav.whatYouWillLearn': "Lo que aprenderás",
   'courseNav.previous': "Anterior",
   'courseNav.next': "Siguiente",
+  'courseNav.onThisPage': "En esta página",
+  'courseNav.copy': "Copiar",
+  'courseNav.copied': "Copiado",
+  'courseNav.unavailableTitle': "Nota",
+  'courseNav.unavailableBody': "Este capítulo se está redactando y aparecerá aquí pronto. Mientras tanto, comienza por los capítulos ya publicados en la barra lateral.",
 }
 
 export default dict

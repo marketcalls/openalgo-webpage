@@ -1771,6 +1771,11 @@ const dict = {
   'courseNav.whatYouWillLearn': "നിങ്ങൾ പഠിക്കുന്നത്",
   'courseNav.previous': "മുമ്പത്തേത്",
   'courseNav.next': "അടുത്തത്",
+  'courseNav.onThisPage': "ഈ പേജിൽ",
+  'courseNav.copy': "പകർത്തുക",
+  'courseNav.copied': "പകർത്തി",
+  'courseNav.unavailableTitle': "കുറിപ്പ്",
+  'courseNav.unavailableBody': "ഈ അധ്യായം ഇപ്പോൾ എഴുതിക്കൊണ്ടിരിക്കുകയാണ്; ഉടൻ ഇവിടെ ലഭ്യമാകും. അതുവരെ, സൈഡ്‌ബാറിൽ ഇതിനകം പ്രസിദ്ധീകരിച്ച അധ്യായങ്ങളിൽ നിന്ന് ആരംഭിക്കുക.",
 }
 
 export default dict

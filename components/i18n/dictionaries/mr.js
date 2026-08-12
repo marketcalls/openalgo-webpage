@@ -1770,6 +1770,11 @@ const dict = {
   'courseNav.whatYouWillLearn': "तुम्ही काय शिकाल",
   'courseNav.previous': "मागील",
   'courseNav.next': "पुढील",
+  'courseNav.onThisPage': "या पृष्ठावर",
+  'courseNav.copy': "कॉपी करा",
+  'courseNav.copied': "कॉपी झाले",
+  'courseNav.unavailableTitle': "टीप",
+  'courseNav.unavailableBody': "हा अध्याय सध्या लिहिला जात आहे आणि लवकरच येथे दिसेल. तोपर्यंत, बाजूच्या पट्टीत आधीच प्रकाशित झालेल्या अध्यायांपासून सुरुवात करा.",
 }
 
 export default dict

@@ -1804,6 +1804,11 @@ const dict = {
   'courseNav.whatYouWillLearn': "আপনি যা শিখবেন",
   'courseNav.previous': "পূর্ববর্তী",
   'courseNav.next': "পরবর্তী",
+  'courseNav.onThisPage': "এই পৃষ্ঠায়",
+  'courseNav.copy': "কপি করুন",
+  'courseNav.copied': "কপি হয়েছে",
+  'courseNav.unavailableTitle': "দ্রষ্টব্য",
+  'courseNav.unavailableBody': "এই অধ্যায়টি বর্তমানে লেখা হচ্ছে এবং শিগগিরই এখানে প্রকাশিত হবে। আপাতত, পাশের তালিকায় ইতিমধ্যে প্রকাশিত অধ্যায়গুলো দিয়ে শুরু করুন।",
 }
 
 export default dict

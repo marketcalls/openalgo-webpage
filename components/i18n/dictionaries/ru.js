@@ -1759,6 +1759,11 @@ const dict = {
   'courseNav.whatYouWillLearn': "Чему вы научитесь",
   'courseNav.previous': "Назад",
   'courseNav.next': "Далее",
+  'courseNav.onThisPage': "На этой странице",
+  'courseNav.copy': "Копировать",
+  'courseNav.copied': "Скопировано",
+  'courseNav.unavailableTitle': "Примечание",
+  'courseNav.unavailableBody': "Эта глава сейчас пишется и скоро появится здесь. А пока начните с уже опубликованных глав на боковой панели.",
 }
 
 export default dict

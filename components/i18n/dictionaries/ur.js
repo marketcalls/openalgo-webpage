@@ -1755,6 +1755,11 @@ const dict = {
   'courseNav.whatYouWillLearn': "آپ کیا سیکھیں گے",
   'courseNav.previous': "پچھلا",
   'courseNav.next': "اگلا",
+  'courseNav.onThisPage': "اس صفحے پر",
+  'courseNav.copy': "کاپی کریں",
+  'courseNav.copied': "کاپی ہو گیا",
+  'courseNav.unavailableTitle': "نوٹ",
+  'courseNav.unavailableBody': "یہ باب ابھی لکھا جا رہا ہے اور جلد یہاں دستیاب ہوگا۔ اس دوران، سائیڈ بار میں پہلے سے شائع شدہ ابواب سے آغاز کریں۔",
 }
 
 export default dict

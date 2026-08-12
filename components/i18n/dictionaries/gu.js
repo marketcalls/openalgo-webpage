@@ -1769,6 +1769,11 @@ const dict = {
   'courseNav.whatYouWillLearn': "તમે શું શીખશો",
   'courseNav.previous': "અગાઉનું",
   'courseNav.next': "આગળનું",
+  'courseNav.onThisPage': "આ પૃષ્ઠ પર",
+  'courseNav.copy': "નકલ કરો",
+  'courseNav.copied': "નકલ થઈ ગઈ",
+  'courseNav.unavailableTitle': "નોંધ",
+  'courseNav.unavailableBody': "આ અધ્યાય હાલમાં લખાઈ રહ્યો છે અને ટૂંક સમયમાં અહીં ઉપલબ્ધ થશે. ત્યાં સુધી, બાજુની પટ્ટીમાં પહેલેથી પ્રકાશિત થયેલા અધ્યાયોથી શરૂઆત કરો.",
 }
 
 export default dict

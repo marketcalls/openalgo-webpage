@@ -1769,6 +1769,11 @@ const dict = {
   'courseNav.whatYouWillLearn': "ನೀವು ಕಲಿಯುವ ವಿಷಯಗಳು",
   'courseNav.previous': "ಹಿಂದಿನ",
   'courseNav.next': "ಮುಂದಿನ",
+  'courseNav.onThisPage': "ಈ ಪುಟದಲ್ಲಿ",
+  'courseNav.copy': "ನಕಲಿಸಿ",
+  'courseNav.copied': "ನಕಲಿಸಲಾಗಿದೆ",
+  'courseNav.unavailableTitle': "ಸೂಚನೆ",
+  'courseNav.unavailableBody': "ಈ ಅಧ್ಯಾಯವನ್ನು ಈಗ ಬರೆಯಲಾಗುತ್ತಿದೆ ಮತ್ತು ಶೀಘ್ರದಲ್ಲೇ ಇಲ್ಲಿ ಕಾಣಿಸಿಕೊಳ್ಳುತ್ತದೆ. ಅಲ್ಲಿಯವರೆಗೆ, ಪಕ್ಕದ ಪಟ್ಟಿಯಲ್ಲಿ ಈಗಾಗಲೇ ಪ್ರಕಟಿಸಿರುವ ಅಧ್ಯಾಯಗಳಿಂದ ಪ್ರಾರಂಭಿಸಿ.",
 }
 
 export default dict

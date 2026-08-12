@@ -1752,6 +1752,11 @@ const dict = {
   'courseNav.whatYouWillLearn': "ଆପଣ କ'ଣ ଶିଖିବେ",
   'courseNav.previous': "ପୂର୍ବବର୍ତ୍ତୀ",
   'courseNav.next': "ପରବର୍ତ୍ତୀ",
+  'courseNav.onThisPage': "ଏହି ପୃଷ୍ଠାରେ",
+  'courseNav.copy': "କପି କରନ୍ତୁ",
+  'courseNav.copied': "କପି ହୋଇଛି",
+  'courseNav.unavailableTitle': "ଟିପ୍ପଣୀ",
+  'courseNav.unavailableBody': "ଏହି ଅଧ୍ୟାୟଟି ବର୍ତ୍ତମାନ ଲେଖାଯାଉଛି ଏବଂ ଶୀଘ୍ର ଏଠାରେ ଉପଲବ୍ଧ ହେବ। ସେପର୍ଯ୍ୟନ୍ତ, ପାର୍ଶ୍ୱପଟିରେ ପୂର୍ବରୁ ପ୍ରକାଶିତ ଅଧ୍ୟାୟଗୁଡ଼ିକରୁ ଆରମ୍ଭ କରନ୍ତୁ।",
 }
 
 export default dict

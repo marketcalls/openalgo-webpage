@@ -1770,6 +1770,11 @@ const dict = {
   'courseNav.whatYouWillLearn': "நீங்கள் கற்றுக்கொள்வது",
   'courseNav.previous': "முந்தைய",
   'courseNav.next': "அடுத்த",
+  'courseNav.onThisPage': "இந்தப் பக்கத்தில்",
+  'courseNav.copy': "நகலெடு",
+  'courseNav.copied': "நகலெடுக்கப்பட்டது",
+  'courseNav.unavailableTitle': "குறிப்பு",
+  'courseNav.unavailableBody': "இந்த அத்தியாயம் தற்போது எழுதப்பட்டு வருகிறது; விரைவில் இங்கே வெளியாகும். இதற்கிடையில், பக்கப்பட்டியில் ஏற்கனவே வெளியிடப்பட்டுள்ள அத்தியாயங்களிலிருந்து தொடங்குங்கள்.",
 }
 
 export default dict
