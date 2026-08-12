@@ -5,38 +5,38 @@
     {
       "id": "A",
       "name": "அடிப்படைகள் மற்றும் நேர்மை",
-      "desc": "STAT arb உண்மையில் என்ன, அது எந்த தரவின் அடிப்படையில் நிற்கிறது, மற்றும் ஒரு உறவு உண்மையானதா இல்லையா என்று முடிவு செய்யும் புள்ளிவிவரங்கள்.",
+      "desc": "Statistical arbitrage உண்மையில் என்ன, அது எந்தத் தரவை அடிப்படையாகக் கொண்டது, மேலும் ஒரு உறவு உண்மையானதா என்பதைச் சோதிக்கும் நேர்மையான அணுகுமுறை.",
       "chapters": [
         {
           "n": 1,
           "slug": "what-is-statistical-arbitrage",
-          "title": "உண்மையில் புள்ளியியல் முரண்பாடு (Statistical Arbitrage) என்றால் என்ன",
-          "summary": "விலையை அல்ல, நிலையான (stationary) உறவை வர்த்தகம் செய்யுங்கள். ஒற்றை-பெயர் மீள்வி (single-name reversion) முதல் ஜோடிகள் (pairs), கூடைகள் (baskets), மற்றும் குறுக்கு-பிரிவு புத்தகங்கள் (cross-sectional books) வரையிலான குடும்ப மரத்தின் வரலாறு, 'உadvantage' ஏன் குறைந்துவிட்டது, மற்றும் எதிர்பார்ப்புகளை நேர்மையாக அமைப்பது.",
+          "title": "Statistical Arbitrage என்றால் என்ன?",
+          "summary": "விலையை அல்ல, stationary உறவை வர்த்தகம் செய்யுங்கள். Single-name reversion முதல் pairs, baskets, cross-sectional books வரை இந்தக் குடும்பத்தின் வரலாறு, குறைந்துவிட்ட edge மற்றும் யதார்த்தமான எதிர்பார்ப்புகளைப் புரிந்துகொள்ளுங்கள்.",
           "learn": [
-            "விலையை அல்ல, உறவை வர்த்தகம் செய்யுங்கள்",
-            "புள்ளிவிவர முரண்பாடு குடும்ப மரம்",
-            "சந்தை நடுநிலைத்தன்மை (Market neutrality)",
-            "எங்கு இந்த ventaja இருந்து எங்கு மறைந்தது",
-            "ஆராய்ச்சி வழிமுறைகளை முதலில்",
+            "விலையை அல்ல, உறவை வர்த்தகம் செய்தல்",
+            "Statistical arbitrage குடும்ப மரம்",
+            "????? ?????????",
+            "Edge எங்கு இருந்து வந்தது, எங்கு மறைந்தது",
+            "ஆராய்ச்சி முறைகள் முதலில்",
             "நேர்மையான எதிர்பார்ப்புகள்"
           ],
           "tags": [
             "NSE",
-            "???????????"
+            "புள்ளியியல்"
           ]
         },
         {
           "n": 2,
           "slug": "building-the-database",
-          "title": "வரலாற்று தரவுத்தளத்தை உருவாக்குதல்",
-          "summary": "ஒருமுறை பதிவிறக்கம் செய்து, வேகமாக படிக்கவும். OpenAlgo மூலம் 50 NSE பெயர்கள் மற்றும் குறியீட்டின் உள்ளூர் DuckDB Cache எவ்வாறு உருவாக்கப்பட்டு, இடைவெเหลமான்களுக்காக சரிபார்க்கப்பட்டு, புதுப்பித்து வைக்கப்படுகிறது, இதனால் ஒவ்வொரு பிற்கால அத்தியாயமும் மில்லி விநாடிகளில் படிக்கப்படுகிறது.",
+          "title": "தரவு தளத்தை உருவாக்குதல்",
+          "summary": "ஒருமுறை பதிவிறக்கம் செய்து வேகமாகப் படிக்கக்கூடிய தரவுத்தளத்தை உருவாக்குங்கள். OpenAlgo மூலம் 50 NSE symbols மற்றும் குறியீட்டின் உள்ளூர் DuckDB cache எவ்வாறு உருவாக்கப்பட்டு, இடைவெளிகள் சரிபார்க்கப்பட்டு, புதுப்பிக்கப்படுகின்றன என்பதைப் பாருங்கள்.",
           "learn": [
-            "மூல API vs மூல DB",
-            "50-பெயர் பிரபஞ்சம்",
-            "DuckDB இல் நிலைநிறுத்துதல்",
-            "உкрытие மற்றும் இடைவெเหลமான்களைச் சரிபார்த்தல்",
-            "ரேட் லிமிட்ஸ் மற்றும் மறுமுயற்சிகள்",
-            "இன்கிரிமென்டல் டாப்பப்"
+            "API தரவு vs உள்ளூர் DB",
+            "50-symbol universe",
+            "DuckDB-ல் நிலைத்த சேமிப்பு",
+            "முழுமை மற்றும் இடைவெளிகளைச் சரிபார்த்தல்",
+            "Rate limits மற்றும் retry",
+            "Incremental update"
           ],
           "tags": [
             "????"
@@ -45,90 +45,90 @@
         {
           "n": 3,
           "slug": "the-data-layer-and-its-biases",
-          "title": "தரவு அடுக்கு மற்றும் அதன் சார்புகள்",
-          "summary": "பெரும்பாலான ஸ்டாட்-ஆர்ب முடிவுகள் மோசமான புள்ளியியல் காரணங்களால் இறப்பதற்கு முன்பே தரவுச் சிக்கல்களால் செத்துப் போகின்றன. சீரமைக்கப்பட்ட விலை பேனல், திரவத்தன்மை வடிகட்டிகள் (liquidity filters), உயிர்வாழ்வு மற்றும் குறியீடு மாற்றம் சார்புநிலை (survivorship and symbol-change bias), மற்றும் சரிசெய்யப்பட்ட Vs வர்த்தக செய்யக்கூடிய முடிவு (adjusted versus tradable close).",
+          "title": "தரவு அடுக்கு மற்றும் அதன் bias-கள்",
+          "summary": "பல statistical arbitrage முடிவுகள் மோசமான புள்ளியியல் காரணமாக அல்ல, தரவு சிக்கல்களால் தோல்வியடைகின்றன. Adjusted price panel, liquidity filters, survivorship மற்றும் symbol-change bias, adjusted close மற்றும் tradable close ஆகியவற்றைப் பிரித்தறியுங்கள்.",
           "learn": [
-            "சீரமைக்கப்பட்ட விலை பேனல்",
-            "திரவத்தன்மை வடிகட்டிகள்",
-            "உயிர்வாழ்வுச் சார்புநிலை",
-            "குறியீடு மாற்றங்கள் மற்றும் புதிய பட்டியல்கள்",
-            "Adjusted Close மற்றும் வர்த்தகச் சாமானின் மூடல் (tradable close)",
-            "வரம்புகளை பெயரிடுவது"
+            "Adjusted price panel",
+            "Liquidity ???????????",
+            "Survivorship bias-??? ?????????????????",
+            "Symbol changes மற்றும் புதிய பட்டியல்கள்",
+            "Adjusted close vs tradable close",
+            "வரம்புகளை வரையறுத்தல்"
           ],
           "tags": [
-            "????",
+            "தரவு",
             "NSE"
           ]
         },
         {
           "n": 4,
           "slug": "research-vs-real-markets",
-          "title": "ஆராய்ச்சி எதிர் நிஜச் சந்தைகள் (Real Markets)",
-          "summary": "ஒரு நீண்ட/குறட்ட பங்கு backtest என்பது ஒரு ஆராய்ச்சி சுருக்கம் ஆகும். இந்தியாவில் குறுகிய கால் (short leg) ஒரு உண்மையான வாகனத்தை (intraday cash, SLB, அல்லது ஒரு பங்கு-முதலீட்டுப் பிரதிநிதி) தேவைப்படுத்துகிறது, மேலும் ஒரு புள்ளிவிவர உறவுக்கும் வர்த்தகச் நன்மைக்கும் உள்ள இடைவெளி.\"",
+          "title": "????????? vs ???????? ????????",
+          "summary": "நீண்ட கால backtest என்பது ஆராய்ச்சியின் சுருக்கம் மட்டுமே. இந்தியாவில் short leg-க்கு intraday cash, SLB அல்லது futures போன்ற உண்மையான கருவி தேவை; ஒவ்வொரு statistical உறவிலும் உள்ள வர்த்தக நன்மைக்கும் நடைமுறை இடைவெளிக்கும் கணக்கு வையுங்கள்.",
           "learn": [
-            "கற்க கைகளுக்கான மூடல் விலை ஏன்",
-            "இந்தியாவில் குறுகிய கால் வாகனங்கள்",
-            "உதவி கடன், மார்கின் மற்றும் F&O தகுதிநிலை",
-            "உறவு எதிர் வர்த்தகச் நன்மை",
-            "ஒவ்வொரு தேர்வும் செலவுகளை எவ்வாறு மாற்றுகிறது",
-            "நேரடி ஒளிபரப்புக்கு முந்தைய சரிபார்ப்புப் பட்டியல்"
+            "கற்கைத் தரவு விலையை ஏன் மறைக்கிறது",
+            "இந்திய short-leg கருவிகள்",
+            "Borrow, margin மற்றும் F&O eligibility",
+            "உறவு எதிர் வர்த்தக நன்மை",
+            "ஒவ்வொரு தேர்வும் costs-ஐ மாற்றுவது எப்படி",
+            "Live deployment-க்கு முன் checklist"
           ],
           "tags": [
-            "????",
-            "??????????"
+            "செயலாக்கம்",
+            "NSE"
           ]
         },
         {
           "n": 5,
           "slug": "stationarity-and-random-walks",
-          "title": "நிலநடுக்கத்தன்மை மற்றும் ரேண்டம் வாக்ஸ்",
-          "summary": "ஒரு ஒற்றை பங்கு ஏன் மீன் சராசரி திரும்பும் பொருளாக வர்த்தகம் செய்ய முடியாது. ரேண்டம் வாக்ஸா எதிர் நிலையானதா, விலைக்களா வருமானங்களா, ADF மற்றும் KPSS சோதனைகள் சரியாக நடத்தப்படுவது என்ன, மற்றும் ஹர்ஸ்ட் அடுக்குகள், நிஜ NSE பெயர்கள் மீது.",
+          "title": "Stationarity மற்றும் Random Walks",
+          "summary": "ஒரு single stock தானாக mean-revert ஆகும் என்று கருதி வர்த்தகம் செய்ய முடியாது. Random walk எதிர் stationary prices மற்றும் returns, ADF மற்றும் KPSS tests, Hurst exponent ஆகியவற்றை உண்மையான NSE symbols மீது சரியாகப் பயன்படுத்துங்கள்.",
           "learn": [
-            "ரேண்டம் வாக்ஸ் vs நிலையானது",
-            "விலைகள் I(1) ஆகும், வருமானங்கள் I(0) ஆகும்",
-            "ADF லேக் மற்றும் போக்கு விவரக்குறிப்பு",
-            "எதிரான பூஜ்யமாக KPSS",
-            "தி ஹர்ஸ்ட் எக்ஸ்போனென்ட்",
-            "ஏடிஎஃப் குறைந்த சக்தி"
+            "Random walk vs stationary series",
+            "Prices I(1), returns I(0)",
+            "ADF test மற்றும் அதன் விளக்கம்",
+            "Stationary-ஐ null ஆகக் கொண்ட KPSS",
+            "Hurst exponent",
+            "ADF-ன் குறைந்த power"
           ],
           "tags": [
-            "???????????",
+            "புள்ளியியல்",
             "NSE"
           ]
         },
         {
           "n": 6,
           "slug": "correlation-is-not-cointegration",
-          "title": "பொருந்தல் என்பது இணை ஒருங்கிணைப்பு அல்ல",
-          "summary": "இது என்ற பாடத்தை கிட்டத்தட்ட எல்லோரும் தவறவிடுவர், NSE தரவுகளில் நேரலையில் கணக்கிடப்படுகிறது: மிகவும் தொடர்புடைய ஜோடிகள் இணை ஒருங்கிணைக்கப்பட்டிருக்க வேண்டியதில்லை, மேலும் குறைவான தொடர்புடைய ஜோடியால் முடியும். போலி பின்னடைவு மற்றும் ஏன் தொடர்புகளை வர்த்தகம் செய்யும் நபர்கள் தோல்வியடைவது.",
+          "title": "Correlation என்பது Cointegration அல்ல",
+          "summary": "மிகவும் correlated-ஆக உள்ள ஜோடிகள் cointegrated ஆக வேண்டியதில்லை; குறைந்த correlation கொண்ட ஜோடியும் cointegrated ஆகலாம். Spurious regression, multiple testing மற்றும் window sensitivity ஆகியவை pair traders ஏன் தோல்வியடைகிறார்கள் என்பதை வெளிப்படுத்துகின்றன.",
           "learn": [
-            "பொருந்தல் vs இணை ஒருங்கிணைப்பு",
-            "மிகவும் தொடர்புடையது இணை ஒருங்கிணைக்கப்பட்டதல்ல",
-            "corr-vs-coint சிதறல் வரைபடம்",
-            "போலி பின்னடைவு",
-            "புறம்பானவற்றின் மாண்டே கார்லோ (Monte Carlo)",
-            "ஜன்னல் உணர்திறன் (Window sensitivity)"
+            "Correlation ??????? cointegration ????????",
+            "High correlation cointegration அல்ல",
+            "Correlation-vs-cointegration scatter plot",
+            "Spurious regression-? ???????? ???????",
+            "Monte Carlo மூலம் false positives",
+            "???? ?????????"
           ],
           "tags": [
-            "???????????",
+            "புள்ளியியல்",
             "NSE"
           ]
         },
         {
           "n": 7,
           "slug": "cointegration-mechanics",
-          "title": "இணைவு இயக்கவியல் (Cointegration Mechanics)",
-          "summary": "உண்மையான இணைக்கப்பட்ட NSE ஜோடி மீது ஆரம்பம் முதல் இறுதி வரையிலான இயந்திர அமைப்பு: என்கில்-கிரேங்கர், ஹெጅ விகிதம் (OLS எதிர் மொத்த குறைந்தபட்ச வர்க்கங்கள்), பிரெட், நீங்கள் எவ்வளவு காலம் வைத்திருக்க வேண்டும் என்று கூறும் ஆர்ன்ஸ்டீன்-உலென்பெக் அரை ஆயுட்காலம் (Ornstein-Uhlenbeck half-life).",
+          "title": "Cointegration mechanics",
+          "summary": "உண்மையான NSE ஜோடியில் ஆரம்பம் முதல் முடிவு வரை இயந்திரத்தை உருவாக்குங்கள்: Engle-Granger, OLS hedge ratio, ADF residual test, multiple testing corrections, p-value-ன் பொருள் மற்றும் hedge ratio-வின் நிலைத்தன்மை.",
           "learn": [
-            "என்கில்-கிரேங்கர் இரண்டு-படி முறை (The Engle-Granger two-step)",
-            "OLS ஹெጅ- விகிதம் சார்புநிலை (OLS hedge-ratio bias)",
-            "மொத்த குறைந்தபட்ச வர்க்கங்கள் (Total least squares)",
-            "பிரெட் கட்டமைப்பு உருவாக்கம் (Building the spread)",
-            "'OU அரை ஆயுட்காலம்'",
-            "'செல்லாத அரை ஆயுட்களைக் கண்டறிதல்'"
+            "Engle-Granger இரண்டு-படி முறை",
+            "OLS hedge ratio",
+            "Residual-ல் ADF",
+            "Multiple testing மற்றும் FDR control",
+            "Hedge-ratio stability",
+            "மாதிரியின் வரம்புகள்"
           ],
           "tags": [
-            "???????????",
+            "புள்ளியியல்",
             "NSE"
           ]
         }
@@ -136,60 +136,60 @@
     },
     {
       "id": "B",
-      "name": "'ஒரு ஜோடியைக் கட்டி, பிறகு உடைத்தல்'",
-      "desc": "'சுயநலம் அடையாமல் ஒரு ஜோடியைக் கண்டுபிடித்து, சிக்னலை உருவாக்கி, அழகான பேக்க்டெஸ்டைப் பார்த்துவிட்டு, பிறகு நேர்மையாக அதை பிரித்துப் பாருங்கள்.'",
+      "name": "Cointegration முதல் signal வரை",
+      "desc": "Cointegration-ஐச் சோதித்து, hedge ratio-வை மதிப்பிட்டு, spread-ஐ z-score signal-ஆக மாற்றும் நடைமுறை.",
       "chapters": [
         {
           "n": 8,
           "slug": "finding-pairs-without-fooling-yourself",
-          "title": "'சுயநலம் அடையாமல் ஜோடிகளைக் கண்டறிதல்'",
-          "summary": "'முதலில் பொருளாதார முன் அனுமானம் (Economic prior), பின்னர் இணை-சமநிலை ஆய்வு (cointegration scan), பிறகு பல-சோதனைப் பொறி: பல ஜோடிகளைச் ஸ்கேன் செய்வது தவறான நேர்மறைகளை உறுதி செய்கிறது. බොன்ஃபெரொனி மற்றும் தவறான கண்டுபிடிப்பு கட்டுப்பாடு (false-discovery control), மேலும் எத்தனை ஆகியவை மாதிரிக்கு வெளியே (out-of-sample) வாழ்கின்றன.'",
+          "title": "Pair finding மற்றும் Multiple Testing",
+          "summary": "ஒரு universe-ல் உள்ள எல்லா ஜோடிகளையும் தேடும்போது கிடைக்கும் அழகான p-values பல நேரங்களில் luck மட்டுமே. Pair ranking, Bonferroni மற்றும் Benjamini-Hochberg corrections, out-of-sample check மற்றும் நடைமுறைக்கு ஏற்ற filter-களை உருவாக்குங்கள்.",
           "learn": [
-            "'முதலில் பொருளாதார முன் அனுமானம்'",
-            "'இணை-சமநிலை ஆய்வு'",
-            "பல-சோதனைப் பொறி",
-            "சீரற்ற தரவுகளில் தவறான நேர்மறைகள்",
-            "Bonferroni மற்றும் FDR கட்டுப்பாடு",
-            "எத்தனை குறைந்து உயிர் வாழ்கின்றன"
+            "Pairwise search",
+            "Multiple testing bias",
+            "Bonferroni correction",
+            "Benjamini-Hochberg FDR",
+            "Out-of-sample validation",
+            "குறைந்த false-positive rate"
           ],
           "tags": [
-            "???????????",
+            "புள்ளியியல்",
             "NSE"
           ]
         },
         {
           "n": 9,
           "slug": "the-spread-and-the-signal",
-          "title": "பரவல் மற்றும் சிக்னல்",
-          "summary": "ஒரு உண்மையான ஜோடியில் z-score உத்தி: பரவல், ரோலிங் மற்றும் வலுவான z-scores, நுழைவு, வெளியேற்றம் மற்றும் நிறுத்தம், ரூபாய்-நடுநிலை அளவு நிர்ணயம், மற்றும் அடுத்த-பார் நிரப்பிகளுடன் கூடிய முதல் இன்-சாம்பிள் பின்னூட்டச் சோதனை (backtest) இது வேண்டுமென்றே நன்றாக உள்ளது.",
+          "title": "Spread மற்றும் Signal",
+          "summary": "ஒரு உண்மையான ஜோடியில் z-score strategy-யை அமைக்குங்கள்: spread, rolling மற்றும் robust z-score, entry, exit, stop, rupee-neutral sizing, next-bar execution மற்றும் look-ahead இல்லாத backtest.",
           "learn": [
-            "பரவல் மற்றும் z-score",
-            "Median மற்றும் MAD உடன் வலுவான z",
-            "நுழைவு, வெளியேறுதல் மற்றும் நிறுத்தம்",
-            "ரூபாய்-நடுநிலை அளவு நிர்ணயம்",
-            "அடுத்த பார் நிரப்பல்கள், பார்க்க முடியாது (look-ahead) இல்லை",
-            "கவர்ச்சியான உள்ள மாதிரி வளைவு"
+            "Spread மற்றும் z-score",
+            "Median மற்றும் MAD அடிப்படையிலான robust z-score",
+            "Entry, exit மற்றும் stop",
+            "??????-??????? ???????",
+            "Next-bar execution; future leak இல்லை",
+            "Signal-ன் பொருளாதார விளக்கம்"
           ],
           "tags": [
             "NSE",
-            "???????????"
+            "புள்ளியியல்"
           ]
         },
         {
           "n": 10,
           "slug": "the-brutal-reality-check",
-          "title": "உக்கிரமான யதார்த்தச் சரிபார்ப்பு",
-          "summary": "அழகுபடியான பின் சோதனைப் பகுதியை பிரித்துப் பாருங்கள்: வெளியுற மாதிரிக் Collapse, யதார்த்த NSE செலவுகள் மொத்தமாக இல்லாமல் நிகரத்தின் அடிப்படையில், ஸ்பிரட் டீ-கோஇன்டிரேட்டிங் ஆவது, மற்றும் look-ahead; தோல்வியுற்ற நிகர வளைவு மறைக்காமல் காட்டப்படுதல்.",
+          "title": "கடுமையான reality check",
+          "summary": "அழகான backtest-ன் அடுக்குகளை அகற்றுங்கள்: out-of-sample drawdown, உண்மையான NSE costs, spread cointegration உடைதல் மற்றும் look-ahead இல்லாத net curve. Pair selection உண்மையில் உயிர்வாழுகிறதா என்பதைச் சோதியுங்கள்.",
           "learn": [
-            "வெளியுற மாதிரி collapse",
-            "உண்மையான NSE செலவுகள், மொத்தமாக vs நிகரం",
-            "நகரும் டி-ஒருங்கிணைப்பு",
-            "முன்னறிவிப்படைக்கப்பட்ட அளவு நிர்ணயம்",
-            "ஜேர் தேர்வுநிலையில் உயிர் பிழைத்தல்",
-            "நேர்மையான தீர்ப்பு"
+            "Out-of-sample drawdown",
+            "உண்மையான NSE costs: gross vs net",
+            "Rolling cointegration breakdown",
+            "Look-ahead-ஐ அளவிடுதல்",
+            "Pair selection-ன் survivorship",
+            "நேர்மையான முடிவு"
           ],
           "tags": [
-            "????",
+            "ஆபத்து",
             "NSE"
           ]
         }
@@ -197,78 +197,78 @@
     },
     {
       "id": "C",
-      "name": "சரியாகச் செய்வது எப்படி",
-      "desc": "டைனமிக் ஹெட்ஜ்கள், கூடைகள், குறுக்குவெட்டு புத்தகங்கள் மற்றும் ஒரு புத்தகத்தை உயிர்ப்புடன் வைத்திருக்கும் இடர் மற்றும் போர்ட்ஃபோலியோ உருவாக்கம்.",
+      "name": "சரியான முறையில் செயலாக்குதல்",
+      "desc": "Dynamic hedge, baskets, cross-sectional portfolios மற்றும் strategy-யை உயிருடன் வைத்திருக்கும் risk மற்றும் portfolio construction.",
       "chapters": [
         {
           "n": 11,
           "slug": "dynamic-hedge-ratios-kalman",
-          "title": "கல்மன் ஃபில்டருடன் டைனமிக் ஹெட்ஜ் விகிதங்கள்",
-          "summary": "ஒரு நிலையான ஹெட்ஜ் விகிதம் தவறானது ஏனெனில் உறவு விலகுகிறது. நேரத்திற்கு ஏற்ப மாறும் ஹெட்ஜுக்கு ஒரு கைகளால் உருவான கல்மன் ஃபில்டர், மேலும் அதிக நெகிழ்வுத்தன்மை ஒரு எளிய நிலையான பீட்டாவால் இழக்கக்கூடும் என்ற நேர்மையான கண்டுபிடிப்பு.",
+          "title": "Kalman filter மூலம் dynamic hedge ratios",
+          "summary": "உறவு மாறிக்கொண்டே இருப்பதால் static hedge ratio தவறாகிறது. Time-varying hedge-க்கு Kalman filter-ஐ உருவாக்கி, rolling OLS-உடன் ஒப்பிட்டு, நெகிழ்வுத்தன்மை சில நேரங்களில் எளிய beta-விடம் தோல்வியடைவதைப் பாருங்கள்.",
           "learn": [
-            "நிலையான beta ஏன் விலகுகிறது",
-            "Kalman predict-update loop",
-            "காலத்தைப் பொறுத்து மாறும் hedge விகிதம்",
-            "Kalman ??????? rolling OLS ??????? ?????? ?????? ????????? ??????? ????????? ???????????????",
-            "Tuning itself ஒரு பொருத்தம்",
-            "எளிமையானது எப்படி வெற்றி பெறுகிறது"
+            "Static beta ஏன் மாறுகிறது",
+            "Kalman prediction-update cycle",
+            "Time-varying hedge ratio",
+            "Kalman filter ??????? rolling OLS ???????",
+            "Tuning என்பது fit அல்ல",
+            "எளிய முறை எப்போது வெல்லும்"
           ],
           "tags": [
-            "???????????",
+            "புள்ளியியல்",
             "NSE"
           ]
         },
         {
           "n": 12,
           "slug": "baskets-and-johansen",
-          "title": "கூட்டங்களும் Johansen சோதனை",
-          "summary": "இரண்டு பெயர்களுக்கு அப்பால்: பல பங்குகளில் இருக்கும் cointegrating vektors, Johansen சோதனையுடன், rank-ஐ தேர்ந்தெடுப்பது, basket எடைகளை வாசிப்பது, மற்றும் vector மாதிரிக்கு வெளியே எவ்வளவு நிலையற்றதாக இருக்கிறது।",
+          "title": "Baskets மற்றும் Johansen test",
+          "summary": "இரண்டு stocks-ஐத் தாண்டிச் செல்லுங்கள்: Johansen test மூலம் பல stocks-க்கிடையிலான cointegrating vectors, rank selection, basket weights, out-of-sample vector stability ஆகியவற்றை ஆய்வு செய்யுங்கள்.",
           "learn": [
-            " ஜோடி (pairs) இணக்கங்கள் முதல் கூடைகள் (baskets) வரை",
-            "ஜோஹன்சன் ட்ரேஸ் மற்றும் ஐகென்வேல்யூ சோதனைக்கள்",
-            "ஒருங்கிணைப்பு தரவரிசையைத் தேர்ந்தெடுத்தல்",
-            "ஒருங்கிணைக்கும் வெக்டாரைப் படித்தல்",
-            "வெக்டர் நிலையற்ற தன்மை",
-            "மதிப்பீட்டு பிழை காலப்போக்கில் அதிகரிக்கும்போது (legs)"
+            "Pairs முதல் baskets வரை",
+            "Johansen trace மற்றும் eigenvalue tests",
+            "Cointegration rank தேர்வு",
+            "Cointegrating vector-ஐ வாசித்தல்",
+            "Vector stability",
+            "அதிக assets-ன் estimation error"
           ],
           "tags": [
-            "???????????",
+            "புள்ளியியல்",
             "NSE"
           ]
         },
         {
           "n": 13,
           "slug": "cross-sectional-factor-neutral",
-          "title": "தடுக்கப்பட்ட புள்ளிவிவர காரணி-நடுநிலை ஊகப் வர்த்தகம் (Cross-Sectional, Factor-Neutral Stat Arb)",
-          "summary": "அளவிடுவதற்கு ஏற்ற பதிப்பு: சந்தை மற்றும் துறை வருமானங்களை நீக்கி, குறுகிய கால எச்சம் தலைகீழ் நிகழ்வின் அடிப்படையில் தரவரிசைப்படுத்தி, முழு உலகளாவிய பகுதி முழுவதும் ஒரு சந்தை-நடுநிலை நீண்ட-குறுகிய புத்தகத்தை உருவாக்குவது, மேலும் அதிக சுழற்சி (turnover) மற்றும் செலவுகள் மொத்தக் கூடுதல் மதிப்பை எவ்வாறு மாற்றுகிறது.",
+          "title": "Cross-sectional, factor-neutral statistical arbitrage",
+          "summary": "விரிவான வடிவம்: market மற்றும் sector returns-ஐ நீக்கி, short-term residual reversion-ஐ rank செய்து, முழு universe-ல் market-neutral long-short portfolio அமைக்குங்கள்; turnover மற்றும் costs எவ்வாறு edge-ஐ மாற்றுகின்றன என்பதைப் புரிந்துகொள்ளுங்கள்.",
           "learn": [
-            "மீதமுள்ள மறுசீரமைப்பு",
-            "சந்தை மற்றும் துறைகளை அகற்றுதல்",
-            "குறுக்குவெட்டு தரவரிசைப்படுத்துதல்",
-            "ஒரு சந்தை-நடுநிலை நீண்ட-குறுகிய புத்தகம்",
-            "திரும்பு மற்றும் செலவு இழுவை",
-            "திறன் மற்றும் கூட்ட நெரிசல்"
+            "Residual return",
+            "Market மற்றும் sector factor removal",
+            "Cross-sectional ranking",
+            "Market-neutral long-short portfolio",
+            "Turnover மற்றும் cost drag",
+            "Capacity மற்றும் crowding"
           ],
           "tags": [
             "NSE",
-            "???????????"
+            "புள்ளியியல்"
           ]
         },
         {
           "n": 14,
           "slug": "risk-sizing-and-portfolio",
-          "title": "ஆபத்து, அளவிடுதல் மற்றும் போர்ட்ஃபோலியோ உருவாக்கம்",
-          "summary": "சமிக்ஞைகளிலிருந்து ஒரு உயிர்வாழும் புத்தகத்திற்கான வழி: பீட்டா எதிராக ரூபாய் நடுநிலைத்தன்மை, ஏற்ற இறக்கம் இலக்கு நிர்ணயம், கோவேரியன்ஸ் சுருங்குதல், ஸ்ப்ரெட்டில் இழப்பு நிறுத்தம் என்ற இக்கட்டான நிலை, ஆபத்து பங்களிப்பு மற்றும் உடைந்த ஜோடிக்கு ஓய்வு வைப்பதற்கான ஒரு விதி.",
+          "title": "Risk, sizing மற்றும் portfolio construction",
+          "summary": "Signals-ஐ நிலைத்த portfolio-ஆக மாற்றுங்கள்: beta-neutral vs rupee-neutral, volatility targeting, covariance shrinkage, spread stop-loss-ன் இருமனம், risk contribution மற்றும் உடைந்த ஜோடியை அகற்றும் விதி.",
           "learn": [
-            "பீட்டா Vs ரூபாய் நடுநிலைமை",
-            "மாறுபாடு இலக்கு நிர்ணயம்",
-            " współவேரி குறைப்பு சுருக்கம் (Covariance shrinkage)",
-            "ஸ்ப்ரெட்டில் நிறுத்தப்பட வேண்டிய இக்கட்டான நிலை",
-            "ஆபத்து பங்களிப்பு",
-            "உடைத்த ஜோடியை ஓய்வுப்படுத்துதல்"
+            "Beta-neutral vs rupee-neutral",
+            "Volatility-? ?????????????",
+            "Covariance ?????????",
+            "Spread stop-ன் இருமனம்",
+            "?????? ??????????",
+            "உடைந்த ஜோடியை நீக்குதல்"
           ],
           "tags": [
-            "????",
+            "ஆபத்து",
             "NSE"
           ]
         }
@@ -276,60 +276,60 @@
     },
     {
       "id": "D",
-      "name": "ஆராய்ச்சி முதல் உண்மை வரை",
-      "desc": "தங்களைத் தாங்களே ஏமாற்றாமல் சரிபார்க்கவும், ஒரு நேரடி செயலாக்கத்திற்கு என்ன தேவை என்பதைப் புரிந்து கொள்ளவும், எல்லாவற்றையும் ஒன்றாக வைக்கவும்.",
+      "name": "ஆராய்ச்சியிலிருந்து உண்மை வரை",
+      "desc": "உங்களைத் தானே ஏமாற்றாமல் validation செய்யுங்கள், live implementation-ன் தேவைகளைப் புரிந்துகொள்ளுங்கள், அனைத்தையும் ஒரே நடைமுறையில் இணைக்குங்கள்.",
       "chapters": [
         {
           "n": 15,
           "slug": "honest-backtesting-and-validation",
-          "title": "நேர்மையான பேக்கெஸ்டிங்க்கும் (Backtesting) சரிபார்ப்பும் (Validation)",
-          "summary": "முழு சரிபார்ப்பு மதிப்பெண் பட்டியல்: வாக்-ஃபோர்ட், தூய்மைப்படுத்தப்பட்ட மற்றும் புறக்கணிப்பு குறுக்கு-சரிபார்ப்பு (Purged and embargoed cross-validation), குறைக்கப்பட்ட শার্প (Deflated Sharpe), பேக்கெஸ்ட் ஓவர்ஃபிட்டிங்கின் நிகழ்தகவு (Probability of backtest overfitting), ஒரு தடுக்கப்பட்ட பூட்ஸ்ட்ராப் (Blocked bootstrap), மற்றும் அளவுரு ஸ்திரத்தன்மை வரைபடங்கள் (Parameter-stability maps).",
+          "title": "நேர்மையான backtesting மற்றும் validation",
+          "summary": "முழுமையான validation அட்டவணை: walk-forward, purged மற்றும் embargoed cross-validation, deflated Sharpe, backtest overfitting probability, block bootstrap மற்றும் parameter-stability maps.",
           "learn": [
-            "வாக்-ஃபோர்ட் பரவல்கள் (Walk-forward distributions)",
-            "எளிய CV ஏன் கசிகிறது (Why ordinary CV leaks)",
-            "தூய்மைப்படுத்தப்பட்ட மற்றும் புறக்கணிப்பு CV (Purged and embargoed CV)",
-            "குறைக்கப்பட்ட শার্প (The deflated Sharpe)",
-            "பேக்கெஸ்ட் ஓவர்ஃபிட்டிங்கின் நிகழ்தகவு (Probability of backtest overfitting)",
-            "Ridge ??????? plateau ???????? ?????? ????????????? ??????? ????????????? ????????????"
+            "Walk-forward distribution",
+            "Ordinary cross-validation-ல் leakage ஏன்",
+            "Purged மற்றும் embargoed cross-validation",
+            "Deflated Sharpe",
+            "Backtest overfitting probability",
+            "Sharp peaks vs stable plateaus"
           ],
           "tags": [
-            "???????????",
-            "????"
+            "புள்ளியியல்",
+            "ஆபத்து"
           ]
         },
         {
           "n": 16,
           "slug": "implementation-pathways",
-          "title": "அமல்படுத்தும் பாதைகள்",
-          "summary": "ஒரு நேரடி பதிப்பிற்கு உண்மையில் என்ன தேவை: லெக் வாகனங்கள் (leg vehicles), லெக்கிங் ஆபத்து மற்றும் இரண்டு-கால நிரப்புதல் சிக்கல் (two-legged fill problem), அகன்ற நாள் பட்டியல்களில் இருந்து மதிப்பிடப்பட்ட தாக்கம் (impact estimated from intraday bars), பங்கேற்பு வரம்புகள் (participation caps), கண்காணிப்பு மற்றும் கில் ஸ்விட்ச் (monitoring and the kill switch), மற்றும் ஆராய்ச்சி முதல் நேரடி இடைவெளி (research-to-live gap).",
+          "title": "Implementation pathways",
+          "summary": "Live strategy-யின் உண்மையான தேவைகள்: இரு legs-க்கான கருவிகள், legging risk மற்றும் partial fills, intraday bar impact, partner limits, monitoring, kill switch மற்றும் research-to-live இடைவெளி.",
           "learn": [
-            "விரிவான லெக் வாகனங்கள் (The leg vehicles in depth)",
-            "லெக்கிங் ஆபத்து மற்றும் பகுதி நிரப்புதல்கள் (Legging risk and partial fills)",
-            "அகன்ற நாள் பட்டியல்களில் இருந்து தாக்கம் (Impact from intraday bars)",
-            "பங்கேற்பு வரம்புகள் மற்றும் சறுக்கல் (Participation caps and slippage)",
-            "கண்காணிப்பு மற்றும் கில் ஸ்விட்ச் (Monitoring and the kill switch)",
-            "ஒரு உத்தியைத் திரும்புதல் (Retiring a strategy)"
+            "இரு legs-க்கான execution instruments",
+            "Legging risk மற்றும் partial fills",
+            "Intraday bar impact",
+            "Partner மற்றும் capital limits",
+            "Monitoring மற்றும் kill switch",
+            "Strategy-யை நிறுத்துதல்"
           ],
           "tags": [
-            "??????????",
-            "????"
+            "செயலாக்கம்",
+            "ஆபத்து"
           ]
         },
         {
           "n": 17,
           "slug": "capstone-and-checklist",
-          "title": "கவரேஜ்: நேர்மையான ஸ்டாட்-ஆர்பி வேர்க்ஃப்ளோ",
-          "summary": "பொருளாதாரப் பரப்பிலிருந்து (universe) துவங்கி, சரிபார்க்கப்பட்ட, செலவு உணர்வுடன் கூடிய, ஆராய்ச்சித் தரத்திலான மார்க்கெட்-நடுநிலை மாதிரிக்கு (market-neutral model) என ஒற்றை ஒழுங்குபடுத்தப்பட்ட செயல்முறைப்படை. இதுவே பிரீ-லைவ் சரிபார்ப்புப் பட்டியல் மற்றும் அனைத்தையும் நீங்களே இயக்க உதவும் துணை நோட்புக்குகளையும் உள்ளடக்கியது.",
+          "title": "Capstone: நேர்மையான statistical arbitrage workflow",
+          "summary": "Universe selection முதல் validation, cost-aware market-neutral model வரை ஒழுங்கான workflow; live-க்கு முன் checklist மற்றும் இணை notebook. Statistical relationship என்பது tradable edge அல்ல என்பதை இறுதியாகச் சோதியுங்கள்.",
           "learn": [
-            "முழுமையான செயல்முறையமைப்பு",
-            "உறவுமுறையிலிருந்து (relationship) சாத்தியமான வர்த்தகத்தின் முனைப்புக்கு (candidate edge)",
-            "நேர்மையான ஸ்கோர்போர்டு",
-            "இது எப்படி வர்த்தகமாக்கப்படும்?",
-            "பிரீ-லைவ் சரிபார்ப்புப் பட்டியல்",
-            "துணை நோட்புக்குகள்"
+            "ஆரம்பம் முதல் முடிவு வரை workflow",
+            "உறவிலிருந்து சாத்தியமான edge வரை",
+            "நேர்மையான validation அட்டவணை",
+            "இதைக் tradeable ஆக்குவது என்ன",
+            "Live-க்கு முன் checklist",
+            "இணை notebook"
           ],
           "tags": [
-            "????",
+            "ஆபத்து",
             "NSE"
           ]
         }
