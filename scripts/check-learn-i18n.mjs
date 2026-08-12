@@ -77,6 +77,28 @@ const COURSES = [
   },
 ]
 
+function selectedValues(flag, allowed) {
+  const values = []
+  for (let index = 2; index < process.argv.length; index += 1) {
+    const argument = process.argv[index]
+    if (argument === flag) {
+      const value = process.argv[index + 1]
+      if (!value || value.startsWith('--')) throw new Error(`${flag} requires a value`)
+      values.push(...value.split(',').map((item) => item.trim()).filter(Boolean))
+      index += 1
+    } else if (argument.startsWith(`${flag}=`)) {
+      values.push(...argument.slice(flag.length + 1).split(',').map((item) => item.trim()).filter(Boolean))
+    }
+  }
+  if (!values.length || values.includes('all')) return new Set(allowed)
+  const unknown = values.filter((value) => !allowed.includes(value))
+  if (unknown.length) throw new Error(`Unknown ${flag.slice(2)}: ${unknown.join(', ')}`)
+  return new Set(values)
+}
+
+const SELECTED_COURSES = selectedValues('--course', COURSES.map((course) => course.course))
+const SELECTED_LOCALES = selectedValues('--locale', LOCALES.slice(1))
+
 const failures = []
 let expectedTranslationChapters = 0
 let completeTranslationChapters = 0
@@ -700,13 +722,13 @@ function checkCurriculumRoutes(course, expectedChapterCount, source) {
 
 checkDictionaries()
 
-for (const course of COURSES) {
+for (const course of COURSES.filter((item) => SELECTED_COURSES.has(item.course))) {
   const chapters = englishChapterNumbers(course)
   const curriculumPath = path.join(ROOT, 'lib', course.curriculum)
   const curriculumSource = readText(curriculumPath, `[${course.course}] curriculum`)
   const englishParts = curriculumSource === null ? null : parseCurriculum(course, curriculumSource)
   if (curriculumSource !== null) checkCurriculumRoutes(course, chapters.length, curriculumSource)
-  for (const locale of LOCALES.slice(1)) {
+  for (const locale of LOCALES.slice(1).filter((item) => SELECTED_LOCALES.has(item))) {
     checkTranslation(course, locale, chapters)
     if (englishParts) checkLocalizedCourseMetadata(course, locale, englishParts)
   }
