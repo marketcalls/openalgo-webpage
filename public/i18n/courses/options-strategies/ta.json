@@ -1,0 +1,515 @@
+{
+  "course": "options-strategies",
+  "locale": "ta",
+  "parts": [
+    {
+      "id": "A",
+      "name": "வியூகத்தைப் படித்தல்",
+      "desc": "Payoff diagram மற்றும் எந்த Options வியூகத்தையும் விளக்கும் ஒன்பது அளவுகோல்கள்.",
+      "chapters": [
+        {
+          "n": 1,
+          "slug": "the-strategy-builder",
+          "title": "Strategy Builder மற்றும் Payoff Diagram",
+          "summary": "எந்த வியூகத்திற்கும் முன் Payoff Diagram-ஐப் படிக்கக் கற்றுக்கொள்ளுங்கள்: ஆரஞ்சு Expiry கோடு, நீல T+0 கோடு, Sigma bands மற்றும் உண்மையான NIFTY legs-களைக் காட்டும் OpenAlgo chart.",
+          "learn": [
+            "Payoff Diagram காட்டுவது என்ன",
+            "Expiry மற்றும் T+0 கோடு",
+            "லாபம் மற்றும் இழப்புப் பகுதிகள்",
+            "வியூகத்தின் legs",
+            "Sigma bands மற்றும் spot கோடு",
+            "உண்மையான உதாரணத்தைப் படித்தல்"
+          ],
+          "tags": [
+            "அடிப்படை"
+          ]
+        },
+        {
+          "n": 2,
+          "slug": "reading-payoffs",
+          "title": "ஒன்பது அளவுகோல்கள்: அதிகபட்ச லாபம், POP, Margin மற்றும் பிறவை",
+          "summary": "Break-even, அதிகபட்ச லாபம் மற்றும் இழப்பு, POP, risk-reward, net credit/debit, premium, P&L மற்றும் margin உள்ளிட்ட Builder-ன் ஒன்பது அளவுகோல்களையும் படிக்கவும்.",
+          "learn": [
+            "Break-even புள்ளி",
+            "அதிகபட்ச லாபம் மற்றும் இழப்பு",
+            "லாபம் கிடைக்கும் சாத்தியம்",
+            "Risk-reward",
+            "Net credit மற்றும் debit வேறுபாடு",
+            "மதிப்பிடப்பட்ட premium மற்றும் margin"
+          ],
+          "tags": [
+            "அடிப்படை"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "B",
+      "name": "Bullish வியூகங்கள்",
+      "desc": "ஒரு Call முதல் Ratio மற்றும் Butterfly trade வரை Builder-ன் bullish அமைப்புகள்.",
+      "chapters": [
+        {
+          "n": 3,
+          "slug": "long-call-short-put",
+          "title": "Long Call மற்றும் Short Put",
+          "summary": "வரையறுக்கப்பட்ட risk மற்றும் வரம்பற்ற மேல்நோக்கிய லாபம் கொண்ட Long Call, premium வருமானத்துடன் பெரிய downside கொண்ட Short Put ஆகிய இரண்டு single-leg bullish trades-ஐப் புரிந்துகொள்ளுங்கள்.",
+          "learn": [
+            "Long Call",
+            "வரையறுக்கப்பட்ட risk மற்றும் வரம்பற்ற upside",
+            "Short Put",
+            "Premium வருமானம் மற்றும் பெரிய risk",
+            "Bullish நிலையில் buyer மற்றும் seller",
+            "உண்மையான payoff-ஐப் படித்தல்"
+          ],
+          "tags": [
+            "????????"
+          ]
+        },
+        {
+          "n": 4,
+          "slug": "bull-call-spread",
+          "title": "Bull Call Spread",
+          "summary": "ஒரு Call-ஐ வாங்கி, அதிக strike-இல் உள்ள Call-ஐ விற்பதன் மூலம் குறைந்த செலவு மற்றும் வரையறுக்கப்பட்ட risk கொண்ட மிதமான bullish trade அமைக்கக் கற்றுக்கொள்ளுங்கள்.",
+          "learn": [
+            "மிதமான bullish கருத்து",
+            "ஒரு Call வாங்கி அதிக strike Call-ஐ விற்றல்",
+            "வரையறுக்கப்பட்ட செலவு மற்றும் லாபம்",
+            "Break-even",
+            "Long Call-க்கு பதிலாக இதை எப்போது தேர்வு செய்வது",
+            "உண்மையான payoff-ஐப் படித்தல்"
+          ],
+          "tags": [
+            "????????"
+          ]
+        },
+        {
+          "n": 5,
+          "slug": "bull-put-spread",
+          "title": "Bull Put Spread",
+          "summary": "Put-ஐ விற்று, அதற்கு கீழான Put-ஐ வாங்குவதன் மூலம் முன்பணம் credit பெறுவது, risk-ஐக் கட்டுப்படுத்துவது, NIFTY வீழ்ச்சியடையாதபோது லாபம் ஈட்டுவது ஆகியவற்றைக் கற்றுக்கொள்ளுங்கள்.",
+          "learn": [
+            "Bullish நிலை மற்றும் premium வருமானம்",
+            "Put விற்று கீழ் strike Put வாங்குதல்",
+            "Net credit",
+            "வரையறுக்கப்பட்ட அதிகபட்ச இழப்பு",
+            "லாபம் கிடைக்கும் சாத்தியம்",
+            "உண்மையான payoff-ஐப் படித்தல்"
+          ],
+          "tags": [
+            "????????"
+          ]
+        },
+        {
+          "n": 6,
+          "slug": "bull-ratio-synthetic",
+          "title": "Ratio Backspread, Synthetic மற்றும் Range Forward",
+          "summary": "Call Ratio Backspread, Long Synthetic Future மற்றும் Range Forward ஆகிய bullish வடிவங்களையும் அவற்றின் risk-களையும் புரிந்துகொள்ளுங்கள்.",
+          "learn": [
+            "Call Ratio Backspread",
+            "இது ஏன் credit trade ஆக இருக்கலாம்",
+            "Long Synthetic Future",
+            "இது ஏன் Future போன்றது",
+            "Range Forward Collar",
+            "உண்மையான payoff-ஐப் படித்தல்"
+          ],
+          "tags": [
+            "????????"
+          ]
+        },
+        {
+          "n": 7,
+          "slug": "bullish-butterfly-condor",
+          "title": "Bullish Butterfly மற்றும் Bullish Condor",
+          "summary": "NIFTY தேர்ந்தெடுத்த உயர்ந்த பகுதிக்கு உயரும்போது அதிக payout தரும் வரையறுக்கப்பட்ட-risk all-call அமைப்புகளைக் கற்றுக்கொள்ளுங்கள்.",
+          "learn": [
+            "இலக்கு வைத்த bullish கருத்து",
+            "Bullish Butterfly",
+            "Bullish Condor",
+            "குறைந்த செலவு மற்றும் உயர்ந்த risk-reward",
+            "POP ஏன் குறைவாக உள்ளது",
+            "உண்மையான payoff-ஐப் படித்தல்"
+          ],
+          "tags": [
+            "????????"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "C",
+      "name": "Bearish வியூகங்கள்",
+      "desc": "Bullish குடும்பத்தின் எதிர்மறை வடிவங்களைக் கொண்ட bearish அமைப்புகள்.",
+      "chapters": [
+        {
+          "n": 8,
+          "slug": "long-put-short-call",
+          "title": "Long Put மற்றும் Short Call",
+          "summary": "வரையறுக்கப்பட்ட risk-உடன் வீழ்ச்சியில் பெரிய லாபம் தரும் Long Put மற்றும் premium வருமானத்துடன் வரம்பற்ற risk கொண்ட Short Call ஆகியவற்றைப் புரிந்துகொள்ளுங்கள்.",
+          "learn": [
+            "Long Put",
+            "வரையறுக்கப்பட்ட risk மற்றும் வீழ்ச்சியில் பெரிய லாபம்",
+            "Short Call",
+            "Premium வருமானம் மற்றும் வரம்பற்ற risk",
+            "Bearish நிலையில் buyer மற்றும் seller",
+            "உண்மையான payoff-ஐப் படித்தல்"
+          ],
+          "tags": [
+            "?????????"
+          ]
+        },
+        {
+          "n": 9,
+          "slug": "bear-call-spread",
+          "title": "Bear Call Spread",
+          "summary": "Call-ஐ விற்று, அதிக strike Call-ஐ வாங்குவதன் மூலம் வரையறுக்கப்பட்ட risk-உடன் premium பெற்று, NIFTY கீழே இருக்கும்போது லாபம் ஈட்டக் கற்றுக்கொள்ளுங்கள்.",
+          "learn": [
+            "Bearish நிலை மற்றும் premium வருமானம்",
+            "Call விற்று அதிக strike Call வாங்குதல்",
+            "Net credit",
+            "வரையறுக்கப்பட்ட அதிகபட்ச இழப்பு",
+            "விலை கீழே இருந்தால் லாபம்",
+            "உண்மையான payoff-ஐப் படித்தல்"
+          ],
+          "tags": [
+            "?????????"
+          ]
+        },
+        {
+          "n": 10,
+          "slug": "bear-put-spread",
+          "title": "Bear Put Spread",
+          "summary": "Put-ஐ வாங்கி, அதற்கு கீழான Put-ஐ விற்பதன் மூலம் வீழ்ச்சியில் லாபம் பெறும் குறைந்த செலவு, வரையறுக்கப்பட்ட-risk முறையைப் புரிந்துகொள்ளுங்கள்.",
+          "learn": [
+            "Bearish கருத்து",
+            "Put வாங்கி கீழ் strike Put விற்றல்",
+            "வரையறுக்கப்பட்ட செலவு மற்றும் லாபம்",
+            "Break-even",
+            "Long Put-க்கு பதிலாக இதை எப்போது தேர்வு செய்வது",
+            "உண்மையான payoff-ஐப் படித்தல்"
+          ],
+          "tags": [
+            "?????????"
+          ]
+        },
+        {
+          "n": 11,
+          "slug": "bear-ratio-synthetic",
+          "title": "Put Ratio Backspread, Synthetic மற்றும் Risk Reversal",
+          "summary": "Put Ratio Backspread, Short Synthetic Future மற்றும் Risk Reversal ஆகிய bearish வடிவங்களையும் மறைந்திருக்கும் திறந்த risk-களையும் புரிந்துகொள்ளுங்கள்.",
+          "learn": [
+            "Put Ratio Backspread",
+            "Short Synthetic Future",
+            "இது ஏன் Short Future போன்றது",
+            "Risk Reversal",
+            "வரம்பற்ற risk எங்கே உள்ளது",
+            "உண்மையான payoff-ஐப் படித்தல்"
+          ],
+          "tags": [
+            "?????????"
+          ]
+        },
+        {
+          "n": 12,
+          "slug": "bearish-butterfly-condor",
+          "title": "Bearish Butterfly மற்றும் Bearish Condor",
+          "summary": "NIFTY தேர்ந்தெடுத்த கீழ்ப்பகுதிக்கு வீழும்போது அதிக payout தரும் வரையறுக்கப்பட்ட-risk all-put அமைப்புகளைக் கற்றுக்கொள்ளுங்கள்.",
+          "learn": [
+            "இலக்கு வைத்த bearish கருத்து",
+            "Bearish Butterfly",
+            "Bearish Condor",
+            "குறைந்த செலவு மற்றும் உயர்ந்த risk-reward",
+            "POP ஏன் குறைவாக உள்ளது",
+            "உண்மையான payoff-ஐப் படித்தல்"
+          ],
+          "tags": [
+            "?????????"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "D",
+      "name": "Volatility வியூகங்கள்",
+      "desc": "திசையை விட பெரிய நகர்வு அல்லது அமைதியான சந்தையை அடிப்படையாகக் கொண்ட trades.",
+      "chapters": [
+        {
+          "n": 13,
+          "slug": "long-straddle-strangle",
+          "title": "Long Straddle மற்றும் Strangle: பெரிய நகர்வில் பந்தயம்",
+          "summary": "திசை தெரியாதபோது Call மற்றும் Put இரண்டையும் வாங்கி பெரிய நகர்வில் பந்தயம் வைப்பது, இரண்டு break-even-கள் மற்றும் பாதகமான time decay ஆகியவற்றைப் புரிந்துகொள்ளுங்கள்.",
+          "learn": [
+            "திசையற்ற பெரிய நகர்வு கருத்து",
+            "Long Straddle",
+            "குறைந்த விலை Long Strangle",
+            "இரண்டு break-even-கள்",
+            "Time decay ஒரு எதிரி",
+            "உண்மையான payoff-ஐப் படித்தல்"
+          ],
+          "tags": [
+            "???????????? ?????"
+          ]
+        },
+        {
+          "n": 14,
+          "slug": "short-straddle-strangle",
+          "title": "Short Straddle மற்றும் Strangle: அமைதியான சந்தையில் பந்தயம்",
+          "summary": "இருபுறமும் Options-ஐ விற்று premium பெறுவது, பரந்த லாபப் பகுதி, அதிக margin மற்றும் வரம்பற்ற risk ஆகியவற்றைப் புரிந்துகொள்ளுங்கள்.",
+          "learn": [
+            "Range-bound கருத்து",
+            "Short Straddle",
+            "பரந்த Short Strangle",
+            "Premium வருமானம்",
+            "வரம்பற்ற risk மற்றும் பெரிய margin",
+            "உண்மையான payoff-ஐப் படித்தல்"
+          ],
+          "tags": [
+            "???????????? ?????"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "E",
+      "name": "Range மற்றும் வருமானம்",
+      "desc": "Iron குடும்பம், Butterfly, Ratio மற்றும் Jade Lizard ஆகியவற்றின் வரையறுக்கப்பட்ட-risk income வடிவங்கள்.",
+      "chapters": [
+        {
+          "n": 15,
+          "slug": "iron-condor",
+          "title": "Iron Condor",
+          "summary": "நான்கு legs மூலம் பரந்த லாபப் பகுதி, இரு முனைகளிலும் வரையறுக்கப்பட்ட risk, மேலும் range-க்குள் இருந்தால் வருமானம் தரும் பிரபலமான வியூகத்தைப் புரிந்துகொள்ளுங்கள்.",
+          "learn": [
+            "வரையறுக்கப்பட்ட-risk range trade",
+            "நான்கு legs-ஐ எளிய மொழியில் புரிந்துகொள்ளுதல்",
+            "பரந்த லாப மேடை",
+            "Long மற்றும் Short Iron Condor",
+            "இரண்டு break-even-கள் மற்றும் POP",
+            "உண்மையான payoff-ஐப் படித்தல்"
+          ],
+          "tags": [
+            "?????? ????"
+          ]
+        },
+        {
+          "n": 16,
+          "slug": "iron-fly-butterfly",
+          "title": "Iron Fly மற்றும் Butterfly",
+          "summary": "ஒரு strike அருகில் NIFTY நிலைத்திருக்கும்போது அதிக payout தரும் குறுகிய, உயர்ந்த-return Condor தொடர்பான trades-ஐக் கற்றுக்கொள்ளுங்கள்.",
+          "learn": [
+            "Iron Fly",
+            "Long மற்றும் Short Iron Fly",
+            "Call மற்றும் Put Butterfly",
+            "Strike-இல் நிலைத்திருக்கும் பந்தயம்",
+            "உயர்ந்த return மற்றும் குறுகிய பகுதி",
+            "உண்மையான payoff-ஐப் படித்தல்"
+          ],
+          "tags": [
+            "?????? ????"
+          ]
+        },
+        {
+          "n": 17,
+          "slug": "ratio-and-backspreads",
+          "title": "Call மற்றும் Put Ratio Spread",
+          "summary": "சமமற்ற leg எண்ணிக்கையுள்ள Call மற்றும் Put Ratio Spread-களில் funding, credit/debit மற்றும் ஒரு பக்கத்தில் திறந்த risk ஆகியவற்றைப் புரிந்துகொள்ளுங்கள்.",
+          "learn": [
+            "சமமற்ற legs",
+            "Call Ratio Spread",
+            "Put Ratio Spread",
+            "Naked risk எங்கே உள்ளது",
+            "Credit மற்றும் debit வடிவங்கள்",
+            "உண்மையான payoff-ஐப் படித்தல்"
+          ],
+          "tags": [
+            "?????? ????"
+          ]
+        },
+        {
+          "n": 18,
+          "slug": "jade-lizard",
+          "title": "Jade Lizard மற்றும் Reverse Jade Lizard",
+          "summary": "Credit மூலம் ஒரு பக்கத்தின் risk-ஐ நீக்கும் Jade Lizard மற்றும் Reverse Jade Lizard அமைப்புகளைக் கற்றுக்கொள்ளுங்கள்.",
+          "learn": [
+            "Jade Lizard அமைப்பு",
+            "மேல்நோக்கிய risk இல்லை",
+            "Reverse Jade Lizard",
+            "கீழ்நோக்கிய risk இல்லை",
+            "Credit ஏன் அவசியம்",
+            "உண்மையான payoff-ஐப் படித்தல்"
+          ],
+          "tags": [
+            "?????? ????"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "F",
+      "name": "மேம்பட்ட மற்றும் கால வியூகங்கள்",
+      "desc": "பரந்த multi-leg அமைப்புகள், காலத்தை trade செய்யும் Calendar-கள் மற்றும் Synthetic வியூகங்கள்.",
+      "chapters": [
+        {
+          "n": 19,
+          "slug": "advanced-multileg",
+          "title": "Batman, Double Fly மற்றும் Double Condor",
+          "summary": "இரண்டு range அமைப்புகளை இணைத்து பரந்த அல்லது இரட்டை உச்சி லாபப் பகுதிகளை உருவாக்கும் பெரிய multi-leg வியூகங்களைப் புரிந்துகொள்ளுங்கள்.",
+          "learn": [
+            "அமைப்புகளை இணைத்தல்",
+            "Batman",
+            "Double Fly",
+            "Double Condor",
+            "இரண்டு லாப உச்சிகள்",
+            "உண்மையான payoff-ஐப் படித்தல்"
+          ],
+          "tags": [
+            "மேம்பட்டது"
+          ]
+        },
+        {
+          "n": 20,
+          "slug": "calendars",
+          "title": "Calendar மற்றும் Diagonal Spread: காலத்தை trade செய்தல்",
+          "summary": "அருகிலுள்ள expiry-ஐ விற்று தொலைதூர expiry-ஐ வாங்குதல், Calendar-ன் tent வடிவம் மற்றும் time decay மூலம் லாபம் பெறுதல் ஆகியவற்றைப் புரிந்துகொள்ளுங்கள்.",
+          "learn": [
+            "அருகிலுள்ளதை விற்று தொலைதூரதை வாங்குதல்",
+            "Call மற்றும் Put Calendar",
+            "Diagonal Spread",
+            "Calendar tent வடிவம்",
+            "Time decay மூலம் லாபம்",
+            "உண்மையான payoff-ஐப் படித்தல்"
+          ],
+          "tags": [
+            "மேம்பட்டது"
+          ]
+        },
+        {
+          "n": 21,
+          "slug": "synthetic-and-covered",
+          "title": "Synthetic மற்றும் Covered Call",
+          "summary": "Call-Put மூலம் Future-ஐ நகலெடுக்கும் Long/Short Synthetic மற்றும் holding மீது வருமானம் தரும் Covered Call ஆகியவற்றைக் கற்றுக்கொள்ளுங்கள்.",
+          "learn": [
+            "Long Synthetic Future",
+            "Short Synthetic Future",
+            "அவை ஏன் Future போன்றவை",
+            "Covered Call",
+            "Holding மீது வருமானம்",
+            "Bullish நிலைக்கு வரம்பு"
+          ],
+          "tags": [
+            "மேம்பட்டது"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "G",
+      "name": "Funding, சரிசெய்தல் மற்றும் தேர்வு",
+      "desc": "Margin மற்றும் collateral, அழுத்தத்தில் trade-ஐப் பாதுகாத்தல், சரியான வியூகத்தைத் தேர்வு செய்தல்.",
+      "chapters": [
+        {
+          "n": 22,
+          "slug": "collateral-and-margin",
+          "title": "F&O-க்கான Margin மற்றும் Collateral",
+          "summary": "SPAN மற்றும் exposure மூலம் margin எவ்வாறு உருவாகிறது, OpenAlgo calculator-ஐப் பயன்படுத்துவது, மேலும் cash-க்குப் பதிலாக தகுதியான சொத்துகளை collateral ஆக அடகு வைப்பது ஆகியவற்றைக் கற்றுக்கொள்ளுங்கள்.",
+          "learn": [
+            "விற்பனைக்கு margin ஏன் தேவை",
+            "SPAN மற்றும் exposure margin",
+            "OpenAlgo margin calculator",
+            "Cash-க்குப் பதிலாக collateral",
+            "தகுதியான F&O collateral",
+            "Haircut மற்றும் cash பகுதி"
+          ],
+          "tags": [
+            "மேலாண்மை"
+          ]
+        },
+        {
+          "n": 23,
+          "slug": "pledging-for-margin",
+          "title": "புத்திசாலித்தனமாக Margin-க்காக Pledging செய்தல்",
+          "summary": "சொத்துகளை விற்காமல் அடகு வைத்து margin பெறுதல், haircut, cash பகுதியின் செலவு, liquid collateral மற்றும் margin-call risk ஆகியவற்றைப் புரிந்துகொள்ளுங்கள்.",
+          "learn": [
+            "Pledging எவ்வாறு செயல்படுகிறது",
+            "Haircut மற்றும் கிடைக்கும் margin",
+            "Cash மற்றும் non-cash collateral",
+            "Cash பகுதியின் வட்டி செலவு",
+            "Liquid collateral-ஐத் தேர்வு செய்தல்",
+            "Covered Call நுட்பம்",
+            "Margin-call மற்றும் கட்டாய விற்பனை risk"
+          ],
+          "tags": [
+            "மேலாண்மை"
+          ]
+        },
+        {
+          "n": 24,
+          "slug": "margin-penalties",
+          "title": "Margin மற்றும் Margin Penalty",
+          "summary": "நாளின் சீரற்ற peak-margin சோதனை, குறைந்தபட்ச margin விதிகள், penalty slabs மற்றும் பொதுவான shortfall காரணங்கள் ஆகியவற்றைப் புரிந்துகொள்ளுங்கள்.",
+          "learn": [
+            "குறைந்தபட்ச margin விதிகள்",
+            "Peak margin மற்றும் சீரற்ற சோதனை",
+            "Penalty slabs",
+            "முன்கூட்டிய மற்றும் பிந்தைய shortfall",
+            "Short அல்லது hedge நீக்குவதால் margin",
+            "Margin buffer வைத்திருத்தல்"
+          ],
+          "tags": [
+            "மேலாண்மை"
+          ]
+        },
+        {
+          "n": 25,
+          "slug": "options-adjustments",
+          "title": "Options Adjustment: அழுத்தத்தில் trade-ஐப் பாதுகாத்தல்",
+          "summary": "சோதிக்கப்படும் position-இல் strike அல்லது காலத்தை roll செய்தல், spread-ஐ மாற்றுதல், hedge சேர்த்தல், மேலும் OpenAlgo-வில் legs-ஐ மூடி மீண்டும் எடுப்பது ஆகியவற்றைக் கற்றுக்கொள்ளுங்கள்.",
+          "learn": [
+            "Adjustment ஏன் செய்ய வேண்டும்",
+            "காலத்தில் முன்னோக்கி roll செய்தல்",
+            "Strike-ஐ மேலே அல்லது கீழே roll செய்தல்",
+            "பரந்த அமைப்பாக மாற்றுதல்",
+            "பாதுகாப்பு leg சேர்த்தல்",
+            "Adjustment மற்றும் exit இடையிலான வேறுபாடு"
+          ],
+          "tags": [
+            "மேலாண்மை"
+          ]
+        },
+        {
+          "n": 26,
+          "slug": "position-greeks-and-iv",
+          "title": "Position Greeks மற்றும் Volatility அமைப்பு",
+          "summary": "முழு position-ன் Delta, Gamma, Theta, Vega, IV Rank, Skew மற்றும் Term Structure ஆகியவற்றைப் பயன்படுத்தி சரியான credit, debit அல்லது Calendar வியூகத்தைத் தேர்வு செய்யுங்கள்.",
+          "learn": [
+            "மொத்த position Delta மற்றும் Gamma",
+            "Net Theta மற்றும் Vega",
+            "IV Rank மற்றும் percentile",
+            "Skew-ஐப் படித்தல்",
+            "Volatility Term Structure",
+            "அமைப்பிற்கு ஏற்ப credit, debit அல்லது Calendar"
+          ],
+          "tags": [
+            "மேலாண்மை"
+          ]
+        },
+        {
+          "n": 27,
+          "slug": "choosing-and-managing",
+          "title": "வியூகத்தைத் தேர்வு செய்து நிர்வகித்தல்",
+          "summary": "Bullish, Bearish, Neutral அல்லது பெரிய நகர்வு பற்றிய கருத்தை அளவுகோல்களின் மூலம் சரியான வியூகத்துடன் பொருத்தி, பாதுகாப்பான அளவைத் தேர்ந்தெடுத்து, தவறானால் வெளியேறுங்கள்.",
+          "learn": [
+            "கருத்துடன் வியூகத்தைப் பொருத்துதல்",
+            "POP மற்றும் risk-reward பயன்படுத்துதல்",
+            "தொடக்கநிலையினருக்கு முதலில் வரையறுக்கப்பட்ட risk",
+            "Position ???? ????????",
+            "லாபம் எப்போது எடுக்க வேண்டும்",
+            "எப்போது வெளியேற வேண்டும்"
+          ],
+          "tags": [
+            "மேலாண்மை"
+          ]
+        }
+      ]
+    }
+  ]
+}
