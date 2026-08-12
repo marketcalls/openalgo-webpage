@@ -1,10 +1,9 @@
-import { ArrowLeft, ArrowRight } from "lucide-react";
-import Link from "next/link";
 import { notFound } from "next/navigation";
 
-import { CHAPTERS, TAG_CLASS, chapterBySlug } from "@/lib/optionsBasicsCurriculum";
+import { PARTS, TAG_CLASS, chapterBySlug } from "@/lib/optionsBasicsCurriculum";
 import { loadChapter } from "@/lib/optionsBasicsContent";
 
+import { LocalizedChapterArticle } from "@/components/course/LocalizedChapterArticle";
 import { LocalizedLesson } from "@/components/course/LocalizedLesson";
 import { LocalizedToc } from "@/components/course/LocalizedToc";
 import LessonClient from "./LessonClient";
@@ -54,9 +53,6 @@ export default function ChapterView({ slug }) {
   if (!ch) notFound();
 
   const { html, toc, hasContent } = loadChapter(ch.n);
-  const idx = CHAPTERS.findIndex((c) => c.n === ch.n);
-  const prev = idx > 0 ? CHAPTERS[idx - 1] : null;
-  const next = idx < CHAPTERS.length - 1 ? CHAPTERS[idx + 1] : null;
 
   const url = `https://openalgo.in/options-basics/${ch.slug}`;
   const jsonLd = {
@@ -87,64 +83,15 @@ export default function ChapterView({ slug }) {
     <div className="grid gap-10 px-5 sm:px-8 lg:px-12 py-10 xl:grid-cols-[minmax(0,1fr)_220px]">
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbLd) }} />
-      <article className="min-w-0">
-        <header className="mb-8 border-b border-border pb-7">
-          <div className="font-label text-xs uppercase tracking-widest text-primary">
-            Module {ch.part} · {ch.partName} - Chapter {String(ch.n).padStart(2, "0")}
-          </div>
-          <h1 className="text-on-surface mt-2 text-3xl sm:text-4xl font-bold leading-tight">
-            {ch.title}
-          </h1>
-          <p className="mt-3 max-w-2xl text-lg text-on-surface-variant">{ch.summary}</p>
-          <div className="mt-3 flex flex-wrap gap-1.5">
-            {ch.tags.map((t) => (
-              <span key={t} className={`ex-tag tag-${TAG_CLASS[t] || "idx"}`}>
-                {t}
-              </span>
-            ))}
-          </div>
-          <div className="mt-6 rounded-2xl border border-border surface-low p-5">
-            <div className="font-label text-xs uppercase tracking-wider text-tertiary">What you&apos;ll learn</div>
-            <ul className="mt-2 grid gap-x-8 gap-y-1 sm:grid-cols-2 text-sm text-on-surface-variant">
-              {ch.learn.map((item) => (
-                <li key={item} className="flex gap-2">
-                  <span className="text-primary">·</span>
-                  {item}
-                </li>
-              ))}
-            </ul>
-          </div>
-        </header>
-
+      <LocalizedChapterArticle
+        course="options-basics"
+        basePath="/options-basics"
+        parts={PARTS}
+        chapterN={ch.n}
+        tagClass={TAG_CLASS}
+      >
         <LocalizedLesson course="options-basics" chapterN={ch.n} html={html} toc={toc} hasContent={hasContent} />
-
-        <nav className="mt-14 grid gap-4 border-t border-border pt-7 sm:grid-cols-2">
-          {prev ? (
-            <Link href={`/options-basics/${prev.slug}`} className="obsidian-card ghost-border rounded-xl p-4 hover-lift">
-              <div className="flex items-center gap-1.5 font-label text-xs uppercase tracking-wider text-on-surface-variant/70">
-                <ArrowLeft className="h-3.5 w-3.5" /> Previous
-              </div>
-              <div className="mt-1 font-semibold text-on-surface">
-                {String(prev.n).padStart(2, "0")}. {prev.title}
-              </div>
-            </Link>
-          ) : (
-            <span />
-          )}
-          {next ? (
-            <Link href={`/options-basics/${next.slug}`} className="obsidian-card ghost-border rounded-xl p-4 hover-lift sm:text-right">
-              <div className="flex items-center gap-1.5 font-label text-xs uppercase tracking-wider text-on-surface-variant/70 sm:justify-end">
-                Next <ArrowRight className="h-3.5 w-3.5" />
-              </div>
-              <div className="mt-1 font-semibold text-on-surface">
-                {String(next.n).padStart(2, "0")}. {next.title}
-              </div>
-            </Link>
-          ) : (
-            <span />
-          )}
-        </nav>
-      </article>
+      </LocalizedChapterArticle>
 
       <LocalizedToc course="options-basics" chapterN={ch.n} html={html} toc={toc} hasContent={hasContent} />
 
