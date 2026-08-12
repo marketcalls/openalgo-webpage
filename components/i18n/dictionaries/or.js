@@ -1744,6 +1744,14 @@ const dict = {
   'gs.auth.ipTitle': 'ଷ୍ଟାଟିକ୍ IP ଆବଶ୍ୟକତା',
   'gs.auth.ipHowLabel': 'ଷ୍ଟାଟିକ୍ IP କିପରି ପାଇବେ:',
   'gs.auth.ipGuideLink': 'ଷ୍ଟାଟିକ୍ IP ଓ ସର୍ଭର୍ ହୋଷ୍ଟିଂ ଗାଇଡ୍',
+  'courseNav.toggleChapters': "ଅଧ୍ୟାୟ ତାଲିକା ଦେଖାନ୍ତୁ/ଲୁଚାନ୍ତୁ",
+  'courseNav.chapters': "ଅଧ୍ୟାୟଗୁଡ଼ିକ",
+  'courseNav.overview': "ପାଠ୍ୟକ୍ରମର ସାରାଂଶ",
+  'courseNav.module': "ମଡ୍ୟୁଲ୍",
+  'courseNav.chapter': "ଅଧ୍ୟାୟ",
+  'courseNav.whatYouWillLearn': "ଆପଣ କ'ଣ ଶିଖିବେ",
+  'courseNav.previous': "ପୂର୍ବବର୍ତ୍ତୀ",
+  'courseNav.next': "ପରବର୍ତ୍ତୀ",
 }
 
 export default dict

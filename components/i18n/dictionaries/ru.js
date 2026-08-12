@@ -1751,6 +1751,14 @@ const dict = {
   'gs.auth.ipTitle': "Требование статического IP",
   'gs.auth.ipHowLabel': "Как получить статический IP:",
   'gs.auth.ipGuideLink': "Руководство по статическому IP и хостингу сервера",
+  'courseNav.toggleChapters': "Показать/скрыть список глав",
+  'courseNav.chapters': "Главы",
+  'courseNav.overview': "Обзор курса",
+  'courseNav.module': "Модуль",
+  'courseNav.chapter': "Глава",
+  'courseNav.whatYouWillLearn': "Чему вы научитесь",
+  'courseNav.previous': "Назад",
+  'courseNav.next': "Далее",
 }
 
 export default dict

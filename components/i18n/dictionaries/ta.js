@@ -1762,6 +1762,14 @@ const dict = {
   'gs.auth.ipTitle': "ஸ்டேடிக் IP தேவை",
   'gs.auth.ipHowLabel': "ஸ்டேடிக் IP பெறுவது எப்படி:",
   'gs.auth.ipGuideLink': "ஸ்டேடிக் IP & சர்வர் ஹோஸ்டிங் வழிகாட்டி",
+  'courseNav.toggleChapters': "அத்தியாயப் பட்டியலைக் காட்டு/மறை",
+  'courseNav.chapters': "அத்தியாயங்கள்",
+  'courseNav.overview': "பாடநெறி மேலோட்டம்",
+  'courseNav.module': "தொகுதி",
+  'courseNav.chapter': "அத்தியாயம்",
+  'courseNav.whatYouWillLearn': "நீங்கள் கற்றுக்கொள்வது",
+  'courseNav.previous': "முந்தைய",
+  'courseNav.next': "அடுத்த",
 }
 
 export default dict

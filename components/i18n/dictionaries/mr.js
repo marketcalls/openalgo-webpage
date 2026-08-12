@@ -1762,6 +1762,14 @@ const dict = {
   'gs.auth.ipTitle': "स्टॅटिक IP आवश्यकता",
   'gs.auth.ipHowLabel': "स्टॅटिक IP कसा मिळवायचा:",
   'gs.auth.ipGuideLink': "स्टॅटिक IP आणि सर्व्हर होस्टिंग मार्गदर्शक",
+  'courseNav.toggleChapters': "प्रकरण सूची दाखवा/लपवा",
+  'courseNav.chapters': "प्रकरणे",
+  'courseNav.overview': "अभ्यासक्रमाचा आढावा",
+  'courseNav.module': "मॉड्यूल",
+  'courseNav.chapter': "प्रकरण",
+  'courseNav.whatYouWillLearn': "तुम्ही काय शिकाल",
+  'courseNav.previous': "मागील",
+  'courseNav.next': "पुढील",
 }
 
 export default dict

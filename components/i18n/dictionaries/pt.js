@@ -1753,6 +1753,14 @@ const dict = {
   'gs.auth.ipTitle': "Requisito de IP Estático",
   'gs.auth.ipHowLabel': "Como obter um IP Estático:",
   'gs.auth.ipGuideLink': "Guia de IP Estático e Hospedagem de Servidor",
+  'courseNav.toggleChapters': "Mostrar/ocultar a lista de capítulos",
+  'courseNav.chapters': "Capítulos",
+  'courseNav.overview': "Visão geral do curso",
+  'courseNav.module': "Módulo",
+  'courseNav.chapter': "Capítulo",
+  'courseNav.whatYouWillLearn': "O que você aprenderá",
+  'courseNav.previous': "Anterior",
+  'courseNav.next': "Próximo",
 }
 
 export default dict

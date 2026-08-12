@@ -1757,6 +1757,14 @@ const en = {
   'ip.emptyPrompt': "Enter an IP address to view location data",
   'ip.customTitle': "Custom IP Lookup",
   'ip.customDesc': "Track any IP address by entering it in the search box above",
+  'courseNav.toggleChapters': "Toggle chapter list",
+  'courseNav.chapters': "Chapters",
+  'courseNav.overview': "Course overview",
+  'courseNav.module': "Module",
+  'courseNav.chapter': "Chapter",
+  'courseNav.whatYouWillLearn': "What you'll learn",
+  'courseNav.previous': "Previous",
+  'courseNav.next': "Next",
 }
 
 export default en

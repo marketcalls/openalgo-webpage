@@ -1747,6 +1747,14 @@ const dict = {
   'gs.auth.ipTitle': "Exigence d'IP statique",
   'gs.auth.ipHowLabel': "Comment obtenir une IP statique :",
   'gs.auth.ipGuideLink': "Guide IP statique et hébergement serveur",
+  'courseNav.toggleChapters': "Afficher/masquer la liste des chapitres",
+  'courseNav.chapters': "Chapitres",
+  'courseNav.overview': "Vue d’ensemble du cours",
+  'courseNav.module': "Module",
+  'courseNav.chapter': "Chapitre",
+  'courseNav.whatYouWillLearn': "Ce que vous apprendrez",
+  'courseNav.previous': "Précédent",
+  'courseNav.next': "Suivant",
 }
 
 export default dict

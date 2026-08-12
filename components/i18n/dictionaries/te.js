@@ -1763,6 +1763,14 @@ const dict = {
   'gs.auth.ipTitle': "స్టాటిక్ IP అవసరం",
   'gs.auth.ipHowLabel': "స్టాటిక్ IP ఎలా పొందాలి:",
   'gs.auth.ipGuideLink': "స్టాటిక్ IP & సర్వర్ హోస్టింగ్ గైడ్",
+  'courseNav.toggleChapters': "అధ్యాయాల జాబితాను చూపు/దాచు",
+  'courseNav.chapters': "అధ్యాయాలు",
+  'courseNav.overview': "కోర్సు అవలోకనం",
+  'courseNav.module': "మాడ్యూల్",
+  'courseNav.chapter': "అధ్యాయం",
+  'courseNav.whatYouWillLearn': "మీరు నేర్చుకునేవి",
+  'courseNav.previous': "మునుపటి",
+  'courseNav.next': "తదుపరి",
 }
 
 export default dict

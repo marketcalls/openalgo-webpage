@@ -1747,6 +1747,14 @@ const dict = {
   'gs.auth.ipTitle': "اسٹیٹک IP کی ضرورت",
   'gs.auth.ipHowLabel': "اسٹیٹک IP کیسے حاصل کریں:",
   'gs.auth.ipGuideLink': "اسٹیٹک IP اور سرور ہوسٹنگ گائیڈ",
+  'courseNav.toggleChapters': "بابوں کی فہرست دکھائیں/چھپائیں",
+  'courseNav.chapters': "ابواب",
+  'courseNav.overview': "کورس کا جائزہ",
+  'courseNav.module': "ماڈیول",
+  'courseNav.chapter': "باب",
+  'courseNav.whatYouWillLearn': "آپ کیا سیکھیں گے",
+  'courseNav.previous': "پچھلا",
+  'courseNav.next': "اگلا",
 }
 
 export default dict

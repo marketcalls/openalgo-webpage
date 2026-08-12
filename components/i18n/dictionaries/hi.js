@@ -1746,6 +1746,14 @@ const dict = {
   'gs.auth.ipTitle': 'स्टैटिक IP आवश्यकता',
   'gs.auth.ipHowLabel': 'स्टैटिक IP कैसे पाएं:',
   'gs.auth.ipGuideLink': 'स्टैटिक IP और सर्वर होस्टिंग गाइड',
+  'courseNav.toggleChapters': "अध्याय सूची दिखाएँ/छिपाएँ",
+  'courseNav.chapters': "अध्याय",
+  'courseNav.overview': "पाठ्यक्रम का अवलोकन",
+  'courseNav.module': "मॉड्यूल",
+  'courseNav.chapter': "अध्याय",
+  'courseNav.whatYouWillLearn': "आप क्या सीखेंगे",
+  'courseNav.previous': "पिछला",
+  'courseNav.next': "अगला",
 }
 
 export default dict

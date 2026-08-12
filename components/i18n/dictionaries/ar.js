@@ -1749,6 +1749,14 @@ const dict = {
   'gs.auth.ipTitle': "متطلب عنوان IP ثابت",
   'gs.auth.ipHowLabel': "كيفية الحصول على عنوان IP ثابت:",
   'gs.auth.ipGuideLink': "دليل عنوان IP ثابت واستضافة الخادم",
+  'courseNav.toggleChapters': "إظهار/إخفاء قائمة الفصول",
+  'courseNav.chapters': "الفصول",
+  'courseNav.overview': "نظرة عامة على الدورة",
+  'courseNav.module': "الوحدة",
+  'courseNav.chapter': "الفصل",
+  'courseNav.whatYouWillLearn': "ما ستتعلمه",
+  'courseNav.previous': "السابق",
+  'courseNav.next': "التالي",
 }
 
 export default dict
