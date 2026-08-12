@@ -1,0 +1,648 @@
+{
+  "course": "python",
+  "locale": "hi",
+  "parts": [
+    {
+      "id": "A",
+      "name": "आधारभूत तैयारी",
+      "desc": "Setup, market connection और आवश्यक Python, NumPy तथा Pandas सीखें।",
+      "chapters": [
+        {
+          "n": 1,
+          "slug": "getting-started",
+          "title": "OpenAlgo के साथ शुरुआत",
+          "summary": "OpenAlgo SDK और सुरक्षित mode को चरणबद्ध examples के साथ समझें और Python में लागू करें।",
+          "learn": [
+            "OpenAlgo SDK और सुरक्षित mode की मूल अवधारणा समझना",
+            "सही market data और inputs तैयार करना",
+            "Python code में नियम लागू करना",
+            "Output और response की जाँच करना",
+            "Errors तथा trading risk सँभालना",
+            "दोबारा उपयोग योग्य workflow बनाना"
+          ],
+          "tags": [
+            "NSE"
+          ]
+        },
+        {
+          "n": 2,
+          "slug": "python-for-traders",
+          "title": "Traders के लिए आवश्यक Python",
+          "summary": "जरूरी Python structures को चरणबद्ध examples के साथ समझें और Python में लागू करें।",
+          "learn": [
+            "जरूरी Python structures की मूल अवधारणा समझना",
+            "सही market data और inputs तैयार करना",
+            "Python code में नियम लागू करना",
+            "Output और response की जाँच करना",
+            "Errors तथा trading risk सँभालना",
+            "दोबारा उपयोग योग्य workflow बनाना"
+          ],
+          "tags": [
+            "NSE"
+          ]
+        },
+        {
+          "n": 3,
+          "slug": "symbols-exchanges",
+          "title": "Symbols, exchanges और lot sizes",
+          "summary": "tradable instrument पहचान को चरणबद्ध examples के साथ समझें और Python में लागू करें।",
+          "learn": [
+            "tradable instrument पहचान की मूल अवधारणा समझना",
+            "सही market data और inputs तैयार करना",
+            "Python code में नियम लागू करना",
+            "Output और response की जाँच करना",
+            "Errors तथा trading risk सँभालना",
+            "दोबारा उपयोग योग्य workflow बनाना"
+          ],
+          "tags": [
+            "NSE",
+            "NFO",
+            "एमसीएक्स",
+            "सूचकांक"
+          ]
+        },
+        {
+          "n": 4,
+          "slug": "market-data-quotes",
+          "title": "Quotes, depth और LTP",
+          "summary": "live quotes और order book को चरणबद्ध examples के साथ समझें और Python में लागू करें।",
+          "learn": [
+            "live quotes और order book की मूल अवधारणा समझना",
+            "सही market data और inputs तैयार करना",
+            "Python code में नियम लागू करना",
+            "Output और response की जाँच करना",
+            "Errors तथा trading risk सँभालना",
+            "दोबारा उपयोग योग्य workflow बनाना"
+          ],
+          "tags": [
+            "NSE",
+            "NFO",
+            "एमसीएक्स"
+          ]
+        },
+        {
+          "n": 5,
+          "slug": "historical-data",
+          "title": "Historical data और timeframes",
+          "summary": "पुराने OHLCV candles को चरणबद्ध examples के साथ समझें और Python में लागू करें।",
+          "learn": [
+            "पुराने OHLCV candles की मूल अवधारणा समझना",
+            "सही market data और inputs तैयार करना",
+            "Python code में नियम लागू करना",
+            "Output और response की जाँच करना",
+            "Errors तथा trading risk सँभालना",
+            "दोबारा उपयोग योग्य workflow बनाना"
+          ],
+          "tags": [
+            "NSE",
+            "NFO",
+            "एमसीएक्स"
+          ]
+        },
+        {
+          "n": 6,
+          "slug": "numpy-for-traders",
+          "title": "Traders के लिए NumPy",
+          "summary": "NumPy arrays और गणना को चरणबद्ध examples के साथ समझें और Python में लागू करें।",
+          "learn": [
+            "NumPy arrays और गणना की मूल अवधारणा समझना",
+            "सही market data और inputs तैयार करना",
+            "Python code में नियम लागू करना",
+            "Output और response की जाँच करना",
+            "Errors तथा trading risk सँभालना",
+            "दोबारा उपयोग योग्य workflow बनाना"
+          ],
+          "tags": [
+            "NSE",
+            "सूचकांक"
+          ]
+        },
+        {
+          "n": 7,
+          "slug": "pandas-for-traders",
+          "title": "Traders के लिए Pandas",
+          "summary": "Pandas DataFrames और windows को चरणबद्ध examples के साथ समझें और Python में लागू करें।",
+          "learn": [
+            "Pandas DataFrames और windows की मूल अवधारणा समझना",
+            "सही market data और inputs तैयार करना",
+            "Python code में नियम लागू करना",
+            "Output और response की जाँच करना",
+            "Errors तथा trading risk सँभालना",
+            "दोबारा उपयोग योग्य workflow बनाना"
+          ],
+          "tags": [
+            "NSE",
+            "एमसीएक्स"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "B",
+      "name": "दृश्यांकन और apps",
+      "desc": "Data को charts और interactive dashboards में बदलें।",
+      "chapters": [
+        {
+          "n": 8,
+          "slug": "matplotlib-charts",
+          "title": "Matplotlib से charts",
+          "summary": "static market charts को चरणबद्ध examples के साथ समझें और Python में लागू करें।",
+          "learn": [
+            "static market charts की मूल अवधारणा समझना",
+            "सही market data और inputs तैयार करना",
+            "Python code में नियम लागू करना",
+            "Output और response की जाँच करना",
+            "Errors तथा trading risk सँभालना",
+            "दोबारा उपयोग योग्य workflow बनाना"
+          ],
+          "tags": [
+            "NSE",
+            "एमसीएक्स",
+            "सूचकांक"
+          ]
+        },
+        {
+          "n": 9,
+          "slug": "plotly-charts",
+          "title": "Plotly के interactive charts",
+          "summary": "interactive candlestick charts को चरणबद्ध examples के साथ समझें और Python में लागू करें।",
+          "learn": [
+            "interactive candlestick charts की मूल अवधारणा समझना",
+            "सही market data और inputs तैयार करना",
+            "Python code में नियम लागू करना",
+            "Output और response की जाँच करना",
+            "Errors तथा trading risk सँभालना",
+            "दोबारा उपयोग योग्य workflow बनाना"
+          ],
+          "tags": [
+            "NSE",
+            "NFO"
+          ]
+        },
+        {
+          "n": 10,
+          "slug": "streamlit-apps",
+          "title": "Streamlit के live dashboards",
+          "summary": "live web dashboards को चरणबद्ध examples के साथ समझें और Python में लागू करें।",
+          "learn": [
+            "live web dashboards की मूल अवधारणा समझना",
+            "सही market data और inputs तैयार करना",
+            "Python code में नियम लागू करना",
+            "Output और response की जाँच करना",
+            "Errors तथा trading risk सँभालना",
+            "दोबारा उपयोग योग्य workflow बनाना"
+          ],
+          "tags": [
+            "NSE",
+            "एमसीएक्स"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "C",
+      "name": "तकनीकी indicators",
+      "desc": "openalgo.ta के indicators श्रेणीवार सीखें।",
+      "chapters": [
+        {
+          "n": 11,
+          "slug": "trend-indicators",
+          "title": "Trend और moving averages",
+          "summary": "trend indicators को चरणबद्ध examples के साथ समझें और Python में लागू करें।",
+          "learn": [
+            "trend indicators की मूल अवधारणा समझना",
+            "सही market data और inputs तैयार करना",
+            "Python code में नियम लागू करना",
+            "Output और response की जाँच करना",
+            "Errors तथा trading risk सँभालना",
+            "दोबारा उपयोग योग्य workflow बनाना"
+          ],
+          "tags": [
+            "NSE",
+            "NFO",
+            "एमसीएक्स"
+          ]
+        },
+        {
+          "n": 12,
+          "slug": "momentum-indicators",
+          "title": "Momentum indicators",
+          "summary": "momentum की माप को चरणबद्ध examples के साथ समझें और Python में लागू करें।",
+          "learn": [
+            "momentum की माप की मूल अवधारणा समझना",
+            "सही market data और inputs तैयार करना",
+            "Python code में नियम लागू करना",
+            "Output और response की जाँच करना",
+            "Errors तथा trading risk सँभालना",
+            "दोबारा उपयोग योग्य workflow बनाना"
+          ],
+          "tags": [
+            "NSE",
+            "NFO"
+          ]
+        },
+        {
+          "n": 13,
+          "slug": "volatility-indicators",
+          "title": "Volatility indicators",
+          "summary": "volatility और range को चरणबद्ध examples के साथ समझें और Python में लागू करें।",
+          "learn": [
+            "volatility और range की मूल अवधारणा समझना",
+            "सही market data और inputs तैयार करना",
+            "Python code में नियम लागू करना",
+            "Output और response की जाँच करना",
+            "Errors तथा trading risk सँभालना",
+            "दोबारा उपयोग योग्य workflow बनाना"
+          ],
+          "tags": [
+            "NSE",
+            "एमसीएक्स"
+          ]
+        },
+        {
+          "n": 14,
+          "slug": "volume-indicators",
+          "title": "Volume indicators",
+          "summary": "volume participation को चरणबद्ध examples के साथ समझें और Python में लागू करें।",
+          "learn": [
+            "volume participation की मूल अवधारणा समझना",
+            "सही market data और inputs तैयार करना",
+            "Python code में नियम लागू करना",
+            "Output और response की जाँच करना",
+            "Errors तथा trading risk सँभालना",
+            "दोबारा उपयोग योग्य workflow बनाना"
+          ],
+          "tags": [
+            "NSE",
+            "NFO"
+          ]
+        },
+        {
+          "n": 15,
+          "slug": "oscillators",
+          "title": "ऑसिलेटर्स",
+          "summary": "bounded oscillators को चरणबद्ध examples के साथ समझें और Python में लागू करें।",
+          "learn": [
+            "bounded oscillators की मूल अवधारणा समझना",
+            "सही market data और inputs तैयार करना",
+            "Python code में नियम लागू करना",
+            "Output और response की जाँच करना",
+            "Errors तथा trading risk सँभालना",
+            "दोबारा उपयोग योग्य workflow बनाना"
+          ],
+          "tags": [
+            "NSE",
+            "एमसीएक्स"
+          ]
+        },
+        {
+          "n": 16,
+          "slug": "statistical-hybrid",
+          "title": "Statistical, hybrid और utility functions",
+          "summary": "statistics और signal helpers को चरणबद्ध examples के साथ समझें और Python में लागू करें।",
+          "learn": [
+            "statistics और signal helpers की मूल अवधारणा समझना",
+            "सही market data और inputs तैयार करना",
+            "Python code में नियम लागू करना",
+            "Output और response की जाँच करना",
+            "Errors तथा trading risk सँभालना",
+            "दोबारा उपयोग योग्य workflow बनाना"
+          ],
+          "tags": [
+            "NSE",
+            "NFO"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "D",
+      "name": "Signals और scanning",
+      "desc": "Indicators को साफ signals में बदलकर market scan करें।",
+      "chapters": [
+        {
+          "n": 17,
+          "slug": "signals",
+          "title": "Indicators से trading signals",
+          "summary": "साफ entry-exit signals को चरणबद्ध examples के साथ समझें और Python में लागू करें।",
+          "learn": [
+            "साफ entry-exit signals की मूल अवधारणा समझना",
+            "सही market data और inputs तैयार करना",
+            "Python code में नियम लागू करना",
+            "Output और response की जाँच करना",
+            "Errors तथा trading risk सँभालना",
+            "दोबारा उपयोग योग्य workflow बनाना"
+          ],
+          "tags": [
+            "NSE"
+          ]
+        },
+        {
+          "n": 18,
+          "slug": "scanning",
+          "title": "Scanning और screeners",
+          "summary": "market-wide screening को चरणबद्ध examples के साथ समझें और Python में लागू करें।",
+          "learn": [
+            "market-wide screening की मूल अवधारणा समझना",
+            "सही market data और inputs तैयार करना",
+            "Python code में नियम लागू करना",
+            "Output और response की जाँच करना",
+            "Errors तथा trading risk सँभालना",
+            "दोबारा उपयोग योग्य workflow बनाना"
+          ],
+          "tags": [
+            "NSE",
+            "NFO",
+            "एमसीएक्स"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "E",
+      "name": "रणनीति संग्रह",
+      "desc": "वास्तविक strategy styles में data, signal और logic समझें।",
+      "chapters": [
+        {
+          "n": 19,
+          "slug": "cash-equity-strategies",
+          "title": "Cash और equity strategies",
+          "summary": "equity trend और momentum को चरणबद्ध examples के साथ समझें और Python में लागू करें।",
+          "learn": [
+            "equity trend और momentum की मूल अवधारणा समझना",
+            "सही market data और inputs तैयार करना",
+            "Python code में नियम लागू करना",
+            "Output और response की जाँच करना",
+            "Errors तथा trading risk सँभालना",
+            "दोबारा उपयोग योग्य workflow बनाना"
+          ],
+          "tags": [
+            "NSE"
+          ]
+        },
+        {
+          "n": 20,
+          "slug": "intraday-strategies",
+          "title": "Intraday strategies",
+          "summary": "intraday trading rules को चरणबद्ध examples के साथ समझें और Python में लागू करें।",
+          "learn": [
+            "intraday trading rules की मूल अवधारणा समझना",
+            "सही market data और inputs तैयार करना",
+            "Python code में नियम लागू करना",
+            "Output और response की जाँच करना",
+            "Errors तथा trading risk सँभालना",
+            "दोबारा उपयोग योग्य workflow बनाना"
+          ],
+          "tags": [
+            "NSE",
+            "NFO"
+          ]
+        },
+        {
+          "n": 21,
+          "slug": "pair-stat-arb",
+          "title": "Pair trading और statistical arbitrage",
+          "summary": "pairs और spread को चरणबद्ध examples के साथ समझें और Python में लागू करें।",
+          "learn": [
+            "pairs और spread की मूल अवधारणा समझना",
+            "सही market data और inputs तैयार करना",
+            "Python code में नियम लागू करना",
+            "Output और response की जाँच करना",
+            "Errors तथा trading risk सँभालना",
+            "दोबारा उपयोग योग्य workflow बनाना"
+          ],
+          "tags": [
+            "NSE"
+          ]
+        },
+        {
+          "n": 22,
+          "slug": "momentum-volatility",
+          "title": "Momentum और volatility trading",
+          "summary": "momentum तथा volatility को चरणबद्ध examples के साथ समझें और Python में लागू करें।",
+          "learn": [
+            "momentum तथा volatility की मूल अवधारणा समझना",
+            "सही market data और inputs तैयार करना",
+            "Python code में नियम लागू करना",
+            "Output और response की जाँच करना",
+            "Errors तथा trading risk सँभालना",
+            "दोबारा उपयोग योग्य workflow बनाना"
+          ],
+          "tags": [
+            "NSE",
+            "एमसीएक्स"
+          ]
+        },
+        {
+          "n": 23,
+          "slug": "seasonal-strategies",
+          "title": "Seasonal और calendar strategies",
+          "summary": "calendar effects को चरणबद्ध examples के साथ समझें और Python में लागू करें।",
+          "learn": [
+            "calendar effects की मूल अवधारणा समझना",
+            "सही market data और inputs तैयार करना",
+            "Python code में नियम लागू करना",
+            "Output और response की जाँच करना",
+            "Errors तथा trading risk सँभालना",
+            "दोबारा उपयोग योग्य workflow बनाना"
+          ],
+          "tags": [
+            "NSE",
+            "NFO"
+          ]
+        },
+        {
+          "n": 24,
+          "slug": "options-strategies",
+          "title": "Options strategies",
+          "summary": "option chain और multi-leg positions को चरणबद्ध examples के साथ समझें और Python में लागू करें।",
+          "learn": [
+            "option chain और multi-leg positions की मूल अवधारणा समझना",
+            "सही market data और inputs तैयार करना",
+            "Python code में नियम लागू करना",
+            "Output और response की जाँच करना",
+            "Errors तथा trading risk सँभालना",
+            "दोबारा उपयोग योग्य workflow बनाना"
+          ],
+          "tags": [
+            "NFO",
+            "सूचकांक"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "F",
+      "name": "निष्पादन",
+      "desc": "SDK से Analyze mode में orders रखें और सँभालें।",
+      "chapters": [
+        {
+          "n": 25,
+          "slug": "placing-orders",
+          "title": "Orders रखना और सँभालना",
+          "summary": "order lifecycle को चरणबद्ध examples के साथ समझें और Python में लागू करें।",
+          "learn": [
+            "order lifecycle की मूल अवधारणा समझना",
+            "सही market data और inputs तैयार करना",
+            "Python code में नियम लागू करना",
+            "Output और response की जाँच करना",
+            "Errors तथा trading risk सँभालना",
+            "दोबारा उपयोग योग्य workflow बनाना"
+          ],
+          "tags": [
+            "NSE",
+            "NFO",
+            "एमसीएक्स"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "G",
+      "name": "Backtesting और optimization",
+      "desc": "VectorBT से capital risk करने से पहले edge जाँचें।",
+      "chapters": [
+        {
+          "n": 26,
+          "slug": "backtesting-basics",
+          "title": "शुरुआत से और VectorBT से backtesting",
+          "summary": "realistic backtest को चरणबद्ध examples के साथ समझें और Python में लागू करें।",
+          "learn": [
+            "realistic backtest की मूल अवधारणा समझना",
+            "सही market data और inputs तैयार करना",
+            "Python code में नियम लागू करना",
+            "Output और response की जाँच करना",
+            "Errors तथा trading risk सँभालना",
+            "दोबारा उपयोग योग्य workflow बनाना"
+          ],
+          "tags": [
+            "NSE",
+            "एमसीएक्स"
+          ]
+        },
+        {
+          "n": 27,
+          "slug": "performance-metrics",
+          "title": "Performance metrics और reporting",
+          "summary": "strategy performance को चरणबद्ध examples के साथ समझें और Python में लागू करें।",
+          "learn": [
+            "strategy performance की मूल अवधारणा समझना",
+            "सही market data और inputs तैयार करना",
+            "Python code में नियम लागू करना",
+            "Output और response की जाँच करना",
+            "Errors तथा trading risk सँभालना",
+            "दोबारा उपयोग योग्य workflow बनाना"
+          ],
+          "tags": [
+            "NSE"
+          ]
+        },
+        {
+          "n": 28,
+          "slug": "optimization",
+          "title": "Parameter optimization",
+          "summary": "robust parameters को चरणबद्ध examples के साथ समझें और Python में लागू करें।",
+          "learn": [
+            "robust parameters की मूल अवधारणा समझना",
+            "सही market data और inputs तैयार करना",
+            "Python code में नियम लागू करना",
+            "Output और response की जाँच करना",
+            "Errors तथा trading risk सँभालना",
+            "दोबारा उपयोग योग्य workflow बनाना"
+          ],
+          "tags": [
+            "NSE",
+            "एमसीएक्स"
+          ]
+        },
+        {
+          "n": 29,
+          "slug": "walk-forward",
+          "title": "Walk-forward testing और robustness",
+          "summary": "out-of-sample robustness को चरणबद्ध examples के साथ समझें और Python में लागू करें।",
+          "learn": [
+            "out-of-sample robustness की मूल अवधारणा समझना",
+            "सही market data और inputs तैयार करना",
+            "Python code में नियम लागू करना",
+            "Output और response की जाँच करना",
+            "Errors तथा trading risk सँभालना",
+            "दोबारा उपयोग योग्य workflow बनाना"
+          ],
+          "tags": [
+            "NSE"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "H",
+      "name": "Machine learning",
+      "desc": "Model को market पढ़ना सिखाकर पूरा bot बनाएँ।",
+      "chapters": [
+        {
+          "n": 30,
+          "slug": "ml-neural-capstone",
+          "title": "Machine learning, neural nets और पूरा bot",
+          "summary": "ML आधारित trading bot को चरणबद्ध examples के साथ समझें और Python में लागू करें।",
+          "learn": [
+            "ML आधारित trading bot की मूल अवधारणा समझना",
+            "सही market data और inputs तैयार करना",
+            "Python code में नियम लागू करना",
+            "Output और response की जाँच करना",
+            "Errors तथा trading risk सँभालना",
+            "दोबारा उपयोग योग्य workflow बनाना"
+          ],
+          "tags": [
+            "NSE",
+            "NFO"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "I",
+      "name": "Live trading की ओर",
+      "desc": "WebSockets से live ticks और positions real time में सँभालें।",
+      "chapters": [
+        {
+          "n": 31,
+          "slug": "websockets",
+          "title": "WebSockets से real-time data",
+          "summary": "streaming market data को चरणबद्ध examples के साथ समझें और Python में लागू करें।",
+          "learn": [
+            "streaming market data की मूल अवधारणा समझना",
+            "सही market data और inputs तैयार करना",
+            "Python code में नियम लागू करना",
+            "Output और response की जाँच करना",
+            "Errors तथा trading risk सँभालना",
+            "दोबारा उपयोग योग्य workflow बनाना"
+          ],
+          "tags": [
+            "NSE",
+            "NFO",
+            "एमसीएक्स"
+          ]
+        },
+        {
+          "n": 32,
+          "slug": "risk-position-sizing",
+          "title": "Risk और position sizing",
+          "summary": "risk आधारित सही quantity को चरणबद्ध examples के साथ समझें और Python में लागू करें।",
+          "learn": [
+            "risk आधारित सही quantity की मूल अवधारणा समझना",
+            "सही market data और inputs तैयार करना",
+            "Python code में नियम लागू करना",
+            "Output और response की जाँच करना",
+            "Errors तथा trading risk सँभालना",
+            "दोबारा उपयोग योग्य workflow बनाना"
+          ],
+          "tags": [
+            "NSE",
+            "NFO",
+            "एमसीएक्स"
+          ]
+        }
+      ]
+    }
+  ]
+}
