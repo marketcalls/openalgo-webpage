@@ -1,0 +1,687 @@
+{
+  "course": "amibroker",
+  "locale": "ta",
+  "parts": [
+    {
+      "id": "A",
+      "name": "AmiBroker à®…à®±à®¿à®®à¯à®•à®®à¯",
+      "desc": "AmiBroker à®Žà®©à¯à®±à®¾à®²à¯ à®Žà®©à¯à®©, Formula Editor à®Žà®µà¯à®µà®¾à®±à¯ à®šà¯†à®¯à®²à¯à®ªà®Ÿà¯à®•à®¿à®±à®¤à¯, AFL-à® à®Žà®³à®¿à®¤à®¾à®•à®ªà¯ à®ªà¯à®°à®¿à®¯à®šà¯ à®šà¯†à®¯à¯à®¯à¯à®®à¯ arrays à®Žà®©à¯à®± à®®à¯à®•à¯à®•à®¿à®¯à®•à¯ à®•à®°à¯à®¤à¯à®¤à¯.",
+      "chapters": [
+        {
+          "n": 1,
+          "slug": "what-is-amibroker",
+          "title": "AmiBroker à®®à®±à¯à®±à¯à®®à¯ AFL à®Žà®©à¯à®±à®¾à®²à¯ à®Žà®©à¯à®©?",
+          "summary": "Charts, Analysis window à®®à®±à¯à®±à¯à®®à¯ AFL à®šà¯†à®¯à¯à®¯à®•à¯à®•à¯‚à®Ÿà®¿à®¯ à®¨à®¾à®©à¯à®•à¯ à®ªà®£à®¿à®•à®³à¯: indicator, exploration, scan, backtest à®†à®•à®¿à®¯à®µà®±à¯à®±à®¿à®©à¯ à®®à¯à®´à¯à®ªà¯ à®ªà®¾à®°à¯à®µà¯ˆ.",
+          "learn": [
+            "AmiBroker à®Žà®¤à®±à¯à®•à¯à®ªà¯ à®ªà®¯à®©à¯à®ªà®Ÿà¯à®•à®¿à®±à®¤à¯",
+            "Indicator, Exploration, Backtest à®µà¯‡à®±à¯à®ªà®¾à®Ÿà¯à®•à®³à¯",
+            "AFL code à®Žà®™à¯à®•à¯ à®‡à®°à¯à®•à¯à®•à¯à®®à¯",
+            "Formula Editor à®®à®±à¯à®±à¯à®®à¯ Apply",
+            "Chart panes à®®à®±à¯à®±à¯à®®à¯ sheets",
+            "à®‡à®¨à¯à®¤ course-à®©à¯ à®…à®®à¯ˆà®ªà¯à®ªà¯"
+          ],
+          "tags": [
+            "à®…à®Ÿà®¿à®ªà¯à®ªà®Ÿà¯ˆà®•à®³à¯"
+          ]
+        },
+        {
+          "n": 2,
+          "slug": "formula-editor",
+          "title": "Formula Editor à®®à®±à¯à®±à¯à®®à¯ à®‰à®™à¯à®•à®³à¯ à®®à¯à®¤à®²à¯ Indicator",
+          "summary": "à®’à®°à¯ à®µà®°à®¿ RSI plot à®Žà®©à¯à®± à®‰à®™à¯à®•à®³à¯ à®®à¯à®¤à®²à¯ AFL-à® à®Žà®´à¯à®¤à®µà¯à®®à¯, apply à®šà¯†à®¯à¯à®¯à®µà¯à®®à¯, à®šà¯‡à®®à®¿à®•à¯à®•à®µà¯à®®à¯; à®¨à¯‡à®°à®¤à¯à®¤à¯ˆ à®®à®¿à®šà¯à®šà®ªà¯à®ªà®Ÿà¯à®¤à¯à®¤à¯à®®à¯ editor à®ªà®´à®•à¯à®•à®™à¯à®•à®³à¯ˆà®•à¯ à®•à®±à¯à®•à®µà¯à®®à¯.",
+          "learn": [
+            "Formula Editor-à®à®¤à¯ à®¤à®¿à®±à®¤à¯à®¤à®²à¯",
+            "_SECTION_BEGIN / _SECTION_END wrapper-ஐப் பயன்படுத்துதல்",
+            "Comments à®®à®±à¯à®±à¯à®®à¯ à®µà®¾à®šà®¿à®ªà¯à®ªà¯à®¤à¯ à®¤à¯†à®³à®¿à®µà¯",
+            "à®®à¯à®¤à®²à¯ line-à® Plot() à®šà¯†à®¯à¯à®¤à®²à¯",
+            "Apply Indicator à®®à®±à¯à®±à¯à®®à¯ Insert à®µà¯‡à®±à¯à®ªà®¾à®Ÿà¯",
+            "Formulas-à® à®šà¯‡à®®à®¿à®¤à¯à®¤à¯ à®’à®´à¯à®™à¯à®•à¯à®ªà®Ÿà¯à®¤à¯à®¤à®²à¯"
+          ],
+          "tags": [
+            "à®…à®Ÿà®¿à®ªà¯à®ªà®Ÿà¯ˆà®•à®³à¯",
+            "AFL"
+          ]
+        },
+        {
+          "n": 3,
+          "slug": "how-afl-thinks",
+          "title": "AFL à®Žà®ªà¯à®ªà®Ÿà®¿à®šà¯ à®šà®¿à®¨à¯à®¤à®¿à®•à¯à®•à®¿à®±à®¤à¯: Arrays à®®à®±à¯à®±à¯à®®à¯ Bars",
+          "summary": "AFL-à®‡à®©à¯ à®®à®¿à®• à®®à¯à®•à¯à®•à®¿à®¯à®®à®¾à®© à®•à®°à¯à®¤à¯à®¤à¯: à®’à®µà¯à®µà¯Šà®°à¯ variable-à®®à¯à®®à¯ à®’à®µà¯à®µà¯Šà®°à¯ bar-à®•à¯à®•à®¾à®© à®®à®¤à®¿à®ªà¯à®ªà¯à®•à®³à¯ˆà®•à¯ à®•à¯Šà®£à¯à®Ÿ à®®à¯à®´à¯ array à®†à®•à¯à®®à¯. à®‡à®¤à¯ˆà®ªà¯ à®ªà¯à®°à®¿à®¨à¯à®¤à®¾à®²à¯ à®®à®±à¯à®±à®µà¯ˆ à®Žà®³à®¿à®¤à®¾à®•à¯à®®à¯.",
+          "learn": [
+            "Array à®Žà®©à¯à®±à®¾à®²à¯ à®‰à®£à¯à®®à¯ˆà®¯à®¿à®²à¯ à®Žà®©à¯à®©",
+            "à®’à®µà¯à®µà¯Šà®°à¯ bar-à®•à¯à®•à¯à®®à¯ à®’à®°à¯ à®®à®¤à®¿à®ªà¯à®ªà¯",
+            "Vectorised à®®à®±à¯à®±à¯à®®à¯ bar-by-bar à®šà®¿à®¨à¯à®¤à®©à¯ˆ",
+            "à®¤à®±à¯à®ªà¯‹à®¤à¯ˆà®¯ bar à®®à®±à¯à®±à¯à®®à¯ array",
+            "à®à®©à¯ loops à®•à®¿à®Ÿà¯à®Ÿà®¤à¯à®¤à®Ÿà¯à®Ÿ à®¤à¯‡à®µà¯ˆà®¯à®¿à®²à¯à®²à¯ˆ",
+            "Arrays-à® columns à®ªà¯‹à®²à®•à¯ à®•à®¾à®Ÿà¯à®šà®¿à®ªà¯à®ªà®Ÿà¯à®¤à¯à®¤à®²à¯"
+          ],
+          "tags": [
+            "à®…à®Ÿà®¿à®ªà¯à®ªà®Ÿà¯ˆà®•à®³à¯",
+            "AFL"
+          ]
+        },
+        {
+          "n": 4,
+          "slug": "price-and-variables",
+          "title": "Price Arrays, Variables à®®à®±à¯à®±à¯à®®à¯ Operators",
+          "summary": "O, H, L, C, V à®®à®±à¯à®±à¯à®®à¯ Volume-à® à®…à®±à®¿à®¨à¯à®¤à¯, à®®à¯à®Ÿà®¿à®µà¯à®•à®³à¯ˆ variables-à®²à¯ à®šà¯‡à®®à®¿à®¤à¯à®¤à¯, à®®à¯à®´à¯ chart-à®•à¯à®•à¯à®®à¯ à®’à®°à¯‡ à®¨à¯‡à®°à®¤à¯à®¤à®¿à®²à¯ à®•à®£à®•à¯à®•à®¿à®Ÿà¯à®™à¯à®•à®³à¯.",
+          "learn": [
+            "Open/High/Low/Close/Volume price arrays",
+            "Variables-à®•à¯à®•à¯ à®®à®¤à®¿à®ªà¯à®ªà¯ à®µà®´à®™à¯à®•à¯à®¤à®²à¯",
+            "Arrays à®®à¯à®´à¯à®µà®¤à¯à®®à¯ arithmetic",
+            "Typical price à®®à®±à¯à®±à¯à®®à¯ ranges",
+            "Operators à®®à®±à¯à®±à¯à®®à¯ precedence",
+            "Chart-à®©à¯ data window-à® à®µà®¾à®šà®¿à®¤à¯à®¤à®²à¯"
+          ],
+          "tags": [
+            "à®…à®Ÿà®¿à®ªà¯à®ªà®Ÿà¯ˆà®•à®³à¯",
+            "AFL"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "B",
+      "name": "AFL à®®à¯Šà®´à®¿",
+      "desc": "AFL-à®©à¯ grammar: plotting, parameters, built-in functions, logic, à®•à®Ÿà®¨à¯à®¤ bars-à®à®ªà¯ à®ªà®¾à®°à¯à®ªà¯à®ªà®¤à¯ à®®à®±à¯à®±à¯à®®à¯ à®‰à®™à¯à®•à®³à¯ à®šà¯Šà®¨à¯à®¤ functions à®Žà®´à¯à®¤à¯à®µà®¤à¯.",
+      "chapters": [
+        {
+          "n": 5,
+          "slug": "plotting-and-styles",
+          "title": "Plotting à®®à®±à¯à®±à¯à®®à¯ Chart Styles",
+          "summary": "Lines, candles, histograms à®®à®±à¯à®±à¯à®®à¯ bands-à® à®µà®°à¯ˆà®¨à¯à®¤à¯, colour, thickness, style à®†à®•à®¿à®¯à®µà®±à¯à®±à¯ˆ à®¨à®¿à®ªà¯à®£à®°à¯ à®ªà¯‹à®²à®•à¯ à®•à®Ÿà¯à®Ÿà¯à®ªà¯à®ªà®Ÿà¯à®¤à¯à®¤à¯à®™à¯à®•à®³à¯.",
+          "learn": [
+            "Plot() à®µà®¿à®°à®¿à®µà®¾à®•",
+            "styleLine / styleCandle / styleHistogram styles",
+            "GetPriceStyle à®®à®±à¯à®±à¯à®®à¯ styleNoTitle",
+            "Colours à®®à®±à¯à®±à¯à®®à¯ colorXXX constants",
+            "| à®®à¯‚à®²à®®à¯ styles à®‡à®£à¯ˆà®¤à¯à®¤à®²à¯",
+            "à®ªà¯à®¤à®¿à®¯ pane-à®²à¯ plotting"
+          ],
+          "tags": [
+            "விளக்கப்படம்",
+            "AFL"
+          ]
+        },
+        {
+          "n": 6,
+          "slug": "parameters",
+          "title": "Parameters: Interactive Controls-ஐ அமைத்தல்",
+          "summary": "Param, ParamColor, ParamList à®ªà¯‹à®©à¯à®±à®µà®±à¯à®±à®¾à®²à¯ hard-coded numbers-à® sliders, colour pickers, dropdowns à®†à®• à®®à®¾à®±à¯à®±à¯à®™à¯à®•à®³à¯.",
+          "learn": [
+            "Param() sliders-ஐ அமைத்தல்",
+            "ParamColor à®®à®±à¯à®±à¯à®®à¯ ParamStyle",
+            "ParamList à®®à®±à¯à®±à¯à®®à¯ ParamToggle",
+            "ParamTrigger buttons-ஐப் பயன்படுத்துதல்",
+            "Magic numbers-à® à®µà®¿à®Ÿ parameters à®à®©à¯ à®šà®¿à®±à®¨à¯à®¤à®µà¯ˆ",
+            "Parameters window"
+          ],
+          "tags": [
+            "விளக்கப்படம்",
+            "AFL"
+          ]
+        },
+        {
+          "n": 7,
+          "slug": "built-in-functions",
+          "title": "Built-in Functions à®®à®±à¯à®±à¯à®®à¯ Indicators",
+          "summary": "à®¤à®¿à®©à®®à¯à®®à¯ à®ªà®¯à®©à¯à®ªà®Ÿà¯à®¤à¯à®¤à¯à®®à¯ MA, EMA, RSI, MACD, ATR, BBands functions à®®à®±à¯à®±à¯à®®à¯ function reference-à® à®µà®¾à®šà®¿à®•à¯à®•à¯à®®à¯ à®®à¯à®±à¯ˆà®•à¯à®•à®¾à®© à®µà®´à®¿à®•à®¾à®Ÿà¯à®Ÿà®¿.",
+          "learn": [
+            "Moving averages: MA, EMA, WMA வகைகள்",
+            "RSI, MACD, Stochastic indicators",
+            "ATR à®®à®±à¯à®±à¯à®®à¯ Bollinger Bands",
+            "Sum, Highest, Lowest, HHV, LLV functions",
+            "AFL function reference-à® à®µà®¾à®šà®¿à®¤à¯à®¤à®²à¯",
+            "Functions-à® nesting à®šà¯†à®¯à¯à®¤à®²à¯"
+          ],
+          "tags": [
+            "குறியீடு",
+            "AFL"
+          ]
+        },
+        {
+          "n": 8,
+          "slug": "conditions-and-logic",
+          "title": "Conditions, Logic à®®à®±à¯à®±à¯à®®à¯ IIf",
+          "summary": "Comparisons à®®à®±à¯à®±à¯à®®à¯ AND/OR à®®à¯‚à®²à®®à¯ true/false arrays à®‰à®°à¯à®µà®¾à®•à¯à®•à®¿, à®®à¯à®•à¯à®•à®¿à®¯à®®à®¾à®© IIf à®®à¯‚à®²à®®à¯ à®’à®µà¯à®µà¯Šà®°à¯ bar-à®•à¯à®•à¯à®®à¯ à®®à®¤à®¿à®ªà¯à®ªà¯ˆà®¤à¯ à®¤à¯‡à®°à¯à®¨à¯à®¤à¯†à®Ÿà¯à®•à¯à®•à®µà¯à®®à¯.",
+          "learn": [
+            "Comparison operators-ஐப் பயன்படுத்துதல்",
+            "Arrays à®®à¯€à®¤à¯ AND, OR, NOT",
+            "True/false à®Žà®©à¯à®ªà®¤à¯ 1/0",
+            "IIf(condition, a, b) à®ªà®¯à®©à¯à®ªà®¾à®Ÿà¯",
+            "IIf-à® nesting à®šà¯†à®¯à¯à®¤à®²à¯",
+            "à®ªà¯Šà®¤à¯à®µà®¾à®© logic à®¤à®µà®±à¯à®•à®³à¯"
+          ],
+          "tags": [
+            "AFL"
+          ]
+        },
+        {
+          "n": 9,
+          "slug": "referencing-bars",
+          "title": "à®ªà®¿à®©à¯à®©à¯‹à®•à¯à®•à®¿à®ªà¯ à®ªà®¾à®°à¯à®ªà¯à®ªà®¤à¯: Ref, Cross à®®à®±à¯à®±à¯à®®à¯ BarsSince",
+          "summary": "Ref à®®à¯‚à®²à®®à¯ à®®à¯à®¨à¯à®¤à¯ˆà®¯ à®®à®±à¯à®±à¯à®®à¯ à®…à®Ÿà¯à®¤à¯à®¤ bars-à® à®…à®£à¯à®•à®¿, Cross à®®à¯‚à®²à®®à¯ crossovers-à®à®•à¯ à®•à®£à¯à®Ÿà®±à®¿à®¨à¯à®¤à¯, à®’à®°à¯ à®¨à®¿à®•à®´à¯à®µà¯à®•à¯à®•à¯à®ªà¯ à®ªà®¿à®±à®•à¯ à®•à®Ÿà®¨à¯à®¤ bars-à® à®Žà®£à¯à®£à¯à®™à¯à®•à®³à¯.",
+          "learn": [
+            "Array-à® shift à®šà¯†à®¯à¯à®¯ Ref()",
+            "à®¨à¯‡à®±à¯à®±à¯ˆà®¯ close, à®®à¯à®¨à¯à®¤à¯ˆà®¯ high",
+            "Cross() à®®à¯‚à®²à®®à¯ crossovers",
+            "BarsSince à®®à®±à¯à®±à¯à®®à¯ Barssince logic",
+            "à®’à®°à¯ window-à®•à¯à®•à¯à®³à¯ HHV / LLV",
+            "Look-ahead bias-à®à®¤à¯ à®¤à®µà®¿à®°à¯à®¤à¯à®¤à®²à¯"
+          ],
+          "tags": [
+            "AFL"
+          ]
+        },
+        {
+          "n": 10,
+          "slug": "dates-and-sessions",
+          "title": "Dates, Times à®®à®±à¯à®±à¯à®®à¯ Trading Session",
+          "summary": "Calendar à®®à®±à¯à®±à¯à®®à¯ clock-à® à®µà®¾à®šà®¿à®¤à¯à®¤à¯, à®’à®µà¯à®µà¯Šà®°à¯ intraday system-à®®à¯à®®à¯ à®•à¯‡à®Ÿà¯à®•à¯à®®à¯ à®•à¯‡à®³à¯à®µà®¿à®•à¯à®•à¯ à®µà®¿à®Ÿà¯ˆà®¯à®³à®¿à®•à¯à®•à®µà¯à®®à¯: à®ªà¯à®¤à®¿à®¯ à®¨à®¾à®³à¯ à®¤à¯Šà®Ÿà®™à¯à®•à®¿à®¯à®¤à®¾?",
+          "learn": [
+            "Day / Month / Year / DayOfWeek functions",
+            "TimeNum à®®à®±à¯à®±à¯à®®à¯ HHMMSS clock",
+            "à®ªà¯à®¤à®¿à®¯ à®¨à®¾à®³à¯ à®…à®²à¯à®²à®¤à¯ session-à®à®•à¯ à®•à®£à¯à®Ÿà®±à®¿à®¤à®²à¯",
+            "Open-à®‡à®²à®¿à®°à¯à®¨à¯à®¤à¯ bars; à®¨à®¾à®³à®¿à®©à¯ à®®à¯à®¤à®²à¯ à®®à®±à¯à®±à¯à®®à¯ à®•à®Ÿà¯ˆà®šà®¿ bar",
+            "à®…à®©à¯à®±à¯ˆà®¯ open, high, low à®‡à®¤à¯à®µà®°à¯ˆ",
+            "Entries-à® time window-à®•à¯à®•à¯à®³à¯ à®•à®Ÿà¯à®Ÿà¯à®ªà¯à®ªà®Ÿà¯à®¤à¯à®¤à®²à¯"
+          ],
+          "tags": [
+            "AFL",
+            "à®¨à®¿à®•à®´à¯à®¨à¯‡à®°à®®à¯"
+          ]
+        },
+        {
+          "n": 11,
+          "slug": "arrays-and-loops",
+          "title": "Arrays à®®à®±à¯à®±à¯à®®à¯ Loops: for-loop",
+          "summary": "à®ªà¯†à®°à¯à®®à¯à®ªà®¾à®²à®¾à®© AFL-à®•à¯à®•à¯ loops à®¤à¯‡à®µà¯ˆà®¯à®¿à®²à¯à®²à¯ˆ; à®†à®©à®¾à®²à¯ trailing stop à®ªà¯‹à®©à¯à®± logic-à®•à¯à®•à¯ à®…à®µà¯ˆ à®¤à¯‡à®µà¯ˆ. à®šà¯à®¤à¯à®¤à®®à®¾à®© for-loop-à® à®Žà®ªà¯à®ªà¯‹à®¤à¯, à®Žà®ªà¯à®ªà®Ÿà®¿ à®Žà®´à¯à®¤à¯à®µà®¤à¯ à®Žà®©à¯à®ªà®¤à¯ˆ à®…à®±à®¿à®¯à¯à®™à¯à®•à®³à¯.",
+          "learn": [
+            "Arrays à®ªà¯‹à®¤à®¾à®¤ à®¨à¯‡à®°à®®à¯",
+            "for( i = 0; i < BarCount; i++ ) loop",
+            "[i] à®®à¯‚à®²à®®à¯ array indexing",
+            "Bars à®‡à®Ÿà¯ˆà®¯à¯‡ state-à®à®¤à¯ à®¤à¯Šà®Ÿà®°à¯à®¨à¯à®¤à¯ à®µà¯ˆà®¤à¯à®¤à®²à¯",
+            "à®Žà®³à®¿à®¯ trailing-stop loop",
+            "Loop performance à®®à®±à¯à®±à¯à®®à¯ pitfalls"
+          ],
+          "tags": [
+            "AFL"
+          ]
+        },
+        {
+          "n": 12,
+          "slug": "custom-functions",
+          "title": "Custom Functions à®®à®±à¯à®±à¯à®®à¯ Procedures",
+          "summary": "à®®à¯€à®£à¯à®Ÿà¯à®®à¯ à®ªà®¯à®©à¯à®ªà®Ÿà¯à®¤à¯à®¤à¯à®®à¯ logic-à® local à®®à®±à¯à®±à¯à®®à¯ global scope à®‰à®Ÿà®©à¯ à®‰à®™à¯à®•à®³à¯ à®šà¯Šà®¨à¯à®¤ functions, procedures à®†à®• à®¤à¯Šà®•à¯à®•à¯à®•à®µà¯à®®à¯.",
+          "learn": [
+            "function à®®à®±à¯à®±à¯à®®à¯ procedure",
+            "Parameters à®®à®±à¯à®±à¯à®®à¯ return",
+            "local à®®à®±à¯à®±à¯à®®à¯ global variables",
+            "à®’à®°à¯ array-à® return à®šà¯†à®¯à¯à®¤à®²à¯",
+            "à®®à¯€à®£à¯à®Ÿà¯à®®à¯ à®ªà®¯à®©à¯à®ªà®Ÿà¯à®¤à¯à®¤à®•à¯à®•à¯‚à®Ÿà®¿à®¯ indicator function",
+            "à®šà®¿à®±à®¿à®¯ à®¤à®©à®¿à®ªà¯à®ªà®Ÿà¯à®Ÿ library à®‰à®°à¯à®µà®¾à®•à¯à®•à®²à¯"
+          ],
+          "tags": [
+            "AFL"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "C",
+      "name": "Charting à®®à®±à¯à®±à¯à®®à¯ Visualisation",
+      "desc": "à®¤à¯†à®³à®¿à®µà®¾à®•à®¤à¯ à®¤à®•à®µà®²à¯ à®šà¯Šà®²à¯à®²à¯à®®à¯ charts à®‰à®°à¯à®µà®¾à®•à¯à®•à¯à®™à¯à®•à®³à¯: arrows, colour-coded candles, dynamic titles, à®ªà®²-pane layouts à®®à®±à¯à®±à¯à®®à¯ GFX dashboards.",
+      "chapters": [
+        {
+          "n": 13,
+          "slug": "shapes-and-text",
+          "title": "Arrows, Shapes à®®à®±à¯à®±à¯à®®à¯ Text",
+          "summary": "PlotShapes à®®à®±à¯à®±à¯à®®à¯ PlotText à®®à¯‚à®²à®®à¯ chart-à®²à¯ signals-à®à®•à¯ à®•à¯à®±à®¿à®¯à®¿à®Ÿà¯à®™à¯à®•à®³à¯: up arrows, down arrows, stars à®®à®±à¯à®±à¯à®®à¯ labels.",
+          "learn": [
+            "PlotShapes à®®à®±à¯à®±à¯à®®à¯ shapeUpArrow",
+            "Offset à®®à¯‚à®²à®®à¯ position à®…à®®à¯ˆà®¤à¯à®¤à®²à¯",
+            "Condition à®…à®Ÿà®¿à®ªà¯à®ªà®Ÿà¯ˆà®¯à®¿à®²à¯ colour",
+            "Labels-à®•à¯à®•à¯ PlotText",
+            "Shapes-à® à®…à®Ÿà¯à®•à¯à®•à¯à®¤à®²à¯",
+            "Buy/Sell arrow conventions-ஐப் புரிந்துகொள்ளுதல்"
+          ],
+          "tags": [
+            "விளக்கப்படம்"
+          ]
+        },
+        {
+          "n": 14,
+          "slug": "color-coding",
+          "title": "Colours, Ribbons à®®à®±à¯à®±à¯à®®à¯ Conditional Candles",
+          "summary": "Trend à®…à®Ÿà®¿à®ªà¯à®ªà®Ÿà¯ˆà®¯à®¿à®²à¯ candles-à®•à¯à®•à¯ colour à®•à¯Šà®Ÿà¯à®¤à¯à®¤à¯, background ribbons à®µà®°à¯ˆà®¨à¯à®¤à¯, à®’à®°à¯‡ à®ªà®¾à®°à¯à®µà¯ˆà®¯à®¿à®²à¯ à®ªà¯à®°à®¿à®¯à¯à®®à¯ visual context à®‰à®°à¯à®µà®¾à®•à¯à®•à¯à®™à¯à®•à®³à¯.",
+          "learn": [
+            "IIf-driven colours-ஐ அமைத்தல்",
+            "à®’à®°à¯ rule à®®à¯‚à®²à®®à¯ candles-à®•à¯à®•à¯ colour",
+            "à®•à¯€à®´à¯à®ªà¯à®ªà®•à¯à®¤à®¿à®¯à®¿à®²à¯ trend ribbons",
+            "Chart background shading",
+            "MACD / RSI colour coding-ஐ அமைத்தல்",
+            "colorXXX à®®à®±à¯à®±à¯à®®à¯ ColorRGB à®µà¯‡à®±à¯à®ªà®¾à®Ÿà¯"
+          ],
+          "tags": [
+            "விளக்கப்படம்"
+          ]
+        },
+        {
+          "n": 15,
+          "slug": "title-and-strformat",
+          "title": "Title Bar à®®à®±à¯à®±à¯à®®à¯ StrFormat",
+          "summary": "Title, StrFormat à®®à®±à¯à®±à¯à®®à¯ WriteIf à®®à¯‚à®²à®®à¯ name, OHLC, percent change à®•à¯Šà®£à¯à®Ÿ dynamic chart header à®‰à®°à¯à®µà®¾à®•à¯à®•à¯à®™à¯à®•à®³à¯.",
+          "learn": [
+            "Title variable",
+            "StrFormat à®®à®±à¯à®±à¯à®®à¯ format specifiers",
+            "{{NAME}}, {{DATE}} tokens-ஐப் பயன்படுத்துதல்",
+            "NumToStr à®®à®±à¯à®±à¯à®®à¯ WriteIf",
+            "Cursor-à®•à¯à®•à®¾à®© SelectedValue",
+            "Professional header"
+          ],
+          "tags": [
+            "விளக்கப்படம்"
+          ]
+        },
+        {
+          "n": 16,
+          "slug": "panes-and-foreign",
+          "title": "Multiple Panes à®®à®±à¯à®±à¯à®®à¯ Symbols à®’à®ªà¯à®ªà¯€à®Ÿà¯",
+          "summary": "Indicator panes-à® à®…à®Ÿà¯à®•à¯à®•à®¿, Foreign à®®à®±à¯à®±à¯à®®à¯ PlotForeign à®®à¯‚à®²à®®à¯ à®µà¯‡à®±à¯ symbol-à®©à¯ data-à®µà¯ˆà®ªà¯ à®ªà¯†à®±à¯à®±à¯ relative strength-à®à®•à¯ à®•à®¾à®Ÿà¯à®Ÿà¯à®™à¯à®•à®³à¯.",
+          "learn": [
+            "New pane à®®à®±à¯à®±à¯à®®à¯ overlay",
+            "à®µà¯‡à®±à¯ symbol-à® à®µà®¾à®šà®¿à®•à¯à®• Foreign()",
+            "Chart-à®²à¯ PlotForeign",
+            "Index-à® à®’à®ªà¯à®ªà®¿à®Ÿà¯à®®à¯ relative strength",
+            "SetForeign / RestorePriceArrays functions",
+            "Spread à®®à®±à¯à®±à¯à®®à¯ ratio charts"
+          ],
+          "tags": [
+            "விளக்கப்படம்"
+          ]
+        },
+        {
+          "n": 17,
+          "slug": "gfx-dashboards",
+          "title": "GFX Dashboards-ஐ உருவாக்குதல்",
+          "summary": "Low-level GFX functions à®®à¯‚à®²à®®à¯ boxes, gradients, text à®•à¯Šà®£à¯à®Ÿ panels-à® à®µà®°à¯ˆà®¨à¯à®¤à¯ polished dashboard à®‰à®°à¯à®µà®¾à®•à¯à®•à¯à®™à¯à®•à®³à¯.",
+          "learn": [
+            "GfxText à®®à®±à¯à®±à¯à®®à¯ GfxSelectFont",
+            "GfxRectangle à®®à®±à¯à®±à¯à®®à¯ GfxGradientRect",
+            "Coordinates à®®à®±à¯à®±à¯à®®à¯ pixels",
+            "Signal status box",
+            "Responsive top dashboard",
+            "GFX à®Žà®ªà¯à®ªà¯‹à®¤à¯ à®ªà®¯à®©à¯à®³à¯à®³à®¤à®¾à®•à¯à®®à¯"
+          ],
+          "tags": [
+            "விளக்கப்படம்"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "D",
+      "name": "Exploration à®®à®±à¯à®±à¯à®®à¯ Scanning",
+      "desc": "à®®à¯à®´à¯ market-à® à®’à®°à¯‡ à®¨à¯‡à®°à®¤à¯à®¤à®¿à®²à¯ screen à®šà¯†à®¯à¯à®¯à¯à®™à¯à®•à®³à¯: Analysis window, AddColumn, filters à®®à®±à¯à®±à¯à®®à¯ ranking.",
+      "chapters": [
+        {
+          "n": 18,
+          "slug": "exploration-basics",
+          "title": "Exploration: Analysis Window",
+          "summary": "Filter à®®à®±à¯à®±à¯à®®à¯ AddColumn à®®à¯‚à®²à®®à¯ AFL-à® à®®à¯à®´à¯ watchlist-à®•à¯à®•à¯à®®à¯ spreadsheet à®ªà¯‹à®²à®ªà¯ à®ªà®¯à®©à¯à®ªà®Ÿà¯à®¤à¯à®¤à¯à®™à¯à®•à®³à¯.",
+          "learn": [
+            "Analysis window",
+            "Filter = row switch",
+            "AddColumn à®®à®±à¯à®±à¯à®®à¯ AddTextColumn",
+            "Decimal formatting-ஐக் கட்டுப்படுத்துதல்",
+            "Watchlist à®®à¯€à®¤à¯ à®‡à®¯à®•à¯à®•à¯à®¤à®²à¯",
+            "Range, date à®®à®±à¯à®±à¯à®®à¯ N-bars settings"
+          ],
+          "tags": [
+            "ஆய்வு"
+          ]
+        },
+        {
+          "n": 19,
+          "slug": "building-a-scanner",
+          "title": "Signal Scanner à®‰à®°à¯à®µà®¾à®•à¯à®•à¯à®¤à®²à¯",
+          "summary": "MACD crosses, RSI extremes, breakouts à®ªà¯‹à®©à¯à®± à®‰à®£à¯à®®à¯ˆà®¯à®¾à®© setup-à®•à®³à¯à®•à¯à®•à®¾à®• à®ªà®² symbols-à® scan à®šà¯†à®¯à¯à®¤à¯ hits-à® à®®à®Ÿà¯à®Ÿà¯à®®à¯ à®ªà®Ÿà¯à®Ÿà®¿à®¯à®²à®¿à®Ÿà¯à®™à¯à®•à®³à¯.",
+          "learn": [
+            "Signals à®®à®Ÿà¯à®Ÿà¯à®®à¯ filter à®šà¯†à®¯à¯à®¤à®²à¯",
+            "MACD / RSI scanners-ஐ உருவாக்குதல்",
+            "Breakout à®®à®±à¯à®±à¯à®®à¯ 52-week scans",
+            "Trigger value-à®à®•à¯ à®•à®¾à®Ÿà¯à®Ÿà¯à®¤à®²à¯",
+            "Scan à®®à®±à¯à®±à¯à®®à¯ Explore à®µà¯‡à®±à¯à®ªà®¾à®Ÿà¯",
+            "Analysis project-à®à®šà¯ à®šà¯‡à®®à®¿à®¤à¯à®¤à®²à¯"
+          ],
+          "tags": [
+            "ஆய்வு"
+          ]
+        },
+        {
+          "n": 20,
+          "slug": "ranking-and-filtering",
+          "title": "Filtering, Sorting à®®à®±à¯à®±à¯à®®à¯ Ranking",
+          "summary": "Results-à® sort à®šà¯†à®¯à¯à®¤à¯, cells-à®•à¯à®•à¯ colour à®•à¯Šà®Ÿà¯à®¤à¯à®¤à¯, strength à®…à®²à¯à®²à®¤à¯ volume à®…à®Ÿà®¿à®ªà¯à®ªà®Ÿà¯ˆà®¯à®¿à®²à¯ universe-à® rank à®šà¯†à®¯à¯à®¯à¯à®™à¯à®•à®³à¯.",
+          "learn": [
+            "à®ªà®² à®¨à®¿à®ªà®¨à¯à®¤à®©à¯ˆà®•à®³à¯ à®•à¯Šà®£à¯à®Ÿ filters",
+            "Columns-à® sort à®šà¯†à®¯à¯à®¤à®²à¯",
+            "Conditional cell colour-ஐ அமைத்தல்",
+            "Relative-volume ranking-ஐச் செய்தல்",
+            "à®šà®¿à®±à®¨à¯à®¤à®µà®±à¯à®±à¯ˆ highlight à®šà¯†à®¯à¯à®¤à®²à¯",
+            "à®¤à®¿à®©à®šà®°à®¿ routine à®†à®• Exploration"
+          ],
+          "tags": [
+            "ஆய்வு"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "E",
+      "name": "Trading Systems à®‰à®°à¯à®µà®¾à®•à¯à®•à¯à®¤à®²à¯",
+      "desc": "Trade à®šà¯†à®¯à¯à®¯à®•à¯à®•à¯‚à®Ÿà®¿à®¯ system-à®©à¯ à®‡à®¯à®¨à¯à®¤à®¿à®°à®®à¯: signals, à®šà¯à®¤à¯à®¤à®®à®¾à®© entries à®®à®±à¯à®±à¯à®®à¯ exits, stops, targets à®®à®±à¯à®±à¯à®®à¯ sizing.",
+      "chapters": [
+        {
+          "n": 21,
+          "slug": "buy-sell-signals",
+          "title": "Buy, Sell, Short à®®à®±à¯à®±à¯à®®à¯ Cover",
+          "summary": "à®’à®°à¯ à®¯à¯‹à®šà®©à¯ˆà®¯à¯ˆ system-à®†à®• à®®à®¾à®±à¯à®±à¯à®®à¯ à®¨à®¾à®©à¯à®•à¯ reserved arrays à®®à®±à¯à®±à¯à®®à¯ AmiBroker à®…à®µà®±à¯à®±à¯ˆ à®µà®¾à®šà®¿à®•à¯à®•à¯à®®à¯ à®®à¯à®±à¯ˆ.",
+          "learn": [
+            "Buy / Sell / Short / Cover signals",
+            "Long-only à®®à®±à¯à®±à¯à®®à¯ long-short",
+            "Signals à®Žà®©à¯à®ªà®¤à¯ true/false arrays",
+            "BuyPrice à®®à®±à¯à®±à¯à®®à¯ à®¤à¯Šà®Ÿà®°à¯à®ªà¯à®Ÿà¯ˆà®¯à®µà¯ˆ",
+            "Indicator-à®‡à®²à®¿à®°à¯à®¨à¯à®¤à¯ system à®µà®°à¯ˆ",
+            "Trade lifecycle"
+          ],
+          "tags": [
+            "உத்தி"
+          ]
+        },
+        {
+          "n": 22,
+          "slug": "cleaning-signals",
+          "title": "Clean Signals: ExRem, Flip à®®à®±à¯à®±à¯à®®à¯ No Repainting",
+          "summary": "ExRem à®®à¯‚à®²à®®à¯ duplicate signals-à® à®¨à¯€à®•à¯à®•à®¿, Flip à®®à¯‚à®²à®®à¯ state-à® à®µà¯ˆà®¤à¯à®¤à®¿à®°à¯à®¨à¯à®¤à¯, system repaint à®†à®•à®¾à®®à®²à¯ à®’à®°à¯ bar à®¤à®¾à®®à®¤à®ªà¯à®ªà®Ÿà¯à®¤à¯à®¤à¯à®™à¯à®•à®³à¯.",
+          "learn": [
+            "Raw signals à®à®©à¯ à®®à¯€à®£à¯à®Ÿà¯à®®à¯ à®µà®°à¯à®•à®¿à®©à¯à®±à®©",
+            "à®®à¯à®¤à®²à¯ signal-à® à®µà¯ˆà®¤à¯à®¤à®¿à®°à¯à®•à¯à®• ExRem",
+            "Stateful holds-à®•à¯à®•à¯ Flip",
+            "Repainting à®¤à®µà®¿à®°à¯à®•à¯à®• Ref(-1)",
+            "SetTradeDelays-ஐப் பயன்படுத்துதல்",
+            "Entry prices-à®•à¯à®•à¯ ValueWhen"
+          ],
+          "tags": [
+            "உத்தி"
+          ]
+        },
+        {
+          "n": 23,
+          "slug": "stops-and-targets",
+          "title": "Stops, Targets à®®à®±à¯à®±à¯à®®à¯ ApplyStop",
+          "summary": "Stop-loss à®®à®±à¯à®±à¯à®®à¯ profit target-à® visual chart levels à®†à®•à®µà¯à®®à¯, ApplyStop à®®à¯‚à®²à®®à¯ à®‰à®£à¯à®®à¯ˆà®¯à®¾à®© backtest exits à®†à®•à®µà¯à®®à¯ à®šà¯‡à®°à¯à®•à¯à®•à®µà¯à®®à¯.",
+          "learn": [
+            "Fixed à®®à®±à¯à®±à¯à®®à¯ percent stops",
+            "ATR-based stops-ஐ அமைத்தல்",
+            "Visual stop/target plots-ஐ வரைவது",
+            "ApplyStop stopTypeLoss / Profit options",
+            "Trailing stops-ஐப் பயன்படுத்துதல்",
+            "Backtest-à®²à¯ stops"
+          ],
+          "tags": [
+            "உத்தி"
+          ]
+        },
+        {
+          "n": 24,
+          "slug": "position-sizing",
+          "title": "Position Sizing à®®à®±à¯à®±à¯à®®à¯ Trade Delays",
+          "summary": "SetPositionSize à®®à¯‚à®²à®®à¯ trade à®…à®³à®µà¯ˆà®¯à¯à®®à¯, SetTradeDelays à®®à®±à¯à®±à¯à®®à¯ SetOption à®®à¯‚à®²à®®à¯ fills à®¨à®Ÿà®•à¯à®•à¯à®®à¯ à®¨à¯‡à®°à®¤à¯à®¤à¯ˆà®¯à¯à®®à¯ à®•à®Ÿà¯à®Ÿà¯à®ªà¯à®ªà®Ÿà¯à®¤à¯à®¤à¯à®™à¯à®•à®³à¯.",
+          "learn": [
+            "SetPositionSize modes-ஐத் தேர்வு செய்தல்",
+            "Equity-à®¯à®¿à®©à¯ à®šà®¤à®µà¯€à®¤à®®à¯ à®®à®±à¯à®±à¯à®®à¯ fixed",
+            "spsShares / spsValue முறைகள்",
+            "SetTradeDelays à®µà®¿à®³à®•à¯à®•à®®à¯",
+            "Initial equity à®®à®±à¯à®±à¯à®®à¯ commissions",
+            "Margin à®®à®±à¯à®±à¯à®®à¯ leverage"
+          ],
+          "tags": [
+            "உத்தி"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "F",
+      "name": "Backtesting à®®à®±à¯à®±à¯à®®à¯ Optimisation",
+      "desc": "Capital-à® à®†à®ªà®¤à¯à®¤à®¿à®²à¯ à®‡à®Ÿà¯à®µà®¤à®±à¯à®•à¯ à®®à¯à®©à¯ edge-à® à®¨à®¿à®°à¯‚à®ªà®¿à®¯à¯à®™à¯à®•à®³à¯: backtest à®“à®Ÿà¯à®Ÿà®¿, report-à® à®µà®¾à®šà®¿à®¤à¯à®¤à¯, à®‰à®™à¯à®•à®³à¯ˆ à®à®®à®¾à®±à¯à®±à®¾à®®à®²à¯ optimise à®šà¯†à®¯à¯à®¯à¯à®™à¯à®•à®³à¯.",
+      "chapters": [
+        {
+          "n": 25,
+          "slug": "first-backtest",
+          "title": "à®‰à®™à¯à®•à®³à¯ à®®à¯à®¤à®²à¯ Backtest",
+          "summary": "Analysis window-à®²à¯ à®®à¯à®´à¯ backtest à®“à®Ÿà¯à®Ÿà®¿, date range à®®à®±à¯à®±à¯à®®à¯ settings à®…à®®à¯ˆà®¤à¯à®¤à¯, equity curve-à®à®ªà¯ à®ªà®¾à®°à¯à®™à¯à®•à®³à¯.",
+          "learn": [
+            "Chart-à®‡à®²à®¿à®°à¯à®¨à¯à®¤à¯ backtest à®µà®°à¯ˆ",
+            "Backtest settings-ஐ அமைத்தல்",
+            "Date range à®®à®±à¯à®±à¯à®®à¯ periodicity",
+            "Backtest à®“à®Ÿà¯à®Ÿà¯à®¤à®²à¯",
+            "Equity curve",
+            "à®ªà¯Šà®¤à¯à®µà®¾à®© setup à®¤à®µà®±à¯à®•à®³à¯"
+          ],
+          "tags": [
+            "பின்சோதனை"
+          ]
+        },
+        {
+          "n": 26,
+          "slug": "backtest-report",
+          "title": "Backtest Report-à® à®µà®¾à®šà®¿à®¤à¯à®¤à®²à¯",
+          "summary": "Net profit, CAR, drawdown, win rate, payoff à®®à®±à¯à®±à¯à®®à¯ risk-adjusted ratios à®ªà¯‹à®©à¯à®± à®Žà®£à¯à®•à®³à®¿à®©à¯ à®ªà¯Šà®°à¯à®³à¯ˆà®ªà¯ à®ªà¯à®°à®¿à®¨à¯à®¤à¯à®•à¯Šà®³à¯à®³à¯à®™à¯à®•à®³à¯.",
+          "learn": [
+            "Net profit à®®à®±à¯à®±à¯à®®à¯ CAR",
+            "Max drawdown à®®à®±à¯à®±à¯à®®à¯ MAR",
+            "Win rate à®®à®±à¯à®±à¯à®®à¯ payoff ratio",
+            "Sharpe à®®à®±à¯à®±à¯à®®à¯ expectancy",
+            "Per-trade list-ஐப் படித்தல்",
+            "Report-à®²à¯ red flags"
+          ],
+          "tags": [
+            "பின்சோதனை"
+          ]
+        },
+        {
+          "n": 27,
+          "slug": "optimization",
+          "title": "Optimisation à®®à®±à¯à®±à¯à®®à¯ Robustness",
+          "summary": "Optimize() à®®à¯‚à®²à®®à¯ parameters-à® sweep à®šà¯†à®¯à¯à®¤à¯, results-à® à®µà®¾à®šà®¿à®¤à¯à®¤à¯, curve-fit peak à®…à®²à¯à®² robust settings-à®à®¤à¯ à®¤à¯‡à®°à¯à®¨à¯à®¤à¯†à®Ÿà¯à®•à¯à®•à®µà¯à®®à¯.",
+          "learn": [
+            "Param-à®•à¯à®•à¯à®ªà¯ à®ªà®¤à®¿à®²à®¾à®• Optimize()",
+            "Optimisation à®“à®Ÿà¯à®Ÿà¯à®¤à®²à¯",
+            "Result table-à® à®µà®¾à®šà®¿à®¤à¯à®¤à®²à¯",
+            "2D heatmaps-ஐப் புரிந்துகொள்ளுதல்",
+            "Robust à®®à®±à¯à®±à¯à®®à¯ peak settings",
+            "Over-fitting à®¤à®µà®¿à®°à¯à®¤à¯à®¤à®²à¯"
+          ],
+          "tags": [
+            "பின்சோதனை"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "G",
+      "name": "உத்தி Playbook",
+      "desc": "à®®à¯à®´à¯à®®à¯ˆà®¯à®¾à®• à®µà®¿à®³à®•à¯à®•à®ªà¯à®ªà®Ÿà¯à®Ÿ à®à®¨à¯à®¤à¯ systems: à®’à®µà¯à®µà¯Šà®©à¯à®±à¯ˆà®¯à¯à®®à¯ backtest à®šà¯†à®¯à¯à®¤à¯, à®‰à®™à¯à®•à®³à¯ à®šà¯Šà®¨à¯à®¤ report images-à®à®šà¯ à®šà¯‡à®°à¯à®•à¯à®•à®²à®¾à®®à¯.",
+      "chapters": [
+        {
+          "n": 28,
+          "slug": "ema-crossover-system",
+          "title": "Strategy: EMA Crossover System-ஐ உருவாக்குதல்",
+          "summary": "Signals, arrows, delays à®®à®±à¯à®±à¯à®®à¯ à®¨à¯€à®™à¯à®•à®³à¯‡ à®‡à®¯à®•à¯à®•à®•à¯à®•à¯‚à®Ÿà®¿à®¯ backtest à®‰à®Ÿà®©à¯ classic trend system-à® à®¤à¯Šà®Ÿà®•à¯à®•à®®à¯ à®®à¯à®¤à®²à¯ à®®à¯à®Ÿà®¿à®µà¯ à®µà®°à¯ˆ à®‰à®°à¯à®µà®¾à®•à¯à®•à¯à®™à¯à®•à®³à¯.",
+          "learn": [
+            "Fast/slow EMA logic-ஐ அமைத்தல்",
+            "Clean long à®®à®±à¯à®±à¯à®®à¯ short signals",
+            "System-à® plot à®šà¯†à®¯à¯à®¤à®²à¯",
+            "Backtest setup-ஐச் செய்வது",
+            "à®…à®¤à®©à¯ report-à® à®µà®¾à®šà®¿à®¤à¯à®¤à®²à¯",
+            "Periods-à® tune à®šà¯†à®¯à¯à®¤à®²à¯"
+          ],
+          "tags": [
+            "உத்தி",
+            "பின்சோதனை"
+          ]
+        },
+        {
+          "n": 29,
+          "slug": "supertrend-system",
+          "title": "Strategy: Supertrend System-ஐ உருவாக்குதல்",
+          "summary": "For-loop à®®à¯‚à®²à®®à¯ à®ªà®¿à®°à®ªà®²à®®à®¾à®© ATR-based Supertrend-à® scratch-à®‡à®²à®¿à®°à¯à®¨à¯à®¤à¯ à®‰à®°à¯à®µà®¾à®•à¯à®•à®¿, trailing stop-à® plot à®šà¯†à®¯à¯à®¤à¯ trade à®šà¯†à®¯à¯à®¯à¯à®™à¯à®•à®³à¯.",
+          "learn": [
+            "Supertrend à®•à®°à¯à®¤à¯à®¤à¯",
+            "ATR bands à®®à®±à¯à®±à¯à®®à¯ loop",
+            "Trend state à®®à®±à¯à®±à¯à®®à¯ flips",
+            "Trailing-stop plot-ஐ வரைவது",
+            "Signals à®®à®±à¯à®±à¯à®®à¯ backtest",
+            "Factor à®®à®±à¯à®±à¯à®®à¯ period tuning"
+          ],
+          "tags": [
+            "உத்தி",
+            "பின்சோதனை"
+          ]
+        },
+        {
+          "n": 30,
+          "slug": "vwap-intraday-system",
+          "title": "Strategy: VWAP Intraday System-ஐ உருவாக்குதல்",
+          "summary": "Time-based entries à®®à®±à¯à®±à¯à®®à¯ session reset à®‰à®Ÿà®©à¯ VWAP-à®à®šà¯ à®šà¯à®±à¯à®±à®¿à®¯ intraday mean-reversion / trend system.",
+          "learn": [
+            "VWAP à®Žà®©à¯à®±à®¾à®²à¯ à®Žà®©à¯à®©",
+            "Intraday VWAP à®‰à®°à¯à®µà®¾à®•à¯à®•à¯à®¤à®²à¯",
+            "Session-aware logic-ஐப் பயன்படுத்துதல்",
+            "VWAP à®…à®°à¯à®•à®¿à®²à®¾à®© entries",
+            "Time-based exits-ஐ அமைத்தல்",
+            "Intraday backtest à®•à¯à®±à®¿à®ªà¯à®ªà¯à®•à®³à¯"
+          ],
+          "tags": [
+            "உத்தி",
+            "பின்சோதனை"
+          ]
+        },
+        {
+          "n": 31,
+          "slug": "breakout-system",
+          "title": "Strategy: Donchian / Opening-Range Breakout-ஐ உருவாக்குதல்",
+          "summary": "à®‡à®°à®£à¯à®Ÿà¯ classic breakouts: Donchian channel à®®à®±à¯à®±à¯à®®à¯ opening-range breakout; code à®šà¯†à®¯à¯à®¤à¯ test à®šà¯†à®¯à¯à®¯à®¤à¯ à®¤à®¯à®¾à®°à®¾à®• à®‰à®³à¯à®³à®©.",
+          "learn": [
+            "Donchian highest/lowest levels",
+            "Channel breakout entries-ஐ அமைத்தல்",
+            "Opening-range levels-ஐக் கணக்கிடுதல்",
+            "Intraday time windows",
+            "Breakout-à®²à¯ stops",
+            "Breakouts-à® backtest à®šà¯†à®¯à¯à®¤à®²à¯"
+          ],
+          "tags": [
+            "உத்தி",
+            "பின்சோதனை"
+          ]
+        },
+        {
+          "n": 32,
+          "slug": "rsi-pullback-system",
+          "title": "Strategy: RSI Pullback à®®à®±à¯à®±à¯à®®à¯ Mean Reversion",
+          "summary": "Trend filter à®‰à®Ÿà®©à¯ RSI à®ªà®¯à®©à¯à®ªà®Ÿà¯à®¤à¯à®¤à¯à®®à¯ counter-trend pullback system: uptrend-à®²à¯ dips-à® à®µà®¾à®™à¯à®•à¯à®¤à®²à¯.",
+          "learn": [
+            "Pullback trigger à®†à®• RSI",
+            "EMA à®®à¯‚à®²à®®à¯ trend filter",
+            "Entry à®®à®±à¯à®±à¯à®®à¯ exit rules",
+            "Falling knives-à®à®¤à¯ à®¤à®µà®¿à®°à¯à®¤à¯à®¤à®²à¯",
+            "Backtest à®®à®±à¯à®±à¯à®®à¯ expectancy",
+            "Long-only à®®à®±à¯à®±à¯à®®à¯ à®‡à®°à¯ à®¤à®¿à®šà¯ˆà®•à®³à¯"
+          ],
+          "tags": [
+            "உத்தி",
+            "பின்சோதனை"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "H",
+      "name": "Real-Time, Alerts à®®à®±à¯à®±à¯à®®à¯ Automation",
+      "desc": "à®’à®°à¯ system-à® live-à®†à®• à®Žà®Ÿà¯à®¤à¯à®¤à¯à®šà¯ à®šà¯†à®²à¯à®²à¯à®™à¯à®•à®³à¯: multiple time frames, phone alerts à®®à®±à¯à®±à¯à®®à¯ OpenAlgo à®µà®´à®¿à®¯à®¾à®• order automation.",
+      "chapters": [
+        {
+          "n": 33,
+          "slug": "multi-timeframe",
+          "title": "Multiple Time Frames-ஐப் பயன்படுத்துதல்",
+          "summary": "TimeFrameSet, TimeFrameGetPrice à®®à®±à¯à®±à¯à®®à¯ à®¤à¯Šà®Ÿà®°à¯à®ªà¯à®Ÿà¯ˆà®¯ functions à®®à¯‚à®²à®®à¯ lower-time-frame chart-à®²à¯ higher time frame-à® à®µà®¾à®šà®¿à®¯à¯à®™à¯à®•à®³à¯.",
+          "learn": [
+            "Multi-timeframe à®à®©à¯",
+            "TimeFrameSet / Restore functions",
+            "TimeFrameGetPrice-ஐப் பயன்படுத்துதல்",
+            "TimeFrameExpand-ஐப் பயன்படுத்துதல்",
+            "Higher-TF trend filter",
+            "Pitfalls à®®à®±à¯à®±à¯à®®à¯ alignment"
+          ],
+          "tags": [
+            "à®¨à®¿à®•à®´à¯à®¨à¯‡à®°à®®à¯"
+          ]
+        },
+        {
+          "n": 34,
+          "slug": "alerts",
+          "title": "Alerts: Telegram à®®à®±à¯à®±à¯à®®à¯ Voice",
+          "summary": "Signal trigger à®†à®© à®‰à®Ÿà®©à¯‡ alerts à®…à®©à¯à®ªà¯à®ªà¯à®™à¯à®•à®³à¯: on-chart AlertIf, Telegram message à®®à®±à¯à®±à¯à®®à¯ spoken voice alert.",
+          "learn": [
+            "AlertIf basics-ஐ அறிதல்",
+            "Repeats-à®à®¤à¯ à®¤à®Ÿà¯à®¤à¯à®¤à®²à¯",
+            "Telegram bot alerts-ஐ அமைத்தல்",
+            "InternetOpenURL-ஐப் பயன்படுத்துதல்",
+            "Voice (Say) alerts-ஐ அமைத்தல்",
+            "Once-per-bar logic-ஐச் செயல்படுத்துதல்"
+          ],
+          "tags": [
+            "à®¨à®¿à®•à®´à¯à®¨à¯‡à®°à®®à¯"
+          ]
+        },
+        {
+          "n": 35,
+          "slug": "openalgo-automation",
+          "title": "OpenAlgo à®®à¯‚à®²à®®à¯ Orders-à® Automate à®šà¯†à®¯à¯à®¤à®²à¯",
+          "summary": "à®‰à®£à¯à®®à¯ˆà®¯à®¾à®© orders à®µà¯ˆà®•à¯à®• à®‰à®™à¯à®•à®³à¯ AFL signals-à® OpenAlgo-à®•à¯à®•à¯ à®…à®©à¯à®ªà¯à®ªà¯à®™à¯à®•à®³à¯; à®®à¯à®¤à®²à®¿à®²à¯ sandbox-à®²à¯ button à®®à®±à¯à®±à¯à®®à¯ signal-based automation-à®à®ªà¯ à®ªà®¯à®©à¯à®ªà®Ÿà¯à®¤à¯à®¤à¯à®™à¯à®•à®³à¯.",
+          "learn": [
+            "AmiBroker à®®à¯à®¤à®²à¯ OpenAlgo à®µà®°à¯ˆ",
+            "Order API call",
+            "Button trading module-ஐப் பயன்படுத்துதல்",
+            "Signal-based auto orders-ஐ அமைத்தல்",
+            "à®®à¯à®¤à®²à®¿à®²à¯ Sandbox (analyzer) mode",
+            "Safety à®®à®±à¯à®±à¯à®®à¯ confirmation"
+          ],
+          "tags": [
+            "à®¨à®¿à®•à®´à¯à®¨à¯‡à®°à®®à¯",
+            "OpenAlgo"
+          ]
+        },
+        {
+          "n": 36,
+          "slug": "whats-next",
+          "title": "à®…à®Ÿà¯à®¤à¯à®¤à¯ à®Žà®™à¯à®•à¯ à®šà¯†à®²à¯à®²à®²à®¾à®®à¯",
+          "summary": "à®‡à®¤à¯à®µà®°à¯ˆ à®•à®±à¯à®±à®µà®±à¯à®±à®¿à®©à¯ à®µà®°à¯ˆà®ªà®Ÿà®®à¯, à®‡à®©à¯à®©à¯à®®à¯ à®†à®°à®¾à®¯ à®µà¯‡à®£à¯à®Ÿà®¿à®¯ AFL à®ªà®•à¯à®¤à®¿à®•à®³à¯ à®®à®±à¯à®±à¯à®®à¯ à®¤à¯Šà®Ÿà®°à¯à®¨à¯à®¤à¯ à®®à¯‡à®®à¯à®ªà®Ÿà¯à®µà®¤à®±à¯à®•à®¾à®© à®µà®´à®¿à®®à¯à®±à¯ˆ.",
+          "learn": [
+            "à®‡à®ªà¯à®ªà¯‹à®¤à¯ à®¨à¯€à®™à¯à®•à®³à¯ à®‰à®°à¯à®µà®¾à®•à¯à®•à®•à¯à®•à¯‚à®Ÿà®¿à®¯à®µà¯ˆ",
+            "à®®à¯‡à®²à¯à®®à¯ à®†à®´à®®à®¾à®•à®šà¯ à®šà¯†à®²à¯à®² à®µà¯‡à®£à¯à®Ÿà®¿à®¯ à®ªà®•à¯à®¤à®¿à®•à®³à¯",
+            "à®¨à®²à¯à®² à®ªà®´à®•à¯à®•à®™à¯à®•à®³à¯ à®®à®±à¯à®±à¯à®®à¯ version control",
+            "Function reference",
+            "Community-à®¯à¯à®Ÿà®©à¯ à®‡à®£à¯ˆà®¤à®²à¯",
+            "AFL à®®à¯à®¤à®²à¯ à®®à¯à®´à¯ workflow à®µà®°à¯ˆ"
+          ],
+          "tags": [
+            "à®…à®Ÿà®¿à®ªà¯à®ªà®Ÿà¯ˆà®•à®³à¯"
+          ]
+        }
+      ]
+    }
+  ]
+}
