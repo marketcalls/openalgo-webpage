@@ -23,7 +23,8 @@
     "deploy": "npm run gen && opennextjs-cloudflare build && opennextjs-cloudflare deploy",
     "gen:stats-arb": "node scripts/gen-stats-arb-content.mjs",
     "gen:risk": "node scripts/gen-risk-content.mjs",
-    "gen:psychology": "node scripts/gen-psychology-content.mjs"
+    "gen:psychology": "node scripts/gen-psychology-content.mjs",
+    "check:learn-i18n": "node scripts/check-learn-i18n.mjs"
   },
   "dependencies": {
     "@radix-ui/react-accordion": "^1.1.2",
