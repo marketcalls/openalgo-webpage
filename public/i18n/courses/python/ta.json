@@ -1,0 +1,648 @@
+{
+  "course": "python",
+  "locale": "ta",
+  "parts": [
+    {
+      "id": "A",
+      "name": "அடிப்படைகள்",
+      "desc": "சூழலை அமைத்து, சந்தையுடன் தொடர்புகொண்டு, Python, NumPy மற்றும் Pandas-ஐ தேவையான அளவு கற்றுக்கொள்ளுங்கள்.",
+      "chapters": [
+        {
+          "n": 1,
+          "slug": "getting-started",
+          "title": "OpenAlgo உடன் தொடங்குதல்",
+          "summary": "OpenAlgo Python SDK-யுடன் இணைந்து, நிதியைச் சரிபார்த்து, analyze mode மற்றும் live mode ஆகியவற்றைப் புரிந்துகொள்ளுங்கள்.",
+          "learn": [
+            "uv மூலம் workspace அமைத்தல்",
+            "api client உருவாக்குதல்",
+            ".env-ல் secrets பாதுகாத்தல்",
+            "funds மற்றும் version படித்தல்",
+            "analyze mode மற்றும் live mode",
+            "முதல் data pull"
+          ],
+          "tags": [
+            "NSE"
+          ]
+        },
+        {
+          "n": 2,
+          "slug": "python-for-traders",
+          "title": "வர்த்தகர்களுக்கான Python அடிப்படைகள்",
+          "summary": "வர்த்தகச் சூழலில் உங்களுக்கு உண்மையில் தேவைப்படும் Python: variables, lists, dicts, loops மற்றும் functions.",
+          "learn": [
+            "எண்கள் மற்றும் P&L கணிதம்",
+            "positions-க்கான lists மற்றும் dicts",
+            "symbols மீது loops",
+            "மீண்டும் பயன்படுத்தக்கூடிய logic-க்கான functions",
+            "signals-க்கான conditionals",
+            "SDK responses கையாளுதல்"
+          ],
+          "tags": [
+            "NSE"
+          ]
+        },
+        {
+          "n": 3,
+          "slug": "symbols-exchanges",
+          "title": "Symbols, Exchanges மற்றும் Lot Sizes",
+          "summary": "NSE equity, NFO F&O மற்றும் MCX commodities முழுவதும் OpenAlgo symbol format-ஐ நன்கு கற்றுக்கொள்ளுங்கள்.",
+          "learn": [
+            "Equity / future / option symbols-????? ????????",
+            "search() மற்றும் symbol()",
+            "Index symbols-?? ????????",
+            "F&O-க்கான expiry()",
+            "instruments() master list-??? ?????????",
+            "sizing-க்கான lot sizes"
+          ],
+          "tags": [
+            "NSE",
+            "NFO",
+            "MCX ?????",
+            "குறியீடு"
+          ]
+        },
+        {
+          "n": 4,
+          "slug": "market-data-quotes",
+          "title": "Quotes, Depth மற்றும் LTP",
+          "summary": "Single quotes, batched multiquotes மற்றும் முழுமையான order-book depth மூலம் live snapshots-ஐப் பெறுங்கள்.",
+          "learn": [
+            "ஒரு symbol-க்கான quotes()",
+            "பல symbols-க்கான multiquotes()",
+            "depth() order book-? ?????????",
+            "Bid/ask spread-??? ?????????????????",
+            "பல exchanges-ல் quotes",
+            "quote board உருவாக்குதல்"
+          ],
+          "tags": [
+            "NSE",
+            "NFO",
+            "MCX ?????"
+          ]
+        },
+        {
+          "n": 5,
+          "slug": "historical-data",
+          "title": "Historical Data மற்றும் Timeframes",
+          "summary": "எந்த interval-லிருந்தும் OHLCV history-ஐப் பெற்று, analysis-க்காக அதை மறுவடிவமைக்குங்கள்.",
+          "learn": [
+            "history() ????? OHLCV ????",
+            "1m முதல் D வரையிலான intervals",
+            "???? ????????? ????????",
+            "பல symbols-ஐ download செய்தல்",
+            "api மற்றும் db source",
+            "Timeframes-ஐ resample செய்தல்"
+          ],
+          "tags": [
+            "NSE",
+            "NFO",
+            "MCX ?????"
+          ]
+        },
+        {
+          "n": 6,
+          "slug": "numpy-for-traders",
+          "title": "வர்த்தகர்களுக்கான NumPy",
+          "summary": "எளிய price data மீது arrays உருவாக்குதல், indexing, vectorised math மற்றும் அன்றாட functions உள்ளிட்ட NumPy அடிப்படைகளைக் கற்றுக்கொள்ளுங்கள்.",
+          "learn": [
+            "Arrays மற்றும் helpers உருவாக்குதல்",
+            "Shape, size மற்றும் dtype",
+            "Indexing மற்றும் slicing",
+            "Vectorised math மற்றும் broadcasting",
+            "Aggregations, masks மற்றும் np.where",
+            "2D arrays மற்றும் axis argument"
+          ],
+          "tags": [
+            "NSE",
+            "குறியீடு"
+          ]
+        },
+        {
+          "n": 7,
+          "slug": "pandas-for-traders",
+          "title": "வர்த்தகர்களுக்கான Pandas",
+          "summary": "Market analysis-ன் முக்கிய கருவியான DataFrames, rolling windows, resampling மற்றும் group-bys-ஐப் பயன்படுத்துங்கள்.",
+          "learn": [
+            "OHLCV மீது Series மற்றும் DataFrame",
+            "தேதி அடிப்படையிலான indexing மற்றும் slicing",
+            "Rolling windows-??? ??????????????",
+            "உயர் TF-க்கு resample செய்தல்",
+            "groupby aggregations ????? ?????????",
+            "Returns மற்றும் drawdown"
+          ],
+          "tags": [
+            "NSE",
+            "MCX ?????"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "B",
+      "name": "Visualisation மற்றும் Apps",
+      "desc": "தரவைக் charts மற்றும் interactive dashboards ஆக மாற்றுங்கள்.",
+      "chapters": [
+        {
+          "n": 8,
+          "slug": "matplotlib-charts",
+          "title": "Matplotlib மூலம் Charting",
+          "summary": "Price lines, return distributions, subplots மற்றும் indicator overlays கொண்ட static charts உருவாக்குங்கள்.",
+          "learn": [
+            "Line மற்றும் step charts",
+            "Subplots-? ????????",
+            "Return histograms-? ??????",
+            "Seaborn statistical charts-??? ??????????????",
+            "Correlation heatmaps-? ????????????",
+            "Figures-ஐ file-ஆக சேமித்தல்"
+          ],
+          "tags": [
+            "NSE",
+            "MCX ?????",
+            "குறியீடு"
+          ]
+        },
+        {
+          "n": 9,
+          "slug": "plotly-charts",
+          "title": "Plotly மூலம் Interactive Charts",
+          "summary": "Volume மற்றும் multi-pane indicators கொண்ட zoom செய்யக்கூடிய candlestick charts உருவாக்குங்கள்.",
+          "learn": [
+            "Candlestick chart-? ?????????",
+            "Volume sub-pane-??? ?????????",
+            "Indicator overlays-? ??????",
+            "RSI/MACD panes-? ????????",
+            "Range slider-??? ??????????????",
+            "HTML-ஆக export செய்தல்"
+          ],
+          "tags": [
+            "NSE",
+            "NFO"
+          ]
+        },
+        {
+          "n": 10,
+          "slug": "streamlit-apps",
+          "title": "Streamlit மூலம் Live Dashboards",
+          "summary": "Quote board, chart viewer மற்றும் mini scanner போன்ற click செய்யக்கூடிய web apps-ஐ உருவாக்குங்கள்.",
+          "learn": [
+            "Streamlit அடிப்படைகள்",
+            "Widgets மற்றும் inputs",
+            "Live quote dashboard-? ????????????",
+            "ஒரு chart-ஐ embed செய்தல்",
+            "எளிய scanner UI",
+            "SDK calls-ஐ caching செய்தல்"
+          ],
+          "tags": [
+            "NSE",
+            "MCX ?????"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "C",
+      "name": "Technical Indicators-?? ???????????",
+      "desc": "openalgo.ta library-யிலுள்ள category அடிப்படையிலான 80-க்கும் மேற்பட்ட indicators.",
+      "chapters": [
+        {
+          "n": 11,
+          "slug": "trend-indicators",
+          "title": "Trend மற்றும் Moving Averages",
+          "summary": "SMA மற்றும் EMA முதல் Supertrend, Ichimoku மற்றும் Parabolic SAR வரை கற்றுக்கொள்ளுங்கள்.",
+          "learn": [
+            "SMA / EMA / WMA ????????",
+            "HMA / ALMA / KAMA / VWMA ????????",
+            "Supertrend ??????????",
+            "Ichimoku Cloud ??????????",
+            "Parabolic SAR ??????????",
+            "Trend filter தேர்வு"
+          ],
+          "tags": [
+            "NSE",
+            "NFO",
+            "MCX ?????"
+          ]
+        },
+        {
+          "n": 12,
+          "slug": "momentum-indicators",
+          "title": "Momentum Indicators-?? ????????",
+          "summary": "RSI, MACD, Stochastic, CCI உள்ளிட்ட கருவிகளால் வேகம் மற்றும் வலிமையை அளவிடுங்கள்.",
+          "learn": [
+            "RSI ??????????",
+            "MACD ??????????",
+            "Stochastic ??????????",
+            "CCI மற்றும் Williams %R",
+            "Fisher Transform ??????????",
+            "Connors RSI ??????????"
+          ],
+          "tags": [
+            "NSE",
+            "NFO"
+          ]
+        },
+        {
+          "n": 13,
+          "slug": "volatility-indicators",
+          "title": "Volatility Indicators-?? ????????",
+          "summary": "Range மற்றும் risk-க்காக ATR, Bollinger Bands, Keltner மற்றும் Donchian channels-ஐப் பயன்படுத்துங்கள்.",
+          "learn": [
+            "ATR மற்றும் NATR",
+            "Bollinger Bands ??????????",
+            "Keltner Channel ??????????",
+            "Donchian Channel ??????????",
+            "Chandelier Exit ??????????",
+            "BB width மற்றும் %B"
+          ],
+          "tags": [
+            "NSE",
+            "MCX ?????"
+          ]
+        },
+        {
+          "n": 14,
+          "slug": "volume-indicators",
+          "title": "Volume Indicators-?? ????????",
+          "summary": "OBV, VWAP, MFI, CMF மற்றும் relative volume மூலம் market participation-ஐப் புரிந்துகொள்ளுங்கள்.",
+          "learn": [
+            "OBV ??????????",
+            "VWAP",
+            "Money Flow Index ??????????",
+            "Chaikin Money Flow ??????????",
+            "Accumulation/Distribution ??????",
+            "Relative volume-??? ?????????????????"
+          ],
+          "tags": [
+            "NSE",
+            "NFO"
+          ]
+        },
+        {
+          "n": 15,
+          "slug": "oscillators",
+          "title": "Oscillators-?? ????????",
+          "summary": "ROC, TRIX, Awesome Oscillator, StochRSI, Vortex உள்ளிட்ட bounded momentum கருவிகளைக் கற்றுக்கொள்ளுங்கள்.",
+          "learn": [
+            "ROC மற்றும் CMO",
+            "TRIX ??????????",
+            "Awesome Oscillator ??????????",
+            "Stochastic RSI ??????????",
+            "Vortex மற்றும் TSI",
+            "Choppiness Index ??????????"
+          ],
+          "tags": [
+            "NSE",
+            "MCX ?????"
+          ]
+        },
+        {
+          "n": 16,
+          "slug": "statistical-hybrid",
+          "title": "Statistical, Hybrid மற்றும் Utility Functions",
+          "summary": "Regression, correlation, ADX, pivots மற்றும் எங்கும் பயன்படுத்தக்கூடிய signal helpers-ஐக் கற்றுக்கொள்ளுங்கள்.",
+          "learn": [
+            "Linear regression மற்றும் slope",
+            "Correlation மற்றும் beta",
+            "ADX / DMI ?????????????",
+            "Pivot points-??? ???????????",
+            "crossover / crossunder signals",
+            "exrem / flip / valuewhen helpers"
+          ],
+          "tags": [
+            "NSE",
+            "NFO"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "D",
+      "name": "Signals மற்றும் Scanning",
+      "desc": "Indicators-ஐத் தெளிவான signals ஆக மாற்றி, முழு market-ஐ screen செய்யுங்கள்.",
+      "chapters": [
+        {
+          "n": 17,
+          "slug": "signals",
+          "title": "Indicators-இலிருந்து Trading Signals வரை",
+          "summary": "Backtest-ல் நம்பிக்கையுடன் பயன்படுத்தக்கூடிய துல்லியமான, duplicate இல்லாத entry மற்றும் exit signals-ஐ உருவாக்குங்கள்.",
+          "learn": [
+            "Boolean conditions-? ????????",
+            "crossover / crossunder signals",
+            "repeats நீக்க exrem",
+            "stateful holds-க்கான flip",
+            "valuewhen lookups-??? ??????????????",
+            "look-ahead தவிர்க்க Shifting"
+          ],
+          "tags": [
+            "NSE"
+          ]
+        },
+        {
+          "n": 18,
+          "slug": "scanning",
+          "title": "Scanning மற்றும் Screeners",
+          "summary": "பல dozens symbols மீது signal-ஐ இயக்கி, முடிவுகளை rank செய்யுங்கள்.",
+          "learn": [
+            "ஒரு universe மீது loop",
+            "RSI / EMA screens ????? ???????",
+            "Breakout scan ?????????",
+            "Relative-volume scan ?????????",
+            "Hits-ஐ rank மற்றும் sort செய்தல்",
+            "பல exchanges-ல் scan செய்தல்"
+          ],
+          "tags": [
+            "NSE",
+            "NFO",
+            "MCX ?????"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "E",
+      "name": "Strategy Playbook-?? ????????",
+      "desc": "ஒவ்வொரு strategy style-ஐயும் fetch செய்து, signal உருவாக்கி, விளக்குங்கள்.",
+      "chapters": [
+        {
+          "n": 19,
+          "slug": "cash-equity-strategies",
+          "title": "Cash மற்றும் Equity Strategies",
+          "summary": "Equities-ல் delivery-style trend following மற்றும் momentum ranking.",
+          "learn": [
+            "Golden-cross trend strategy",
+            "Momentum ranking ?????????",
+            "Donchian breakout strategy",
+            "Position மற்றும் CNC",
+            "Equity curve preview-??? ?????????",
+            "Universe rotation ???????? ??????????????"
+          ],
+          "tags": [
+            "NSE"
+          ]
+        },
+        {
+          "n": 20,
+          "slug": "intraday-strategies",
+          "title": "Intraday Strategies-?? ????????",
+          "summary": "Opening-range breakout, VWAP reversion மற்றும் intraday EMA systems.",
+          "learn": [
+            "Opening Range Breakout strategy",
+            "VWAP mean-reversion strategy",
+            "Intraday EMA cross strategy",
+            "Time-based exits-? ????????",
+            "MIS product-??? ?????????????????",
+            "Index மற்றும் stock futures"
+          ],
+          "tags": [
+            "NSE",
+            "NFO"
+          ]
+        },
+        {
+          "n": 21,
+          "slug": "pair-stat-arb",
+          "title": "Pair Trading மற்றும் Statistical Arbitrage",
+          "summary": "Spread-ஐ trade செய்யுங்கள்: ratio, z-score, correlation மற்றும் beta-neutral pairs.",
+          "learn": [
+            "Price spread உருவாக்குதல்",
+            "Spread-ன் Z-score",
+            "Correlation filter-??? ??????????????",
+            "Beta மற்றும் hedge ratio",
+            "Entry/exit bands-? ????????",
+            "Stat-arb mechanics-??? ?????????????????"
+          ],
+          "tags": [
+            "NSE"
+          ]
+        },
+        {
+          "n": 22,
+          "slug": "momentum-volatility",
+          "title": "Momentum மற்றும் Volatility Trading",
+          "summary": "ATR / Bollinger அடிப்படையிலான volatility-driven entries மற்றும் sizing-உடன் cross-sectional momentum.",
+          "learn": [
+            "Cross-sectional momentum ???????? ??????????????",
+            "ATR breakout strategy",
+            "Bollinger squeeze ???????? ??????????????",
+            "Volatility targeting ????? risk ????????",
+            "Regime filter-??? ??????????????",
+            "Vol-scaled position size-??? ???????????"
+          ],
+          "tags": [
+            "NSE",
+            "MCX ?????"
+          ]
+        },
+        {
+          "n": 23,
+          "slug": "seasonal-strategies",
+          "title": "Seasonal மற்றும் Calendar Strategies",
+          "summary": "History-யிலிருந்து day-of-week, month மற்றும் expiry-week effects-ஐ நேரடியாக அளவிடுங்கள்.",
+          "learn": [
+            "Day-of-week returns-? ?????????",
+            "Monthly seasonality-? ????? ???????",
+            "Turn-of-month effect-??? ?????????????????",
+            "Expiry-week behaviour-??? ?????????",
+            "Pandas-ல் calendar masks",
+            "Seasonal rule-ஐ backtest செய்தல்"
+          ],
+          "tags": [
+            "NSE",
+            "NFO"
+          ]
+        },
+        {
+          "n": 24,
+          "slug": "options-strategies",
+          "title": "Options Strategies-?? ????????",
+          "summary": "Option chain முதல் buying, spreads, straddles மற்றும் hedging வரை அனைத்தையும் symbol மூலம் கற்றுக்கொள்ளுங்கள்.",
+          "learn": [
+            "Option chain மற்றும் ATM",
+            "optionsymbol() மற்றும் greeks",
+            "Calls / puts வாங்குதல்",
+            "Vertical மற்றும் straddle legs",
+            "Position-ஐ hedge செய்தல்",
+            "Multi-leg orders-? ????????????"
+          ],
+          "tags": [
+            "NFO",
+            "குறியீடு"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "F",
+      "name": "Execution-?? ???????????",
+      "desc": "SDK மூலம் real orders-ஐ (analyze mode-ல்) place செய்து நிர்வகியுங்கள்.",
+      "chapters": [
+        {
+          "n": 25,
+          "slug": "placing-orders",
+          "title": "Orders Place செய்தல் மற்றும் நிர்வகித்தல்",
+          "summary": "Market, limit, SL, smart, basket, split உள்ளிட்ட ஒவ்வொரு order type-ஐயும், modify மற்றும் cancel-ஐயும் கற்றுக்கொள்ளுங்கள்.",
+          "learn": [
+            "placeorder() types-??? ?????????????????",
+            "placesmartorder() ????? smart orders",
+            "basket மற்றும் split orders",
+            "modify / cancel ????????",
+            "Order மற்றும் position books",
+            "அனைத்து positions-ஐ close செய்தல்"
+          ],
+          "tags": [
+            "NSE",
+            "NFO",
+            "MCX ?????"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "G",
+      "name": "Backtesting மற்றும் Optimisation",
+      "desc": "Capital-ஐ risk செய்வதற்கு முன் VectorBT மூலம் edge-ஐ நிரூபியுங்கள்.",
+      "chapters": [
+        {
+          "n": 26,
+          "slug": "backtesting-basics",
+          "title": "Scratch-இலிருந்து மற்றும் VectorBT மூலம் Backtesting",
+          "summary": "Vectorised backtest-ஐ கையால் உருவாக்கி, பின்னர் அதை VectorBT மற்றும் realistic costs மூலம் மீண்டும் உருவாக்குங்கள்.",
+          "learn": [
+            "Signals-இலிருந்து positions",
+            "Returns மற்றும் equity curve",
+            "Costs மற்றும் slippage",
+            "VectorBT from_signals ???????? ??????????????",
+            "pf.stats() படித்தல்",
+            "Long-only மற்றும் both"
+          ],
+          "tags": [
+            "NSE",
+            "MCX ?????"
+          ]
+        },
+        {
+          "n": 27,
+          "slug": "performance-metrics",
+          "title": "Performance Metrics மற்றும் Reporting",
+          "summary": "Sharpe, Sortino, CAGR, drawdown மற்றும் win-rate ஆகியவற்றுடன் முழுமையான QuantStats report.",
+          "learn": [
+            "CAGR மற்றும் total return",
+            "Sharpe மற்றும் Sortino",
+            "Max drawdown-? ?????????",
+            "Win rate மற்றும் profit factor",
+            "Benchmark மற்றும் index",
+            "QuantStats tearsheet-? ????????????"
+          ],
+          "tags": [
+            "NSE"
+          ]
+        },
+        {
+          "n": 28,
+          "slug": "optimization",
+          "title": "Parameter Optimisation-?? ???????????",
+          "summary": "Parameter grids-ஐ sweep செய்து, heatmaps வரைந்து, சிறந்ததை மட்டும் அல்ல robust settings-ஐத் தேர்ந்தெடுங்கள்.",
+          "learn": [
+            "Param grid வரையறுத்தல்",
+            "VectorBT broadcasting ???????? ??????????????",
+            "Returns heatmap-??? ?????????",
+            "Sharpe heatmap-??? ?????????",
+            "Robust மற்றும் peak",
+            "Cost-aware optimisation ???????"
+          ],
+          "tags": [
+            "NSE",
+            "MCX ?????"
+          ]
+        },
+        {
+          "n": 29,
+          "slug": "walk-forward",
+          "title": "Walk-Forward Testing மற்றும் Robustness",
+          "summary": "In-sample மற்றும் out-of-sample பகுதிகளாகப் பிரித்து, window-ஐ முன்னோக்கி நகர்த்தி, உங்களை நீங்களே ஏமாற்றிக் கொள்ளாமல் இருங்கள்.",
+          "learn": [
+            "Train/test split-? ????????",
+            "In-sample மற்றும் out-of-sample",
+            "Rolling walk-forward ?????",
+            "Parameter stability-??? ????????????",
+            "Overfitting red flags-??? ?????????",
+            "Deflated expectations-??? ??????????"
+          ],
+          "tags": [
+            "NSE"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "H",
+      "name": "Machine Learning-?? ????????",
+      "desc": "Market-ஐப் படிக்க ஒரு model-ஐப் பயிற்றுவித்து, முழுமையான bot-ஐ deploy செய்யுங்கள்.",
+      "chapters": [
+        {
+          "n": 30,
+          "slug": "ml-neural-capstone",
+          "title": "Machine Learning, Neural Nets மற்றும் முழுமையான Bot",
+          "summary": "Features-ஐ engineer செய்து, classifier மற்றும் neural network-ஐ train செய்து, அதை live OpenAlgo loop-உடன் இணைக்குங்கள்.",
+          "learn": [
+            "Indicators-இலிருந்து features",
+            "ML-க்கான train/test",
+            "Logistic மற்றும் random forest",
+            "ஒரு neural network (MLP)",
+            "Walk-forward ML check ???????",
+            "End-to-end trading bot-? ????????????"
+          ],
+          "tags": [
+            "NSE",
+            "NFO"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "I",
+      "name": "Live-க்கு செல்லுதல்",
+      "desc": "WebSockets மூலம் live ticks-ஐ stream செய்து, real positions-ஐ real time-ல் நிர்வகியுங்கள்.",
+      "chapters": [
+        {
+          "n": 31,
+          "slug": "websockets",
+          "title": "WebSockets மூலம் Real-Time Data",
+          "summary": "WebSocket மூலம் live ticks-ஐ stream செய்து, ஒவ்வொரு price வரும்போதும் stop-loss, target மற்றும் trailing stop-ஐக் கணக்கிட்டு position-ஐ real time-ல் நிர்வகியுங்கள்.",
+          "learn": [
+            "Polling (REST) மற்றும் streaming (WebSocket)",
+            "API-ஐ அல்லது feed-ஐ எப்போது பயன்படுத்துவது",
+            "connect() மற்றும் subscribe_ltp/quote/depth",
+            "Live stop-loss மற்றும் target கணக்கிடுதல்",
+            "ஒவ்வொரு tick-லும் trailing stop-loss",
+            "முழுமையான live trade manager"
+          ],
+          "tags": [
+            "NSE",
+            "NFO",
+            "MCX ?????"
+          ]
+        },
+        {
+          "n": 32,
+          "slug": "risk-position-sizing",
+          "title": "Risk மற்றும் Position Sizing",
+          "summary": "Fixed-fractional risk, stop distance, ATR மற்றும் portfolio heat மூலம் signal-ஐ சரியான quantity-ஆக மாற்றி, lot-aware sizer-ஐ மீண்டும் பயன்படுத்துங்கள்.",
+          "learn": [
+            "Entries-ஐ விட sizing ஏன் முக்கியம்",
+            "Fixed-fractional: ஒரு trade-க்கு 1% risk",
+            "Stop distance-இலிருந்து quantity",
+            "ATR-based stops மற்றும் volatility sizing",
+            "Portfolio heat மற்றும் exposure caps",
+            "மீண்டும் பயன்படுத்தக்கூடிய position_size() helper"
+          ],
+          "tags": [
+            "NSE",
+            "NFO",
+            "MCX ?????"
+          ]
+        }
+      ]
+    }
+  ]
+}
