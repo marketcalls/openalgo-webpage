@@ -81,6 +81,55 @@ const failures = []
 let expectedTranslationChapters = 0
 let completeTranslationChapters = 0
 
+const EXACT_ENGLISH_ALLOWLIST = new Set([
+  'AFL',
+  'AmiBroker',
+  'API',
+  'ARIMA',
+  'BSE',
+  'CAPM',
+  'CDSL',
+  'CSV',
+  'CVaR',
+  'EWMA',
+  'F&O',
+  'FPO',
+  'GARCH',
+  'GST',
+  'India VIX',
+  'InvIT',
+  'IPO',
+  'JSON',
+  'Jupyter',
+  'LTCG',
+  'Matplotlib',
+  'NFO',
+  'Nifty',
+  'NSE',
+  'NSDL',
+  'NumPy',
+  'OFS',
+  'OHLCV',
+  'OpenAlgo',
+  'Pandas',
+  'Python',
+  'RBI',
+  'REIT',
+  'REST',
+  'SciPy',
+  'SEBI',
+  'Sensex',
+  'SQL',
+  'STCG',
+  'STT',
+  'UPI',
+  'VaR',
+  'VWAP',
+  'WebSocket',
+  'pandas',
+  'scikit-learn',
+])
+
 function relative(filePath) {
   return path.relative(ROOT, filePath).split(path.sep).join('/')
 }
@@ -100,6 +149,347 @@ function readText(filePath, label) {
 
 function formatNumbers(numbers) {
   return numbers.length ? numbers.join(', ') : 'none'
+}
+
+function isObject(value) {
+  return value !== null && !Array.isArray(value) && typeof value === 'object'
+}
+
+function normalizeVisible(value) {
+  return value.trim().replace(/\s+/g, ' ')
+}
+
+function nonEmptyString(value) {
+  return typeof value === 'string' && value.trim().length > 0
+}
+
+function matchingDelimiter(source, start) {
+  const pairs = { '[': ']', '{': '}', '(': ')' }
+  const open = source[start]
+  const close = pairs[open]
+  if (!close) return -1
+
+  let depth = 0
+  let quote = null
+  let escaped = false
+  let lineComment = false
+  let blockComment = false
+
+  for (let index = start; index < source.length; index += 1) {
+    const char = source[index]
+    const next = source[index + 1]
+
+    if (lineComment) {
+      if (char === '\n') lineComment = false
+      continue
+    }
+    if (blockComment) {
+      if (char === '*' && next === '/') {
+        blockComment = false
+        index += 1
+      }
+      continue
+    }
+    if (quote) {
+      if (escaped) escaped = false
+      else if (char === '\\') escaped = true
+      else if (char === quote) quote = null
+      continue
+    }
+    if (char === '/' && next === '/') {
+      lineComment = true
+      index += 1
+      continue
+    }
+    if (char === '/' && next === '*') {
+      blockComment = true
+      index += 1
+      continue
+    }
+    if (char === '"' || char === "'" || char === '`') {
+      quote = char
+      continue
+    }
+    if (char === open) depth += 1
+    else if (char === close) {
+      depth -= 1
+      if (depth === 0) return index
+    }
+  }
+
+  return -1
+}
+
+function propertyArray(source, property) {
+  const match = new RegExp(`\\b${property}\\s*:`).exec(source)
+  if (!match) return null
+  const start = source.indexOf('[', match.index + match[0].length)
+  if (start < 0) return null
+  const end = matchingDelimiter(source, start)
+  return end < 0 ? null : source.slice(start, end + 1)
+}
+
+function objectElements(arraySource) {
+  if (!arraySource) return []
+  const elements = []
+  let index = 1
+  while (index < arraySource.length - 1) {
+    if (arraySource[index] === '{') {
+      const end = matchingDelimiter(arraySource, index)
+      if (end < 0) return elements
+      elements.push(arraySource.slice(index, end + 1))
+      index = end + 1
+    } else index += 1
+  }
+  return elements
+}
+
+function decodeJsString(raw) {
+  return raw.replace(/\\(['"\\bfnrtv])/g, (_, escaped) => {
+    const values = { b: '\b', f: '\f', n: '\n', r: '\r', t: '\t', v: '\v' }
+    return values[escaped] ?? escaped
+  })
+}
+
+function propertyString(source, property) {
+  const match = new RegExp(`\\b${property}\\s*:\\s*(["'])((?:\\\\.|(?!\\1)[\\s\\S])*?)\\1`).exec(
+    source,
+  )
+  return match ? decodeJsString(match[2]) : null
+}
+
+function propertyNumber(source, property) {
+  const match = new RegExp(`\\b${property}\\s*:\\s*(\\d+)\\b`).exec(source)
+  return match ? Number(match[1]) : null
+}
+
+function stringElements(arraySource) {
+  if (!arraySource) return null
+  const values = []
+  const pattern = /(["'])((?:\\.|(?!\1)[\s\S])*?)\1/g
+  let match
+  while ((match = pattern.exec(arraySource)) !== null) values.push(decodeJsString(match[2]))
+  return values
+}
+
+function parseCurriculum(course, source) {
+  const marker = /export\s+const\s+PARTS\s*=/.exec(source)
+  const arrayStart = marker ? source.indexOf('[', marker.index + marker[0].length) : -1
+  const arrayEnd = arrayStart >= 0 ? matchingDelimiter(source, arrayStart) : -1
+  if (arrayStart < 0 || arrayEnd < 0) {
+    fail(`[${course.course}] cannot statically parse exported PARTS curriculum`)
+    return null
+  }
+
+  const parts = []
+  let nextChapter = 1
+  for (const partSource of objectElements(source.slice(arrayStart, arrayEnd + 1))) {
+    const part = {
+      id: propertyString(partSource, 'id'),
+      name: propertyString(partSource, 'name'),
+      desc: propertyString(partSource, 'desc'),
+      chapters: [],
+    }
+    for (const chapterSource of objectElements(propertyArray(partSource, 'chapters'))) {
+      const explicitNumber = propertyNumber(chapterSource, 'n')
+      const chapter = {
+        n: explicitNumber ?? nextChapter,
+        slug: propertyString(chapterSource, 'slug'),
+        title: propertyString(chapterSource, 'title'),
+        summary: propertyString(chapterSource, 'summary'),
+        learn: stringElements(propertyArray(chapterSource, 'learn')),
+        tags: stringElements(propertyArray(chapterSource, 'tags')),
+        partId: part.id,
+      }
+      part.chapters.push(chapter)
+      nextChapter = chapter.n + 1
+    }
+    parts.push(part)
+  }
+
+  if (!parts.length || parts.some((part) => !part.id || !part.chapters.length)) {
+    fail(`[${course.course}] statically parsed curriculum is missing parts or chapters`)
+    return null
+  }
+  return parts
+}
+
+function checkExactEnglish(course, locale, field, translated, english) {
+  if (!nonEmptyString(translated) || !nonEmptyString(english)) return
+  const value = normalizeVisible(translated)
+  if (value === normalizeVisible(english) && !EXACT_ENGLISH_ALLOWLIST.has(value)) {
+    fail(`[${course}/${locale}] ${field} is unchanged English: ${JSON.stringify(value)}`)
+  }
+}
+
+function checkLocalizedStringArray(course, locale, field, translated, english) {
+  if (!Array.isArray(translated)) {
+    fail(`[${course}/${locale}] ${field} must be an array`)
+    return
+  }
+  if (!Array.isArray(english)) {
+    fail(`[${course}] cannot statically determine English ${field} cardinality`)
+    return
+  }
+  if (translated.length !== english.length) {
+    fail(
+      `[${course}/${locale}] ${field} has ${translated.length} entries; expected ${english.length}`,
+    )
+  }
+  translated.forEach((value, index) => {
+    if (!nonEmptyString(value)) {
+      fail(`[${course}/${locale}] ${field}[${index}] must be a non-empty string`)
+      return
+    }
+    if (index < english.length) {
+      checkExactEnglish(course, locale, `${field}[${index}]`, value, english[index])
+    }
+  })
+}
+
+function readJson(filePath, label) {
+  const source = readText(filePath, label)
+  if (source === null) return null
+  try {
+    return JSON.parse(source)
+  } catch (error) {
+    fail(`${label}: invalid JSON in ${relative(filePath)} (${error.message})`)
+    return null
+  }
+}
+
+function checkLocalizedCourseMetadata(course, locale, englishParts) {
+  const filePath = path.join(
+    ROOT,
+    'public',
+    'i18n',
+    'courses',
+    course.course,
+    `${locale}.json`,
+  )
+  const label = `[${course.course}/${locale}] course metadata`
+  const data = readJson(filePath, label)
+  if (!isObject(data)) {
+    if (data !== null) fail(`${label}: root must be an object`)
+    return
+  }
+  if (data.course !== course.course) {
+    fail(`${label}: course must equal ${JSON.stringify(course.course)}`)
+  }
+  if (data.locale !== locale) fail(`${label}: locale must equal ${JSON.stringify(locale)}`)
+  if (!Array.isArray(data.parts)) {
+    fail(`${label}: parts must be an array`)
+    return
+  }
+
+  const englishPartMap = new Map(englishParts.map((part) => [part.id, part]))
+  const localizedPartIds = data.parts.map((part) => (isObject(part) ? part.id : null))
+  const duplicatePartIds = localizedPartIds.filter(
+    (id, index) => id !== null && localizedPartIds.indexOf(id) !== index,
+  )
+  const missingPartIds = englishParts
+    .map((part) => part.id)
+    .filter((id) => !localizedPartIds.includes(id))
+  const unexpectedPartIds = localizedPartIds.filter((id) => id !== null && !englishPartMap.has(id))
+  if (duplicatePartIds.length || missingPartIds.length || unexpectedPartIds.length) {
+    fail(
+      `${label}: duplicate part ids: ${[...new Set(duplicatePartIds)].join(', ') || 'none'}; ` +
+        `missing: ${missingPartIds.join(', ') || 'none'}; ` +
+        `unexpected: ${[...new Set(unexpectedPartIds)].join(', ') || 'none'}`,
+    )
+  }
+
+  const englishChapters = englishParts.flatMap((part) => part.chapters)
+  const expectedChapterMap = new Map(englishChapters.map((chapter) => [chapter.n, chapter]))
+  const seenChapterNumbers = []
+
+  data.parts.forEach((part, partIndex) => {
+    if (!isObject(part)) {
+      fail(`${label}: parts[${partIndex}] must be an object`)
+      return
+    }
+    const englishPart = englishPartMap.get(part.id)
+    if (!englishPart) return
+
+    for (const field of ['name', 'desc']) {
+      if (!nonEmptyString(part[field])) {
+        fail(`${label}: part ${part.id} ${field} must be a non-empty string`)
+      } else {
+        checkExactEnglish(course.course, locale, `part ${part.id} ${field}`, part[field], englishPart[field])
+      }
+    }
+    if (!Array.isArray(part.chapters)) {
+      fail(`${label}: part ${part.id} chapters must be an array`)
+      return
+    }
+
+    part.chapters.forEach((chapter, chapterIndex) => {
+      if (!isObject(chapter)) {
+        fail(`${label}: part ${part.id} chapters[${chapterIndex}] must be an object`)
+        return
+      }
+      if (!Number.isInteger(chapter.n) || chapter.n < 1) {
+        fail(`${label}: part ${part.id} chapters[${chapterIndex}].n must be a positive integer`)
+        return
+      }
+      seenChapterNumbers.push(chapter.n)
+      const englishChapter = expectedChapterMap.get(chapter.n)
+      if (!englishChapter) return
+      if (!nonEmptyString(chapter.slug)) {
+        fail(`${label}: chapter ${chapter.n} slug must be a non-empty string`)
+      } else if (chapter.slug !== englishChapter.slug) {
+        fail(
+          `${label}: chapter ${chapter.n} slug must equal ` +
+            `${JSON.stringify(englishChapter.slug)}; received ${JSON.stringify(chapter.slug)}`,
+        )
+      }
+      if (englishChapter.partId !== part.id) {
+        fail(
+          `${label}: chapter ${chapter.n} belongs to part ${englishChapter.partId}, not part ${part.id}`,
+        )
+      }
+      for (const field of ['title', 'summary']) {
+        if (!nonEmptyString(chapter[field])) {
+          fail(`${label}: chapter ${chapter.n} ${field} must be a non-empty string`)
+        } else {
+          checkExactEnglish(
+            course.course,
+            locale,
+            `chapter ${chapter.n} ${field}`,
+            chapter[field],
+            englishChapter[field],
+          )
+        }
+      }
+      checkLocalizedStringArray(
+        course.course,
+        locale,
+        `chapter ${chapter.n} learn`,
+        chapter.learn,
+        englishChapter.learn,
+      )
+      checkLocalizedStringArray(
+        course.course,
+        locale,
+        `chapter ${chapter.n} tags`,
+        chapter.tags,
+        englishChapter.tags,
+      )
+    })
+  })
+
+  const duplicates = seenChapterNumbers.filter(
+    (chapter, index) => seenChapterNumbers.indexOf(chapter) !== index,
+  )
+  const seenSet = new Set(seenChapterNumbers)
+  const missing = englishChapters.map((chapter) => chapter.n).filter((chapter) => !seenSet.has(chapter))
+  const unexpected = [...seenSet].filter((chapter) => !expectedChapterMap.has(chapter))
+  if (duplicates.length || missing.length || unexpected.length) {
+    fail(
+      `${label}: duplicate chapters: ${formatNumbers([...new Set(duplicates)])}; ` +
+        `missing: ${formatNumbers(missing)}; unexpected: ${formatNumbers(unexpected)}`,
+    )
+  }
 }
 
 function englishChapterNumbers(course) {
@@ -283,11 +673,7 @@ function curriculumSlugs(source) {
   return slugs
 }
 
-function checkCurriculumRoutes(course, expectedChapterCount) {
-  const curriculumPath = path.join(ROOT, 'lib', course.curriculum)
-  const source = readText(curriculumPath, `[${course.course}] curriculum`)
-  if (source === null) return
-
+function checkCurriculumRoutes(course, expectedChapterCount, source) {
   const slugs = curriculumSlugs(source)
   if (slugs.length !== expectedChapterCount) {
     fail(
@@ -316,9 +702,13 @@ checkDictionaries()
 
 for (const course of COURSES) {
   const chapters = englishChapterNumbers(course)
-  checkCurriculumRoutes(course, chapters.length)
+  const curriculumPath = path.join(ROOT, 'lib', course.curriculum)
+  const curriculumSource = readText(curriculumPath, `[${course.course}] curriculum`)
+  const englishParts = curriculumSource === null ? null : parseCurriculum(course, curriculumSource)
+  if (curriculumSource !== null) checkCurriculumRoutes(course, chapters.length, curriculumSource)
   for (const locale of LOCALES.slice(1)) {
     checkTranslation(course, locale, chapters)
+    if (englishParts) checkLocalizedCourseMetadata(course, locale, englishParts)
   }
 }
 
