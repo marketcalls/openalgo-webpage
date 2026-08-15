@@ -1,0 +1,1433 @@
+{
+  "course": "quant",
+  "locale": "ml",
+  "seriesTitle": "ക്വാണ്ടിറ്റേറ്റീവ് ട്രേഡിങ്",
+  "seriesSub": "ട്രേഡറിൽ നിന്ന് പ്രവർത്തനക്ഷമമായ ക്വാണ്ടിലേക്കുള്ള ഇന്ത്യാകേന്ദ്രിത സമ്പൂർണ പഠനപാത: വിപണിയുടെ അടിസ്ഥാന പ്രവർത്തനം, ഗണിതം, മൈക്രോസ്ട്രക്ചർ, വേഗസാങ്കേതികവിദ്യ, ഡെറിവേറ്റീവുകൾ, ആൽഫ ഗവേഷണം, സത്യസന്ധമായ ബാക്ക്‌ടെസ്റ്റിങ്, പ്രൊഡക്ഷൻ എന്നിവയെല്ലാം OpenAlgo SDK വഴിയുള്ള യഥാർഥ ഇന്ത്യൻ വിപണി ഡാറ്റയിൽ അധിഷ്ഠിതമായി പഠിക്കുന്നു.",
+  "parts": [
+    {
+      "id": "A",
+      "name": "ക്വാണ്ട് കരിയർ ഭൂപടവും ഇന്ത്യൻ വിപണി ഘടനയും",
+      "desc": "ഒരു ക്വാണ്ട് യഥാർഥത്തിൽ ചെയ്യുന്നതെന്ത്, സ്ഥാപനങ്ങളും ചുമതലകളും, ഇന്ത്യൻ വിപണി കൃത്യമായി എങ്ങനെ പ്രവർത്തിക്കുന്നു എന്നിവ.",
+      "chapters": [
+        {
+          "n": 1,
+          "slug": "what-is-a-quant",
+          "title": "ഒരു ക്വാണ്ട് യഥാർഥത്തിൽ ചെയ്യുന്നത്",
+          "summary": "ഒരു വിപണി ചോദ്യത്തെ പരിശോധിച്ചതും ഉചിതമായ വലുപ്പം നിശ്ചയിച്ചതും നിരീക്ഷിക്കാവുന്നതുമായ തീരുമാനമാക്കി ക്വാണ്ട് മാറ്റുന്ന യഥാർഥ ജോലി, അത് വിവേചനാധിഷ്ഠിത ട്രേഡിങ്ങിൽനിന്ന് വ്യത്യസ്തമാകുന്ന വിധം.",
+          "learn": [
+            "ക്വാണ്ട് ചിന്തയും വിവേചനാധിഷ്ഠിത ചിന്തയും",
+            "ഗവേഷണം മുതൽ റിസ്ക് വരെയുള്ള ചക്രം",
+            "സിഗ്നലും നോയിസും",
+            "ക്വാണ്ടിന് വേണ്ട നൈപുണ്യസഞ്ചയം",
+            "ഒരു പ്രവൃത്തിദിനം യഥാർഥത്തിൽ എങ്ങനെയിരിക്കും",
+            "മിഥ്യാധാരണകളും യാഥാർഥ്യവും"
+          ],
+          "tags": [
+            "NSE",
+            "സൂചിക (INDEX)"
+          ]
+        },
+        {
+          "n": 2,
+          "slug": "quant-roles",
+          "title": "ക്വാണ്ട് ഗവേഷകൻ, ക്വാണ്ട് ട്രേഡർ, ക്വാണ്ട് ഡെവലപ്പർ",
+          "summary": "ക്വാണ്ടിലെ മൂന്ന് മുഖ്യ ചുമതലകൾ, ഓരോന്നിനും വേണ്ട കഴിവുകൾ, യഥാർഥ ഡെസ്കിൽ ഗവേഷണം, ട്രേഡിങ്, എൻജിനീയറിങ് ടീമുകൾ പരസ്പരം ജോലി കൈമാറുന്ന വിധം.",
+          "learn": [
+            "ഗവേഷകൻ, ട്രേഡർ, ഡെവലപ്പർ",
+            "ഓരോ ചുമതലയിലേക്കുമുള്ള നൈപുണ്യപടികൾ",
+            "ചുമതലകൾ സഹകരിക്കുന്ന വിധം",
+            "എക്സിക്യൂഷൻ ക്വാണ്ടും ആൽഫ ക്വാണ്ടും",
+            "നിങ്ങൾക്ക് യോജിക്കുന്ന സ്ഥാനം",
+            "ഒരു ചുമതലയിലേക്കുള്ള വളർച്ച"
+          ],
+          "tags": [
+            "NSE"
+          ]
+        },
+        {
+          "n": 3,
+          "slug": "quant-firms",
+          "title": "Buy-side, Sell-side, Prop, HFT സ്ഥാപനങ്ങൾ",
+          "summary": "ക്വാണ്ട് പ്രവർത്തിക്കുന്ന സ്ഥാപനലോകം: ബാങ്കുകൾ, ബ്രോക്കർമാർ, മ്യൂച്വൽ ഫണ്ടുകൾ, ഹെഡ്ജ് ഫണ്ടുകൾ, prop സ്ഥാപനങ്ങൾ, HFT സ്ഥാപനങ്ങൾ; അവയുടെ പ്രേരണകൾ ജോലിയെ രൂപപ്പെടുത്തുന്ന വിധം.",
+          "learn": [
+            "Buy-side-ഉം sell-side-ഉം",
+            "Prop ട്രേഡിങ് സ്ഥാപനങ്ങൾ",
+            "HFT, മാർക്കറ്റ് മേക്കിങ് സ്ഥാപനങ്ങൾ",
+            "ഇന്ത്യയിലെ AMCs, PMS, AIFs",
+            "പ്രേരണകൾ സ്ട്രാറ്റജിയെ രൂപപ്പെടുത്തുന്ന വിധം",
+            "ഇന്ത്യയിൽ ക്വാണ്ടുകളെ നിയമിക്കുന്നവർ"
+          ],
+          "tags": [
+            "NSE"
+          ]
+        },
+        {
+          "n": 4,
+          "slug": "indian-market-map",
+          "title": "ഇന്ത്യൻ വിപണികളുടെ ഭൂപടം",
+          "summary": "NSE, BSE, ക്യാഷ്, F&O, കറൻസി, ഡെറ്റ് വിഭാഗങ്ങൾ, പ്രധാന സൂചികകൾ, ഒരു ക്വാണ്ട് യഥാർഥത്തിൽ ട്രേഡ് ചെയ്യുന്ന വിഭാഗങ്ങൾ എന്നിവയുടെ ഭൂപടം.",
+          "learn": [
+            "NSE-ഉം BSE-ഉം",
+            "ക്യാഷ്, F&O, കറൻസി, ഡെറ്റ് വിഭാഗങ്ങൾ",
+            "Nifty, Bank Nifty, FinNifty, Sensex സൂചികകൾ",
+            "ലോട്ട് വലുപ്പങ്ങളും കരാർ തരങ്ങളും",
+            "സൂചികയും ഒറ്റ ഓഹരിയും",
+            "ഓരോ എഡ്ജിനും യോജിക്കുന്ന വിഭാഗം"
+          ],
+          "tags": [
+            "NSE",
+            "സൂചിക (INDEX)"
+          ]
+        },
+        {
+          "n": 5,
+          "slug": "market-participants",
+          "title": "വിപണി പങ്കാളികളും വില നീക്കുന്നവരും",
+          "summary": "റീട്ടെയിൽ, HNI, FPI, DII, proprietary ഡെസ്കുകൾ, മാർക്കറ്റ് മേക്കർമാർ എന്നിവരിൽ ആരാണ് ലിക്വിഡിറ്റി നൽകുന്നതും ആവശ്യപ്പെടുന്നതും, ഡാറ്റയിൽ അവരുടെ അടയാളങ്ങൾ വായിക്കുന്ന വിധവും.",
+          "learn": [
+            "റീട്ടെയിൽ, HNI ഫ്ലോ",
+            "FPI, DII പെരുമാറ്റം",
+            "Proprietary ഡെസ്കുകൾ",
+            "മാർക്കറ്റ് മേക്കർമാരും ലിക്വിഡിറ്റി ദാതാക്കളും",
+            "വിവരമുള്ളതും വിവരമില്ലാത്തതുമായ ഫ്ലോ",
+            "പങ്കാളിത്ത ഡാറ്റ വായിക്കൽ"
+          ],
+          "tags": [
+            "NSE",
+            "NFO"
+          ]
+        },
+        {
+          "n": 6,
+          "slug": "market-plumbing",
+          "title": "SEBI, എക്സ്ചേഞ്ചുകൾ, ക്ലിയറിങ് കോർപ്പറേഷനുകൾ, ഡിപ്പോസിറ്ററികൾ",
+          "summary": "റെഗുലേറ്റർ, എക്സ്ചേഞ്ചുകൾ, default waterfall ഉള്ള ക്ലിയറിങ് കോർപ്പറേഷനുകൾ, ഡിപ്പോസിറ്ററികൾ, പരസ്പരപ്രവർത്തനക്ഷമത എന്നിവ അടങ്ങുന്ന സ്ഥാപനതല സംവിധാനം.",
+          "learn": [
+            "SEBI-യുടെ അധികാരപരിധി",
+            "എക്സ്ചേഞ്ചുകളും ക്ലിയറിങ് കോർപ്പറേഷനുകളും",
+            "CCP-യും default waterfall-ഉം",
+            "NSDL, CDSL ഡിപ്പോസിറ്ററികൾ",
+            "ക്ലിയറിങ് പരസ്പരപ്രവർത്തനക്ഷമത",
+            "ഈ സംവിധാനം ക്വാണ്ടിന് പ്രധാനമാകുന്നത് എന്തുകൊണ്ട്"
+          ],
+          "tags": [
+            "NSE"
+          ]
+        },
+        {
+          "n": 7,
+          "slug": "clearing-and-settlement",
+          "title": "ക്ലിയറിങ്, സെറ്റിൽമെന്റ്, T+1, ഐച്ഛിക T+0",
+          "summary": "മാച്ചിങ്ങിനു ശേഷമുള്ള ഒരു ട്രേഡിന്റെ ജീവിതം: novation, netting, ദിവസമൊട്ടാകെയുള്ള മാർജിനുകൾ, T+1 ചക്രം, ഇന്ത്യയിലെ ഐച്ഛിക T+0 സെറ്റിൽമെന്റ് എന്നിവ.",
+          "learn": [
+            "മാച്ചിങ്ങിനു ശേഷമുള്ള ട്രേഡ് ജീവിതചക്രം",
+            "Novation-ഉം netting-ഉം",
+            "സെറ്റിൽമെന്റ് ബാധ്യതകൾ",
+            "T+1 ചക്രം",
+            "ഐച്ഛിക T+0 സെറ്റിൽമെന്റ്",
+            "സെറ്റിൽമെന്റ് റിസ്കും ക്വാണ്ടും"
+          ],
+          "tags": [
+            "NSE"
+          ]
+        },
+        {
+          "n": 8,
+          "slug": "cost-of-trading",
+          "title": "ഒരു ട്രേഡിന്റെ യഥാർഥ ചെലവ്",
+          "summary": "STT, സ്റ്റാമ്പ് ഡ്യൂട്ടി, എക്സ്ചേഞ്ച്, SEBI ചാർജുകൾ, GST, ബ്രോക്കറേജ് എന്നിവയ്ക്കൊപ്പം spread, slippage, impact എന്നിവ ചേർന്ന, മിക്ക എഡ്ജുകളും ഇല്ലാതാക്കുന്ന സമഗ്ര ചെലവ് മോഡൽ.",
+          "learn": [
+            "വിഭാഗം അനുസരിച്ചുള്ള STT",
+            "സ്റ്റാമ്പ് ഡ്യൂട്ടിയും എക്സ്ചേഞ്ച് ചാർജുകളും",
+            "SEBI ഫീസും GST-യും",
+            "ബ്രോക്കറേജും DP ചാർജുകളും",
+            "സ്പ്രെഡ്, സ്ലിപ്പേജ്, വിലയിലെ സ്വാധീനം",
+            "സമഗ്ര ചെലവ് ഫങ്ഷൻ"
+          ],
+          "tags": [
+            "NSE",
+            "NFO"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "B",
+      "name": "ക്വാണ്ട് ഗണിതം, സ്ഥിതിവിവരശാസ്ത്രം, ഗവേഷണ അടിത്തറകൾ",
+      "desc": "ട്രേഡിങ്ങിനുള്ള സാധ്യതാശാസ്ത്രം, സ്ഥിതിവിവരശാസ്ത്രം, രേഖീയ ബീജഗണിതം എന്നിവ ലളിതമായ ഭാഷയിലും ചാർട്ടുകളുടെയും യഥാർഥ റിട്ടേണുകളുടെയും സഹായത്തോടെയും.",
+      "chapters": [
+        {
+          "n": 9,
+          "slug": "returns-and-distributions",
+          "title": "റിട്ടേണുകൾ, ലോഗ് റിട്ടേണുകൾ, അനുഭവസിദ്ധ വസ്തുതകൾ",
+          "summary": "സിംപിൾ, ലോഗ് റിട്ടേണുകളുടെ വ്യത്യാസവും യഥാർഥ ഇന്ത്യൻ ഡാറ്റയിൽ അളക്കുന്ന fat tails, ചാഞ്ചാട്ട കൂട്ടിച്ചേരൽ, ലെവറേജ് പ്രഭാവം തുടങ്ങിയ വിപണിയുടെ അനുഭവസിദ്ധ സത്യങ്ങളും.",
+          "learn": [
+            "സിംപിൾ, ലോഗ് റിട്ടേണുകൾ",
+            "Compounding-ഉം aggregation-ഉം",
+            "Fat tails-ഉം bell curve-ഉം",
+            "ചാഞ്ചാട്ട കൂട്ടിച്ചേരൽ",
+            "ലെവറേജ് പ്രഭാവം",
+            "Nifty-യിലെ അനുഭവസിദ്ധ വസ്തുതകൾ"
+          ],
+          "tags": [
+            "NSE",
+            "സൂചിക (INDEX)"
+          ]
+        },
+        {
+          "n": 10,
+          "slug": "probability-for-traders",
+          "title": "ട്രേഡർമാർക്കുള്ള സാധ്യതാശാസ്ത്രം",
+          "summary": "Random variables, expectation, variance, സോപാധിക സാധ്യത, Bayes എന്നിവ വിപണി ഉദാഹരണങ്ങളിലൂടെ ഒരു ട്രേഡർ യഥാർഥത്തിൽ ഉപയോഗിക്കുന്ന രീതിയിൽ.",
+          "learn": [
+            "Random variables-ഉം expectation-ഉം",
+            "Variance-ഉം standard deviation-ഉം",
+            "സോപാധിക സാധ്യത",
+            "ട്രേഡർമാർക്കുള്ള Bayes",
+            "വലിയ സംഖ്യകളുടെ നിയമം",
+            "Monte Carlo സിമുലേഷൻ"
+          ],
+          "tags": [
+            "സൂചിക (INDEX)"
+          ]
+        },
+        {
+          "n": 11,
+          "slug": "distributions-fat-tails",
+          "title": "വിതരണങ്ങൾ, Fat Tails, അതിതീവ്ര നീക്കങ്ങൾ",
+          "summary": "Normal distribution റിസ്ക് കുറച്ചുകാണിക്കുന്നതിന്റെ കാരണം; kurtosis, Student-t, power laws, extreme-value ചിന്ത എന്നിവ ഇന്ത്യൻ വിപണി തകർച്ചകളിൽ പ്രയോഗിക്കൽ.",
+          "learn": [
+            "Normal distribution-ഉം അതിന്റെ പരാജയങ്ങളും",
+            "Skewness-ഉം kurtosis-ഉം",
+            "Student-t-യും stable laws-ഉം",
+            "റിട്ടേണുകളിലെ power laws",
+            "അത്യന്തമൂല്യ സിദ്ധാന്തം",
+            "Fat tails പരിഗണിച്ചുള്ള sizing"
+          ],
+          "tags": [
+            "NSE",
+            "സൂചിക (INDEX)"
+          ]
+        },
+        {
+          "n": 12,
+          "slug": "inference-and-hypothesis-testing",
+          "title": "സ്ഥിതിവിവര അനുമാനവും പരികൽപ്പനാ പരിശോധനയും",
+          "summary": "Sampling, estimation, വിശ്വാസ ഇടവേളകൾ, hypothesis tests എന്നിവ ഉപയോഗിച്ച് ഒരു എഡ്ജ് യഥാർഥമാണോ എന്ന് സത്യസന്ധമായി പരിശോധിക്കുന്ന സംവിധാനം.",
+          "learn": [
+            "Sampling-ഉം estimates-ഉം",
+            "വിശ്വാസ ഇടവേളകൾ",
+            "പരികൽപ്പന പരിശോധന",
+            "പ്-values സത്യസന്ധമായി",
+            "റ്റ്-tests-ഉം bootstrap-ഉം",
+            "Effect size-ഉം significance-ഉം"
+          ],
+          "tags": [
+            "NSE"
+          ]
+        },
+        {
+          "n": 13,
+          "slug": "multiple-testing",
+          "title": "ഒന്നിലധികം പരിശോധനയും തെറ്റായ കണ്ടെത്തലും",
+          "summary": "500 ആശയങ്ങൾ പരിശോധിച്ചാൽ ഒരു വ്യാജ വിജയി ഏതാണ്ട് ഉറപ്പാണ്; multiple-comparisons പ്രശ്നം, family-wise error, തെറ്റായ കണ്ടെത്തൽ നിരക്ക്, deflated Sharpe എന്നിവ.",
+          "learn": [
+            "ഒന്നിലധികം പരിശോധനയുടെ കെണി",
+            "കുടുംബതല പിശക് നിരക്ക്",
+            "Bonferroni-യും Holm-ഉം",
+            "തെറ്റായ കണ്ടെത്തൽ നിരക്ക്",
+            "ബാക്ക്‌ടെസ്റ്റുകളിലെ data snooping",
+            "ഡിഫ്ലേറ്റഡ് Sharpe അനുപാതം"
+          ],
+          "tags": [
+            "NSE"
+          ]
+        },
+        {
+          "n": 14,
+          "slug": "stationarity-random-walk",
+          "title": "സ്റ്റേഷനാരിറ്റി, റാൻഡം വാക്കുകൾ, EMH",
+          "summary": "വിലകൾ പ്രവചനാതീതമായി അലഞ്ഞുനടക്കുന്നതിന്റെ കാരണം, അത് പരിശോധിക്കുന്ന വിധം, efficient-market ആശയം ശരിയായും തെറ്റായും കാണുന്ന കാര്യങ്ങൾ.",
+          "learn": [
+            "റാൻഡം വാക്ക്",
+            "Stationary-യും non-stationary-യും",
+            "ADF, KPSS പരിശോധനകൾ",
+            "വിലകൾ പ്രവചനത്തെ ചെറുക്കുന്നതെന്തുകൊണ്ട്",
+            "കാര്യക്ഷമ വിപണി പരികൽപ്പന",
+            "EMH പരാജയപ്പെടുന്ന ഇടങ്ങൾ"
+          ],
+          "tags": [
+            "NSE",
+            "സൂചിക (INDEX)"
+          ]
+        },
+        {
+          "n": 15,
+          "slug": "linear-algebra-pca",
+          "title": "രേഖീയ ബീജഗണിതം, Covariance, PCA",
+          "summary": "എല്ലാ റിസ്ക് മോഡലുകളുടെയും അടിയിലുള്ള vectors, matrices, കോവേറിയൻസ് മാട്രിക്സ് എന്നിവയും ഒരു വലിയ ഓഹരിസമൂഹത്തെ നയിക്കുന്ന കുറച്ച് ഘടകങ്ങൾ principal components വെളിപ്പെടുത്തുന്ന വിധവും.",
+          "learn": [
+            "ക്വാണ്ടുകൾക്കുള്ള vectors, matrices",
+            "കോവേറിയൻസ് മാട്രിക്സ്",
+            "Eigenvalues-ഉം eigenvectors-ഉം",
+            "പ്രധാന ഘടക വിശകലനം",
+            "PCA ഉപയോഗിച്ച് Nifty ഓഹരികളിലെ ഘടകങ്ങൾ",
+            "Dimensionality-യും noise-ഉം"
+          ],
+          "tags": [
+            "NSE"
+          ]
+        },
+        {
+          "n": 16,
+          "slug": "optimization-methods",
+          "title": "Optimization, നിയന്ത്രണങ്ങൾ, സംഖ്യാത്മക രീതികൾ",
+          "summary": "Weights, parameters, fits എന്നിവ ഒരു ക്വാണ്ട് പരിഹരിക്കുന്ന വിധം; convexity, gradients, constraints, ഇടയിലുള്ള numerical കെണികൾ എന്നിവ.",
+          "learn": [
+            "ലക്ഷ്യ ഫംഗ്ഷനുകൾ",
+            "Convex-ഉം non-convex-ഉം",
+            "Gradient, Newton രീതികൾ",
+            "നിയന്ത്രിത optimization",
+            "പോർട്ട്ഫോളിയോകൾക്കുള്ള quadratic programming",
+            "Numerical stability കെണികൾ"
+          ],
+          "tags": [
+            "NSE",
+            "സൂചിക (INDEX)"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "C",
+      "name": "ഇന്ത്യൻ വിപണിയുടെ സൂക്ഷ്മഘടന",
+      "desc": "വിലകൾ യഥാർഥത്തിൽ രൂപപ്പെടുന്ന വിധം: ഓർഡർ ബുക്ക്, ട്രേഡിങ് ദിനം, ലിക്വിഡിറ്റി, ഇംപാക്ട്, ഓർഡർ ഫ്ലോ എന്നിവ.",
+      "chapters": [
+        {
+          "n": 17,
+          "slug": "why-microstructure-matters",
+          "title": "വിപണി സൂക്ഷ്മഘടന പ്രധാനമാകുന്നത് എന്തുകൊണ്ട്",
+          "summary": "ചാർട്ടിലെ വിലയും യഥാർഥത്തിൽ ലഭിക്കുന്ന വിലയും തമ്മിലുള്ള അന്തരം, മിക്ക റീട്ടെയിൽ എഡ്ജുകളും സൂക്ഷ്മഘടനയിൽ നിശ്ശബ്ദമായി ഇല്ലാതാകുന്നതിന്റെ കാരണം.",
+          "learn": [
+            "സൂക്ഷ്മഘടന പഠിക്കുന്നതെന്ത്",
+            "Quoted വിലയും effective വിലയും",
+            "എഡ്ജ് ചോർന്നുപോകുന്ന ഇടങ്ങൾ",
+            "Spread കടക്കുന്നതിന്റെ ചെലവ്",
+            "വേഗം കുറഞ്ഞ ട്രേഡർമാർക്കും സൂക്ഷ്മഘടന",
+            "Module ക്-യുടെ ഭൂപടം"
+          ],
+          "tags": [
+            "NSE"
+          ]
+        },
+        {
+          "n": 18,
+          "slug": "limit-order-book",
+          "title": "Limit Order Book അടിസ്ഥാനങ്ങൾ",
+          "summary": "Bids, asks, depth എന്നിവ ഉൾപ്പെടുന്ന, എല്ലാ ഇന്ത്യൻ ട്രേഡുകളും മാച്ച് ചെയ്യുന്ന തത്സമയ queue യഥാർഥ depth ഡാറ്റയിൽനിന്ന് വായിക്കൽ.",
+          "learn": [
+            "ബിഡുകൾ, ആസ്കുകൾ, വിപണി ആഴം",
+            "Market, limit ഓർഡറുകൾ",
+            "Depth ladder വായിക്കൽ",
+            "മൊത്തം buy, sell quantity",
+            "വെളിപ്പെടുത്തിയ അളവും ഐസ്ബർഗ് അളവും",
+            "depth() ഡാറ്റ വായിക്കൽ"
+          ],
+          "tags": [
+            "NSE",
+            "കമ്മോഡിറ്റി (MCX)"
+          ]
+        },
+        {
+          "n": 19,
+          "slug": "order-types-lifecycle",
+          "title": "ഓർഡർ തരങ്ങളും ഓർഡർ ജീവിതചക്രവും",
+          "summary": "ഇന്ത്യൻ എക്സ്ചേഞ്ചുകളിലെ എല്ലാ ഓർഡർ തരങ്ങളും entry, modification, cancellation, audit trail, client-code നിയന്ത്രണങ്ങൾ ഉൾപ്പെടുന്ന പൂർണ്ണ ജീവിതചക്രവും.",
+          "learn": [
+            "മാർക്കറ്റ്, ലിമിറ്റ്, SL, SL-M ഓർഡറുകൾ",
+            "IOC, GTT, ഐസ്ബർഗ് ഓർഡറുകൾ",
+            "ഓർഡർ നൽകലും മാറ്റവും",
+            "റദ്ദാക്കലും audit trail-ഉം",
+            "UCC, client-code നിയന്ത്രണങ്ങൾ",
+            "Product തരങ്ങൾ: MIS, NRML, CNC"
+          ],
+          "tags": [
+            "NSE"
+          ]
+        },
+        {
+          "n": 20,
+          "slug": "price-time-priority",
+          "title": "വില-സമയം മുൻഗണന-യും Queue സ്ഥാനവും",
+          "summary": "Matching engine ആരുടെ ഓർഡർ ആദ്യം നിറവേറ്റണമെന്ന് തീരുമാനിക്കുന്ന വിധം, queue-യിലെ സ്ഥാനത്തിന്റെ സാമ്പത്തിക മൂല്യം, passive trading-നെ അത് നയിക്കുന്ന വിധം.",
+          "learn": [
+            "വില-സമയം മുൻഗണന",
+            "Queue സ്ഥാനവും മൂല്യവും",
+            "Order book സംഭവങ്ങൾ",
+            "Cancel-and-replace ചെലവുകൾ",
+            "പ്രോ-റാറ്റ, FIFO മാച്ചിങ്",
+            "ക്വാണ്ടുകൾക്കുള്ള queue dynamics"
+          ],
+          "tags": [
+            "NSE",
+            "NFO"
+          ]
+        },
+        {
+          "n": 21,
+          "slug": "trading-day-structure",
+          "title": "ഇന്ത്യൻ ട്രേഡിങ് ദിനത്തിന്റെ ഘടന",
+          "summary": "Pre-open മുതൽ post-close വരെ NSE, BSE ദിവസത്തിലെ എല്ലാ session-കളും സമയക്രമവും ഒരു ക്വാണ്ട് പാലിക്കേണ്ട പ്രത്യേക വിഭാഗങ്ങളും.",
+          "learn": [
+            "Pre-open സെഷൻ",
+            "തുടർച്ചയായ ട്രേഡിങ്",
+            "ബ്ലോക്ക്, ബൾക്ക് ഇടപാട് ജാലകങ്ങൾ",
+            "Closing session-ഉം post-close-ഉം",
+            "പുതിയ listing-കൾക്കുള്ള special pre-open",
+            "Commodity, currency സമയങ്ങൾ"
+          ],
+          "tags": [
+            "NSE",
+            "കമ്മോഡിറ്റി (MCX)",
+            "കറൻസി ഡെറിവേറ്റീവ്സ് (CDS)"
+          ]
+        },
+        {
+          "n": 22,
+          "slug": "auctions",
+          "title": "പ്രീ-ഓപ്പൺ, കോൾ ലേലം, ക്ലോസിംഗ് ലേലം",
+          "summary": "ഓർഡർ ബുക്കിൽനിന്ന് call auction ഒരു വ്യക്തമായ വില കണ്ടെത്തുന്ന വിധം, pre-open സംവിധാനം, SEBI-യുടെ പുതിയ closing auction session എന്നിവ.",
+          "learn": [
+            "Call auction പ്രവർത്തനം",
+            "Equilibrium വില കണ്ടെത്തൽ",
+            "പ്രീ-ഓപ്പൺ ലേലം",
+            "Order imbalance സിഗ്നലുകൾ",
+            "ക്ലോസിങ് ഓക്ഷൻ സെഷൻ (CAS)",
+            "Auction-ഉം continuous trading-ഉം"
+          ],
+          "tags": [
+            "NSE",
+            "സൂചിക (INDEX)"
+          ]
+        },
+        {
+          "n": 23,
+          "slug": "circuit-breakers",
+          "title": "സർക്യൂട്ട് ബ്രേക്കറുകൾ, വില ബാൻഡുകൾ, ട്രേഡിംഗ് നിർത്തലുകൾ",
+          "summary": "ഇൻഡക്സ് ഹാൾട്ടുകൾ, സ്ക്രിപ് പ്രൈസ് ബാൻഡുകൾ, ASM, GSM പട്ടികകൾ, F&O നിരോധനം എന്നിവയിലൂടെ വിപണി നിർത്തുകയും കണക്കാക്കുന്ന സിഗ്നലുകൾ വളച്ചൊടിക്കുകയും ചെയ്യുന്ന ചട്ടങ്ങൾ.",
+          "learn": [
+            "ഇൻഡക്സ് സർക്യൂട്ട് ബ്രേക്കറുകൾ",
+            "സ്ക്രിപ്പ് വിലപരിധികൾ",
+            "ASM, GSM പട്ടികകൾ",
+            "F&O നിരോധന കാലയളവ്",
+            "അപ്പർ, ലോവർ സർക്യൂട്ടുകൾ",
+            "Halts-ഉം നിങ്ങളുടെ സിഗ്നലുകളും"
+          ],
+          "tags": [
+            "NSE"
+          ]
+        },
+        {
+          "n": 24,
+          "slug": "bulk-block-deals",
+          "title": "Bulk Deals, Block Deals, പ്രത്യേക Windows",
+          "summary": "വില തകർക്കാതെ വലിയ സ്ഥാപനങ്ങൾ വലിയ അളവ് നീക്കുന്ന വിധം; bulk-deal, block-deal windows, വെളിപ്പെടുത്തൽ ചട്ടങ്ങൾ, അവയിലെ prints ക്വാണ്ടിനോട് പറയുന്നത്.",
+          "learn": [
+            "Bulk, block deals വ്യത്യാസം",
+            "ബ്ലോക്ക്-ഡീൽ ജാലകങ്ങൾ",
+            "വെളിപ്പെടുത്തൽ പരിധികൾ",
+            "Bulk-deal ഡാറ്റ വായിക്കൽ",
+            "ചർച്ച ചെയ്ത് നിശ്ചയിക്കുന്ന trades",
+            "വലിയ prints നൽകുന്ന സിഗ്നലുകൾ"
+          ],
+          "tags": [
+            "NSE"
+          ]
+        },
+        {
+          "n": 25,
+          "slug": "liquidity-spread-depth",
+          "title": "ലിക്വിഡിറ്റി, Spread, Depth",
+          "summary": "ലിക്വിഡിറ്റിയുടെ യഥാർഥ അർഥം; quoted, effective spread, depth, resilience എന്നിവയും യഥാർഥ NSE ഓഹരികളിൽ അവ അളക്കുന്ന വിധവും.",
+          "learn": [
+            "Bid-ask spread ഘടകങ്ങൾ",
+            "ക്വോട്ടഡ്, എഫക്റ്റീവ് സ്പ്രെഡുകൾ",
+            "Depth-ഉം resilience-ഉം",
+            "Amihud illiquidity അളവ്",
+            "NSE ഓഹരികളിലെ ലിക്വിഡിറ്റി അളക്കൽ",
+            "ചെലവായ ലിക്വിഡിറ്റി"
+          ],
+          "tags": [
+            "NSE"
+          ]
+        },
+        {
+          "n": 26,
+          "slug": "impact-cost-tca",
+          "title": "ഇംപാക്ട് ചെലവ്, സ്ലിപ്പേജ്, ഇടപാട് ചെലവ് വിശകലനം",
+          "summary": "സ്വന്തം ഓർഡർ വില നീക്കുന്നതിന്റെ കാരണം, market impact മോഡലിങ്, benchmark-ുകളോട് slippage അളക്കൽ, സത്യസന്ധമായ transaction cost analysis എന്നിവ.",
+          "learn": [
+            "താൽക്കാലികവും സ്ഥിരവുമായ വില സ്വാധീനം",
+            "Kyle'സ് lambda-യുടെ സഹജബോധം",
+            "Slippage-ഉം arrival price-ഉം",
+            "നിർവഹണ കുറവ്",
+            "Square-root impact മോഡലുകൾ",
+            "യഥാർഥ fills-ലുള്ള TCA"
+          ],
+          "tags": [
+            "NSE"
+          ]
+        },
+        {
+          "n": 27,
+          "slug": "order-flow",
+          "title": "ഓപ്പൺ ഇന്ററസ്റ്റ്, വോള്യം, ഓർഡർ പ്രവാഹം",
+          "summary": "Volume, open interest, പങ്കാളി അടിസ്ഥാനത്തിലുള്ള positions, വിവരമുള്ള പ്രവർത്തനം സൂചിപ്പിക്കുന്ന order-flow സിഗ്നലുകൾ എന്നിവയിലൂടെ വിപണിസമ്മർദം വായിക്കൽ.",
+          "learn": [
+            "Volume-ഉം open interest-ഉം",
+            "പങ്കാളി അടിസ്ഥാനത്തിലുള്ള OI",
+            "FII/DII flow ഡാറ്റ",
+            "Order-flow അസന്തുലിതാവസ്ഥ",
+            "Toxicity-യും പ്രതികൂല തിരഞ്ഞെടുപ്പ്-ഉം",
+            "സിഗ്നലായ flow"
+          ],
+          "tags": [
+            "NSE",
+            "NFO"
+          ]
+        },
+        {
+          "n": 28,
+          "slug": "short-selling-slb",
+          "title": "Short Selling, SLB, കടമെടുക്കൽ സംവിധാനം",
+          "summary": "ഇന്ത്യയിൽ ഷോർട്ടിങ് യഥാർഥത്തിൽ പ്രവർത്തിക്കുന്ന വിധം: ഇൻട്രാഡേ, ഡെലിവറി ഷോർട്ടുകൾ, സെക്യൂരിറ്റീസ് വായ്പാ വിപണി, ഷോർട്ട് പൊസിഷന്റെ ചെലവും റിസ്കും.",
+          "learn": [
+            "ഇൻട്രാഡേ, ഡെലിവറി ഷോർട്ടുകൾ",
+            "SLB പ്രവർത്തനം",
+            "Borrow cost-ഉം ലഭ്യതയും",
+            "Short squeeze സാഹചര്യങ്ങൾ",
+            "ഇന്ത്യയിലെ naked short ചട്ടങ്ങൾ",
+            "Market-neutral portfolios-നുള്ള shorting"
+          ],
+          "tags": [
+            "NSE",
+            "NFO"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "D",
+      "name": "HFT, നിർവഹണം, ട്രേഡിങ് സാങ്കേതികവിദ്യ",
+      "desc": "അൽഗോരിതമിക് ട്രേഡിങ്, വേഗത്തിന്റെ മത്സരം, എക്സിക്യൂഷൻ അൽഗോരിതങ്ങൾ, അവയെ നിയന്ത്രിക്കുന്ന സാങ്കേതികവിദ്യയും ചട്ടങ്ങളും.",
+      "chapters": [
+        {
+          "n": 29,
+          "slug": "algo-trading-foundations",
+          "title": "അൽഗോരിതമിക് ട്രേഡിങ് അടിസ്ഥാനങ്ങൾ",
+          "summary": "ഒരു അൽഗോരിതമിക് സ്ട്രാറ്റജി യഥാർഥത്തിൽ എന്താണ്; data മുതൽ signal, order, risk വരെയുള്ള ചക്രവും എല്ലാ automated system-കൾക്കും പൊതുവായ architecture-ഉം.",
+          "learn": [
+            "Algo trading ചക്രം",
+            "Signal, sizing, execution പാളികൾ",
+            "Event-driven-ഉം polling-ഉം",
+            "State-ഉം idempotency-യും",
+            "Order gateway ആയി OpenAlgo",
+            "ആശയത്തിൽനിന്ന് പ്രവർത്തിക്കുന്ന bot വരെ"
+          ],
+          "tags": [
+            "NSE"
+          ]
+        },
+        {
+          "n": 30,
+          "slug": "hft-vs-algo-vs-systematic",
+          "title": "HFT, Algo Trading, Systematic Trading തമ്മിലുള്ള വ്യത്യാസം",
+          "summary": "പലരും കൂട്ടിക്കുഴയ്ക്കുന്ന മൂന്ന് പദങ്ങൾ; യഥാർഥ HFT-യെ algorithmic, systematic trading-ൽനിന്ന് വേർതിരിക്കുന്ന latency, holding period, infrastructure എന്നിവ.",
+          "learn": [
+            "HFT നിർവചിക്കൽ",
+            "Algo-യും systematic-ഉം",
+            "Latency-യും holding periods-ഉം",
+            "ഓരോ തലത്തിലും പങ്കെടുക്കാനാകുന്നവർ",
+            "തലം അനുസരിച്ചുള്ള infrastructure",
+            "റീട്ടെയിൽ ക്വാണ്ടുകളുടെ സ്ഥാനം"
+          ],
+          "tags": [
+            "NSE"
+          ]
+        },
+        {
+          "n": 31,
+          "slug": "dma-colocation-latency",
+          "title": "DMA, കോ-ലൊക്കേഷൻ, കുറഞ്ഞ-ലേറ്റൻസി പ്രവേശനം",
+          "summary": "വേഗത്തിന്റെ സൂക്ഷ്മഘടന; നേരിട്ടുള്ള വിപണി പ്രവേശനം, NSE co-location, tick-by-tick feeds, timestamping, latency ആയുധമത്സരം എന്നിവ.",
+          "learn": [
+            "നേരിട്ടുള്ള വിപണി പ്രവേശനം",
+            "NSE/BSE co-location സൗകര്യം",
+            "Tick-by-tick ഡാറ്റ",
+            "ലേറ്റൻസി ആർബിട്രാജ്",
+            "Timestamping-ഉം clocks-ഉം",
+            "റീട്ടെയിലിന് പങ്കെടുക്കാനാകുന്നതും കഴിയാത്തതും"
+          ],
+          "tags": [
+            "NSE"
+          ]
+        },
+        {
+          "n": 32,
+          "slug": "market-data-feeds",
+          "title": "മാർക്കറ്റ് ഡാറ്റാ ഫീഡുകൾ: സ്നാപ്പ്ഷോട്ട്, ടിക്ക്, L2, L3",
+          "summary": "ഓരോ algo-യ്ക്കുമുള്ള ഡാറ്റ; snapshot, tick feeds, order book-ന്റെ L1, L2, L3 തലങ്ങൾ, broadcast, unicast എന്നിവയും ഓരോന്നിന്റെ ചെലവും വെളിപ്പെടുത്തുന്ന വിവരവും.",
+          "learn": [
+            "സ്നാപ്പ്ഷോട്ട്, ടിക്ക് ഫീഡുകൾ",
+            "L1, L2, L3 ഡാറ്റ",
+            "എക്സ്ചേഞ്ച് ബ്രോഡ്കാസ്റ്റ് ഫീഡുകൾ",
+            "കോൺഫ്ലേറ്റഡ്, പൂർണ ഡെപ്ത് ഫീഡുകൾ",
+            "Feed handlers-ഉം gaps-ഉം",
+            "ശരിയായ feed തിരഞ്ഞെടുക്കൽ"
+          ],
+          "tags": [
+            "NSE",
+            "കമ്മോഡിറ്റി (MCX)"
+          ]
+        },
+        {
+          "n": 33,
+          "slug": "orderbook-reconstruction",
+          "title": "Order Book പുനർനിർമ്മാണവും Replay-യും",
+          "summary": "Event feed-ൽനിന്ന് പൂർണ്ണ limit order book പുനർനിർമ്മിക്കൽ, ഒരു ട്രേഡിങ് ദിനം deterministically replay ചെയ്യൽ, execution പരിശോധിക്കാൻ അത് ഉപയോഗിക്കൽ.",
+          "learn": [
+            "Events-ൽനിന്ന് book-ലേക്ക്",
+            "ചേർക്കൽ, മാറ്റം, റദ്ദാക്കൽ, trade",
+            "നിർണിത റീപ്ലേ",
+            "പുനർനിർമ്മാണത്തിലെ കെണികൾ",
+            "ഗവേഷണ dataset നിർമ്മിക്കൽ",
+            "Execution testing-നുള്ള replay"
+          ],
+          "tags": [
+            "NSE"
+          ]
+        },
+        {
+          "n": 34,
+          "slug": "hft-strategy-families",
+          "title": "HFT സ്ട്രാറ്റജി വിഭാഗങ്ങൾ: Making, Arb, Event",
+          "summary": "High-frequency desks യഥാർഥത്തിൽ പ്രവർത്തിപ്പിക്കുന്ന നിഷ്ക്രിയ മാർക്കറ്റ് മേക്കിംഗ്, latency, statistical arbitrage, event-driven reaction സ്ട്രാറ്റജികൾ.",
+          "learn": [
+            "നിഷ്ക്രിയ മാർക്കറ്റ് മേക്കിംഗ്",
+            "ലേറ്റൻസി ആർബിട്രാജ്",
+            "വേഗത്തിലുള്ള statistical arbitrage",
+            "ഇവന്റ്, വാർത്താ പ്രതികരണ തന്ത്രങ്ങൾ",
+            "ലിക്വിഡിറ്റി കണ്ടെത്തൽ",
+            "HFT portfolios-ലെ റിസ്ക്"
+          ],
+          "tags": [
+            "NSE",
+            "NFO"
+          ]
+        },
+        {
+          "n": 35,
+          "slug": "order-to-trade-ratio",
+          "title": "Order-to-Trade Ratio, റദ്ദാക്കലുകൾ, Quote Stuffing",
+          "summary": "വേഗത്തിനുമേൽ exchange ഏർപ്പെടുത്തുന്ന നിയന്ത്രണങ്ങൾ: ഓർഡർ-ട്രേഡ് അനുപാതം, cancellation penalties, സാധുവായ quoting-ഉം കൃത്രിമ quote stuffing-ഉം തമ്മിലുള്ള അതിർ.",
+          "learn": [
+            "ഓർഡർ-ടു-ട്രേഡ് അനുപാതം",
+            "OTR അനുപാതത്തിന് NSE ചുമത്തുന്ന പിഴകൾ",
+            "റദ്ദാക്കലിന്റെ economics",
+            "Quote stuffing-ഉം spoofing-ഉം",
+            "Layering-ഉം surveillance-ഉം",
+            "ചട്ടത്തിന്റെ ശരിയായ വശത്ത് നിൽക്കൽ"
+          ],
+          "tags": [
+            "NSE"
+          ]
+        },
+        {
+          "n": 36,
+          "slug": "smart-order-routing",
+          "title": "Smart Order Routing-ഉം Multi-Venue Execution-ഉം",
+          "summary": "മികച്ച fill ലഭിക്കാൻ ഒരു ഓർഡർ NSE, BSE എന്നിവയ്ക്കിടയിൽ വിഭജിക്കൽ; smart order routing, consolidated book, venues-ലുടനീളമുള്ള best execution എന്നിവ.",
+          "learn": [
+            "Venues-ലുടനീളം route ചെയ്യുന്നതെന്തിന്",
+            "സ്മാർട്ട് ഓർഡർ റൂട്ടിംഗ് തർക്കം",
+            "ഏകീകൃത ഓർഡർ ബുക്ക്",
+            "Best execution ബാധ്യത",
+            "Routing-ലെ latency",
+            "Brokers വഴി റീട്ടെയിലിനുള്ള SOR"
+          ],
+          "tags": [
+            "NSE"
+          ]
+        },
+        {
+          "n": 37,
+          "slug": "execution-algorithms",
+          "title": "നിർവഹണ അൽഗോരിതങ്ങൾ: VWAP, TWAP, POV, IS",
+          "summary": "വിപണിയെ നീക്കാതെ വലിയ ഓർഡറുകൾ ഘട്ടംഘട്ടമായി നടപ്പാക്കുന്ന scheduling algorithms-ഉം അവയുടെ പിന്നിലെ implementation-shortfall framework-ഉം.",
+          "learn": [
+            "വലിയ ഓർഡറുകൾ വിഭജിക്കുന്നതെന്തിന്",
+            "VWAP-ഉം TWAP-ഉം",
+            "Volume-ന്റെ ശതമാനം (POV)",
+            "നിർവഹണ കുറവ്",
+            "Almgren-Chriss സഹജബോധം",
+            "Execution algo തിരഞ്ഞെടുക്കൽ"
+          ],
+          "tags": [
+            "NSE"
+          ]
+        },
+        {
+          "n": 38,
+          "slug": "market-making-inventory",
+          "title": "Market Making-ഉം ഇൻവെന്ററി റിസ്ക്-ഉം",
+          "summary": "എല്ലാ ട്രേഡിന്റെയും മറുവശം; ഇരുവശത്തും quote നൽകൽ, spread സമ്പാദിക്കൽ, അത് ഇല്ലാതാക്കാവുന്ന inventory, adverse-selection റിസ്കുകൾ.",
+          "learn": [
+            "ഇരുവശത്തും quoting",
+            "Spread സമ്പാദിക്കൽ",
+            "ഇൻവെന്ററി റിസ്ക്",
+            "പ്രതികൂല തിരഞ്ഞെടുപ്പ്",
+            "Avellaneda-Stoikov സഹജബോധം",
+            "Inventory നിയന്ത്രിക്കാൻ quotes ചരിക്കൽ"
+          ],
+          "tags": [
+            "NSE",
+            "NFO"
+          ]
+        },
+        {
+          "n": 39,
+          "slug": "retail-api-algo-framework",
+          "title": "ഇന്ത്യയിലെ Retail API Algo ചട്ടക്കൂട്",
+          "summary": "സുരക്ഷിതമായ retail algo trading-നുള്ള SEBI ചട്ടക്കൂട്; API keys, static IP, unique algo IDs, white-box, black-box വർഗീകരണം, broker, exchange ഉത്തരവാദിത്തങ്ങൾ.",
+          "learn": [
+            "SEBI റീട്ടെയിൽ ആൽഗോ സർക്കുലർ (2025)",
+            "API keys-ഉം static IP-യും",
+            "Unique algo ID രജിസ്ട്രേഷൻ",
+            "വൈറ്റ്-ബോക്സ്, ബ്ലാക്ക്-ബോക്സ് ആൽഗോകൾ",
+            "Broker, exchange ചുമതലകൾ",
+            "റീട്ടെയിൽ ക്വാണ്ടുകൾക്ക് മാറുന്നതെന്ത്"
+          ],
+          "tags": [
+            "NSE"
+          ]
+        },
+        {
+          "n": 40,
+          "slug": "kill-switches-risk-controls",
+          "title": "കിൽ സ്വിച്ചുകൾ, റിസ്ക് നിയന്ത്രണങ്ങൾ, അൽഗോ നിരീക്ഷണം",
+          "summary": "ഓരോ automated trader-നും വേണ്ട സുരക്ഷാപാളി; ട്രേഡിന് മുമ്പുള്ള റിസ്ക് പരിശോധനകൾ, position, loss limits, കിൽ സ്വിച്ച്, നിയന്ത്രണം വിട്ട സംവിധാനങ്ങളെ നിരീക്ഷിക്കുന്ന surveillance എന്നിവ.",
+          "learn": [
+            "ട്രേഡിന് മുമ്പുള്ള റിസ്ക് പരിശോധനകൾ",
+            "പൊസിഷൻ, നഷ്ടപരിധികൾ",
+            "കിൽ സ്വിച്ച്",
+            "Throttles-ഉം rate limits-ഉം",
+            "Exchange തലത്തിലുള്ള നിരീക്ഷണം",
+            "Fail-safe systems രൂപകൽപ്പന"
+          ],
+          "tags": [
+            "NSE"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "E",
+      "name": "ടൈം സീരീസ്, ഇക്കണോമെട്രിക്സ്, പ്രവചനം",
+      "desc": "ഇന്നത്തെ വിപണി ഇന്നലത്തേതിനെ ആശ്രയിക്കുന്ന വിധത്തിന്റെ മോഡലിങ്: മീൻ റിവേഴ്ഷൻ, വോളറ്റിലിറ്റി, റെജീമുകൾ, ക്ഷയം എന്നിവ.",
+      "chapters": [
+        {
+          "n": 41,
+          "slug": "time-series-models",
+          "title": "AR, MA, ARIMA മോഡലുകൾ",
+          "summary": "സ്വന്തം ഭൂതകാലം ഓർക്കുന്ന series-കൾക്കുള്ള പരമ്പരാഗത മോഡലുകളും റിട്ടേണുകളിൽ പ്രവചിക്കാനാകുന്നതും കഴിയാത്തതുമായ കാര്യങ്ങളുടെ സത്യസന്ധമായ വിലയിരുത്തലും.",
+          "learn": [
+            "Autoregression (AR) മാതൃക",
+            "ചലിക്കുന്ന ശരാശരി (MA)",
+            "ARIMA",
+            "statsmodels ഉപയോഗിച്ചുള്ള fitting",
+            "Returns-ഉം vol-ഉം പ്രവചിക്കൽ",
+            "യഥാർഥത്തിൽ പ്രവചിക്കാവുന്നത്"
+          ],
+          "tags": [
+            "NSE",
+            "സൂചിക (INDEX)"
+          ]
+        },
+        {
+          "n": 42,
+          "slug": "volatility-modeling",
+          "title": "ചാഞ്ചാട്ട മോഡലിംഗ്: EWMA, ARCH, GARCH",
+          "summary": "Volatility-ക്ക് ഓർമയുണ്ട്: ശാന്തതയ്ക്ക് പിന്നാലെ ശാന്തതയും കൊടുങ്കാറ്റുകൾ കൂട്ടമായും വരുന്നു. ഇന്ത്യൻ index ഡാറ്റയിൽ EWMA, ARCH, GARCH എന്നിവ അത് കൃത്യമാക്കുന്നു.",
+          "learn": [
+            "Vol clustering-ന്റെ കാരണം",
+            "EWMA volatility കണക്ക്",
+            "ARCH, GARCH സഹജബോധം",
+            "arch ഉപയോഗിച്ചുള്ള GARCH fitting",
+            "ചാഞ്ചാട്ട പ്രവചനം",
+            "Nifty volatility പ്രവചിക്കൽ"
+          ],
+          "tags": [
+            "സൂചിക (INDEX)"
+          ]
+        },
+        {
+          "n": 43,
+          "slug": "realized-volatility",
+          "title": "സാക്ഷാത്കരിച്ച, ഇൻട്രാഡേ ചാഞ്ചാട്ടം",
+          "summary": "High-frequency ഡാറ്റയിൽനിന്ന് volatility അളക്കൽ; സാക്ഷാത്കരിച്ച വേരിയൻസ്, ട്രേഡിങ് ദിനത്തിലെ intraday volatility smile, overnight, intraday റിസ്കുകളുടെ വ്യത്യാസം.",
+          "learn": [
+            "സാക്ഷാത്കരിച്ച വേരിയൻസ്",
+            "Sampling frequency-യും noise-ഉം",
+            "Intraday vol ഉ-shape",
+            "Overnight, intraday റിസ്കുകൾ",
+            "Realized-ഉം implied-ഉം",
+            "മോഡലുകളിൽ RV ഉപയോഗിക്കൽ"
+          ],
+          "tags": [
+            "സൂചിക (INDEX)",
+            "NSE"
+          ]
+        },
+        {
+          "n": 44,
+          "slug": "mean-reversion-ou",
+          "title": "Mean Reversion-ഉം Ornstein-Uhlenbeck-ഉം",
+          "summary": "ഒരു ബന്ധനത്തിലുള്ള വിലയുടെ ഗണിതം; Ornstein-Uhlenbeck process, reversion-ന്റെ half-life, ഒരു series യഥാർഥത്തിൽ തിരിച്ചുവരുന്നുണ്ടോ എന്ന് പരിശോധിക്കുന്ന വിധം.",
+          "learn": [
+            "Mean reversion സഹജബോധം",
+            "ഓൺസ്റ്റീൻ-ഉലെൻബെക്ക് പ്രക്രിയ",
+            "Reversion വേഗം കണക്കാക്കൽ",
+            "Reversion-ന്റെ half-life",
+            "Mean reversion പരിശോധന",
+            "തിരിച്ചുവരുന്ന series ട്രേഡ് ചെയ്യൽ"
+          ],
+          "tags": [
+            "NSE"
+          ]
+        },
+        {
+          "n": 45,
+          "slug": "cointegration-pairs",
+          "title": "Cointegration-ഉം Pairs Trading-ഉം",
+          "summary": "ദീർഘകാല ബന്ധത്താൽ ചേർന്നുനിൽക്കുന്ന രണ്ട് അലഞ്ഞുനടക്കുന്ന വിലകൾ; cointegration, Engle-Granger test, spread, സ്-score, പൂർണ്ണമായൊരു ഇന്ത്യൻ pairs trade എന്നിവ.",
+          "learn": [
+            "Cointegration-ഉം correlation-ഉം",
+            "Engle-Granger പരിശോധന",
+            "Spread നിർമ്മിക്കൽ",
+            "സ്-score സിഗ്നൽ",
+            "ഇന്ത്യൻ pairs തിരഞ്ഞെടുക്കൽ",
+            "Pairs trading റിസ്കുകൾ"
+          ],
+          "tags": [
+            "NSE"
+          ]
+        },
+        {
+          "n": 46,
+          "slug": "regimes-and-breaks",
+          "title": "Regime Detection-ഉം ഘടനാപരമായ വിച്ഛേദങ്ങൾ-ഉം",
+          "summary": "വിപണി ശാന്തമായ bull, നീണ്ടുനിൽക്കുന്ന bear, തീവ്ര shock എന്നീ അവസ്ഥകൾക്കിടയിൽ മാറുന്നു; നിലവിലെ regime-ഉം സ്ട്രാറ്റജി അവസാനിപ്പിക്കുന്ന breaks-ഉം കണ്ടെത്തൽ.",
+          "learn": [
+            "ബുൾ, ബെയർ, സൈഡ്‌വേസ് വിപണി-അവസ്ഥകൾ",
+            "ചാഞ്ചാട്ട റെജീമുകൾ",
+            "Markov switching സഹജബോധം",
+            "മാറ്റബിന്ദു കണ്ടെത്തൽ",
+            "ഘടനാപരമായ വിച്ഛേദങ്ങൾ",
+            "ഒരു സ്ട്രാറ്റജി പ്രവർത്തനം നിർത്തുന്നതെന്തുകൊണ്ട്"
+          ],
+          "tags": [
+            "സൂചിക (INDEX)"
+          ]
+        },
+        {
+          "n": 47,
+          "slug": "forecast-evaluation",
+          "title": "Forecast Evaluation-ഉം Model Decay-യും",
+          "summary": "പ്രവചനം സത്യസന്ധമായി വിലയിരുത്തുകയും model തത്സമയം ദുർബലമാകുന്നത് കണ്ടെത്തുകയും ചെയ്യൽ; error metrics, out-of-sample ശീലം, decay monitoring എന്നിവ.",
+          "learn": [
+            "പിശക് അളവുകൾ (MSE, MAE)",
+            "ദിശാപരമായ കൃത്യത",
+            "സാമ്പിളിന് പുറത്തുള്ള മൂല്യനിർണയം",
+            "Diebold-Mariano സഹജബോധം",
+            "Model decay കണ്ടെത്തൽ",
+            "ഒരു model വിരമിക്കേണ്ട സമയം"
+          ],
+          "tags": [
+            "NSE",
+            "സൂചിക (INDEX)"
+          ]
+        },
+        {
+          "n": 48,
+          "slug": "capacity-and-half-life",
+          "title": "ശേഷി, ടേൺഓവർ, സിഗ്നൽ അർദ്ധായുസ്സ്",
+          "summary": "ഒരു സ്ട്രാറ്റജിക്ക് കൈകാര്യം ചെയ്യാവുന്ന പണത്തിന്റെ അളവും അതിന്റെ edge മങ്ങുന്ന വേഗവും; impact-ൽനിന്നുള്ള capacity, turnover, cost, സിഗ്നൽ അർദ്ധായുസ്സ് എന്നിവ.",
+          "learn": [
+            "തന്ത്ര ശേഷി",
+            "Turnover-ഉം cost drag-ഉം",
+            "സിഗ്നൽ അർദ്ധായുസ്സ്",
+            "Market impact-ൽനിന്നുള്ള capacity",
+            "Crowding-ഉം decay-യും",
+            "Capacity അനുസരിച്ചുള്ള sizing"
+          ],
+          "tags": [
+            "NSE"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "F",
+      "name": "ഡെറിവേറ്റീവുകൾ, വോളറ്റിലിറ്റി, ആർബിട്രാജ്",
+      "desc": "ഇന്ത്യയിലെ ഡെറിവേറ്റീവ് സംവിധാനം: ഫ്യൂച്ചേഴ്സും ബേസിസും, ഓപ്ഷൻ വിലനിർണയവും Greeks-ഉം, വോളറ്റിലിറ്റി സർഫേസും അവയെ ബന്ധിപ്പിക്കുന്ന ആർബിട്രാജും.",
+      "chapters": [
+        {
+          "n": 49,
+          "slug": "futures-and-carry",
+          "title": "ഫ്യൂച്ചേഴ്സ്, ഫോർവേഡ്സ്, കോസ്റ്റ് ഓഫ് കാരി",
+          "summary": "വിലനിർണയത്തിലെ ഏറ്റവും ശക്തമായ ആശയമായ സൗജന്യലാഭം അസാധ്യമാണെന്ന തത്വവും, അണ്ടർലൈയിങ്ങിനെ അപേക്ഷിച്ച് ഫ്യൂച്ചറിന്റെ ന്യായവില കോസ്റ്റ് ഓഫ് കാരി നിശ്ചയിക്കുന്ന വിധവും.",
+          "learn": [
+            "Forwards-ഉം futures-ഉം",
+            "No-arbitrage തത്വം",
+            "കാരി ചെലവ്",
+            "Fair value-ഉം basis-ഉം",
+            "Expiry-യിലെ convergence",
+            "ഇന്ത്യൻ futures-ലെ carry"
+          ],
+          "tags": [
+            "NFO",
+            "സൂചിക (INDEX)"
+          ]
+        },
+        {
+          "n": 50,
+          "slug": "basis-and-index-arb",
+          "title": "Cash-Futures Basis-ഉം Index Arbitrage-ഉം",
+          "summary": "എല്ലാ ഇന്ത്യൻ ഡെസ്കിലും നടക്കുന്ന arbitrage; cash-futures basis, അത് rich അല്ലെങ്കിൽ cheap ആകുന്ന സമയം, index arbitrage future-നെ ന്യായവിലയിൽ നിലനിർത്തുന്ന വിധം.",
+          "learn": [
+            "ക്യാഷ്-ഫ്യൂച്ചേഴ്സ് ബേസിസ്",
+            "സമ്പന്നവും വിലകുറഞ്ഞതുമായ ബേസിസ്",
+            "Index arbitrage പ്രവർത്തനം",
+            "Index പുനരാവിഷ്കരിക്കൽ",
+            "Dividends-ഉം basis-ഉം",
+            "Basis trades-ന്റെ റിസ്കുകൾ"
+          ],
+          "tags": [
+            "NFO",
+            "സൂചിക (INDEX)"
+          ]
+        },
+        {
+          "n": 51,
+          "slug": "options-pricing",
+          "title": "ഓപ്ഷൻ വിലനിർണ്ണയം: Black-Scholes, Black-76",
+          "summary": "F&O, Black-76, Black-Scholes — ഇന്ത്യൻ F&O-യ്ക്ക് സിന്തറ്റിക് ഫ്യൂച്ചറിൽ നിന്നുള്ള ഉപയോഗിച്ച് വിലനിർണയം നടത്തുന്നതും സ്പോട്ടിൽ നിന്നുള്ള ഉപയോഗിക്കാത്തതും എന്തുകൊണ്ട്; മോഡലുകളും അനുമാനങ്ങളും പരാജയപ്പെടുന്ന ഇടങ്ങളും.",
+          "learn": [
+            "പുട്ട്-കോൾ തുല്യത",
+            "കൃത്രിമ ഫ്യൂച്ചർ",
+            "Black-Scholes അനുമാനങ്ങൾ",
+            "Forward അടിസ്ഥാനമാക്കിയ Black-76",
+            "ഇന്ത്യ Black-76 ഉപയോഗിക്കുന്നതെന്തുകൊണ്ട്",
+            "Nifty option വിലനിർണയം"
+          ],
+          "tags": [
+            "NFO",
+            "സൂചിക (INDEX)"
+          ]
+        },
+        {
+          "n": 52,
+          "slug": "the-greeks",
+          "title": "ഗ്രീക്കുകൾ: ഡെൽറ്റ, ഗാമ, വേഗ, തീറ്റ, റോ",
+          "summary": "Option-ന്റെ ചലനം; വില, volatility, സമയം എന്നിവയോടുള്ള sensitivity അളക്കുന്ന Greeks യഥാർഥ Nifty options-ൽ തത്സമയം കണക്കാക്കൽ.",
+          "learn": [
+            "Delta-യും gamma-യും",
+            "Vega-യും theta-യും",
+            "Rho-യും dividends-ഉം",
+            "Strikes-ലുടനീളമുള്ള Greeks",
+            "Position Greeks അളവുകൾ",
+            "OpenAlgo ഉപയോഗിച്ച് Nifty ഓപ്ഷന്റെ ഗ്രീക്കുകൾ"
+          ],
+          "tags": [
+            "NFO",
+            "സൂചിക (INDEX)"
+          ]
+        },
+        {
+          "n": 53,
+          "slug": "volatility-surface",
+          "title": "ചാഞ്ചാട്ട ഉപരിതലം, സ്ക്യൂ, കാലാവധി ഘടന",
+          "summary": "സൂചിത ചാഞ്ചാട്ടം ഒറ്റ സംഖ്യയല്ല; strikes-ലുടനീളമുള്ള smile, skew, expiries-ലുടനീളമുള്ള കാലാവധി ഘടന എന്നിവ യഥാർഥ option chains-ൽനിന്ന് വായിക്കൽ.",
+          "learn": [
+            "സൂചിത ചാഞ്ചാട്ടം",
+            "Volatility smile-ഉം skew-ഉം",
+            "കാലാവധി ഘടന",
+            "Surface നിർമ്മിക്കൽ",
+            "Weekly-expiry ചലനരീതി",
+            "Surface വായിക്കൽ"
+          ],
+          "tags": [
+            "NFO",
+            "സൂചിക (INDEX)"
+          ]
+        },
+        {
+          "n": 54,
+          "slug": "vix-and-vrp",
+          "title": "India VIX-ഉം Volatility Risk Premium-ഉം",
+          "summary": "വിപണിയുടെ ഭയസൂചികയും insurance വിൽക്കുന്നതിനുള്ള premium-ഉം; India VIX നിർമ്മിക്കുന്ന വിധം, അത് പ്രവചിക്കുന്നത്, volatility risk premium എന്നിവ.",
+          "learn": [
+            "India VIX കണക്കാക്കുന്ന വിധം",
+            "പ്രതീക്ഷിക്കുന്ന നീക്കമായി VIX",
+            "Implied, realized അന്തരം",
+            "വോളറ്റിലിറ്റി റിസ്ക് പ്രീമിയം",
+            "VIX-ഉം index-ഉം",
+            "Premium ട്രേഡ് ചെയ്യൽ"
+          ],
+          "tags": [
+            "NFO",
+            "സൂചിക (INDEX)"
+          ]
+        },
+        {
+          "n": 55,
+          "slug": "gamma-scalping-vol-trading",
+          "title": "Gamma Scalping-ഉം Volatility Trading-ഉം",
+          "summary": "ട്രേഡ് ചെയ്യാവുന്ന asset ആയി volatility; delta-hedged straddles, gamma scalping, variance, അവയെ നയിക്കുന്ന ഇന്ത്യൻ expiry-day effects എന്നിവ.",
+          "learn": [
+            "Asset ആയി volatility",
+            "Delta-hedged options തന്ത്രം",
+            "ഗാമ സ്കാൽപ്പിങ് P&L",
+            "Variance-ഉം straddles-ഉം",
+            "Expiry-day പ്രതിഫലങ്ങൾ",
+            "Vol വിൽക്കലും വാങ്ങലും"
+          ],
+          "tags": [
+            "NFO",
+            "സൂചിക (INDEX)"
+          ]
+        },
+        {
+          "n": 56,
+          "slug": "equity-derivatives-microstructure",
+          "title": "ഇന്ത്യയിലെ Equity Derivatives Microstructure",
+          "summary": "ഇൻഡക്സ്, സിംഗിൾ-സ്റ്റോക്ക് F&O യഥാർഥത്തിൽ ട്രേഡ് ചെയ്യുന്ന വിധം; സ്ട്രൈക്കുകളിലെയും എക്സ്പയറികളിലെയും ലിക്വിഡിറ്റി, പ്രതിവാര-പ്രതിമാസ വ്യത്യാസങ്ങൾ, ഇന്ത്യൻ ഓപ്ഷനുകളുടെ മൈക്രോസ്ട്രക്ചർ സവിശേഷതകൾ.",
+          "learn": [
+            "ഇൻഡക്സ്, സ്റ്റോക്ക് F&O ലിക്വിഡിറ്റി",
+            "പ്രതിവാര, പ്രതിമാസ എക്സ്പയറികൾ",
+            "Strike liquidity-യും spreads-ഉം",
+            "Expiry കേന്ദ്രീകരണം",
+            "F&O — സ്റ്റോക്ക് F&O-യുടെ ഭൗതിക സെറ്റിൽമെന്റ്",
+            "Microstructure സവിശേഷതകൾ"
+          ],
+          "tags": [
+            "NFO"
+          ]
+        },
+        {
+          "n": 57,
+          "slug": "currency-and-rate-derivatives",
+          "title": "കറൻസി, പലിശനിരക്ക് ഡെറിവേറ്റീവുകൾ",
+          "summary": "Equities-ന് അപ്പുറം USD-INR, cross-currency futures, options, interest-rate futures എന്നിവയും macro, hedging ആവശ്യങ്ങൾക്ക് ക്വാണ്ട് അവ ഉപയോഗിക്കുന്ന വിധവും.",
+          "learn": [
+            "Currency futures-ഉം options-ഉം",
+            "USD-INR വിപണി microstructure",
+            "പലിശനിരക്ക് futures (IRF)",
+            "Yield curve അടിസ്ഥാനങ്ങൾ",
+            "Macro hedging ഉപയോഗങ്ങൾ",
+            "Liquidity-യും limits-ഉം"
+          ],
+          "tags": [
+            "കറൻസി ഡെറിവേറ്റീവ്സ് (CDS)",
+            "NSE"
+          ]
+        },
+        {
+          "n": 58,
+          "slug": "margins-and-position-limits",
+          "title": "മാർജിനുകൾ, ഈട്, പൊസിഷൻ പരിധികൾ, സെറ്റിൽമെന്റ്",
+          "summary": "ഡെറിവേറ്റീവുകളുടെ മൂലധന സംവിധാനം: SPAN, എക്സ്പോഷർ മാർജിൻ, കൊളാറ്ററൽ, ഹെയർകട്ടുകൾ, പൊസിഷൻ പരിധികൾ, സ്റ്റോക്ക് F&O ഓപ്ഷനുകളുടെ ഭൗതിക സെറ്റിൽമെന്റ്.",
+          "learn": [
+            "SPAN-ഉം exposure margin-ഉം",
+            "Collateral-ഉം haircuts-ഉം",
+            "Cross-margin ആനുകൂല്യങ്ങൾ",
+            "പൊസിഷൻ പരിധികൾ",
+            "ഭൗതിക സെറ്റിൽമെന്റ്",
+            "ക്വാണ്ട് portfolio-യിലെ margin"
+          ],
+          "tags": [
+            "NFO"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "G",
+      "name": "ആൽഫ ഗവേഷണവും സ്ട്രാറ്റജി വിഭാഗങ്ങളും",
+      "desc": "ഇന്ത്യൻ ഡാറ്റയിൽ നിർമ്മിച്ച് പരീക്ഷിക്കുന്ന ഗവേഷണ പ്രക്രിയയും പ്രധാന സിസ്റ്റമാറ്റിക് സ്ട്രാറ്റജി വിഭാഗങ്ങളും.",
+      "chapters": [
+        {
+          "n": 59,
+          "slug": "alpha-research-process",
+          "title": "ആൽഫ ഗവേഷണ പ്രക്രിയ",
+          "summary": "ഒരു ഉൾത്തോന്നലിനെ പരിശോധിച്ച edge ആക്കൽ; hypothesis, data, test, validation അടങ്ങിയ ട്രേഡിങ്ങിനുള്ള ശാസ്ത്രീയ രീതി, പുനരുപയോഗിക്കാവുന്ന checklist സഹിതം.",
+          "learn": [
+            "ആശയത്തിൽനിന്ന് hypothesis-ലേക്ക്",
+            "ന്യായമായ test രൂപകൽപ്പന",
+            "Signal-ഉം noise-ഉം",
+            "In-sample-ഉം out-of-sample-ഉം",
+            "Decay-യും capacity-യും",
+            "ഗവേഷണ checklist"
+          ],
+          "tags": [
+            "NSE"
+          ]
+        },
+        {
+          "n": 60,
+          "slug": "cross-sectional-momentum",
+          "title": "ഓഹരികൾക്കിടയിലെ മൊമെന്റം",
+          "summary": "Systematic equity-യുടെ പ്രധാനരീതി; മുൻകാല return അനുസരിച്ച് universe rank ചെയ്ത് winners വാങ്ങുകയും losers short ചെയ്യുകയും ഇന്ത്യൻ വിപണിയിലെ തടസ്സങ്ങൾ കണക്കാക്കുകയും ചെയ്യൽ.",
+          "learn": [
+            "Cross-sectional, time-series വ്യത്യാസം",
+            "രൂപീകരണ, ഹോൾഡിങ് കാലയളവുകൾ",
+            "NSE യൂണിവേഴ്സിന്റെ റാങ്കിങ്",
+            "Long-short നിർമ്മാണം",
+            "Momentum തകർച്ചകൾ",
+            "ചെലവുകളും turnover-ഉം"
+          ],
+          "tags": [
+            "NSE"
+          ]
+        },
+        {
+          "n": 61,
+          "slug": "value-quality-factors",
+          "title": "Value, Quality, Size, Low-Vol ഘടകങ്ങൾ",
+          "summary": "മിക്ക equity returns-നെയും നയിക്കുന്ന value, quality, size, low-volatility ഘടകങ്ങൾ ഇന്ത്യൻ വിപണിക്കായി നിർമ്മിക്കുകയും സംയോജിപ്പിക്കുകയും ചെയ്യൽ.",
+          "learn": [
+            "CAPM-ഉം beta-യും",
+            "Value, quality ഘടകങ്ങൾ",
+            "Size-ഉം low-vol-ഉം",
+            "India factors നിർമ്മിക്കൽ",
+            "ഘടകങ്ങൾ സംയോജിപ്പിക്കൽ",
+            "Factor zoo-യും ജാഗ്രതയും"
+          ],
+          "tags": [
+            "NSE"
+          ]
+        },
+        {
+          "n": 62,
+          "slug": "statistical-arbitrage",
+          "title": "Statistical Arbitrage-ഉം Market-Neutral Portfolios-ഉം",
+          "summary": "ബന്ധങ്ങളുടെ market-neutral trading; pairs, baskets, cash-futures arbitrage എന്നിവയും വളരെ കുറഞ്ഞ net market exposure ഉള്ള portfolio നിർമ്മാണവും.",
+          "learn": [
+            "Cointegration-ൽനിന്നുള്ള pairs",
+            "Spread നിർമ്മിക്കൽ",
+            "സ്-score entries, exits",
+            "ബാസ്കറ്റ്, ഇൻഡക്സ് ആർബിട്രാജ്",
+            "Market-neutral നിർമ്മാണം",
+            "Neutral portfolio റിസ്ക്"
+          ],
+          "tags": [
+            "NSE",
+            "NFO"
+          ]
+        },
+        {
+          "n": 63,
+          "slug": "event-driven",
+          "title": "Event-Driven സ്ട്രാറ്റജികൾ",
+          "summary": "കലണ്ടർ അടിസ്ഥാനമാക്കിയ ട്രേഡിങ്; earnings drift, index reconstitution, കോർപ്പറേറ്റ് നടപടികൾ, നിശ്ചിത events-നെ ചുറ്റിപ്പറ്റിയ പ്രവചനയോഗ്യമായ flows എന്നിവ.",
+          "learn": [
+            "Earnings-ന് ശേഷമുള്ള drift",
+            "Nifty index പുനഃസംഘടന",
+            "കോർപ്പറേറ്റ് നടപടികൾ",
+            "Buybacks-ഉം dividends-ഉം",
+            "Event trades രൂപകൽപ്പന",
+            "Event risk നിയന്ത്രണം"
+          ],
+          "tags": [
+            "NSE",
+            "NFO"
+          ]
+        },
+        {
+          "n": 64,
+          "slug": "flow-based-strategies",
+          "title": "Flow-Based സ്ട്രാറ്റജികൾ: FII/DII, OI, Expiry",
+          "summary": "വലിയ പണത്തിന്റെ അടയാളങ്ങൾ ട്രേഡ് ചെയ്യൽ: FII, DII പണമൊഴുക്കുകൾ, ഓപ്പൺ-ഇന്ററസ്റ്റ് മാറ്റങ്ങൾ, F&O നിരോധനപ്പട്ടിക, ശക്തമായ ഇന്ത്യൻ എക്സ്പയറി-ദിന പ്രഭാവങ്ങൾ.",
+          "learn": [
+            "FII/DII flow സിഗ്നലുകൾ",
+            "Open-interest വർധന",
+            "സിഗ്നലായി F&O നിരോധനം",
+            "Expiry-day പ്രതിഫലങ്ങൾ",
+            "Rollover വിശകലനം",
+            "Flow സിഗ്നലുകൾ സംയോജിപ്പിക്കൽ"
+          ],
+          "tags": [
+            "NSE",
+            "NFO"
+          ]
+        },
+        {
+          "n": 65,
+          "slug": "intraday-mean-reversion-breakout",
+          "title": "Intraday Mean Reversion-ഉം Breakout മോഡലുകളും",
+          "summary": "നീണ്ട നീക്കത്തിനെതിരെ ട്രേഡ് ചെയ്യലും സ്ഥിരീകരിച്ച breakouts പിന്തുടരലും എന്ന രണ്ട് intraday മാതൃകകൾ യഥാർഥ intraday ഡാറ്റയും സത്യസന്ധമായ ചെലവുകളും ഉപയോഗിച്ച് നിർമ്മിക്കൽ.",
+          "learn": [
+            "Intraday mean reversion മാതൃക",
+            "Opening-range breakout മാതൃക",
+            "VWAP-ലേക്കുള്ള reversion",
+            "ദിവസസമയത്തിന്റെ പ്രതിഫലങ്ങൾ",
+            "Stops-ഉം targets-ഉം",
+            "Intraday ചെലവിന്റെ യാഥാർഥ്യം"
+          ],
+          "tags": [
+            "NSE",
+            "സൂചിക (INDEX)"
+          ]
+        },
+        {
+          "n": 66,
+          "slug": "alt-data-nlp",
+          "title": "ഇന്ത്യൻ വിപണികൾക്കുള്ള Alternative Data-യും NLP-യും",
+          "summary": "വിലയ്ക്ക് അപ്പുറമുള്ള edge; news, announcements, filings, sentiment എന്നിവയും text-നെ tradeable signal ആക്കുന്ന natural-language tools-ഉം.",
+          "learn": [
+            "Alt data ആയി കണക്കാക്കുന്നത്",
+            "News-ഉം announcements-ഉം",
+            "NLP-യും sentiment-ഉം",
+            "Filings-ഉം disclosures-ഉം",
+            "Alt data-യിലെ കെണികൾ",
+            "Text signal നിർമ്മിക്കൽ"
+          ],
+          "tags": [
+            "NSE"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "H",
+      "name": "ബാക്ക്‌ടെസ്റ്റിങ്, ML, പോർട്ട്ഫോളിയോ നിർമ്മാണം",
+      "desc": "സത്യസന്ധമായ പരിശോധന, സുരക്ഷിതമായ മെഷീൻ ലേണിങ് ഉപയോഗം, പല സിഗ്നലുകളെ ഒറ്റ റിസ്ക് നിയന്ത്രിത പോർട്ട്ഫോളിയോ ആക്കൽ എന്നിവ.",
+      "chapters": [
+        {
+          "n": 67,
+          "slug": "backtesting-rigor",
+          "title": "സ്വയം വഞ്ചിക്കാതെയുള്ള ബാക്ക്‌ടെസ്റ്റിങ്",
+          "summary": "നഷ്ടമുണ്ടാക്കുന്ന system-നെ മനോഹരമായ backtest ആക്കുന്ന കെണികളും പരിശോധന സത്യസന്ധമാക്കി നിലനിർത്തുന്ന ശീലവും.",
+          "learn": [
+            "Backtest-ന്റെ ഘടന",
+            "യാഥാർഥ്യസമാന fills, costs",
+            "In-sample-ഉം out-of-sample-ഉം",
+            "Overfitting-ഉം snooping-ഉം",
+            "യുക്തിസഹ പരിശോധനകൾ",
+            "വിശ്വസിക്കാവുന്ന backtest"
+          ],
+          "tags": [
+            "NSE"
+          ]
+        },
+        {
+          "n": 68,
+          "slug": "bias-lookahead-survivorship",
+          "title": "ലുക്ക്-അഹെഡ്, സർവൈവർഷിപ്പ്, കോർപ്പറേറ്റ്-ആക്ഷൻ പക്ഷപാതം",
+          "summary": "ഭാവി ഉപയോഗിക്കൽ, ഇല്ലാതായവയെ ഒഴിവാക്കൽ, splits, bonuses തെറ്റായി കൈകാര്യം ചെയ്യൽ എന്നീ naive backtest-നെ നിശ്ശബ്ദമായി പെരുപ്പിക്കുന്ന മൂന്ന് bias-ുകൾ.",
+          "learn": [
+            "Look-ahead പക്ഷപാതം",
+            "Survivorship പക്ഷപാതം",
+            "Corporate-action ക്രമീകരണം",
+            "Point-in-time data രീതി",
+            "Index പുനഃസംഘടനാ പക്ഷപാതം",
+            "ഡാറ്റാസെറ്റ് ഓഡിറ്റ്"
+          ],
+          "tags": [
+            "NSE"
+          ]
+        },
+        {
+          "n": 69,
+          "slug": "walkforward-purged-cv",
+          "title": "വാക്ക്-ഫോർവേഡ്, പർജ്ഡ് CV, ഡിഫ്ലേറ്റഡ് Sharpe",
+          "summary": "സമയത്തെ മാനിക്കുന്ന validation; walk-forward testing, purged, embargoed cross-validation, നടത്തിയ എല്ലാ trials-നും അനുസരിച്ച് Sharpe കുറയ്ക്കൽ എന്നിവ.",
+          "learn": [
+            "Walk-forward പരിശോധന",
+            "സാധാരണ CV വിവരച്ചോർച്ച ഉണ്ടാക്കുന്നതെന്തുകൊണ്ട്",
+            "Purged ക്-fold CV",
+            "Embargo പ്രയോഗം",
+            "Combinatorial purged CV പരിശോധന",
+            "ഡിഫ്ലേറ്റഡ് Sharpe"
+          ],
+          "tags": [
+            "NSE"
+          ]
+        },
+        {
+          "n": 70,
+          "slug": "ml-in-quant",
+          "title": "ക്വാണ്ടിലെ Machine Learning: സാധ്യതയും അപകടവും",
+          "summary": "Machine learning ക്വാണ്ടിനെ യഥാർഥത്തിൽ സഹായിക്കുന്നിടം, അത് ഭാവിവിവരം നിശ്ശബ്ദമായി ചോർത്തുന്നിടം, സ്വയം വഞ്ചിക്കാതെ ഉപയോഗിക്കുന്ന വിധം.",
+          "learn": [
+            "ML സഹായിക്കുന്നതും ദോഷകരമാകുന്നതുമായ ഇടങ്ങൾ",
+            "Time series-ലെ Train/test വിഭജനം",
+            "ഫീച്ചർ, ലേബൽ ചോർച്ച",
+            "Tree മോഡലുകളും linear മോഡലുകളും",
+            "ഫീച്ചർ പ്രാധാന്യം",
+            "Overfit ML ഒഴിവാക്കൽ"
+          ],
+          "tags": [
+            "NSE"
+          ]
+        },
+        {
+          "n": 71,
+          "slug": "feature-engineering-labeling",
+          "title": "ഫീച്ചർ എൻജിനീയറിംഗ്, ലേബലിംഗ്, ചോർച്ച",
+          "summary": "ML-ന്റെ ഫലം നിശ്ചയിക്കുന്ന ഭാഗം; point-in-time features നിർമ്മിക്കൽ, triple-barrier ഉപയോഗിച്ച് labeling, leakage പൂർണ്ണമായി നീക്കൽ എന്നിവ.",
+          "learn": [
+            "Point-in-time features നിർമ്മാണം",
+            "Stationary feature പരിവർത്തനങ്ങൾ",
+            "Fixed-horizon labels നിർമ്മാണം",
+            "Triple-barrier രീതി",
+            "Meta-labeling രീതി",
+            "ചോർച്ച ഓഡിറ്റുകൾ"
+          ],
+          "tags": [
+            "NSE"
+          ]
+        },
+        {
+          "n": 72,
+          "slug": "portfolio-construction-risk",
+          "title": "പോർട്ട്ഫോളിയോ നിർമ്മാണം, റിസ്ക് മോഡലുകൾ, VaR, സ്ട്രെസ്",
+          "summary": "പല സിഗ്നലുകളിൽനിന്ന് ഒരു portfolio-യിലേക്ക്; mean-variance-ഉം പരിഹാരങ്ങളും, position sizing, Kelly, risk models, tail-നുള്ള VaR, CVaR, stress testing എന്നിവ.",
+          "learn": [
+            "Mean-variance-ഉം പരിമിതികളും",
+            "Risk parity-യും vol targeting-ഉം",
+            "Kelly-യും fractional Kelly-യും",
+            "Factor risk models നിർമ്മാണം",
+            "VaRഉം CVaRഉം",
+            "ടെയിൽ റിസ്കിന്റെ സ്ട്രെസ് ടെസ്റ്റിങ്"
+          ],
+          "tags": [
+            "NSE",
+            "സൂചിക (INDEX)"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "I",
+      "name": "പ്രൊഡക്ഷൻ, അനുസരണം, കരിയർ",
+      "desc": "ഗവേഷണം ലൈവാക്കൽ: ഇൻഫ്രാസ്ട്രക്ചർ, പ്രൊഡക്ഷൻ പൈപ്പ്‌ലൈൻ, നിരീക്ഷണം, അനുസരണം, ക്യാപ്‌സ്റ്റോൺ പദ്ധതി എന്നിവ.",
+      "chapters": [
+        {
+          "n": 73,
+          "slug": "data-infrastructure",
+          "title": "ഡാറ്റയും ഗവേഷണ ഇൻഫ്രാസ്ട്രക്ചറും",
+          "summary": "പ്രചാരം കുറഞ്ഞെങ്കിലും നിർണായകമായ അടിത്തറ: tick, bar സംഭരണം, സമയോചിത datasets, time-series databases, പുനരാവർത്തിക്കാവുന്ന research environment എന്നിവ.",
+          "learn": [
+            "ടിക്ക്, L1, L2, L3 സംഭരണം",
+            "Point-in-time datasets നിർമ്മാണം",
+            "Time-series databases ഉപയോഗം",
+            "Cleaning-ഉം കോർപ്പറേറ്റ് നടപടികൾ-ഉം",
+            "പുനരാവർത്തിക്കാവുന്ന pipelines",
+            "ചെലവും scale-ഉം"
+          ],
+          "tags": [
+            "NSE"
+          ]
+        },
+        {
+          "n": 74,
+          "slug": "research-to-production",
+          "title": "ഗവേഷണത്തിൽനിന്ന് പ്രൊഡക്ഷനിലേക്കുള്ള പൈപ്പ്‌ലൈൻ",
+          "summary": "Notebook-നും live bot-നും ഇടയിലുള്ള വിടവ് shared code paths, configuration, parity testing, അച്ചടക്കമുള്ള deployment process എന്നിവയിലൂടെ അടയ്ക്കൽ.",
+          "learn": [
+            "Research-production വിടവ്",
+            "പങ്കിട്ട സിഗ്നൽ കോഡ്",
+            "Config-ഉം parameters-ഉം",
+            "Backtest-live parity പരിശോധന",
+            "Staging-ഉം deployment-ഉം",
+            "Versioning-ഉം rollback-ഉം"
+          ],
+          "tags": [
+            "NSE"
+          ]
+        },
+        {
+          "n": 75,
+          "slug": "live-trading-system-design",
+          "title": "Live Trading System രൂപകൽപ്പന",
+          "summary": "പ്രവർത്തിക്കുന്ന trading system-ന്റെ architecture; OMS, PMS, order, position lifecycle, state management, പരാജയസമയത്തെ resilience എന്നിവ.",
+          "learn": [
+            "OMS, PMS ചുമതലകൾ",
+            "ഓർഡർ, പൊസിഷൻ അവസ്ഥ",
+            "Event loops-ഉം queues-ഉം",
+            "Idempotency-യും recovery-യും",
+            "BCP-യും disaster recovery-യും",
+            "പരാജയം മുൻകൂട്ടി കണ്ടുള്ള രൂപകൽപ്പന"
+          ],
+          "tags": [
+            "NSE"
+          ]
+        },
+        {
+          "n": 76,
+          "slug": "monitoring-reconciliation",
+          "title": "നിരീക്ഷണം, Reconciliation, Incident കൈകാര്യം ചെയ്യൽ",
+          "summary": "Live portfolio വിശ്വസനീയവും പ്രവർത്തനക്ഷമവുമായി നിലനിർത്തൽ: തത്സമയ monitoring, ദിവസാവസാന reconciliation, logging, alerting, ശാന്തമായ incident response എന്നിവ.",
+          "learn": [
+            "Live monitoring-ഉം dashboards-ഉം",
+            "റിസ്ക്-പരിധി മുന്നറിയിപ്പുകൾ",
+            "ട്രേഡ്, പൊസിഷൻ പൊരുത്തപ്പെടുത്തൽ",
+            "Logging-ഉം audit trails-ഉം",
+            "സംഭവ പ്രതികരണം",
+            "സംഭവാനന്തര വിശകലനം"
+          ],
+          "tags": [
+            "NSE"
+          ]
+        },
+        {
+          "n": 77,
+          "slug": "sebi-algo-compliance-ethics",
+          "title": "SEBI Algo അനുസരണവും ധാർമികതയും",
+          "summary": "ചട്ടങ്ങൾക്കുള്ളിലെ ട്രേഡിങ്; SEBI algo framework, system audit, governance ചുമതലകൾ, market-conduct rules, automated trading-ന്റെ ധാർമികത എന്നിവ.",
+          "learn": [
+            "SEBI ആൽഗോ ചട്ടക്കൂട്",
+            "System audit-ഉം governance-ഉം",
+            "Cyber resilience ചുമതലകൾ",
+            "വിപണി പെരുമാറ്റച്ചട്ടങ്ങൾ",
+            "കൃത്രിമ ഇടപെടലിന്റെ ചുവപ്പുവരകൾ",
+            "ധാർമികതയും ഉത്തരവാദിത്തവും"
+          ],
+          "tags": [
+            "NSE"
+          ]
+        },
+        {
+          "n": 78,
+          "slug": "capstone",
+          "title": "ക്യാപ്‌സ്റ്റോൺ: സമ്പൂർണ്ണ ഇന്ത്യൻ ക്വാണ്ട് ഗവേഷണ പദ്ധതി",
+          "summary": "എല്ലാം ഒരുമിച്ച്; hypothesis മുതൽ microstructure-aware data, model, portfolio, risk, സത്യസന്ധമായ backtest, production പാത വരെ ഒരു യഥാർഥ edge വികസിപ്പിക്കൽ.",
+          "learn": [
+            "Hypothesis രൂപപ്പെടുത്തൽ",
+            "Microstructure പരിഗണിച്ച data",
+            "Model നിർമ്മിക്കൽ",
+            "Portfolio-യും sizing-ഉം",
+            "സത്യസന്ധമായ backtest-ഉം ചെലവുകളും",
+            "Production-ലേക്കുള്ള പാത"
+          ],
+          "tags": [
+            "NSE",
+            "സൂചിക (INDEX)",
+            "NFO"
+          ]
+        }
+      ]
+    }
+  ]
+}
