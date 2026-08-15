@@ -1,5 +1,6 @@
 import { ArrowRight, ShieldCheck } from "lucide-react";
 import Link from "next/link";
+import LocalizedCourseHome from "@/components/course/LocalizedCourseHome";
 
 import { CHAPTERS, PARTS, TAG_CLASS } from "@/lib/riskCurriculum";
 
@@ -54,6 +55,7 @@ const COURSE_LD = {
 
 export default function RiskCourseHome() {
   return (
+    <LocalizedCourseHome course="risk-management" parts={PARTS} tagClass={TAG_CLASS}>
     <div>
       <script
         type="application/ld+json"
@@ -171,5 +173,6 @@ export default function RiskCourseHome() {
         </p>
       </div>
     </div>
+    </LocalizedCourseHome>
   );
 }

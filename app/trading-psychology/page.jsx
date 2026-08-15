@@ -1,5 +1,6 @@
 import { ArrowRight, Brain } from "lucide-react";
 import Link from "next/link";
+import LocalizedCourseHome from "@/components/course/LocalizedCourseHome";
 
 import { CHAPTERS, PARTS, TAG_CLASS } from "@/lib/psychologyCurriculum";
 
@@ -54,6 +55,7 @@ const COURSE_LD = {
 
 export default function PsychologyCourseHome() {
   return (
+    <LocalizedCourseHome course="trading-psychology" parts={PARTS} tagClass={TAG_CLASS}>
     <div>
       <script
         type="application/ld+json"
@@ -172,5 +174,6 @@ export default function PsychologyCourseHome() {
         </p>
       </div>
     </div>
+    </LocalizedCourseHome>
   );
 }

@@ -1,5 +1,6 @@
 import { ArrowRight, LineChart } from "lucide-react";
 import Link from "next/link";
+import LocalizedCourseHome from "@/components/course/LocalizedCourseHome";
 
 import { CHAPTERS, PARTS, TAG_CLASS } from "@/lib/statsArbCurriculum";
 
@@ -54,6 +55,7 @@ const COURSE_LD = {
 
 export default function StatsArbCourseHome() {
   return (
+    <LocalizedCourseHome course="stats-arb" parts={PARTS} tagClass={TAG_CLASS}>
     <div>
       <script
         type="application/ld+json"
@@ -158,5 +160,6 @@ export default function StatsArbCourseHome() {
         </p>
       </div>
     </div>
+    </LocalizedCourseHome>
   );
 }
