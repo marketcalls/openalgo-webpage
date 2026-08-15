@@ -34,6 +34,7 @@ yarn-error.log*
 .open-next/
 .wrangler/
 .dev.vars
+/public/i18n/content/
 
 # typescript
 *.tsbuildinfo
