@@ -20,7 +20,7 @@ const dict = {
   'hero.h1a': 'Sua plataforma pessoal',
   'hero.h1b': 'de algo trading.',
   'hero.desc':
-    'Teste e execute suas ideias de trading, conecte suas plataformas favoritas e crie estratégias com IA - com uma suíte de análise de opções integrada e suporte a 33+ corretoras.',
+    'Teste e execute suas ideias de trading, conecte suas plataformas favoritas e crie estratégias com IA - com uma suíte de análise de opções integrada e suporte a 35+ corretoras.',
   'hero.statDownloads': 'Downloads',
   'hero.statOpenSource': 'Open source',
   'hero.statStars': 'Estrelas no GitHub',
@@ -39,7 +39,7 @@ const dict = {
   'why.h3t': 'Privacidade e controle totais',
   'why.h3d': 'Seu código, suas estratégias, seus dados. Nada sai da sua infraestrutura.',
   'why.h4t': 'Suporte multiplataforma',
-  'why.h4d': 'Integre com 33+ corretoras. Use a partir de Python, TradingView, Excel e muito mais.',
+  'why.h4d': 'Integre com 35+ corretoras. Use a partir de Python, TradingView, Excel e muito mais.',
 
   'trust.t1': '100% open source',
   'trust.t2': 'Licença AGPL-3.0',
@@ -89,7 +89,7 @@ const dict = {
   'values.v1t': 'Verdadeiramente independente',
   'values.v1d':
     'Sem vendor lock-in. Sem dependências ocultas. Troque de corretora quando quiser. Suas estratégias funcionam em qualquer lugar. Uma API, várias corretoras.',
-  'values.v1i1': 'API unificada para 33+ corretoras',
+  'values.v1i1': 'API unificada para 35+ corretoras',
   'values.v1i2': 'Portabilidade de estratégias garantida',
   'values.v1i3': 'Sem formatos ou protocolos proprietários',
   'values.v2t': 'Comunidade em primeiro lugar',
@@ -338,7 +338,7 @@ const dict = {
 
   // Features page
   'feat.title': 'Recursos da Plataforma',
-  'feat.desc': 'O OpenAlgo é uma stack completa e self-hosted para algo trading e análise de opções - uma suíte de opções com 15 ferramentas, um motor de execução unificado e integrações com 33+ corretoras, feito para traders individuais que querem controle total da sua infraestrutura.',
+  'feat.desc': 'O OpenAlgo é uma stack completa e self-hosted para algo trading e análise de opções - uma suíte de opções com 15 ferramentas, um motor de execução unificado e integrações com 35+ corretoras, feito para traders individuais que querem controle total da sua infraestrutura.',
   'feat.cat.optionsAnalytics': 'Análise de Opções',
   'feat.cat.aiSkills': 'IA e Skills',
   'feat.cat.orderManagement': 'Gestão de Ordens',
@@ -418,7 +418,7 @@ const dict = {
   'feat.f31d': 'Alertas e indicadores do GoCharting podem disparar ordens ao vivo através do OpenAlgo - gráficos nativos do mercado indiano encontram a automação',
   'feat.f32t': 'Trading Multiplataforma',
   'feat.f32d': 'Opere a partir do Amibroker, TradingView, Python, MetaTrader, Excel ou Google Sheets - o OpenAlgo é a ponte até sua corretora',
-  'feat.f33t': 'Suporte a 33+ Corretoras',
+  'feat.f33t': 'Suporte a 35+ Corretoras',
   'feat.f33d': 'Conecte-se sem esforço às principais plataformas de corretagem da Índia, entre corretoras discount, full-service e emergentes',
   'feat.f34t': 'Opere Conversando (MCP)',
   'feat.f34d': 'Conecte sua conta OpenAlgo ao Claude, Cursor, Windsurf ou ChatGPT e coloque ordens, confira posições e consulte preços ao vivo apenas pedindo',
