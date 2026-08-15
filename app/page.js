@@ -153,9 +153,9 @@ export default function Home() {
 
           <div className="reveal reveal-4 mb-12 flex flex-wrap items-center justify-center gap-x-12 gap-y-6">
             {[
-              { icon: Download, value: "3,40,000+", label: t('hero.statDownloads') },
+              { icon: Download, value: "4,20,000+", label: t('hero.statDownloads') },
               { icon: Code2, value: "100%", label: t('hero.statOpenSource') },
-              { icon: Star, value: "2,400+", label: t('hero.statStars') },
+              { icon: Star, value: "2,500+", label: t('hero.statStars') },
             ].map(({ icon: Icon, value, label }) => (
               <div key={label} className="flex items-center gap-3">
                 <Icon className="h-5 w-5 text-on-surface-variant" aria-hidden="true" />
