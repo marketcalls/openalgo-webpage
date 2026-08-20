@@ -21,7 +21,6 @@ const en = {
   'footer.copyright': 'Copyright',
 
   // Hero
-  'hero.badge': 'New in V2 - 15-tool options analytics suite',
   'hero.h1a': 'Your personal',
   'hero.h1b': 'algo trading platform.',
   'hero.desc':
@@ -33,13 +32,38 @@ const en = {
   'hero.ctaGithub': 'GitHub',
   'hero.integrates': 'Integrates with',
 
+  // Platform capability blocks
+  'platform.kicker': 'One platform, many desks',
+  'platform.title': 'Not just an algo trading platform.',
+  'platform.title2': 'A complete trading desk.',
+  'platform.sub':
+    'Execution is only the starting point. Charting, no-code strategy building, options analytics, scalping and sandbox testing all run inside the same self-hosted stack.',
+  'platform.b1t': 'Self-hosted algo trading',
+  'platform.b1d':
+    'A unified broker API and execution engine on your own server, driven from TradingView, Amibroker, ChartInk, Excel, Python or MCP.',
+  'platform.b2t': 'Charting platform',
+  'platform.b2d':
+    'Chart-based trading in the built-in terminal: fire and manage orders from the chart itself, with 90+ indicators on real market data.',
+  'platform.b3t': 'No-code strategy builder',
+  'platform.b3d':
+    'Flow is a drag-and-drop canvas: wire 53 node types from triggers to indicators, conditions and orders, then activate it to run on its own.',
+  'platform.b4t': 'Options trading platform',
+  'platform.b4d':
+    '18 built-in tools: option chain, Greeks, OI tracker, max pain, vol surface, GEX, IV smile, straddles and arbitrage, plus portfolio and SIP backtesters.',
+  'platform.b5t': 'Scalping platform',
+  'platform.b5d':
+    'A keyboard-driven scalping terminal: arrow keys fire CE and PE orders, F6 flattens every position and F7 cancels every pending order.',
+  'platform.b6t': 'Sandbox testing',
+  'platform.b6d':
+    'Analyzer mode runs any strategy against real market data with 1 crore of sandbox capital and exchange-aligned auto square-off.',
+
   // Why OpenAlgo
   'why.kicker': 'Why OpenAlgo',
   'why.title': 'Own everything,',
   'why.title2': 'from code to infrastructure.',
   'why.sub': 'The only trading platform where you own everything - the code, the data, and the servers it runs on.',
   'why.h1t': 'Options & strategy analytics',
-  'why.h1d': '15 built-in tools: strategy builder, option chain, Greeks, OI tracker and range, max pain, straddles, vol surface, GEX, gamma density, IV smile, and a futures arbitrage scanner.',
+  'why.h1d': '18 built-in tools: strategy builder, option chain, Greeks, OI tracker and range, max pain, straddles, vol surface, GEX, gamma density, IV smile, a futures arbitrage scanner, plus portfolio and SIP backtesters.',
   'why.h2t': 'Self-hostable infrastructure',
   'why.h2d': 'Deploy on your server, your cloud, your way. No vendor lock-in.',
   'why.h3t': 'Complete privacy & control',
@@ -313,7 +337,7 @@ const en = {
 
   // Features page
   'feat.title': "Platform Features",
-  'feat.desc': "OpenAlgo is a complete self-hosted stack for algo trading and options analytics - a 15-tool options suite, a unified execution engine, and integrations across 35+ brokers, built for individual traders who want full control of their infrastructure.",
+  'feat.desc': "OpenAlgo is a complete self-hosted stack for algo trading and options analytics - an 18-tool options and portfolio suite, a unified execution engine, and integrations across 35+ brokers, built for individual traders who want full control of their infrastructure.",
   'feat.cat.optionsAnalytics': "Options Analytics",
   'feat.cat.aiSkills': "AI & Skills",
   'feat.cat.orderManagement': "Order Management",

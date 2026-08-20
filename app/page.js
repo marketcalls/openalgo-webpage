@@ -24,6 +24,11 @@ import {
   Box,
   Sigma,
   Network,
+  Server,
+  ChartCandlestick,
+  Blocks,
+  Zap,
+  ShieldCheck,
   Wallet,
   PieChart,
   Wand2,
@@ -106,6 +111,15 @@ export default function Home() {
     { title: "Rust SDK", description: "Official Rust SDK for OpenAlgo", icon: Cog, url: "https://github.com/marketcalls/openalgo-rust" }
   ]
 
+  const platformBlocks = [
+    { icon: Server, title: t('platform.b1t'), desc: t('platform.b1d') },
+    { icon: ChartCandlestick, title: t('platform.b2t'), desc: t('platform.b2d') },
+    { icon: Blocks, title: t('platform.b3t'), desc: t('platform.b3d') },
+    { icon: Sigma, title: t('platform.b4t'), desc: t('platform.b4d') },
+    { icon: Zap, title: t('platform.b5t'), desc: t('platform.b5d') },
+    { icon: ShieldCheck, title: t('platform.b6t'), desc: t('platform.b6d') },
+  ]
+
   const integrations = [
     { title: "Excel Add-in", description: "Trade from Excel spreadsheets", icon: FileSpreadsheet, url: "https://github.com/marketcalls/OpenAlgo-Excel" },
     { title: "Amibroker Plugin", description: "OpenAlgo Plugin for Amibroker", icon: Plug, url: "https://github.com/marketcalls/OpenAlgoPlugin" },
@@ -135,13 +149,6 @@ export default function Home() {
       <section className="relative overflow-hidden px-4 py-24 md:py-32">
         <div className="absolute inset-0 obsidian-grid" aria-hidden="true" />
         <div className="relative z-10 mx-auto max-w-4xl text-center">
-          <div className="reveal reveal-1 mb-10 inline-flex items-center gap-2.5 rounded-full border bg-surface-bright px-4 py-2">
-            <span className="h-2 w-2 rounded-full bg-on-surface pulse-live" aria-hidden="true" />
-            <span className="font-label text-label-md uppercase text-on-surface-variant">
-              {t('hero.badge')}
-            </span>
-          </div>
-
           <h1 className="reveal reveal-2 mb-8 text-[2.75rem] font-extrabold leading-[1.04] tracking-[-0.03em] text-on-surface sm:text-[4rem] md:text-[4.5rem]">
             {t('hero.h1a')}
             <span className="block text-on-surface-variant/70">{t('hero.h1b')}</span>
@@ -196,6 +203,34 @@ export default function Home() {
                 >
                   {platform}
                 </span>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Platform capability blocks */}
+      <section className="border-t px-4 py-24">
+        <div className="container mx-auto">
+          <div className="mx-auto max-w-6xl">
+            <div className="mb-14 text-center">
+              <Kicker>{t('platform.kicker')}</Kicker>
+              <h2 className="mt-4 text-display-md text-on-surface">
+                {t('platform.title')}
+                <span className="block text-on-surface-variant/70">{t('platform.title2')}</span>
+              </h2>
+              <p className="mx-auto mt-5 max-w-2xl text-lg leading-relaxed text-on-surface-variant">
+                {t('platform.sub')}
+              </p>
+            </div>
+
+            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+              {platformBlocks.map(({ icon: Icon, title, desc }) => (
+                <div key={title} className="obsidian-card rounded-3xl p-6">
+                  <ProjectIcon icon={Icon} />
+                  <h3 className="mb-1.5 mt-4 font-bold text-on-surface">{title}</h3>
+                  <p className="text-sm leading-relaxed text-on-surface-variant">{desc}</p>
+                </div>
               ))}
             </div>
           </div>

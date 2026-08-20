@@ -16,7 +16,6 @@ const dict = {
   'footer.privacy': 'Política de Privacidade',
   'footer.copyright': 'Copyright',
 
-  'hero.badge': 'Novidade na V2 - suíte de análise de opções com 15 ferramentas',
   'hero.h1a': 'Sua plataforma pessoal',
   'hero.h1b': 'de algo trading.',
   'hero.desc':
@@ -28,12 +27,36 @@ const dict = {
   'hero.ctaGithub': 'GitHub',
   'hero.integrates': 'Integra com',
 
+  'platform.kicker': 'Uma plataforma, várias mesas',
+  'platform.title': 'Não é apenas uma plataforma de trading algorítmico.',
+  'platform.title2': 'Uma mesa de operações completa.',
+  'platform.sub':
+    'A execução é apenas o ponto de partida. Gráficos, criação de estratégias sem código, análise de opções, scalping e testes em sandbox rodam dentro da mesma stack auto-hospedada.',
+  'platform.b1t': 'Trading algorítmico auto-hospedado',
+  'platform.b1d':
+    'Uma API de corretora unificada e um motor de execução no seu próprio servidor, comandados por TradingView, Amibroker, ChartInk, Excel, Python ou MCP.',
+  'platform.b2t': 'Plataforma de gráficos',
+  'platform.b2d':
+    'Negociação pelo gráfico no terminal integrado: envie e gerencie ordens direto do gráfico, com mais de 90 indicadores e dados reais de mercado.',
+  'platform.b3t': 'Construtor de estratégias sem código',
+  'platform.b3d':
+    'O Flow é uma tela de arrastar e soltar: conecte 53 tipos de nó, de gatilhos a indicadores, condições e ordens, e ative para rodar sozinho.',
+  'platform.b4t': 'Plataforma de trading de opções',
+  'platform.b4d':
+    '18 ferramentas integradas: cadeia de opções, gregas, OI tracker, max pain, superfície de volatilidade, GEX, IV smile, straddles, arbitragem e backtesters de carteira e SIP.',
+  'platform.b5t': 'Plataforma de scalping',
+  'platform.b5d':
+    'Terminal de scalping comandado pelo teclado: as setas enviam ordens CE e PE, F6 zera todas as posições e F7 cancela as ordens pendentes.',
+  'platform.b6t': 'Testes em sandbox',
+  'platform.b6d':
+    'O modo analisador roda qualquer estratégia com dados reais de mercado, capital de sandbox e zeragem automática alinhada ao pregão.',
+
   'why.kicker': 'Por que OpenAlgo',
   'why.title': 'Seja dono de tudo,',
   'why.title2': 'do código à infraestrutura.',
   'why.sub': 'A única plataforma de trading em que tudo é seu - o código, os dados e os servidores onde ela roda.',
   'why.h1t': 'Análise de opções e estratégias',
-  'why.h1d': '15 ferramentas integradas: construtor de estratégias, option chain, Greeks, rastreador e range de OI, max pain, straddles, superfície de volatilidade, GEX, densidade de gamma, IV smile e um scanner de arbitragem de futuros.',
+  'why.h1d': '18 ferramentas integradas: construtor de estratégias, option chain, Greeks, rastreador e range de OI, max pain, straddles, superfície de volatilidade, GEX, densidade de gamma, IV smile e um scanner de arbitragem de futuros.',
   'why.h2t': 'Infraestrutura self-hosted',
   'why.h2d': 'Implante no seu servidor, na sua nuvem, do seu jeito. Sem vendor lock-in.',
   'why.h3t': 'Privacidade e controle totais',
@@ -338,7 +361,7 @@ const dict = {
 
   // Features page
   'feat.title': 'Recursos da Plataforma',
-  'feat.desc': 'O OpenAlgo é uma stack completa e self-hosted para algo trading e análise de opções - uma suíte de opções com 15 ferramentas, um motor de execução unificado e integrações com 35+ corretoras, feito para traders individuais que querem controle total da sua infraestrutura.',
+  'feat.desc': 'O OpenAlgo é uma stack completa e self-hosted para algo trading e análise de opções - uma suíte de opções com 18 ferramentas, um motor de execução unificado e integrações com 35+ corretoras, feito para traders individuais que querem controle total da sua infraestrutura.',
   'feat.cat.optionsAnalytics': 'Análise de Opções',
   'feat.cat.aiSkills': 'IA e Skills',
   'feat.cat.orderManagement': 'Gestão de Ordens',

@@ -36,7 +36,7 @@ export function Footer() {
           </a>
           <span className="hidden md:inline text-outline-variant">|</span>
           <span className="rounded-full border px-3 py-1 font-label text-label-md text-on-surface-variant">
-            v2.0.16
+            v2.0.21
           </span>
         </div>
 
