@@ -65,7 +65,8 @@
     "wrangler": "^4.100.0"
   },
   "overrides": {
-    "postcss": "^8.5.10"
+    "postcss": "^8.5.10",
+    "nanoid": "5.1.16"
   },
   "browserslist": [
     "chrome >= 109",
