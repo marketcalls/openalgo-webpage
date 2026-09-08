@@ -87,7 +87,10 @@ const features = [
   { titleKey: "feat.f72t", descKey: "feat.f72d", icon: MessageCircle, category: "Community" },
   { titleKey: "feat.f73t", descKey: "feat.f73d", icon: Bot, category: "Community" },
   { titleKey: "feat.f74t", descKey: "feat.f74d", icon: Users, category: "Community" },
-  { titleKey: "feat.f75t", descKey: "feat.f75d", icon: Github, category: "Community" }
+  { titleKey: "feat.f75t", descKey: "feat.f75d", icon: Github, category: "Community" },
+  { titleKey: "feat.f76t", descKey: "feat.f76d", icon: Layers, category: "Strategy Execution" },
+  { titleKey: "feat.f77t", descKey: "feat.f77d", icon: Bot, category: "AI & Skills" },
+  { titleKey: "feat.f78t", descKey: "feat.f78d", icon: Database, category: "Data Management" }
 ]
 
 const categories = [

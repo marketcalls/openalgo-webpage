@@ -31,13 +31,13 @@ const dict = {
   'platform.title': 'Não é apenas uma plataforma de trading algorítmico.',
   'platform.title2': 'Uma mesa de operações completa.',
   'platform.sub':
-    'A execução é apenas o ponto de partida. Gráficos, criação de estratégias sem código, análise de opções, scalping e testes em sandbox rodam dentro da mesma stack auto-hospedada.',
+    'A execução é apenas o ponto de partida. Gráficos, criação de estratégias sem código e de várias pernas, análise de opções, scalping, testes em sandbox, um agente de trading com IA e o seu próprio armazém de dados de mercado rodam dentro da mesma stack auto-hospedada.',
   'platform.b1t': 'Trading algorítmico auto-hospedado',
   'platform.b1d':
     'Uma API de corretora unificada e um motor de execução no seu próprio servidor, comandados por TradingView, Amibroker, ChartInk, Excel, Python ou MCP.',
   'platform.b2t': 'Plataforma de gráficos',
   'platform.b2d':
-    'Negociação pelo gráfico no terminal integrado: envie e gerencie ordens direto do gráfico, com mais de 90 indicadores e dados reais de mercado.',
+    'O terminal de trading integrado: envie e gerencie ordens a partir do próprio gráfico, com mais de 90 indicadores sobre dados reais de mercado e o agente de IA num painel lateral.',
   'platform.b3t': 'Construtor de estratégias sem código',
   'platform.b3d':
     'O Flow é uma tela de arrastar e soltar: conecte 53 tipos de nó, de gatilhos a indicadores, condições e ordens, e ative para rodar sozinho.',
@@ -50,6 +50,18 @@ const dict = {
   'platform.b6t': 'Testes em sandbox',
   'platform.b6d':
     'O modo analisador roda qualquer estratégia com dados reais de mercado, capital de sandbox e zeragem automática alinhada ao pregão.',
+  'platform.b7t':
+    'Motor de estratégias com gestão de risco',
+  'platform.b7d':
+    'Rode cestas de opções ou pernas acionadas por sinal com stop, alvo e trailing por perna, um piso de trava de lucro para a cesta e um limite de perda diária, pelo navegador ou por um webhook.',
+  'platform.b8t':
+    'Agente de trading com IA integrado',
+  'platform.b8d':
+    'Um chat que lê os seus próprios dados de mercado, desenha gráficos e diagramas de payoff, calcula indicadores e escreve estratégias. Cada ordem para e aguarda a sua aprovação.',
+  'platform.b9t':
+    'Armazém de dados de mercado',
+  'platform.b9d':
+    'O Historify baixa o histórico do corretor para um armazém local e a partir dele serve gráficos, atualizações agendadas e exportações CSV ou Parquet para pesquisa e backtests.',
 
   'why.kicker': 'Por que OpenAlgo',
   'why.title': 'Seja dono de tudo,',
@@ -462,7 +474,7 @@ const dict = {
   'feat.f42t': 'Master Contracts',
   'feat.f42d': 'A lista completa de instrumentos de todas as bolsas é atualizada diariamente, para que seus dados de símbolos nunca fiquem desatualizados',
   'feat.f43t': 'Acesso a Dados Históricos',
-  'feat.f43d': 'Obtenha candles históricos de qualquer símbolo e timeframe através da integração com o Historify - ideal para backtests e pesquisa',
+  'feat.f43d': 'Puxe candles históricos de qualquer símbolo e período direto da API REST - ideal para backtests e pesquisa',
   'feat.f44t': 'Rastreador de PnL em Tempo Real',
   'feat.f44d': 'Curva de P&L ao vivo, drawdown, win rate e detalhamento por estratégia - veja exatamente como está o seu dia',
   'feat.f45t': 'Monitor de Latência',
@@ -527,6 +539,12 @@ const dict = {
   'feat.f74d': 'Sessões online regulares cobrindo o roadmap, novos recursos e Q&A ao vivo com a equipe principal',
   'feat.f75t': 'Desenvolvimento Aberto',
   'feat.f75d': 'Cada linha de código, cada PR, cada issue é pública no GitHub - roadmap transparente, guiado pela comunidade',
+  'feat.f76t': 'Motor de estratégias com gestão de risco',
+  'feat.f76d': 'Rode cestas de opções ou pernas acionadas por sinal com stop, alvo e trailing por perna integrados, mais um piso de trava de lucro para a cesta e um limite de perda diária que sobrevive a um reinício',
+  'feat.f77t': 'Agente de trading com IA integrado',
+  'feat.f77d': 'Peça um gráfico, um indicador, uma cadeia de opções ou uma estratégia em linguagem comum - o agente lê os seus próprios dados do OpenAlgo e para cada ordem à espera da sua aprovação',
+  'feat.f78t': 'Armazém de dados Historify',
+  'feat.f78d': 'Baixe o histórico do corretor para o seu próprio armazém local, agende atualizações, exporte CSV ou Parquet e sirva gráficos e backtests a partir dele',
 
   // Download page
   'dl.title': 'Downloads',

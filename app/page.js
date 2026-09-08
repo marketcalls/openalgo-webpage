@@ -25,6 +25,7 @@ import {
   Sigma,
   Network,
   Server,
+  Database,
   ChartCandlestick,
   Blocks,
   Zap,
@@ -118,6 +119,9 @@ export default function Home() {
     { icon: Sigma, title: t('platform.b4t'), desc: t('platform.b4d') },
     { icon: Zap, title: t('platform.b5t'), desc: t('platform.b5d') },
     { icon: ShieldCheck, title: t('platform.b6t'), desc: t('platform.b6d') },
+    { icon: Layers, title: t('platform.b7t'), desc: t('platform.b7d') },
+    { icon: Bot, title: t('platform.b8t'), desc: t('platform.b8d') },
+    { icon: Database, title: t('platform.b9t'), desc: t('platform.b9d') },
   ]
 
   const integrations = [
@@ -194,8 +198,9 @@ export default function Home() {
             <div className="mx-auto flex max-w-3xl flex-wrap justify-center gap-2">
               {[
                 "Amibroker", "TradingView", "GoCharting", "Python", "MetaTrader",
-                "N8N", "Java", "Go", ".NET", "Node.js", "Rust",
-                "ChartInk", "Excel", "Google Sheets", "OpenClaw", "Telegram", "WhatsApp"
+                "NinjaTrader", "N8N", "Java", "Go", ".NET", "Node.js", "Rust",
+                "ChartInk", "Excel", "Google Sheets", "OpenClaw", "Hermes Agent",
+                "GrokBot", "Telegram", "WhatsApp"
               ].map((platform) => (
                 <span
                   key={platform}

@@ -37,13 +37,13 @@ const en = {
   'platform.title': 'Not just an algo trading platform.',
   'platform.title2': 'A complete trading desk.',
   'platform.sub':
-    'Execution is only the starting point. Charting, no-code strategy building, options analytics, scalping and sandbox testing all run inside the same self-hosted stack.',
+    'Execution is only the starting point. Charting, no-code and multi-leg strategy building, options analytics, scalping, sandbox testing, an AI trading agent and your own market data store all run inside the same self-hosted stack.',
   'platform.b1t': 'Self-hosted algo trading',
   'platform.b1d':
     'A unified broker API and execution engine on your own server, driven from TradingView, Amibroker, ChartInk, Excel, Python or MCP.',
   'platform.b2t': 'Charting platform',
   'platform.b2d':
-    'Chart-based trading in the built-in terminal: fire and manage orders from the chart itself, with 90+ indicators on real market data.',
+    'The built-in trading terminal: fire and manage orders from the chart itself, with 90+ indicators on real market data and the AI agent in a side panel.',
   'platform.b3t': 'No-code strategy builder',
   'platform.b3d':
     'Flow is a drag-and-drop canvas: wire 53 node types from triggers to indicators, conditions and orders, then activate it to run on its own.',
@@ -56,6 +56,15 @@ const en = {
   'platform.b6t': 'Sandbox testing',
   'platform.b6d':
     'Analyzer mode runs any strategy against real market data with 1 crore of sandbox capital and exchange-aligned auto square-off.',
+  'platform.b7t': 'Strategy engine with risk management',
+  'platform.b7d':
+    'Run option baskets or signal-driven legs with per-leg stop, target and trailing, a basket lock-profit floor and a daily loss limit, from the browser or a webhook.',
+  'platform.b8t': 'Built-in AI trading agent',
+  'platform.b8d':
+    'A chat that reads your own market data, draws charts and payoff diagrams, computes indicators and writes strategies. Every order pauses for your approval.',
+  'platform.b9t': 'Market data warehouse',
+  'platform.b9d':
+    'Historify pulls broker history into a local store, then serves charts, scheduled top-ups and CSV or Parquet exports for research and backtests.',
 
   // Why OpenAlgo
   'why.kicker': 'Why OpenAlgo',
@@ -438,7 +447,7 @@ const en = {
   'feat.f42t': "Master Contracts",
   'feat.f42d': "The full instrument list across every exchange refreshes daily, so your symbol data is never stale",
   'feat.f43t': "Historical Data Access",
-  'feat.f43d': "Pull historical candles for any symbol and timeframe through the Historify integration - ideal for backtests and research",
+  'feat.f43d': "Pull historical candles for any symbol and timeframe straight from the REST API - ideal for backtests and research",
   'feat.f44t': "Real-Time PnL Tracker",
   'feat.f44d': "Live P&L curve, drawdown, win rate, and per-strategy breakdown - see exactly how your day is going",
   'feat.f45t': "Latency Monitor",
@@ -503,6 +512,12 @@ const en = {
   'feat.f74d': "Regular online sessions covering roadmap, new features, and live Q&A with the core team",
   'feat.f75t': "Open Development",
   'feat.f75d': "Every line of code, every PR, every issue is public on GitHub - transparent roadmap, community-driven",
+  'feat.f76t': "Strategy Engine with Risk Management",
+  'feat.f76d': "Run option baskets or signal-driven legs with per-leg stop, target and trailing built in, plus a basket lock-profit floor and a daily loss limit that survives a restart",
+  'feat.f77t': "Built-in AI Trading Agent",
+  'feat.f77d': "Ask for a chart, an indicator, an option chain or a strategy in plain English - the agent reads your own OpenAlgo data and pauses every order for your approval",
+  'feat.f78t': "Historify Data Warehouse",
+  'feat.f78d': "Download broker history into your own local store, then schedule top-ups, export CSV or Parquet, and serve charts and backtests from it",
 
   // Download page
   'dl.title': "Downloads",
