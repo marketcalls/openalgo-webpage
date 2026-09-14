@@ -43,7 +43,7 @@ const en = {
     'A unified broker API and execution engine on your own server, driven from TradingView, Amibroker, ChartInk, Excel, Python or MCP.',
   'platform.b2t': 'Charting platform',
   'platform.b2d':
-    'The built-in trading terminal: fire and manage orders from the chart itself, with 90+ indicators on real market data and the AI agent in a side panel.',
+    'The built-in trading terminal: fire and manage orders from the chart itself, with 100+ indicators on real market data and the AI agent in a side panel.',
   'platform.b3t': 'No-code strategy builder',
   'platform.b3d':
     'Flow is a drag-and-drop canvas: wire 53 node types from triggers to indicators, conditions and orders, then activate it to run on its own.',
@@ -52,7 +52,7 @@ const en = {
     '18 built-in tools: option chain, Greeks, OI tracker, max pain, vol surface, GEX, IV smile, straddles and arbitrage, plus portfolio and SIP backtesters.',
   'platform.b5t': 'Scalping platform',
   'platform.b5d':
-    'A keyboard-driven scalping terminal: arrow keys fire CE and PE orders, F6 flattens every position and F7 cancels every pending order.',
+    'A keyboard-driven terminal for equity, futures and options: arrow keys buy and sell the call and put legs, F6 flattens every position and F7 cancels every pending order. Stop, target and trailing run server-side, so they survive a closed browser.',
   'platform.b6t': 'Sandbox testing',
   'platform.b6d':
     'Analyzer mode runs any strategy against real market data with 1 crore of sandbox capital and exchange-aligned auto square-off.',

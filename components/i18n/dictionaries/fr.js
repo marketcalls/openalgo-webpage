@@ -37,7 +37,7 @@ const dict = {
     "Une API courtier unifiée et un moteur d'exécution sur votre propre serveur, pilotés depuis TradingView, Amibroker, ChartInk, Excel, Python ou MCP.",
   'platform.b2t': 'Plateforme graphique',
   'platform.b2d':
-    "Le terminal de trading intégré : passez et gérez vos ordres depuis le graphique lui-même, avec plus de 90 indicateurs sur des données de marché réelles et l'agent IA dans un panneau latéral.",
+    "Le terminal de trading intégré : passez et gérez vos ordres depuis le graphique lui-même, avec plus de 100 indicateurs sur des données de marché réelles et l'agent IA dans un panneau latéral.",
   'platform.b3t': 'Constructeur de stratégies sans code',
   'platform.b3d':
     "Flow est un canevas glisser-déposer : reliez 53 types de nœuds, des déclencheurs aux indicateurs, conditions et ordres, puis activez-le pour qu'il tourne seul.",
@@ -46,7 +46,7 @@ const dict = {
     "18 outils intégrés : chaîne d'options, grecques, suivi de l'OI, max pain, surface de volatilité, GEX, IV smile, straddles, arbitrage, plus des backtesters de portefeuille et de SIP.",
   'platform.b5t': 'Plateforme de scalping',
   'platform.b5d':
-    'Terminal de scalping piloté au clavier : les flèches envoient les ordres CE et PE, F6 solde toutes les positions et F7 annule tous les ordres en attente.',
+    "Un terminal piloté au clavier pour actions, futures et options : les flèches achètent et vendent les jambes call et put, F6 solde toutes les positions et F7 annule tous les ordres en attente. Le stop, l'objectif et le trailing tournent côté serveur et survivent à la fermeture du navigateur.",
   'platform.b6t': 'Tests en sandbox',
   'platform.b6d':
     "Le mode analyseur exécute n'importe quelle stratégie sur des données de marché réelles, avec un capital sandbox et une clôture automatique calée sur le marché.",

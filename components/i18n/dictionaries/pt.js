@@ -37,7 +37,7 @@ const dict = {
     'Uma API de corretora unificada e um motor de execução no seu próprio servidor, comandados por TradingView, Amibroker, ChartInk, Excel, Python ou MCP.',
   'platform.b2t': 'Plataforma de gráficos',
   'platform.b2d':
-    'O terminal de trading integrado: envie e gerencie ordens a partir do próprio gráfico, com mais de 90 indicadores sobre dados reais de mercado e o agente de IA num painel lateral.',
+    'O terminal de trading integrado: envie e gerencie ordens a partir do próprio gráfico, com mais de 100 indicadores sobre dados reais de mercado e o agente de IA num painel lateral.',
   'platform.b3t': 'Construtor de estratégias sem código',
   'platform.b3d':
     'O Flow é uma tela de arrastar e soltar: conecte 53 tipos de nó, de gatilhos a indicadores, condições e ordens, e ative para rodar sozinho.',
@@ -46,7 +46,7 @@ const dict = {
     '18 ferramentas integradas: cadeia de opções, gregas, OI tracker, max pain, superfície de volatilidade, GEX, IV smile, straddles, arbitragem e backtesters de carteira e SIP.',
   'platform.b5t': 'Plataforma de scalping',
   'platform.b5d':
-    'Terminal de scalping comandado pelo teclado: as setas enviam ordens CE e PE, F6 zera todas as posições e F7 cancela as ordens pendentes.',
+    'Um terminal controlado pelo teclado para ações, futuros e opções: as setas compram e vendem as pernas call e put, F6 fecha todas as posições e F7 cancela todas as ordens pendentes. O stop, o alvo e o trailing correm no servidor, por isso sobrevivem a um navegador fechado.',
   'platform.b6t': 'Testes em sandbox',
   'platform.b6d':
     'O modo analisador roda qualquer estratégia com dados reais de mercado, capital de sandbox e zeragem automática alinhada ao pregão.',
