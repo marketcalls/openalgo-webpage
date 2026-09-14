@@ -57,7 +57,7 @@ const dict = {
   'platform.b8t':
     'Agente de trading con IA integrado',
   'platform.b8d':
-    'Un chat que lee tus propios datos de mercado, dibuja gráficos y diagramas de payoff, calcula indicadores y escribe estrategias. Cada orden se detiene para tu aprobación.',
+    'Un chat y agente de voz que lee tus propios datos de mercado, dibuja gráficos y diagramas de payoff, calcula indicadores y escribe estrategias. Cada orden se detiene para tu aprobación.',
   'platform.b9t':
     'Almacén de datos de mercado',
   'platform.b9d':

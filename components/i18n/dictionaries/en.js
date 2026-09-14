@@ -61,7 +61,7 @@ const en = {
     'Run option baskets or signal-driven legs with per-leg stop, target and trailing, a basket lock-profit floor and a daily loss limit, from the browser or a webhook.',
   'platform.b8t': 'Built-in AI trading agent',
   'platform.b8d':
-    'A chat that reads your own market data, draws charts and payoff diagrams, computes indicators and writes strategies. Every order pauses for your approval.',
+    'A chat and voice agent that reads your own market data, draws charts and payoff diagrams, computes indicators and writes strategies. Every order pauses for your approval.',
   'platform.b9t': 'Market data warehouse',
   'platform.b9d':
     'Historify pulls broker history into a local store, then serves charts, scheduled top-ups and CSV or Parquet exports for research and backtests.',
