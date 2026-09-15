@@ -1,5 +1,6 @@
 "use client"
 
+import dynamic from "next/dynamic"
 import { Button } from "@/components/ui/button"
 import { useI18n } from "@/components/i18n/LanguageProvider"
 import {
@@ -17,6 +18,17 @@ import {
   Smartphone,
   Terminal,
 } from "lucide-react"
+
+/**
+ * The charts on this page are the engine running, never pictures of it. That is
+ * the page's whole claim, and a reader who switches a tab or drags the live
+ * chart has checked it themselves before reading a word of the copy.
+ *
+ * Every one of them loads client-side only. The site deploys to a Cloudflare
+ * Worker with a hard script-size ceiling, and a charting engine in the server
+ * bundle would take a serious bite out of it for no benefit: none of this can
+ * render without a canvas anyway.
+ */
 
 /**
  * Every figure on this page is measured from the published 2.3.0 build, not
@@ -63,12 +75,6 @@ const TIERS = [
   { name: "/webgl", size: "6.38 KB", descKey: "charts.tier.webgl" },
 ]
 
-const SHOTS = [
-  { src: "/assets/images/charts/terminal.png", titleKey: "charts.shot1t", descKey: "charts.shot1d" },
-  { src: "/assets/images/charts/order-flow.png", titleKey: "charts.shot2t", descKey: "charts.shot2d" },
-  { src: "/assets/images/charts/chart-types.png", titleKey: "charts.shot3t", descKey: "charts.shot3d" },
-  { src: "/assets/images/charts/scales.png", titleKey: "charts.shot4t", descKey: "charts.shot4d" },
-]
 
 const SNIPPET = `import { createWidget } from 'openalgo-charts/widget'
 
@@ -83,6 +89,42 @@ createWidget(document.getElementById('chart'), {
     },
   },
 })`
+
+const LiveBtcChart = dynamic(() => import("@/components/charts/LiveBtcChart"), {
+  ssr: false,
+  loading: () => <ChartSkeleton height={640} label="Loading the live BTC/USD chart" />,
+})
+
+const EmbeddedDemo = dynamic(() => import("@/components/charts/EmbeddedDemo"), { ssr: false })
+
+const ChartTypeCard = dynamic(
+  () => import("@/components/charts/demos").then((m) => m.ChartTypeCard),
+  { ssr: false, loading: () => <ChartSkeleton height={320} label="Loading demo" /> }
+)
+const ThemeCard = dynamic(() => import("@/components/charts/demos").then((m) => m.ThemeCard), {
+  ssr: false,
+  loading: () => <ChartSkeleton height={320} label="Loading demo" />,
+})
+const IndicatorsCard = dynamic(
+  () => import("@/components/charts/demos").then((m) => m.IndicatorsCard),
+  { ssr: false, loading: () => <ChartSkeleton height={320} label="Loading demo" /> }
+)
+const PriceScaleCard = dynamic(
+  () => import("@/components/charts/demos").then((m) => m.PriceScaleCard),
+  { ssr: false, loading: () => <ChartSkeleton height={320} label="Loading demo" /> }
+)
+
+/** A box the size of the chart that will replace it, so nothing jumps on load. */
+function ChartSkeleton({ height, label }) {
+  return (
+    <div
+      className="flex items-center justify-center rounded-2xl border bg-surface-bright text-sm text-on-surface-variant"
+      style={{ height }}
+    >
+      {label}
+    </div>
+  )
+}
 
 function Kicker({ children }) {
   return (
@@ -146,16 +188,9 @@ export default function ChartsPage() {
             </div>
           </div>
 
-          {/* Hero shot */}
+          {/* The live chart, which is the page's opening argument */}
           <div className="mx-auto mt-14 max-w-6xl">
-            <div className="overflow-hidden rounded-2xl border bg-surface-bright shadow-[0_8px_40px_rgba(0,0,0,0.08)]">
-              <img
-                src="/assets/images/charts/terminal.png"
-                alt={t('charts.shot1t')}
-                className="w-full"
-                loading="eager"
-              />
-            </div>
+            <LiveBtcChart />
           </div>
         </div>
       </section>
@@ -216,28 +251,38 @@ export default function ChartsPage() {
         </div>
       </section>
 
-      {/* Screenshots */}
+      {/* Interactive demos */}
       <section className="px-3 py-6 sm:px-6">
         <div className="scheme-dark rounded-[2.5rem] px-4 py-20 sm:px-8 md:py-28">
           <div className="container mx-auto">
             <div className="mb-16 text-center">
               <Kicker>{t('charts.shots.kicker')}</Kicker>
               <h2 className="mt-4 text-display-md text-on-surface">{t('charts.shots.title')}</h2>
+              <p className="mx-auto mt-5 max-w-2xl text-lg leading-relaxed text-on-surface-variant">
+                {t('charts.shots.sub')}
+              </p>
             </div>
-            <div className="mx-auto max-w-6xl space-y-10">
-              {SHOTS.slice(1).map((shot) => (
-                <figure key={shot.src} className="space-y-4">
-                  <div className="overflow-hidden rounded-2xl border">
-                    <img src={shot.src} alt={t(shot.titleKey)} className="w-full" loading="lazy" />
-                  </div>
-                  <figcaption className="text-center">
-                    <h3 className="font-bold text-on-surface">{t(shot.titleKey)}</h3>
-                    <p className="mx-auto mt-1 max-w-2xl text-sm leading-relaxed text-on-surface-variant">
-                      {t(shot.descKey)}
-                    </p>
-                  </figcaption>
-                </figure>
-              ))}
+
+            <div className="mx-auto grid max-w-6xl gap-5 lg:grid-cols-2">
+              <ChartTypeCard />
+              <ThemeCard />
+              <IndicatorsCard />
+              <PriceScaleCard />
+            </div>
+
+            <div className="mx-auto mt-14 max-w-6xl space-y-5">
+              <EmbeddedDemo
+                title={t('charts.demo.orderflow')}
+                description={t('charts.demo.orderflowDesc')}
+                src="https://marketcalls.github.io/openalgo-charts/demos/orderflow/index.html"
+                height={600}
+              />
+              <EmbeddedDemo
+                title={t('charts.demo.drawings')}
+                description={t('charts.demo.drawingsDesc')}
+                src="https://marketcalls.github.io/openalgo-charts/demos/drawings/index.html"
+                height={560}
+              />
             </div>
           </div>
         </div>
