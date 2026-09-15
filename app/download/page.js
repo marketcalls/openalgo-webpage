@@ -2,7 +2,7 @@
 
 import { Button } from "@/components/ui/button"
 import { useI18n } from "@/components/i18n/LanguageProvider"
-import { Download, Laptop, Monitor, Terminal, ExternalLink, Github, Package, Chrome, FileSpreadsheet, GitBranch, BookOpen, Brain, Code2, Hexagon, Coffee, Hash, Wind, Plug, History, Zap, Layers, Bot, Smartphone, Globe, Puzzle, Gauge, TrendingUp, Cog, Network, BarChart3, FlaskConical, LineChart, PieChart, LayoutGrid, Activity, Calculator, MessageCircle, Sigma } from "lucide-react"
+import { Download, Laptop, Monitor, Terminal, ExternalLink, Github, Package, Chrome, FileSpreadsheet, GitBranch, BookOpen, Brain, Code2, Hexagon, Coffee, Hash, Wind, Plug, History, Layers, Bot, Smartphone, Globe, Puzzle, Gauge, TrendingUp, Cog, Network, BarChart3, FlaskConical, LineChart, PieChart, LayoutGrid, Activity, Calculator, MessageCircle, Sigma } from "lucide-react"
 import { useState } from "react"
 
 const iconAccents = [
@@ -28,36 +28,35 @@ export default function DownloadPage() {
   // this page was the one left behind, still offering five SDKs and none of the
   // projects added since.
   const sdks = [
-    { title: "Python", icon: Code2, url: "https://github.com/marketcalls/openalgo-python-library", docs: "https://docs.openalgo.in/trading-platform/python" },
-    { title: "Node.js", icon: Hexagon, url: "https://github.com/marketcalls/openalgo-node", docs: "https://docs.openalgo.in/trading-platform/nodejs" },
-    { title: "Java", icon: Coffee, url: "https://github.com/marketcalls/openalgo-java", docs: "https://docs.openalgo.in/trading-platform/java" },
-    { title: ".NET / C#", icon: Hash, url: "https://github.com/marketcalls/openalgo.NET", docs: "https://docs.openalgo.in/trading-platform/.net" },
-    { title: "Go", icon: Wind, url: "https://github.com/marketcalls/openalgo-go", docs: "https://docs.openalgo.in/trading-platform/go" },
-    { title: "Rust", icon: Cog, url: "https://github.com/marketcalls/openalgo-rust" }
+    { title: "Python", description: "Official Python SDK for OpenAlgo API", icon: Code2, url: "https://github.com/marketcalls/openalgo-python-library", docs: "https://docs.openalgo.in/trading-platform/python" },
+    { title: "Node.js", description: "JavaScript/TypeScript SDK", icon: Hexagon, url: "https://github.com/marketcalls/openalgo-node", docs: "https://docs.openalgo.in/trading-platform/nodejs" },
+    { title: "Java", description: "Official Java SDK for OpenAlgo", icon: Coffee, url: "https://github.com/marketcalls/openalgo-java", docs: "https://docs.openalgo.in/trading-platform/java" },
+    { title: ".NET / C#", description: "C# / .NET SDK for OpenAlgo", icon: Hash, url: "https://github.com/marketcalls/openalgo.NET", docs: "https://docs.openalgo.in/trading-platform/.net" },
+    { title: "Go", description: "Golang SDK for OpenAlgo", icon: Wind, url: "https://github.com/marketcalls/openalgo-go", docs: "https://docs.openalgo.in/trading-platform/go" },
+    { title: "Rust", description: "Official Rust SDK for OpenAlgo", icon: Cog, url: "https://github.com/marketcalls/openalgo-rust" }
   ]
 
   const integrations = [
-    { title: "Excel Add-in", icon: FileSpreadsheet, url: "https://github.com/marketcalls/OpenAlgo-Excel", docs: "https://docs.openalgo.in/trading-platform/excel" },
-    { title: "Amibroker Plugin", icon: Plug, url: "https://github.com/marketcalls/OpenAlgoPlugin", docs: "https://docs.openalgo.in/trading-platform/amibroker/amibroker-plugin" },
-    { title: "Backtrader Integration", icon: History, url: "https://github.com/p2c2e/openalgo-backtrader" },
-    { title: "AI Agents", icon: Bot, url: "https://github.com/marketcalls/TradingAgent" },
-    { title: "MCP", icon: Network, url: "/mcp", docs: "https://docs.openalgo.in/mcp" },
-    { title: "Indicator Skills", icon: BarChart3, url: "/skills" },
-    { title: "Backtesting Skills", icon: FlaskConical, url: "/skills" },
-    { title: "PineTS", icon: Zap, url: "https://github.com/marketcalls/openalgo-pinets" },
-    { title: "AlgoMirror", icon: Layers, url: "https://github.com/marketcalls/algomirror" },
-    { title: "OpenAlgo Charts", icon: LineChart, url: "https://github.com/marketcalls/openalgo-charts", docs: "https://marketcalls.github.io/openalgo-charts" },
-    { title: "OpenStatz", icon: PieChart, url: "https://github.com/marketcalls/openstatz" },
-    { title: "OpenAlgo Heatmap", icon: LayoutGrid, url: "https://github.com/marketcalls/openalgo-heatmap" },
-    { title: "OpenQuest", icon: Activity, url: "https://github.com/marketcalls/openquest" },
-    { title: "Marginism", icon: Calculator, url: "https://github.com/marketcalls/marginism" },
-    { title: "OpenGreeks", icon: Sigma, url: "https://github.com/marketcalls/opengreeks" },
-    { title: "Wars", icon: MessageCircle, url: "https://github.com/marketcalls/wars" },
-    { title: "OpenAlgo Mobile", icon: Smartphone, url: "https://github.com/marketcalls/openalgo-mobile" },
-    { title: "Web Portal", icon: Globe, url: "https://github.com/marketcalls/openalgo-webpage" },
-    { title: "Chrome Plugin", icon: Puzzle, url: "https://github.com/marketcalls/openalgo-chrome" },
-    { title: "Fast Scalper", icon: Gauge, url: "https://github.com/marketcalls/fastscalper-tauri" },
-    { title: "OpenBull", icon: TrendingUp, url: "https://github.com/marketcalls/openbull" }
+    { title: "Excel Add-in", description: "Trade from Excel spreadsheets", icon: FileSpreadsheet, url: "https://github.com/marketcalls/OpenAlgo-Excel", docs: "https://docs.openalgo.in/trading-platform/excel" },
+    { title: "Amibroker Plugin", description: "OpenAlgo Plugin for Amibroker", icon: Plug, url: "https://github.com/marketcalls/OpenAlgoPlugin", docs: "https://docs.openalgo.in/trading-platform/amibroker/amibroker-plugin" },
+    { title: "Backtrader Integration", description: "Python Library for backtesting", icon: History, url: "https://github.com/p2c2e/openalgo-backtrader" },
+    { title: "AI Agents", description: "Multi-agent AI trading research framework", icon: Bot, url: "https://github.com/marketcalls/TradingAgent" },
+    { title: "MCP", description: "Model Context Protocol integration", icon: Network, url: "/mcp", docs: "https://docs.openalgo.in/mcp" },
+    { title: "Indicator Skills", description: "AI agent skills for 100+ indicators, charts & scanners", icon: BarChart3, url: "/skills" },
+    { title: "Backtesting Skills", description: "VectorBT backtesting skills for Claude Code, Cursor, Codex", icon: FlaskConical, url: "/skills" },
+    { title: "AlgoMirror", description: "Multi Account OpenAlgo Orchestrator", icon: Layers, url: "https://github.com/marketcalls/algomirror" },
+    { title: "OpenAlgo Charts", description: "Dependency-free HTML5 canvas charting engine, 76.52 KB Brotli", icon: LineChart, url: "https://github.com/marketcalls/openalgo-charts", docs: "https://marketcalls.github.io/openalgo-charts" },
+    { title: "OpenStatz", description: "Portfolio analytics for quants - Quant Tearsheets", icon: PieChart, url: "https://github.com/marketcalls/openstatz" },
+    { title: "OpenAlgo Heatmap", description: "Finviz-style market heatmap (React Component)", icon: LayoutGrid, url: "https://github.com/marketcalls/openalgo-heatmap" },
+    { title: "OpenQuest", description: "Realtime Stock Data Aggregator with TradingView Charts", icon: Activity, url: "https://github.com/marketcalls/openquest" },
+    { title: "Marginism", description: "Offline SPAN margin calculator", icon: Calculator, url: "https://github.com/marketcalls/marginism" },
+    { title: "OpenGreeks", description: "Fast options pricing & Greeks for Python", icon: Sigma, url: "https://github.com/marketcalls/opengreeks" },
+    { title: "Wars", description: "WhatsApp client for Python, powered by Rust. A thin PyO3 wrapper over whatsapp-rust", icon: MessageCircle, url: "https://github.com/marketcalls/wars" },
+    { title: "OpenAlgo Mobile", description: "Flutter Mobile Trading App", icon: Smartphone, url: "https://github.com/marketcalls/openalgo-mobile" },
+    { title: "Web Portal", description: "NextJS + ShadcnUI web interface", icon: Globe, url: "https://github.com/marketcalls/openalgo-webpage" },
+    { title: "Chrome Plugin", description: "Browser extension for OpenAlgo", icon: Puzzle, url: "https://github.com/marketcalls/openalgo-chrome" },
+    { title: "Fast Scalper", description: "High-performance app (Rust + Tauri)", icon: Gauge, url: "https://github.com/marketcalls/fastscalper-tauri" },
+    { title: "OpenBull", description: "Self Hostable Options Trading Platform", icon: TrendingUp, url: "https://github.com/marketcalls/openbull" }
   ]
 
 
@@ -127,7 +126,7 @@ export default function DownloadPage() {
             <p className="text-sm text-on-surface-variant mb-5">
               {t('dl.sdkDescPre')} <strong className="text-on-surface">API v1</strong> {t('dl.sdkDescPost')}
             </p>
-            <div className="grid gap-4 md:grid-cols-3 lg:grid-cols-5">
+            <div className="grid gap-4 sm:grid-cols-2 md:grid-cols-3">
               {sdks.map((sdk, index) => (
                 <div key={index} className="obsidian-card p-5 rounded-xl hover-lift group ghost-border relative">
                   <a href={sdk.url} target="_blank" rel="noopener noreferrer"
@@ -137,6 +136,7 @@ export default function DownloadPage() {
                     <ExternalLink className="h-4 w-4 text-on-surface-variant group-hover:text-primary transition-colors" />
                   </div>
                   <h4 className="font-semibold mb-1 text-on-surface">{sdk.title}</h4>
+                  <p className="mb-2 text-sm leading-relaxed text-on-surface-variant">{sdk.description}</p>
                   {sdk.docs && (
                     <a href={sdk.docs} target="_blank" rel="noopener noreferrer"
                        className="relative z-10 text-xs text-primary hover:underline font-label">
@@ -167,6 +167,7 @@ export default function DownloadPage() {
                     <ExternalLink className="h-4 w-4 text-on-surface-variant group-hover:text-primary transition-colors" />
                   </div>
                   <h4 className="font-semibold text-sm mb-1 text-on-surface">{item.title}</h4>
+                  <p className="mb-2 text-sm leading-relaxed text-on-surface-variant">{item.description}</p>
                   {item.docs && (
                     <a href={item.docs} target="_blank" rel="noopener noreferrer"
                        className="relative z-10 text-xs text-primary hover:underline font-label">
