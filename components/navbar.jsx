@@ -2,7 +2,7 @@
 
 import { usePathname } from 'next/navigation'
 import Link from 'next/link'
-import { Menu, Github, X, ArrowUpRight } from 'lucide-react'
+import { Menu, X, ArrowUpRight } from 'lucide-react'
 import { Button } from './ui/button'
 import { clsx } from 'clsx'
 import { useState, useEffect } from 'react'
@@ -23,6 +23,7 @@ export function Navbar() {
 
   const menuItems = [
     { href: "/features", label: t('nav.features') },
+    { href: "/charts", label: t('nav.charts') },
     { href: "/download", label: t('nav.download') },
     { href: "/blog", label: t('nav.blog') },
     { href: "/discord", label: t('nav.discord') },
@@ -64,15 +65,6 @@ export function Navbar() {
               </Link>
             )
           })}
-          <a
-            href="https://github.com/marketcalls/openalgo"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="flex items-center gap-1.5 rounded-full px-3.5 py-1.5 text-sm font-medium text-on-surface-variant transition-colors hover:text-on-surface"
-          >
-            <Github className="h-4 w-4" />
-            GitHub
-          </a>
         </nav>
 
         {/* Right zone */}
@@ -133,16 +125,6 @@ export function Navbar() {
               onClick={() => setIsOpen(false)}
             >
               {t('nav.docs')}
-            </a>
-            <a
-              href="https://github.com/marketcalls/openalgo"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex items-center gap-2 rounded-xl px-4 py-3 text-sm font-medium text-on-surface-variant transition-colors hover:bg-surface-low hover:text-on-surface"
-              onClick={() => setIsOpen(false)}
-            >
-              <Github className="h-4 w-4" />
-              GitHub
             </a>
             <div className="px-4 pt-2 sm:hidden">
               <Button asChild className="w-full">

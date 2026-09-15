@@ -2,6 +2,7 @@ const dict = {
   // Navigation
   'nav.home': 'হোম',
   'nav.features': 'ফিচার্স',
+  'nav.charts': 'চার্টস',
   'nav.download': 'ডাউনলোড',
   'nav.blog': 'ব্লগ',
   'nav.discord': 'Discord',

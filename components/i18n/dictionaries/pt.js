@@ -1,6 +1,7 @@
 const dict = {
   'nav.home': 'Início',
   'nav.features': 'Recursos',
+  'nav.charts': 'Gráficos',
   'nav.download': 'Download',
   'nav.blog': 'Blog',
   'nav.discord': 'Discord',
