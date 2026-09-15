@@ -21,11 +21,41 @@ import { BTC_USD_INTERVALS, BTC_USD_SOURCE, createBtcUsdFeed } from "./btcUsdFee
  * some point.
  */
 
+/**
+ * Candles visible when the chart opens.
+ *
+ * Loading a long history and showing all of it are different things, and
+ * conflating them is how this chart ended up opening on fifteen hundred hair
+ * thin candles. The full series stays loaded so the reader can scroll back
+ * through it; this is only the window they land on.
+ *
+ * The chart is the first thing on the page and it has to be readable at a
+ * glance on a phone as well as a desktop, so the window is tighter than the
+ * five hundred bars the trading terminal repairs a lost viewport to.
+ */
+const VISIBLE_BARS = 180
+
 const priceFormat = new Intl.NumberFormat("en-US", {
   style: "currency",
   currency: "USD",
   minimumFractionDigits: 2,
 })
+
+/**
+ * Put the viewport over the most recent candles rather than the whole series.
+ *
+ * The clear air past the newest candle is what every chart leaves: without it
+ * the last bar sits flush against the price axis and reads as cut off.
+ */
+function showRecent(widget, count) {
+  if (count <= 0) return
+  const last = count - 1
+  const visible = Math.min(VISIBLE_BARS, count)
+  widget.chart.setVisibleLogicalRange({
+    from: Math.max(0, last - visible + 1),
+    to: last + Math.max(1, Math.round(visible * 0.05)),
+  })
+}
 
 export default function LiveBtcChart() {
   const host = useRef(null)
@@ -84,7 +114,10 @@ export default function LiveBtcChart() {
           onBars: (bars, interval) => {
             if (cancelled || !widget) return
             widget.series.setData(bars)
-            if (lastInterval !== interval) widget.chart.resetScale()
+            // Only on the first load of a timeframe. Every later refresh leaves
+            // the viewport alone, so a reader who has panned back or zoomed in
+            // is not yanked to the right edge every fifteen seconds.
+            if (lastInterval !== interval) showRecent(widget, bars.length)
             lastInterval = interval
           },
           onStatus: (status) => {
