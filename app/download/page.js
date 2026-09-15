@@ -2,7 +2,7 @@
 
 import { Button } from "@/components/ui/button"
 import { useI18n } from "@/components/i18n/LanguageProvider"
-import { Download, Laptop, Monitor, Terminal, ExternalLink, Github, Package, Chrome, FileSpreadsheet, GitBranch, BookOpen, Brain, Code2, Hexagon, Coffee, Hash, Wind, Plug, History, Zap, Layers, Bot, Smartphone, Globe, Puzzle, Gauge, TrendingUp } from "lucide-react"
+import { Download, Laptop, Monitor, Terminal, ExternalLink, Github, Package, Chrome, FileSpreadsheet, GitBranch, BookOpen, Brain, Code2, Hexagon, Coffee, Hash, Wind, Plug, History, Zap, Layers, Bot, Smartphone, Globe, Puzzle, Gauge, TrendingUp, Cog, Network, BarChart3, FlaskConical, LineChart, PieChart, LayoutGrid, Activity, Calculator, MessageCircle, Sigma } from "lucide-react"
 import { useState } from "react"
 
 const iconAccents = [
@@ -24,27 +24,42 @@ export default function DownloadPage() {
   const { t } = useI18n()
   const [activePlatform, setActivePlatform] = useState("mac")
 
+  // Kept in step with the same list on the home page. The two drifted once and
+  // this page was the one left behind, still offering five SDKs and none of the
+  // projects added since.
   const sdks = [
     { title: "Python", icon: Code2, url: "https://github.com/marketcalls/openalgo-python-library", docs: "https://docs.openalgo.in/trading-platform/python" },
     { title: "Node.js", icon: Hexagon, url: "https://github.com/marketcalls/openalgo-node", docs: "https://docs.openalgo.in/trading-platform/nodejs" },
     { title: "Java", icon: Coffee, url: "https://github.com/marketcalls/openalgo-java", docs: "https://docs.openalgo.in/trading-platform/java" },
     { title: ".NET / C#", icon: Hash, url: "https://github.com/marketcalls/openalgo.NET", docs: "https://docs.openalgo.in/trading-platform/.net" },
-    { title: "Go", icon: Wind, url: "https://github.com/marketcalls/openalgo-go", docs: "https://docs.openalgo.in/trading-platform/go" }
+    { title: "Go", icon: Wind, url: "https://github.com/marketcalls/openalgo-go", docs: "https://docs.openalgo.in/trading-platform/go" },
+    { title: "Rust", icon: Cog, url: "https://github.com/marketcalls/openalgo-rust" }
   ]
 
   const integrations = [
     { title: "Excel Add-in", icon: FileSpreadsheet, url: "https://github.com/marketcalls/OpenAlgo-Excel", docs: "https://docs.openalgo.in/trading-platform/excel" },
     { title: "Amibroker Plugin", icon: Plug, url: "https://github.com/marketcalls/OpenAlgoPlugin", docs: "https://docs.openalgo.in/trading-platform/amibroker/amibroker-plugin" },
     { title: "Backtrader Integration", icon: History, url: "https://github.com/p2c2e/openalgo-backtrader" },
+    { title: "AI Agents", icon: Bot, url: "https://github.com/marketcalls/TradingAgent" },
+    { title: "MCP", icon: Network, url: "/mcp", docs: "https://docs.openalgo.in/mcp" },
+    { title: "Indicator Skills", icon: BarChart3, url: "/skills" },
+    { title: "Backtesting Skills", icon: FlaskConical, url: "/skills" },
     { title: "PineTS", icon: Zap, url: "https://github.com/marketcalls/openalgo-pinets" },
     { title: "AlgoMirror", icon: Layers, url: "https://github.com/marketcalls/algomirror" },
-    { title: "MCP / AI Agents", icon: Bot, url: "https://github.com/marketcalls/openalgo/tree/main/mcp", docs: "https://docs.openalgo.in/mcp" },
+    { title: "OpenAlgo Charts", icon: LineChart, url: "https://github.com/marketcalls/openalgo-charts", docs: "https://marketcalls.github.io/openalgo-charts" },
+    { title: "OpenStatz", icon: PieChart, url: "https://github.com/marketcalls/openstatz" },
+    { title: "OpenAlgo Heatmap", icon: LayoutGrid, url: "https://github.com/marketcalls/openalgo-heatmap" },
+    { title: "OpenQuest", icon: Activity, url: "https://github.com/marketcalls/openquest" },
+    { title: "Marginism", icon: Calculator, url: "https://github.com/marketcalls/marginism" },
+    { title: "OpenGreeks", icon: Sigma, url: "https://github.com/marketcalls/opengreeks" },
+    { title: "Wars", icon: MessageCircle, url: "https://github.com/marketcalls/wars" },
     { title: "OpenAlgo Mobile", icon: Smartphone, url: "https://github.com/marketcalls/openalgo-mobile" },
     { title: "Web Portal", icon: Globe, url: "https://github.com/marketcalls/openalgo-webpage" },
     { title: "Chrome Plugin", icon: Puzzle, url: "https://github.com/marketcalls/openalgo-chrome" },
     { title: "Fast Scalper", icon: Gauge, url: "https://github.com/marketcalls/fastscalper-tauri" },
     { title: "OpenBull", icon: TrendingUp, url: "https://github.com/marketcalls/openbull" }
   ]
+
 
   const platformTabs = [
     { id: "mac", label: "macOS", icon: Laptop },

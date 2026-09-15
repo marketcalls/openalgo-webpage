@@ -137,7 +137,7 @@ export default function Home() {
     { title: "Web Portal", description: "NextJS + ShadcnUI web interface", icon: Globe, url: "https://github.com/marketcalls/openalgo-webpage" },
     { title: "Chrome Plugin", description: "Browser extension for OpenAlgo", icon: Puzzle, url: "https://github.com/marketcalls/openalgo-chrome" },
     { title: "Fast Scalper", description: "High-performance app (Rust + Tauri)", icon: Gauge, url: "https://github.com/marketcalls/fastscalper-tauri" },
-    { title: "OpenAlgo Charts", description: "Dependency-free HTML5 canvas charting engine (<50KB Brotli)", icon: LineChart, url: "https://github.com/marketcalls/openalgo-charts" },
+    { title: "OpenAlgo Charts", description: "Dependency-free HTML5 canvas charting engine, 76.52 KB Brotli", icon: LineChart, url: "https://github.com/marketcalls/openalgo-charts" },
     { title: "OpenStatz", description: "Portfolio analytics for quants - Quant Tearsheets", icon: PieChart, url: "https://github.com/marketcalls/openstatz" },
     { title: "OpenAlgo Heatmap", description: "Finviz-style market heatmap (React Component)", icon: LayoutGrid, url: "https://github.com/marketcalls/openalgo-heatmap" },
     { title: "OpenQuest", description: "Realtime Stock Data Aggregator with TradingView Charts", icon: Activity, url: "https://github.com/marketcalls/openquest" },
