@@ -46,7 +46,6 @@ import {
   Smartphone,
   Puzzle,
   Calculator,
-  MessageCircle,
   Users,
 } from "lucide-react"
 
@@ -142,7 +141,7 @@ export default function Home() {
     { title: "OpenAlgo Heatmap", description: "Finviz-style market heatmap (React Component)", icon: LayoutGrid, url: "https://github.com/marketcalls/openalgo-heatmap" },
     { title: "OpenQuest", description: "Realtime Stock Data Aggregator with TradingView Charts", icon: Activity, url: "https://github.com/marketcalls/openquest" },
     { title: "Marginism", description: "Offline SPAN margin calculator", icon: Calculator, url: "https://github.com/marketcalls/marginism" },
-    { title: "Wars", description: "WhatsApp client for Python, powered by Rust. A thin PyO3 wrapper over whatsapp-rust", icon: MessageCircle, url: "https://github.com/marketcalls/wars" },
+    { title: "OpenScript", description: "Open trading language for studies and strategies. Apache 2.0, zero dependencies", icon: Code2, url: "https://github.com/marketcalls/openscript" },
     { title: "OpenGreeks", description: "Fast options pricing & Greeks for Python", icon: Sigma, url: "https://github.com/marketcalls/opengreeks" },
     { title: "OpenBull", description: "Self Hostable Options Trading Platform", icon: TrendingUp, url: "https://github.com/marketcalls/openbull" }
   ]
@@ -164,7 +163,7 @@ export default function Home() {
 
           <div className="reveal reveal-4 mb-12 flex flex-wrap items-center justify-center gap-x-12 gap-y-6">
             {[
-              { icon: Download, value: "4,75,000+", label: t('hero.statDownloads') },
+              { icon: Download, value: "4,80,000+", label: t('hero.statDownloads') },
               { icon: Code2, value: "100%", label: t('hero.statOpenSource') },
               { icon: Star, value: "2,700+", label: t('hero.statStars') },
             ].map(({ icon: Icon, value, label }) => (

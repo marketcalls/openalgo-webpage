@@ -2,7 +2,7 @@
 
 import { Button } from "@/components/ui/button"
 import { useI18n } from "@/components/i18n/LanguageProvider"
-import { Download, Laptop, Monitor, Terminal, ExternalLink, Github, Package, Chrome, FileSpreadsheet, GitBranch, BookOpen, Brain, Code2, Hexagon, Coffee, Hash, Wind, Plug, History, Layers, Bot, Smartphone, Globe, Puzzle, Gauge, TrendingUp, Cog, Network, BarChart3, FlaskConical, LineChart, PieChart, LayoutGrid, Activity, Calculator, MessageCircle, Sigma } from "lucide-react"
+import { Download, Laptop, Monitor, Terminal, ExternalLink, Github, Package, Chrome, FileSpreadsheet, GitBranch, BookOpen, Brain, Code2, Hexagon, Coffee, Hash, Wind, Plug, History, Layers, Bot, Smartphone, Globe, Puzzle, Gauge, TrendingUp, Cog, Network, BarChart3, FlaskConical, LineChart, PieChart, LayoutGrid, Activity, Calculator, Sigma } from "lucide-react"
 import { useState } from "react"
 
 const iconAccents = [
@@ -51,7 +51,7 @@ export default function DownloadPage() {
     { title: "OpenQuest", description: "Realtime Stock Data Aggregator with TradingView Charts", icon: Activity, url: "https://github.com/marketcalls/openquest" },
     { title: "Marginism", description: "Offline SPAN margin calculator", icon: Calculator, url: "https://github.com/marketcalls/marginism" },
     { title: "OpenGreeks", description: "Fast options pricing & Greeks for Python", icon: Sigma, url: "https://github.com/marketcalls/opengreeks" },
-    { title: "Wars", description: "WhatsApp client for Python, powered by Rust. A thin PyO3 wrapper over whatsapp-rust", icon: MessageCircle, url: "https://github.com/marketcalls/wars" },
+    { title: "OpenScript", description: "Open trading language for studies and strategies. Apache 2.0, zero dependencies", icon: Code2, url: "https://github.com/marketcalls/openscript", docs: "/script" },
     { title: "OpenAlgo Mobile", description: "Flutter Mobile Trading App", icon: Smartphone, url: "https://github.com/marketcalls/openalgo-mobile" },
     { title: "Web Portal", description: "NextJS + ShadcnUI web interface", icon: Globe, url: "https://github.com/marketcalls/openalgo-webpage" },
     { title: "Chrome Plugin", description: "Browser extension for OpenAlgo", icon: Puzzle, url: "https://github.com/marketcalls/openalgo-chrome" },
