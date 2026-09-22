@@ -6,13 +6,16 @@ import {
   Bot, Package, Github, Network, Link2, FileSpreadsheet, SplitSquareHorizontal,
   MessageCircle, LayoutDashboard, Terminal, Webhook, Activity,
   BarChart3, Gauge, FileJson, Brain, Search, Clock, GitMerge, Key, ShieldCheck,
-  AlertCircle, User, Mail, Smartphone, History, Container,
+  AlertCircle, User, Mail, Smartphone, History, Container, BellRing, CandlestickChart, FileCode2,
   Wand2, Layers, Target, Box, Sigma, PieChart, Wallet, Waves, ArrowLeftRight
 } from "lucide-react"
 
 // `category` is a stable internal id used for color lookup; display strings
 // come from the i18n keys (feat.*) resolved at render time.
 const features = [
+  { titleKey: "feat.f80t", descKey: "feat.f80d", icon: CandlestickChart, category: "OpenScript" },
+  { titleKey: "feat.f81t", descKey: "feat.f81d", icon: FileCode2, category: "OpenScript" },
+  { titleKey: "feat.f79t", descKey: "feat.f79d", icon: BellRing, category: "OpenScript" },
   { titleKey: "feat.f1t", descKey: "feat.f1d", icon: Wand2, category: "Options Analytics" },
   { titleKey: "feat.f2t", descKey: "feat.f2d", icon: Box, category: "Options Analytics" },
   { titleKey: "feat.f3t", descKey: "feat.f3d", icon: Layers, category: "Options Analytics" },
@@ -94,6 +97,7 @@ const features = [
 ]
 
 const categories = [
+  { name: "OpenScript", nameKey: "feat.cat.openscript", color: "text-primary bg-primary/10" },
   { name: "Options Analytics", nameKey: "feat.cat.optionsAnalytics", color: "text-primary bg-primary/10" },
   { name: "AI & Skills", nameKey: "feat.cat.aiSkills", color: "text-tertiary bg-tertiary/10" },
   { name: "Order Management", nameKey: "feat.cat.orderManagement", color: "text-primary bg-primary/10" },

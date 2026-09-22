@@ -1,0 +1,150 @@
+{
+  "note": "Screenshots of OpenScript running in the /trading page of OpenAlgo, on Indian market instruments. Files live in public/script/screens/. Reference one in a page with {{screen: id}}.",
+  "screens": {
+    "trading-workspace": {
+      "file": "trading-workspace.webp",
+      "alt": "The /trading page with a HalfTrend study written in OpenScript on a BHEL 15 minute NSE chart and its source open in the Scripts panel",
+      "caption": "A HalfTrend study written in OpenScript on a BHEL 15 minute NSE chart, with its source open in the Scripts panel."
+    },
+    "scripts-panel": {
+      "file": "scripts-panel.webp",
+      "alt": "The Scripts panel listing saved OpenScript files",
+      "caption": "The Scripts panel: your saved studies and strategies, with a new script one click away."
+    },
+    "editor": {
+      "file": "editor.webp",
+      "alt": "The OpenScript editor in the Scripts panel showing the HalfTrend study with syntax colouring and a numbered gutter",
+      "caption": "The Scripts panel editor: the language's own highlighting, a numbered gutter and save on Ctrl+S."
+    },
+    "editor-diagnostics": {
+      "file": "editor-diagnostics.webp",
+      "alt": "The Scripts panel console listing a compile error with its line, code and fix",
+      "caption": "Every save compiles. The console under the editor names the line, the error code and the fix."
+    },
+    "study-overlay": {
+      "file": "study-overlay.webp",
+      "alt": "An EMA cross study on a daily SBIN chart with a green and red trend band and labelled golden and death crosses",
+      "caption": "An overlay study on a daily NSE chart: two EMAs, the band between them shaded by trend, and each crossover labelled."
+    },
+    "study-pane": {
+      "file": "study-pane.webp",
+      "alt": "An oscillator study drawn in its own pane below the price chart",
+      "caption": "A study with overlay = false gets its own pane below the price."
+    },
+    "supertrend": {
+      "file": "supertrend.webp",
+      "alt": "Supertrend study on a BHEL 15 minute NSE chart: a lime band under price in uptrends, a red band above it in downtrends, the protected side shaded and BUY and SELL labels at each flip",
+      "caption": "Supertrend on a BHEL 15 minute chart: the band trails price, the side it protects is shaded, and every flip is labelled."
+    },
+    "indicator-picker": {
+      "file": "indicator-picker.webp",
+      "alt": "The indicators dialog listing OpenScript studies",
+      "caption": "Saved scripts appear in the indicators dialog beside the built-in studies."
+    },
+    "study-settings": {
+      "file": "study-settings.webp",
+      "alt": "The settings dialog of a study showing its inputs",
+      "caption": "Every input() becomes a field in the study's settings dialog."
+    },
+    "table-dashboard": {
+      "file": "table-dashboard.webp",
+      "alt": "A table dashboard fixed to a corner of the chart",
+      "caption": "A table fixed to a corner of the chart, updated on every bar."
+    },
+    "zones-boxes": {
+      "file": "zones-boxes.webp",
+      "alt": "Supply and demand zones drawn as boxes on the chart",
+      "caption": "Drawing objects: zones drawn with draw.box."
+    },
+    "higher-timeframe": {
+      "file": "higher-timeframe.webp",
+      "alt": "A daily bias read onto an intraday chart",
+      "caption": "A higher timeframe value read with req.timeframe on an intraday chart."
+    },
+    "backtest-panel": {
+      "file": "backtest-panel.webp",
+      "alt": "The Backtest panel with strategy, date range, inputs and the settings the strategy declares",
+      "caption": "The Backtest panel: pick a strategy and a range, adjust its inputs, and run it in the browser."
+    },
+    "backtest-report": {
+      "file": "backtest-report.webp",
+      "alt": "Backtest report figures: net profit, return, trades, win rate, profit factor, expectancy, drawdown and run-up",
+      "caption": "The report: net profit, return, win rate, profit factor, expectancy, drawdown and run-up, from one run."
+    },
+    "backtest-trades": {
+      "file": "backtest-trades.webp",
+      "alt": "The trade list of a backtest with side, entry, exit and net result",
+      "caption": "Every trade the run made, with its entry, exit and net result."
+    },
+    "strategy-on-chart": {
+      "file": "strategy-on-chart.webp",
+      "alt": "Backtest entries and exits marked on an NSE chart",
+      "caption": "Each fill of the run is marked on the bar it happened on: entries, exits and their size."
+    },
+    "strategies-panel": {
+      "file": "strategies-panel.webp",
+      "alt": "The Strategies panel with a deployed OpenScript strategy",
+      "caption": "The Strategies panel: deploy a strategy to sandbox trading first, then live."
+    },
+    "alerts-panel": {
+      "file": "alerts-panel.webp",
+      "alt": "The Alerts panel with Alerts and Log tabs, a search box, a status filter and one active alert",
+      "caption": "The Alerts panel: every alert with its instrument, interval and status, and a Log of every trigger."
+    },
+    "alert-create": {
+      "file": "alert-create.webp",
+      "alt": "The Create alert dialog set to watch a plot of an OpenScript study",
+      "caption": "Create alert: watch a price, a study plot, a drawing level or a candle condition, and choose how it fires."
+    },
+    "alert-on-chart": {
+      "file": "alert-on-chart.webp",
+      "alt": "A price alert drawn as a labelled line on an NSE chart beside the Alerts panel",
+      "caption": "An alert is drawn on the chart it watches, and listed in the Alerts panel with its status."
+    },
+    "alert-toast": {
+      "file": "alert-toast.webp",
+      "alt": "A notification raised by a study's alert on the chart",
+      "caption": "An alert raised by a running study appears as a notification on the chart."
+    },
+    "interval-menu": {
+      "file": "interval-menu.webp",
+      "alt": "The chart interval menu with minute, hour and day intervals",
+      "caption": "The chart interval decides the bars a script runs over."
+    },
+    "objects-panel": {
+      "file": "objects-panel.webp",
+      "alt": "The Objects panel listing the chart's source and studies with Hide, Settings and Remove",
+      "caption": "The Objects panel lists every study on the chart, with Hide, Settings and Remove."
+    },
+    "new-script": {
+      "file": "new-script.webp",
+      "alt": "The new script form with a name and a Study or Strategy kind",
+      "caption": "New script: give it a name and choose Study or Strategy."
+    },
+    "study-style": {
+      "file": "study-style.webp",
+      "alt": "The Style tab of a study's settings dialog with a colour per plot",
+      "caption": "The Style tab: every plot can be switched off or recoloured without touching the code."
+    },
+    "symbol-search": {
+      "file": "symbol-search.webp",
+      "alt": "Symbol search listing NSE and BSE equities and NFO futures and options",
+      "caption": "Symbol search: cash, futures and options on Indian exchanges, in OpenAlgo's common symbol format."
+    },
+    "deploy-form": {
+      "file": "deploy-form.webp",
+      "alt": "The form for deploying a strategy with instrument, exchange, interval, product and inputs",
+      "caption": "Deploying a strategy: the script, the instrument, the interval, the product and its inputs."
+    },
+    "halftrend": {
+      "file": "halftrend.webp",
+      "alt": "HalfTrend study on a BHEL 15 minute chart: a blue up level and a red down level with shaded channels and Buy and Sell labels",
+      "caption": "HalfTrend, written in OpenScript: the level holds flat through noise, a channel rides it, and each flip is labelled."
+    },
+    "bollinger": {
+      "file": "bollinger.webp",
+      "alt": "Bollinger Bands on a BHEL 15 minute chart with a shaded band, an orange basis and Breakout and Breakdown labels",
+      "caption": "Bollinger Bands from bollinger(): three plots, a fill between the outer two, and a signal where price closes outside a band."
+    }
+  }
+}

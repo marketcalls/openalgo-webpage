@@ -1,0 +1,150 @@
+# OpenScript
+
+> OpenScript (OpenAlgo Script) is an open trading language: write a study or a strategy once, plot it, backtest it and trade it through OpenAlgo.
+
+## Documentation
+
+### Getting started
+
+- [Introduction](https://openalgo.in/script/getting-started/introduction): What OpenScript (also called OpenAlgo Script) is: one language for studies and strategies, compiled to data, run in the /trading page, and available as two Apache 2.0 libraries.
+- [Language basics](https://openalgo.in/script/getting-started/language-basics): The whole language on one page for someone new to OpenScript: how a script is laid out, comments, names, literals, the price series, every operator with its precedence, reading past bars, blocks, variables and var, conditions, loops, functions, and where each topic continues.
+- [Quickstart](https://openalgo.in/script/getting-started/quickstart): Open the Scripts panel in /trading, write a first study, save it and put it on an NSE chart in five minutes.
+- [Your first strategy](https://openalgo.in/script/getting-started/first-strategy): Turn a study into a strategy with buy and close, then backtest it from the Backtest panel.
+- [The editor](https://openalgo.in/script/getting-started/the-editor): The Scripts panel editor in /trading: the language's own highlighting, a numbered gutter, save on Ctrl+S with a compile on every save, the diagnostics console, applying a script to the chart, and managing studies.
+- [Example scripts](https://openalgo.in/script/getting-started/example-scripts): Twelve complete scripts, from an EMA cross to an options premium strategy, each explained with its output on the chart.
+
+### Language
+
+- [Script structure](https://openalgo.in/script/language/script-structure): The version line, the one declaration, statements, indentation, comments and line continuation.
+- [Execution model](https://openalgo.in/script/language/execution-model): A script runs once per bar, top to bottom, oldest bar first. What that means for every line you write.
+- [Types and values](https://openalgo.in/script/language/types-and-values): number, bool, string, color, series and input qualifiers, and how the compiler infers them.
+- [Absent values](https://openalgo.in/script/language/absent-values): none: where it comes from, how it propagates, and isNone and orElse.
+- [Variables and scope](https://openalgo.in/script/language/variables-and-scope): Assignment, reassignment, block scope and name rules.
+- [Operators](https://openalgo.in/script/language/operators): Arithmetic, comparison, logical and conditional operators, and the history operator.
+- [Control flow](https://openalgo.in/script/language/control-flow): if, else, switch, for, while, break and continue.
+- [User functions](https://openalgo.in/script/language/functions): Defining functions with fn, parameters, return values and per-call state.
+- [Bars and history](https://openalgo.in/script/language/bars-and-history): Reading past values with [], how far back you can look and what the first bars return.
+- [Persistence](https://openalgo.in/script/language/persistence): var: values that survive from one bar to the next.
+- [Warmup](https://openalgo.in/script/language/warmup): The first bar each call produces a value on, and how warmups compose.
+- [Realtime and confirmation](https://openalgo.in/script/language/realtime-and-confirmation): Confirmed bars versus the forming bar, bar.isConfirmed and live updates.
+- [Collections](https://openalgo.in/script/language/collections): Arrays, maps and matrices.
+- [Objects and methods](https://openalgo.in/script/language/objects-and-methods): User types with type, fields, and method call syntax.
+- [Libraries](https://openalgo.in/script/language/libraries): Sharing code between scripts with import.
+
+### Data and time
+
+- [Timeframes](https://openalgo.in/script/data/timeframes): The chart interval, how intervals are written, and intraday versus daily bars on Indian exchanges.
+- [Higher timeframes](https://openalgo.in/script/data/higher-timeframes): Reading a daily or weekly value on an intraday chart with req.timeframe, without repainting.
+- [Other instruments](https://openalgo.in/script/data/other-instruments): Reading another symbol with req.symbol: index against stock, spot against futures.
+- [Sessions and time](https://openalgo.in/script/data/sessions-and-time): The NSE session, session.* and date.*, time zones and the first bar of the day.
+- [Repainting](https://openalgo.in/script/data/repainting): What repainting is, which reads can repaint, and how the compiler warns you.
+
+### Visuals
+
+- [Visuals overview](https://openalgo.in/script/visuals/overview): Everything a script can draw: plots, levels, fills, colours, shapes, lines, boxes, labels and tables.
+- [Plots](https://openalgo.in/script/visuals/plots): plot and plotCandles: styles, widths, colours per bar and plotting in a separate pane.
+- [Levels](https://openalgo.in/script/visuals/levels): Horizontal levels for oscillators and reference prices.
+- [Fills](https://openalgo.in/script/visuals/fills): Shading between two plotted series with fill(), which takes two plot handles (a level cannot be filled).
+- [Colors](https://openalgo.in/script/visuals/colors): Named colours, hex literals, transparency, gradients and colour per bar.
+- [Bar colouring and backgrounds](https://openalgo.in/script/visuals/bar-coloring-and-backgrounds): barColor and background.
+- [Labels and shapes](https://openalgo.in/script/visuals/labels-and-shapes): Markers, labels and text on bars.
+- [Lines and boxes](https://openalgo.in/script/visuals/lines-and-boxes): draw.line, draw.box and draw.polyline: zones, trendlines and ranges.
+- [Tables](https://openalgo.in/script/visuals/tables): Dashboards fixed to a corner of the chart.
+
+### Inputs and settings
+
+- [Inputs](https://openalgo.in/script/inputs/inputs): Exposing settings with input(): numbers, bools, strings, selects, colours, sources and timeframes.
+- [Settings and style](https://openalgo.in/script/inputs/settings-and-style): The study settings dialog, what a user can restyle, and declaration options.
+
+### Alerts
+
+- [Alerts from scripts](https://openalgo.in/script/alerts/overview): alert, signal and notify: raising alerts from a script, frequency, messages and what fires when.
+- [Alerts in /trading](https://openalgo.in/script/alerts/alerts-in-trading): Creating, managing and reading alerts on the /trading page: price alerts, script alerts and the alert log.
+
+### Strategies
+
+- [Overview](https://openalgo.in/script/strategies/overview): What a strategy file is, how it differs from a study, and the order life cycle.
+- [Orders](https://openalgo.in/script/strategies/orders): buy, sell, exit, close and the order.* handles: market, limit and stop orders.
+- [Exits and brackets](https://openalgo.in/script/strategies/exits-and-brackets): Stops, targets, trailing stops, brackets and OCO.
+- [Position and sizing](https://openalgo.in/script/strategies/position-and-sizing): pos.*, quantity rules, lot sizes on F&O, and sizing helpers.
+- [Legs and books](https://openalgo.in/script/strategies/multi-leg-and-books): Options and multi-leg positions with leg.* and book.*: straddles, strangles and managed books.
+- [Costs and fills](https://openalgo.in/script/strategies/costs-and-fills): Commission, slippage and how fills are simulated in a backtest.
+- [Backtesting](https://openalgo.in/script/strategies/backtesting): Running a backtest from the Backtest panel: range, inputs, settings, and what runs where.
+- [Reading a report](https://openalgo.in/script/strategies/reading-a-report): Every figure in the backtest report, the trade list and the equity curve.
+- [Reading the books](https://openalgo.in/script/strategies/reading-the-books): The orders, trades and ledger a strategy run produces.
+- [Sandbox and live](https://openalgo.in/script/strategies/sandbox-and-live): Deploying a strategy from the Strategies panel, sandbox trading (analyzer mode in OpenAlgo) first, then live.
+
+### Writing scripts
+
+- [Style guide](https://openalgo.in/script/writing/style-guide): Naming, layout and comment conventions that keep scripts readable.
+- [Debugging](https://openalgo.in/script/writing/debugging): print, plotting intermediate values, reading diagnostics and the log.
+- [Limits](https://openalgo.in/script/writing/limits): Every limit the engine enforces and what happens when a script reaches one.
+- [Profiling and speed](https://openalgo.in/script/writing/profiling): Keeping scripts fast: stateful calls, loops and history reads.
+- [Testing scripts](https://openalgo.in/script/writing/testing): Checking a script against known values and cases.
+- [Troubleshooting](https://openalgo.in/script/writing/troubleshooting): The problems people hit most often and how to fix each one.
+- [Sharing scripts](https://openalgo.in/script/writing/sharing-scripts): Packaging a script so someone else can use it: header, inputs, README, licence and versions.
+
+### Reference
+
+- [Keywords](https://openalgo.in/script/reference/keywords): Every reserved word of the language, and the two positional words version and limits.
+- [Operators](https://openalgo.in/script/reference/operators): Every operator with its precedence, operand types and result type.
+- [Types](https://openalgo.in/script/reference/types): The value types, qualifiers (series, input, const), collections, object handles and user types.
+- [Declarations](https://openalgo.in/script/reference/declarations): study() and strategy(): every declaration argument, its default and what it controls. The version line and limits block.
+- [Price and volume](https://openalgo.in/script/reference/price-and-volume): The per-bar values a script reads bare: open, high, low, close, volume, open interest and the averaged prices.
+- [bar.*](https://openalgo.in/script/reference/bar): Facts about the bar being computed: its index, whether it is the first, last, confirmed or realtime bar.
+- [chart.*](https://openalgo.in/script/reference/chart): Facts about the chart and the instrument: symbol, exchange, interval, tick size, lot size, expiry, strike.
+- [session.*](https://openalgo.in/script/reference/session): Trading session facts: open, first and last bar of a session, holidays, session start and end times.
+- [date.*](https://openalgo.in/script/reference/date): Calendar arithmetic on timestamps: parts of a date, start of day, week and month, formatting.
+- [Technical analysis](https://openalgo.in/script/reference/technical-analysis): Every indicator function: moving averages, trend, oscillators, volatility, volume, bands and channels.
+- [Series functions](https://openalgo.in/script/reference/series): Functions over a series history: crosses, highest and lowest, sums, pivots, bars since, value when.
+- [Math](https://openalgo.in/script/reference/math): Arithmetic, rounding, trigonometry and the math.* constants.
+- [General](https://openalgo.in/script/reference/general): Absent values and conversion: isNone, orElse, toBool, toNumber, text.
+- [Strings](https://openalgo.in/script/reference/string): The str.* functions for building, searching and formatting text.
+- [Colors](https://openalgo.in/script/reference/color): The nineteen named colours and every function that builds or changes a colour.
+- [Collections](https://openalgo.in/script/reference/collections): Functions over arrays: size, push, pop, insert, slice, sort, search and aggregate.
+- [Inputs](https://openalgo.in/script/reference/input): input(): every kind of setting a script can expose in its settings dialog.
+- [Plotting](https://openalgo.in/script/reference/plotting): plot, plotCandles, level, fill, background and barColor: every argument and style.
+- [Drawing objects](https://openalgo.in/script/reference/drawing): The draw.* functions: lines, labels, boxes and polylines, and every setter.
+- [Tables](https://openalgo.in/script/reference/tables): table() and cell(): fixed-position dashboards on the chart.
+- [Alerts and logging](https://openalgo.in/script/reference/alerts-and-logging): alert, signal, notify and print: raising alerts, emitting signals and writing to the log.
+- [Requests](https://openalgo.in/script/reference/request): The req.* functions: other timeframes, other instruments, events and request status.
+- [Strategy orders](https://openalgo.in/script/reference/strategy): buy, sell, exit, close, cancel and cancelAll: the order calls of a strategy file.
+- [pos.*](https://openalgo.in/script/reference/position): The running position and account figures a strategy can read.
+- [order.*](https://openalgo.in/script/reference/orders): Order handles: placing, modifying, bracket and OCO orders, fills, status and sizing helpers.
+- [leg.*](https://openalgo.in/script/reference/legs): Multi-leg positions: entering and exiting legs, relative and fixed strikes, per-leg stops and targets.
+- [book.*](https://openalgo.in/script/reference/books): Books: grouping legs into a managed position with daily loss, profit locks, entry windows and expiry square-off.
+
+### Errors
+
+- [Reading an error](https://openalgo.in/script/errors/overview): How a diagnostic is laid out: code, severity, message, cause and fix, and the eight code ranges.
+- [OS1xxx Syntax errors](https://openalgo.in/script/errors/syntax): Every OS1 code: message, cause, fix and a before and after example.
+- [OS2xxx Names and types](https://openalgo.in/script/errors/names-and-types): Every OS2 code: message, cause, fix and a before and after example.
+- [OS3xxx Arguments](https://openalgo.in/script/errors/arguments): Every OS3 code: message, cause, fix and a before and after example.
+- [OS4xxx Runtime errors](https://openalgo.in/script/errors/runtime): Every OS4 code: message, cause, fix and a before and after example.
+- [OS5xxx Limits](https://openalgo.in/script/errors/limits): Every OS5 code: message, cause, fix and a before and after example.
+- [OS6xxx Data](https://openalgo.in/script/errors/data): Every OS6 code: message, cause, fix and a before and after example.
+- [OS7xxx Orders](https://openalgo.in/script/errors/orders): Every OS7 code: message, cause, fix and a before and after example.
+- [OS8xxx Warnings](https://openalgo.in/script/errors/warnings): Every OS8 code: message, cause, fix and a before and after example.
+
+### Integrate
+
+- [Two libraries](https://openalgo.in/script/integrate/overview): The JavaScript library (openalgo-script on npm) and the Python engine (openscript on PyPI): Apache 2.0, zero dependencies, for any financial portal.
+- [JavaScript library](https://openalgo.in/script/integrate/javascript): Install openalgo-script, compile a script, run it over bars, and read plots, signals and alerts.
+- [Chart adapter](https://openalgo.in/script/integrate/charts-adapter): Drawing a compiled study on openalgo-charts with the charts adapter.
+- [Editor integration](https://openalgo.in/script/integrate/editor-integration): The six headless editor functions and the drop-in editor adapter.
+- [Backtesting API](https://openalgo.in/script/integrate/backtesting-api): Running a strategy over bars from code and reading the run record.
+- [Python engine](https://openalgo.in/script/integrate/python-engine): pip install openscript: running compiled programs on a server in pure Python.
+- [Compiled program](https://openalgo.in/script/integrate/compiled-program): The versioned data format the compiler emits, and why no eval is needed anywhere.
+- [Host interface](https://openalgo.in/script/integrate/host-interface): What a host platform supplies: bars, instrument facts, requests, order routing.
+- [Your own engine](https://openalgo.in/script/integrate/conformance): Writing an engine in another language and holding it to the conformance suite.
+
+### Resources
+
+- [Glossary](https://openalgo.in/script/resources/glossary): Every term the documentation uses, defined once.
+- [FAQ](https://openalgo.in/script/resources/faq): Short answers to the questions people ask first.
+- [Using AI assistants](https://openalgo.in/script/resources/ai-assistants): The whole documentation as one markdown file and an llms.txt map, and how to give them to an AI assistant that writes OpenScript.
+- [Release notes](https://openalgo.in/script/resources/release-notes): What each release of the language and its two libraries changed, and what is still planned.
+
+## Complete reference
+
+- [openscript-reference.md](https://openalgo.in/script/openscript-reference.md): every page above in one markdown file

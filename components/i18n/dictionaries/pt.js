@@ -2,6 +2,8 @@ const dict = {
   'nav.home': 'Início',
   'nav.features': 'Recursos',
   'nav.charts': 'Gráficos',
+  'nav.script': 'Script',
+  'nav.more': 'Mais',
   'nav.download': 'Download',
   'nav.blog': 'Blog',
   'nav.discord': 'Discord',
@@ -375,6 +377,7 @@ const dict = {
   // Features page
   'feat.title': 'Recursos da Plataforma',
   'feat.desc': 'O OpenAlgo é uma stack completa e self-hosted para algo trading e análise de opções - uma suíte de opções com 18 ferramentas, um motor de execução unificado e integrações com 35+ corretoras, feito para traders individuais que querem controle total da sua infraestrutura.',
+  'feat.cat.openscript': 'OpenScript',
   'feat.cat.optionsAnalytics': 'Análise de Opções',
   'feat.cat.aiSkills': 'IA e Skills',
   'feat.cat.orderManagement': 'Gestão de Ordens',
@@ -546,6 +549,12 @@ const dict = {
   'feat.f77d': 'Peça um gráfico, um indicador, uma cadeia de opções ou uma estratégia em linguagem comum - o agente lê os seus próprios dados do OpenAlgo e para cada ordem à espera da sua aprovação',
   'feat.f78t': 'Armazém de dados Historify',
   'feat.f78d': 'Baixe o histórico do corretor para o seu próprio armazém local, agende atualizações, exporte CSV ou Parquet e sirva gráficos e backtests a partir dele',
+  'feat.f79t': 'Alertas de preço e de indicadores',
+  'feat.f79d': 'Defina alertas em um nível de preço ou em qualquer condição de indicador, disparados por alert() e signal() no seu código OpenScript, e acompanhe cada disparo no log de alertas',
+  'feat.f80t': 'Indicadores personalizados',
+  'feat.f80d': 'Escreva seus próprios indicadores em OpenScript, a linguagem de trading aberta integrada ao /trading, com um editor que compila a cada salvamento e aponta a linha, o erro e a correção',
+  'feat.f81t': 'Estratégias de trading personalizadas',
+  'feat.f81d': 'Transforme um indicador em uma estratégia com compra, venda e saída, faça o backtest no navegador e depois coloque-a em sandbox trading (modo Analisador no OpenAlgo) antes de operar ao vivo',
 
   // Download page
   'dl.title': 'Downloads',

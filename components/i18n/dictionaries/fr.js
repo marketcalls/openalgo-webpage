@@ -2,6 +2,8 @@ const dict = {
   'nav.home': 'Accueil',
   'nav.features': 'Fonctionnalités',
   'nav.charts': 'Graphiques',
+  'nav.script': 'Script',
+  'nav.more': 'Plus',
   'nav.download': 'Télécharger',
   'nav.blog': 'Blog',
   'nav.discord': 'Discord',
@@ -371,6 +373,7 @@ const dict = {
   // Batch B
   'feat.title': "Fonctionnalités de la plateforme",
   'feat.desc': "OpenAlgo est une stack complète et auto-hébergée pour le trading algorithmique et l'analyse d'options - une suite de 18 outils d'options, un moteur d'exécution unifié, et des intégrations avec 35+ brokers, conçue pour les traders individuels qui veulent le contrôle total de leur infrastructure.",
+  'feat.cat.openscript': "OpenScript",
   'feat.cat.optionsAnalytics': "Analyse d'options",
   'feat.cat.aiSkills': "IA et Skills",
   'feat.cat.orderManagement': "Gestion des ordres",
@@ -542,6 +545,12 @@ const dict = {
   'feat.f77d': "Demandez un graphique, un indicateur, une chaîne d'options ou une stratégie en langage courant - l'agent lit vos propres données OpenAlgo et met chaque ordre en attente de votre approbation",
   'feat.f78t': 'Entrepôt de données Historify',
   'feat.f78d': "Téléchargez l'historique du courtier dans votre propre entrepôt local, planifiez les mises à jour, exportez en CSV ou Parquet et servez-en graphiques et backtests",
+  'feat.f79t': "Alertes de prix et d'indicateurs",
+  'feat.f79d': "Définissez des alertes sur un niveau de prix ou sur n'importe quelle condition d'indicateur, déclenchées par alert() et signal() dans votre code OpenScript, et suivez chaque déclenchement dans le journal des alertes",
+  'feat.f80t': "Indicateurs personnalisés",
+  'feat.f80d': "Écrivez vos propres indicateurs en OpenScript, le langage de trading ouvert intégré à /trading, avec un éditeur qui compile à chaque enregistrement et indique la ligne, l'erreur et la correction",
+  'feat.f81t': "Stratégies de trading personnalisées",
+  'feat.f81d': "Transformez un indicateur en stratégie avec achat, vente et sortie, backtestez-la dans le navigateur, puis déployez-la en trading sandbox (mode Analyzer dans OpenAlgo) avant de passer au trading réel",
 
   // Download page
   'dl.title': "Téléchargements",

@@ -5,6 +5,8 @@ const en = {
   'nav.home': 'Home',
   'nav.features': 'Features',
   'nav.charts': 'Charts',
+  'nav.script': 'Script',
+  'nav.more': 'More',
   'nav.download': 'Download',
   'nav.blog': 'Blog',
   'nav.discord': 'Discord',
@@ -348,6 +350,7 @@ const en = {
   // Features page
   'feat.title': "Platform Features",
   'feat.desc': "OpenAlgo is a complete self-hosted stack for algo trading and options analytics - an 18-tool options and portfolio suite, a unified execution engine, and integrations across 35+ brokers, built for individual traders who want full control of their infrastructure.",
+  'feat.cat.openscript': "OpenScript",
   'feat.cat.optionsAnalytics': "Options Analytics",
   'feat.cat.aiSkills': "AI & Skills",
   'feat.cat.orderManagement': "Order Management",
@@ -519,6 +522,12 @@ const en = {
   'feat.f77d': "Ask for a chart, an indicator, an option chain or a strategy in plain English - the agent reads your own OpenAlgo data and pauses every order for your approval",
   'feat.f78t': "Historify Data Warehouse",
   'feat.f78d': "Download broker history into your own local store, then schedule top-ups, export CSV or Parquet, and serve charts and backtests from it",
+  'feat.f79t': "Price and Study Alerts",
+  'feat.f79d': "Set alerts on a price level or on any study condition, raised by alert() and signal() in your OpenScript code, and follow every trigger in the alert log",
+  'feat.f80t': "Custom Indicators",
+  'feat.f80d': "Write your own studies in OpenScript, the open trading language built into /trading, with an editor that compiles on every save and names the line, the error and the fix",
+  'feat.f81t': "Custom Trading Strategies",
+  'feat.f81d': "Turn a study into a strategy with buy, sell and exit, backtest it in the browser, then deploy it to sandbox trading (analyzer mode in OpenAlgo) before going live",
 
   // Download page
   'dl.title': "Downloads",

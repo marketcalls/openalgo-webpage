@@ -1,3 +1,4 @@
+import fs from 'node:fs'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { initOpenNextCloudflareForDev } from '@opennextjs/cloudflare'
@@ -6,6 +7,35 @@ import { initOpenNextCloudflareForDev } from '@opennextjs/cloudflare'
 initOpenNextCloudflareForDev()
 
 const projectRoot = path.dirname(fileURLToPath(import.meta.url))
+
+// /script/<section> has no page of its own, so send it to the section's first
+// written page. Sections and their order come from content/script/nav.json; a
+// page counts as written when its markdown exists, the same test
+// scripts/gen-script-docs.mjs uses. Redirects are resolved at build time, so
+// they land in the routes manifest and cost the Worker nothing per request.
+function scriptSectionRedirects() {
+  const contentDir = path.join(projectRoot, 'content', 'script')
+  let nav
+  try {
+    nav = JSON.parse(fs.readFileSync(path.join(contentDir, 'nav.json'), 'utf8'))
+  } catch {
+    return []
+  }
+  const out = []
+  for (const section of nav.sections || []) {
+    const first = (section.pages || []).find((p) =>
+      fs.existsSync(path.join(contentDir, section.slug, `${p.slug}.md`))
+    )
+    if (!first) continue
+    out.push({
+      source: `/script/${section.slug}`,
+      destination: `/script/${section.slug}/${first.slug}`,
+      // Temporary: the first page of a section can change as pages are added.
+      permanent: false,
+    })
+  }
+  return out
+}
 
 const securityHeaders = [
   { key: 'X-Content-Type-Options', value: 'nosniff' },
@@ -68,6 +98,18 @@ const nextConfig = {
         destination: 'https://docs.openalgo.in',
         permanent: false,
       },
+      // The language's pages live at /script; /scripts is the common misspelling.
+      {
+        source: '/scripts',
+        destination: '/script',
+        permanent: true,
+      },
+      {
+        source: '/scripts/:path*',
+        destination: '/script/:path*',
+        permanent: true,
+      },
+      ...scriptSectionRedirects(),
     ]
   },
 }
