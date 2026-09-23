@@ -128,6 +128,14 @@ all read from the compiler. Do not retype any of that. You write:
    index futures and options, the 09:15 to 15:30 session).
 3. `**Remarks.**` for warmup, absence, edge cases, performance (when useful).
 4. `**See also.**` with `[[...]]` links (when useful).
+5. For a function, one sentence per argument in
+   `content/script/arguments/<page>.json`, keyed by the entry and then by the
+   parameter name (required for every implemented function). Say what the
+   argument means and how it is used; the type, default and accepted values
+   are shown beside it already. These fill the Description column of the
+   parameter table and the Arguments part of the reference manual at
+   `/script/reference/v1`, which is built from this same prose in this order:
+   the description, examples, remarks and see also.
 
 Group entries under `##` headings by purpose (for example Moving averages,
 Oscillators, Volatility). The prose of an entry runs until the next directive

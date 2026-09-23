@@ -114,6 +114,20 @@ under `/fundamentals`, `/python`, `/quant`, etc., indexed by `/learn`.
   prerendered fine, passed `next start`, and then answered 404 for every page in
   the OpenNext Worker (workerd). Do not reintroduce dynamic segments here; test
   new routes with `opennextjs-cloudflare preview`, not only `next start`.
+- Reference manual at `/script/reference/v1`: every IMPLEMENTED name (library
+  values and functions, plus keywords, types, operators and the two
+  declarations) on one page, grouped by kind. Built by
+  `scripts/script-docs/reference-v1.mjs` from the same package facts and the
+  same entry markdown as the docs (nothing written twice), plus the argument
+  descriptions in `content/script/arguments/<page>.json` (hand-written, one per
+  parameter; the check fails on a missing, empty or stale one, and they also
+  fill the Description column of the docs parameter tables). The page renders
+  only the index on the server (`lib/scriptReferenceV1.json`); the entries are
+  a static asset, `public/script/reference-v1.json`, fetched by the client, so
+  they add nothing to the Worker. `SectionFrame` drops the docs sidebar for the
+  `v1` segment, and the manual claims `/` for its own filter (`data-own-slash`,
+  honoured by `DocSearch`; Ctrl+K still opens site search). A new operators-page
+  section needs a row in the `OPERATORS` table there, or the check fails.
 - Screenshots live in `public/script/screens/` and are listed in
   `content/script/screens.json`. They were captured from the local OpenAlgo
   /trading page: never save over the user's own scripts there, and crop below

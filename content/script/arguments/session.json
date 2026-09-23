@@ -1,0 +1,6 @@
+{
+  "session.isIn()": {
+    "spec": "The window, written `\"HHMM-HHMM\"` with an optional list of days after a colon, such as `\"0915-1530:12345\"`. Days run from `1` for Monday to `7` for Sunday. The window starts at the first time and stops before the second, and an end before the start crosses midnight.",
+    "zone": "The IANA zone the times are read in, such as `\"Asia/Kolkata\"`. Leave it out to use the chart's timezone. A zone the host does not know stops the script with `OS6005`."
+  }
+}

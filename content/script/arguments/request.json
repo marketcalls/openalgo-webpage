@@ -1,0 +1,20 @@
+{
+  "req.error()": {
+    "read": "The name you assigned the read to, such as `idx` in `idx = req.symbol(...)`."
+  },
+  "req.isReady()": {
+    "read": "The name you assigned the read to, such as `idx` in `idx = req.symbol(...)`."
+  },
+  "req.symbol()": {
+    "symbol": "The other instrument's symbol, written as OpenAlgo writes it, such as `SBIN` or `NIFTY`. It is fixed before the first bar, so write it as a literal or an `input()`.",
+    "timeframe": "The interval to compute the expression at, such as `\"5m\"`, `\"1h\"` or `\"1D\"`. It is fixed before the first bar, and one finer than the chart's is refused with `OS6002`.",
+    "expr": "The expression to compute on the other instrument's bars, such as `close` or `ema(close, 20)`. Inside it, prices and every indicator read the requested bars.",
+    "exchange": "The other instrument's exchange, such as `NSE`, `NSE_INDEX` or `NFO`. Left out, the chart's own exchange is used.",
+    "mode": "What the read may know on a chart bar whose requested bar has not finished: `\"confirmed\"` holds the last closed bar and never repaints, `\"developing\"` gives the bar so far, and `\"lookahead\"` gives its final value and repaints on history. Write it as a literal. Pass `\"developing\"` to pair each chart bar with the other instrument's bar at the same time."
+  },
+  "req.timeframe()": {
+    "timeframe": "The coarser interval to compute the expression at, such as `\"1h\"` or `\"1D\"`. It is fixed before the first bar, and one finer than the chart's is refused with `OS6002`.",
+    "expr": "The expression to compute on the coarser bars, such as `high` or `ema(close, 20)`. Inside it, prices and every indicator read the coarser bars.",
+    "mode": "What the read may know on a chart bar whose requested bar has not finished: `\"confirmed\"` holds the last closed bar and never repaints, `\"developing\"` gives the bar so far, and `\"lookahead\"` gives its final value and repaints on history. Write it as a literal."
+  }
+}

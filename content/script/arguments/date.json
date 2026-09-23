@@ -1,0 +1,69 @@
+{
+  "date.day()": {
+    "t": "The timestamp to read, in milliseconds since 1 January 1970 UTC, such as `time`.",
+    "zone": "The IANA timezone to read the timestamp in, such as `\"Asia/Kolkata\"`. Left out, the chart's timezone is used."
+  },
+  "date.dayOfWeek()": {
+    "t": "The timestamp to read, in milliseconds since 1 January 1970 UTC, such as `time`.",
+    "zone": "The IANA timezone to read the timestamp in, such as `\"Asia/Kolkata\"`. Left out, the chart's timezone is used."
+  },
+  "date.dayOfYear()": {
+    "t": "The timestamp to read, in milliseconds since 1 January 1970 UTC, such as `time`.",
+    "zone": "The IANA timezone to read the timestamp in, such as `\"Asia/Kolkata\"`. Left out, the chart's timezone is used."
+  },
+  "date.format()": {
+    "t": "The timestamp to write, such as `time`.",
+    "pattern": "The layout of the text, built from the placeholders `yyyy`, `MM`, `dd`, `HH`, `mm`, `ss`, `MMM` and `EEE`, as in `\"dd MMM yyyy\"`. Every other character is copied as written.",
+    "zone": "The IANA timezone to write the timestamp in, such as `\"Asia/Kolkata\"`. Left out, the chart's timezone is used."
+  },
+  "date.from()": {
+    "year": "The calendar year, such as `2025`. Every field must be a whole number, or the result is `none`.",
+    "month": "The month, 1 for January through 12 for December. A value outside that range rolls over, so 13 is January of the next year.",
+    "day": "The day of the month, 1 to 31. A value outside the month rolls over, so day 0 is the last day of the month before.",
+    "hour": "The hour on a 24 hour clock, 0 to 23.",
+    "minute": "The minute of the hour, 0 to 59.",
+    "second": "The second of the minute, 0 to 59.",
+    "zone": "The IANA timezone the fields are read in as a wall clock time, such as `\"Asia/Kolkata\"`. Left out, the chart's timezone is used."
+  },
+  "date.hour()": {
+    "t": "The timestamp to read, in milliseconds since 1 January 1970 UTC, such as `time`.",
+    "zone": "The IANA timezone to read the timestamp in, such as `\"Asia/Kolkata\"`. Left out, the chart's timezone is used."
+  },
+  "date.isSameDay()": {
+    "a": "The first timestamp to compare, such as `time`.",
+    "b": "The second timestamp to compare, such as `time[1]`. When either timestamp is absent, the answer is `none`.",
+    "zone": "The IANA timezone whose calendar decides the day, such as `\"Asia/Kolkata\"`. Left out, the chart's timezone is used."
+  },
+  "date.minute()": {
+    "t": "The timestamp to read, in milliseconds since 1 January 1970 UTC, such as `time`.",
+    "zone": "The IANA timezone to read the timestamp in, such as `\"Asia/Kolkata\"`. Left out, the chart's timezone is used."
+  },
+  "date.month()": {
+    "t": "The timestamp to read, in milliseconds since 1 January 1970 UTC, such as `time`.",
+    "zone": "The IANA timezone to read the timestamp in, such as `\"Asia/Kolkata\"`. Left out, the chart's timezone is used."
+  },
+  "date.second()": {
+    "t": "The timestamp to read, in milliseconds since 1 January 1970 UTC, such as `time`.",
+    "zone": "The IANA timezone to read the timestamp in, such as `\"Asia/Kolkata\"`. Left out, the chart's timezone is used."
+  },
+  "date.startOfDay()": {
+    "t": "The timestamp to round back, such as `time`.",
+    "zone": "The IANA timezone to read the timestamp in, such as `\"Asia/Kolkata\"`. Left out, the chart's timezone is used."
+  },
+  "date.startOfMonth()": {
+    "t": "The timestamp to round back, such as `time`.",
+    "zone": "The IANA timezone to read the timestamp in, such as `\"Asia/Kolkata\"`. Left out, the chart's timezone is used."
+  },
+  "date.startOfWeek()": {
+    "t": "The timestamp to round back, such as `time`.",
+    "zone": "The IANA timezone to read the timestamp in, such as `\"Asia/Kolkata\"`. Left out, the chart's timezone is used."
+  },
+  "date.weekOfYear()": {
+    "t": "The timestamp to read, in milliseconds since 1 January 1970 UTC, such as `time`.",
+    "zone": "The IANA timezone to read the timestamp in, such as `\"Asia/Kolkata\"`. Left out, the chart's timezone is used."
+  },
+  "date.year()": {
+    "t": "The timestamp to read, in milliseconds since 1 January 1970 UTC, such as `time`.",
+    "zone": "The IANA timezone to read the timestamp in, such as `\"Asia/Kolkata\"`. Left out, the chart's timezone is used."
+  }
+}

@@ -1,0 +1,436 @@
+/* ============================================================
+   Reference manual (/script/reference/v1)
+
+   The docs frame (bar, sidebar, drawer) with an index of every name in
+   place of the page list, and every entry in one scroll. Entries reuse the
+   docs content styles (.osd-doc) and code panels from ../../script-docs.css,
+   so a block reads the same in the manual, on a docs page and in the
+   /trading editor. Monochrome tokens only, from app/globals.css.
+   ============================================================ */
+@media (min-width: 1024px) {
+  .orv-shell .osd-frame {
+    grid-template-columns: 296px minmax(0, 1fr);
+  }
+}
+.orv-shell .orv-sidebar {
+  padding-top: 0;
+}
+
+/* Filter */
+.orv-filter {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  padding: 1rem 0.25rem 0.7rem;
+  background: hsl(var(--background));
+}
+.orv-drawer .orv-filter {
+  padding: 0.25rem 0 0.7rem;
+}
+.orv-filter-input {
+  width: 100%;
+  height: 38px;
+  padding: 0 2.4rem 0 0.85rem;
+  border: 1px solid hsl(var(--border));
+  border-radius: 10px;
+  background: hsl(var(--surface-bright));
+  font-size: 0.86rem;
+  color: hsl(var(--on-surface));
+}
+.orv-filter-input::placeholder {
+  color: hsl(var(--on-surface-variant) / 0.8);
+}
+.orv-filter-input:focus {
+  outline: 2px solid hsl(var(--ring));
+  outline-offset: 1px;
+}
+.orv-filter-kbd {
+  position: absolute;
+  right: 0.8rem;
+  top: calc(1rem + 9px);
+  pointer-events: none;
+}
+.orv-drawer .orv-filter-kbd {
+  display: none;
+}
+
+/* Index */
+.orv-index-group {
+  margin-top: 0.55rem;
+}
+.orv-index ul {
+  list-style: none;
+  margin: 0.15rem 0 0.4rem;
+  padding: 0;
+}
+.orv-index-link {
+  display: block;
+  padding: 0.2rem 0.75rem;
+  border-radius: 6px;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  color: hsl(var(--on-surface-variant));
+  transition: background 0.15s, color 0.15s;
+}
+.orv-index-link code {
+  font-family: var(--osd-mono);
+  font-size: 0.78rem;
+}
+.orv-index-link:hover {
+  background: hsl(var(--surface-container-low));
+  color: hsl(var(--on-surface));
+}
+.orv-index-link.is-active {
+  background: hsl(var(--surface-container));
+  color: hsl(var(--on-surface));
+  font-weight: 600;
+}
+.orv-index-link:focus-visible,
+.orv-counts a:focus-visible,
+.orv-entries a:focus-visible {
+  outline: 2px solid hsl(var(--ring));
+  outline-offset: 2px;
+  border-radius: 6px;
+}
+/* Search results */
+.orv-index-count {
+  margin: 0.1rem 0 0.25rem;
+  padding: 0 0.75rem;
+  font-size: 0.78rem;
+  line-height: 1.45;
+  color: hsl(var(--on-surface-variant));
+}
+.orv-index-link mark {
+  padding: 0 0.05em;
+  border-radius: 3px;
+  background: hsl(var(--surface-container-highest));
+  color: hsl(var(--on-surface));
+  font-weight: 700;
+}
+.orv-index-link.has-excerpt {
+  white-space: normal;
+  padding-top: 0.3rem;
+  padding-bottom: 0.35rem;
+}
+.orv-index-excerpt {
+  display: block;
+  margin-top: 0.1rem;
+  font-size: 0.72rem;
+  line-height: 1.4;
+  color: hsl(var(--on-surface-variant) / 0.85);
+}
+
+/* Main column */
+.orv-main {
+  min-width: 0;
+  padding: 1.75rem 1rem 6rem;
+}
+@media (min-width: 640px) {
+  .orv-main {
+    padding: 2.25rem 1.5rem 6rem;
+  }
+}
+@media (min-width: 1024px) {
+  .orv-main {
+    padding: 2.5rem 3rem 7rem;
+  }
+}
+.orv-main > * {
+  max-width: 52rem;
+}
+.orv-eyebrow {
+  margin: 0;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: hsl(var(--on-surface-variant));
+}
+.orv-intro h1 {
+  margin: 0.5rem 0 0.9rem;
+  font-size: clamp(1.9rem, 3.2vw, 2.6rem);
+  font-weight: 800;
+  line-height: 1.08;
+  letter-spacing: -0.035em;
+  color: hsl(var(--on-surface));
+}
+.orv-lede {
+  margin: 0;
+  font-size: 1.02rem;
+  line-height: 1.65;
+  color: hsl(var(--on-surface-variant));
+}
+.orv-counts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+  margin: 1.35rem 0 1.1rem;
+  padding: 0;
+  list-style: none;
+}
+.orv-counts a {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 0.35rem;
+  padding: 0.38rem 0.85rem;
+  border: 1px solid hsl(var(--border));
+  border-radius: 999px;
+  font-size: 0.82rem;
+  color: hsl(var(--on-surface-variant));
+  transition: border-color 0.15s, color 0.15s;
+}
+.orv-counts a:hover {
+  border-color: hsl(var(--on-surface) / 0.45);
+  color: hsl(var(--on-surface));
+}
+.orv-counts strong {
+  font-weight: 700;
+  color: hsl(var(--on-surface));
+}
+.orv-note {
+  margin: 0;
+  font-size: 0.88rem;
+  line-height: 1.65;
+  color: hsl(var(--on-surface-variant));
+}
+.orv-note code {
+  font-family: var(--osd-mono);
+  font-size: 0.8rem;
+}
+.orv-note a,
+.orv-status a {
+  color: hsl(var(--on-surface));
+  text-decoration: underline;
+  text-decoration-color: hsl(var(--on-surface) / 0.3);
+  text-underline-offset: 3px;
+}
+.orv-status {
+  margin: 2.5rem 0;
+  padding: 1rem 1.2rem;
+  border: 1px dashed hsl(var(--outline-variant));
+  border-radius: 12px;
+  font-size: 0.92rem;
+  color: hsl(var(--on-surface-variant));
+}
+
+/* Groups and entries */
+.osd-doc .orv-group-title {
+  display: flex;
+  align-items: baseline;
+  gap: 0.65rem;
+  margin: 4rem 0 0;
+  padding-bottom: 0.7rem;
+  border-bottom: 2px solid hsl(var(--on-surface));
+  font-size: 1.55rem;
+  font-weight: 800;
+  letter-spacing: -0.025em;
+}
+.osd-doc.orv-entries > .orv-group:first-child .orv-group-title {
+  margin-top: 2.75rem;
+}
+.orv-group-title span {
+  font-family: var(--osd-mono);
+  font-size: 0.8rem;
+  font-weight: 500;
+  letter-spacing: 0;
+  color: hsl(var(--on-surface-variant));
+}
+.orv-entry {
+  padding: 2rem 0 1.4rem;
+  border-bottom: 1px solid hsl(var(--border));
+  /* No content-visibility here, though it would save layout: with entries
+     sized by estimate, a link to one far down the page lands short and
+     drifts as the entries above it lay out. An address has to land exactly. */
+}
+.orv-entry,
+.orv-group-title,
+.orv-entry [id] {
+  scroll-margin-top: calc(var(--osd-top) + 1rem);
+}
+.orv-entry:target {
+  padding-left: 1rem;
+  box-shadow: inset 3px 0 0 hsl(var(--on-surface));
+}
+.orv-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.55rem 1rem;
+}
+.osd-doc .orv-title {
+  margin: 0;
+  font-size: 1.35rem;
+  line-height: 1.3;
+}
+.osd-doc .orv-title a {
+  color: hsl(var(--on-surface));
+  text-decoration: none;
+}
+.osd-doc .orv-title code {
+  padding: 0;
+  border: 0;
+  background: none;
+  font-size: 1.22rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+}
+.orv-meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.35rem;
+}
+.orv-kind,
+.orv-badge {
+  display: inline-flex;
+  align-items: center;
+  height: 22px;
+  padding: 0 0.6rem;
+  border: 1px solid hsl(var(--border));
+  border-radius: 999px;
+  font-size: 0.68rem;
+  font-weight: 600;
+  line-height: 1;
+  white-space: nowrap;
+}
+.orv-kind {
+  border-color: hsl(var(--on-surface));
+  background: hsl(var(--on-surface));
+  color: hsl(var(--background));
+  letter-spacing: 0.02em;
+}
+.orv-kind-sub {
+  margin-left: 0.4rem;
+  padding-left: 0.4rem;
+  border-left: 1px solid hsl(var(--background) / 0.35);
+  font-weight: 500;
+  text-transform: lowercase;
+}
+.orv-badge {
+  background: hsl(var(--surface-container-low));
+  font-family: var(--osd-mono);
+  color: hsl(var(--on-surface-variant));
+}
+.orv-swatch {
+  display: inline-block;
+  width: 22px;
+  height: 22px;
+  border: 1px solid hsl(var(--border));
+  border-radius: 6px;
+}
+.osd-doc a.orv-guide {
+  margin-left: 0.25rem;
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: hsl(var(--on-surface-variant));
+  text-decoration: none;
+}
+.osd-doc a.orv-guide:hover {
+  color: hsl(var(--on-surface));
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.orv-part {
+  margin-top: 1.15rem;
+}
+.orv-part > :last-child {
+  margin-bottom: 0;
+}
+.orv-desc > :first-child {
+  margin-top: 0.7rem;
+}
+.osd-doc .orv-h {
+  margin: 1.6rem 0 0.55rem;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.11em;
+  text-transform: uppercase;
+  color: hsl(var(--on-surface-variant));
+}
+.orv-part .orv-signature {
+  margin-top: 0.4rem;
+}
+.osd-doc code.orv-type {
+  font-size: 0.86rem;
+}
+.orv-first {
+  margin: 0.4rem 0 0;
+  font-size: 0.86rem;
+  color: hsl(var(--on-surface-variant));
+}
+.orv-form {
+  margin: 0;
+}
+
+/* Arguments */
+.orv-args {
+  margin: 0;
+}
+.orv-arg {
+  padding: 0.75rem 0;
+  border-top: 1px solid hsl(var(--border) / 0.8);
+}
+.orv-arg:first-child {
+  padding-top: 0.25rem;
+  border-top: 0;
+}
+.orv-arg dt {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.35rem 0.6rem;
+}
+.osd-doc .orv-arg-name {
+  padding: 0;
+  border: 0;
+  background: none;
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: hsl(var(--on-surface));
+}
+.osd-doc .orv-arg-type {
+  padding: 0;
+  border: 0;
+  background: none;
+  font-size: 0.8rem;
+  color: hsl(var(--on-surface-variant));
+}
+.orv-arg-req,
+.orv-arg-def {
+  font-size: 0.74rem;
+  color: hsl(var(--on-surface-variant));
+}
+.orv-arg-req {
+  font-weight: 700;
+  color: hsl(var(--on-surface));
+}
+.osd-doc .orv-arg-def code {
+  font-size: 0.74rem;
+}
+.orv-arg dd {
+  margin: 0.3rem 0 0;
+}
+.osd-doc .orv-arg dd p {
+  margin: 0.15rem 0 0;
+  font-size: 0.93rem;
+  line-height: 1.6;
+}
+.osd-doc .orv-arg dd p.orv-arg-notes {
+  font-size: 0.82rem;
+  color: hsl(var(--on-surface-variant));
+}
+.orv-example-label {
+  margin: 1.2rem 0 -0.7rem;
+  font-size: 0.82rem;
+}
+@media (max-width: 640px) {
+  .orv-head {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .orv-entry:target {
+    padding-left: 0.75rem;
+  }
+}

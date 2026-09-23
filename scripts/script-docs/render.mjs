@@ -131,6 +131,11 @@ function expandEntryLinks(md, ctx) {
       ctx.problems.push(`unknown entry link [[${key}]]`);
       return `\`${key}\``;
     }
+    // A caller that files entries somewhere else (the v1 reference keeps every
+    // entry on one page) says where a key's link goes; null falls through to
+    // the key's docs page.
+    const own = ctx.linkFor?.(key);
+    if (own) return `[\`${key}\`](${own})`;
     const page = ctx.keyPage.get(key);
     if (!page) {
       ctx.problems.push(`entry link [[${key}]] has no reference page`);
@@ -149,7 +154,7 @@ function inline(md, ctx) {
   return makeMarked(ctx).parseInline(expandEntryLinks(md, ctx));
 }
 
-function signatureHtml(sig) {
+export function signatureHtml(sig) {
   // name(param?: type = default, ...) -> type, or name: type
   const esc2 = (s) => esc(s);
   const m = sig.match(/^([\w.]+)\((.*)\)\s*->\s*(.+)$/);
@@ -184,6 +189,42 @@ function signatureHtml(sig) {
   return `<span class="t-f">${esc2(name)}</span><span class="t-p">${open}</span>${rendered.join(joiner)}<span class="t-p">${close} -&gt; </span><span class="t-k">${esc2(ret)}</span>`;
 }
 
+// ---------------------------------------------------------------------------
+// Argument descriptions
+//
+// The package states each parameter's name, type, default and accepted values,
+// and nothing about what it means. That sentence is written by hand, one file
+// per reference page under content/script/arguments/, keyed by entry and then
+// by parameter name. The check holds every parameter of every implemented
+// function to having one.
+
+const ARGS_DIR = path.join(ROOT, "content", "script", "arguments");
+
+/** Every written argument description, as entry key to { parameter: text }. */
+export function loadArgumentDocs() {
+  const map = new Map();
+  if (!fs.existsSync(ARGS_DIR)) return map;
+  for (const file of fs.readdirSync(ARGS_DIR).filter((f) => f.endsWith(".json")).sort()) {
+    const data = JSON.parse(fs.readFileSync(path.join(ARGS_DIR, file), "utf8"));
+    for (const [key, params] of Object.entries(data)) map.set(key, { ...(map.get(key) ?? {}), ...params, __file: file });
+  }
+  return map;
+}
+
+const ARG_DOCS = loadArgumentDocs();
+
+/** The written description of one argument, or "" when there is none yet. */
+export const argumentDoc = (key, name) => (ARG_DOCS.get(key)?.[name] ?? "").trim();
+
+/** The facts about a parameter beyond its type and default, as short phrases. */
+export function parameterNotes(p) {
+  const notes = [];
+  if (p.values.length) notes.push(`One of ${p.values.map((v) => `<code>"${esc(v)}"</code>`).join(", ")}`);
+  if (p.whole) notes.push("A whole number");
+  if (p.constant) notes.push("Fixed before the first bar");
+  return notes;
+}
+
 function paramsTable(facts, ctx) {
   const rows = [];
   const seen = new Set();
@@ -193,15 +234,14 @@ function paramsTable(facts, ctx) {
       if (seen.has(id)) continue;
       seen.add(id);
       const def = p.required ? `<span class="osd-req">required</span>` : p.default !== undefined ? `<code>${esc(p.default)}</code>` : `<span class="osd-muted">optional</span>`;
-      const notes = [];
-      if (p.values.length) notes.push(`One of ${p.values.map((v) => `<code>"${esc(v)}"</code>`).join(", ")}`);
-      if (p.whole) notes.push("A whole number");
-      if (p.constant) notes.push("Fixed before the first bar");
-      rows.push(`<tr><td><code>${esc(p.name)}</code></td><td><code>${esc(p.type)}</code></td><td>${def}</td><td>${notes.join(". ") || ""}</td></tr>`);
+      const doc = argumentDoc(facts.key, p.name);
+      const notes = parameterNotes(p);
+      const cell = [doc ? inline(doc, ctx) : "", notes.length ? `<span class="osd-param-notes">${notes.join(". ")}</span>` : ""].filter(Boolean).join(" ");
+      rows.push(`<tr><td><code>${esc(p.name)}</code></td><td><code>${esc(p.type)}</code></td><td>${def}</td><td>${cell}</td></tr>`);
     }
   }
   if (!rows.length) return "";
-  return `<div class="osd-table osd-params"><table><thead><tr><th>Parameter</th><th>Type</th><th>Default</th><th>Notes</th></tr></thead><tbody>${rows.join("")}</tbody></table></div>`;
+  return `<div class="osd-table osd-params"><table><thead><tr><th>Parameter</th><th>Type</th><th>Default</th><th>Description</th></tr></thead><tbody>${rows.join("")}</tbody></table></div>`;
 }
 
 function renderEntry(key, bodyMd, ctx) {
@@ -415,12 +455,31 @@ export function frontMatter(src) {
   return { meta, body: src.slice(m[0].length) };
 }
 
-export function renderPage(src, { page, keyPage, screens, version }) {
-  const ctx = {
-    page, keyPage, screens, version,
+/** A fresh rendering context, the state one page accumulates. */
+export function renderContext({ page, keyPage, screens, version, linkFor }) {
+  return {
+    page, keyPage, screens, version, linkFor,
     toc: [], ids: new Set(), links: [], blocks: [], entries: [], errors: [], problems: [],
     screensUsed: [], missingScreens: [], search: [], entryBodies: new Map(),
   };
+}
+
+/**
+ * A piece of page markdown rendered on its own: code, callouts, screenshots,
+ * tables and [[links]] as a page renders them, with no entry or error
+ * directives. The v1 reference renders the parts of an entry this way.
+ */
+export function renderFragment(md, ctx) {
+  return md.trim() ? renderBlocks(md, ctx, false) : "";
+}
+
+/** Inline markdown, [[links]] included, with no paragraph around it. */
+export function renderInline(md, ctx) {
+  return inline(md, ctx);
+}
+
+export function renderPage(src, { page, keyPage, screens, version }) {
+  const ctx = renderContext({ page, keyPage, screens, version });
   const { meta, body } = frontMatter(src);
   const html = renderBlocks(body, ctx, true);
   return { meta, html, ctx };

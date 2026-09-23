@@ -8,6 +8,11 @@ import SearchButton from "@/components/script/SearchButton"
 import { paint } from "@/components/script/StaticCode"
 import screensData from "@/content/script/screens.json"
 import { SCRIPT_REPO, SCRIPT_VERSION, SITE, firstPageOf, scriptNav } from "@/lib/scriptDocs"
+import manual from "@/lib/scriptReferenceV1.json"
+
+// The reference manual: every implemented name on one page.
+const MANUAL_HREF = "/script/reference/v1"
+const MANUAL_NAMES = Object.values(manual.counts).reduce((n, c) => n + c, 0)
 
 const TITLE = "OpenScript: write a study or a strategy once"
 const DESCRIPTION =
@@ -142,8 +147,8 @@ function Kicker({ children, id }) {
 
 export default function ScriptLandingPage() {
   const introHref = pageHref("getting-started", "introduction")
-  // The reference opens on its first page, where /script/reference redirects.
-  const referenceHref = firstPageOf("reference") ?? "/script#docs"
+  // "The reference" is the manual: every name on one page, filterable.
+  const referenceHref = MANUAL_HREF
   const quickstartHref = pageHref("getting-started", "quickstart")
   // Shown only once the page is written, so the link never points at a 404.
   const basicsHref = isReady("getting-started", "language-basics") ? "/script/getting-started/language-basics" : null
@@ -205,7 +210,7 @@ export default function ScriptLandingPage() {
                 Read the introduction
               </Link>
               <Link href={referenceHref} className={buttonVariants({ variant: "outline", size: "lg", className: "h-11 px-6" })}>
-                Browse the reference
+                Reference manual
               </Link>
               <a
                 href={SCRIPT_REPO}
@@ -430,6 +435,24 @@ export default function ScriptLandingPage() {
             })}
           </div>
 
+          <div className="obsidian-card osd-manual-card mx-auto mt-6 flex max-w-6xl flex-col gap-5 rounded-3xl p-6 sm:flex-row sm:items-center sm:justify-between md:p-8">
+            <div>
+              <h3 className="text-lg font-bold text-on-surface">
+                <Link href={MANUAL_HREF} className="osd-map-title">
+                  Reference manual, version 1
+                </Link>
+              </h3>
+              <p className="mt-2 max-w-2xl text-sm leading-relaxed text-on-surface-variant">
+                All {MANUAL_NAMES} names you can use today on one page: variables, constants, functions, keywords, types
+                and operators, each with its syntax, arguments, return type and a working example. Filter it with{" "}
+                <kbd className="osd-kbd">/</kbd> and link straight to any entry.
+              </p>
+            </div>
+            <Link href={MANUAL_HREF} className={buttonVariants({ size: "sm", className: "h-9 shrink-0 px-4" })}>
+              Open the manual
+            </Link>
+          </div>
+
           <p className="mx-auto mt-10 max-w-3xl text-center text-sm text-on-surface-variant">
             For AI assistants: <a className="osd-inline-link" href="/script/llms.txt">llms.txt</a> maps the
             documentation, and <a className="osd-inline-link" href="/script/openscript-reference.md">openscript-reference.md</a>{" "}
@@ -451,7 +474,7 @@ export default function ScriptLandingPage() {
               Start the quickstart
             </Link>
             <Link href={referenceHref} className={buttonVariants({ variant: "outline", size: "lg", className: "h-11 px-6" })}>
-              Browse the reference
+              Open the reference manual
             </Link>
           </div>
         </div>

@@ -1,0 +1,107 @@
+{
+  "draw.box()": {
+    "t1": "The time of the first corner, a timestamp in UTC milliseconds such as `time` or `time[n]`.",
+    "p1": "The price of the first corner, on the scale of the pane the study draws in.",
+    "t2": "The time of the opposite corner, a timestamp like `t1`.",
+    "p2": "The price of the opposite corner.",
+    "color": "The border colour. Left as `none`, no border is drawn, so give a box a border or a fill for it to be seen.",
+    "fillColor": "The colour inside the box. Left as `none`, the box has no fill.",
+    "opacity": "How strongly the fill is drawn: the fill shows at `opacity` times the colour's own strength, and the default is faint enough to leave the candles readable.",
+    "width": "The thickness of the border.",
+    "text": "A caption drawn inside the box.",
+    "textColor": "The colour of the caption.",
+    "tooltip": "Detail shown while the pointer rests on the box, so the caption can stay short."
+  },
+  "draw.delete()": {
+    "obj": "The line, label, box or polyline to remove. `none`, or an object already deleted, does nothing; assign `none` to the name on the same lines so no later setter reaches the deleted object."
+  },
+  "draw.label()": {
+    "t": "The time the label is anchored at, a timestamp in UTC milliseconds such as `time` or `time[n]`.",
+    "p": "The price the label is placed at, on the scale of the pane the study draws in. There is no pixel offset, so pad the price with a multiple of `atr()` to clear the candle.",
+    "text": "The caption. Keep it short and put the detail in `tooltip`.",
+    "color": "The colour of the plate behind the text. Left as `none`, no plate is drawn and the text sits straight on the chart.",
+    "textColor": "The colour of the text. Pick one that reads on the plate, or on the chart when there is no plate.",
+    "align": "Which part of the plate sits on the anchor's time: `\"center\"` centres it, `\"left\"` puts its left edge there so it extends to the right, and `\"right\"` puts its right edge there so it extends to the left.",
+    "tooltip": "Detail shown while the pointer rests on the label."
+  },
+  "draw.line()": {
+    "t1": "The time of the first anchor, a timestamp in UTC milliseconds such as `time` or `time[n]`.",
+    "p1": "The price of the first anchor, on the scale of the pane the study draws in.",
+    "t2": "The time of the second anchor, a timestamp like `t1`.",
+    "p2": "The price of the second anchor.",
+    "color": "The line colour.",
+    "width": "The line thickness.",
+    "style": "The line pattern: `\"solid\"`, `\"dashed\"` or `\"dotted\"`.",
+    "extendLeft": "`true` continues the line past its first anchor to the left edge of the pane.",
+    "extendRight": "`true` continues the line past its second anchor to the right edge of the pane, which is how a line reaches into the space past the newest bar."
+  },
+  "draw.polyline()": {
+    "times": "The times of the points, timestamps in UTC milliseconds, paired by index with `prices`. The path is copied when the call runs, so changing the array afterwards redraws nothing.",
+    "prices": "The prices of the points, paired by index with `times`, so keep the two arrays the same length. A point whose time or price is `none` is a gap in the path.",
+    "color": "The colour of the path's stroke.",
+    "width": "The thickness of the stroke.",
+    "closed": "`true` joins the last point back to the first, making a closed shape.",
+    "fillColor": "The colour inside the shape. Left as `none`, the shape has no fill.",
+    "opacity": "How strongly the fill is drawn: the fill shows at `opacity` times the colour's own strength."
+  },
+  "draw.setAt()": {
+    "label": "The label to move.",
+    "t": "The new time of the label's anchor, a timestamp in UTC milliseconds.",
+    "p": "The new price of the label's anchor."
+  },
+  "draw.setBounds()": {
+    "obj": "The line or box to move.",
+    "t1": "The new time of the first anchor, a timestamp in UTC milliseconds.",
+    "p1": "The new price of the first anchor.",
+    "t2": "The new time of the second anchor.",
+    "p2": "The new price of the second anchor."
+  },
+  "draw.setColor()": {
+    "obj": "The line, label, box or polyline to recolour.",
+    "color": "The new colour: a line's colour, a box's border, a label's plate or a polyline's stroke."
+  },
+  "draw.setExtend()": {
+    "line": "The line to change.",
+    "left": "`true` continues the line past its first anchor to the left edge of the pane; `false` stops it at the anchor.",
+    "right": "`true` continues the line past its second anchor to the right edge of the pane; `false` stops it at the anchor."
+  },
+  "draw.setFillColor()": {
+    "obj": "The box or polyline to change.",
+    "color": "The new colour inside the shape. A box's `opacity`, set when it was created, still dims it."
+  },
+  "draw.setFrom()": {
+    "obj": "The line or box whose first anchor moves. The second anchor stays where it is.",
+    "t": "The new time of the first anchor, a timestamp in UTC milliseconds.",
+    "p": "The new price of the first anchor."
+  },
+  "draw.setPoints()": {
+    "polyline": "The polyline whose whole path is replaced.",
+    "times": "The new times of the points, timestamps in UTC milliseconds, paired by index with `prices`.",
+    "prices": "The new prices of the points, paired by index with `times`."
+  },
+  "draw.setStyle()": {
+    "obj": "The line to restyle. Only a line has a style.",
+    "style": "The new line pattern: `\"solid\"`, `\"dashed\"` or `\"dotted\"`."
+  },
+  "draw.setText()": {
+    "obj": "The label or box whose caption changes.",
+    "text": "The new caption."
+  },
+  "draw.setTextColor()": {
+    "obj": "The label or box whose text is recoloured.",
+    "color": "The new text colour."
+  },
+  "draw.setTo()": {
+    "obj": "The line or box whose second anchor moves. The first anchor stays where it is.",
+    "t": "The new time of the second anchor, a timestamp in UTC milliseconds.",
+    "p": "The new price of the second anchor."
+  },
+  "draw.setTooltip()": {
+    "obj": "The label or box to change.",
+    "text": "The detail shown while the pointer rests on the object."
+  },
+  "draw.setWidth()": {
+    "obj": "The line, box or polyline to change.",
+    "width": "The new thickness of the line, of the box's border or of the polyline's stroke."
+  }
+}

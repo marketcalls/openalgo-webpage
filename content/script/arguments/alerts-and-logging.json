@@ -1,0 +1,17 @@
+{
+  "alert()": {
+    "message": "The text the alert sends, built on the bar where it fires, so every value in it is that bar's value. Join numbers in with `text()`, so the message cannot come out absent.",
+    "id": "The alert's permanent name, such as `\"cross-up\"`, which a host keys the alert by. Write it as a short literal and keep it when you edit the script; left out, the compiler derives one and warns with `OS8008`.",
+    "title": "A heading for people, which you may change freely. It is fixed before the first bar, so write it at the call as a literal.",
+    "frequency": "How often the alert may fire: `\"oncePerBar\"`, `\"once\"` for the first time only, or `\"everyUpdate\"` on every run of the forming bar, which needs `onUnconfirmed = true`. The /trading chart fires every alert at most once per bar, whatever it says."
+  },
+  "signal()": {
+    "text": "The marker's text, read on each bar. A text of `none` puts no marker on that bar, so no `if` is needed.",
+    "color": "The marker's colour, which its text is drawn in on the /trading chart. It is fixed before the first bar, so write it as a literal or an `input()`.",
+    "at": "Where the marker sits: `\"above\"` the bar, `\"below\"` it, or `\"price\"` on the bar itself. It is fixed before the first bar, like `color`.",
+    "shape": "The marker's form, such as a `\"label\"` carrying the text or an `\"arrowUp\"`. It is fixed before the first bar, like `color`."
+  },
+  "print()": {
+    "value": "The value to write to the log, of any type. To combine words and numbers, build one string with `+` and `text()`."
+  }
+}

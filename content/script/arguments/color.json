@@ -1,0 +1,29 @@
+{
+  "alpha()": {
+    "color": "The colour whose alpha is read. An absent colour gives an absent alpha."
+  },
+  "fade()": {
+    "color": "The colour to make transparent. The alpha it already has is scaled, so fading twice compounds.",
+    "percent": "How transparent to make it, from `0` (unchanged) to `100` (invisible)."
+  },
+  "mix()": {
+    "a": "The colour at weight `0`.",
+    "b": "The colour at weight `1`.",
+    "weight": "How far to blend from `a` to `b`: `0` gives `a`, `1` gives `b` and `0.5` the colour halfway. A weight outside 0 to 1 is not refused and carries the blend past the far colour, so clamp it first."
+  },
+  "rgb()": {
+    "r": "The red channel, a whole number from `0` to `255`.",
+    "g": "The green channel, a whole number from `0` to `255`.",
+    "b": "The blue channel, a whole number from `0` to `255`."
+  },
+  "rgba()": {
+    "r": "The red channel, a whole number from `0` to `255`.",
+    "g": "The green channel, a whole number from `0` to `255`.",
+    "b": "The blue channel, a whole number from `0` to `255`.",
+    "a": "The alpha, from `0` (invisible) to `1` (opaque). A computed value outside that range is clamped to the nearest end."
+  },
+  "withAlpha()": {
+    "color": "The colour to set the alpha of. The alpha it had before is replaced, not scaled.",
+    "a": "The new alpha, from `0` (invisible) to `1` (opaque). A computed value outside that range is clamped to the nearest end."
+  }
+}

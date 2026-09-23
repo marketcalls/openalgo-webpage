@@ -1,0 +1,33 @@
+{
+  "buy()": {
+    "qty": "The quantity to enter, counted in the declaration's `qtyType`. Left out, the declaration's `qty` is used; zero or below is refused with `OS7004`.",
+    "limit": "A limit price: the order rests until price trades at it or better. With `stop` as well, the order is a stop-limit.",
+    "stop": "A stop trigger price: the order waits until price trades through it. Every price must fall on a tick of the instrument, or the order is refused with `OS7006`.",
+    "tag": "A label for the order, carried to the destination and the trade list. It names nothing that has to exist, and `close()` or `cancel()` can refer to it later.",
+    "leg": "The leg the order is for, in a multi-leg strategy. Legs are planned, so writing it today is refused with `OS3023`."
+  },
+  "sell()": {
+    "qty": "The quantity to sell, counted in the declaration's `qtyType`. Against a long it closes the long first, and any excess opens a short; zero or below is refused with `OS7004`.",
+    "limit": "A limit price: the order rests until price trades at it or better. With `stop` as well, the order is a stop-limit.",
+    "stop": "A stop trigger price: the order waits until price trades through it. Every price must fall on a tick of the instrument, or the order is refused with `OS7006`.",
+    "tag": "A label for the order, carried to the destination and the trade list. It names nothing that has to exist, and `close()` or `cancel()` can refer to it later.",
+    "leg": "The leg the order is for, in a multi-leg strategy. Legs are planned, so writing it today is refused with `OS3023`."
+  },
+  "exit()": {
+    "tag": "A label telling the destination which entry the levels protect. A tag that matches no order is not refused.",
+    "qty": "The quantity the stop and target are sent for, counted in the declaration's `qtyType`.",
+    "limit": "The profit target as a price. It cannot be given together with `profit` (`OS3010`).",
+    "stop": "The protective stop as a price, below a long and above a short. A level on the wrong side of an open position is refused with `OS7010`.",
+    "profit": "The profit target as a distance from the entry price, in the instrument's own price units. It cannot be given together with `limit` (`OS3010`).",
+    "loss": "The stop as a distance from the entry price, in the instrument's own price units. It cannot be given together with `stop` (`OS3010`).",
+    "leg": "The leg the order is for, in a multi-leg strategy. Legs are planned, so writing it today is refused with `OS3023`."
+  },
+  "close()": {
+    "tag": "The tag of the entries to close: only the part of the position those orders opened is closed. Left out, the whole position is closed, and a tag no order in the file is placed with is refused with `OS7016`.",
+    "qty": "How much to close, leaving the rest held. Left out, all that is left is closed; under `qtyType = \"units\"` a larger quantity than what is left is refused with `OS7017`.",
+    "leg": "The leg the order is for, in a multi-leg strategy. Legs are planned, so writing it today is refused with `OS3023`."
+  },
+  "cancel()": {
+    "tag": "The tag of the working order to cancel; every working order carrying it is cancelled. A tag with no working order is refused with `OS7009` and stops the run."
+  }
+}

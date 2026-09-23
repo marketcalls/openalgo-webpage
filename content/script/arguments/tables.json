@@ -1,0 +1,20 @@
+{
+  "table()": {
+    "title": "Names the grid. The /trading chart does not show the title.",
+    "rows": "The number of rows. Rows are addressed from 0, so a grid of 4 rows has rows 0 to 3.",
+    "cols": "The number of columns, addressed from 0 like the rows.",
+    "position": "The corner of the pane the grid is pinned to: `\"topLeft\"`, `\"topRight\"`, `\"bottomLeft\"` or `\"bottomRight\"`. An `input()` with the four corners as options lets the reader move it.",
+    "textColor": "The text colour of every cell that sets none of its own.",
+    "bgColor": "The grid's background, behind every cell that sets none of its own. A translucent colour such as `fade(black, 25)` keeps the candles behind the grid faintly visible.",
+    "borderWidth": "The thickness of the grid's border, with `0` for no border."
+  },
+  "cell()": {
+    "t": "The table to write into: the value `table()` returned.",
+    "row": "The row to write, counting from 0. A row outside the grid is error `OS4004`, which stops the script on that bar.",
+    "col": "The column to write, counting from 0. A column outside the grid is error `OS4004`.",
+    "text": "The text to show. Convert a number with `text()` first; a text that is `none` leaves the cell blank.",
+    "textColor": "The text colour of this cell, overriding the grid's `textColor`.",
+    "bgColor": "The background of this cell, overriding the grid's `bgColor`.",
+    "align": "Where the text sits in the cell: `\"left\"`, `\"center\"` or `\"right\"`. Put labels left and numbers right so the digits line up."
+  }
+}

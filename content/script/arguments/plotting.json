@@ -1,0 +1,47 @@
+{
+  "plot()": {
+    "value": "The number to draw on this bar, read on every bar. A `none` value leaves a gap in the column, so warmup needs no special code.",
+    "title": "The column's name in the legend and in the settings dialog, where a user can restyle it. It is required, so `plot(x)` alone is error `OS3012`.",
+    "color": "The colour of the column: one fixed colour such as `aqua`, or an expression that picks a colour per bar, such as `hist > 0 ? lime : red`. Left out, the host picks the next colour from its palette.",
+    "width": "The line thickness. Keep one line heavier than the rest so a reader knows which one to follow.",
+    "style": "How the column is drawn: `\"line\"` joins the values, `\"lineWithMarkers\"` adds a mark at each value, `\"step\"` holds each value flat until it changes, `\"area\"` fills to the axis, `\"histogram\"` draws a bar from zero and `\"column\"` a bar from the axis.",
+    "offset": "Moves where the column is drawn by this many bars, never what it holds: a positive offset draws to the right, a negative one back over history, which is how a pivot is drawn on the bar it formed on.",
+    "overlay": "`true` draws this one column on the price pane. Left out, the column lands in the pane the study's declaration chose.",
+    "precision": "The number of decimals on the axis the plot maps to. It formats that shared axis, not this one line, and rounds no value; use `round()` to change a value.",
+    "format": "How the axis the plot maps to shows its numbers: `\"price\"`, `\"percent\"` or `\"volume\"`. It is display only, so `\"percent\"` divides nothing by a hundred.",
+    "scale": "The axis the column maps to within its pane: `\"right\"` is the right-hand price axis, `\"left\"` a second axis for a series in other units, and `\"none\"` no axis, for a column whose size would flatten everything else."
+  },
+  "plotCandles()": {
+    "open": "The price each candle's body starts from, read on every bar. On a bar where the sources are `none`, as during warmup, no candle is drawn.",
+    "high": "The top of each candle's upper wick, read on every bar.",
+    "low": "The bottom of each candle's lower wick, read on every bar.",
+    "close": "The price each candle's body ends at. A candle whose close is at or above its open takes `colorUp`, and one below it takes `colorDown`.",
+    "title": "The name of the candles in the legend and in the settings dialog. It is required.",
+    "colorUp": "The body colour of a candle whose close is at or above its open. It may change from bar to bar.",
+    "colorDown": "The body colour of a candle whose close is below its open. It may change from bar to bar.",
+    "wickColor": "The colour of the wicks. Left as `none`, each wick is drawn in its body's colour on that bar.",
+    "borderColor": "The colour of the body's outline. Left as `none`, each border is drawn in its body's colour on that bar."
+  },
+  "level()": {
+    "price": "The price the horizontal line is drawn at. It is read on every bar and the line drawn is the one from the last bar executed, so an absent price on the newest bar draws no line.",
+    "title": "The line's name. Give every level one, since it is the line's only label: a level shows no value in the legend.",
+    "color": "The line's colour, one colour fixed for the whole chart.",
+    "style": "The line pattern: `\"solid\"`, `\"dashed\"` or `\"dotted\"`.",
+    "width": "The line thickness."
+  },
+  "fill()": {
+    "plotA": "The first plot of the band: the handle a `plot()` or `plotCandles()` call returned, not a value. `colorUp` paints where this plot is above `plotB`.",
+    "plotB": "The second plot of the band, also a handle returned by `plot()` or `plotCandles()`. A value in its place is error `OS3020`.",
+    "color": "One colour for the whole band. It cannot be given together with `colorUp` or `colorDown` (`OS3010`). With no colour given at all, the band takes `plotA`'s colour faded to twelve percent.",
+    "colorUp": "The band's colour where `plotA` is above `plotB`.",
+    "colorDown": "The band's colour where `plotA` is below `plotB`.",
+    "opacity": "A dimmer from 0 to 1 that multiplies whatever transparency the colours already have. Dimming with both `opacity` and `fade()` compounds, so pick one.",
+    "overlay": "`true` draws the band on the price pane. The band and the two plots it names must end up in the same pane, which the compiler does not check."
+  },
+  "background()": {
+    "color": "The shade for the full height of this bar, behind everything else in the pane. `none` leaves the bar unshaded, and when the script calls it more than once on a bar the last call wins."
+  },
+  "barColor()": {
+    "color": "The colour for the instrument's own candle on this bar. `none` leaves the candle its own colour, and when the script calls it more than once on a bar the last call wins."
+  }
+}

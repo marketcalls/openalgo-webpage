@@ -19,6 +19,7 @@ import path from "node:path";
 
 import { ROOT, PACKAGE_VERSION, LIBRARY_KEYS, entryFacts, anchorFor, RESERVED_WORDS, ERRORS } from "./script-docs/language.mjs";
 import { renderPage, loadScreens } from "./script-docs/render.mjs";
+import { V1_ROUTE, writeReferenceV1 } from "./script-docs/reference-v1.mjs";
 
 const CONTENT = path.join(ROOT, "content", "script");
 const nav = JSON.parse(fs.readFileSync(path.join(CONTENT, "nav.json"), "utf8"));
@@ -84,6 +85,17 @@ function write() {
   }
   const pub = path.join(ROOT, "public", "script");
   fs.mkdirSync(pub, { recursive: true });
+
+  // The reference manual: every implemented name on one page.
+  const pageTitles = new Map(Object.entries(pages).map(([id, p]) => [id, p.title]));
+  const v1 = writeReferenceV1({ results, keyPage, screens: loadScreens(), pageTitles });
+  search.unshift({
+    k: "page",
+    t: "Reference manual v1",
+    u: V1_ROUTE,
+    s: "Reference",
+    d: "Every implemented variable, constant, function, keyword, type and operator on one page, each with its syntax, arguments and an example.",
+  });
   fs.writeFileSync(path.join(pub, "search-index.json"), JSON.stringify(search));
 
   // The code viewer's language data: every name with its signatures and the
@@ -120,11 +132,13 @@ function write() {
     for (const p of s.pages) if (pages[`${s.slug}/${p.slug}`]) llms.push(`- [${pages[`${s.slug}/${p.slug}`].title}](https://openalgo.in/script/${s.slug}/${p.slug}): ${p.brief}`);
     llms.push("");
   }
-  llms.push("## Complete reference", "", "- [openscript-reference.md](https://openalgo.in/script/openscript-reference.md): every page above in one markdown file", "");
+  llms.push("## Complete reference", "", "- [openscript-reference.md](https://openalgo.in/script/openscript-reference.md): every page above in one markdown file", `- [Reference manual v1](https://openalgo.in${V1_ROUTE}): every implemented variable, constant, function, keyword, type and operator on one page`, "");
   fs.writeFileSync(path.join(pub, "llms.txt"), llms.join("\n"));
   const kb = (f) => (fs.statSync(f).size / 1024).toFixed(0);
   writeRoutes();
   console.log(`[gen:script] lib/scriptDocsData.json ${kb(path.join(ROOT, "lib", "scriptDocsData.json"))} KB, search ${search.length} items, reference md ${kb(path.join(pub, "openscript-reference.md"))} KB`);
+  const counts = Object.entries(v1.counts).map(([k, n]) => `${n} ${k}`).join(", ");
+  console.log(`[gen:script] reference v1: ${counts}; ${(v1.bytes / 1024).toFixed(0)} KB of entries${v1.problems.length ? `; ${v1.problems.length} problem(s), run check:script` : ""}`);
 }
 
 // One static route file per written page, plus a layout per section. The docs

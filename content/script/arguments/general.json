@@ -1,0 +1,19 @@
+{
+  "isNone()": {
+    "x": "The value to test, of any type."
+  },
+  "orElse()": {
+    "x": "The value to use when it is present.",
+    "fallback": "The value to use when `x` is absent. It must be the same type as `x`."
+  },
+  "toBool()": {
+    "x": "The condition to make definite: `none` becomes `false`, and `true` and `false` stay as they are. A number is not accepted."
+  },
+  "toNumber()": {
+    "s": "The text to read a number from, such as a value typed into a text input. Text that is not a number gives `none`."
+  },
+  "text()": {
+    "x": "The value to write as text, of any type. In the form with `decimals` it must be a number.",
+    "decimals": "How many digits to write after the point, exactly, rounding halves away from zero. A whole number."
+  }
+}

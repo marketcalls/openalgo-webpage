@@ -1,0 +1,67 @@
+{
+  "str.contains()": {
+    "s": "The string to search in.",
+    "part": "The text to look for. The test is exact and case sensitive, and an empty `part` is contained in every string."
+  },
+  "str.endsWith()": {
+    "s": "The string to test.",
+    "part": "The text the string must end with. The test is case sensitive, and an empty `part` is a suffix of every string."
+  },
+  "str.indexOf()": {
+    "s": "The string to search in.",
+    "part": "The text to find. The result is its first position counting from 0, or `-1` when it does not occur."
+  },
+  "str.join()": {
+    "parts": "The strings to join, in order. An absent element is written as the word `none`.",
+    "separator": "The text written between each pair of parts, such as `\", \"`."
+  },
+  "str.length()": {
+    "s": "The string to measure."
+  },
+  "str.lower()": {
+    "s": "The string to convert to small letters."
+  },
+  "str.padLeft()": {
+    "s": "The string to pad.",
+    "width": "The length in characters to pad to. A string already that long or longer comes back unchanged.",
+    "fill": "The text added on the left to reach the width. When it is longer than one character it repeats and is cut to fit."
+  },
+  "str.padRight()": {
+    "s": "The string to pad.",
+    "width": "The length in characters to pad to. A string already that long or longer comes back unchanged.",
+    "fill": "The text added on the right to reach the width. When it is longer than one character it repeats and is cut to fit."
+  },
+  "str.repeat()": {
+    "s": "The string to repeat.",
+    "n": "The number of copies, a whole number of 0 or more. A negative or fractional count stops the study with `OS4003`."
+  },
+  "str.replace()": {
+    "s": "The string to change.",
+    "find": "The text to look for, matched exactly. Only its first occurrence is replaced.",
+    "with": "The text put in place of `find`."
+  },
+  "str.replaceAll()": {
+    "s": "The string to change.",
+    "find": "The text to look for, matched exactly. Every occurrence is replaced, from left to right.",
+    "with": "The text put in place of each occurrence. It is not searched again."
+  },
+  "str.split()": {
+    "s": "The string to split.",
+    "separator": "The text to split at. It is not kept in the pieces, and an empty separator splits the string into single characters."
+  },
+  "str.startsWith()": {
+    "s": "The string to test.",
+    "part": "The text the string must begin with. The test is case sensitive, and an empty `part` is a prefix of every string."
+  },
+  "str.substring()": {
+    "s": "The string to cut from.",
+    "from": "The position to start at, counting from 0. A negative or fractional position stops the study with `OS4003`.",
+    "to": "The position to stop before, which is not included. Left out, everything to the end is taken, and a `to` past the end is cut back to the end."
+  },
+  "str.trim()": {
+    "s": "The string to trim."
+  },
+  "str.upper()": {
+    "s": "The string to convert to capitals."
+  }
+}

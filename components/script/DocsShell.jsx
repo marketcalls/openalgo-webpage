@@ -38,6 +38,10 @@ function SidebarNav({ nav, pathname, collapsed, onToggle, onNavigate, idPrefix }
       >
         Overview
       </Link>
+      <Link href="/script/reference/v1" prefetch={false} onClick={onNavigate} className="osd-nav-home osd-nav-manual">
+        Reference manual
+        <span className="osd-nav-count">v1</span>
+      </Link>
       {nav.map((section) => {
         const open = !collapsed.has(section.slug)
         const listId = `${idPrefix}-${section.slug}`
@@ -186,6 +190,9 @@ export default function DocsShell({ nav, version, repo, children }) {
           <span className="osd-docbar-sub">Documentation</span>
           <div className="osd-docbar-end">
             <SearchButton />
+            <Link href="/script/reference/v1" prefetch={false} className="osd-docbar-link">
+              Reference
+            </Link>
             <a href={repo} target="_blank" rel="noopener noreferrer" className="osd-docbar-link">
               GitHub
             </a>

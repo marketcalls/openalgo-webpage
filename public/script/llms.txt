@@ -148,3 +148,4 @@
 ## Complete reference
 
 - [openscript-reference.md](https://openalgo.in/script/openscript-reference.md): every page above in one markdown file
+- [Reference manual v1](https://openalgo.in/script/reference/v1): every implemented variable, constant, function, keyword, type and operator on one page

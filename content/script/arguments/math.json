@@ -1,0 +1,98 @@
+{
+  "abs()": {
+    "x": "The number whose size is taken, such as `close - open`. An absent `x` gives `none`."
+  },
+  "ceil()": {
+    "x": "The number to round up: the result is the smallest whole number at or above it. Below zero this moves toward zero."
+  },
+  "clamp()": {
+    "x": "The value to hold inside the range.",
+    "lo": "The lowest value the result may take. Keep it at or below `hi`, because nothing checks the order.",
+    "hi": "The highest value the result may take."
+  },
+  "exp()": {
+    "x": "The power to raise `e` to. A result too large to be finite gives `none`."
+  },
+  "floor()": {
+    "x": "The number to round down: the result is the largest whole number at or below it. Below zero this moves away from zero."
+  },
+  "log()": {
+    "x": "The number whose natural logarithm is taken. Zero or below gives `none`."
+  },
+  "log10()": {
+    "x": "The number whose base ten logarithm is taken. Zero or below gives `none`."
+  },
+  "max()": {
+    "a": "The first of the two values to compare.",
+    "b": "The second value to compare. Either value absent gives `none`.",
+    "arr": "An array of numbers, in the form `max(arr)`, whose largest element is returned. An empty array or an absent element gives `none`."
+  },
+  "min()": {
+    "a": "The first of the two values to compare.",
+    "b": "The second value to compare. Either value absent gives `none`.",
+    "arr": "An array of numbers, in the form `min(arr)`, whose smallest element is returned. An empty array or an absent element gives `none`."
+  },
+  "mod()": {
+    "a": "The number to divide.",
+    "b": "The number to divide by. The remainder takes its sign, and a `b` of `0` gives `none`."
+  },
+  "pow()": {
+    "x": "The base.",
+    "y": "The power to raise `x` to. A result that is not a finite real number, such as a fractional power of a negative base, gives `none`."
+  },
+  "round()": {
+    "x": "The number to round. A value exactly halfway rounds away from zero.",
+    "decimals": "How many digits to keep after the point. A whole number of 0 or more; leave it out to round to a whole number."
+  },
+  "roundToStep()": {
+    "x": "The number to round to the nearest multiple of `step`. Halfway values go away from zero.",
+    "step": "The spacing of the grid, such as `50` for index strikes. It must be above zero; zero or below gives `none`."
+  },
+  "roundToTick()": {
+    "price": "The price to round to the nearest multiple of the instrument's tick size, `chart.tickSize`. When the host states no tick size the result is `none`."
+  },
+  "sign()": {
+    "x": "The number whose direction is taken: `-1` below zero, `0` at zero and `1` above."
+  },
+  "sqrt()": {
+    "x": "The number whose square root is taken. Below zero gives `none`."
+  },
+  "trunc()": {
+    "x": "The number whose fraction is removed, rounding toward zero on both sides."
+  },
+  "math.acos()": {
+    "x": "The cosine to turn back into an angle, from `-1` to `1`. Outside that range gives `none`."
+  },
+  "math.asin()": {
+    "x": "The sine to turn back into an angle, from `-1` to `1`. Outside that range gives `none`."
+  },
+  "math.atan()": {
+    "x": "The tangent to turn back into an angle. Any present number is accepted."
+  },
+  "math.atan2()": {
+    "y": "The vertical coordinate of the point, the rise. It comes first.",
+    "x": "The horizontal coordinate of the point, the run. It may be zero or negative."
+  },
+  "math.cos()": {
+    "x": "The angle, in radians."
+  },
+  "math.hypot()": {
+    "x": "The first coordinate, or the first of two readings measured on the same scale.",
+    "y": "The second coordinate, or the second reading. Either argument absent gives `none`."
+  },
+  "math.log2()": {
+    "x": "The number whose base two logarithm is taken. Zero or below gives `none`."
+  },
+  "math.sin()": {
+    "x": "The angle, in radians."
+  },
+  "math.tan()": {
+    "x": "The angle, in radians."
+  },
+  "math.toDegrees()": {
+    "x": "The angle in radians to convert to degrees."
+  },
+  "math.toRadians()": {
+    "x": "The angle in degrees to convert to radians."
+  }
+}

@@ -134,6 +134,9 @@ export default function DocSearch() {
           return !o
         })
       } else if (e.key === "/" && !e.ctrlKey && !e.metaKey && !e.altKey && !isTyping(e.target)) {
+        // A page with a filter of its own (the reference manual) takes "/"
+        // for it; Ctrl+K still opens this search there.
+        if (document.querySelector("[data-own-slash]")) return
         e.preventDefault()
         show()
       }

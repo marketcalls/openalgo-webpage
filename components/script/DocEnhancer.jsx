@@ -114,9 +114,24 @@ function prepare(block) {
   return { text, lang, editor: null, host: null }
 }
 
+/**
+ * A Copy button on a signature panel (the Syntax line of a reference entry), so
+ * a call can be taken as written, parameter names and all, like an example.
+ */
+function prepareSignature(panel) {
+  if (panel.querySelector(":scope > .osd-code-copy")) return
+  const copy = document.createElement("button")
+  copy.type = "button"
+  copy.className = "osd-code-copy osd-sig-copy"
+  copy.textContent = "Copy"
+  copy.setAttribute("aria-label", "Copy the syntax")
+  panel.appendChild(copy)
+}
+
 function enhance(root) {
   const blocks = Array.from(root.querySelectorAll(".osd-code"))
   const state = new Map(blocks.map((b) => [b, prepare(b)]))
+  root.querySelectorAll(".osd-signature").forEach(prepareSignature)
   const near = new Set()
   const timers = new Set()
   let monaco = null
@@ -225,10 +240,12 @@ function enhance(root) {
 
     const copy = target.closest(".osd-code-copy")
     if (copy && root.contains(copy)) {
-      const block = copy.closest(".osd-code")
-      const s = state.get(block)
-      if (!s) return
-      copyText(s.text).then((ok) => {
+      // An example copies the text it was built from; a signature panel
+      // copies what it shows.
+      const holder = copy.closest(".osd-code, .osd-signature")
+      const text = state.get(holder)?.text ?? holder?.querySelector("pre")?.textContent?.replace(/\n+$/, "")
+      if (!text) return
+      copyText(text).then((ok) => {
         copy.textContent = ok ? "Copied" : "Press Ctrl+C"
         copy.classList.toggle("is-done", ok)
         const t = setTimeout(() => {

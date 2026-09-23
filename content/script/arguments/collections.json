@@ -1,0 +1,67 @@
+{
+  "arrayEqual()": {
+    "a": "The first array to compare.",
+    "b": "The second array. The two are equal when they have the same length and each pair of elements is equal by `==`."
+  },
+  "avg()": {
+    "arr": "The array of numbers to average. An empty array, or one absent element, gives an absent mean."
+  },
+  "clear()": {
+    "arr": "The array to empty. It keeps its identity, so every name that refers to it sees it empty.",
+    "t": "A table made with `table()`. Every cell is emptied, so the panel can be rebuilt from scratch."
+  },
+  "copy()": {
+    "arr": "The array to copy. The copy is independent of it, though a copy of drawings holds the same drawings, not new ones."
+  },
+  "element()": {
+    "arr": "The array to read from.",
+    "i": "The index to read, counting from 0. An index outside `0` to `size - 1`, or with a fractional part, stops the study with `OS4004`."
+  },
+  "indexOf()": {
+    "arr": "The array to search.",
+    "v": "The value to look for, compared with `==`. Search for `none` to find an absent element."
+  },
+  "insert()": {
+    "arr": "The array to insert into.",
+    "i": "The index to insert before, from 0 to `size(arr)`. Inserting at `size(arr)` adds to the end; anything larger is `OS4004`.",
+    "v": "The value to insert, of the array's element type."
+  },
+  "pop()": {
+    "arr": "The array to take the last element from. An empty array stops the study with `OS4004`, so test `size(arr) > 0` first."
+  },
+  "push()": {
+    "arr": "The array to add to.",
+    "v": "The value to add at the end, of the array's element type."
+  },
+  "remove()": {
+    "arr": "The array to remove from.",
+    "i": "The index of the element to remove, counting from 0. An index outside `0` to `size - 1` is `OS4004`."
+  },
+  "reverse()": {
+    "arr": "The array to reverse, in place."
+  },
+  "set()": {
+    "arr": "The array to write into.",
+    "i": "The index to write, which must already exist. Writing past the end is `OS4004`, not a way to grow the array.",
+    "v": "The value to write, of the array's element type."
+  },
+  "shift()": {
+    "arr": "The array to take the first element from. An empty array stops the study with `OS4004`."
+  },
+  "size()": {
+    "arr": "The array to count."
+  },
+  "slice()": {
+    "arr": "The array to copy a range from. It is not changed.",
+    "from": "The first index to copy, counting from 0. A negative or fractional bound stops the study with `OS4003`.",
+    "to": "The index to stop before, which is not included. A `to` past the end is cut back to the end."
+  },
+  "sort()": {
+    "arr": "The array to sort, in place.",
+    "order": "`\"asc\"` for smallest first or `\"desc\"` for largest first. Write it as a literal or take it from a menu `input()`."
+  },
+  "unshift()": {
+    "arr": "The array to add to.",
+    "v": "The value to add at the front, where it becomes element 0."
+  }
+}

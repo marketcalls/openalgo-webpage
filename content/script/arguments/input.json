@@ -1,0 +1,15 @@
+{
+  "input()": {
+    "value": "The starting value, whose type decides the kind of row: a number gives a number field, `true` or `false` a tick box, text a text field, a colour a swatch, and a price series such as `close` a menu of price sources. It must be known before any data arrives.",
+    "title": "The row's label in the settings dialog, written as text at the call. When the input is assigned to a name it may be left out, and the name becomes the label.",
+    "min": "For a number, the lowest value allowed. The arrows stop there, and a saved value below it stops the study from loading with `OS6019`.",
+    "max": "For a number, the highest value allowed. The arrows stop there, and a saved value above it stops the study from loading with `OS6019`.",
+    "step": "For a number, how far one click of an arrow moves the value. It shapes the arrows only: a value typed into the field is kept as typed.",
+    "options": "A list of strings that turns a text row into a menu of exactly those values. The default must be one of them, or the script is refused with `OS3018`.",
+    "kind": "Picks a row the type alone cannot: `\"interval\"` builds a timeframe menu, and `\"time\"` a date and time field whose value is a timestamp. `\"symbol\"`, `\"price\"` and `\"session\"` are planned, and writing one is error `OS2001`.",
+    "group": "A heading the row sits under. The settings dialog, and the input forms of the Backtest and Strategies panels, show each group as a heading over its rows.",
+    "tooltip": "Help text shown as a line under the row: the unit, or what moving the value does.",
+    "inline": "Planned: rows given the same value would sit on one line. It is accepted and has no effect yet.",
+    "confirm": "Planned: the value would be asked for when the study is added to a chart. It is accepted and has no effect yet."
+  }
+}

@@ -1,0 +1,111 @@
+{
+  "avgSkip()": {
+    "src": "The series to average. Bars where it is absent are passed over, and the mean divides by the number of bars that had a value.",
+    "len": "How many bars the window covers, this bar included. A whole number of 1 or more."
+  },
+  "barsSince()": {
+    "cond": "The condition to count from. The count is `0` on a bar where it is true, and a bar where it is absent counts as a bar where it was not true."
+  },
+  "change()": {
+    "src": "The series whose move is measured, such as `close`.",
+    "len": "How many bars back to compare with, so the result is `src - src[len]`. A whole number of 1 or more. Leave it out to compare with the previous bar."
+  },
+  "correlation()": {
+    "a": "The first of the two series to compare, such as a stock's `close`.",
+    "b": "The second series to compare. Swapping `a` and `b` gives the same result.",
+    "len": "How many bars the window covers, this bar included. A whole number of 1 or more."
+  },
+  "count()": {
+    "cond": "The condition to count. A bar where it is absent counts as not true rather than making the result absent.",
+    "len": "How many bars the window covers, this bar included. A whole number of 1 or more."
+  },
+  "countPresent()": {
+    "src": "The series to check. A bar counts when its value is present.",
+    "len": "How many bars the window covers, this bar included. A whole number of 1 or more."
+  },
+  "covariance()": {
+    "a": "The first of the two series.",
+    "b": "The second series. Swapping `a` and `b` gives the same result.",
+    "len": "How many bars the window covers, this bar included. A whole number of 1 or more."
+  },
+  "cross()": {
+    "a": "The first of the two values, a series such as a fast average or a fixed number.",
+    "b": "The second value. A crossing in either direction counts, so the order of `a` and `b` does not matter."
+  },
+  "crossDown()": {
+    "a": "The value that moves: the result is true on the bar it goes below `b`, having been at or above `b` on the previous bar.",
+    "b": "The value `a` crosses, a series such as a slow average or a fixed number such as `70`."
+  },
+  "crossUp()": {
+    "a": "The value that moves: the result is true on the bar it goes above `b`, having been at or below `b` on the previous bar.",
+    "b": "The value `a` crosses, a series such as a slow average or a fixed number such as `30`."
+  },
+  "cum()": {
+    "src": "The series to add up from the first bar. An absent bar gives an absent result on that bar and leaves the total where it was."
+  },
+  "falling()": {
+    "src": "The series to test, such as an average or an oscillator.",
+    "len": "How many consecutive one bar changes must all be below zero. A whole number of 1 or more; an unchanged bar breaks the run."
+  },
+  "highest()": {
+    "src": "The series to search, usually `high` or `close`.",
+    "len": "How many bars the window covers, this bar included. A whole number of 1 or more."
+  },
+  "highestBars()": {
+    "src": "The series to search, usually `high`.",
+    "len": "How many bars the window covers, this bar included. A whole number of 1 or more."
+  },
+  "history()": {
+    "src": "The value to read from an earlier bar: a series, an expression such as `close - open`, or an array.",
+    "n": "How many bars back to read. A whole number of 1 or more; `0` stops the script with `OS4003`, where `close[0]` would simply read this bar."
+  },
+  "lowest()": {
+    "src": "The series to search, usually `low` or `close`.",
+    "len": "How many bars the window covers, this bar included. A whole number of 1 or more."
+  },
+  "lowestBars()": {
+    "src": "The series to search, usually `low`.",
+    "len": "How many bars the window covers, this bar included. A whole number of 1 or more."
+  },
+  "median()": {
+    "src": "The series whose middle value is taken.",
+    "len": "How many bars the window covers, this bar included. A whole number of 1 or more; with an even count the result is the mean of the two middle values."
+  },
+  "percentRank()": {
+    "src": "The series whose value on this bar is ranked against its own window.",
+    "len": "How many bars the window covers, this bar included. A whole number of 1 or more."
+  },
+  "percentile()": {
+    "src": "The series whose values in the window are sorted.",
+    "len": "How many bars the window covers, this bar included. A whole number of 1 or more.",
+    "p": "The percentile to read, from `0` (the window's lowest value) to `100` (its highest). Between two values the result is interpolated in a straight line, and a `p` outside 0 to 100 gives `none`."
+  },
+  "pivotHigh()": {
+    "src": "The series to find swing highs in, usually `high`.",
+    "left": "How many bars before the pivot must all be lower than it.",
+    "right": "How many bars after the pivot must all be lower than it. The value is reported that many bars after the pivot, on the first bar the pivot is known."
+  },
+  "pivotLow()": {
+    "src": "The series to find swing lows in, usually `low`.",
+    "left": "How many bars before the pivot must all be higher than it.",
+    "right": "How many bars after the pivot must all be higher than it. The value is reported that many bars after the pivot, on the first bar the pivot is known."
+  },
+  "rising()": {
+    "src": "The series to test, such as an average or an oscillator.",
+    "len": "How many consecutive one bar changes must all be above zero. A whole number of 1 or more; an unchanged bar breaks the run."
+  },
+  "sum()": {
+    "src": "The series to total over the window. One absent bar in the window makes the total absent.",
+    "len": "How many bars the window covers, this bar included. A whole number of 1 or more.",
+    "arr": "An array of numbers, in the form `sum(arr)`, whose elements are all added. An empty array totals `0`, and an absent element makes the total `none`."
+  },
+  "sumSkip()": {
+    "src": "The series to total. Bars where it is absent are passed over, and a window with no present values totals `0`.",
+    "len": "How many bars the window covers, this bar included. A whole number of 1 or more."
+  },
+  "valueWhen()": {
+    "cond": "The event to capture `src` at. A bar where it is absent counts as not true.",
+    "src": "The value to capture on a bar where `cond` is true, such as `low` at a crossover. It can be of any type.",
+    "occurrence": "Which true bar to read: `0` is the most recent, `1` the one before it, and so on. A whole number of 0 or more; a fraction or a negative number gives `none` on every bar."
+  }
+}

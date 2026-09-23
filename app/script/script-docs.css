@@ -223,6 +223,12 @@
 .osd-nav-home.is-active {
   color: hsl(var(--on-surface));
 }
+/* The link to the reference manual, under Overview, with its version beside it */
+.osd-nav-manual {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
 .osd-nav-section {
   margin-top: 0.9rem;
 }
@@ -1136,27 +1142,50 @@ a.osd-nav-link:hover {
   color: inherit;
   opacity: 0.85;
 }
+/* Copy: a labelled button that reads as one at a glance, on every example and
+   every signature panel. It was a faint word in the corner and readers did not
+   find it. */
 .osd-code-copy {
   margin-left: auto;
   flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
   height: 26px;
-  padding: 0 0.65rem;
-  border: 1px solid transparent;
-  border-radius: 7px;
-  background: transparent;
+  padding: 0 0.8rem;
+  border: 1px solid #3d3d3d;
+  border-radius: 999px;
+  background: #1a1a1a;
   font-family: inherit;
-  font-size: 11px;
-  color: var(--osd-gutter);
+  font-size: 11.5px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  color: #ededed;
   cursor: pointer;
   transition: color 0.15s, border-color 0.15s, background 0.15s;
 }
 .osd-code-copy:hover {
-  border-color: #333;
-  background: #141414;
-  color: var(--osd-text);
+  border-color: #fafafa;
+  background: #fafafa;
+  color: #0a0a0a;
+}
+.osd-code-copy:active {
+  transform: translateY(1px);
 }
 .osd-code-copy.is-done {
+  border-color: var(--osd-string);
+  background: #1a1a1a;
   color: var(--osd-string);
+}
+/* On a signature panel, which has no toolbar, it sits in the corner and the
+   line keeps clear of it. */
+.osd-sig-copy {
+  position: absolute;
+  top: 9px;
+  right: 9px;
+  z-index: 1;
+}
+.osd-signature:has(.osd-sig-copy) .osd-pre {
+  padding-right: 5.5rem;
 }
 
 .osd-pre {

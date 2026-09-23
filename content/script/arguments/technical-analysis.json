@@ -1,0 +1,217 @@
+{
+  "adOsc()": {
+    "fast": "The length of the fast exponential average of the accumulation distribution line.",
+    "slow": "The length of the slow exponential average of the same line, which is subtracted from the fast one."
+  },
+  "adx()": {
+    "diLen": "The smoothing length, in bars, of the upward movement, the downward movement and the true range behind the two DI lines.",
+    "adxLen": "The smoothing length, in bars, applied to the spread between the two DI lines to give the ADX line."
+  },
+  "alma()": {
+    "src": "The series to average, such as `close` or another indicator's output.",
+    "len": "The number of bars in the window, counting the current bar.",
+    "offset": "Where the peak of the bell curve sits in the window, from 0 at the oldest bar to 1 at the newest. The default of 0.85 leans toward recent bars.",
+    "sigma": "How narrow the bell curve is. A larger value puts the weight on the bars nearest the peak; a smaller one spreads it toward an equal-weight average."
+  },
+  "aroon()": {
+    "len": "The lookback in bars. The high and low are searched over `len + 1` bars, so an extreme set exactly `len` bars ago still counts."
+  },
+  "atr()": {
+    "len": "The smoothing length, in bars, of the true range."
+  },
+  "awesomeOsc()": {
+    "fast": "The length of the fast simple average of the bar midpoint, `hl2`.",
+    "slow": "The length of the slow simple average of `hl2`, which is subtracted from the fast one."
+  },
+  "bbPercent()": {
+    "src": "The series the bands are built on and placed between, usually `close`.",
+    "len": "The length of the simple average at the centre of the bands and of the standard deviation.",
+    "mult": "How many standard deviations the upper and lower bands sit from the basis."
+  },
+  "bbWidth()": {
+    "src": "The series the bands are built on, usually `close`.",
+    "len": "The length of the simple average at the centre of the bands and of the standard deviation.",
+    "mult": "How many standard deviations the upper and lower bands sit from the basis."
+  },
+  "bollinger()": {
+    "src": "The series the bands are built on, usually `close`.",
+    "len": "The length of the simple average at the centre of the bands and of the standard deviation.",
+    "mult": "How many standard deviations the upper and lower bands sit from the basis."
+  },
+  "cci()": {
+    "len": "The window, in bars, for the average of the typical price, `hlc3`, and for its mean deviation."
+  },
+  "chop()": {
+    "len": "The window, in bars, whose travelled distance and overall range are compared."
+  },
+  "cmf()": {
+    "len": "The window, in bars, over which the accumulation terms and the volume are summed."
+  },
+  "cmo()": {
+    "src": "The series whose bar-to-bar changes are summed, usually `close`.",
+    "len": "The window, in bars, over which the up changes and the down changes are summed."
+  },
+  "dema()": {
+    "src": "The series to average, such as `close` or another indicator's output.",
+    "len": "The length of each of the two exponential averages."
+  },
+  "donchian()": {
+    "len": "The window, in bars, whose highest high and lowest low form the channel. It includes the current bar."
+  },
+  "dpo()": {
+    "src": "The series to detrend, usually `close`.",
+    "len": "The length of the simple average that is subtracted. The average is read as it stood `floor(len / 2) + 1` bars ago."
+  },
+  "ema()": {
+    "src": "The series to average, such as `close` or another indicator's output.",
+    "len": "The length in bars. It sets the newest value's weight, `2 / (len + 1)`, and the bar the average is seeded on, `len - 1`."
+  },
+  "eom()": {
+    "len": "The number of bars the per-bar ease of movement is averaged over."
+  },
+  "forceIndex()": {
+    "len": "The length of the exponential average that smooths each bar's change in close times its volume."
+  },
+  "hma()": {
+    "src": "The series to average, such as `close` or another indicator's output.",
+    "len": "The length in bars. The recipe takes weighted averages over `len`, over half of it and over its rounded square root."
+  },
+  "hv()": {
+    "src": "The series whose log returns are measured, usually `close`.",
+    "len": "The number of log returns in the window.",
+    "periodsPerYear": "How many of the chart's bars make a year, used to annualise the deviation: 252 for daily bars, or the bars in a session times the sessions in a year, such as `75 * 252` on a 5 minute chart."
+  },
+  "ichimoku()": {
+    "convLen": "The window, in bars, whose highest high and lowest low give the conversion line.",
+    "baseLen": "The window, in bars, whose highest high and lowest low give the base line. It is also the usual displacement of the spans and the lagging line, so change the plot offsets to match.",
+    "spanLen": "The window, in bars, whose highest high and lowest low give span B."
+  },
+  "keltner()": {
+    "len": "The length of the average of the close that forms the basis.",
+    "mult": "How many average true ranges the upper and lower bands sit from the basis.",
+    "atrLen": "The length of the average true range that sets the width of the bands.",
+    "maType": "Which average forms the basis: `\"sma\"`, `\"ema\"`, `\"wma\"`, `\"rma\"`, `\"hma\"` or `\"vwma\"`. Another name is not caught when the script compiles and leaves all three values absent on every bar."
+  },
+  "linreg()": {
+    "src": "The series the straight line is fitted through.",
+    "len": "The number of bars the least squares line is fitted over.",
+    "offset": "How many bars back along the fitted line to read it. `0` reads it on the current bar, so `linreg(src, len) - linreg(src, len, 1)` is the slope per bar."
+  },
+  "ma()": {
+    "src": "The series to average, such as `close` or another indicator's output.",
+    "len": "The length in bars, passed to the average `type` names.",
+    "type": "Which average to compute: `\"sma\"`, `\"ema\"`, `\"wma\"`, `\"rma\"`, `\"hma\"` or `\"vwma\"`. Feed it from a select input so the reader can switch the average in the settings dialog."
+  },
+  "macd()": {
+    "src": "The series both averages are taken of, usually `close`.",
+    "fast": "The length of the fast exponential average.",
+    "slow": "The length of the slow exponential average, which is subtracted from the fast one.",
+    "signal": "The length of the exponential average of the MACD line that forms the signal line."
+  },
+  "mfi()": {
+    "len": "The window, in bars, over which the rising and the falling money flow are summed."
+  },
+  "mom()": {
+    "src": "The series whose change is measured.",
+    "len": "How many bars back the older value is taken: the result is `src - src[len]`."
+  },
+  "natr()": {
+    "len": "The smoothing length, in bars, of the true range, as in `atr()`."
+  },
+  "ppo()": {
+    "src": "The series both averages are taken of, usually `close`.",
+    "fast": "The length of the fast exponential average.",
+    "slow": "The length of the slow exponential average. The gap between the two is divided by it.",
+    "signal": "The length of the exponential average of the PPO line that forms the signal line."
+  },
+  "psar()": {
+    "start": "The acceleration the stop begins with, and returns to after every flip.",
+    "step": "How much the acceleration grows each time the trend makes a new extreme.",
+    "max": "The ceiling at which the acceleration stops growing."
+  },
+  "relativeVolume()": {
+    "len": "The number of bars the average volume is taken over, counting the current bar."
+  },
+  "rma()": {
+    "src": "The series to average, such as `close` or another indicator's output.",
+    "len": "The length in bars. It sets the newest value's weight, `1 / len`, and the bar the average is seeded on, `len - 1`."
+  },
+  "roc()": {
+    "src": "The series whose change is measured.",
+    "len": "How many bars back the older value is taken. The change is expressed as a percentage of that older value."
+  },
+  "rsi()": {
+    "src": "The series whose bar-to-bar changes are measured, usually `close`.",
+    "len": "The smoothing length, in bars, of the average gain and the average loss."
+  },
+  "sma()": {
+    "src": "The series to average, such as `close` or another indicator's output.",
+    "len": "The number of bars averaged, counting the current bar."
+  },
+  "stdev()": {
+    "src": "The series whose spread is measured.",
+    "len": "The number of bars in the window.",
+    "sample": "Whether to divide by `len - 1`, the sample form, instead of `len`, the population form. The band indicators use the population form.",
+    "arr": "The array whose elements are measured, in the second form of the call. That form always uses the population divisor."
+  },
+  "stoch()": {
+    "len": "The window, in bars, whose highest high and lowest low set the range the close is placed in.",
+    "smoothK": "The number of bars the raw position is averaged over to give %K. `1` gives the fast stochastic and `3` the common slow one.",
+    "smoothD": "The number of bars %K is averaged over to give %D."
+  },
+  "stochRsi()": {
+    "src": "The series the RSI is computed on, usually `close`.",
+    "rsiLen": "The length of the RSI.",
+    "stochLen": "The window, in bars, of RSI values whose high and low set the range the RSI is placed in.",
+    "smoothK": "The number of bars the raw position is averaged over to give %K.",
+    "smoothD": "The number of bars %K is averaged over to give %D."
+  },
+  "supertrend()": {
+    "factor": "How many average true ranges the band sits from the bar's midpoint, `hl2`. A larger factor gives a looser line that flips less often.",
+    "atrLen": "The length of the average true range the band distance is measured in."
+  },
+  "swma()": {
+    "src": "The series to smooth. The average always covers four bars, so there is no length to set."
+  },
+  "tema()": {
+    "src": "The series to average, such as `close` or another indicator's output.",
+    "len": "The length of each of the three chained exponential averages."
+  },
+  "trix()": {
+    "src": "The series that is triple smoothed, usually `close`.",
+    "len": "The length of each of the three chained exponential averages."
+  },
+  "tsi()": {
+    "src": "The series whose bar-to-bar change is smoothed, usually `close`.",
+    "longLen": "The length of the first exponential smoothing, applied to the change and to its size.",
+    "shortLen": "The length of the second exponential smoothing, applied to the output of the first."
+  },
+  "ultimateOsc()": {
+    "len1": "The first window, in bars. Its pressure ratio carries a weight of 4 in 7, so pass the shortest length here.",
+    "len2": "The second window, in bars. Its pressure ratio carries a weight of 2 in 7.",
+    "len3": "The third window, in bars. Its pressure ratio carries a weight of 1 in 7, so pass the longest length here."
+  },
+  "variance()": {
+    "src": "The series whose spread is measured.",
+    "len": "The number of bars in the window.",
+    "sample": "Whether to divide by `len - 1`, the sample form, instead of `len`. With `true` and a length of 1 the result is absent."
+  },
+  "vwap()": {
+    "src": "The price that is averaged, weighted by each bar's volume. It defaults to the typical price, `hlc3`."
+  },
+  "vwapAnchor()": {
+    "src": "The price that is averaged, weighted by each bar's volume, such as `hlc3`.",
+    "resetWhen": "The condition that starts a new average. On every bar where it is true, both running totals restart before that bar is added."
+  },
+  "vwma()": {
+    "src": "The series to average, such as `close` or another indicator's output.",
+    "len": "The number of bars averaged, each weighted by its bar's volume."
+  },
+  "williamsR()": {
+    "len": "The window, in bars, whose highest high and lowest low set the range the close is placed in."
+  },
+  "wma()": {
+    "src": "The series to average, such as `close` or another indicator's output.",
+    "len": "The number of bars averaged. The newest bar is weighted `len` and the oldest 1."
+  }
+}

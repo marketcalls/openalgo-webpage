@@ -23,8 +23,10 @@
 import fs from "node:fs";
 import path from "node:path";
 
-import { ROOT, compileBlock, ERRORS, RESERVED_WORDS, PUNCTUATORS } from "./script-docs/language.mjs";
+import { ROOT, compileBlock, ERRORS, RESERVED_WORDS, PUNCTUATORS, LIBRARY_KEYS, entryFacts } from "./script-docs/language.mjs";
 import { buildAll } from "./gen-script-docs.mjs";
+import { loadArgumentDocs } from "./script-docs/render.mjs";
+import { buildReferenceV1 } from "./script-docs/reference-v1.mjs";
 
 const args = process.argv.slice(2);
 const strict = args.includes("--strict");
@@ -34,7 +36,7 @@ const pageArg = args.find((a) => a.startsWith("--page"))
 const only = pageArg ? new Set(pageArg.split(",").map((s) => s.trim()).filter(Boolean)) : null;
 
 const nav = JSON.parse(fs.readFileSync(path.join(ROOT, "content", "script", "nav.json"), "utf8"));
-const { pages, results } = buildAll({ quiet: true });
+const { pages, results, keyPage, screens } = buildAll({ quiet: true });
 
 // Stored encoded so this file is not the one place in the docs build that
 // names what the docs must not. Decode with base64 to read the list.
@@ -138,8 +140,69 @@ for (const r of results) {
   for (const s of ctx.missingScreens) (strict ? note : warn)(r.id, `screenshot ${s} not captured yet`);
 }
 
+// 8. The v1 reference manual (/script/reference/v1): every implemented name,
+//    every reserved word and every operator mark has an entry; every argument
+//    of every implemented function has a written description, and no
+//    description names a function or argument the language does not have;
+//    every link inside the manual lands on something.
+let v1Entries = 0;
+if (!only || only.has("reference/v1")) {
+  const pageTitles = new Map(Object.entries(pages).map(([id, pg]) => [id, pg.title]));
+  const v1 = buildReferenceV1({ results, keyPage, screens, pageTitles });
+  const id = "reference/v1";
+  for (const pr of v1.problems) note(id, pr);
+  const anchors = new Set(Object.keys(v1.html));
+  v1Entries = anchors.size;
+  const names = new Map(v1.groups.flatMap((g) => g.items.map((it) => [`${g.id}:${it.n}`, it.a])));
+  for (const key of LIBRARY_KEYS) {
+    const f = entryFacts(key);
+    if (f.planned) continue;
+    const kinds = f.callable ? ["functions"] : ["variables", "constants"];
+    if (!kinds.some((k) => names.has(`${k}:${key}`))) note(id, `implemented ${key} has no entry`);
+  }
+  for (const w of [...RESERVED_WORDS, "version", "limits"]) if (!names.has(`keywords:${w}`)) note(id, `keyword ${w} has no entry`);
+  const opNames = v1.groups.find((g) => g.id === "operators")?.items.map((it) => it.n.split(/\s+/)) ?? [];
+  for (const op of PUNCTUATORS) if (!opNames.some((marks) => marks.includes(op))) note(id, `operator mark ${op} has no entry`);
+
+  const ids = new Set();
+  for (const html of Object.values(v1.html)) for (const m of html.matchAll(/\bid="([^"]+)"/g)) ids.add(m[1]);
+  for (const [anchor, html] of Object.entries(v1.html)) {
+    for (const m of html.matchAll(/href="#([^"]+)"/g)) if (!ids.has(m[1])) note(id, `${anchor} links to #${m[1]}, which the manual does not have`);
+  }
+  for (const href of v1.docsLinks) {
+    const [pathPart, anchor] = href.split("#");
+    const target = idsByPage.get(pathPart.replace(/^\/script\/?/, "").replace(/\/$/, ""));
+    if (pathPart.replace(/^\/script\/?/, "") === "") continue;
+    if (!target) note(id, `link ${href} points at no written page`);
+    else if (anchor && !target.has(anchor)) note(id, `link ${href} points at an anchor the page does not have`);
+  }
+
+  // The argument files: nothing stale, nothing empty, the prose rules.
+  const argDocs = loadArgumentDocs();
+  for (const [key, params] of argDocs) {
+    const where = `arguments/${params.__file}`;
+    let f;
+    try {
+      f = entryFacts(key);
+    } catch {
+      note(where, `${key} is not in the library`);
+      continue;
+    }
+    const known = new Set(f.overloads.flatMap((o) => o.parameters.map((p) => p.name)));
+    for (const [name, text] of Object.entries(params)) {
+      if (name === "__file") continue;
+      if (!known.has(name)) note(where, `${key} has no argument ${name}`);
+      if (!String(text).trim()) note(where, `${key} ${name} is empty`);
+      const m = String(text).match(BANNED_RE);
+      if (m) note(where, `${key} ${name} names "${m[1]}", which the docs must not`);
+      if (DASHES.test(text)) note(where, `${key} ${name} has an em or en dash`);
+      if (EMOJI.test(text)) note(where, `${key} ${name} has an emoji or icon`);
+    }
+  }
+}
+
 const written = results.filter((r) => !r.missing).length;
-console.log(`[check:script] ${written}/${results.length} pages written, ${blocksChecked} code blocks compiled, ${entriesSeen} reference entries, ${errorsSeen} error entries`);
+console.log(`[check:script] ${written}/${results.length} pages written, ${blocksChecked} code blocks compiled, ${entriesSeen} reference entries, ${errorsSeen} error entries, ${v1Entries} manual entries`);
 if (warnings.length) {
   console.log(`\n${warnings.length} warning(s):`);
   for (const w of warnings.slice(0, 200)) console.log(`  - ${w}`);

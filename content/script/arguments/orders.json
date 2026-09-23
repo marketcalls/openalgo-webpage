@@ -1,0 +1,22 @@
+{
+  "order.bracket()": {
+    "tag": "A label telling the destination which entry the levels protect. A tag that matches no order is not refused.",
+    "profit": "The profit target as a distance from the entry price, in the instrument's own price units.",
+    "loss": "The stop as a distance from the entry price, in the instrument's own price units.",
+    "leg": "The leg the order is for, in a multi-leg strategy. Legs are planned, so writing it today is refused with `OS3023`."
+  },
+  "order.place()": {
+    "side": "`\"buy\"` or `\"sell\"`, which may come out of a calculation. A value written outside that list is refused before the first bar with `OS3008`.",
+    "qty": "The quantity, counted in the declaration's `qtyType`. It is required here; zero or below is refused with `OS7004`.",
+    "type": "The order type: `\"market\"`, `\"limit\"`, `\"stop\"` or `\"stopLimit\"`. It must agree with the prices given, or the call is refused with `OS7007`.",
+    "price": "The limit price, for a `\"limit\"` or `\"stopLimit\"` order. Leave it out for a market or stop order.",
+    "trigger": "The trigger price, for a `\"stop\"` or `\"stopLimit\"` order. Leave it out for a market or limit order.",
+    "tag": "A label for the order, carried to the destination and the trade list. It names nothing that has to exist, and `close()` or `cancel()` can refer to it later.",
+    "leg": "The leg the order is for, in a multi-leg strategy. Legs are planned, so writing it today is refused with `OS3023`."
+  },
+  "order.reverse()": {
+    "qty": "The size of the new position the other way. Left out, it is the same size as the position being closed.",
+    "tag": "A label for the orders, carried to the destination and the trade list. It names nothing that has to exist.",
+    "leg": "The leg the order is for, in a multi-leg strategy. Legs are planned, so writing it today is refused with `OS3023`."
+  }
+}
