@@ -34,9 +34,7 @@ A timestamp is the same number everywhere, but its calendar fields depend on a t
 | An IANA name (the standard `Area/City` form) such as `"Asia/Kolkata"` or `"Europe/London"`, or `"UTC"` | That zone |
 | An abbreviation such as `"IST"`, or a name the host does not know | `OS6005` when the bar runs, which stops the script |
 
-:::warn
-The /trading Backtest panel states no timezone in this release, so in a backtest every call on this page that leaves out `zone` returns `none`. In a strategy you backtest, pass the zone: `date.hour(time, "Asia/Kolkata")`.
-:::
+The /trading Backtest panel states the exchange's own zone, from the platform's market calendar, and a strategy running from the Strategies panel reads the calendar in the instrument's zone, so a call that leaves out `zone` reads Indian time in both, as it does on the chart. Pass the zone, as in `date.hour(time, "Asia/Kolkata")`, in a script that must also run on a host that states none.
 
 A zone is always a name, never a fixed offset, because an offset is wrong for half the year anywhere that moves its clocks. Where clocks do move, a wall clock time that was skipped resolves to the instant it would have been, and a time that happened twice resolves to the first of the two. India does not move its clocks, so none of this affects an Indian chart.
 

@@ -94,7 +94,7 @@ A condition must be a `bool` or absent. There is no truthiness (treating a numbe
 
 ### How do I write a block?
 
-With indentation, using spaces. There are no braces, no `end` and no semicolons. Every line of one block carries exactly the same indentation, and four spaces is the convention. A tab is OS1002 and a line out by one space is OS1003. See [Script structure](/script/language/script-structure).
+With indentation, using spaces. There are no braces, no `end` and no semicolons. Every line of one block carries exactly the same indentation, and four spaces is the convention. A tab character is OS1002 and a line out by one space is OS1003. In the /trading editor the Tab key inserts four spaces, and Shift+Tab takes them away, so pressing Tab never puts a tab character in the file. See [Script structure](/script/language/script-structure).
 
 ### Why can I not write `a < b < c`?
 
@@ -247,19 +247,19 @@ plot(nifty, "NIFTY")
 
 [[session.isIn()]] tells you whether a bar falls inside a window you state, such as `session.isIn("0915-1530")`, and `bar.isFirst or not date.isSameDay(time, time[1])` finds the first bar of each day. Both read the bar's time in the chart's timezone. [[session.isFirstBar]] and [[session.isLastBar]] also need the instrument's trading hours.
 
-All of these come from facts the host supplies, and a fact the host has not supplied makes the read absent rather than guessed. In this release the /trading chart supplies its timezone but not the trading hours, so `session.isFirstBar` is absent there, and a new IST date, `isNone(time[1]) or not date.isSameDay(time, time[1], "Asia/Kolkata")`, is the test to use for the first bar of an NSE day. A backtest run from the Backtest panel is given neither, so there a session or calendar read that relies on the chart's timezone is absent, and so is a daily read. Name the zone, as in `session.isIn("0915-1530", "Asia/Kolkata")`, and the read works in a backtest too. See [Sessions and time](/script/data/sessions-and-time).
+All of these come from facts the host supplies, and a fact the host has not supplied makes the read absent rather than guessed. On /trading the chart, the Backtest panel and a deployed strategy all state the instrument's timezone and its regular trading session, taken from the market calendar, so `session.isFirstBar` marks the first bar of each NSE session in all three. A deployed strategy still refuses `session.isLastBar`. On the chart the session is read in the chart's timezone: set the chart to a zone other than the exchange's and the session is left out, so `session.isFirstBar` is absent. A new IST date, `isNone(time[1]) or not date.isSameDay(time, time[1], "Asia/Kolkata")`, finds the first bar of an NSE day without needing anything from the host, and naming the zone, as in `session.isIn("0915-1530", "Asia/Kolkata")`, keeps a window right whatever zone the chart is set to. See [Sessions and time](/script/data/sessions-and-time).
 
 ## Alerts
 
 ### How do I raise an alert?
 
-Put `alert(message, id = "...")` inside the `if` that describes the condition. There is no separate function to declare a condition: the condition is the `if` you would have written anyway. In /trading, once the study is on a chart, the chart checks the condition as new bars arrive, shows a notification when it fires, and the Alerts panel keeps a log of every firing. Alerts are checked by the chart that is open, so they fire only while /trading is open.
+Put `alert(message, id = "...")` inside the `if` that describes the condition. There is no separate function to declare a condition: the condition is the `if` you would have written anyway. In /trading, once the study is on a chart, the chart judges the condition when each bar closes, shows a notification when it fires, and the Alerts panel keeps a log of every firing. Alerts are checked by the chart that is open, so they fire only while /trading is open, and only for bars that close while it is: history loaded when the page opens is never alerted on.
 
-In this release the chart judges a script's alert once, when a bar first arrives, and during market hours that is before the bar has closed, so an alert that waits for the close may not fire at all. To be told reliably, plot the condition as 1 or 0 and create a study alert on that plot from the chart's **Create alert** dialog, with **Study plot** as what to watch. See [Alerts from scripts](/script/alerts/overview) and [Alerts on a script condition](/script/alerts/alerts-in-trading#alerts-on-a-script-condition).
+A script alert reaches you on the page. To send a condition your script computes to Telegram or WhatsApp, or to give it an expiry, plot the condition as 1 or 0 and create a study alert on that plot from the chart's **Create alert** dialog, with **Study plot** as what to watch. See [Alerts from scripts](/script/alerts/overview) and [Alerts on a script condition](/script/alerts/alerts-in-trading#alerts-on-a-script-condition).
 
 ### Why does my alert not fire on the bar where I can see it should?
 
-Because that bar is still forming. Alerts, signals and orders wait until the bar closes, and if the condition is no longer true by then they never fire. That is what stops an alert from firing on a cross that is gone a minute later. On the /trading chart there is a second reason, the one in the answer above: the chart has already judged the bar before it closed.
+Because that bar is still forming. Alerts, signals and orders wait until the bar closes, and if the condition is no longer true by then they never fire. That is what stops an alert from firing on a cross that is gone a minute later.
 
 ### Why did adding the study not fire alerts for all the past bars?
 
@@ -280,7 +280,7 @@ version 1
 strategy("EMA cross", overlay = true, capital = 500000, qtyType = "units")
 
 // One lot, counted in units. chart.lotSize is absent, not 1, where the host
-// states no lot size, as on the /trading chart.
+// states no lot size, such as a symbol whose contract is not downloaded.
 lotUnits = max(orElse(chart.lotSize, 1), 1)
 
 fast = ema(close, 9)
@@ -296,7 +296,7 @@ if crossDown(fast, slow) and pos.isLong
     close()
 ```
 
-The size is one lot, stated in units, which is how NFO futures and MCX contracts are best sized in this release: the Backtest panel states the lot size, the chart does not (so there the example trades one unit), and the Strategies panel runs only a strategy that counts in units. See [Position and sizing](/script/strategies/position-and-sizing).
+The size is one lot, stated in units, which is how NFO futures and MCX contracts are best sized in this release: the chart, the Backtest panel and a deployed strategy all state the lot size from the platform's instrument record, and the Strategies panel runs only a strategy that counts in units. See [Position and sizing](/script/strategies/position-and-sizing).
 
 ### Why did my order fill at the next bar's open?
 

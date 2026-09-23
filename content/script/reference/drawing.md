@@ -15,7 +15,7 @@ rangeMinutes = input(15, "Opening range, in minutes", min = 1, max = 240)
 keepSessions = input(5,  "Sessions to keep", min = 1, max = 60)
 
 // The session's first bar, or the first bar of each IST day where the host
-// states no session hours, as on the /trading chart.
+// states no session hours.
 newSession = orElse(session.isFirstBar, isNone(time[1]) or not date.isSameDay(time, time[1], "Asia/Kolkata"))
 
 var openTime  = none
@@ -52,7 +52,7 @@ else if not isNone(zone)
 
 {{screen: zones-boxes}}
 
-The examples on this page that reset once per session find the session's first bar with the `newSession` line above. [[session.isFirstBar]] needs the instrument's session hours, which the /trading chart does not state in this release, so there it has no value; a new IST date marks the same bar for an NSE, BSE or MCX session.
+The examples on this page that reset once per session find the session's first bar with the `newSession` line above. [[session.isFirstBar]] needs the instrument's session hours, which the /trading chart states from the platform's market calendar; where a host states none, a new IST date marks the same bar for an NSE, BSE or MCX session.
 
 ## How drawing objects work
 
@@ -314,8 +314,8 @@ version 1
 study("VWAP tag", overlay = true, precision = 2)
 
 // The day's VWAP, restarted on the first bar of each IST day. vwap() restarts
-// on the session's first bar, which the /trading chart cannot find without
-// session hours, so this anchors it by date.
+// on the session's first bar, which needs session hours from the host, so
+// this anchors it by date and works wherever a timezone is known.
 newDay = isNone(time[1]) or not date.isSameDay(time, time[1], "Asia/Kolkata")
 v = vwapAnchor(hlc3, newDay)
 plot(v, "VWAP", orange, width = 2)

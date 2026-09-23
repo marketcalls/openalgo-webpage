@@ -3,7 +3,7 @@ title: Example scripts
 description: Twelve complete OpenScript files, from an EMA cross to a short options premium strategy, and three showcase studies, each explained with what it shows on the chart and where it runs in /trading.
 ---
 
-These twelve scripts are complete files you can paste into the Scripts panel, save and apply. Each one is small enough to read in a few minutes and makes one or two ideas of the language concrete: nine are studies and three are strategies, and they run from a first EMA cross to a two leg options premium strategy. For every script, this page says what it draws, which language features it shows and why they are written the way they are, and where it runs in /trading today. After them, [Showcase scripts](/script/getting-started/example-scripts#showcase-scripts) gives three studies written to look their best on a chart, each with the screenshot it drew.
+These twelve scripts are complete files you can paste into the Scripts panel, save and apply. Each one is small enough to read in a few minutes and makes one or two ideas of the language concrete: nine are studies and three are strategies, and they run from a first EMA cross to a two leg options premium strategy. For every script, this page says what it draws, which language features it shows and why they are written the way they are, and where it runs in /trading. After them, [Showcase scripts](/script/getting-started/example-scripts#showcase-scripts) gives three studies written to look their best on a chart, each with the screenshot it drew.
 
 The comments inside each script say why a line is written the way it is, not what it does. For what a function does, follow its link to the reference.
 
@@ -24,19 +24,16 @@ The comments inside each script say why a line is written the way it is, not wha
 | 11 | [Opening range breakout](#11-opening-range-breakout) | Strategy | One trade per session, the range as the stop, an exit on the clock |
 | 12 | [Short premium, combined stop](#12-short-premium-combined-stop) | Strategy | Two legs managed as one position on their combined price |
 
-## Where they run in /trading today
+## Where they run in /trading
 
-Every script here compiles with no error. A few use features the /trading page does not supply to the engine yet, and it is better to know that before you apply one than to wonder why it drew nothing.
+Every script here compiles with no error. A few use features one part of the /trading page does not support yet, and it is better to know that before you apply one than to wonder why it did nothing.
 
 | Script | On the chart | Backtest panel | Strategies panel |
 |---|---|---|---|
-| 1, 2, 4, 7, 8, 9 | Draws as described | Not a strategy | Not a strategy |
-| 3 Anchored VWAP | Draws as described, with the anchor time read as UTC | Not a strategy | Not a strategy |
-| 5 Opening range | Draws nothing yet: needs the session's opening time | Not a strategy | Not a strategy |
-| 6 Combined premium | Draws the premium; two parts need facts the chart does not state yet | Not a strategy | Not a strategy |
+| 1, 2, 3, 4, 5, 6, 7, 8, 9 | Draws as described | Not a strategy | Not a strategy |
 | 10 EMA cross, bracketed | Draws and simulates its trades | Runs. Its `exit()` levels are not filled, so trades close on the opposite cross | Refused: it calls `exit()` |
-| 11 Opening range breakout | Opens no trades: needs the session's opening time | Opens no trades, for the same reason | Refused: it reads the session, calls `exit()` and sizes in lots |
-| 12 Short premium | Draws the premium, opens no trades: needs the session | Refused with OS6006: it reads another instrument | Refused: it reads the session, the calendar and another instrument, and sizes in lots |
+| 11 Opening range breakout | Draws the range and simulates its trades | Runs. Its `exit()` levels are not filled, so trades close on the clock exit | Refused: it calls `exit()` and sizes in lots |
+| 12 Short premium | Draws the premium and simulates its trades | Refused with OS6006: it reads another instrument | Refused: it reads another instrument and sizes in lots |
 | Showcase: HalfTrend, Bollinger Bands, EMA cross in colour | Draws as described | Not a strategy | Not a strategy |
 
 The notes under each script explain the reason. [Your first strategy](/script/getting-started/first-strategy) builds a strategy that runs in all three places.
@@ -248,7 +245,7 @@ What to notice:
 - **[[sqrt()]]** of a negative number returns `none` rather than failing. The script floors the value with [[max()]] instead of relying on that.
 
 :::note
-In this release the /trading chart reads a time input as UTC, not as Indian time. IST is UTC plus 5 hours 30 minutes, so to anchor at the 09:15 IST open of 1 January 2025, type `2025-01-01 03:45`. The default, `2025-01-01 09:15`, anchors at 14:45 IST that day.
+The /trading chart reads a time input in the chart's timezone, which is Indian time unless you changed it, so the default `2025-01-01 09:15` anchors at the 09:15 IST open of 1 January 2025.
 :::
 
 ## 4. RSI divergence
@@ -407,7 +404,7 @@ What to notice:
 - **[[background()]]** shades the bars while the range is forming.
 
 :::note
-In this release the /trading chart does not tell the engine when the exchange session opens, so `session.isFirstBar` has no value there and this study draws nothing but its legend row. The chart may also say the study "needs more history than the bars loaded": it shows that message for any study with no value on any bar, and here the cause is the missing session hours, not the history. The script is correct OpenScript and runs wherever the host states its session hours.
+The /trading chart takes each exchange's session hours from the market calendar, so on an NSE chart the range forms from 09:15 and on an MCX chart from 09:00. The session arrives a moment after the study is first drawn, and the study redraws with it. If you set the chart to a timezone other than the exchange's, the chart leaves the session out rather than read it hours off, `session.isFirstBar` has no value, and the study draws nothing but its legend row.
 :::
 
 ## 6. Combined premium
@@ -477,7 +474,7 @@ What to notice:
 - **Options pricing.** This study adds traded prices. When you need a fair value for an Indian index option, price it with Black-76 off the synthetic future, not with a spot-based model.
 
 :::note
-In this release the /trading chart does not state a lot size or session hours to the engine. [[chart.lotSize]] is then absent, so the **Position value** line stays empty, and [[session.isFirstBar]] has no value, so the opening premium is taken once, at the first bar both legs have, rather than at every session's open. In the default confirmed mode each leg is its latest closed bar, one bar behind the chart, and both legs lag together, so the sum still adds two prices from the same moment; `mode = "developing"` reads the forming bar instead and can repaint. [[chart.exchange]] is absent on the chart as well, and the legs are then looked up on the chart's own exchange. The combined premium draws as described; its alert follows the chart's rule for script alerts, so during market hours it may not fire (see [Alerts from scripts](/script/alerts/overview)).
+On the /trading chart, [[chart.lotSize]] and [[chart.exchange]] are the chart instrument's own, read from the platform's instrument record a moment after the study is first drawn. On a chart of the NIFTY future or of one of the legs, the lot is the legs' lot, so the **Position value** line is in rupees, and both legs are looked up on NFO. The session comes from the market calendar, so the opening premium is taken at each session's open, at the first bar both legs have. In the default confirmed mode each leg is its latest closed bar, one bar behind the chart, and both legs lag together, so the sum still adds two prices from the same moment; `mode = "developing"` reads the forming bar instead and can repaint. The alert fires when a bar closes, as the chart's rule for script alerts says (see [Alerts in /trading](/script/alerts/alerts-in-trading#alerts-from-a-script)).
 :::
 
 ## 7. Higher timeframe bias
@@ -889,8 +886,8 @@ if ready and ok and close < rangeLow
 
 // The clock exit is neither a stop nor a target: it is the admission that a
 // position that has not worked in five hours is not going to. closeOnSessionEnd
-// is declared as well, for hosts that state session hours; /trading states
-// none in this release, so there it has no effect.
+// is declared as well; version 0.5.0 accepts it and does not act on it yet, so
+// this exit is the one that flattens the position.
 if pos.size != 0 and not isNone(elapsed) and elapsed >= holdMinutes * 60000
     close()
 
@@ -908,7 +905,7 @@ What to notice:
 - **A time exit.** `elapsed >= holdMinutes * 60000` flattens with [[close()]] five hours after the open, before the NSE close at 15:30 IST.
 
 :::note
-In this release the /trading chart and Backtest panel do not state the session's opening time to the engine, so [[session.isFirstBar]] has no value there, the range never forms and the script opens no trades. The Strategies panel refuses it, because it reads the session, calls `exit()` and sizes in lots. It is shown here for the language: the pattern is the one to reach for wherever a host states its session hours.
+The /trading chart and the Backtest panel take each exchange's session hours from the market calendar, so [[session.isFirstBar]] marks each session's open, the range forms and the script trades. In version 0.5.0 the backtest does not fill the levels [[exit()]] sets, so in the Backtest panel each trade closes on the clock exit. The Strategies panel refuses it, because it calls `exit()` and sizes in lots.
 :::
 
 ## 12. Short premium, combined stop
@@ -1011,10 +1008,10 @@ What to notice:
 - **A weekly schedule.** [[date.dayOfWeek()]] picks the weekday, for example the day before a weekly expiry.
 - **Absence as a guard.** While flat, `entryPremium` is `none`, so `movePct` is `none` and none of the exit tests can be true.
 - **One exit with a reason.** A single [[close()]] carries the reason in its [[signal()]] marker, so the position can never be closed three times over.
-- **The second leg is an alert.** The strategy trades the chart's leg; the other leg's orders go out as [[alert()]] messages with their own ids. On /trading this script does not run today, as the note below explains.
+- **The second leg is an alert.** The strategy trades the chart's leg; the other leg's orders go out as [[alert()]] messages with their own ids. On /trading this script runs on the chart only, as the note below explains.
 
 :::note
-The Backtest panel refuses this script with [OS6006](/script/errors/data#os6006), because a backtest holds only the chart's own bars and this script reads another instrument. On the /trading chart it draws the combined premium but opens no trades, because [[session.isFirstBar]] has no value there. The Strategies panel refuses it, because it reads the session, the calendar and another instrument, and sizes in lots. A strategy that wants both legs in its own books declares them with [[leg.relative()]], which is planned; see [Legs and books](/script/strategies/multi-leg-and-books).
+The Backtest panel refuses this script with [OS6006](/script/errors/data#os6006), because a backtest holds only the chart's own bars and this script reads another instrument. On the /trading chart it draws the combined premium and simulates its trades on the chosen weekday, with [[session.isFirstBar]] taken from the exchange's session in the market calendar. The Strategies panel refuses it, because it reads another instrument and sizes in lots. A strategy that wants both legs in its own books declares them with [[leg.relative()]], which is planned; see [Legs and books](/script/strategies/multi-leg-and-books).
 :::
 
 ## Showcase scripts

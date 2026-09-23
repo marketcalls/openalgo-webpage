@@ -268,12 +268,14 @@ A strategy that compiles, runs and never trades raises no error. Work down this 
 1. **Is the entry condition ever true?** Plot it for a moment on its own axis, so the price scale is not squashed: `plot(goLong ? 1 : 0, "Entry", scale = "left")`, and look for the spikes.
 2. **Is it only true during warmup?** The `not isNone(atrValue)` guard blocks entries until the ATR has a value.
 3. **Did the first trade ever close?** If `pos.isFlat` never becomes true again, every later entry is blocked by the guard.
-4. **Does the condition read something the panel does not supply?** In this release the Backtest panel does not tell the engine the chart's interval, its timezone or the session's hours. So [[chart.interval]], [[session.isFirstBar]] and [[session.isLastBar]] have no value in a backtest, and neither has a day, week or month [[req.timeframe()]] read, or a [[session.isIn()]] or `date.*` call that names no zone. A condition built on them is never true. Name the zone, as in `session.isIn("0915-1530", "Asia/Kolkata")`, and filter on an intraday read such as `"1h"`, which the backtest folds from the chart's own bars.
+4. **Does the condition read something the panel does not supply?** The Backtest panel tells the engine the chart's interval, the exchange's timezone and its regular trading session from the market calendar, so [[session.isFirstBar]], [[session.isLastBar]], `date.*` calls and higher timeframe reads work in a backtest. It does not state [[chart.now()]], which is absent on every bar, and a chart of seconds bars states no interval. A `kind = "time"` input is read as a UTC clock there, not as Indian time, so a time typed as `09:15` means 14:45 IST in a backtest.
 
 Two more cases show a message instead of a report:
 
 - **A range where the instrument did not trade**, over a holiday or before listing, returns no bars, and the panel says "No bars came back for that instrument over that range."
 - **A range that is too long.** More than 100,000 bars is refused with a message that names the count. Shorten the range or use a longer timeframe.
+
+A run the engine stops part way, on an error in the script such as a negative history index, still shows its figures, with a line beside them saying where it stopped, such as "This run stopped on bar 1,204 of 2,970", followed by that bar's date and time in the instrument's timezone. The figures then describe only the bars before it.
 
 Plotting an intermediate value, as in the first question, is the fastest way to answer the first three. See [Debugging](/script/writing/debugging).
 

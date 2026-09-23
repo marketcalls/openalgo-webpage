@@ -33,7 +33,7 @@ if crossDown(fast, slow)
 | | [[signal()]] | [[alert()]] | [[print()]] | [[notify()]] |
 |---|---|---|---|---|
 | Produces | A marker on the bar | A message about the bar | A line in the script's log | A message to a named channel |
-| On the /trading page | Drawn on the chart | A notification on the page, and a row in the Log tab of the Alerts panel, when it fires; while the market is open it may not fire, as [Alerts](#alerts) explains | Not shown in this release | Planned |
+| On the /trading page | Drawn on the chart | A notification on the page, and a row in the Log tab of the Alerts panel, once for the bar when that bar closes, as [Alerts](#alerts) explains | Not shown in this release | Planned |
 | On the history already loaded | Drawn on every past bar that matched | Fires for none of them | Written for every bar that ran it | Planned |
 | On a bar still forming | Waits for the close | Waits for the close | Waits for the close | Planned |
 
@@ -66,7 +66,7 @@ if bar.isConfirmed and close > prevHigh
 
 Declares a watched condition and the message it sends. The condition is the chain of `if` guards that reaches the call, and the message is evaluated on the bar where they held, so every value in it is that bar's value. The host, the application running the study such as the /trading page, watches it as bars arrive and raises the alert on each new bar where the guards hold; the script polls nothing.
 
-On the /trading page an alert is watched as soon as its study is on the chart, and each firing shows as a notification and is recorded in the Log tab of the Alerts panel. In this release, though, the chart judges a script's alerts once, when a bar first arrives. During market hours a bar arrives with its first tick, before it has closed, so an alert that waits for the close (every alert, unless the study sets `onUnconfirmed = true`) has nothing to report yet, and the chart does not look at that bar again. Such an alert fires only for a bar that reaches the chart already closed. To be told reliably, plot the condition as 1 or 0 and create a study alert on that plot from the chart's **Create alert** dialog, with **Study plot** as the source, as [Alerts on a script condition](/script/alerts/alerts-in-trading#alerts-on-a-script-condition) shows.
+On the /trading page an alert is watched as soon as its study is on the chart. When a bar closes, the chart judges the study's alerts on it, and each one whose guards hold fires once for that bar: a notification on the page and a row in the Log tab of the Alerts panel. Only bars that close while the chart is open are judged, never the history loaded with it, and alerts are held back while a replay or a change of workspace has the chart. In a study that sets `onUnconfirmed = true` an alert may fire on the forming bar instead, and still fires at most once for it. A study alert on a plotted condition, created from the chart's **Create alert** dialog, is the other way to be told, as [Alerts on a script condition](/script/alerts/alerts-in-trading#alerts-on-a-script-condition) shows.
 
 ```openscript
 version 1
@@ -102,7 +102,7 @@ if close > open
     alert("Rising", id = "rising", frequency = "everyUpdate")
 ```
 
-On the /trading chart in this release every alert fires at most once per bar, whatever its `frequency` says: the chart checks each condition once for each new bar and has nowhere to keep the setting. For one alert per session, hold a `var` flag and test it in the condition. The example finds each session's first bar with [[session.isFirstBar]] where the host states session hours, and with a new IST date where it does not, which includes the /trading chart:
+On the /trading chart every alert fires at most once per bar, whatever its `frequency` says: the chart judges each condition once for each bar and has nowhere to keep the setting. For one alert per session, hold a `var` flag and test it in the condition. The example finds each session's first bar with [[session.isFirstBar]] where the host states session hours, as the /trading chart does, and with a new IST date where it does not:
 
 ```openscript
 version 1
@@ -125,7 +125,7 @@ if not newSession and not alerted and close > rangeHigh
     alert(chart.symbol + " closed above its first bar high at " + text(close, 2), id = "first-bar-break", title = "First bar break")
 ```
 
-**Remarks.** Adding a study to a chart fires nothing for the bars already loaded: an alert is a statement about now. Nested guards join with `and`, so an `alert()` two `if`s deep has both conditions. A condition that is `none` takes the false branch, so an alert guarded by a comparison stays quiet during warmup; if an alert never fires, plot its condition as `cond ? 1 : 0` and look at the line. If the line shows the condition held and the /trading chart still sent nothing, that is the limit described under the entry above, and the same plotted line is what a study alert can watch. Test a change, with [[crossUp()]], [[crossDown()]] or a comparison with `[1]`, rather than a state, or the alert fires on every bar the state lasts. Routing, retries and where a message is delivered belong to the host; see [Alerts in /trading](/script/alerts/alerts-in-trading).
+**Remarks.** Adding a study to a chart fires nothing for the bars already loaded: an alert is a statement about now. Nested guards join with `and`, so an `alert()` two `if`s deep has both conditions. A condition that is `none` takes the false branch, so an alert guarded by a comparison stays quiet during warmup; if an alert never fires, plot its condition as `cond ? 1 : 0` and look at the line. If the line shows the condition held on a bar that closed while the chart was open, and the /trading chart still sent nothing, [Alerts in /trading](/script/alerts/alerts-in-trading) lists what else to check; the same plotted line is also what a study alert can watch. Test a change, with [[crossUp()]], [[crossDown()]] or a comparison with `[1]`, rather than a state, or the alert fires on every bar the state lasts. Routing, retries and where a message is delivered belong to the host; see [Alerts in /trading](/script/alerts/alerts-in-trading).
 
 **See also.** [[signal()]], [[text()]], [[date.format()]], [Alerts from scripts](/script/alerts/overview)
 

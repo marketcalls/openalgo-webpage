@@ -201,7 +201,7 @@ background(inWindow ? fade(silver, 92) : none)
 plot(inWindow ? high : none, "High in the window", aqua, style = "step")
 ```
 
-The language's own answer to "is this the first bar of the session" is [[session.isFirstBar]]. It depends on the host supplying the instrument's session hours, and [Sessions and time](/script/data/sessions-and-time#sessions-and-the-clock-in-trading-today) explains where that works in /trading today and why this study tests the date instead.
+The language's own answer to "is this the first bar of the session" is [[session.isFirstBar]]. It depends on the host supplying the instrument's session hours, which /trading reads from the market calendar; [Sessions and time](/script/data/sessions-and-time#sessions-and-the-clock-in-trading-today) lists where each part of /trading states them. This study tests the date instead, which needs no session hours and so works on any host.
 
 Two units, two jobs:
 
@@ -263,15 +263,15 @@ The chart's interval reaches a script differently depending on where in /trading
 | Where the script runs | What it is told |
 |---|---|
 | On the chart, as a study | The chart's interval as /trading names it, and the chart's timezone |
-| In the Backtest panel | Nothing about the interval. The run fetches bars of the chart's instrument at the chart's interval over the panel's dates, but `chart.interval`, `chart.intervalMinutes`, `chart.isIntraday` and `chart.timezone` are absent |
-| In the Strategies panel | The interval the deployment names |
+| In the Backtest panel | The chart's interval written the way the language writes it, so a `D`, `W` or `M` chart is stated as `"1D"`, `"1W"` or `"1M"`, and the exchange's timezone. A chart in seconds states no interval, because the language has no unit shorter than a minute |
+| In the Strategies panel | The interval the deployment names, and the instrument's timezone |
 
 {{screen: interval-menu}}
 
-/trading names minute and hour intervals the way the language does, such as `5m`, `15m` and `1h`, so on those charts every value on this page is present. Its daily, weekly and monthly charts are named `D`, `W` and `M`, which are not timeframes the language reads (it writes `1D`, `1W` and `1M`). On a daily chart `chart.interval` is therefore `"D"`, and `chart.intervalMinutes` and `chart.isIntraday` are both absent, which is why the examples above treat an absent `chart.isIntraday` as "not intraday".
+/trading names minute and hour intervals the way the language does, such as `5m`, `15m` and `1h`, so on those charts every value on this page is present. Its daily, weekly and monthly charts are named `D`, `W` and `M`, which are not timeframes the language reads (it writes `1D`, `1W` and `1M`). On a daily chart `chart.interval` is therefore `"D"`, and `chart.intervalMinutes` and `chart.isIntraday` are both absent, which is why the examples above treat an absent `chart.isIntraday` as "not intraday". The Backtest panel states the same chart as `"1D"`, so there both values are present.
 
 :::warn
-A strategy that branches on `chart.isIntraday` behaves differently in the Backtest panel than on the chart: there the value is absent, and an absent condition takes the false branch of an `if` or a ternary. If a strategy needs a length that depends on the interval, take the length in bars as an input so the backtest and the chart run the same numbers. [Backtesting](/script/strategies/backtesting) covers the panel itself.
+On a daily, weekly or monthly chart the chart and the Backtest panel state the interval differently. The chart states `D`, so `chart.intervalMinutes` is absent there, and the panel states `"1D"`, so it is 1440. `chart.isIntraday` takes the false branch in both, absent on the chart and `false` in the panel, but a calculation on `chart.intervalMinutes` does not agree. If a strategy needs a length that depends on the interval, take the length in bars as an input so the backtest and the chart run the same numbers. [Backtesting](/script/strategies/backtesting) covers the panel itself.
 :::
 
 ## Mistakes worth naming

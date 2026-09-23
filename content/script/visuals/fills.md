@@ -202,7 +202,7 @@ pLow  = plot(forming ? none : rangeLow,  "Range low",  orange, style = "step")
 fill(pHigh, pLow, color = aqua, opacity = 0.09)
 ```
 
-The day is found by a change of IST date because the /trading chart does not supply the exchange's session hours in this release, so [[session.isFirstBar]] has no value there. [Sessions and time](/script/data/sessions-and-time) explains why the date test is right for Indian exchanges.
+The day is found by a change of IST date, which works on any chart, including one whose host states no session hours. On the /trading chart, which states the exchange's session from the market calendar, `newDay = session.isFirstBar` gives the same bars. [Sessions and time](/script/data/sessions-and-time) explains why the date test is right for Indian exchanges.
 
 **A band that switches off while its visible edges stay.** Draw the edges as ordinary plots, then give the band a second pair of ends: invisible copies of the edges that are absent whenever the band should be off. The lines carry straight on, and the shading appears only where both copies have values:
 

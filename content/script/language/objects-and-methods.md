@@ -339,8 +339,8 @@ panel = table("Session", 3, 2, position = "topRight", textColor = silver)
 
 spread = atr(14)
 
-// The session's first bar, or of the IST day where the host states no
-// session hours, as on the /trading chart.
+// The session's first bar, or of the IST day on a host that states no
+// session hours.
 newSession = orElse(session.isFirstBar, isNone(time[1]) or not date.isSameDay(time, time[1], "Asia/Kolkata"))
 
 // Bars since the session opened, counted with a var that restarts each session.

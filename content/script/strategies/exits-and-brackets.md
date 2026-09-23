@@ -206,7 +206,7 @@ Intraday strategies on NSE and NFO have to be flat before 15:30. Three facts dec
 
 **An exit decided on the last bar fills in the next session.** With the default `fillOn = "nextOpen"`, a `close()` decided on the session's last bar fills at the next bar's open, which is the next session's first bar. To be flat by the close, decide on a bar that leaves another bar to fill in. [[session.isIn()]] tests the time each bar starts at: a bar is inside `"0915-1500"` when it starts at or after 09:15 and before 15:00. So `not session.isIn("0915-1500", "Asia/Kolkata")` is first true on the bar that starts at 15:00, and on 15-minute bars the close it sends fills at the 15:15 open.
 
-**Each place in /trading reads the clock differently.** The chart reads it in the chart's timezone. The Backtest panel reads it only where the script names the zone, as every example here does. [[session.isFirstBar]] and [[session.isLastBar]] have no value in either, because /trading does not state the instrument's session hours to the script yet. And the Strategies panel refuses to start a script that calls [[session.isIn()]] or any `date.*` function on an Indian instrument, so a deployed strategy needs a window built from arithmetic on [[time]]: [Sessions and time](/script/data/sessions-and-time#sessions-and-the-clock-in-trading-today) shows one.
+**Name the zone in a clock test.** The chart reads the clock in the chart's timezone, Asia/Kolkata unless you changed it, and the Backtest panel and a deployment read it in the exchange's zone. Naming `"Asia/Kolkata"`, as every example here does, keeps a clock test at the same time of day in all three, whatever a chart is set to. [[session.isLastBar]] answers on the chart and in the Backtest panel, from the market calendar's session hours, but a deployment refuses it when the run loads, so a strategy you mean to deploy exits on a cutoff time instead. [Sessions and time](/script/data/sessions-and-time#sessions-and-the-clock-in-trading-today) has the details for each place.
 
 | Exit kind | Written with | Good for |
 |---|---|---|
@@ -214,7 +214,7 @@ Intraday strategies on NSE and NFO have to be flat before 15:30. Three facts dec
 | Minutes in the trade | [[time]] minus a `var` set when the position opens | A rule stated in clock time |
 | Bars held | [[bar.index]] minus a `var` set when the position opens | A horizon in bars; [[pos.barsHeld]] is planned |
 | A weekday | [[date.dayOfWeek()]] with the zone named | A weekly rule, such as flat before a weekly expiry |
-| The session's last bar | [[session.isLastBar]] with `fillOn = "close"` | A host that states session hours; not /trading today |
+| The session's last bar | [[session.isLastBar]] with `fillOn = "close"` | The chart and the Backtest panel; a deployment refuses it in 0.5.0 |
 
 This strategy gives up on a trade that is not in profit after two hours, never holds more than sixty bars, and is flat before the close:
 
@@ -322,6 +322,6 @@ Events reach the run's record and the log, not the chart, and no call reads one:
 | The run stops with OS7010 | A stop moved above a long's entry | Stop below a long, target above it |
 | The plotted stop drifts after entry | The plot reads a level recomputed every bar | Hold the level set at entry in a `var` and plot that |
 | An intraday position is carried overnight | `closeOnSessionEnd` alone, or an exit decided on the last bar | Exit on a cutoff time that leaves a bar to fill in |
-| No exits on the clock in the Backtest panel | A clock test written without a zone | Name the zone: `session.isIn("0915-1500", "Asia/Kolkata")` |
+| Exits on the clock at the wrong time of day | A clock test written without a zone, on a chart set to another timezone | Name the zone: `session.isIn("0915-1500", "Asia/Kolkata")` |
 
 **Related.** [Orders](/script/strategies/orders), [Position and sizing](/script/strategies/position-and-sizing), [Legs and books](/script/strategies/multi-leg-and-books), [Costs and fills](/script/strategies/costs-and-fills), [Sessions and time](/script/data/sessions-and-time), [Sandbox and live](/script/strategies/sandbox-and-live), [Strategy orders reference](/script/reference/strategy), [leg.* reference](/script/reference/legs)

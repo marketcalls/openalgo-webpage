@@ -229,8 +229,8 @@ The price may be computed from the data. It is read on every bar, and **the line
 version 1
 study("Session open", overlay = true, precision = 2)
 
-// The session's first bar, or the first bar of the IST day where the chart
-// states no session hours, as /trading does in this release.
+// The session's first bar, or the first bar of the IST day where the host
+// states no session hours.
 newSession = orElse(session.isFirstBar, isNone(time[1]) or not date.isSameDay(time, time[1], "Asia/Kolkata"))
 
 var sessionOpen = none

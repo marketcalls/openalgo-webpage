@@ -249,8 +249,8 @@ Two behaviours to know before you rely on alerts:
 
 **Adding a study to a chart fires nothing for the history already on it.** An alert is a statement about now. A study added at noon that raised four hundred alerts for the morning's bars would be useless.
 
-:::note On the /trading chart in this release
-The chart judges a script's alerts once for each new bar, when the bar first arrives. During market hours that is the bar's first tick, before the close the alert is waiting for, and the chart does not look at the bar again, so the alert may not fire. A bar that reaches the chart already closed does fire it. Every `frequency` also behaves as `"oncePerBar"` there. To be told reliably, plot the condition as 1 or 0 and put a study alert on that plot, as [Alerts on a script condition](/script/alerts/alerts-in-trading#alerts-on-a-script-condition) shows.
+:::note On the /trading chart
+The chart judges a script's alert when its bar closes, and fires it once for that bar: a notification on the page and a row in the Log tab of the Alerts panel. Only bars that close while the chart is open are judged, never the history loaded when it opens. An alert written with `onUnconfirmed = true` can fire on the forming bar instead, still once. Every `frequency` behaves as `"oncePerBar"` there, and alerts wait while a replay or a workspace change has the chart.
 :::
 
 {{screen: alert-toast}}

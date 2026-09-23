@@ -7,14 +7,14 @@ A backtest says what a strategy would have done. A deployment runs it: a process
 
 ## A strategy ready to deploy
 
-The strategy runner in release 0.5.0 runs a subset of what the backtest runs. This file stays inside it: its quantity is in units, its stop is a rule the script tests on each close, and it reads no calendar and no session boundary.
+The strategy runner in release 0.5.0 runs a subset of what the backtest runs. This file stays inside it: its quantity is in units, and its stop is a rule the script tests on each close rather than a bracket.
 
 ```openscript title="EMA cross, deployable"
 version 1
 
-// Written for the 0.5.0 strategy runner: units, a stop written as a rule, and no
-// calendar or session reads, which the runner does not answer yet. The costs
-// are for the backtest; a deployment pays whatever the market charges.
+// Written for the 0.5.0 strategy runner: units, and a stop written as a rule
+// rather than exit(), which the runner does not send yet. The costs are for
+// the backtest; a deployment pays whatever the market charges.
 strategy("EMA cross, deployable", overlay = true, precision = 2,
          capital = 500000, qty = input(1, "Quantity, units", min = 1),
          product = "intraday",
@@ -119,13 +119,15 @@ When a run starts, the runner checks the program before it sends anything. In re
 |---|---|---|
 | Calls [[exit()]] or [[order.bracket()]] | A stop and a target have to go out as one protected pair, and the runner cannot send that yet. Sending the entry alone would leave a position with nothing protecting it | Write the stop as a rule tested on each close, as above |
 | Sizes by `qtyType = "lots"`, `"cash"` or `"equityPercent"` | It sends only a quantity the script states in units | Use `qtyType = "units"`, and size F&O orders in units of the lot |
-| Reads [[session.isFirstBar]] or [[session.isLastBar]] | The runner works out no session boundaries. It refuses the first itself, and the server's engine does not have the second yet | Anchor on something the bars carry |
-| Reads the calendar: any `date.*` call, [[date.format()]] or [[session.isIn()]] | The runner reads a clock only in UTC and an Indian instrument's calendar is IST, so every such call would answer nothing and the strategy would never act on one | Keep calendar rules out of a deployed script in this release |
-| Declares an input with `kind = "time"` | The same: a written time would be read under the wrong calendar | The same |
+| Reads [[session.isLastBar]] | The server's engine does not have it yet, so the run is refused when it loads, with OS6004 naming the function | Square off by the clock instead, with [[session.isIn()]] or a `date.*` test |
+| Reads [[session.isFirstBar]] when the market calendar holds no session for the exchange, or when the instrument's details could not be read as the run started | Every answer would be absent, and the strategy would never act on one | Run it on an exchange the calendar holds, or start it again in a moment |
+| Reads the calendar, any `date.*` call, [[date.format()]] or [[session.isIn()]], or declares an input with `kind = "time"`, on an instrument whose zone the server cannot read a clock in | Every calendar read would be absent, and a written time would be read under the wrong calendar | The server reads Asia/Kolkata, the zone of every Indian exchange, so this concerns an instrument in another zone only |
 
 A refused run ends at once and sends nothing. The row goes back to **stopped**, and the reason, naming the script, is in the run's log on the server.
 
-`closeOnSessionEnd` is not acted on by the runner either, so an intraday strategy that must be flat by the close needs its own exit, and without a calendar read that exit cannot be a time of day in this release. Watch the end of the first sessions, and close anything left open yourself.
+Everything else about the instrument and the clock is there in a deployment. The runner reads the instrument's timezone, tick size, lot size, instrument type and whether it reports volume and open interest from the same platform record the chart and the Backtest panel read, and its trading session from the market calendar. Calendar reads, any `date.*` call, [[date.format()]] and [[session.isIn()]], are answered in the instrument's zone, IST for an Indian exchange, and a `kind = "time"` input is read in that zone too. [[session.isFirstBar]] and [[vwap()]] follow the calendar's session. A run started on a special session day reads that day's bars against the day's own hours and every other day's against the regular ones, and keeps that session for as long as it runs.
+
+`closeOnSessionEnd` is not acted on by the runner either, so an intraday strategy that must be flat by the close needs its own exit: a time of day tested with [[session.isIn()]] or a `date.*` call, as [Exiting on the clock](/script/strategies/exits-and-brackets#exiting-on-the-clock) shows. Watch the end of the first sessions, and close anything left open yourself.
 
 :::warn Intraday positions and the square-off
 In analyzer mode the sandbox squares off `MIS` positions on its own at a set time before the close (15:15 for NSE, BSE and NFO by default), and after that time it refuses `MIS` orders that would open or add to a position until the next session. That square-off is not one of the deployment's orders, so the deployment's books still show the position, and its next exit would be an order in the other direction. Pause or stop a deployment that is holding an `MIS` position before the square-off time, or deploy it with `CNC` or `NRML`. A live account may square off intraday positions in the same way: check your own account's rule.
@@ -206,6 +208,7 @@ The runner can also hold a schedule for a deployment: a start time and an option
 Each run writes its own log file on the server, in the `log/strategies` folder of the OpenAlgo installation, named after the deployment and the time the run started, in IST. The Strategies panel does not show it. It records, in plain sentences:
 
 - the start, with the strategy, instrument, exchange and interval, and a line saying orders go through the platform's own order path;
+- the trading session the run reads from the market calendar, and whether today is a special session;
 - which inputs were set from the deployment's saved values;
 - the history replay and how many bars it covered;
 - which destination the orders are going to, analyzer or live, once the first order is accepted;
@@ -222,7 +225,7 @@ Work through this before a strategy runs with real money. Every item can be chec
 **The script**
 
 1. It starts with `version 1`, compiles with no errors, and you have read every warning.
-2. It stays inside what the runner needs: quantities in units, no `exit()` or `order.bracket()`, no calendar or session reads, no time inputs.
+2. It stays inside what the runner needs: quantities in units, no `exit()` or `order.bracket()`, and no `session.isLastBar`.
 3. Every entry has an exit, including one that does not depend on the entry signal reversing, such as a loss limit written as a rule.
 4. Every entry is guarded by the position, such as [[pos.isFlat]], so no signal can enter twice.
 5. It is warm within the history the runner replays at your interval, or you accept its first sessions as warmup.

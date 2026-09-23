@@ -1,9 +1,9 @@
 ---
 title: Sessions and time
-description: Time in OpenScript, from UTC timestamps and the chart's timezone to the NSE session from 09:15 to 15:30 IST, the first bar of the day, time windows, holidays, and what each part of /trading supports today.
+description: Time in OpenScript, from UTC timestamps and the chart's timezone to the NSE session from 09:15 to 15:30 IST, the first bar of the day, time windows, holidays, and what each part of /trading supports.
 ---
 
-Trading happens in sessions, and a session is not the same thing as a calendar day. This page covers how OpenScript (also called OpenAlgo Script) represents time, how to find the first bar of a trading day, how to test whether a bar falls inside a window such as 09:15 to 09:30 IST, how to cope with holidays, and which of these tools work in each part of the /trading page today.
+Trading happens in sessions, and a session is not the same thing as a calendar day. This page covers how OpenScript (also called OpenAlgo Script) represents time, how to find the first bar of a trading day, how to test whether a bar falls inside a window such as 09:15 to 09:30 IST, how to cope with holidays, and which of these tools work in each part of the /trading page.
 
 ## One instant, two calendars
 
@@ -42,7 +42,7 @@ A **session** is the instrument's trading session as the host defines it. It is 
 | [[session.isHoliday()]] | `bool` | Whether a date is a trading holiday | Planned |
 | [[session.nextOpen]] | `series number` | When the next session opens | Planned |
 
-`session.isFirstBar` and `session.isLastBar` are worked out from the instrument's session hours, which the host states. **Where the host states none, both are absent on every bar.** That is the honest answer, since a guessed session would be wrong somewhere, and it is the situation in /trading today: see [the last section](#sessions-and-the-clock-in-trading-today). [[timeClose]], the instant a bar ends, and `date.add`, calendar arithmetic, are planned as well.
+`session.isFirstBar` and `session.isLastBar` are worked out from the instrument's session hours, which the host states. **Where the host states none, both are absent on every bar.** That is the honest answer, since a guessed session would be wrong somewhere. /trading states the session from the platform's market calendar, with the exceptions in [the last section](#sessions-and-the-clock-in-trading-today). [[timeClose]], the instant a bar ends, and `date.add`, calendar arithmetic, are planned as well.
 
 Using a planned name is refused by the compiler with OS2020:
 
@@ -65,11 +65,11 @@ A session is what an exchange opens and closes. A date is what a calendar says. 
 
 Everything in the language that resets "per day" is meant to reset per **session**. [[vwap()]] restarts when the session opens, so it needs the session hours too. A `"1D"` [higher timeframe read](/script/data/higher-timeframes) groups the bars of one calendar day in the chart's timezone, which on an Indian exchange is one session. Write your own state the same way.
 
-**For Indian exchanges the two line up.** No NSE, BSE or MCX session runs past midnight IST, so a new calendar day in IST is a new session. That gives a test that works on the /trading chart today, when the chart is not told the session hours.
+**For Indian exchanges the two line up.** No NSE, BSE or MCX session runs past midnight IST, so a new calendar day in IST is a new session. That gives a test that works on any host, including one that states no session hours.
 
 ## The first bar of the day
 
-The language's answer is `session.isFirstBar`. On Indian instruments you can also test for a new IST date, which is what this study does, so it works on the /trading chart now:
+The language's answer is `session.isFirstBar`, which /trading works out from the market calendar's session hours. On Indian instruments you can also test for a new IST date, which is what this study does, so it works the same on a host that states no session hours:
 
 ```openscript title="Day open, high and low"
 version 1
@@ -101,7 +101,7 @@ fill(dayHighPlot, dayLowPlot, fade(aqua, 94))
 
 The oldest day on the chart may have started before the first loaded bar, so its open, high and low describe only the part of the day the chart holds. Every later day is complete.
 
-On a host that supplies session hours, replace the `newDay` line with `newDay = session.isFirstBar` and the study works on any market, including one whose session crosses midnight.
+On a host that supplies session hours, as /trading does, replace the `newDay` line with `newDay = session.isFirstBar` and the study works on any market, including one whose session crosses midnight.
 
 ### Tests that look right and are not
 
@@ -120,7 +120,7 @@ The `isSameDay` test has one more trap, on the oldest bar. There `time[1]` is ab
 
 The schedule is also its limit. If trading stops before the last scheduled bar, no bar that day has `session.isLastBar` true, so a strategy that must be flat also needs a clock based exit.
 
-Where session hours are not supplied, as in /trading today, square off by the clock instead: a window with [[session.isIn()]] on the chart, or the IST arithmetic in [the last section](#sessions-and-the-clock-in-trading-today), which works in every part of /trading.
+In /trading, `session.isLastBar` answers on the chart and in the Backtest panel. A deployed strategy cannot read it yet: the runner refuses it when the run loads. So a strategy you mean to deploy squares off by the clock instead, with a window in [[session.isIn()]], or with the IST arithmetic in [the last section](#sessions-and-the-clock-in-trading-today), which needs nothing from the host at all.
 
 ## Windows inside the day
 
@@ -203,14 +203,15 @@ if bar.isLast
 An anchor the reader picks, such as the start of an anchored average, is an input of kind `"time"`. The dialog stores the date and time as text, and the script receives a timestamp in UTC milliseconds, ready to compare with `time`:
 
 ```openscript
-// In /trading the text is read as a UTC clock: 03:45 UTC is 09:15 IST.
-anchor = input("2025-01-02 03:45", "Anchor, UTC", kind = "time")
+// On the /trading chart the text is read in the chart's timezone:
+// 09:15 on a chart in Asia/Kolkata is 09:15 IST.
+anchor = input("2025-01-02 09:15", "Anchor", kind = "time")
 started = time >= anchor
 background(started ? fade(aqua, 95) : none)
 ```
 
 :::warn
-In /trading today, the text of a time input is read as a **UTC** clock, not in the chart's timezone, on the chart and in the Backtest panel alike. `2025-01-02 09:15` means 09:15 UTC, which is 14:45 IST. To anchor at an IST time, subtract 5 hours 30 minutes when you type it, and say "UTC" in the input's title so the reader does too. The Strategies panel does not run a script with a time input at all.
+The /trading chart reads the text of a time input in the chart's timezone, and a deployed strategy reads it in the instrument's zone, IST for an Indian exchange. The **Backtest panel** still reads it as a **UTC** clock: there `2025-01-02 09:15` means 09:15 UTC, which is 14:45 IST. To anchor a backtest at an IST time, subtract 5 hours 30 minutes when you type the time in the panel's inputs.
 :::
 
 ## Holidays
@@ -265,15 +266,19 @@ plot(bar.isLast ? ageMinutes : none, "Minutes since the newest bar opened")
 
 ## Sessions and the clock in /trading today
 
-The same script meets three different hosts in /trading, and they do not all supply the same facts yet.
+The same script meets three different hosts in /trading. All three read the instrument's timezone and trading session from the platform's market calendar, the same record an admin edits when the exchange changes its hours, so no session time is written into a script or into the page.
 
-| Where the script runs | `date.*` and `session.isIn` | `session.isFirstBar` and `session.isLastBar` |
+| Where the script runs | `date.*` and `session.isIn` | `session.isFirstBar`, `session.isLastBar` and [[vwap()]] |
 |---|---|---|
-| On the chart, as a study | Read in the chart's timezone | Absent: /trading does not yet give the chart's engine the instrument's session hours. [[vwap()]], which restarts at each session's open, is absent for the same reason |
-| In the Backtest panel | Absent: the backtest run is not told the chart's timezone | Absent |
-| In the Strategies panel, as a deployed strategy | The runner refuses to start a script that calls them, because its engine reads a clock only in UTC and an Indian instrument's calendar is Asia/Kolkata. It refuses a time input for the same reason | The runner refuses to start a script that reads them |
+| On the chart, as a study or a strategy | Read in the chart's timezone | From the instrument's regular session hours. Absent while the chart's timezone is set to a zone other than the exchange's, and for the moment after the study is first drawn, before the instrument's details arrive; the study draws again when they do |
+| In the Backtest panel | Read in the exchange's timezone, Asia/Kolkata for an Indian exchange | From the regular session hours, for every day of the run |
+| In the Strategies panel, as a deployed strategy | Read in the instrument's zone, Asia/Kolkata for an Indian exchange | `session.isFirstBar` and `vwap()` from the market calendar; a run started on a special session day reads that day with its own hours. `session.isLastBar` is refused when the run loads, OS6004: the server's engine does not have it yet |
 
-The studies on this page use `date.*` and `session.isIn`, so they work on the chart. A strategy that has to behave the same on the chart, in the Backtest panel and when deployed needs a clock that none of those hosts can take away: arithmetic on [[time]] itself.
+The chart and the Backtest panel use the **regular** session for every day, because the engine holds one session for a whole run. On a special session day, such as an evening session on a holiday, the bars are read against the regular hours.
+
+A deployed strategy is refused before it starts when the server cannot read a clock in the instrument's zone, or when a script reads `session.isFirstBar` and the market calendar holds no session for the exchange. Both refusals name the script and the reason in the run's log.
+
+The studies on this page use `date.*` and `session.isIn`, which answer in every part of /trading. Arithmetic on [[time]] itself is still worth knowing: it needs nothing from the host, so a script written with it behaves the same on a host that states no timezone or session at all.
 
 India does not observe daylight saving, so India Standard Time is always exactly 5 hours 30 minutes ahead of UTC. Adding that offset to `time` and dividing gives the IST day and the minute of the IST day with no calendar function at all. (A fixed offset is wrong for any zone that changes its clocks, which is why the language never uses one. For IST it is exact all year.)
 

@@ -3,7 +3,7 @@ title: Alerts in /trading
 description: Create price, study and drawing alerts on the /trading chart, alert on a condition your OpenScript study computes, see what a script's own alert() does there, and read the Alerts and Log tabs of the Alerts panel.
 ---
 
-This page is about alerts as you meet them on the /trading page of OpenAlgo: setting a price alert with one right-click, putting an alert on a study's line (including a study you wrote in OpenScript), what an `alert()` in your script does on the chart in this release, how each firing reaches you, and how to read and manage everything in the **Alerts** panel on the right-hand toolbar. For writing `alert()` calls in a script, see [Alerts from scripts](/script/alerts/overview).
+This page is about alerts as you meet them on the /trading page of OpenAlgo: setting a price alert with one right-click, putting an alert on a study's line (including a study you wrote in OpenScript), what an `alert()` in your script does on the chart, how each firing reaches you, and how to read and manage everything in the **Alerts** panel on the right-hand toolbar. For writing `alert()` calls in a script, see [Alerts from scripts](/script/alerts/overview).
 
 :::key Alerts run in your browser
 Alerts are checked by the chart that is open in /trading, so an alert fires only while /trading is open in a browser tab. The tab may sit behind other windows: a chart with an Active alert keeps fetching bars while it is hidden. Close the tab and nothing fires until you open it again. What did fire is kept on the OpenAlgo server, in the Log tab, for 90 days.
@@ -18,7 +18,7 @@ Alerts are checked by the chart that is open in /trading, so an alert fires only
 | Drawing alert | A level of a drawing, such as a trend line | Right-click the drawing, or the **Alerts** button | Yes |
 | Script alert | An [[alert()]] call in an OpenScript study on the chart | Nothing to create: it is watched once the study is on the chart | No. Any firing appears in the Log tab |
 
-The first three are alerts you set on the chart, and each has a row in the Alerts tab with its own settings. The fourth is written into the script itself: its condition and message come from the code. In this release a script alert rarely fires on the chart (see [Alerts from a script](#alerts-from-a-script)), so to be told about a condition your script computes, use a study alert on a plot of it, as [Alerts on a script condition](#alerts-on-a-script-condition) shows.
+The first three are alerts you set on the chart, and each has a row in the Alerts tab with its own settings. The fourth is written into the script itself: its condition and message come from the code, and it fires when its bar closes (see [Alerts from a script](#alerts-from-a-script)). A script alert goes to the sound and the desktop notification only, so to send a condition your script computes to Telegram or WhatsApp, or to give it an expiry, use a study alert on a plot of it, as [Alerts on a script condition](#alerts-on-a-script-condition) shows.
 
 ## A price alert in one click
 
@@ -161,13 +161,13 @@ Right-click a drawing and choose **Create drawing alert**. When a drawing cannot
 
 ## Alerts from a script
 
-A study that calls [[alert()]] needs no setup to be watched. Save it in the Scripts panel and put it on the chart with **Apply to chart** there, or from the **Indicators** dialog. Each `alert()` in it becomes a condition the chart checks as new bars arrive, starting from the next new bar.
+A study that calls [[alert()]] needs no setup to be watched. Save it in the Scripts panel and put it on the chart with **Apply to chart** there, or from the **Indicators** dialog. Each `alert()` in it becomes a condition the chart judges on every bar that closes while the chart is open.
 
-:::warn Script alerts do not fire reliably on the chart in this release
-The chart checks each new bar for a script's alerts once, at the moment the bar first reaches the chart, and does not look at that bar again after it closes. During trading hours a bar arrives with its first tick, and an `alert()` waits for its bar to close unless the file sets `onUnconfirmed = true`, so at that moment it has nothing to report. It fires only for a bar that arrives late, after its time has passed. A file that does set `onUnconfirmed = true` fires only when its condition already holds on the first update of a new bar, with the message worked out from that update. Until this is fixed, use the route in [Alerts on a script condition](#alerts-on-a-script-condition), which works with every delivery channel.
+:::note When a script alert is judged
+An `alert()` waits for its bar to close. When the next bar arrives, the chart judges the bar that just closed with the script's own condition and fires once for it, with the message worked out from that closed bar. A file that sets `onUnconfirmed = true` can fire on the forming bar instead, as soon as its condition holds, and is still not fired a second time for the same bar. While replay or a workspace change is using the chart, script alerts are held back.
 :::
 
-When a script alert does fire on the chart:
+When a script alert fires on the chart:
 
 - a toast shows the script's message, or its title when the message is absent on that bar;
 - the alert sound plays, and a desktop notification appears if the /trading tab is hidden and the browser allows notifications;
@@ -177,15 +177,16 @@ A few things set script alerts apart from the alerts you create on the chart:
 
 - **They are not in the Alerts tab**, so they have no Stop, Edit or Delete. To silence them, remove the study from the chart, or take the `alert()` out of the script and save it.
 - **Delivery is fixed** at Sound and Desktop notification. There is no box to tick for Telegram or WhatsApp.
-- **Nothing fires for history.** Adding the study, or changing its settings, recalculates the past without sending anything. Only bars that arrive afterwards are checked.
+- **Nothing fires for history.** Adding the study, or changing its settings, recalculates the past without sending anything. Only bars that close while the chart is open are judged, never the history loaded when it opens.
+- **An edit keeps it watched.** Applying a script that is already on the chart, after you save a change, updates that copy rather than adding a second one, so its alerts carry on under the same study.
 - **At most once per bar.** The chart checks each `alert()` once for each new bar, so the `frequency` values `"once"` and `"everyUpdate"` behave as `"oncePerBar"` here. See [frequency](/script/alerts/overview#frequency).
 - **The id names the alert.** A repeat of the same `id` replaces its previous desktop notification rather than stacking another beside it. Give every alert a fixed `id` and a `title`, as [The id is a promise](/script/alerts/overview#the-id-is-a-promise) explains.
 
-A strategy deployed from the Strategies panel runs on the OpenAlgo server rather than on the chart, so the limit above does not apply to it. It sends nothing while it replays history at the start; after that, each alert it raises is written as a line in that run's log, and it is not sent to this panel, the sound or any channel.
+A strategy deployed from the Strategies panel runs on the OpenAlgo server rather than on the chart. It sends nothing while it replays history at the start; after that, each alert it raises is written as a line in that run's log, and it is not sent to this panel, the sound or any channel.
 
 ## Alerts on a script condition
 
-The dependable way to be told about something your script computes is to plot the condition as 1 or 0 and put a study alert on that plot. Set to **On bar close**, the study alert is judged on the closed bar, the same rule a script's `alert()` follows. It also has everything the dialog offers (a name, message placeholders, an expiry, repeat) and can go to Telegram or WhatsApp as well as the sound and the desktop notification.
+To send a condition your script computes anywhere beyond the sound and the desktop notification, plot the condition as 1 or 0 and put a study alert on that plot. Set to **On bar close**, the study alert is judged on the closed bar, the same rule a script's `alert()` follows. It also has everything the dialog offers (a name, message placeholders, an expiry, repeat) and can go to Telegram or WhatsApp as well as the sound and the desktop notification.
 
 ```openscript title="Breakout flag"
 version 1

@@ -135,7 +135,7 @@ if newDay
 level(dayOpen, "Day open", fade(aqua, 25), style = "solid", width = 2)
 ```
 
-The first bar of the day is found here by a change of date in IST, which is right for NSE, BSE and MCX because none of their sessions runs past midnight. The language's own [[session.isFirstBar]] needs the exchange's session hours, which the /trading chart does not supply in this release, so it has no value there. [Sessions and time](/script/data/sessions-and-time) explains both.
+The first bar of the day is found here by a change of date in IST, which is right for NSE, BSE and MCX because none of their sessions runs past midnight. The language's own [[session.isFirstBar]] needs the exchange's session hours. The /trading chart states them from the market calendar, so there it finds the same bars; the date test also works on a host that states no session hours. [Sessions and time](/script/data/sessions-and-time) explains both.
 
 **If you want to see where the level used to be, it is not a level.** A value whose past matters is a column, and a column is a plot. Use `style = "step"` so the picture says "it was this, then it became that" rather than sloping between readings that never happened:
 

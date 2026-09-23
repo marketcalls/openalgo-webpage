@@ -313,7 +313,7 @@ if cross(close, v)
     alert("Price crossed VWAP", id = "vwap-cross")
 ```
 
-**Remarks.** `cross(a, b)` is the same as `crossUp(a, b) or crossDown(a, b)`. When you later need to know which way it went, test the two directions separately. The example anchors the average by date because [[vwap()]] restarts on the session's first bar, which needs session hours the /trading chart does not state in this release.
+**Remarks.** `cross(a, b)` is the same as `crossUp(a, b) or crossDown(a, b)`. When you later need to know which way it went, test the two directions separately. The example anchors the average by date, which needs only a timezone; [[vwap()]] restarts on the session's own first bar, which needs the host to state session hours, as the /trading chart does.
 
 **See also.** [[crossUp()]], [[crossDown()]], [[alert()]]
 
@@ -415,7 +415,7 @@ score = close > open ? 1 : close < open ? -1 : 0
 plot(cum(score), "Running score", aqua)
 ```
 
-**Remarks.** An absent bar gives an absent result on that bar and leaves the total where it was; the next present bar carries on from there. The total never restarts. For a total that restarts every session at 09:15, keep it in a `var` and reset it on the session's first bar, as [Persistence](/script/language/persistence) shows: [[session.isFirstBar]] where the host states session hours, and a new IST date on the /trading chart, which does not.
+**Remarks.** An absent bar gives an absent result on that bar and leaves the total where it was; the next present bar carries on from there. The total never restarts. For a total that restarts every session at 09:15, keep it in a `var` and reset it on the session's first bar, as [Persistence](/script/language/persistence) shows: [[session.isFirstBar]] where the host states session hours, as the /trading chart does, and a new IST date where it does not.
 
 **See also.** [[sum()]], [[sumSkip()]], [[obv()]]
 

@@ -27,7 +27,7 @@ lockAt     = input(2000, "Then keep at least this much", min = 0)
 stepMoney  = input(2000, "Raise the floor for every further", min = 100)
 advance    = input(1500, "Raise it by", min = 0)
 
-// The zone is written out so the windows also work in the Backtest panel.
+// The zone is written out so the windows read Indian time on any host.
 zone       = "Asia/Kolkata"
 lotUnits   = max(orElse(chart.lotSize, 1), 1)
 pointValue = orElse(chart.pointValue, 1)

@@ -40,7 +40,7 @@ plot(pos.isFlat ? none : pos.avgPrice, "Entry", fade(silver, 40), style = "step"
 
 If the exchange's lot size for the contract on the chart is 75 units, `lots = 2` sends a buy of 150 units, and `close()` sells exactly what is held. Why this file counts in units rather than declaring `qtyType = "lots"` is explained under [Where a size comes from](#where-a-size-comes-from).
 
-Where the lot size comes from depends on where the strategy runs in /trading. The Backtest panel and a deployment from the Strategies panel use the lot size OpenAlgo holds for the instrument. The chart does not state one to the script yet, so on the chart [[chart.lotSize]] is absent, this file falls back to one unit per lot, and the chart's fill markers show one unit where the backtest shows a lot.
+The chart, the Backtest panel and a deployment from the Strategies panel all read [[chart.lotSize]] from the lot size OpenAlgo holds for the instrument. Where OpenAlgo holds no contract for the symbol, and on the chart for the moment before the instrument's details arrive, the lot size is absent and this file falls back to one unit per lot.
 
 ## What a strategy can read about itself
 
@@ -144,7 +144,7 @@ Index futures and options on NFO, and most MCX contracts, cannot be traded in si
 | Money per one point of price, per unit | [[chart.pointValue]] | The host has not stated one |
 | Smallest price step | [[chart.tickSize]] | The host has not stated one |
 
-**Absent is not 1.** When the host has not stated a lot size, `chart.lotSize` is absent, and absence propagates through arithmetic, so a size computed from it is absent too and the order is refused with OS7002. Decide once what a missing lot size means in your script: `max(orElse(chart.lotSize, 1), 1)` treats it as one unit. In /trading that fallback matters on the chart, which states no lot size. The Backtest panel states the lot size OpenAlgo holds for the instrument, and where OpenAlgo holds none it runs on a lot of 1 and a tick of 0.05 and says so in the line under the report's figures.
+**Absent is not 1.** When the host has not stated a lot size, `chart.lotSize` is absent, and absence propagates through arithmetic, so a size computed from it is absent too and the order is refused with OS7002. Decide once what a missing lot size means in your script: `max(orElse(chart.lotSize, 1), 1)` treats it as one unit. In /trading that fallback matters where OpenAlgo holds no contract for the symbol: the chart then states no lot size, and the Backtest panel runs on a lot of 1 and a tick of 0.05 and says so in the line under the report's figures.
 
 **Round down to whole lots yourself.** A quantity that is not a whole number of lots is catalogued as OS7005, and in version 0.5.0 nothing raises it: the order is sent as written and the destination is left to reject it. [[order.roundToLot()]] is planned. Until it lands, round with arithmetic:
 
@@ -342,7 +342,6 @@ The report's equity curve marks a trade at the size it ended up at, and at its f
 | A lots strategy ends up hugely short in the backtest | `close()` under `qtyType = "lots"` | Count in units from `chart.lotSize`, or flatten with `close(qty = lots)` |
 | The backtest refuses to start with OS6021 | `qtyType = "cash"` or `"equityPercent"` | Count in units |
 | The Strategies panel will not start the strategy | Any `qtyType` other than `"units"` | Count in units from `chart.lotSize` |
-| The chart's markers show one unit where the backtest shows a lot | The chart states no lot size, so `chart.lotSize` falls back to 1 there | Nothing to fix; read sizes from the Backtest panel |
 | Every order is refused with OS7002 | A size computed from `chart.lotSize` while it is absent | `max(orElse(chart.lotSize, 1), 1)` |
 | The size explodes on quiet days | Risk sizing with no cap as the stop distance shrinks | Cap the size |
 | The run stops with OS7008 | An entry beyond `pyramiding` | Guard entries, or raise `pyramiding` on purpose |

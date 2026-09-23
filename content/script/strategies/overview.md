@@ -117,7 +117,7 @@ These three calls look alike in a file and do entirely different things:
 A bar is **confirmed** once it has closed and its prices can no longer change. A marker is a statement about the chart, and nothing can stop it being drawn. An order is a request, and it can be refused: for an absent price or size (OS7002), a size of zero or less (OS7004), a price off the tick (OS7006), a resting order with no price (OS7007), an entry beyond the pyramiding limit (OS7008), cancelling a tag that is not working (OS7009), a stop or target on the wrong side of an open position (OS7010), two opposite orders on one bar (OS7013), or a close larger than what it closes (OS7017). [Orders](/script/strategies/orders) lists every refusal with its usual cause.
 
 :::warn A refused order stops the script
-In version 0.5.0 a refused order stops the run at the bar it happened on. Nothing that bar decided is sent, and no later bar executes. In the Backtest panel the report then holds only the trades made before it, and the panel does not show the error, so a run with far fewer trades than the chart suggests is worth checking for one. The guards below are what keep a strategy from ever reaching one.
+In version 0.5.0 a refused order stops the run at the bar it happened on. Nothing that bar decided is sent, and no later bar executes. In the Backtest panel the report then holds only the trades made before it, and above the figures the panel says which bar the run stopped on, what went wrong and the code, so the figures are not read as the whole range. The guards below are what keep a strategy from ever reaching one.
 :::
 
 ## What happens on every bar
@@ -189,7 +189,7 @@ A strategy is mostly the same code as the study plus a handful of guards. Learn 
 
 **Warmup** is the run of early bars before an indicator has enough history to give a value. The last guard applies to `and` as well: its right side is not evaluated when its left side is false, so write `goLong = crossUp(fast, slow)` at the top level and test `goLong and pos.isFlat`, rather than putting the call inside the condition.
 
-[[session.isOpen]] is planned. Until it lands, [[session.isIn()]] with a window you write is the trading-hours guard. Name the zone, `"Asia/Kolkata"` for Indian markets: the chart states its timezone to the script, but the Backtest panel does not, and there a window with no zone has no value on any bar, so the strategy never trades.
+[[session.isOpen]] is planned. Until it lands, [[session.isIn()]] with a window you write is the trading-hours guard. Name the zone, `"Asia/Kolkata"` for Indian markets: a window with no zone is read in the chart's timezone on the chart and in the exchange's zone in the Backtest panel and a deployment, so naming it keeps the window at the same time of day everywhere, whatever a chart is set to.
 
 ```openscript title="Breakout, guarded"
 version 1
@@ -214,7 +214,7 @@ else if pos.isLong and not inHours
 plot(breakoutLevel, "Breakout level", aqua, style = "step")
 ```
 
-A strategy deployed from the Strategies panel cannot read the clock this way in version 0.5.0: the runner refuses to start a script that calls [[session.isIn()]] or any `date.*` function on an Indian instrument. [Sessions and time](/script/data/sessions-and-time#sessions-and-the-clock-in-trading-today) shows a trading window built from arithmetic on [[time]] that works in all three places.
+A strategy deployed from the Strategies panel reads the clock this way too: the runner answers [[session.isIn()]] and every `date.*` function in the instrument's zone, IST for an Indian exchange. [Sessions and time](/script/data/sessions-and-time#sessions-and-the-clock-in-trading-today) lists what each part of /trading reads.
 
 ## Where a strategy runs in /trading
 
@@ -233,7 +233,7 @@ The Strategies panel shows the platform's current mode in its header, and its st
 
 {{screen: strategies-panel}}
 
-The runner that executes a deployment supports a subset of the language in version 0.5.0: quantities in units only, no [[exit()]] or [[order.bracket()]], and no calendar or session reads. It refuses anything else before the first order, and [Sandbox and live](/script/strategies/sandbox-and-live) lists each refusal with its fix.
+The runner that executes a deployment supports a subset of the language in version 0.5.0: quantities in units only, no [[exit()]] or [[order.bracket()]], and no [[session.isLastBar]]. It refuses anything else before the first order, and [Sandbox and live](/script/strategies/sandbox-and-live) lists each refusal with its fix.
 
 A strategy that wants its stop or target drawn plots it like any other value. The chart shows what happened; the destination decides what happens.
 
@@ -264,8 +264,8 @@ Every script on this page trades one instrument, the one on its chart, and opens
 | Symptom | Cause | Fix |
 |---|---|---|
 | The position grows every bar the condition is true | No position guard | Add `and pos.isFlat`, or raise `pyramiding` on purpose |
-| The backtest stops partway, with far fewer trades than the chart shows | A refused order, most often OS7008: a second entry with `pyramiding = 1` | Guard entries with `pos.isFlat` |
-| No trades at all in the Backtest panel | A trading window written without a zone, such as `session.isIn("0930-1500")` | Name the zone: `session.isIn("0930-1500", "Asia/Kolkata")` |
+| The backtest stops partway, and the panel says which bar it stopped on | A refused order, most often OS7008: a second entry with `pyramiding = 1` | Guard entries with `pos.isFlat` |
+| Trades at the wrong time of day | A trading window written without a zone, such as `session.isIn("0930-1500")`, on a chart set to another timezone | Name the zone: `session.isIn("0930-1500", "Asia/Kolkata")` |
 | The backtest is much better than the account | `fillOn = "close"`, no slippage, no commission | Keep the defaults, then add real costs |
 | Orders appear on history and not on the forming bar | The condition is true inside the bar and false at its close | Nothing to fix: that is the deferral working |
 | A stop plotted on the chart never exits the backtest | Levels from `exit()` are not filled in 0.5.0 | Test the level in the script, as [Exits and brackets](/script/strategies/exits-and-brackets) shows |

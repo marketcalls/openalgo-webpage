@@ -420,10 +420,11 @@ tempted to put in the caption.
 
 The language's own test for the first bar of a session is
 [[session.isFirstBar]]. It needs the instrument's session hours, which the
-/trading chart does not give the engine yet, so there it has no value and a
-study built on it draws nothing. On NSE, BSE and MCX a new IST date is a new
-session, so the date test above works on the chart today. See
-[Sessions and time](/script/data/sessions-and-time#sessions-and-the-clock-in-trading-today).
+/trading chart states from the market calendar, so there it marks the same bars
+as the date test. The date test is kept here because it needs nothing from the
+host: on NSE, BSE and MCX a new IST date is a new session, so it also works
+where no session hours are stated. See
+[Sessions and time](/script/data/sessions-and-time).
 
 ## When a label is the wrong tool
 
@@ -463,7 +464,7 @@ number of lines to write.
 | The label is several bars right of its pivot | Anchored at `time` on the bar that reported the pivot | Anchor at `time[rightBars]` |
 | The chart slows as history loads, or the script stops with OS5010 | One label per bar, or an uncapped list | Cap the list, or use a plot |
 | A label is bare white text | No `color`, so the label has no plate | Pass a plate colour |
-| A study that marks the session open draws nothing on the /trading chart | It tests `session.isFirstBar`, which has no value there | Test for a new IST date, as the gaps study does |
+| A study that marks the session open draws nothing | It tests `session.isFirstBar`, which has no value where no session hours are stated: on /trading, when the chart's timezone was changed away from the exchange's, or when the instrument's details could not be read | Set the chart back to the exchange's timezone, or test for a new IST date, as the gaps study does |
 | OS2003 on the marker text | A number joined to a string | Convert it with `text(value, decimals)` |
 
 **Related.** [Lines and boxes](/script/visuals/lines-and-boxes) for the

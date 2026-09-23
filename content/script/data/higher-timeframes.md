@@ -295,12 +295,10 @@ Drawing a coarse bar as a candle currently takes four reads, one per price. A si
 | Where the script runs | Intraday reads such as `"15m"` or `"1h"` | Day, week and month reads |
 |---|---|---|
 | On the chart, as a study | Folded from the chart's own bars | Folded in the chart's timezone, Asia/Kolkata unless you changed it in the chart settings |
-| In the Backtest panel | Folded from the chart's bars | Absent on every bar, because the backtest run is not told the chart's timezone |
+| In the Backtest panel | Folded from the chart's bars | Folded in the exchange's timezone, Asia/Kolkata for an Indian exchange |
 
-:::warn
-A strategy that filters its trades with a daily read, as in the bias example above, takes no trades in the Backtest panel today: the read is absent, so the filter is never true. [[req.error()]] on the read says why: the host did not supply a timezone. Test such a strategy by drawing it on the chart, or use an intraday read such as `"1h"` for the filter.
-:::
+The chart folds days in the chart's timezone and the Backtest panel in the exchange's, so the two agree unless the chart's timezone has been changed away from the exchange's. A strategy that filters its trades with a daily read, as in the bias example above, trades the same days in both.
 
-The rules for the timeframe need the chart's interval. /trading names its daily, weekly and monthly charts `D`, `W` and `M`, which the language cannot read, so on those charts OS6002 and OS6015 are never raised. A `"1h"` read on a /trading daily chart is not refused: every day becomes its own coarse bar, and the read quietly hands back the previous day's value. On a daily chart, read only `"1D"` or coarser.
+The rules for the timeframe need the chart's interval. On the chart, /trading names its daily, weekly and monthly charts `D`, `W` and `M`, which the language cannot read, so on those charts OS6002 and OS6015 are never raised. A `"1h"` read on a /trading daily chart is not refused there: every day becomes its own coarse bar, and the read quietly hands back the previous day's value. The Backtest panel states the same chart as `"1D"`, so there the `"1h"` read is refused with OS6002. On a daily chart, read only `"1D"` or coarser.
 
 **Related:** [Timeframes](/script/data/timeframes), [Repainting](/script/data/repainting), [Other instruments](/script/data/other-instruments), [Sessions and time](/script/data/sessions-and-time), [req.* reference](/script/reference/request), [Warmup](/script/language/warmup)

@@ -295,9 +295,9 @@ if up and not orElse(up[1], false)
 
 ### My alert never arrives
 
-**Cause.** Everything in the previous entry applies, and two things are specific to alerts on the /trading page. Nothing fires for bars that were already on the chart when the study was added, because an alert is a statement about now. And in this release the chart checks a script's [[alert()]] once for each new bar, at the moment that bar first arrives. During market hours a bar arrives with its first tick, before it has closed, while the alert waits for its bar to close, so at that moment it has nothing to report and the chart does not look at that bar again. The alert fires only for a bar that reaches the chart already closed, which you cannot rely on while the market is open.
+**Cause.** Everything in the previous entry applies, and three things are specific to alerts on the /trading page. A script's [[alert()]] is judged when its bar closes on a chart that is open, so nothing fires for bars that were already on the chart when the study was added, or for the history loaded when the page opens: an alert is a statement about now. The chart that shows the study has to stay open, because that is where the condition is checked. And while replay or a change of workspace owns the chart, alerts are held back.
 
-**Fix.** Plot the condition as 1 or 0 and put a study alert on that plot: open **Create alert** from the chart's **Alerts** button, set **What to watch** to **Study plot**, pick the study and its plot, and set **Evaluate** to **On bar close**. [Alerts on a script condition](/script/alerts/alerts-in-trading#alerts-on-a-script-condition) walks through it. Keep a fixed `id` on every `alert()` in the script as well: without one its identity comes from its line number, which moves when you edit the file, and the compiler warns with [OS8008](/script/errors/warnings#os8008).
+**Fix.** Plot the condition as `cond ? 1 : 0` first and check that the line reaches 1 on a bar that closed while you watched. Keep a fixed `id` on every `alert()` in the script: without one its identity comes from its line number, which moves when you edit the file, and the compiler warns with [OS8008](/script/errors/warnings#os8008). A script alert reaches you as a notification on the page and a row in the Log tab. To send the condition to Telegram or WhatsApp, or to give it an expiry, put a study alert on that plot instead: open **Create alert** from the chart's **Alerts** button, set **What to watch** to **Study plot**, pick the study and its plot, and set **Evaluate** to **On bar close**. [Alerts on a script condition](/script/alerts/alerts-in-trading#alerts-on-a-script-condition) walks through it.
 
 ```openscript
 fast = ema(close, 9)
@@ -390,7 +390,7 @@ See [Other instruments](/script/data/other-instruments).
 3. **The condition has not been true since it started.** Orders wait for a confirmed bar, and a strategy acts only on bars that arrive after it starts.
 4. **The instrument was outside its trading session.** Nothing in the script checks this for you.
 
-**Fix.** Check the deployment's row and the mode in the Strategies panel header. To check the logic itself, open the script in the Scripts panel and press **Apply to chart**: for a strategy, that runs a backtest over the chart's history and marks every fill on the price. On the chart and in the Backtest panel, guard entries to the session with [[session.isIn()]] and a named zone, such as `session.isIn("0915-1530", "Asia/Kolkata")`. A deployed strategy cannot read the clock that way, because the Strategies panel refuses a script that calls `session.*` or `date.*` on an Indian instrument, so there build the window from arithmetic on [[time]]. `closeOnSessionEnd = true` is accepted and not acted on in version 0.5.0, so a strategy that must be flat at the close needs its own exit. See [Sandbox and live](/script/strategies/sandbox-and-live) and [Sessions and time](/script/data/sessions-and-time#sessions-and-the-clock-in-trading-today).
+**Fix.** Check the deployment's row and the mode in the Strategies panel header. To check the logic itself, open the script in the Scripts panel and press **Apply to chart**: for a strategy, that runs a backtest over the chart's history and marks every fill on the price. Guard entries to the session with [[session.isIn()]] and a named zone, such as `session.isIn("0915-1530", "Asia/Kolkata")`. The same guard holds on the chart, in the Backtest panel and in a deployed strategy, which reads the calendar in the instrument's zone. `closeOnSessionEnd = true` is accepted and not acted on in version 0.5.0, so a strategy that must be flat at the close needs its own exit. See [Sandbox and live](/script/strategies/sandbox-and-live) and [Sessions and time](/script/data/sessions-and-time).
 
 :::note
 [OS7012](/script/errors/orders#os7012) (outside the session) is in the error reference, but nothing raises it in version 0.5.0: nothing compares the bar's time with the instrument's session before an order is sent. Guard the session yourself.
@@ -422,7 +422,7 @@ fast = ema(close, 9)
 slow = ema(close, 21)
 crossed = crossUp(fast, slow)
 stop = lowest(low, 20)
-// The zone is named, so the window also holds in the Backtest panel.
+// The zone is named, so the window holds whatever timezone the chart is set to.
 inSession = session.isIn("0915-1530", "Asia/Kolkata")
 
 // Absent until the 20 bar window fills, and zero when the stop is too wide

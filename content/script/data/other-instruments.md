@@ -249,7 +249,7 @@ plot(dayMid, "NIFTY previous day mid", style = "step")
 
 [[chart.tickSize]], [[chart.lotSize]], [[chart.exchange]] and the rest of the `chart` namespace describe the instrument **the chart is showing**, never the one a read names. There is no per-read equivalent, so a study that reads another instrument and needs its lot size takes it as an input and says so in the title.
 
-On the /trading chart, a study is not told the chart instrument's exchange or lot size either, so `chart.exchange` and `chart.lotSize` are absent there. Take a lot size as an input whenever a study works in money.
+On the /trading chart, `chart.exchange` and `chart.lotSize` are the chart instrument's own, read from the platform's instrument record a moment after the study is first drawn. They are still the chart's, so a study that works in money on the legs it reads takes their lot size as an input.
 
 ## Index against its future
 
@@ -327,7 +327,7 @@ if decay >= targetPct
 
 The alert and the marker act on developing reads, so on the live chart they see the legs' prices as last fetched when the bar closes. Treat the alert as a prompt to look at the premium, not as an instruction to trade.
 
-On the /trading chart in this release, the marker draws as described, but the script's own `alert()` may not fire while the market is open: the chart judges a script's alerts once, when a bar first arrives, before it has closed. To be told reliably, plot `decay >= targetPct ? 1 : 0` as well and put a study alert on that plot, as [Alerts on a script condition](/script/alerts/alerts-in-trading#alerts-on-a-script-condition) shows.
+On the /trading chart the script's own `alert()` fires when the bar closes, as a toast, the alert sound and a row in the Log tab. To send it to Telegram or WhatsApp as well, plot `decay >= targetPct ? 1 : 0` and put a study alert on that plot, as [Alerts on a script condition](/script/alerts/alerts-in-trading#alerts-on-a-script-condition) shows.
 
 ## Other instruments in /trading
 

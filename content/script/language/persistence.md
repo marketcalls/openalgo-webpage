@@ -387,7 +387,7 @@ study("Session volume weighted price", overlay = true, precision = 2)
 src = input(hlc3, "Source")
 
 // The session's first bar where the host states session hours, and the first
-// bar of each IST day where it does not, as on the /trading chart.
+// bar of each IST day where it does not.
 newSession = orElse(session.isFirstBar, isNone(time[1]) or not date.isSameDay(time, time[1], "Asia/Kolkata"))
 
 // Three running totals rather than an array of every bar in the session.
@@ -418,10 +418,10 @@ plot(sessionBars, "Bars this session", fade(silver, 40), scale = "left")
 
 Three details here are persistence decisions rather than style:
 
-- The reset happens inside `if newSession`, on the first bar of each session, rather than by a second `var` line. `newSession` is [[session.isFirstBar]] where the host states the instrument's session hours; the /trading chart does not in this release, so there a new IST date marks the same bar for an NSE session.
+- The reset happens inside `if newSession`, on the first bar of each session, rather than by a second `var` line. `newSession` is [[session.isFirstBar]] where the host states the instrument's session hours, as /trading does; on a host that states none, a new IST date marks the same bar for an NSE session.
 - The readiness test is `totalVolume > 0`, not `sessionBars > 0`. An index has no traded volume, so its bars carry a volume of zero or no volume at all, depending on the data. With zero the total stays at zero and the test is false; with no volume the total is absent, the test is absent and takes the false branch. Either way the study draws nothing rather than dividing by zero.
 - Nothing needs `live var`. Every number settles when its bar closes, which is the only way the line on the chart today can be the line that was on it at the time.
 
-The library already has this calculation as [[vwap()]], which restarts every session. It needs the session hours too, so on the /trading chart it has no value in this release, and [[vwapAnchor()]] with the same `newSession` as its anchor gives the same line. Writing it by hand is how you learn the pattern for the accumulators the library does not have.
+The library already has this calculation as [[vwap()]], which restarts every session. It needs the session hours too, which /trading states, and on a host that states none [[vwapAnchor()]] with the same `newSession` as its anchor gives the same line. Writing it by hand is how you learn the pattern for the accumulators the library does not have.
 
 **Related.** [Execution model](/script/language/execution-model), [Bars and history](/script/language/bars-and-history), [Warmup](/script/language/warmup), [Realtime and confirmation](/script/language/realtime-and-confirmation), [Variables and scope](/script/language/variables-and-scope), [User functions](/script/language/functions), [Collections](/script/language/collections)

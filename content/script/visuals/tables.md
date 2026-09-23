@@ -95,9 +95,11 @@ explains each:
    that says "warming up" rather than leaving a blank or inventing a zero.
 
 The first row reads [[chart.symbol]] and [[chart.interval]], which the /trading
-chart supplies. It does not yet supply [[chart.exchange]] or [[chart.lotSize]],
-so there both are absent: a cell built from either is blank, and `show` would
-say "warming up" for ever.
+chart supplies itself. Facts from the platform's instrument record, such as
+[[chart.exchange]] and [[chart.lotSize]], arrive a moment after the study is
+first drawn, and the study is drawn again when they do. A fact the host does not
+state at all, such as [[chart.pointValue]] on the /trading chart, stays absent:
+a cell built from it is blank, and `show` would say "warming up" for ever.
 
 ## Declaring a grid
 
@@ -443,7 +445,7 @@ a list belongs in the [print log](/script/writing/debugging) or a
 | A second panel never appears | The chart draws only the first grid a study declares | Declare one grid, or split the study in two |
 | Numbers do not line up | Cells are left aligned by default | `align = "right"` on the value column |
 | An empty block stays in the corner with the panel switched off | The grid has a `bgColor` or a border, which is drawn at the declared size | Put the background on the cells you write instead |
-| A cell is blank, or says "warming up" for ever, on the /trading chart | It reads `chart.exchange` or `chart.lotSize`, which the chart does not supply yet | Leave those readings out of a panel meant for the chart |
+| A cell is blank, or says "warming up" for ever, on the /trading chart | It reads a fact the chart does not state, such as `chart.pointValue` or `chart.currency`, or the lot size of a symbol whose contract has not been downloaded | Test the fact with `isNone` and say "not stated", or leave that reading out of a panel meant for the chart |
 | OS4003 on a `str.repeat` meter | A count that is not a whole number | Round it down with `floor` first |
 
 **Related.** [Labels and shapes](/script/visuals/labels-and-shapes) for the stack

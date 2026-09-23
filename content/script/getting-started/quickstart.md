@@ -87,7 +87,7 @@ What each part does:
 | [[crossUp()]], [[crossDown()]] | True on the bar where the fast average crosses above, or below, the slow one |
 | [[signal()]] | Puts a labelled marker on that bar |
 
-Indent the two `signal` lines with four spaces. OpenScript uses indentation to mark a block, and a tab in the indentation is an error ([OS1002](/script/errors/syntax#os1002)). The editor's Tab key does not insert spaces, so type the spaces yourself.
+Indent the two `signal` lines with four spaces. OpenScript uses indentation to mark a block, and a tab in the indentation is an error ([OS1002](/script/errors/syntax#os1002)). The editor's Tab key never types a tab: it indents the line by four spaces, and Shift+Tab takes them out again.
 
 ## 4. Save it
 

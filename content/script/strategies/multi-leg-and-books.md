@@ -243,8 +243,8 @@ targetPct = input(50, "Target, percent of the entry premium", min = 1, max = 99)
 
 lotUnits = max(orElse(chart.lotSize, 1), 1)
 
-// Every clock test names the zone, so it holds in the Backtest panel as well
-// as on the chart. A new IST date is a new session.
+// Every clock test names the zone, so it means IST whatever timezone the
+// chart is set to. A new IST date is a new session.
 newDay    = isNone(time[1]) or not date.isSameDay(time, time[1], "Asia/Kolkata")
 entryTime = session.isIn("0920-1000", "Asia/Kolkata")
 lateDay   = not session.isIn("0915-1500", "Asia/Kolkata")

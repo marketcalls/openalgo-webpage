@@ -31,7 +31,7 @@ Six settings, and a study that works on any instrument and any interval without 
 
 On the /trading page you open a study's settings from its row in the chart legend. The dialog has two tabs:
 
-- **Inputs** holds one row per `input()` call, in the order the script declares them.
+- **Inputs** holds one row per `input()` call, in the order the script declares them, under a heading for each `group` and with each `tooltip` as a line of help under its row.
 - **Style** holds rows the chart adds for every plot without the script declaring anything: its colour, opacity, thickness, line style and plot style.
 
 **Defaults** at the bottom puts every row back to the script's defaults, and **Ok** applies the changes.
@@ -196,11 +196,9 @@ barColor(isNone(bias) ? none : close > bias ? fade(lime, 40) : fade(red, 40))
 
 A timeframe is a count and a unit: `"5m"`, `"1h"`, `"1D"`, `"1W"`, `"1M"`. The units are case sensitive, so `"1M"` is a month and `"1m"` a minute, and a bare number counts minutes, so `"60"` and `"1h"` are the same. A timeframe finer than the chart's own stops the study from loading with [OS6002](/script/errors/data#os6002), because bars that were never loaded cannot be invented. [Higher timeframes](/script/data/higher-timeframes) covers the read itself.
 
-In /trading the drop-down lists **Chart interval** first, then the intervals your broker serves (for example `1m`, `5m`, `15m`, `1h` and `D`), and it keeps the study's current value in the list even when the broker does not name it.
+In /trading the drop-down lists **Chart interval** first, labelled with the chart's own interval, such as **Chart interval (5m)**, then the intervals your broker serves that the study can build from the chart's bars: the chart's own and coarser ones, and on an intraday chart only whole multiples of it. On a 5 minute chart, for example, `10m`, `15m`, `30m`, `1h` and `D` are offered, and `1m` and `3m` are not. It keeps the study's current value in the list even when it is not one of those.
 
-:::warn
-Two of those entries are not timeframes the language reads in this release. **Chart interval** is an empty value, and `D` is the broker's spelling of a day, which the language writes `"1D"`. Choosing either stops the study from loading with [OS6001](/script/errors/data#os6001). Pick a minute or hour entry, or keep a day as the script's default, `"1D"`.
-:::
+Every choice is saved in the language's spelling. **Chart interval** saves the chart's interval as it is at that moment, so moving the chart to another interval afterwards does not move the setting with it, and `D` is saved as `"1D"`.
 
 ### Time
 
@@ -221,7 +219,7 @@ plot(time >= anchorTime ? anchored : none, "Anchored VWAP", orange, width = 2)
 
 This is the one kind whose saved value and returned value differ. The saved value is the text, a clock reading, so a layout saved in one timezone opens at the same clock time in another. The returned value is the timestamp a script needs for comparing with `time`. Text that is not a date stops the study from loading with [OS6019](/script/errors/data#os6019).
 
-Which timezone the text is read in is up to the host. The language intends the chart's own timezone, but the /trading page in this release reads it as UTC: `"2025-01-01 09:15"` there means 09:15 UTC, which is 14:45 in India. That is why the example gives a date alone. Midnight UTC is 05:30 in India, before the 09:15 open, so the anchor lands on the first bar of that day either way.
+Which timezone the text is read in is up to the host. The /trading chart reads it in the chart's own timezone, so on an Indian chart `"2025-01-01 09:15"` is 09:15 IST, and a strategy running from the Strategies panel reads it in the instrument's zone. The Backtest panel reads it as UTC: there `"2025-01-01 09:15"` means 09:15 UTC, which is 14:45 in India. That is why the example gives a date alone. Midnight is before the 09:15 open whether it is read in IST or in UTC (05:30 in India), so the anchor lands on the first bar of that day in all three.
 
 ### Planned kinds
 
@@ -261,7 +259,7 @@ background(session.isIn(window) ? none : fade(gray, 90))
 
 `title`, `group`, `tooltip`, `options` and `kind` are written on the line itself, as literals (joining two literals with `+` is fine). The same text held in a name first is [OS3003](/script/errors/arguments#os3003), because the dialog is built before any line of the script runs.
 
-`group` and `tooltip` travel with the input for any host that shows them. The /trading dialog in this release lists the rows in the order the script declares them and does not yet show group headings or tooltips, so order your `input()` calls the way a reader should meet them, and put a unit in the title when it matters, as in `"Stop, in ATR"`:
+`group` and `tooltip` travel with the input for any host that shows them. In /trading the settings dialog, and the input forms of the Backtest and Strategies panels, show each group as a heading over its rows and each tooltip as a line of help under its row, in the order the script declares them. So order your `input()` calls the way a reader should meet them, and still put a unit in the title when it matters, as in `"Stop, in ATR"`, because the title is what a reader scans:
 
 ```openscript
 stopLen = input(14, "ATR length", group = "Risk", min = 1, max = 200,

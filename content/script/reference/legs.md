@@ -27,7 +27,7 @@ strategy("Sell the option on the chart", overlay = true, precision = 2,
 lots    = input(1,  "Lots", min = 1, max = 50)
 stopPct = input(30, "Stop, percent above the entry premium", min = 5, max = 300)
 
-// The zone is written out so the windows also work in the Backtest panel.
+// The zone is written out so the windows read Indian time on any host.
 zone        = "Asia/Kolkata"
 lotUnits    = max(orElse(chart.lotSize, 1), 1)
 entryWindow = session.isIn("0920-0935", zone)
@@ -50,7 +50,7 @@ else if entryWindow and pos.isFlat and not doneToday
 plot(stopLevel, "Stop", red, style = "step")
 ```
 
-The size is counted in units from the lot size, and the stop is a rule the script tests, for the reasons on [Strategy orders](/script/reference/strategy). On the chart the lot size is not stated to the script yet, so there [[chart.lotSize]] is absent and this file falls back to one unit per lot; the Backtest panel uses the lot size OpenAlgo holds for the instrument.
+The size is counted in units from the lot size, and the stop is a rule the script tests, for the reasons on [Strategy orders](/script/reference/strategy). The chart and the Backtest panel both state the lot size OpenAlgo holds for the instrument; where a host states none, [[chart.lotSize]] is absent and this file falls back to one unit per lot.
 
 Every order call except [[cancel()]] and [[cancelAll()]] accepts a `leg` argument, and in version 0.5.0 writing it is refused with OS3023, whatever it names: a file that declares no leg has no name the argument could refer to. Take the argument out and the order acts on the chart's instrument.
 

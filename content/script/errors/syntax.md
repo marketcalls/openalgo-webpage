@@ -109,7 +109,7 @@ A block is the lines indented under a header: `if`, `else`, `for`, `while`, `swi
 
 {{error: OS1002}}
 
-The line is indented with a tab. A tab is drawn at a different width in every editor, so a block marked with tabs could mean one thing on your screen and another on someone else's, and the language accepts spaces only. In the /trading editor the Tab key moves the focus out of the editor rather than typing anything, so a tab almost always arrives in pasted code. Replace each leading tab with four spaces.
+The line is indented with a tab. A tab is drawn at a different width in every editor, so a block marked with tabs could mean one thing on your screen and another on someone else's, and the language accepts spaces only. In the /trading editor the Tab key indents with four spaces and never types a tab, so a tab almost always arrives in pasted code. Replace each leading tab with four spaces.
 
 {{error: OS1003}}
 

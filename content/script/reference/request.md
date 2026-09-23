@@ -121,11 +121,11 @@ Each distinct symbol, exchange and timeframe is one series the host fetches and 
 | Where the script runs | [[req.timeframe()]] | [[req.symbol()]] |
 |---|---|---|
 | On the chart, as a study | Folded from the chart's bars. Day, week and month reads use the chart's timezone, Asia/Kolkata unless changed in the chart settings | Fetched through the chart's own data feed |
-| In the Backtest panel | Intraday reads work. Day, week and month reads are absent on every bar, because the run is not told the chart's timezone | The run is refused before its first bar with `OS6006` |
+| In the Backtest panel | Folded from the run's bars. Day, week and month reads use the exchange's zone, Asia/Kolkata for Indian exchanges | The run is refused before its first bar with `OS6006` |
 
-The /trading chart does not tell a study its instrument's exchange, so [[chart.exchange]] is `none` there. A [[req.symbol()]] call that names no `exchange` is fetched on the chart's own exchange, which suits a peer stock on the same exchange; name `exchange` whenever the other instrument trades elsewhere, such as `NIFTY` on `NSE_INDEX` from an NSE stock chart.
+A [[req.symbol()]] call that names no `exchange` is fetched on the chart's own exchange, [[chart.exchange]], which suits a peer stock on the same exchange; name `exchange` whenever the other instrument trades elsewhere, such as `NIFTY` on `NSE_INDEX` from an NSE stock chart.
 
-/trading calls its daily interval `D`, which is not a timeframe the language reads, so on a daily chart a read that passes [[chart.interval]] stops the study with `OS6001`. Write `"1D"` there instead.
+The /trading chart calls its daily interval `D`, which is not a timeframe the language reads, so on a daily chart a read that passes [[chart.interval]] stops the study with `OS6001`. Write `"1D"` there instead.
 
 ## Reading another timeframe
 

@@ -32,7 +32,7 @@ trigger   = isNone(rangeHigh) ? none : roundToTick(rangeHigh)
 stopPrice = isNone(trigger) ? none : roundToTick(trigger - stopMult * atrValue)
 ready     = not isNone(trigger) and not isNone(stopPrice)
 
-// The zone is written out so the windows also work in the Backtest panel.
+// The zone is written out so the windows read Indian time on any host.
 inHours = session.isIn("0930-1430", "Asia/Kolkata")
 lateDay = not session.isIn("0915-1500", "Asia/Kolkata")
 
@@ -65,11 +65,11 @@ plot(entryStop, "Protective stop", red, style = "step")
 plot(pos.isFlat ? none : pos.avgPrice, "Average price", fade(silver, 40), style = "step")
 ```
 
-Three things in it are there because of how version 0.5.0 behaves:
+Three things in it are worth knowing before you adapt it:
 
 - **The stop is also tested by the script** (`low <= entryStop`). The stop sent with [[exit()]] is handed on as an instruction, and neither the backtest nor the chart fills it, so without the script's own test no trade in a backtest would ever stop out.
-- **The time windows name their zone**, `"Asia/Kolkata"`. The Backtest panel does not pass the chart's time zone to a run, so [[session.isIn()]] with no zone has no value on any bar of a backtest, and a strategy guarded by it never trades. [Backtesting](/script/strategies/backtesting) lists the other things the panel does not supply yet.
-- **It is for the chart and the Backtest panel.** The Strategies panel refuses to start a strategy that calls [[exit()]], and one that reads the clock with [[session.isIn()]] on an Indian instrument. [Sessions and time](/script/data/sessions-and-time#sessions-and-the-clock-in-trading-today) shows a time window that works there too.
+- **The time windows name their zone**, `"Asia/Kolkata"`. The /trading chart, its Backtest panel and the Strategies panel all state the instrument's zone, so there the zone only makes the intent plain; on a host that states none, [[session.isIn()]] with no zone has no value on any bar, and a strategy guarded by it never trades. [Backtesting](/script/strategies/backtesting) lists what the Backtest panel does not act on yet.
+- **It is for the chart and the Backtest panel.** The Strategies panel refuses to start a strategy that calls [[exit()]]. [Sandbox and live](/script/strategies/sandbox-and-live) lists what the runner needs from a script.
 
 The fills of a strategy are marked on the chart where they happened, as in this run of another strategy on a 15-minute NSE chart:
 

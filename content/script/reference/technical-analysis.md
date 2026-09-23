@@ -1177,11 +1177,9 @@ plot(v, "VWAP", orange, width = 2)
 barColor(close > v ? lime : close < v ? red : none)
 ```
 
-:::warn
-In this release the /trading chart does not state the instrument's session hours to the script, so there `vwap()` has no session to start from and is absent on every bar: the study above draws nothing. See [Sessions and time](/script/data/sessions-and-time#sessions-and-the-clock-in-trading-today).
-:::
+On the /trading chart and in its Backtest panel the session hours come from the platform's market calendar, so the study above restarts at each session's open. A host that states no session hours, or a /trading chart whose timezone you have set to one other than the exchange's, gives `vwap()` no session to start from, and it is absent on every bar.
 
-No Indian session runs past midnight IST, so a new IST date is a new session. Anchoring [[vwapAnchor()]] to that gives the same average, and it works on the /trading chart today:
+No Indian session runs past midnight IST, so a new IST date is a new session. Anchoring [[vwapAnchor()]] to that gives the same average wherever a timezone is known, with or without session hours:
 
 ```openscript
 version 1

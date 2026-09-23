@@ -152,7 +152,7 @@ Reading it with the glossary's words:
 
 **Error.** A diagnostic in the ranges OS1xxx to OS7xxx. An error found before the first bar stops compilation. An error raised while a bar runs stops the run at that bar: earlier bars keep what they drew, and nothing is drawn from that bar on.
 
-**Exchange.** The venue an instrument trades on, read as [[chart.exchange]] in the host's own naming where the host states it (the /trading chart does not in this release). OpenAlgo uses NSE and BSE for equities, NFO for index and stock futures and options, MCX for commodities and NSE_INDEX for the NSE indices.
+**Exchange.** The venue an instrument trades on, read as [[chart.exchange]] in the host's own naming where the host states it, as the /trading chart, the Backtest panel and a deployed strategy all do. OpenAlgo uses NSE and BSE for equities, NFO for index and stock futures and options, MCX for commodities and NSE_INDEX for the NSE indices.
 
 **Expectancy.** The average net result of one closed trade in a backtest: net profit divided by the number of closed trades. A positive expectancy means the strategy made money per trade on average, after charges.
 
@@ -230,7 +230,7 @@ plot(move, "Change from the previous close")
 
 **Lookback.** How many bars a calculation reads, such as the 20 in `sma(close, 20)`. The reference calls it the length, `len`, and it must be a whole number.
 
-**Lot.** The number of units that trade together, read as [[chart.lotSize]] where the host states it: the /trading Backtest panel does, and the /trading chart does not in this release. NFO futures and options and MCX contracts trade in whole lots, and a strategy declared with `qtyType = "lots"` counts its orders in lots, though the Strategies panel runs only a strategy that counts in units. See [Position and sizing](/script/strategies/position-and-sizing).
+**Lot.** The number of units that trade together, read as [[chart.lotSize]] where the host states it: on /trading the chart, the Backtest panel and a deployed strategy all state it from the platform's instrument record. NFO futures and options and MCX contracts trade in whole lots, and a strategy declared with `qtyType = "lots"` counts its orders in lots, though the Strategies panel runs only a strategy that counts in units. See [Position and sizing](/script/strategies/position-and-sizing).
 
 ## M
 
@@ -336,7 +336,7 @@ background(noPrev ? fade(gray, 90) : none)
 
 **Series.** The per-bar history of a value, written `series number`, `series bool` and so on. Reading it bare gives this bar's value and `[n]` gives the value `n` bars back. See [Types and values](/script/language/types-and-values).
 
-**Session.** The instrument's trading hours as the host defines them, such as 09:15 to 15:30 IST for NSE equities and derivatives. The `session` namespace reports the first bar, the last bar and whether a bar falls in a window you state. The first and last bar need the host to supply the hours, and are absent where it has not. See [Sessions and time](/script/data/sessions-and-time).
+**Session.** The instrument's trading hours as the host defines them, such as 09:15 to 15:30 IST for NSE equities and derivatives. The `session` namespace reports the first bar, the last bar and whether a bar falls in a window you state. The first and last bar need the host to supply the hours, and are absent where it has not. On /trading the hours come from the market calendar. See [Sessions and time](/script/data/sessions-and-time).
 
 **Settings dialog.** The panel of one row per [[input()]], plus the style rows the host adds for every plot. It is built once, before the first bar, which is why inputs must be at the top level. See [Settings and style](/script/inputs/settings-and-style).
 
@@ -412,7 +412,7 @@ background(noPrev ? fade(gray, 90) : none)
 
 **Warning.** A diagnostic in the OS8xxx range. It stops nothing, and describes a shape that is valid but almost never what the author meant. See [OS8xxx Warnings](/script/errors/warnings).
 
-**Watched condition.** What one [[alert()]] call becomes in the chart contract: its id, title, message and the conditions that lead to it. In /trading, the chart that shows the study checks it while the page is open, with nothing more for you to set up, and raises a notification when it holds. In this release the chart judges each bar once, when it first arrives, so during market hours an alert that waits for the bar to close may not fire; a study alert on a plotted condition is the dependable route. See [Alerts in /trading](/script/alerts/alerts-in-trading).
+**Watched condition.** What one [[alert()]] call becomes in the chart contract: its id, title, message and the conditions that lead to it. In /trading, the chart that shows the study checks it while the page is open, with nothing more for you to set up, judging each bar when it closes, and raises a notification when it holds. See [Alerts in /trading](/script/alerts/alerts-in-trading).
 
 **Whole number.** A number with no fractional part, which lengths and array indices require. A fractional length is refused rather than rounded, because a length of 14.5 is a mistake in the script and rounding it would hide the mistake.
 

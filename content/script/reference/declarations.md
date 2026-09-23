@@ -434,7 +434,7 @@ Asks for any open position to be flattened at the session's close, for an intrad
 
 Two things decide how you do that:
 
-- The exact test for the last bar is [[session.isLastBar]], which needs the host to state the instrument's session hours. The /trading chart and Backtest panel do not state them in this release, so there it is `none`.
+- The exact test for the last bar is [[session.isLastBar]], which needs the host to state the instrument's session hours. The /trading chart and Backtest panel state them, from the platform's market calendar, but a strategy running from the Strategies panel is refused when it reads `session.isLastBar`, so a strategy you mean to deploy cannot rely on it.
 - With the default `fillOn = "nextOpen"`, an order decided on the session's last bar fills at the next bar's open, which is the next session's first bar, so the position is carried overnight anyway.
 
 A window you name avoids both. The example starts closing at 15:15, so the exit fills at the next bar's open while the session is still trading, and it names the zone so the window is read in Indian time even where the host states no timezone.

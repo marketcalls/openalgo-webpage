@@ -148,11 +148,11 @@ bias   = req.timeframe(biasTf, ema(close, 20))
 plot(bias, "Bias", style = "step")
 ```
 
-In /trading the menu starts with **Chart interval**, followed by the intervals your data feed serves, such as `1m`, `5m`, `15m`, `1h` and `D`, and the input's current value if the feed does not list it. The script receives exactly the string you pick, and a read accepts only the forms on [Timeframes](/script/data/timeframes#how-a-timeframe-is-written):
+In the /trading settings dialog the menu starts with **Chart interval**, labelled with the chart's own interval, such as **Chart interval (5m)**, followed by the intervals your data feed serves that a read can build from the chart's bars: the chart's interval or a coarser one, and on an intraday chart only a whole multiple of it. On a 5 minute chart that is `10m`, `15m`, `30m`, `1h` and the day, with `1m` and `3m` left out. The script receives each choice in the language's spelling, the forms on [Timeframes](/script/data/timeframes#how-a-timeframe-is-written):
 
-:::warn
-Some entries in the /trading menu are not timeframes a read accepts. **Chart interval** hands the script an empty string, and **D** is the feed's name for daily, where the language writes `1D` (likewise **W** and **M**, where it writes `1W` and `1M`). A read given any of these stops with OS6001 when the study loads. For a daily read, keep `"1D"` as the input's default: the menu shows the input's current value as an entry of its own when the feed does not list it.
-:::
+- **Chart interval** stores the chart's interval as it is when you choose it, `5m` on that chart. Moving the chart to another interval later does not change the setting.
+- The feed's **D**, **W** and **M** are stored as `1D`, `1W` and `1M`.
+- A saved value that is no longer offered, such as `1m` on a chart that has since moved to `5m`, stays in the menu as an entry of its own, so the dialog never shows one interval while the study uses another.
 
 The repaint mode of a read is never an input. `mode = "confirmed"`, `"developing"` or `"lookahead"` is written as a literal, because a setting would let a reader change the honesty of a study without reading it.
 
@@ -161,14 +161,14 @@ The repaint mode of a read is never an input. `mode = "confirmed"`, `"developing
 `kind = "time"` takes a date and a time. In the /trading dialog it is a text box with the hint `YYYY-MM-DD HH:MM`. The value is stored as the text you typed, and the script receives a timestamp in UTC milliseconds, converted once before the first bar, ready to compare with [[time]].
 
 ```openscript
-// Read as a UTC clock in /trading: 03:45 UTC is 09:15 IST.
-anchor = input("2025-01-02 03:45", "Anchor, UTC", kind = "time")
+// Read in the chart's timezone on the /trading chart: 09:15 IST on an IST chart.
+anchor = input("2025-01-02 09:15", "Anchor", kind = "time")
 started = time >= anchor
 background(started ? fade(aqua, 95) : none)
 ```
 
 :::warn
-In /trading today the text is converted as a **UTC** clock, not in the chart's timezone, on the chart and in the Backtest panel alike. `2025-01-02 09:15` is 09:15 UTC, which is 14:45 IST. Subtract 5 hours 30 minutes from an IST time when you type it, and put "UTC" in the title so the reader knows. The Strategies panel refuses to run a script with a time input. [Sessions and time](/script/data/sessions-and-time) has more on time in /trading.
+Where the text is read depends on where the script runs. The /trading chart reads it in the chart's timezone, so `2025-01-02 09:15` is 09:15 IST on a chart in Indian time. A strategy deployed from the Strategies panel reads it in the instrument's timezone, which is IST for Indian exchanges. The Backtest panel still reads it as a **UTC** clock: there `09:15` is 14:45 IST, so subtract 5 hours 30 minutes from an IST time when you type one for a backtest. [Sessions and time](/script/data/sessions-and-time) has more on time in /trading.
 :::
 
 ## Where input() may appear
@@ -206,7 +206,7 @@ dailyRsi = req.timeframe("1D", rsi(close, input(14, "RSI length", min = 2)))
 plot(dailyRsi, "Daily RSI", purple, style = "step")
 ```
 
-The input inside the read follows the dialog like any other. The one in the declaration is a different case in /trading today: the chart reads declaration options when it loads the study, at their defaults, so changing the Decimals row does not change the drawing there. [Settings and style](/script/inputs/settings-and-style#what-the-declaration-decides) lists what follows the dialog.
+The input inside the read follows the dialog like any other. The one in the declaration is a different case in /trading: the chart reads declaration options when it loads the study, at their defaults, so changing the Decimals row does not change the drawing there. [Settings and style](/script/inputs/settings-and-style#what-the-declaration-decides) lists what follows the dialog.
 
 ## Names, titles and saved values
 
@@ -263,9 +263,9 @@ Every kind also accepts these arguments:
 | `inline` | `string` | `""` | Planned: rows sharing a value sit on one line |
 | `confirm` | `bool` | `false` | Planned: ask for this value when the study is added |
 
-`group` and `tooltip` are carried in the compiled script. In /trading today, the study settings dialog lists the inputs in the order they appear in the source, without group headings and without tooltips. The input forms in the Backtest and Strategies panels show the tooltip when you rest the pointer on an input's label. The compiler accepts `inline` and `confirm`, and they have no effect yet.
+`group` and `tooltip` are carried in the compiled script. In /trading, the study settings dialog and the input forms in the Backtest and Strategies panels list the inputs in the order they appear in the source, show each `group` as a heading above its rows, and write each `tooltip` as a line of help under its row. The compiler accepts `inline` and `confirm`, and they have no effect yet.
 
-So make the labels carry the meaning. **Name the unit in the label when it is not obvious**: "Band width, in ATR" and "Flat this many minutes after the open" need no tooltip. "Multiplier" and "Threshold" need one and will still be misread. Keep grouping anyway, in the order a reader works: calculation first, then what is drawn, then anything about trading.
+Still make the labels carry the meaning, because the label is what a reader scans. **Name the unit in the label when it is not obvious**: "Band width, in ATR" and "Flat this many minutes after the open" need no tooltip. "Multiplier" and "Threshold" need one and will still be misread without it. Group in the order a reader works: calculation first, then what is drawn, then anything about trading.
 
 ```openscript title="Range breakout"
 version 1

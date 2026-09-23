@@ -182,7 +182,7 @@ newDay = isNone(time[1]) or not date.isSameDay(time, time[1], "Asia/Kolkata")
 background(newDay ? fade(yellow, 80) : none)
 ```
 
-**Remarks.** Opaque yellow is hard to read on a light chart. Use it faded, or for markers on a dark chart. The example tests the date rather than [[session.isFirstBar]], which needs session hours the /trading chart does not state in this release.
+**Remarks.** Opaque yellow is hard to read on a light chart. Use it faded, or for markers on a dark chart. The example tests the date, which needs only a timezone; [[session.isFirstBar]] marks the same bar where the host states session hours, as the /trading chart does.
 
 **See also.** [[orange]], [[background()]], [[session.isFirstBar]]
 
@@ -263,7 +263,7 @@ newDay = isNone(time[1]) or not date.isSameDay(time, time[1], "Asia/Kolkata")
 plot(vwapAnchor(hlc3, newDay), "VWAP", blue, width = 2)
 ```
 
-**Remarks.** Pure blue is dark and can be hard to see on a dark chart; [[aqua]] is the brighter choice there. The example anchors the average itself because [[vwap()]] restarts on the session's first bar, which needs session hours the /trading chart does not state in this release; there `vwap()` has no value.
+**Remarks.** Pure blue is dark and can be hard to see on a dark chart; [[aqua]] is the brighter choice there. The example anchors the average itself on a new IST date, which needs only a timezone. [[vwap()]] restarts on the session's own first bar, which needs the host to state session hours, as the /trading chart does.
 
 **See also.** [[aqua]], [[navy]], [[vwapAnchor()]], [[vwap()]]
 

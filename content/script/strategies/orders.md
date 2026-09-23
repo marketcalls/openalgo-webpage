@@ -119,7 +119,7 @@ Two rules apply to every price you pass:
 - **A price must fall on a tick.** A limit between two ticks cannot exist at the exchange, so it is refused with OS7006, naming the instrument, its tick and the price. The engine does not round it for you, because that would move the order off the level your script computed. Round it yourself with [[roundToTick()]].
 - **[[roundToTick()]] is absent when the host has stated no tick size.** An order given the absent result is refused with OS7002. Test the rounded price once and use the result everywhere, as the examples on this page do.
 
-Here is a stop entry placed once a session, above the high of the first fifteen minutes (09:15 to 09:30), and cancelled at 11:00 if it has not triggered. Every clock test names the zone, because the Backtest panel does not state the chart's timezone to the script, and a window with no zone has no value there:
+Here is a stop entry placed once a session, above the high of the first fifteen minutes (09:15 to 09:30), and cancelled at 11:00 if it has not triggered. Every clock test names the zone, so the window means IST on the chart, in the Backtest panel and in a deployment alike, whatever timezone a chart is set to:
 
 ```openscript title="Opening range stop entry"
 version 1
@@ -162,7 +162,7 @@ else if pos.isLong and lateDay
 plot(rangeHigh, "Range high", aqua, style = "step")
 ```
 
-A deployment from the Strategies panel cannot read the clock like this in version 0.5.0; [Sessions and time](/script/data/sessions-and-time#sessions-and-the-clock-in-trading-today) explains why, and what works instead.
+A deployment from the Strategies panel reads the clock like this too, in the instrument's zone; [Sessions and time](/script/data/sessions-and-time#sessions-and-the-clock-in-trading-today) lists what each part of /trading reads.
 
 ## One position, and no order crosses zero
 
@@ -389,7 +389,7 @@ Use the bare functions where the direction is written in the source, and `order.
 
 ## Refusals
 
-Every refused order reports a code and a reason, naming the line that placed it. In version 0.5.0 a refusal while the run is going also stops the run at that bar: nothing the bar decided is sent, and no later bar executes. The Backtest panel then reports only the trades made before the refusal, and does not show the error itself. Codes marked "At compile time" are caught before any bar runs.
+Every refused order reports a code and a reason, naming the line that placed it. In version 0.5.0 a refusal while the run is going also stops the run at that bar: nothing the bar decided is sent, and no later bar executes. The Backtest panel then reports only the trades made before the refusal, and says above the figures which bar the run stopped on and why. Codes marked "At compile time" are caught before any bar runs.
 
 | Code | Means | Usual cause | In 0.5.0 |
 |---|---|---|---|
@@ -422,7 +422,7 @@ OS7008 is the pyramiding limit doing its job. Silently building a position the d
 | Two entries where the script meant one | Guarded on `pos.isFlat` alone while a resting order was still working | Remember the working order in a `var`, as the examples do |
 | The run stops with OS7009 | `cancel` on an order that has already filled | Clear the "working" flag when the position opens |
 | The run stops with OS7013 | Two `if` blocks placing opposite orders on one bar | One `if` chain with `else if` |
-| No orders at all in the Backtest panel | A clock test written without a zone, such as `session.isIn("0930-1100")` | Name the zone: `session.isIn("0930-1100", "Asia/Kolkata")` |
+| Orders at the wrong time of day | A clock test written without a zone, such as `session.isIn("0930-1100")`, on a chart set to another timezone | Name the zone: `session.isIn("0930-1100", "Asia/Kolkata")` |
 | OS3023 on every order | A `leg` argument | Take it out; the order acts on the chart's instrument |
 | Orders appear on history and not on the forming bar | The condition is true inside the bar and false at its close | Nothing to fix: orders wait for the bar to confirm |
 

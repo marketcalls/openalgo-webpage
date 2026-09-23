@@ -199,11 +199,11 @@ complete.
 
 :::note
 The language's own test for the first bar of a session is
-[[session.isFirstBar]]. The /trading chart does not yet give the engine the
-instrument's session hours, so there it has no value, and a study that resets on
-it never resets. On NSE, BSE and MCX a new date in IST is a new session, so the
-examples on this page test the date. See
-[Sessions and time](/script/data/sessions-and-time#sessions-and-the-clock-in-trading-today).
+[[session.isFirstBar]]. The /trading chart states the instrument's session hours
+from the market calendar, so there it works. The examples on this page test the
+date instead because that needs nothing from the host: on NSE, BSE and MCX a new
+date in IST is a new session, so the date test also works where no session hours
+are stated. See [Sessions and time](/script/data/sessions-and-time).
 :::
 
 ## Extending to the right
@@ -605,7 +605,7 @@ if bar.isLast
 | The box hides the candles | A fill that is too strong | Lower `opacity` |
 | A box's fill cannot be seen | A faded fill colour dimmed again by `opacity` | Pass a plain colour and set the strength with `opacity` |
 | A vertical line crosses the whole pane | An extended line whose two anchors share a time | Anchor the line at two different times |
-| A study that resets each session draws nothing on the /trading chart | It resets on `session.isFirstBar`, which has no value there | Test for a new IST date, as the examples here do |
+| A study that resets each session never resets | It resets on `session.isFirstBar`, which has no value where no session hours are stated: on /trading, when the chart's timezone was changed away from the exchange's, or when the instrument's details could not be read | Set the chart back to the exchange's timezone, or test for a new IST date, as the examples here do |
 
 **Related.** [Labels and shapes](/script/visuals/labels-and-shapes) for text
 plates and markers, [Tables](/script/visuals/tables) for numbers pinned to a

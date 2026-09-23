@@ -164,19 +164,20 @@ The language is young, and these pages say plainly what works today.
 - **Planned.** Some names in the library are declared but not implemented yet, for example the risk-based sizing helpers such as `order.qtyForRisk()` and the account figures such as `pos.equity`. The compiler refuses a planned name where you wrote it, with [OS2020](/script/errors/names-and-types#os2020) and a message that says it is planned, rather than letting the script fail later. The reference marks every planned entry.
 - **Not modelled yet.** A stop and target attached with `exit()` are not filled by the 0.5.0 backtest, and a strategy that calls `exit()` is refused by the Strategies panel. Manage exits in the script with `close()` for now, as [Your first strategy](/script/getting-started/first-strategy) shows.
 
-### What the /trading page does not supply yet
+### What each part of the /trading page supports
 
-A script can ask for facts about the market that the /trading page does not pass to the engine in this release. Where a fact is missing, the value that reads it has no value on any bar, and a condition built on it is never true. The script still compiles, so it is worth knowing before you wonder why a study drew nothing.
+The /trading page reads each instrument's facts from OpenAlgo itself: the tick size and lot size from the instrument record, and the timezone and trading session from the market calendar, whose timings an admin can edit. Some features still work in one part of the page and not another. Where a fact is missing, the value that reads it has no value on any bar, and a condition built on it is never true. The script still compiles, so it is worth knowing before you wonder why a study drew nothing.
 
 | Fact or feature | On the chart | Backtest panel | Strategies panel |
 |---|---|---|---|
-| Session hours, read by `session.isFirstBar` and the other `session.*` values | No value | No value | Refused |
-| Lot size, read by `chart.lotSize` | No value | Stated | Stated |
-| Another timeframe, read with `req.timeframe()` | Works | No value, because the panel does not state the chart's interval | Refused |
+| Session hours, read by `session.isFirstBar` and `session.isLastBar` | Stated | Stated | `session.isFirstBar` works; `session.isLastBar` is refused |
+| Lot size, read by `chart.lotSize` | Stated | Stated | Stated |
+| The calendar, read by the `date.*` functions and `session.isIn()` | Works, in the chart's timezone | Works, in the exchange's timezone | Works, in the exchange's timezone |
+| Another timeframe, read with `req.timeframe()` | Works | Works | Refused |
 | Another instrument, read with `req.symbol()` | Works | Refused with [OS6006](/script/errors/data#os6006) | Refused |
 | Drawing objects and tables | Work | Run, but a backtest shows only trades | Refused |
 
-The Strategies panel also refuses a strategy that reads the calendar (the `date.*` functions) or sizes its orders in anything but units, and every refusal names its reason. [Example scripts](/script/getting-started/example-scripts) shows what these limits mean for twelve complete scripts.
+The Strategies panel also refuses a strategy that sizes its orders in anything but units, and every refusal names its reason. [Example scripts](/script/getting-started/example-scripts) shows what these limits mean for twelve complete scripts.
 
 The [Release notes](/script/resources/release-notes) list every change and what is still to come.
 
@@ -878,7 +879,7 @@ What each part does:
 | `crossUp()`, `crossDown()` | True on the bar where the fast average crosses above, or below, the slow one |
 | `signal()` | Puts a labelled marker on that bar |
 
-Indent the two `signal` lines with four spaces. OpenScript uses indentation to mark a block, and a tab in the indentation is an error ([OS1002](/script/errors/syntax#os1002)). The editor's Tab key does not insert spaces, so type the spaces yourself.
+Indent the two `signal` lines with four spaces. OpenScript uses indentation to mark a block, and a tab in the indentation is an error ([OS1002](/script/errors/syntax#os1002)). The editor's Tab key never types a tab: it indents the line by four spaces, and Shift+Tab takes them out again.
 
 ## 4. Save it
 
@@ -1226,12 +1227,14 @@ A strategy that compiles, runs and never trades raises no error. Work down this 
 1. **Is the entry condition ever true?** Plot it for a moment on its own axis, so the price scale is not squashed: `plot(goLong ? 1 : 0, "Entry", scale = "left")`, and look for the spikes.
 2. **Is it only true during warmup?** The `not isNone(atrValue)` guard blocks entries until the ATR has a value.
 3. **Did the first trade ever close?** If `pos.isFlat` never becomes true again, every later entry is blocked by the guard.
-4. **Does the condition read something the panel does not supply?** In this release the Backtest panel does not tell the engine the chart's interval, its timezone or the session's hours. So `chart.interval`, `session.isFirstBar` and `session.isLastBar` have no value in a backtest, and neither has a day, week or month `req.timeframe()` read, or a `session.isIn()` or `date.*` call that names no zone. A condition built on them is never true. Name the zone, as in `session.isIn("0915-1530", "Asia/Kolkata")`, and filter on an intraday read such as `"1h"`, which the backtest folds from the chart's own bars.
+4. **Does the condition read something the panel does not supply?** The Backtest panel tells the engine the chart's interval, the exchange's timezone and its regular trading session from the market calendar, so `session.isFirstBar`, `session.isLastBar`, `date.*` calls and higher timeframe reads work in a backtest. It does not state `chart.now()`, which is absent on every bar, and a chart of seconds bars states no interval. A `kind = "time"` input is read as a UTC clock there, not as Indian time, so a time typed as `09:15` means 14:45 IST in a backtest.
 
 Two more cases show a message instead of a report:
 
 - **A range where the instrument did not trade**, over a holiday or before listing, returns no bars, and the panel says "No bars came back for that instrument over that range."
 - **A range that is too long.** More than 100,000 bars is refused with a message that names the count. Shorten the range or use a longer timeframe.
+
+A run the engine stops part way, on an error in the script such as a negative history index, still shows its figures, with a line beside them saying where it stopped, such as "This run stopped on bar 1,204 of 2,970", followed by that bar's date and time in the instrument's timezone. The figures then describe only the bars before it.
 
 Plotting an intermediate value, as in the first question, is the fastest way to answer the first three. See [Debugging](/script/writing/debugging).
 
@@ -1253,7 +1256,7 @@ The panel is 480 pixels wide to begin with. Drag its inner edge to make it anywh
 
 When you open the panel, it reopens the script you last opened in this browser. A study's source can also be opened from the chart: see [From the chart to the source](#from-the-chart-to-the-source).
 
-> **Save before you switch away. Opening another panel on the toolbar, or another script from the menu, replaces what is in the editor with the saved file, and unsaved changes are lost without a prompt.**
+> **Unsaved changes are kept. Opening another panel on the toolbar, or another script from the menu, keeps what you typed as a draft of that script, and it is there again when you reopen the script, even after a reload in the same browser. See [Unsaved changes](#unsaved-changes).**
 
 ## The header
 
@@ -1266,7 +1269,7 @@ The header is one row, and it is the panel's whole navigation.
 | Kind badge | **STUDY** or **STRATEGY**, read from the script's declaration |
 | Apply to chart | The play button. Puts the saved script on the chart. See [Applying a script](#applying-a-script) |
 | **Save** | Checks and saves the script. Enabled when there are unsaved changes |
-| Script actions | The three dots. **New script**, and **Delete script** |
+| Script actions | The three dots. **New script**, **Discard unsaved changes** and **Delete script** |
 
 ## Creating a script
 
@@ -1324,7 +1327,7 @@ The editing area is plain text with three aids.
 
 Three habits matter in this editor:
 
-- **Indent with spaces.** A block is the lines indented under an `if`, a `for` or a function, and four spaces per level is the convention. A tab in the indentation is an error ([OS1002](/script/errors/syntax#os1002)). The Tab key moves the focus out of the editor instead of inserting spaces, so type the spaces.
+- **Indent with spaces.** A block is the lines indented under an `if`, a `for` or a function, and four spaces per level is the convention. A tab in the indentation is an error ([OS1002](/script/errors/syntax#os1002)), so the Tab key never types one: it indents the line by four spaces, and with several lines selected it moves each of them in by one level, keeping their indentation relative to each other. Shift+Tab moves them back out. To leave the editor with the keyboard, press Esc and then Tab.
 - **Keep one statement per line.** There are no semicolons and no braces. A long call can carry on over several lines while its brackets are open. See [Script structure](/script/language/script-structure).
 - **Paste freely.** Text pasted from a file whose lines end with a carriage return as well as a line feed is normalised as it arrives, so line and column numbers in messages always match what you see.
 
@@ -1399,13 +1402,19 @@ Click **Save**, or press Ctrl+S (Cmd+S on a keyboard with a Command key). A save
 
 Scripts are stored on the OpenAlgo server, as one `.oscript` file each in the `strategies/openscript` folder, so they are the same from any browser you log in from. An installation that runs OpenAlgo in a container keeps that folder on a named volume, so your scripts survive a rebuild and an upgrade. A script can be up to 256 KB.
 
+### Unsaved changes
+
+What you type and have not saved is kept as a draft of that script, in this browser. Switching to another script, opening another panel or reloading the page does not lose it: open the script again and the draft is back in the editor, with **Unsaved changes** in the status bar. Saving writes the draft to the file, and the draft is gone. To throw a draft away and go back to the saved file, choose **Discard unsaved changes** in the Script actions menu and confirm with **Discard changes**.
+
+If the saved file changed after the draft was typed, because it was saved from another tab or restored from its backup, the panel says so above the editor before you save: saving then replaces that newer copy with your draft.
+
 > **The panel keeps no revision history in this release. Each save replaces the file; the server keeps a copy of the previous save beside it, as a backup, and nothing older. If you want a history of every change, keep the `strategies/openscript` folder under version control, or copy a script before a change you are unsure of.**
 
 ## Applying a script
 
 **Apply to chart**, the play button, is enabled when the open script is saved and compiles. Until then, hovering it says "Save a script that compiles, and it can be applied to the chart." What it does depends on the kind of script.
 
-- **A study** is added to the chart pane you last clicked, as it was last saved, with a legend row and a settings dialog built from its inputs. Each press adds another copy, so to replace an older copy, remove it with the x on its legend row, or with **Remove** under **Active** in the Indicators dialog.
+- **A study** is added to the chart pane you last clicked, as it was last saved, with a legend row and a settings dialog built from its inputs. When that pane already has the script, pressing Apply again after a save updates the copy there to the saved version rather than adding a second one, so an alert set on it keeps working. If the new version stops on the chart's first bar, the copy already there is kept as it was, and a message says why. To remove a copy, use the x on its legend row, or **Remove** under **Active** in the Indicators dialog.
 - **A strategy** is added to the chart the same way, and then the panel switches to **Backtest**, which runs the strategy over the chart's history and marks every fill on the price. See [Your first strategy](/script/getting-started/first-strategy).
 
 If no chart is open, nothing is added and the console says so.
@@ -1440,7 +1449,9 @@ The reference covers what those features would show you. Every entry in the [Ref
 | Ctrl+S, Cmd+S | Save the open script |
 | Enter | In the new script form, create the script |
 | Esc | In the new script form, cancel it. Elsewhere, when the cursor is not in a text field, close the panel |
-| Tab | Moves the focus out of the editor. Type spaces to indent |
+| Tab | In the editor, indent the line, or every selected line, by four spaces |
+| Shift+Tab | In the editor, remove one level of indentation from the line, or every selected line |
+| Esc, then Tab | Move the focus out of the editor |
 
 **Related.** [Quickstart](/script/getting-started/quickstart), [Your first strategy](/script/getting-started/first-strategy), [Script structure](/script/language/script-structure), [Reading an error](/script/errors/overview), [Debugging](/script/writing/debugging), [Troubleshooting](/script/writing/troubleshooting), [Editor integration](/script/integrate/editor-integration)
 
@@ -1449,7 +1460,7 @@ The reference covers what those features would show you. Every entry in the [Ref
 
 Source: https://openalgo.in/script/getting-started/example-scripts
 
-These twelve scripts are complete files you can paste into the Scripts panel, save and apply. Each one is small enough to read in a few minutes and makes one or two ideas of the language concrete: nine are studies and three are strategies, and they run from a first EMA cross to a two leg options premium strategy. For every script, this page says what it draws, which language features it shows and why they are written the way they are, and where it runs in /trading today. After them, [Showcase scripts](/script/getting-started/example-scripts#showcase-scripts) gives three studies written to look their best on a chart, each with the screenshot it drew.
+These twelve scripts are complete files you can paste into the Scripts panel, save and apply. Each one is small enough to read in a few minutes and makes one or two ideas of the language concrete: nine are studies and three are strategies, and they run from a first EMA cross to a two leg options premium strategy. For every script, this page says what it draws, which language features it shows and why they are written the way they are, and where it runs in /trading. After them, [Showcase scripts](/script/getting-started/example-scripts#showcase-scripts) gives three studies written to look their best on a chart, each with the screenshot it drew.
 
 The comments inside each script say why a line is written the way it is, not what it does. For what a function does, follow its link to the reference.
 
@@ -1470,19 +1481,16 @@ The comments inside each script say why a line is written the way it is, not wha
 | 11 | [Opening range breakout](#11-opening-range-breakout) | Strategy | One trade per session, the range as the stop, an exit on the clock |
 | 12 | [Short premium, combined stop](#12-short-premium-combined-stop) | Strategy | Two legs managed as one position on their combined price |
 
-## Where they run in /trading today
+## Where they run in /trading
 
-Every script here compiles with no error. A few use features the /trading page does not supply to the engine yet, and it is better to know that before you apply one than to wonder why it drew nothing.
+Every script here compiles with no error. A few use features one part of the /trading page does not support yet, and it is better to know that before you apply one than to wonder why it did nothing.
 
 | Script | On the chart | Backtest panel | Strategies panel |
 |---|---|---|---|
-| 1, 2, 4, 7, 8, 9 | Draws as described | Not a strategy | Not a strategy |
-| 3 Anchored VWAP | Draws as described, with the anchor time read as UTC | Not a strategy | Not a strategy |
-| 5 Opening range | Draws nothing yet: needs the session's opening time | Not a strategy | Not a strategy |
-| 6 Combined premium | Draws the premium; two parts need facts the chart does not state yet | Not a strategy | Not a strategy |
+| 1, 2, 3, 4, 5, 6, 7, 8, 9 | Draws as described | Not a strategy | Not a strategy |
 | 10 EMA cross, bracketed | Draws and simulates its trades | Runs. Its `exit()` levels are not filled, so trades close on the opposite cross | Refused: it calls `exit()` |
-| 11 Opening range breakout | Opens no trades: needs the session's opening time | Opens no trades, for the same reason | Refused: it reads the session, calls `exit()` and sizes in lots |
-| 12 Short premium | Draws the premium, opens no trades: needs the session | Refused with OS6006: it reads another instrument | Refused: it reads the session, the calendar and another instrument, and sizes in lots |
+| 11 Opening range breakout | Draws the range and simulates its trades | Runs. Its `exit()` levels are not filled, so trades close on the clock exit | Refused: it calls `exit()` and sizes in lots |
+| 12 Short premium | Draws the premium and simulates its trades | Refused with OS6006: it reads another instrument | Refused: it reads another instrument and sizes in lots |
 | Showcase: HalfTrend, Bollinger Bands, EMA cross in colour | Draws as described | Not a strategy | Not a strategy |
 
 The notes under each script explain the reason. [Your first strategy](/script/getting-started/first-strategy) builds a strategy that runs in all three places.
@@ -1692,7 +1700,7 @@ What to notice:
 - **Absence means "not started".** Before the anchor, `ready` is false and every reading is `none`, so nothing is drawn.
 - **`sqrt()`** of a negative number returns `none` rather than failing. The script floors the value with `max()` instead of relying on that.
 
-> **In this release the /trading chart reads a time input as UTC, not as Indian time. IST is UTC plus 5 hours 30 minutes, so to anchor at the 09:15 IST open of 1 January 2025, type `2025-01-01 03:45`. The default, `2025-01-01 09:15`, anchors at 14:45 IST that day.**
+> **The /trading chart reads a time input in the chart's timezone, which is Indian time unless you changed it, so the default `2025-01-01 09:15` anchors at the 09:15 IST open of 1 January 2025.**
 
 ## 4. RSI divergence
 
@@ -1848,7 +1856,7 @@ What to notice:
 - **`style = "step"`** draws a level that changes in steps rather than sloping between bars.
 - **`background()`** shades the bars while the range is forming.
 
-> **In this release the /trading chart does not tell the engine when the exchange session opens, so `session.isFirstBar` has no value there and this study draws nothing but its legend row. The chart may also say the study "needs more history than the bars loaded": it shows that message for any study with no value on any bar, and here the cause is the missing session hours, not the history. The script is correct OpenScript and runs wherever the host states its session hours.**
+> **The /trading chart takes each exchange's session hours from the market calendar, so on an NSE chart the range forms from 09:15 and on an MCX chart from 09:00. The session arrives a moment after the study is first drawn, and the study redraws with it. If you set the chart to a timezone other than the exchange's, the chart leaves the session out rather than read it hours off, `session.isFirstBar` has no value, and the study draws nothing but its legend row.**
 
 ## 6. Combined premium
 
@@ -1916,7 +1924,7 @@ What to notice:
 - **`scale = "left"`** puts the position value on its own axis, so rupees and premium points do not share a scale.
 - **Options pricing.** This study adds traded prices. When you need a fair value for an Indian index option, price it with Black-76 off the synthetic future, not with a spot-based model.
 
-> **In this release the /trading chart does not state a lot size or session hours to the engine. `chart.lotSize` is then absent, so the **Position value** line stays empty, and `session.isFirstBar` has no value, so the opening premium is taken once, at the first bar both legs have, rather than at every session's open. In the default confirmed mode each leg is its latest closed bar, one bar behind the chart, and both legs lag together, so the sum still adds two prices from the same moment; `mode = "developing"` reads the forming bar instead and can repaint. `chart.exchange` is absent on the chart as well, and the legs are then looked up on the chart's own exchange. The combined premium draws as described; its alert follows the chart's rule for script alerts, so during market hours it may not fire (see [Alerts from scripts](/script/alerts/overview)).**
+> **On the /trading chart, `chart.lotSize` and `chart.exchange` are the chart instrument's own, read from the platform's instrument record a moment after the study is first drawn. On a chart of the NIFTY future or of one of the legs, the lot is the legs' lot, so the **Position value** line is in rupees, and both legs are looked up on NFO. The session comes from the market calendar, so the opening premium is taken at each session's open, at the first bar both legs have. In the default confirmed mode each leg is its latest closed bar, one bar behind the chart, and both legs lag together, so the sum still adds two prices from the same moment; `mode = "developing"` reads the forming bar instead and can repaint. The alert fires when a bar closes, as the chart's rule for script alerts says (see [Alerts in /trading](/script/alerts/alerts-in-trading#alerts-from-a-script)).**
 
 ## 7. Higher timeframe bias
 
@@ -2322,8 +2330,8 @@ if ready and ok and close < rangeLow
 
 // The clock exit is neither a stop nor a target: it is the admission that a
 // position that has not worked in five hours is not going to. closeOnSessionEnd
-// is declared as well, for hosts that state session hours; /trading states
-// none in this release, so there it has no effect.
+// is declared as well; version 0.5.0 accepts it and does not act on it yet, so
+// this exit is the one that flattens the position.
 if pos.size != 0 and not isNone(elapsed) and elapsed >= holdMinutes * 60000
     close()
 
@@ -2340,7 +2348,7 @@ What to notice:
 - **One trade per session**, held in `var traded`, reset on `session.isFirstBar`.
 - **A time exit.** `elapsed >= holdMinutes * 60000` flattens with `close()` five hours after the open, before the NSE close at 15:30 IST.
 
-> **In this release the /trading chart and Backtest panel do not state the session's opening time to the engine, so `session.isFirstBar` has no value there, the range never forms and the script opens no trades. The Strategies panel refuses it, because it reads the session, calls `exit()` and sizes in lots. It is shown here for the language: the pattern is the one to reach for wherever a host states its session hours.**
+> **The /trading chart and the Backtest panel take each exchange's session hours from the market calendar, so `session.isFirstBar` marks each session's open, the range forms and the script trades. In version 0.5.0 the backtest does not fill the levels `exit()` sets, so in the Backtest panel each trade closes on the clock exit. The Strategies panel refuses it, because it calls `exit()` and sizes in lots.**
 
 ## 12. Short premium, combined stop
 
@@ -2442,9 +2450,9 @@ What to notice:
 - **A weekly schedule.** `date.dayOfWeek()` picks the weekday, for example the day before a weekly expiry.
 - **Absence as a guard.** While flat, `entryPremium` is `none`, so `movePct` is `none` and none of the exit tests can be true.
 - **One exit with a reason.** A single `close()` carries the reason in its `signal()` marker, so the position can never be closed three times over.
-- **The second leg is an alert.** The strategy trades the chart's leg; the other leg's orders go out as `alert()` messages with their own ids. On /trading this script does not run today, as the note below explains.
+- **The second leg is an alert.** The strategy trades the chart's leg; the other leg's orders go out as `alert()` messages with their own ids. On /trading this script runs on the chart only, as the note below explains.
 
-> **The Backtest panel refuses this script with [OS6006](/script/errors/data#os6006), because a backtest holds only the chart's own bars and this script reads another instrument. On the /trading chart it draws the combined premium but opens no trades, because `session.isFirstBar` has no value there. The Strategies panel refuses it, because it reads the session, the calendar and another instrument, and sizes in lots. A strategy that wants both legs in its own books declares them with `leg.relative()`, which is planned; see [Legs and books](/script/strategies/multi-leg-and-books).**
+> **The Backtest panel refuses this script with [OS6006](/script/errors/data#os6006), because a backtest holds only the chart's own bars and this script reads another instrument. On the /trading chart it draws the combined premium and simulates its trades on the chosen weekday, with `session.isFirstBar` taken from the exchange's session in the market calendar. The Strategies panel refuses it, because it reads another instrument and sizes in lots. A strategy that wants both legs in its own books declares them with `leg.relative()`, which is planned; see [Legs and books](/script/strategies/multi-leg-and-books).**
 
 ## Showcase scripts
 
@@ -6510,7 +6518,7 @@ study("Session volume weighted price", overlay = true, precision = 2)
 src = input(hlc3, "Source")
 
 // The session's first bar where the host states session hours, and the first
-// bar of each IST day where it does not, as on the /trading chart.
+// bar of each IST day where it does not.
 newSession = orElse(session.isFirstBar, isNone(time[1]) or not date.isSameDay(time, time[1], "Asia/Kolkata"))
 
 // Three running totals rather than an array of every bar in the session.
@@ -6541,11 +6549,11 @@ plot(sessionBars, "Bars this session", fade(silver, 40), scale = "left")
 
 Three details here are persistence decisions rather than style:
 
-- The reset happens inside `if newSession`, on the first bar of each session, rather than by a second `var` line. `newSession` is `session.isFirstBar` where the host states the instrument's session hours; the /trading chart does not in this release, so there a new IST date marks the same bar for an NSE session.
+- The reset happens inside `if newSession`, on the first bar of each session, rather than by a second `var` line. `newSession` is `session.isFirstBar` where the host states the instrument's session hours, as /trading does; on a host that states none, a new IST date marks the same bar for an NSE session.
 - The readiness test is `totalVolume > 0`, not `sessionBars > 0`. An index has no traded volume, so its bars carry a volume of zero or no volume at all, depending on the data. With zero the total stays at zero and the test is false; with no volume the total is absent, the test is absent and takes the false branch. Either way the study draws nothing rather than dividing by zero.
 - Nothing needs `live var`. Every number settles when its bar closes, which is the only way the line on the chart today can be the line that was on it at the time.
 
-The library already has this calculation as `vwap()`, which restarts every session. It needs the session hours too, so on the /trading chart it has no value in this release, and `vwapAnchor()` with the same `newSession` as its anchor gives the same line. Writing it by hand is how you learn the pattern for the accumulators the library does not have.
+The library already has this calculation as `vwap()`, which restarts every session. It needs the session hours too, which /trading states, and on a host that states none `vwapAnchor()` with the same `newSession` as its anchor gives the same line. Writing it by hand is how you learn the pattern for the accumulators the library does not have.
 
 **Related.** [Execution model](/script/language/execution-model), [Bars and history](/script/language/bars-and-history), [Warmup](/script/language/warmup), [Realtime and confirmation](/script/language/realtime-and-confirmation), [Variables and scope](/script/language/variables-and-scope), [User functions](/script/language/functions), [Collections](/script/language/collections)
 
@@ -7157,8 +7165,8 @@ Two behaviours to know before you rely on alerts:
 
 **Adding a study to a chart fires nothing for the history already on it.** An alert is a statement about now. A study added at noon that raised four hundred alerts for the morning's bars would be useless.
 
-> **On the /trading chart in this release**
-The chart judges a script's alerts once for each new bar, when the bar first arrives. During market hours that is the bar's first tick, before the close the alert is waiting for, and the chart does not look at the bar again, so the alert may not fire. A bar that reaches the chart already closed does fire it. Every `frequency` also behaves as `"oncePerBar"` there. To be told reliably, plot the condition as 1 or 0 and put a study alert on that plot, as [Alerts on a script condition](/script/alerts/alerts-in-trading#alerts-on-a-script-condition) shows.
+> **On the /trading chart**
+The chart judges a script's alert when its bar closes, and fires it once for that bar: a notification on the page and a row in the Log tab of the Alerts panel. Only bars that close while the chart is open are judged, never the history loaded when it opens. An alert written with `onUnconfirmed = true` can fire on the forming bar instead, still once. Every `frequency` behaves as `"oncePerBar"` there, and alerts wait while a replay or a workspace change has the chart.
 
 [Alerts from scripts](/script/alerts/overview) covers messages, frequency and what happens after an alert fires.
 
@@ -8021,8 +8029,8 @@ panel = table("Session", 3, 2, position = "topRight", textColor = silver)
 
 spread = atr(14)
 
-// The session's first bar, or of the IST day where the host states no
-// session hours, as on the /trading chart.
+// The session's first bar, or of the IST day on a host that states no
+// session hours.
 newSession = orElse(session.isFirstBar, isNone(time[1]) or not date.isSameDay(time, time[1], "Asia/Kolkata"))
 
 // Bars since the session opened, counted with a var that restarts each session.
@@ -8609,7 +8617,7 @@ background(inWindow ? fade(silver, 92) : none)
 plot(inWindow ? high : none, "High in the window", aqua, style = "step")
 ```
 
-The language's own answer to "is this the first bar of the session" is `session.isFirstBar`. It depends on the host supplying the instrument's session hours, and [Sessions and time](/script/data/sessions-and-time#sessions-and-the-clock-in-trading-today) explains where that works in /trading today and why this study tests the date instead.
+The language's own answer to "is this the first bar of the session" is `session.isFirstBar`. It depends on the host supplying the instrument's session hours, which /trading reads from the market calendar; [Sessions and time](/script/data/sessions-and-time#sessions-and-the-clock-in-trading-today) lists where each part of /trading states them. This study tests the date instead, which needs no session hours and so works on any host.
 
 Two units, two jobs:
 
@@ -8671,13 +8679,13 @@ The chart's interval reaches a script differently depending on where in /trading
 | Where the script runs | What it is told |
 |---|---|
 | On the chart, as a study | The chart's interval as /trading names it, and the chart's timezone |
-| In the Backtest panel | Nothing about the interval. The run fetches bars of the chart's instrument at the chart's interval over the panel's dates, but `chart.interval`, `chart.intervalMinutes`, `chart.isIntraday` and `chart.timezone` are absent |
-| In the Strategies panel | The interval the deployment names |
+| In the Backtest panel | The chart's interval written the way the language writes it, so a `D`, `W` or `M` chart is stated as `"1D"`, `"1W"` or `"1M"`, and the exchange's timezone. A chart in seconds states no interval, because the language has no unit shorter than a minute |
+| In the Strategies panel | The interval the deployment names, and the instrument's timezone |
 
 
-/trading names minute and hour intervals the way the language does, such as `5m`, `15m` and `1h`, so on those charts every value on this page is present. Its daily, weekly and monthly charts are named `D`, `W` and `M`, which are not timeframes the language reads (it writes `1D`, `1W` and `1M`). On a daily chart `chart.interval` is therefore `"D"`, and `chart.intervalMinutes` and `chart.isIntraday` are both absent, which is why the examples above treat an absent `chart.isIntraday` as "not intraday".
+/trading names minute and hour intervals the way the language does, such as `5m`, `15m` and `1h`, so on those charts every value on this page is present. Its daily, weekly and monthly charts are named `D`, `W` and `M`, which are not timeframes the language reads (it writes `1D`, `1W` and `1M`). On a daily chart `chart.interval` is therefore `"D"`, and `chart.intervalMinutes` and `chart.isIntraday` are both absent, which is why the examples above treat an absent `chart.isIntraday` as "not intraday". The Backtest panel states the same chart as `"1D"`, so there both values are present.
 
-> **A strategy that branches on `chart.isIntraday` behaves differently in the Backtest panel than on the chart: there the value is absent, and an absent condition takes the false branch of an `if` or a ternary. If a strategy needs a length that depends on the interval, take the length in bars as an input so the backtest and the chart run the same numbers. [Backtesting](/script/strategies/backtesting) covers the panel itself.**
+> **On a daily, weekly or monthly chart the chart and the Backtest panel state the interval differently. The chart states `D`, so `chart.intervalMinutes` is absent there, and the panel states `"1D"`, so it is 1440. `chart.isIntraday` takes the false branch in both, absent on the chart and `false` in the panel, but a calculation on `chart.intervalMinutes` does not agree. If a strategy needs a length that depends on the interval, take the length in bars as an input so the backtest and the chart run the same numbers. [Backtesting](/script/strategies/backtesting) covers the panel itself.**
 
 ## Mistakes worth naming
 
@@ -8985,11 +8993,11 @@ Drawing a coarse bar as a candle currently takes four reads, one per price. A si
 | Where the script runs | Intraday reads such as `"15m"` or `"1h"` | Day, week and month reads |
 |---|---|---|
 | On the chart, as a study | Folded from the chart's own bars | Folded in the chart's timezone, Asia/Kolkata unless you changed it in the chart settings |
-| In the Backtest panel | Folded from the chart's bars | Absent on every bar, because the backtest run is not told the chart's timezone |
+| In the Backtest panel | Folded from the chart's bars | Folded in the exchange's timezone, Asia/Kolkata for an Indian exchange |
 
-> **A strategy that filters its trades with a daily read, as in the bias example above, takes no trades in the Backtest panel today: the read is absent, so the filter is never true. `req.error()` on the read says why: the host did not supply a timezone. Test such a strategy by drawing it on the chart, or use an intraday read such as `"1h"` for the filter.**
+The chart folds days in the chart's timezone and the Backtest panel in the exchange's, so the two agree unless the chart's timezone has been changed away from the exchange's. A strategy that filters its trades with a daily read, as in the bias example above, trades the same days in both.
 
-The rules for the timeframe need the chart's interval. /trading names its daily, weekly and monthly charts `D`, `W` and `M`, which the language cannot read, so on those charts OS6002 and OS6015 are never raised. A `"1h"` read on a /trading daily chart is not refused: every day becomes its own coarse bar, and the read quietly hands back the previous day's value. On a daily chart, read only `"1D"` or coarser.
+The rules for the timeframe need the chart's interval. On the chart, /trading names its daily, weekly and monthly charts `D`, `W` and `M`, which the language cannot read, so on those charts OS6002 and OS6015 are never raised. A `"1h"` read on a /trading daily chart is not refused there: every day becomes its own coarse bar, and the read quietly hands back the previous day's value. The Backtest panel states the same chart as `"1D"`, so there the `"1h"` read is refused with OS6002. On a daily chart, read only `"1D"` or coarser.
 
 **Related:** [Timeframes](/script/data/timeframes), [Repainting](/script/data/repainting), [Other instruments](/script/data/other-instruments), [Sessions and time](/script/data/sessions-and-time), [req.* reference](/script/reference/request), [Warmup](/script/language/warmup)
 
@@ -9243,7 +9251,7 @@ plot(dayMid, "NIFTY previous day mid", style = "step")
 
 `chart.tickSize`, `chart.lotSize`, `chart.exchange` and the rest of the `chart` namespace describe the instrument **the chart is showing**, never the one a read names. There is no per-read equivalent, so a study that reads another instrument and needs its lot size takes it as an input and says so in the title.
 
-On the /trading chart, a study is not told the chart instrument's exchange or lot size either, so `chart.exchange` and `chart.lotSize` are absent there. Take a lot size as an input whenever a study works in money.
+On the /trading chart, `chart.exchange` and `chart.lotSize` are the chart instrument's own, read from the platform's instrument record a moment after the study is first drawn. They are still the chart's, so a study that works in money on the legs it reads takes their lot size as an input.
 
 ## Index against its future
 
@@ -9321,7 +9329,7 @@ if decay >= targetPct
 
 The alert and the marker act on developing reads, so on the live chart they see the legs' prices as last fetched when the bar closes. Treat the alert as a prompt to look at the premium, not as an instruction to trade.
 
-On the /trading chart in this release, the marker draws as described, but the script's own `alert()` may not fire while the market is open: the chart judges a script's alerts once, when a bar first arrives, before it has closed. To be told reliably, plot `decay >= targetPct ? 1 : 0` as well and put a study alert on that plot, as [Alerts on a script condition](/script/alerts/alerts-in-trading#alerts-on-a-script-condition) shows.
+On the /trading chart the script's own `alert()` fires when the bar closes, as a toast, the alert sound and a row in the Log tab. To send it to Telegram or WhatsApp as well, plot `decay >= targetPct ? 1 : 0` and put a study alert on that plot, as [Alerts on a script condition](/script/alerts/alerts-in-trading#alerts-on-a-script-condition) shows.
 
 ## Other instruments in /trading
 
@@ -9348,7 +9356,7 @@ On a /trading chart of minute or hour bars, reading at `chart.interval` works as
 
 Source: https://openalgo.in/script/data/sessions-and-time
 
-Trading happens in sessions, and a session is not the same thing as a calendar day. This page covers how OpenScript (also called OpenAlgo Script) represents time, how to find the first bar of a trading day, how to test whether a bar falls inside a window such as 09:15 to 09:30 IST, how to cope with holidays, and which of these tools work in each part of the /trading page today.
+Trading happens in sessions, and a session is not the same thing as a calendar day. This page covers how OpenScript (also called OpenAlgo Script) represents time, how to find the first bar of a trading day, how to test whether a bar falls inside a window such as 09:15 to 09:30 IST, how to cope with holidays, and which of these tools work in each part of the /trading page.
 
 ## One instant, two calendars
 
@@ -9385,7 +9393,7 @@ A **session** is the instrument's trading session as the host defines it. It is 
 | `session.isHoliday()` | `bool` | Whether a date is a trading holiday | Planned |
 | `session.nextOpen` | `series number` | When the next session opens | Planned |
 
-`session.isFirstBar` and `session.isLastBar` are worked out from the instrument's session hours, which the host states. **Where the host states none, both are absent on every bar.** That is the honest answer, since a guessed session would be wrong somewhere, and it is the situation in /trading today: see [the last section](#sessions-and-the-clock-in-trading-today). `timeClose`, the instant a bar ends, and `date.add`, calendar arithmetic, are planned as well.
+`session.isFirstBar` and `session.isLastBar` are worked out from the instrument's session hours, which the host states. **Where the host states none, both are absent on every bar.** That is the honest answer, since a guessed session would be wrong somewhere. /trading states the session from the platform's market calendar, with the exceptions in [the last section](#sessions-and-the-clock-in-trading-today). `timeClose`, the instant a bar ends, and `date.add`, calendar arithmetic, are planned as well.
 
 Using a planned name is refused by the compiler with OS2020:
 
@@ -9408,11 +9416,11 @@ A session is what an exchange opens and closes. A date is what a calendar says. 
 
 Everything in the language that resets "per day" is meant to reset per **session**. `vwap()` restarts when the session opens, so it needs the session hours too. A `"1D"` [higher timeframe read](/script/data/higher-timeframes) groups the bars of one calendar day in the chart's timezone, which on an Indian exchange is one session. Write your own state the same way.
 
-**For Indian exchanges the two line up.** No NSE, BSE or MCX session runs past midnight IST, so a new calendar day in IST is a new session. That gives a test that works on the /trading chart today, when the chart is not told the session hours.
+**For Indian exchanges the two line up.** No NSE, BSE or MCX session runs past midnight IST, so a new calendar day in IST is a new session. That gives a test that works on any host, including one that states no session hours.
 
 ## The first bar of the day
 
-The language's answer is `session.isFirstBar`. On Indian instruments you can also test for a new IST date, which is what this study does, so it works on the /trading chart now:
+The language's answer is `session.isFirstBar`, which /trading works out from the market calendar's session hours. On Indian instruments you can also test for a new IST date, which is what this study does, so it works the same on a host that states no session hours:
 
 ```openscript
 version 1
@@ -9444,7 +9452,7 @@ fill(dayHighPlot, dayLowPlot, fade(aqua, 94))
 
 The oldest day on the chart may have started before the first loaded bar, so its open, high and low describe only the part of the day the chart holds. Every later day is complete.
 
-On a host that supplies session hours, replace the `newDay` line with `newDay = session.isFirstBar` and the study works on any market, including one whose session crosses midnight.
+On a host that supplies session hours, as /trading does, replace the `newDay` line with `newDay = session.isFirstBar` and the study works on any market, including one whose session crosses midnight.
 
 ### Tests that look right and are not
 
@@ -9463,7 +9471,7 @@ The `isSameDay` test has one more trap, on the oldest bar. There `time[1]` is ab
 
 The schedule is also its limit. If trading stops before the last scheduled bar, no bar that day has `session.isLastBar` true, so a strategy that must be flat also needs a clock based exit.
 
-Where session hours are not supplied, as in /trading today, square off by the clock instead: a window with `session.isIn()` on the chart, or the IST arithmetic in [the last section](#sessions-and-the-clock-in-trading-today), which works in every part of /trading.
+In /trading, `session.isLastBar` answers on the chart and in the Backtest panel. A deployed strategy cannot read it yet: the runner refuses it when the run loads. So a strategy you mean to deploy squares off by the clock instead, with a window in `session.isIn()`, or with the IST arithmetic in [the last section](#sessions-and-the-clock-in-trading-today), which needs nothing from the host at all.
 
 ## Windows inside the day
 
@@ -9546,13 +9554,14 @@ if bar.isLast
 An anchor the reader picks, such as the start of an anchored average, is an input of kind `"time"`. The dialog stores the date and time as text, and the script receives a timestamp in UTC milliseconds, ready to compare with `time`:
 
 ```openscript
-// In /trading the text is read as a UTC clock: 03:45 UTC is 09:15 IST.
-anchor = input("2025-01-02 03:45", "Anchor, UTC", kind = "time")
+// On the /trading chart the text is read in the chart's timezone:
+// 09:15 on a chart in Asia/Kolkata is 09:15 IST.
+anchor = input("2025-01-02 09:15", "Anchor", kind = "time")
 started = time >= anchor
 background(started ? fade(aqua, 95) : none)
 ```
 
-> **In /trading today, the text of a time input is read as a **UTC** clock, not in the chart's timezone, on the chart and in the Backtest panel alike. `2025-01-02 09:15` means 09:15 UTC, which is 14:45 IST. To anchor at an IST time, subtract 5 hours 30 minutes when you type it, and say "UTC" in the input's title so the reader does too. The Strategies panel does not run a script with a time input at all.**
+> **The /trading chart reads the text of a time input in the chart's timezone, and a deployed strategy reads it in the instrument's zone, IST for an Indian exchange. The **Backtest panel** still reads it as a **UTC** clock: there `2025-01-02 09:15` means 09:15 UTC, which is 14:45 IST. To anchor a backtest at an IST time, subtract 5 hours 30 minutes when you type the time in the panel's inputs.**
 
 ## Holidays
 
@@ -9606,15 +9615,19 @@ plot(bar.isLast ? ageMinutes : none, "Minutes since the newest bar opened")
 
 ## Sessions and the clock in /trading today
 
-The same script meets three different hosts in /trading, and they do not all supply the same facts yet.
+The same script meets three different hosts in /trading. All three read the instrument's timezone and trading session from the platform's market calendar, the same record an admin edits when the exchange changes its hours, so no session time is written into a script or into the page.
 
-| Where the script runs | `date.*` and `session.isIn` | `session.isFirstBar` and `session.isLastBar` |
+| Where the script runs | `date.*` and `session.isIn` | `session.isFirstBar`, `session.isLastBar` and `vwap()` |
 |---|---|---|
-| On the chart, as a study | Read in the chart's timezone | Absent: /trading does not yet give the chart's engine the instrument's session hours. `vwap()`, which restarts at each session's open, is absent for the same reason |
-| In the Backtest panel | Absent: the backtest run is not told the chart's timezone | Absent |
-| In the Strategies panel, as a deployed strategy | The runner refuses to start a script that calls them, because its engine reads a clock only in UTC and an Indian instrument's calendar is Asia/Kolkata. It refuses a time input for the same reason | The runner refuses to start a script that reads them |
+| On the chart, as a study or a strategy | Read in the chart's timezone | From the instrument's regular session hours. Absent while the chart's timezone is set to a zone other than the exchange's, and for the moment after the study is first drawn, before the instrument's details arrive; the study draws again when they do |
+| In the Backtest panel | Read in the exchange's timezone, Asia/Kolkata for an Indian exchange | From the regular session hours, for every day of the run |
+| In the Strategies panel, as a deployed strategy | Read in the instrument's zone, Asia/Kolkata for an Indian exchange | `session.isFirstBar` and `vwap()` from the market calendar; a run started on a special session day reads that day with its own hours. `session.isLastBar` is refused when the run loads, OS6004: the server's engine does not have it yet |
 
-The studies on this page use `date.*` and `session.isIn`, so they work on the chart. A strategy that has to behave the same on the chart, in the Backtest panel and when deployed needs a clock that none of those hosts can take away: arithmetic on `time` itself.
+The chart and the Backtest panel use the **regular** session for every day, because the engine holds one session for a whole run. On a special session day, such as an evening session on a holiday, the bars are read against the regular hours.
+
+A deployed strategy is refused before it starts when the server cannot read a clock in the instrument's zone, or when a script reads `session.isFirstBar` and the market calendar holds no session for the exchange. Both refusals name the script and the reason in the run's log.
+
+The studies on this page use `date.*` and `session.isIn`, which answer in every part of /trading. Arithmetic on `time` itself is still worth knowing: it needs nothing from the host, so a script written with it behaves the same on a host that states no timezone or session at all.
 
 India does not observe daylight saving, so India Standard Time is always exactly 5 hours 30 minutes ahead of UTC. Adding that offset to `time` and dividing gives the IST day and the minute of the IST day with no calendar function at all. (A fixed offset is wrong for any zone that changes its clocks, which is why the language never uses one. For IST it is exact all year.)
 
@@ -10748,7 +10761,7 @@ if newDay
 level(dayOpen, "Day open", fade(aqua, 25), style = "solid", width = 2)
 ```
 
-The first bar of the day is found here by a change of date in IST, which is right for NSE, BSE and MCX because none of their sessions runs past midnight. The language's own `session.isFirstBar` needs the exchange's session hours, which the /trading chart does not supply in this release, so it has no value there. [Sessions and time](/script/data/sessions-and-time) explains both.
+The first bar of the day is found here by a change of date in IST, which is right for NSE, BSE and MCX because none of their sessions runs past midnight. The language's own `session.isFirstBar` needs the exchange's session hours. The /trading chart states them from the market calendar, so there it finds the same bars; the date test also works on a host that states no session hours. [Sessions and time](/script/data/sessions-and-time) explains both.
 
 **If you want to see where the level used to be, it is not a level.** A value whose past matters is a column, and a column is a plot. Use `style = "step"` so the picture says "it was this, then it became that" rather than sloping between readings that never happened:
 
@@ -11143,7 +11156,7 @@ pLow  = plot(forming ? none : rangeLow,  "Range low",  orange, style = "step")
 fill(pHigh, pLow, color = aqua, opacity = 0.09)
 ```
 
-The day is found by a change of IST date because the /trading chart does not supply the exchange's session hours in this release, so `session.isFirstBar` has no value there. [Sessions and time](/script/data/sessions-and-time) explains why the date test is right for Indian exchanges.
+The day is found by a change of IST date, which works on any chart, including one whose host states no session hours. On the /trading chart, which states the exchange's session from the market calendar, `newDay = session.isFirstBar` gives the same bars. [Sessions and time](/script/data/sessions-and-time) explains why the date test is right for Indian exchanges.
 
 **A band that switches off while its visible edges stay.** Draw the edges as ordinary plots, then give the band a second pair of ends: invisible copies of the edges that are absent whenever the band should be off. The lines carry straight on, and the shading appears only where both copies have values:
 
@@ -12424,10 +12437,11 @@ tempted to put in the caption.
 
 The language's own test for the first bar of a session is
 `session.isFirstBar`. It needs the instrument's session hours, which the
-/trading chart does not give the engine yet, so there it has no value and a
-study built on it draws nothing. On NSE, BSE and MCX a new IST date is a new
-session, so the date test above works on the chart today. See
-[Sessions and time](/script/data/sessions-and-time#sessions-and-the-clock-in-trading-today).
+/trading chart states from the market calendar, so there it marks the same bars
+as the date test. The date test is kept here because it needs nothing from the
+host: on NSE, BSE and MCX a new IST date is a new session, so it also works
+where no session hours are stated. See
+[Sessions and time](/script/data/sessions-and-time).
 
 ## When a label is the wrong tool
 
@@ -12467,7 +12481,7 @@ number of lines to write.
 | The label is several bars right of its pivot | Anchored at `time` on the bar that reported the pivot | Anchor at `time[rightBars]` |
 | The chart slows as history loads, or the script stops with OS5010 | One label per bar, or an uncapped list | Cap the list, or use a plot |
 | A label is bare white text | No `color`, so the label has no plate | Pass a plate colour |
-| A study that marks the session open draws nothing on the /trading chart | It tests `session.isFirstBar`, which has no value there | Test for a new IST date, as the gaps study does |
+| A study that marks the session open draws nothing | It tests `session.isFirstBar`, which has no value where no session hours are stated: on /trading, when the chart's timezone was changed away from the exchange's, or when the instrument's details could not be read | Set the chart back to the exchange's timezone, or test for a new IST date, as the gaps study does |
 | OS2003 on the marker text | A number joined to a string | Convert it with `text(value, decimals)` |
 
 **Related.** [Lines and boxes](/script/visuals/lines-and-boxes) for the
@@ -12677,11 +12691,11 @@ first pair of lines can describe only part of a day; every pair after it is
 complete.
 
 > **The language's own test for the first bar of a session is**
-`session.isFirstBar`. The /trading chart does not yet give the engine the
-instrument's session hours, so there it has no value, and a study that resets on
-it never resets. On NSE, BSE and MCX a new date in IST is a new session, so the
-examples on this page test the date. See
-[Sessions and time](/script/data/sessions-and-time#sessions-and-the-clock-in-trading-today).
+`session.isFirstBar`. The /trading chart states the instrument's session hours
+from the market calendar, so there it works. The examples on this page test the
+date instead because that needs nothing from the host: on NSE, BSE and MCX a new
+date in IST is a new session, so the date test also works where no session hours
+are stated. See [Sessions and time](/script/data/sessions-and-time).
 
 ## Extending to the right
 
@@ -13081,7 +13095,7 @@ if bar.isLast
 | The box hides the candles | A fill that is too strong | Lower `opacity` |
 | A box's fill cannot be seen | A faded fill colour dimmed again by `opacity` | Pass a plain colour and set the strength with `opacity` |
 | A vertical line crosses the whole pane | An extended line whose two anchors share a time | Anchor the line at two different times |
-| A study that resets each session draws nothing on the /trading chart | It resets on `session.isFirstBar`, which has no value there | Test for a new IST date, as the examples here do |
+| A study that resets each session never resets | It resets on `session.isFirstBar`, which has no value where no session hours are stated: on /trading, when the chart's timezone was changed away from the exchange's, or when the instrument's details could not be read | Set the chart back to the exchange's timezone, or test for a new IST date, as the examples here do |
 
 **Related.** [Labels and shapes](/script/visuals/labels-and-shapes) for text
 plates and markers, [Tables](/script/visuals/tables) for numbers pinned to a
@@ -13186,9 +13200,11 @@ explains each:
    that says "warming up" rather than leaving a blank or inventing a zero.
 
 The first row reads `chart.symbol` and `chart.interval`, which the /trading
-chart supplies. It does not yet supply `chart.exchange` or `chart.lotSize`,
-so there both are absent: a cell built from either is blank, and `show` would
-say "warming up" for ever.
+chart supplies itself. Facts from the platform's instrument record, such as
+`chart.exchange` and `chart.lotSize`, arrive a moment after the study is
+first drawn, and the study is drawn again when they do. A fact the host does not
+state at all, such as `chart.pointValue` on the /trading chart, stays absent:
+a cell built from it is blank, and `show` would say "warming up" for ever.
 
 ## Declaring a grid
 
@@ -13534,7 +13550,7 @@ a list belongs in the [print log](/script/writing/debugging) or a
 | A second panel never appears | The chart draws only the first grid a study declares | Declare one grid, or split the study in two |
 | Numbers do not line up | Cells are left aligned by default | `align = "right"` on the value column |
 | An empty block stays in the corner with the panel switched off | The grid has a `bgColor` or a border, which is drawn at the declared size | Put the background on the cells you write instead |
-| A cell is blank, or says "warming up" for ever, on the /trading chart | It reads `chart.exchange` or `chart.lotSize`, which the chart does not supply yet | Leave those readings out of a panel meant for the chart |
+| A cell is blank, or says "warming up" for ever, on the /trading chart | It reads a fact the chart does not state, such as `chart.pointValue` or `chart.currency`, or the lot size of a symbol whose contract has not been downloaded | Test the fact with `isNone` and say "not stated", or leave that reading out of a panel meant for the chart |
 | OS4003 on a `str.repeat` meter | A count that is not a whole number | Round it down with `floor` first |
 
 **Related.** [Labels and shapes](/script/visuals/labels-and-shapes) for the stack
@@ -13696,9 +13712,11 @@ bias   = req.timeframe(biasTf, ema(close, 20))
 plot(bias, "Bias", style = "step")
 ```
 
-In /trading the menu starts with **Chart interval**, followed by the intervals your data feed serves, such as `1m`, `5m`, `15m`, `1h` and `D`, and the input's current value if the feed does not list it. The script receives exactly the string you pick, and a read accepts only the forms on [Timeframes](/script/data/timeframes#how-a-timeframe-is-written):
+In the /trading settings dialog the menu starts with **Chart interval**, labelled with the chart's own interval, such as **Chart interval (5m)**, followed by the intervals your data feed serves that a read can build from the chart's bars: the chart's interval or a coarser one, and on an intraday chart only a whole multiple of it. On a 5 minute chart that is `10m`, `15m`, `30m`, `1h` and the day, with `1m` and `3m` left out. The script receives each choice in the language's spelling, the forms on [Timeframes](/script/data/timeframes#how-a-timeframe-is-written):
 
-> **Some entries in the /trading menu are not timeframes a read accepts. **Chart interval** hands the script an empty string, and **D** is the feed's name for daily, where the language writes `1D` (likewise **W** and **M**, where it writes `1W` and `1M`). A read given any of these stops with OS6001 when the study loads. For a daily read, keep `"1D"` as the input's default: the menu shows the input's current value as an entry of its own when the feed does not list it.**
+- **Chart interval** stores the chart's interval as it is when you choose it, `5m` on that chart. Moving the chart to another interval later does not change the setting.
+- The feed's **D**, **W** and **M** are stored as `1D`, `1W` and `1M`.
+- A saved value that is no longer offered, such as `1m` on a chart that has since moved to `5m`, stays in the menu as an entry of its own, so the dialog never shows one interval while the study uses another.
 
 The repaint mode of a read is never an input. `mode = "confirmed"`, `"developing"` or `"lookahead"` is written as a literal, because a setting would let a reader change the honesty of a study without reading it.
 
@@ -13707,13 +13725,13 @@ The repaint mode of a read is never an input. `mode = "confirmed"`, `"developing
 `kind = "time"` takes a date and a time. In the /trading dialog it is a text box with the hint `YYYY-MM-DD HH:MM`. The value is stored as the text you typed, and the script receives a timestamp in UTC milliseconds, converted once before the first bar, ready to compare with `time`.
 
 ```openscript
-// Read as a UTC clock in /trading: 03:45 UTC is 09:15 IST.
-anchor = input("2025-01-02 03:45", "Anchor, UTC", kind = "time")
+// Read in the chart's timezone on the /trading chart: 09:15 IST on an IST chart.
+anchor = input("2025-01-02 09:15", "Anchor", kind = "time")
 started = time >= anchor
 background(started ? fade(aqua, 95) : none)
 ```
 
-> **In /trading today the text is converted as a **UTC** clock, not in the chart's timezone, on the chart and in the Backtest panel alike. `2025-01-02 09:15` is 09:15 UTC, which is 14:45 IST. Subtract 5 hours 30 minutes from an IST time when you type it, and put "UTC" in the title so the reader knows. The Strategies panel refuses to run a script with a time input. [Sessions and time](/script/data/sessions-and-time) has more on time in /trading.**
+> **Where the text is read depends on where the script runs. The /trading chart reads it in the chart's timezone, so `2025-01-02 09:15` is 09:15 IST on a chart in Indian time. A strategy deployed from the Strategies panel reads it in the instrument's timezone, which is IST for Indian exchanges. The Backtest panel still reads it as a **UTC** clock: there `09:15` is 14:45 IST, so subtract 5 hours 30 minutes from an IST time when you type one for a backtest. [Sessions and time](/script/data/sessions-and-time) has more on time in /trading.**
 
 ## Where input() may appear
 
@@ -13750,7 +13768,7 @@ dailyRsi = req.timeframe("1D", rsi(close, input(14, "RSI length", min = 2)))
 plot(dailyRsi, "Daily RSI", purple, style = "step")
 ```
 
-The input inside the read follows the dialog like any other. The one in the declaration is a different case in /trading today: the chart reads declaration options when it loads the study, at their defaults, so changing the Decimals row does not change the drawing there. [Settings and style](/script/inputs/settings-and-style#what-the-declaration-decides) lists what follows the dialog.
+The input inside the read follows the dialog like any other. The one in the declaration is a different case in /trading: the chart reads declaration options when it loads the study, at their defaults, so changing the Decimals row does not change the drawing there. [Settings and style](/script/inputs/settings-and-style#what-the-declaration-decides) lists what follows the dialog.
 
 ## Names, titles and saved values
 
@@ -13807,9 +13825,9 @@ Every kind also accepts these arguments:
 | `inline` | `string` | `""` | Planned: rows sharing a value sit on one line |
 | `confirm` | `bool` | `false` | Planned: ask for this value when the study is added |
 
-`group` and `tooltip` are carried in the compiled script. In /trading today, the study settings dialog lists the inputs in the order they appear in the source, without group headings and without tooltips. The input forms in the Backtest and Strategies panels show the tooltip when you rest the pointer on an input's label. The compiler accepts `inline` and `confirm`, and they have no effect yet.
+`group` and `tooltip` are carried in the compiled script. In /trading, the study settings dialog and the input forms in the Backtest and Strategies panels list the inputs in the order they appear in the source, show each `group` as a heading above its rows, and write each `tooltip` as a line of help under its row. The compiler accepts `inline` and `confirm`, and they have no effect yet.
 
-So make the labels carry the meaning. **Name the unit in the label when it is not obvious**: "Band width, in ATR" and "Flat this many minutes after the open" need no tooltip. "Multiplier" and "Threshold" need one and will still be misread. Keep grouping anyway, in the order a reader works: calculation first, then what is drawn, then anything about trading.
+Still make the labels carry the meaning, because the label is what a reader scans. **Name the unit in the label when it is not obvious**: "Band width, in ATR" and "Flat this many minutes after the open" need no tooltip. "Multiplier" and "Threshold" need one and will still be misread without it. Group in the order a reader works: calculation first, then what is drawn, then anything about trading.
 
 ```openscript
 version 1
@@ -13986,7 +14004,7 @@ A tab with nothing on it is greyed out, so a study with no inputs opens straight
 
 ## The Inputs tab
 
-The Inputs tab has one row per `input()` call, in the order they appear in the source, with the input's title as the label and a control chosen by the input's kind:
+The Inputs tab has one row per `input()` call, in the order they appear in the source, with the input's title as the label and a control chosen by the input's kind. An input's `group` is a heading above its rows, and its `tooltip` is a line of help under its row:
 
 | Kind of input | Control |
 |---|---|
@@ -13994,12 +14012,12 @@ The Inputs tab has one row per `input()` call, in the order they appear in the s
 | Switch (`true` or `false`) | A tick box |
 | Choice (`options = [...]`) | A menu of the listed values |
 | Source (`close`, `hlc3` and so on) | A menu of Open, High, Low, Close, Hl2, Hlc3 and Ohlc4 |
-| Interval (`kind = "interval"`) | A menu of Chart interval and the intervals your data feed serves |
+| Interval (`kind = "interval"`) | A menu of Chart interval and the intervals your data feed serves that a read can build from the chart's bars, stored in the language's spelling, such as `1D` for the feed's `D` |
 | Colour | A colour swatch |
 | Text | A text box |
-| Time (`kind = "time"`) | A text box with the hint `YYYY-MM-DD HH:MM`, read as a UTC clock in /trading today |
+| Time (`kind = "time"`) | A text box with the hint `YYYY-MM-DD HH:MM`, read in the chart's timezone |
 
-The dialog does not show group headings or tooltips today, so write labels that say what a row is and in which unit. [Inputs](/script/inputs/inputs) covers every kind, its bounds and the values it hands the script.
+Headings and help lines do not replace a clear label, so still write labels that say what a row is and in which unit. [Inputs](/script/inputs/inputs) covers every kind, its bounds and the values it hands the script.
 
 ## The Style tab
 
@@ -14195,7 +14213,7 @@ plot(sma(close, 20), "Average", precision = 1)
 
 The full list of options for `study()` and `strategy()` is in the [declarations reference](/script/reference/declarations).
 
-> **An `input()` can be written as a declaration option, such as `precision = input(2, "Decimals")`, or as a plot's `width` or `style`. In /trading today, the chart reads those at their defaults when it loads the study, so changing such a row in the settings dialog does not change the drawing. Colour inputs, level styles and a pane's `range` do follow the dialog.**
+> **An `input()` can be written as a declaration option, such as `precision = input(2, "Decimals")`, or as a plot's `width` or `style`. In /trading, the chart reads those at their defaults when it loads the study, so changing such a row in the settings dialog does not change the drawing. Colour inputs, level styles and a pane's `range` do follow the dialog.**
 
 ## What /trading keeps
 
@@ -14263,7 +14281,7 @@ Source: https://openalgo.in/script/alerts/overview
 
 An alert is how a script tells you about a condition while you are looking somewhere else: a crossover on a five-minute SBIN chart, a break of the opening range on NIFTY futures, an RSI turning back from an extreme. This page covers the three calls OpenScript (also called OpenAlgo Script) gives you for it, `alert()`, `signal()` and the planned `notify()`: what each one takes, exactly when it fires, how to build a message that carries the numbers you need, and how the three differ.
 
-What happens after an alert fires depends on where the script runs. For the /trading page, including what works there in this release, read [Alerts in /trading](/script/alerts/alerts-in-trading).
+What happens after an alert fires depends on where the script runs. For the /trading page, including how its chart judges a script's alerts and where each firing goes, read [Alerts in /trading](/script/alerts/alerts-in-trading).
 
 ## A first alert
 
@@ -14300,8 +14318,8 @@ Three things are worth seeing before any detail:
 
 By the rules of the language, this study raises one alert on the bar where a crossing is confirmed (the bar has closed), and nothing for the crossings already in the chart's history.
 
-> **On the /trading chart in this release**
-The /trading chart checks each bar for a script's alerts once, when the bar first reaches the chart. During trading hours a bar arrives with its first tick, before it has closed, so an `alert()` waiting for the close (every alert, unless the file opts out) has nothing to report yet, and the chart does not look at that bar again. Such an alert can still fire for a bar that arrives late, after its time has passed, but you cannot rely on it. To be told about a script's condition on /trading today, plot the condition and put a study alert on that plot, as [Alerts on a script condition](/script/alerts/alerts-in-trading#alerts-on-a-script-condition) shows. A strategy deployed from the Strategies panel is not affected: it runs on the OpenAlgo server and writes its alerts to the run's log.
+> **On the /trading chart**
+The /trading chart follows the same rule. When a bar closes, the chart judges it with the script's conditions and fires each alert that holds, once for that bar, as a toast, the alert sound, a desktop notification when the tab is hidden, and a row in the Log tab of the Alerts panel. Only bars that close while the chart is open are judged. To send a script's condition to Telegram or WhatsApp as well, plot the condition and put a study alert on that plot, as [Alerts on a script condition](/script/alerts/alerts-in-trading#alerts-on-a-script-condition) shows. A strategy deployed from the Strategies panel runs on the OpenAlgo server instead and writes its alerts to the run's log.
 
 ## The three calls at a glance
 
@@ -14394,7 +14412,7 @@ Where a script's message does come out absent, the /trading chart shows the aler
 
 | Want in the message | Write |
 |---|---|
-| The instrument | `chart.symbol`, and `orElse(chart.exchange, "")`: the /trading chart does not state the exchange, and an absent part would make the whole message absent |
+| The instrument | `chart.symbol`, and `orElse(chart.exchange, "")`: the exchange arrives a moment after the study is first drawn, and on a host that states none an absent part would make the whole message absent |
 | The chart's interval | `chart.interval` |
 | The bar's price | `text(close, 2)` |
 | A computed value | `text(atr(14), 2)` |
@@ -14598,7 +14616,7 @@ if crossDown(close, lower)
 
 ### An alert and a marker, once per session
 
-The high and low of the first minutes of each session, with one alert and one marker for the first break of either side. On an NSE chart the session opens at 09:15, so the default range is 09:15 to 09:30. The session's first bar is `session.isFirstBar` where the host states session hours; the /trading chart does not in this release, so the study falls back to the first bar of each IST day, which on NSE is the same bar.
+The high and low of the first minutes of each session, with one alert and one marker for the first break of either side. On an NSE chart the session opens at 09:15, so the default range is 09:15 to 09:30. The session's first bar is `session.isFirstBar`, which the /trading chart works out from the exchange's session in the market calendar. On a host that states no session hours the study falls back to the first bar of each IST day, which on NSE is the same bar.
 
 ```openscript
 version 1
@@ -14709,13 +14727,13 @@ plot(slow, "Slow EMA", orange)
 
 The alert describes the order being sent, not a fill. By default a market order fills at the next bar's open, so on the bar that raises the exit alert the long is still open, and `pos.avgPrice` still reads the price it was entered at.
 
-A strategy added to the /trading chart is drawn like a study, and the chart judges its alerts the same way it judges a study's (see the warning near the top of this page). A strategy deployed from the Strategies panel runs on the OpenAlgo server rather than on the chart. It sends nothing while it replays history at the start; after that, each alert it raises is written as a line in that run's log, such as `Alert exit: Exit Exit signal: closing the long entered at 812.45`, rather than being sent anywhere. See [Sandbox and live](/script/strategies/sandbox-and-live).
+A strategy added to the /trading chart is drawn like a study, and the chart judges its alerts the same way it judges a study's, when each bar closes (see the note near the top of this page). A strategy deployed from the Strategies panel runs on the OpenAlgo server rather than on the chart. It sends nothing while it replays history at the start; after that, each alert it raises is written as a line in that run's log, such as `Alert exit: Exit Exit signal: closing the long entered at 812.45`, rather than being sent anywhere. See [Sandbox and live](/script/strategies/sandbox-and-live).
 
 ## What goes wrong
 
 | Symptom | Cause | Fix |
 |---|---|---|
-| A study's alert does not fire on the /trading chart | In this release the chart checks each bar only as it arrives, before a waiting alert can fire | Plot the condition and put a study alert on it: [Alerts on a script condition](/script/alerts/alerts-in-trading#alerts-on-a-script-condition) |
+| A study's alert fired on the /trading chart but did not reach Telegram or WhatsApp | A script alert goes to the sound, the desktop notification and the Log tab only | Plot the condition and put a study alert on it: [Alerts on a script condition](/script/alerts/alerts-in-trading#alerts-on-a-script-condition) |
 | Nothing fires, ever, anywhere | The condition is absent during warmup and false afterwards, or it is never true | Plot the condition as `cond ? 1 : 0` from a study of its own and look at the line |
 | Fires on every bar of a trend | The condition tests a state, not a change | Test the change: `crossUp()`, a comparison with `[1]`, or a `var` flag |
 | Fired, and then the bar closed the other way | `onUnconfirmed = true` without a `bar.isConfirmed` guard | Remove `onUnconfirmed`, or add the guard |
@@ -14736,7 +14754,7 @@ More cases are on [Troubleshooting](/script/writing/troubleshooting). For the co
 
 Source: https://openalgo.in/script/alerts/alerts-in-trading
 
-This page is about alerts as you meet them on the /trading page of OpenAlgo: setting a price alert with one right-click, putting an alert on a study's line (including a study you wrote in OpenScript), what an `alert()` in your script does on the chart in this release, how each firing reaches you, and how to read and manage everything in the **Alerts** panel on the right-hand toolbar. For writing `alert()` calls in a script, see [Alerts from scripts](/script/alerts/overview).
+This page is about alerts as you meet them on the /trading page of OpenAlgo: setting a price alert with one right-click, putting an alert on a study's line (including a study you wrote in OpenScript), what an `alert()` in your script does on the chart, how each firing reaches you, and how to read and manage everything in the **Alerts** panel on the right-hand toolbar. For writing `alert()` calls in a script, see [Alerts from scripts](/script/alerts/overview).
 
 > **Alerts run in your browser**
 Alerts are checked by the chart that is open in /trading, so an alert fires only while /trading is open in a browser tab. The tab may sit behind other windows: a chart with an Active alert keeps fetching bars while it is hidden. Close the tab and nothing fires until you open it again. What did fire is kept on the OpenAlgo server, in the Log tab, for 90 days.
@@ -14750,7 +14768,7 @@ Alerts are checked by the chart that is open in /trading, so an alert fires only
 | Drawing alert | A level of a drawing, such as a trend line | Right-click the drawing, or the **Alerts** button | Yes |
 | Script alert | An `alert()` call in an OpenScript study on the chart | Nothing to create: it is watched once the study is on the chart | No. Any firing appears in the Log tab |
 
-The first three are alerts you set on the chart, and each has a row in the Alerts tab with its own settings. The fourth is written into the script itself: its condition and message come from the code. In this release a script alert rarely fires on the chart (see [Alerts from a script](#alerts-from-a-script)), so to be told about a condition your script computes, use a study alert on a plot of it, as [Alerts on a script condition](#alerts-on-a-script-condition) shows.
+The first three are alerts you set on the chart, and each has a row in the Alerts tab with its own settings. The fourth is written into the script itself: its condition and message come from the code, and it fires when its bar closes (see [Alerts from a script](#alerts-from-a-script)). A script alert goes to the sound and the desktop notification only, so to send a condition your script computes to Telegram or WhatsApp, or to give it an expiry, use a study alert on a plot of it, as [Alerts on a script condition](#alerts-on-a-script-condition) shows.
 
 ## A price alert in one click
 
@@ -14891,12 +14909,12 @@ Right-click a drawing and choose **Create drawing alert**. When a drawing cannot
 
 ## Alerts from a script
 
-A study that calls `alert()` needs no setup to be watched. Save it in the Scripts panel and put it on the chart with **Apply to chart** there, or from the **Indicators** dialog. Each `alert()` in it becomes a condition the chart checks as new bars arrive, starting from the next new bar.
+A study that calls `alert()` needs no setup to be watched. Save it in the Scripts panel and put it on the chart with **Apply to chart** there, or from the **Indicators** dialog. Each `alert()` in it becomes a condition the chart judges on every bar that closes while the chart is open.
 
-> **Script alerts do not fire reliably on the chart in this release**
-The chart checks each new bar for a script's alerts once, at the moment the bar first reaches the chart, and does not look at that bar again after it closes. During trading hours a bar arrives with its first tick, and an `alert()` waits for its bar to close unless the file sets `onUnconfirmed = true`, so at that moment it has nothing to report. It fires only for a bar that arrives late, after its time has passed. A file that does set `onUnconfirmed = true` fires only when its condition already holds on the first update of a new bar, with the message worked out from that update. Until this is fixed, use the route in [Alerts on a script condition](#alerts-on-a-script-condition), which works with every delivery channel.
+> **When a script alert is judged**
+An `alert()` waits for its bar to close. When the next bar arrives, the chart judges the bar that just closed with the script's own condition and fires once for it, with the message worked out from that closed bar. A file that sets `onUnconfirmed = true` can fire on the forming bar instead, as soon as its condition holds, and is still not fired a second time for the same bar. While replay or a workspace change is using the chart, script alerts are held back.
 
-When a script alert does fire on the chart:
+When a script alert fires on the chart:
 
 - a toast shows the script's message, or its title when the message is absent on that bar;
 - the alert sound plays, and a desktop notification appears if the /trading tab is hidden and the browser allows notifications;
@@ -14906,15 +14924,16 @@ A few things set script alerts apart from the alerts you create on the chart:
 
 - **They are not in the Alerts tab**, so they have no Stop, Edit or Delete. To silence them, remove the study from the chart, or take the `alert()` out of the script and save it.
 - **Delivery is fixed** at Sound and Desktop notification. There is no box to tick for Telegram or WhatsApp.
-- **Nothing fires for history.** Adding the study, or changing its settings, recalculates the past without sending anything. Only bars that arrive afterwards are checked.
+- **Nothing fires for history.** Adding the study, or changing its settings, recalculates the past without sending anything. Only bars that close while the chart is open are judged, never the history loaded when it opens.
+- **An edit keeps it watched.** Applying a script that is already on the chart, after you save a change, updates that copy rather than adding a second one, so its alerts carry on under the same study.
 - **At most once per bar.** The chart checks each `alert()` once for each new bar, so the `frequency` values `"once"` and `"everyUpdate"` behave as `"oncePerBar"` here. See [frequency](/script/alerts/overview#frequency).
 - **The id names the alert.** A repeat of the same `id` replaces its previous desktop notification rather than stacking another beside it. Give every alert a fixed `id` and a `title`, as [The id is a promise](/script/alerts/overview#the-id-is-a-promise) explains.
 
-A strategy deployed from the Strategies panel runs on the OpenAlgo server rather than on the chart, so the limit above does not apply to it. It sends nothing while it replays history at the start; after that, each alert it raises is written as a line in that run's log, and it is not sent to this panel, the sound or any channel.
+A strategy deployed from the Strategies panel runs on the OpenAlgo server rather than on the chart. It sends nothing while it replays history at the start; after that, each alert it raises is written as a line in that run's log, and it is not sent to this panel, the sound or any channel.
 
 ## Alerts on a script condition
 
-The dependable way to be told about something your script computes is to plot the condition as 1 or 0 and put a study alert on that plot. Set to **On bar close**, the study alert is judged on the closed bar, the same rule a script's `alert()` follows. It also has everything the dialog offers (a name, message placeholders, an expiry, repeat) and can go to Telegram or WhatsApp as well as the sound and the desktop notification.
+To send a condition your script computes anywhere beyond the sound and the desktop notification, plot the condition as 1 or 0 and put a study alert on that plot. Set to **On bar close**, the study alert is judged on the closed bar, the same rule a script's `alert()` follows. It also has everything the dialog offers (a name, message placeholders, an expiry, repeat) and can go to Telegram or WhatsApp as well as the sound and the desktop notification.
 
 ```openscript
 version 1
@@ -15140,7 +15159,7 @@ These three calls look alike in a file and do entirely different things:
 A bar is **confirmed** once it has closed and its prices can no longer change. A marker is a statement about the chart, and nothing can stop it being drawn. An order is a request, and it can be refused: for an absent price or size (OS7002), a size of zero or less (OS7004), a price off the tick (OS7006), a resting order with no price (OS7007), an entry beyond the pyramiding limit (OS7008), cancelling a tag that is not working (OS7009), a stop or target on the wrong side of an open position (OS7010), two opposite orders on one bar (OS7013), or a close larger than what it closes (OS7017). [Orders](/script/strategies/orders) lists every refusal with its usual cause.
 
 > **A refused order stops the script**
-In version 0.5.0 a refused order stops the run at the bar it happened on. Nothing that bar decided is sent, and no later bar executes. In the Backtest panel the report then holds only the trades made before it, and the panel does not show the error, so a run with far fewer trades than the chart suggests is worth checking for one. The guards below are what keep a strategy from ever reaching one.
+In version 0.5.0 a refused order stops the run at the bar it happened on. Nothing that bar decided is sent, and no later bar executes. In the Backtest panel the report then holds only the trades made before it, and above the figures the panel says which bar the run stopped on, what went wrong and the code, so the figures are not read as the whole range. The guards below are what keep a strategy from ever reaching one.
 
 ## What happens on every bar
 
@@ -15211,7 +15230,7 @@ A strategy is mostly the same code as the study plus a handful of guards. Learn 
 
 **Warmup** is the run of early bars before an indicator has enough history to give a value. The last guard applies to `and` as well: its right side is not evaluated when its left side is false, so write `goLong = crossUp(fast, slow)` at the top level and test `goLong and pos.isFlat`, rather than putting the call inside the condition.
 
-`session.isOpen` is planned. Until it lands, `session.isIn()` with a window you write is the trading-hours guard. Name the zone, `"Asia/Kolkata"` for Indian markets: the chart states its timezone to the script, but the Backtest panel does not, and there a window with no zone has no value on any bar, so the strategy never trades.
+`session.isOpen` is planned. Until it lands, `session.isIn()` with a window you write is the trading-hours guard. Name the zone, `"Asia/Kolkata"` for Indian markets: a window with no zone is read in the chart's timezone on the chart and in the exchange's zone in the Backtest panel and a deployment, so naming it keeps the window at the same time of day everywhere, whatever a chart is set to.
 
 ```openscript
 version 1
@@ -15236,7 +15255,7 @@ else if pos.isLong and not inHours
 plot(breakoutLevel, "Breakout level", aqua, style = "step")
 ```
 
-A strategy deployed from the Strategies panel cannot read the clock this way in version 0.5.0: the runner refuses to start a script that calls `session.isIn()` or any `date.*` function on an Indian instrument. [Sessions and time](/script/data/sessions-and-time#sessions-and-the-clock-in-trading-today) shows a trading window built from arithmetic on `time` that works in all three places.
+A strategy deployed from the Strategies panel reads the clock this way too: the runner answers `session.isIn()` and every `date.*` function in the instrument's zone, IST for an Indian exchange. [Sessions and time](/script/data/sessions-and-time#sessions-and-the-clock-in-trading-today) lists what each part of /trading reads.
 
 ## Where a strategy runs in /trading
 
@@ -15254,7 +15273,7 @@ The same compiled strategy runs in three places, and the numbers it computes do 
 The Strategies panel shows the platform's current mode in its header, and its start button names the destination it is about to use:
 
 
-The runner that executes a deployment supports a subset of the language in version 0.5.0: quantities in units only, no `exit()` or `order.bracket()`, and no calendar or session reads. It refuses anything else before the first order, and [Sandbox and live](/script/strategies/sandbox-and-live) lists each refusal with its fix.
+The runner that executes a deployment supports a subset of the language in version 0.5.0: quantities in units only, no `exit()` or `order.bracket()`, and no `session.isLastBar`. It refuses anything else before the first order, and [Sandbox and live](/script/strategies/sandbox-and-live) lists each refusal with its fix.
 
 A strategy that wants its stop or target drawn plots it like any other value. The chart shows what happened; the destination decides what happens.
 
@@ -15285,8 +15304,8 @@ Every script on this page trades one instrument, the one on its chart, and opens
 | Symptom | Cause | Fix |
 |---|---|---|
 | The position grows every bar the condition is true | No position guard | Add `and pos.isFlat`, or raise `pyramiding` on purpose |
-| The backtest stops partway, with far fewer trades than the chart shows | A refused order, most often OS7008: a second entry with `pyramiding = 1` | Guard entries with `pos.isFlat` |
-| No trades at all in the Backtest panel | A trading window written without a zone, such as `session.isIn("0930-1500")` | Name the zone: `session.isIn("0930-1500", "Asia/Kolkata")` |
+| The backtest stops partway, and the panel says which bar it stopped on | A refused order, most often OS7008: a second entry with `pyramiding = 1` | Guard entries with `pos.isFlat` |
+| Trades at the wrong time of day | A trading window written without a zone, such as `session.isIn("0930-1500")`, on a chart set to another timezone | Name the zone: `session.isIn("0930-1500", "Asia/Kolkata")` |
 | The backtest is much better than the account | `fillOn = "close"`, no slippage, no commission | Keep the defaults, then add real costs |
 | Orders appear on history and not on the forming bar | The condition is true inside the bar and false at its close | Nothing to fix: that is the deferral working |
 | A stop plotted on the chart never exits the backtest | Levels from `exit()` are not filled in 0.5.0 | Test the level in the script, as [Exits and brackets](/script/strategies/exits-and-brackets) shows |
@@ -15413,7 +15432,7 @@ Two rules apply to every price you pass:
 - **A price must fall on a tick.** A limit between two ticks cannot exist at the exchange, so it is refused with OS7006, naming the instrument, its tick and the price. The engine does not round it for you, because that would move the order off the level your script computed. Round it yourself with `roundToTick()`.
 - **`roundToTick()` is absent when the host has stated no tick size.** An order given the absent result is refused with OS7002. Test the rounded price once and use the result everywhere, as the examples on this page do.
 
-Here is a stop entry placed once a session, above the high of the first fifteen minutes (09:15 to 09:30), and cancelled at 11:00 if it has not triggered. Every clock test names the zone, because the Backtest panel does not state the chart's timezone to the script, and a window with no zone has no value there:
+Here is a stop entry placed once a session, above the high of the first fifteen minutes (09:15 to 09:30), and cancelled at 11:00 if it has not triggered. Every clock test names the zone, so the window means IST on the chart, in the Backtest panel and in a deployment alike, whatever timezone a chart is set to:
 
 ```openscript
 version 1
@@ -15456,7 +15475,7 @@ else if pos.isLong and lateDay
 plot(rangeHigh, "Range high", aqua, style = "step")
 ```
 
-A deployment from the Strategies panel cannot read the clock like this in version 0.5.0; [Sessions and time](/script/data/sessions-and-time#sessions-and-the-clock-in-trading-today) explains why, and what works instead.
+A deployment from the Strategies panel reads the clock like this too, in the instrument's zone; [Sessions and time](/script/data/sessions-and-time#sessions-and-the-clock-in-trading-today) lists what each part of /trading reads.
 
 ## One position, and no order crosses zero
 
@@ -15683,7 +15702,7 @@ Use the bare functions where the direction is written in the source, and `order.
 
 ## Refusals
 
-Every refused order reports a code and a reason, naming the line that placed it. In version 0.5.0 a refusal while the run is going also stops the run at that bar: nothing the bar decided is sent, and no later bar executes. The Backtest panel then reports only the trades made before the refusal, and does not show the error itself. Codes marked "At compile time" are caught before any bar runs.
+Every refused order reports a code and a reason, naming the line that placed it. In version 0.5.0 a refusal while the run is going also stops the run at that bar: nothing the bar decided is sent, and no later bar executes. The Backtest panel then reports only the trades made before the refusal, and says above the figures which bar the run stopped on and why. Codes marked "At compile time" are caught before any bar runs.
 
 | Code | Means | Usual cause | In 0.5.0 |
 |---|---|---|---|
@@ -15716,7 +15735,7 @@ OS7008 is the pyramiding limit doing its job. Silently building a position the d
 | Two entries where the script meant one | Guarded on `pos.isFlat` alone while a resting order was still working | Remember the working order in a `var`, as the examples do |
 | The run stops with OS7009 | `cancel` on an order that has already filled | Clear the "working" flag when the position opens |
 | The run stops with OS7013 | Two `if` blocks placing opposite orders on one bar | One `if` chain with `else if` |
-| No orders at all in the Backtest panel | A clock test written without a zone, such as `session.isIn("0930-1100")` | Name the zone: `session.isIn("0930-1100", "Asia/Kolkata")` |
+| Orders at the wrong time of day | A clock test written without a zone, such as `session.isIn("0930-1100")`, on a chart set to another timezone | Name the zone: `session.isIn("0930-1100", "Asia/Kolkata")` |
 | OS3023 on every order | A `leg` argument | Take it out; the order acts on the chart's instrument |
 | Orders appear on history and not on the forming bar | The condition is true inside the bar and false at its close | Nothing to fix: orders wait for the bar to confirm |
 
@@ -15929,7 +15948,7 @@ Intraday strategies on NSE and NFO have to be flat before 15:30. Three facts dec
 
 **An exit decided on the last bar fills in the next session.** With the default `fillOn = "nextOpen"`, a `close()` decided on the session's last bar fills at the next bar's open, which is the next session's first bar. To be flat by the close, decide on a bar that leaves another bar to fill in. `session.isIn()` tests the time each bar starts at: a bar is inside `"0915-1500"` when it starts at or after 09:15 and before 15:00. So `not session.isIn("0915-1500", "Asia/Kolkata")` is first true on the bar that starts at 15:00, and on 15-minute bars the close it sends fills at the 15:15 open.
 
-**Each place in /trading reads the clock differently.** The chart reads it in the chart's timezone. The Backtest panel reads it only where the script names the zone, as every example here does. `session.isFirstBar` and `session.isLastBar` have no value in either, because /trading does not state the instrument's session hours to the script yet. And the Strategies panel refuses to start a script that calls `session.isIn()` or any `date.*` function on an Indian instrument, so a deployed strategy needs a window built from arithmetic on `time`: [Sessions and time](/script/data/sessions-and-time#sessions-and-the-clock-in-trading-today) shows one.
+**Name the zone in a clock test.** The chart reads the clock in the chart's timezone, Asia/Kolkata unless you changed it, and the Backtest panel and a deployment read it in the exchange's zone. Naming `"Asia/Kolkata"`, as every example here does, keeps a clock test at the same time of day in all three, whatever a chart is set to. `session.isLastBar` answers on the chart and in the Backtest panel, from the market calendar's session hours, but a deployment refuses it when the run loads, so a strategy you mean to deploy exits on a cutoff time instead. [Sessions and time](/script/data/sessions-and-time#sessions-and-the-clock-in-trading-today) has the details for each place.
 
 | Exit kind | Written with | Good for |
 |---|---|---|
@@ -15937,7 +15956,7 @@ Intraday strategies on NSE and NFO have to be flat before 15:30. Three facts dec
 | Minutes in the trade | `time` minus a `var` set when the position opens | A rule stated in clock time |
 | Bars held | `bar.index` minus a `var` set when the position opens | A horizon in bars; `pos.barsHeld` is planned |
 | A weekday | `date.dayOfWeek()` with the zone named | A weekly rule, such as flat before a weekly expiry |
-| The session's last bar | `session.isLastBar` with `fillOn = "close"` | A host that states session hours; not /trading today |
+| The session's last bar | `session.isLastBar` with `fillOn = "close"` | The chart and the Backtest panel; a deployment refuses it in 0.5.0 |
 
 This strategy gives up on a trade that is not in profit after two hours, never holds more than sixty bars, and is flat before the close:
 
@@ -16045,7 +16064,7 @@ Events reach the run's record and the log, not the chart, and no call reads one:
 | The run stops with OS7010 | A stop moved above a long's entry | Stop below a long, target above it |
 | The plotted stop drifts after entry | The plot reads a level recomputed every bar | Hold the level set at entry in a `var` and plot that |
 | An intraday position is carried overnight | `closeOnSessionEnd` alone, or an exit decided on the last bar | Exit on a cutoff time that leaves a bar to fill in |
-| No exits on the clock in the Backtest panel | A clock test written without a zone | Name the zone: `session.isIn("0915-1500", "Asia/Kolkata")` |
+| Exits on the clock at the wrong time of day | A clock test written without a zone, on a chart set to another timezone | Name the zone: `session.isIn("0915-1500", "Asia/Kolkata")` |
 
 **Related.** [Orders](/script/strategies/orders), [Position and sizing](/script/strategies/position-and-sizing), [Legs and books](/script/strategies/multi-leg-and-books), [Costs and fills](/script/strategies/costs-and-fills), [Sessions and time](/script/data/sessions-and-time), [Sandbox and live](/script/strategies/sandbox-and-live), [Strategy orders reference](/script/reference/strategy), [leg.* reference](/script/reference/legs)
 
@@ -16091,7 +16110,7 @@ plot(pos.isFlat ? none : pos.avgPrice, "Entry", fade(silver, 40), style = "step"
 
 If the exchange's lot size for the contract on the chart is 75 units, `lots = 2` sends a buy of 150 units, and `close()` sells exactly what is held. Why this file counts in units rather than declaring `qtyType = "lots"` is explained under [Where a size comes from](#where-a-size-comes-from).
 
-Where the lot size comes from depends on where the strategy runs in /trading. The Backtest panel and a deployment from the Strategies panel use the lot size OpenAlgo holds for the instrument. The chart does not state one to the script yet, so on the chart `chart.lotSize` is absent, this file falls back to one unit per lot, and the chart's fill markers show one unit where the backtest shows a lot.
+The chart, the Backtest panel and a deployment from the Strategies panel all read `chart.lotSize` from the lot size OpenAlgo holds for the instrument. Where OpenAlgo holds no contract for the symbol, and on the chart for the moment before the instrument's details arrive, the lot size is absent and this file falls back to one unit per lot.
 
 ## What a strategy can read about itself
 
@@ -16194,7 +16213,7 @@ Index futures and options on NFO, and most MCX contracts, cannot be traded in si
 | Money per one point of price, per unit | `chart.pointValue` | The host has not stated one |
 | Smallest price step | `chart.tickSize` | The host has not stated one |
 
-**Absent is not 1.** When the host has not stated a lot size, `chart.lotSize` is absent, and absence propagates through arithmetic, so a size computed from it is absent too and the order is refused with OS7002. Decide once what a missing lot size means in your script: `max(orElse(chart.lotSize, 1), 1)` treats it as one unit. In /trading that fallback matters on the chart, which states no lot size. The Backtest panel states the lot size OpenAlgo holds for the instrument, and where OpenAlgo holds none it runs on a lot of 1 and a tick of 0.05 and says so in the line under the report's figures.
+**Absent is not 1.** When the host has not stated a lot size, `chart.lotSize` is absent, and absence propagates through arithmetic, so a size computed from it is absent too and the order is refused with OS7002. Decide once what a missing lot size means in your script: `max(orElse(chart.lotSize, 1), 1)` treats it as one unit. In /trading that fallback matters where OpenAlgo holds no contract for the symbol: the chart then states no lot size, and the Backtest panel runs on a lot of 1 and a tick of 0.05 and says so in the line under the report's figures.
 
 **Round down to whole lots yourself.** A quantity that is not a whole number of lots is catalogued as OS7005, and in version 0.5.0 nothing raises it: the order is sent as written and the destination is left to reject it. `order.roundToLot()` is planned. Until it lands, round with arithmetic:
 
@@ -16391,7 +16410,6 @@ The report's equity curve marks a trade at the size it ended up at, and at its f
 | A lots strategy ends up hugely short in the backtest | `close()` under `qtyType = "lots"` | Count in units from `chart.lotSize`, or flatten with `close(qty = lots)` |
 | The backtest refuses to start with OS6021 | `qtyType = "cash"` or `"equityPercent"` | Count in units |
 | The Strategies panel will not start the strategy | Any `qtyType` other than `"units"` | Count in units from `chart.lotSize` |
-| The chart's markers show one unit where the backtest shows a lot | The chart states no lot size, so `chart.lotSize` falls back to 1 there | Nothing to fix; read sizes from the Backtest panel |
 | Every order is refused with OS7002 | A size computed from `chart.lotSize` while it is absent | `max(orElse(chart.lotSize, 1), 1)` |
 | The size explodes on quiet days | Risk sizing with no cap as the stop distance shrinks | Cap the size |
 | The run stops with OS7008 | An entry beyond `pyramiding` | Guard entries, or raise `pyramiding` on purpose |
@@ -16643,8 +16661,8 @@ targetPct = input(50, "Target, percent of the entry premium", min = 1, max = 99)
 
 lotUnits = max(orElse(chart.lotSize, 1), 1)
 
-// Every clock test names the zone, so it holds in the Backtest panel as well
-// as on the chart. A new IST date is a new session.
+// Every clock test names the zone, so it means IST whatever timezone the
+// chart is set to. A new IST date is a new session.
 newDay    = isNone(time[1]) or not date.isSameDay(time, time[1], "Asia/Kolkata")
 entryTime = session.isIn("0920-1000", "Asia/Kolkata")
 lateDay   = not session.isIn("0915-1500", "Asia/Kolkata")
@@ -17162,7 +17180,9 @@ State quantities in units. A strategy sized with `qtyType = "cash"` or `"equityP
 
 ### The instrument's own facts
 
-The run reads the instrument's tick size and lot size from the platform's own record of the symbol. The tick size is what a tick of `slippage` is worth and what `chart.tickSize` answers; the lot size is what `chart.lotSize` answers and what converts a quantity stated in lots. The line under the figures states both, for example **Tick 0.05, lot 1**. When the platform holds no record for an instrument, the run uses a tick of 0.05 and a lot of 1 and the line says so, because a guessed tick size makes every slippage charge wrong without anything else looking wrong. Money is shown in rupees, to two decimal places, and each charge is rounded to the paisa.
+The run reads the instrument's tick size and lot size from the platform's own record of the symbol. The tick size is what a tick of `slippage` is worth and what `chart.tickSize` answers; the lot size is what `chart.lotSize` answers and what converts a quantity stated in lots. The line under the figures states both, for example **Tick 0.05, lot 1**. When the platform holds no record for an instrument, the run uses a tick of 0.05 and a lot of 1 and the line says so, because a guessed tick size makes every slippage charge wrong without anything else looking wrong.
+
+The run is also told the chart's interval (a `D`, `W` or `M` chart as `"1D"`, `"1W"` or `"1M"`), the exchange's timezone and its regular trading session from the market calendar, the instrument type, and whether the instrument reports volume and open interest. So `chart.interval`, `date.*` calls written without a zone, `session.isFirstBar`, `session.isLastBar`, `vwap()` and day, week and month reads all answer in a backtest as they do on the chart. The session is the regular one for every day of the range, since the engine holds one session for a whole run. Money is shown in rupees, to two decimal places, and each charge is rounded to the paisa.
 
 ## What runs where
 
@@ -17204,8 +17224,8 @@ version 1
 strategy("Traded window", overlay = true, precision = 2,
          capital = 500000, qty = 1)
 
-// Dates, not times of day: the Backtest panel gives the run no time zone, so a
-// written time of day would be read as UTC rather than as Indian time.
+// Dates, not times of day: the Backtest panel reads a written time as UTC
+// rather than as Indian time, so a time of day would land 5 hours 30 minutes late.
 tradeFrom = input("2025-01-01", "Trade from",      kind = "time")
 tradeTo   = input("2026-01-01", "Stop trading on", kind = "time")
 
@@ -17230,7 +17250,7 @@ plot(slow, "Slow", orange, width = 2)
 background(inWindow ? none : fade(silver, 92))
 ```
 
-Set **From** a few weeks before **Trade from** and **To** on or after **Stop trading on**, and the grey background shows the bars that were computed and not traded. Time inputs are for backtesting only: the strategy runner refuses to start a script that declares one, so take the window out before you [deploy](/script/strategies/sandbox-and-live).
+Set **From** a few weeks before **Trade from** and **To** on or after **Stop trading on**, and the grey background shows the bars that were computed and not traded. A deployment reads the same inputs, in the instrument's zone, so the window works there too. A window whose **Stop trading on** date has passed keeps a deployment out of the market for good, so move it past today, or take the window out, before you [deploy](/script/strategies/sandbox-and-live).
 
 The second way is to state the guard in the script, which is worth doing anyway because the chart then shows the bar the strategy became honest on rather than leaving you to infer it from the first marker:
 
@@ -17268,15 +17288,12 @@ Some parts of a strategy compile and are not acted on by the backtest in this re
 |---|---|---|
 | A stop or target set with `exit()` or `order.bracket()` | Not filled | Write the stop as a rule tested on each close. [Costs and fills](/script/strategies/costs-and-fills) shows one |
 | `closeOnSessionEnd = true` | Not acted on: a position is carried past the close | Close it in the script as well |
-| A calendar read with no time zone, such as `date.hour(time)` or `session.isIn("0915-1530")` | Absent on every bar, because the panel does not state the chart's time zone to the run, so a condition built on it is never true | Pass the zone: `date.hour(time, "Asia/Kolkata")`, `session.isIn("0915-1530", "Asia/Kolkata")` |
-| `session.isFirstBar`, `session.isLastBar` | No value, so never true: the run is given no session boundaries | Anchor on a time window you write with an explicit zone |
-| A day, week or month read, such as `req.timeframe("1D", close)` | Absent on every bar, because the run has no time zone to group days in | Filter on an intraday read such as `"1h"`, or test the strategy drawn on the chart |
-| `chart.interval`, `chart.intervalMinutes`, `chart.isIntraday` | Absent: the panel does not state the chart's interval to the run | Take a length in bars as an input |
-| Another instrument, read with `req.symbol()` | The run is refused before it starts | Backtest on the instrument itself; an intraday `req.timeframe()` read of the chart's own instrument works |
+| An input with `kind = "time"` | Read as a UTC clock, not as Indian time: `2025-01-02 09:15` is 14:45 IST | Type the time in UTC, 5 hours 30 minutes earlier, or use dates only |
+| Another instrument, read with `req.symbol()` | The run is refused before it starts | Backtest on the instrument itself; a `req.timeframe()` read of the chart's own instrument works |
 | `qtyType = "lots"` | Entries are converted from lots to units, but an exit that sizes itself, such as `close()`, is not: it sends the position's unit count as a number of lots, sells many times what is held and opens a large position the other way | Use `qtyType = "units"` |
 | `qtyType = "cash"` or `"equityPercent"` | The run is refused before it starts | Use `qtyType = "units"` |
 
-One more behaviour is worth knowing. An order the strategy is not allowed to place, such as a second entry while one is open and `pyramiding` is `1`, is an error that stops the script at that bar (OS7008). Nothing after that bar is placed or filled: the trade list ends there, and the equity curve carries whatever position was open, marked to every later close, to the end of the range. The Backtest panel does not show the error, so a run that shows far fewer trades than the chart suggests, or ends on one long open trade, is worth checking for this first. Guarding every entry with `pos.isFlat`, or with the side you mean to add to, keeps a strategy from reaching one. [Orders](/script/strategies/orders) lists the refusals.
+One more behaviour is worth knowing. An order the strategy is not allowed to place, such as a second entry while one is open and `pyramiding` is `1`, is an error that stops the script at that bar (OS7008). Nothing after that bar is placed or filled: the trade list ends there, and the equity curve carries whatever position was open, marked to every later close, to the end of the range. Above the figures the Backtest panel says which bar the run stopped on and when, what went wrong with its fix, and the code with its line and column, so a report that ends early is not read as the whole range. Guarding every entry with `pos.isFlat`, or with the side you mean to add to, keeps a strategy from reaching one. [Orders](/script/strategies/orders) lists the refusals.
 
 ## Reproducing a run
 
@@ -17828,14 +17845,14 @@ A backtest says what a strategy would have done. A deployment runs it: a process
 
 ## A strategy ready to deploy
 
-The strategy runner in release 0.5.0 runs a subset of what the backtest runs. This file stays inside it: its quantity is in units, its stop is a rule the script tests on each close, and it reads no calendar and no session boundary.
+The strategy runner in release 0.5.0 runs a subset of what the backtest runs. This file stays inside it: its quantity is in units, and its stop is a rule the script tests on each close rather than a bracket.
 
 ```openscript
 version 1
 
-// Written for the 0.5.0 strategy runner: units, a stop written as a rule, and no
-// calendar or session reads, which the runner does not answer yet. The costs
-// are for the backtest; a deployment pays whatever the market charges.
+// Written for the 0.5.0 strategy runner: units, and a stop written as a rule
+// rather than exit(), which the runner does not send yet. The costs are for
+// the backtest; a deployment pays whatever the market charges.
 strategy("EMA cross, deployable", overlay = true, precision = 2,
          capital = 500000, qty = input(1, "Quantity, units", min = 1),
          product = "intraday",
@@ -17938,13 +17955,15 @@ When a run starts, the runner checks the program before it sends anything. In re
 |---|---|---|
 | Calls `exit()` or `order.bracket()` | A stop and a target have to go out as one protected pair, and the runner cannot send that yet. Sending the entry alone would leave a position with nothing protecting it | Write the stop as a rule tested on each close, as above |
 | Sizes by `qtyType = "lots"`, `"cash"` or `"equityPercent"` | It sends only a quantity the script states in units | Use `qtyType = "units"`, and size F&O orders in units of the lot |
-| Reads `session.isFirstBar` or `session.isLastBar` | The runner works out no session boundaries. It refuses the first itself, and the server's engine does not have the second yet | Anchor on something the bars carry |
-| Reads the calendar: any `date.*` call, `date.format()` or `session.isIn()` | The runner reads a clock only in UTC and an Indian instrument's calendar is IST, so every such call would answer nothing and the strategy would never act on one | Keep calendar rules out of a deployed script in this release |
-| Declares an input with `kind = "time"` | The same: a written time would be read under the wrong calendar | The same |
+| Reads `session.isLastBar` | The server's engine does not have it yet, so the run is refused when it loads, with OS6004 naming the function | Square off by the clock instead, with `session.isIn()` or a `date.*` test |
+| Reads `session.isFirstBar` when the market calendar holds no session for the exchange, or when the instrument's details could not be read as the run started | Every answer would be absent, and the strategy would never act on one | Run it on an exchange the calendar holds, or start it again in a moment |
+| Reads the calendar, any `date.*` call, `date.format()` or `session.isIn()`, or declares an input with `kind = "time"`, on an instrument whose zone the server cannot read a clock in | Every calendar read would be absent, and a written time would be read under the wrong calendar | The server reads Asia/Kolkata, the zone of every Indian exchange, so this concerns an instrument in another zone only |
 
 A refused run ends at once and sends nothing. The row goes back to **stopped**, and the reason, naming the script, is in the run's log on the server.
 
-`closeOnSessionEnd` is not acted on by the runner either, so an intraday strategy that must be flat by the close needs its own exit, and without a calendar read that exit cannot be a time of day in this release. Watch the end of the first sessions, and close anything left open yourself.
+Everything else about the instrument and the clock is there in a deployment. The runner reads the instrument's timezone, tick size, lot size, instrument type and whether it reports volume and open interest from the same platform record the chart and the Backtest panel read, and its trading session from the market calendar. Calendar reads, any `date.*` call, `date.format()` and `session.isIn()`, are answered in the instrument's zone, IST for an Indian exchange, and a `kind = "time"` input is read in that zone too. `session.isFirstBar` and `vwap()` follow the calendar's session. A run started on a special session day reads that day's bars against the day's own hours and every other day's against the regular ones, and keeps that session for as long as it runs.
+
+`closeOnSessionEnd` is not acted on by the runner either, so an intraday strategy that must be flat by the close needs its own exit: a time of day tested with `session.isIn()` or a `date.*` call, as [Exiting on the clock](/script/strategies/exits-and-brackets#exiting-on-the-clock) shows. Watch the end of the first sessions, and close anything left open yourself.
 
 > **Intraday positions and the square-off**
 In analyzer mode the sandbox squares off `MIS` positions on its own at a set time before the close (15:15 for NSE, BSE and NFO by default), and after that time it refuses `MIS` orders that would open or add to a position until the next session. That square-off is not one of the deployment's orders, so the deployment's books still show the position, and its next exit would be an order in the other direction. Pause or stop a deployment that is holding an `MIS` position before the square-off time, or deploy it with `CNC` or `NRML`. A live account may square off intraday positions in the same way: check your own account's rule.
@@ -18024,6 +18043,7 @@ The runner can also hold a schedule for a deployment: a start time and an option
 Each run writes its own log file on the server, in the `log/strategies` folder of the OpenAlgo installation, named after the deployment and the time the run started, in IST. The Strategies panel does not show it. It records, in plain sentences:
 
 - the start, with the strategy, instrument, exchange and interval, and a line saying orders go through the platform's own order path;
+- the trading session the run reads from the market calendar, and whether today is a special session;
 - which inputs were set from the deployment's saved values;
 - the history replay and how many bars it covered;
 - which destination the orders are going to, analyzer or live, once the first order is accepted;
@@ -18040,7 +18060,7 @@ Work through this before a strategy runs with real money. Every item can be chec
 **The script**
 
 1. It starts with `version 1`, compiles with no errors, and you have read every warning.
-2. It stays inside what the runner needs: quantities in units, no `exit()` or `order.bracket()`, no calendar or session reads, no time inputs.
+2. It stays inside what the runner needs: quantities in units, no `exit()` or `order.bracket()`, and no `session.isLastBar`.
 3. Every entry has an exit, including one that does not depend on the entry signal reversing, such as a loss limit written as a rule.
 4. Every entry is guarded by the position, such as `pos.isFlat`, so no signal can enter twice.
 5. It is warm within the history the runner replays at your interval, or you accept its first sessions as warmup.
@@ -20055,9 +20075,9 @@ if up and not orElse(up[1], false)
 
 ### My alert never arrives
 
-**Cause.** Everything in the previous entry applies, and two things are specific to alerts on the /trading page. Nothing fires for bars that were already on the chart when the study was added, because an alert is a statement about now. And in this release the chart checks a script's `alert()` once for each new bar, at the moment that bar first arrives. During market hours a bar arrives with its first tick, before it has closed, while the alert waits for its bar to close, so at that moment it has nothing to report and the chart does not look at that bar again. The alert fires only for a bar that reaches the chart already closed, which you cannot rely on while the market is open.
+**Cause.** Everything in the previous entry applies, and three things are specific to alerts on the /trading page. A script's `alert()` is judged when its bar closes on a chart that is open, so nothing fires for bars that were already on the chart when the study was added, or for the history loaded when the page opens: an alert is a statement about now. The chart that shows the study has to stay open, because that is where the condition is checked. And while replay or a change of workspace owns the chart, alerts are held back.
 
-**Fix.** Plot the condition as 1 or 0 and put a study alert on that plot: open **Create alert** from the chart's **Alerts** button, set **What to watch** to **Study plot**, pick the study and its plot, and set **Evaluate** to **On bar close**. [Alerts on a script condition](/script/alerts/alerts-in-trading#alerts-on-a-script-condition) walks through it. Keep a fixed `id` on every `alert()` in the script as well: without one its identity comes from its line number, which moves when you edit the file, and the compiler warns with [OS8008](/script/errors/warnings#os8008).
+**Fix.** Plot the condition as `cond ? 1 : 0` first and check that the line reaches 1 on a bar that closed while you watched. Keep a fixed `id` on every `alert()` in the script: without one its identity comes from its line number, which moves when you edit the file, and the compiler warns with [OS8008](/script/errors/warnings#os8008). A script alert reaches you as a notification on the page and a row in the Log tab. To send the condition to Telegram or WhatsApp, or to give it an expiry, put a study alert on that plot instead: open **Create alert** from the chart's **Alerts** button, set **What to watch** to **Study plot**, pick the study and its plot, and set **Evaluate** to **On bar close**. [Alerts on a script condition](/script/alerts/alerts-in-trading#alerts-on-a-script-condition) walks through it.
 
 ```openscript
 fast = ema(close, 9)
@@ -20150,7 +20170,7 @@ See [Other instruments](/script/data/other-instruments).
 3. **The condition has not been true since it started.** Orders wait for a confirmed bar, and a strategy acts only on bars that arrive after it starts.
 4. **The instrument was outside its trading session.** Nothing in the script checks this for you.
 
-**Fix.** Check the deployment's row and the mode in the Strategies panel header. To check the logic itself, open the script in the Scripts panel and press **Apply to chart**: for a strategy, that runs a backtest over the chart's history and marks every fill on the price. On the chart and in the Backtest panel, guard entries to the session with `session.isIn()` and a named zone, such as `session.isIn("0915-1530", "Asia/Kolkata")`. A deployed strategy cannot read the clock that way, because the Strategies panel refuses a script that calls `session.*` or `date.*` on an Indian instrument, so there build the window from arithmetic on `time`. `closeOnSessionEnd = true` is accepted and not acted on in version 0.5.0, so a strategy that must be flat at the close needs its own exit. See [Sandbox and live](/script/strategies/sandbox-and-live) and [Sessions and time](/script/data/sessions-and-time#sessions-and-the-clock-in-trading-today).
+**Fix.** Check the deployment's row and the mode in the Strategies panel header. To check the logic itself, open the script in the Scripts panel and press **Apply to chart**: for a strategy, that runs a backtest over the chart's history and marks every fill on the price. Guard entries to the session with `session.isIn()` and a named zone, such as `session.isIn("0915-1530", "Asia/Kolkata")`. The same guard holds on the chart, in the Backtest panel and in a deployed strategy, which reads the calendar in the instrument's zone. `closeOnSessionEnd = true` is accepted and not acted on in version 0.5.0, so a strategy that must be flat at the close needs its own exit. See [Sandbox and live](/script/strategies/sandbox-and-live) and [Sessions and time](/script/data/sessions-and-time).
 
 > **[OS7012](/script/errors/orders#os7012) (outside the session) is in the error reference, but nothing raises it in version 0.5.0: nothing compares the bar's time with the instrument's session before an order is sent. Guard the session yourself.**
 
@@ -20180,7 +20200,7 @@ fast = ema(close, 9)
 slow = ema(close, 21)
 crossed = crossUp(fast, slow)
 stop = lowest(low, 20)
-// The zone is named, so the window also holds in the Backtest panel.
+// The zone is named, so the window holds whatever timezone the chart is set to.
 inSession = session.isIn("0915-1530", "Asia/Kolkata")
 
 // Absent until the 20 bar window fills, and zero when the stop is too wide
@@ -20404,7 +20424,7 @@ Each line of that header does a specific job.
 - **"Built for"** tells a reader whether they are the intended user.
 - **"Does not"** prevents most misunderstandings, and it is the line everybody leaves out.
 
-The `group` and `tooltip` arguments of `input()` matter more than they look. The settings dialog is the only documentation many users will ever read, so write titles as full phrases with units, group related rows under a heading, and put what a title is too short to say in a tooltip. The /trading study settings dialog does not show group headings or tooltips in this release, so the title has to carry the meaning on its own there; the input forms of the Backtest and Strategies panels show the tooltip when you rest the pointer on an input's label. The `group` on `study()` is different: it is the category a picker files the study under. In the /trading Indicators dialog your own scripts are listed together under **My scripts**, and the group is the label shown beside a script's name when you point at it. See [Settings and style](/script/inputs/settings-and-style).
+The `group` and `tooltip` arguments of `input()` matter more than they look. The settings dialog is the only documentation many users will ever read, so write titles as full phrases with units, group related rows under a heading, and put what a title is too short to say in a tooltip. On /trading, the study settings dialog and the input forms of the Backtest and Strategies panels show each group as a heading over its rows and each tooltip as a line of help under its row, so a tooltip is read by everyone who opens the settings, not only by someone who goes looking for it. The `group` on `study()` is different: it is the category a picker files the study under. In the /trading Indicators dialog your own scripts are listed together under **My scripts**, and the group is the label shown beside a script's name when you point at it. See [Settings and style](/script/inputs/settings-and-style).
 
 
 ## Versioning
@@ -22410,7 +22430,7 @@ Asks for any open position to be flattened at the session's close, for an intrad
 
 Two things decide how you do that:
 
-- The exact test for the last bar is `session.isLastBar`, which needs the host to state the instrument's session hours. The /trading chart and Backtest panel do not state them in this release, so there it is `none`.
+- The exact test for the last bar is `session.isLastBar`, which needs the host to state the instrument's session hours. The /trading chart and Backtest panel state them, from the platform's market calendar, but a strategy running from the Strategies panel is refused when it reads `session.isLastBar`, so a strategy you mean to deploy cannot rely on it.
 - With the default `fillOn = "nextOpen"`, an order decided on the session's last bar fills at the next bar's open, which is the next session's first bar, so the position is carried overnight anyway.
 
 A window you name avoids both. The example starts closing at 15:15, so the exit fills at the next bar's open while the session is still trading, and it names the zone so the window is read in Indian time even where the host states no timezone.
@@ -22616,7 +22636,7 @@ plot(showVolume ? avgVolume : none, "20 bar mean", orange)
 
 **Remarks.** `volume` is absent, not zero, on a bar for which the host supplies no volume. Zero is a real reading that means nobody traded; a volume nobody reported is a different fact. Anything computed from an absent `volume` is absent too, so a volume study draws a gap there rather than a flat line. Whether an index such as the NIFTY 50 arrives with no volume or with zeros depends on the data source, so use the futures contract when you need volume for an index.
 
-`chart.hasVolume` says whether the host supplies volume at all, but a host may leave it unstated, and the /trading chart does in this release. That is why the example writes `chart.hasVolume != false`: it hides the volume only when the host says there is none.
+`chart.hasVolume` says whether the host supplies volume at all, but a host may leave it unstated, and on the /trading chart it is unstated for a moment, until the instrument's facts arrive. That is why the example writes `chart.hasVolume != false`: it hides the volume only when the host says there is none.
 
 **See also.** `chart.hasVolume`, `vwap()`, `obv()`, `relativeVolume()`
 
@@ -22993,7 +23013,7 @@ Source: https://openalgo.in/script/reference/chart
 
 The `chart` namespace answers questions about what the script is running on: which instrument, on which exchange, at what interval, in which timezone, and with what contract arithmetic (tick size, lot size, point value). A script that reads these facts instead of typing numbers in can work unchanged on an NSE stock, an NFO index future and an MCX contract, wherever the host states them.
 
-Not every host states every fact. The /trading chart in this release passes the script only the symbol, the interval, the tick size and the timezone, so `chart.exchange`, `chart.lotSize`, `chart.instrumentType`, `chart.hasVolume` and the rest read as `none` there. The table under [Where the facts come from](#where-the-facts-come-from) shows what each part of /trading states, and each entry below says what to do where its fact is missing.
+Not every host states every fact. The /trading chart states all of them except `chart.pointValue` and `chart.currency`, and its Backtest panel states all of them except `chart.now()`. The table under [Where the facts come from](#where-the-facts-come-from) shows what each part of /trading states, and each entry below says what to do where its fact is missing.
 
 Every entry except `chart.now()` is a single value, fixed for the whole run. None of them has a history, so `chart.tickSize[1]` is `OS2004`: the answer could not have been different one bar ago.
 
@@ -23001,18 +23021,22 @@ Every entry except `chart.now()` is a single value, fixed for the whole run. Non
 
 Every fact here comes from the host, the application that runs the script, and any of them may be missing. A fact the host does not state reads as `none`, never as a guess, so a script can tell "one lot is 75 units" from "nobody said".
 
-In this release the /trading page states these facts:
+The /trading page states these facts:
 
 | Fact | On the /trading chart | In the /trading Backtest panel |
 |---|---|---|
 | `chart.symbol` | Yes | Yes |
-| `chart.exchange` | `none` | Yes |
-| `chart.interval`, and `chart.intervalMinutes` and `chart.isIntraday` worked out from it | Yes | `none` |
-| `chart.timezone` | Yes, `"Asia/Kolkata"` unless the chart is set otherwise | `none` |
+| `chart.exchange` | Yes | Yes |
+| `chart.interval`, and `chart.intervalMinutes` and `chart.isIntraday` worked out from it | Yes, as the chart names it (`"D"` on a daily chart) | Yes, in the language's spelling (`"1D"` on a daily chart); `none` on a chart of seconds |
+| `chart.timezone` | Yes, `"Asia/Kolkata"` unless the chart is set otherwise | Yes, the exchange's zone: `"Asia/Kolkata"` for Indian exchanges |
 | `chart.tickSize` | Yes | Yes |
-| `chart.lotSize`, `chart.pointValue`, `chart.currency` | `none` | Yes |
-| `chart.instrumentType`, `chart.hasVolume`, `chart.hasOpenInterest` | `none` | `none` |
+| `chart.lotSize` | Yes, where the platform holds the instrument's contract | Yes |
+| `chart.pointValue`, `chart.currency` | `none` | Yes |
+| `chart.instrumentType` | Yes, where the platform holds the instrument's contract | Yes, where the platform holds the instrument's contract |
+| `chart.hasVolume`, `chart.hasOpenInterest` | Yes | Yes |
 | `chart.now()` | Yes | `none` |
+
+Both also state the instrument's regular trading session, from the platform's market calendar, which the [session facts](/script/reference/session) are worked out from. On the chart, the facts that come from the platform's instrument record (the exchange, the lot size, the instrument type, whether it has volume and open interest, and the session) arrive a moment after the study is first drawn. Until they do, or when the platform cannot read them, they are `none`, and the study is drawn again as soon as they arrive. A strategy running from the Strategies panel is told the same instrument facts as the Backtest panel, except the point value and the currency.
 
 So test a fact with `isNone()`, or give it a fallback with `orElse()`, before a calculation depends on it. The example below shows each fact, or "not stated" where the host gave none.
 
@@ -23074,7 +23098,7 @@ chart.exchange: string
 
 First value: n/a
 
-The exchange the instrument trades on, as the host codes it: for example `"NSE"` or `"BSE"` for cash equities, `"NFO"` for NSE futures and options, `"MCX"` for commodities, or `none` where the host does not say, as on the /trading chart. It is also the default exchange of `req.symbol()`, so a read of another instrument looks on the same exchange unless you name one.
+The exchange the instrument trades on, as the host codes it: for example `"NSE"` or `"BSE"` for cash equities, `"NFO"` for NSE futures and options, `"MCX"` for commodities, or `none` where the host does not say. It is also the default exchange of `req.symbol()`, so a read of another instrument looks on the same exchange unless you name one.
 
 ```openscript
 version 1
@@ -23084,7 +23108,7 @@ isDerivative = chart.exchange == "NFO" or chart.exchange == "MCX"
 background(isDerivative ? fade(purple, 95) : none)
 ```
 
-**Remarks.** The /trading chart does not state the exchange in this release, so there the value is `none` and both comparisons above are `false`: `==` never returns `none`, which keeps the example safe to run anywhere.
+**Remarks.** The /trading chart and its Backtest panel both state the exchange. Where a host states none, the value is `none` and both comparisons above are `false`: `==` never returns `none`, which keeps the example safe to run anywhere.
 
 **See also.** `chart.symbol`, `chart.instrumentType`
 
@@ -23109,7 +23133,7 @@ plain = sma(close, 20)
 plot(isIndex ? plain : weighted, "Mean of 20 bars", isIndex ? orange : aqua)
 ```
 
-**Remarks.** Pair this check with `chart.hasVolume` and `chart.hasOpenInterest` rather than assuming what each type supplies. The /trading page does not state the instrument type in this release.
+**Remarks.** Pair this check with `chart.hasVolume` and `chart.hasOpenInterest` rather than assuming what each type supplies. The /trading chart and its Backtest panel state the instrument type where the platform holds the instrument's contract, and leave it `none` otherwise.
 
 **See also.** `chart.hasVolume`, `chart.optionType`
 
@@ -23169,7 +23193,7 @@ chart.lotSize: number
 
 First value: n/a
 
-How many units make up one lot. On NFO futures and options and on MCX, orders are placed in whole lots, and lot sizes are set by the exchange and revised from time to time, so read this value rather than typing a number into a script. It is `none` when the host has not said, which on /trading means on the chart: only the Backtest panel states it.
+How many units make up one lot. On NFO futures and options and on MCX, orders are placed in whole lots, and lot sizes are set by the exchange and revised from time to time, so read this value rather than typing a number into a script. It is `none` when the host has not said. The /trading chart and its Backtest panel both state it, from the platform's instrument record.
 
 ```openscript
 version 1
@@ -23179,7 +23203,7 @@ lotValue = close * chart.lotSize
 plot(lotValue, "Value of one lot", aqua)
 ```
 
-**Remarks.** The /trading Backtest panel states the lot size, from the platform's instrument record. The /trading chart does not in this release, so there the example draws nothing, which is the honest answer: without a lot size there is no lot value. A strategy that sizes in lots can declare `qtyType = "lots"`, and then every order quantity is a count of lots of this size. See [Declarations](/script/reference/declarations#qtytype).
+**Remarks.** On an instrument whose contract the platform does not hold, the /trading chart states no lot size, and the example draws nothing, which is the honest answer: without a lot size there is no lot value. A strategy that sizes in lots can declare `qtyType = "lots"`, and then every order quantity is a count of lots of this size. See [Declarations](/script/reference/declarations#qtytype).
 
 **See also.** `order.roundToLot()`, `chart.pointValue`
 
@@ -23202,7 +23226,7 @@ atrMoney = atr(14) * perLot
 plot(atrMoney, "Average true range in money, per lot", orange)
 ```
 
-**Remarks.** The /trading Backtest panel states a point value of 1. The /trading chart does not state one in this release, so there the example draws nothing.
+**Remarks.** The /trading Backtest panel states a point value of 1. The /trading chart does not state one, so there the example draws nothing.
 
 **See also.** `chart.lotSize`, `chart.currency`, `atr()`
 
@@ -23227,7 +23251,7 @@ showVolume = chart.hasVolume != false
 plot(showVolume ? volume : none, "Volume", fade(aqua, 40), style = "column")
 ```
 
-**Remarks.** The /trading page does not state this fact in this release, so it is `none` there. `chart.hasVolume ? volume : none` would then hide the volume that is actually present; `chart.hasVolume != false` does not, because `none != false` is `true`.
+**Remarks.** The /trading chart and its Backtest panel both state this fact; an index is stated as having no volume. A host may leave it unstated, and on the chart it is `none` for a moment until the instrument's facts arrive. `chart.hasVolume ? volume : none` would then hide the volume that is actually present; `chart.hasVolume != false` does not, because `none != false` is `true`.
 
 **See also.** `volume`, `chart.hasOpenInterest`
 
@@ -23261,7 +23285,7 @@ chart.interval: string
 
 First value: n/a
 
-The chart's interval as the host names it: a count and a unit such as `"1m"`, `"5m"` or `"1h"`, a bare number of minutes such as `"60"`, or a letter such as `"D"`, `"W"` or `"M"`, which is how the /trading chart names its daily, weekly and monthly intervals. The unit letter is case sensitive: `"1M"` is a month and `"1m"` is a minute.
+The chart's interval as the host names it: a count and a unit such as `"1m"`, `"5m"` or `"1h"`, a bare number of minutes such as `"60"`, or a letter such as `"D"`, `"W"` or `"M"`, which is how the /trading chart names its daily, weekly and monthly intervals. The /trading Backtest panel states those three as `"1D"`, `"1W"` and `"1M"`. The unit letter is case sensitive: `"1M"` is a month and `"1m"` is a minute.
 
 ```openscript
 version 1
@@ -23338,7 +23362,7 @@ if bar.isLast
     cell(panel, 1, 1, date.format(time, "dd MMM HH:mm"))
 ```
 
-**Remarks.** The /trading Backtest panel states no timezone in this release. There a date or session call that relies on the default returns `none`; pass the zone explicitly, as in `date.hour(time, "Asia/Kolkata")`, in a strategy you backtest.
+**Remarks.** The /trading chart states the zone its axis is set to, `"Asia/Kolkata"` unless you change it. The Backtest panel states the exchange's own zone, from the platform's market calendar, so a date or session call that relies on the default reads Indian time in a backtest as well. A host that states no zone leaves every such call `none`; pass the zone explicitly, as in `date.hour(time, "Asia/Kolkata")`, where a script must run on one.
 
 **See also.** `date.hour()`, `session.isIn()`
 
@@ -23423,12 +23447,14 @@ Three members work today, and they get their answers from two different places. 
 
 | Member | Answers from | Where it is `none` |
 |---|---|---|
-| `session.isFirstBar`, `session.isLastBar` | The instrument's own session hours, which the host states | Wherever the host states no session hours, which includes the /trading chart and Backtest panel in this release |
+| `session.isFirstBar`, `session.isLastBar` | The instrument's own session hours, which the host states | Wherever the host states no session hours. The /trading chart and Backtest panel state them, from the platform's market calendar |
 | `session.isIn()` | A window of clock times you write in the script | Wherever no timezone is known; name one with the `zone` argument to be safe |
 
 The rest of the namespace is planned and listed at the end of this page.
 
-So on the /trading page today, build session logic on `session.isIn()`, and use the first two where the host states the hours, with a fallback for where it does not. The example below needs nothing from the host except a timezone: it holds the high and low of the first fifteen minutes of each NSE day.
+On the /trading chart and in its Backtest panel all three work. A strategy running from the Strategies panel has `session.isFirstBar` and `session.isIn()`, read in the instrument's own zone, and is refused when it starts if it reads `session.isLastBar`, which the server's engine does not have yet.
+
+Use `session.isIn()` when the window is yours rather than the exchange's, such as the first fifteen minutes, and the first two for the exchange's own hours, with a fallback in a script meant to run where no hours are stated. The example below needs nothing from the host except a timezone: it holds the high and low of the first fifteen minutes of each NSE day.
 
 ```openscript
 version 1
@@ -23489,7 +23515,9 @@ plot(dayLow, "Session low", red, style = "step")
 
 **Remarks.** It is the first bar delivered inside the session's hours, so a session that opened late still has a first bar. The oldest bar of the chart counts as a first bar too when the data starts in the middle of a session, which makes the first session on the chart a partial one. A bar outside the session's hours has `false`.
 
-It comes from the session hours in the instrument's record, read in the instrument's timezone. When the host states no session for the instrument, the value is `none`, and an `if` on it never runs. That is why the example wraps it in `orElse()`: on the /trading page, which states no session hours in this release, the example falls back to a change of calendar day, which is the same thing for an NSE session.
+It comes from the session hours in the instrument's record, read in the instrument's timezone. When the host states no session for the instrument, the value is `none`, and an `if` on it never runs. That is why the example wraps it in `orElse()`: where no session hours are stated, it falls back to a change of calendar day, which is the same thing for an NSE session.
+
+The /trading chart and Backtest panel state the instrument's regular hours from the platform's market calendar, the same hours for every day on the chart, so a special session outside them, such as an evening session on a holiday, has no first bar there. On a chart whose timezone you have set to one other than the exchange's, the chart states no session at all rather than hours read in the wrong zone, and the value is `none`.
 
 **See also.** `session.isLastBar`, `bar.isFirst`, `vwap()`
 
@@ -23522,7 +23550,7 @@ if crossDown(fast, slow) or squareOff
 
 **Remarks.** Waiting for the next session's first bar to flatten is too late: by then the position has been carried overnight. Watch the fill rule too. With the default `fillOn = "nextOpen"`, an order decided on the last bar fills at the next bar's open, which is the next session's first bar. The example declares `fillOn = "close"` so the exit fills at the close of the bar that decided it. The other way is to decide earlier, with a window such as `session.isIn("1515-1530")`, and keep the default fill.
 
-It needs the chart's interval as well as the session hours, to know which bar slot is last. When the host does not state both, the value is `none`, which is why the example falls back to a window. The window names its zone because the /trading Backtest panel states no timezone.
+It needs the chart's interval as well as the session hours, to know which bar slot is last. When the host does not state both, the value is `none`, which is why the example falls back to a window. The window names its zone so it reads Indian time on any host. A strategy running from the Strategies panel is refused when it reads `session.isLastBar`, so for a deployed strategy use the window alone.
 
 **See also.** `session.isFirstBar`, `close()`, `bar.isLast`
 
@@ -23573,7 +23601,7 @@ The `spec` string is `"HHMM-HHMM"`, with an optional list of days after a colon.
 
 Days are numbered 1 for Monday through 7 for Sunday, the same as `date.dayOfWeek()`. For a window that crosses midnight, the day list names the day the window opened on: `"2300-0100:1"` covers Monday 23:00 to Tuesday 01:00.
 
-The times are read in the chart's timezone unless `zone` names another IANA zone (the standard `Area/City` form), such as `"Asia/Kolkata"`. Where no timezone is known, as in the /trading Backtest panel in this release, the result is `none` unless you pass `zone`. A zone the host does not know stops the script with `OS6005`; abbreviations such as `"IST"` are not zone names.
+The times are read in the chart's timezone unless `zone` names another IANA zone (the standard `Area/City` form), such as `"Asia/Kolkata"`. Where no timezone is known, the result is `none` unless you pass `zone`. The /trading chart, its Backtest panel and a strategy running from the Strategies panel all state one. A zone the host does not know stops the script with `OS6005`; abbreviations such as `"IST"` are not zone names.
 
 A spec that does not follow the form above, such as `"9:15-15:30"`, is not caught by the compiler and matches no bar: the result is `none`, so a condition built on it never holds. Check the spelling when a window never lights up.
 
@@ -23687,7 +23715,7 @@ A timestamp is the same number everywhere, but its calendar fields depend on a t
 | An IANA name (the standard `Area/City` form) such as `"Asia/Kolkata"` or `"Europe/London"`, or `"UTC"` | That zone |
 | An abbreviation such as `"IST"`, or a name the host does not know | `OS6005` when the bar runs, which stops the script |
 
-> **The /trading Backtest panel states no timezone in this release, so in a backtest every call on this page that leaves out `zone` returns `none`. In a strategy you backtest, pass the zone: `date.hour(time, "Asia/Kolkata")`.**
+The /trading Backtest panel states the exchange's own zone, from the platform's market calendar, and a strategy running from the Strategies panel reads the calendar in the instrument's zone, so a call that leaves out `zone` reads Indian time in both, as it does on the chart. Pass the zone, as in `date.hour(time, "Asia/Kolkata")`, in a script that must also run on a host that states none.
 
 A zone is always a name, never a fixed offset, because an offset is wrong for half the year anywhere that moves its clocks. Where clocks do move, a wall clock time that was skipped resolves to the instant it would have been, and a time that happened twice resolves to the first of the two. India does not move its clocks, so none of this affects an Indian chart.
 
@@ -25902,9 +25930,9 @@ plot(v, "VWAP", orange, width = 2)
 barColor(close > v ? lime : close < v ? red : none)
 ```
 
-> **In this release the /trading chart does not state the instrument's session hours to the script, so there `vwap()` has no session to start from and is absent on every bar: the study above draws nothing. See [Sessions and time](/script/data/sessions-and-time#sessions-and-the-clock-in-trading-today).**
+On the /trading chart and in its Backtest panel the session hours come from the platform's market calendar, so the study above restarts at each session's open. A host that states no session hours, or a /trading chart whose timezone you have set to one other than the exchange's, gives `vwap()` no session to start from, and it is absent on every bar.
 
-No Indian session runs past midnight IST, so a new IST date is a new session. Anchoring `vwapAnchor()` to that gives the same average, and it works on the /trading chart today:
+No Indian session runs past midnight IST, so a new IST date is a new session. Anchoring `vwapAnchor()` to that gives the same average wherever a timezone is known, with or without session hours:
 
 ```openscript
 version 1
@@ -26737,7 +26765,7 @@ if cross(close, v)
     alert("Price crossed VWAP", id = "vwap-cross")
 ```
 
-**Remarks.** `cross(a, b)` is the same as `crossUp(a, b) or crossDown(a, b)`. When you later need to know which way it went, test the two directions separately. The example anchors the average by date because `vwap()` restarts on the session's first bar, which needs session hours the /trading chart does not state in this release.
+**Remarks.** `cross(a, b)` is the same as `crossUp(a, b) or crossDown(a, b)`. When you later need to know which way it went, test the two directions separately. The example anchors the average by date, which needs only a timezone; `vwap()` restarts on the session's own first bar, which needs the host to state session hours, as the /trading chart does.
 
 **See also.** `crossUp()`, `crossDown()`, `alert()`
 
@@ -26891,7 +26919,7 @@ score = close > open ? 1 : close < open ? -1 : 0
 plot(cum(score), "Running score", aqua)
 ```
 
-**Remarks.** An absent bar gives an absent result on that bar and leaves the total where it was; the next present bar carries on from there. The total never restarts. For a total that restarts every session at 09:15, keep it in a `var` and reset it on the session's first bar, as [Persistence](/script/language/persistence) shows: `session.isFirstBar` where the host states session hours, and a new IST date on the /trading chart, which does not.
+**Remarks.** An absent bar gives an absent result on that bar and leaves the total where it was; the next present bar carries on from there. The total never restarts. For a total that restarts every session at 09:15, keep it in a `var` and reset it on the session's first bar, as [Persistence](/script/language/persistence) shows: `session.isFirstBar` where the host states session hours, as the /trading chart does, and a new IST date where it does not.
 
 **See also.** `sum()`, `sumSkip()`, `obv()`
 
@@ -29467,7 +29495,7 @@ newDay = isNone(time[1]) or not date.isSameDay(time, time[1], "Asia/Kolkata")
 background(newDay ? fade(yellow, 80) : none)
 ```
 
-**Remarks.** Opaque yellow is hard to read on a light chart. Use it faded, or for markers on a dark chart. The example tests the date rather than `session.isFirstBar`, which needs session hours the /trading chart does not state in this release.
+**Remarks.** Opaque yellow is hard to read on a light chart. Use it faded, or for markers on a dark chart. The example tests the date, which needs only a timezone; `session.isFirstBar` marks the same bar where the host states session hours, as the /trading chart does.
 
 **See also.** `orange`, `background()`, `session.isFirstBar`
 
@@ -29590,7 +29618,7 @@ newDay = isNone(time[1]) or not date.isSameDay(time, time[1], "Asia/Kolkata")
 plot(vwapAnchor(hlc3, newDay), "VWAP", blue, width = 2)
 ```
 
-**Remarks.** Pure blue is dark and can be hard to see on a dark chart; `aqua` is the brighter choice there. The example anchors the average itself because `vwap()` restarts on the session's first bar, which needs session hours the /trading chart does not state in this release; there `vwap()` has no value.
+**Remarks.** Pure blue is dark and can be hard to see on a dark chart; `aqua` is the brighter choice there. The example anchors the average itself on a new IST date, which needs only a timezone. `vwap()` restarts on the session's own first bar, which needs the host to state session hours, as the /trading chart does.
 
 **See also.** `aqua`, `navy`, `vwapAnchor()`, `vwap()`
 
@@ -29923,7 +29951,7 @@ study("Opening bar range", precision = 2)
 sessions = input(10, "Sessions to average", min = 2, max = 60)
 
 // The session's first bar, or the first bar of each IST day where the host
-// states no session hours, as on the /trading chart.
+// states no session hours.
 newSession = orElse(session.isFirstBar, isNone(time[1]) or not date.isSameDay(time, time[1], "Asia/Kolkata"))
 
 // One number per session, the range of its first bar (09:15 on NSE),
@@ -29939,7 +29967,7 @@ plot(avg(ranges), "Average opening bar range", aqua)
 plot(newSession ? high - low : none, "This session's opening bar", orange, style = "column")
 ```
 
-`newSession` is `session.isFirstBar` where the host states the instrument's session hours. The /trading chart does not in this release, so there a new IST date marks the first bar instead, which for an NSE session is the same bar. The `var` keeps the array from bar to bar, `push()` adds this session's number, `shift()` drops the oldest, and `avg()` summarises what is left. Until the first session's opening bar, the array is empty and its average is absent, so nothing is drawn.
+`newSession` is `session.isFirstBar` where the host states the instrument's session hours, as the /trading chart does. Where a host states none, a new IST date marks the first bar instead, which for an NSE session is the same bar. The `var` keeps the array from bar to bar, `push()` adds this session's number, `shift()` drops the oldest, and `avg()` summarises what is left. Until the first session's opening bar, the array is empty and its average is absent, so nothing is drawn.
 
 ## Rules every array follows
 
@@ -30587,7 +30615,7 @@ Six settings, and a study that works on any instrument and any interval without 
 
 On the /trading page you open a study's settings from its row in the chart legend. The dialog has two tabs:
 
-- **Inputs** holds one row per `input()` call, in the order the script declares them.
+- **Inputs** holds one row per `input()` call, in the order the script declares them, under a heading for each `group` and with each `tooltip` as a line of help under its row.
 - **Style** holds rows the chart adds for every plot without the script declaring anything: its colour, opacity, thickness, line style and plot style.
 
 **Defaults** at the bottom puts every row back to the script's defaults, and **Ok** applies the changes.
@@ -30771,9 +30799,9 @@ barColor(isNone(bias) ? none : close > bias ? fade(lime, 40) : fade(red, 40))
 
 A timeframe is a count and a unit: `"5m"`, `"1h"`, `"1D"`, `"1W"`, `"1M"`. The units are case sensitive, so `"1M"` is a month and `"1m"` a minute, and a bare number counts minutes, so `"60"` and `"1h"` are the same. A timeframe finer than the chart's own stops the study from loading with [OS6002](/script/errors/data#os6002), because bars that were never loaded cannot be invented. [Higher timeframes](/script/data/higher-timeframes) covers the read itself.
 
-In /trading the drop-down lists **Chart interval** first, then the intervals your broker serves (for example `1m`, `5m`, `15m`, `1h` and `D`), and it keeps the study's current value in the list even when the broker does not name it.
+In /trading the drop-down lists **Chart interval** first, labelled with the chart's own interval, such as **Chart interval (5m)**, then the intervals your broker serves that the study can build from the chart's bars: the chart's own and coarser ones, and on an intraday chart only whole multiples of it. On a 5 minute chart, for example, `10m`, `15m`, `30m`, `1h` and `D` are offered, and `1m` and `3m` are not. It keeps the study's current value in the list even when it is not one of those.
 
-> **Two of those entries are not timeframes the language reads in this release. **Chart interval** is an empty value, and `D` is the broker's spelling of a day, which the language writes `"1D"`. Choosing either stops the study from loading with [OS6001](/script/errors/data#os6001). Pick a minute or hour entry, or keep a day as the script's default, `"1D"`.**
+Every choice is saved in the language's spelling. **Chart interval** saves the chart's interval as it is at that moment, so moving the chart to another interval afterwards does not move the setting with it, and `D` is saved as `"1D"`.
 
 ### Time
 
@@ -30794,7 +30822,7 @@ plot(time >= anchorTime ? anchored : none, "Anchored VWAP", orange, width = 2)
 
 This is the one kind whose saved value and returned value differ. The saved value is the text, a clock reading, so a layout saved in one timezone opens at the same clock time in another. The returned value is the timestamp a script needs for comparing with `time`. Text that is not a date stops the study from loading with [OS6019](/script/errors/data#os6019).
 
-Which timezone the text is read in is up to the host. The language intends the chart's own timezone, but the /trading page in this release reads it as UTC: `"2025-01-01 09:15"` there means 09:15 UTC, which is 14:45 in India. That is why the example gives a date alone. Midnight UTC is 05:30 in India, before the 09:15 open, so the anchor lands on the first bar of that day either way.
+Which timezone the text is read in is up to the host. The /trading chart reads it in the chart's own timezone, so on an Indian chart `"2025-01-01 09:15"` is 09:15 IST, and a strategy running from the Strategies panel reads it in the instrument's zone. The Backtest panel reads it as UTC: there `"2025-01-01 09:15"` means 09:15 UTC, which is 14:45 in India. That is why the example gives a date alone. Midnight is before the 09:15 open whether it is read in IST or in UTC (05:30 in India), so the anchor lands on the first bar of that day in all three.
 
 ### Planned kinds
 
@@ -30834,7 +30862,7 @@ background(session.isIn(window) ? none : fade(gray, 90))
 
 `title`, `group`, `tooltip`, `options` and `kind` are written on the line itself, as literals (joining two literals with `+` is fine). The same text held in a name first is [OS3003](/script/errors/arguments#os3003), because the dialog is built before any line of the script runs.
 
-`group` and `tooltip` travel with the input for any host that shows them. The /trading dialog in this release lists the rows in the order the script declares them and does not yet show group headings or tooltips, so order your `input()` calls the way a reader should meet them, and put a unit in the title when it matters, as in `"Stop, in ATR"`:
+`group` and `tooltip` travel with the input for any host that shows them. In /trading the settings dialog, and the input forms of the Backtest and Strategies panels, show each group as a heading over its rows and each tooltip as a line of help under its row, in the order the script declares them. So order your `input()` calls the way a reader should meet them, and still put a unit in the title when it matters, as in `"Stop, in ATR"`, because the title is what a reader scans:
 
 ```openscript
 stopLen = input(14, "ATR length", group = "Risk", min = 1, max = 200,
@@ -31163,8 +31191,8 @@ The price may be computed from the data. It is read on every bar, and **the line
 version 1
 study("Session open", overlay = true, precision = 2)
 
-// The session's first bar, or the first bar of the IST day where the chart
-// states no session hours, as /trading does in this release.
+// The session's first bar, or the first bar of the IST day where the host
+// states no session hours.
 newSession = orElse(session.isFirstBar, isNone(time[1]) or not date.isSameDay(time, time[1], "Asia/Kolkata"))
 
 var sessionOpen = none
@@ -31329,7 +31357,7 @@ rangeMinutes = input(15, "Opening range, in minutes", min = 1, max = 240)
 keepSessions = input(5,  "Sessions to keep", min = 1, max = 60)
 
 // The session's first bar, or the first bar of each IST day where the host
-// states no session hours, as on the /trading chart.
+// states no session hours.
 newSession = orElse(session.isFirstBar, isNone(time[1]) or not date.isSameDay(time, time[1], "Asia/Kolkata"))
 
 var openTime  = none
@@ -31365,7 +31393,7 @@ else if not isNone(zone)
 ```
 
 
-The examples on this page that reset once per session find the session's first bar with the `newSession` line above. `session.isFirstBar` needs the instrument's session hours, which the /trading chart does not state in this release, so there it has no value; a new IST date marks the same bar for an NSE, BSE or MCX session.
+The examples on this page that reset once per session find the session's first bar with the `newSession` line above. `session.isFirstBar` needs the instrument's session hours, which the /trading chart states from the platform's market calendar; where a host states none, a new IST date marks the same bar for an NSE, BSE or MCX session.
 
 ## How drawing objects work
 
@@ -31747,8 +31775,8 @@ version 1
 study("VWAP tag", overlay = true, precision = 2)
 
 // The day's VWAP, restarted on the first bar of each IST day. vwap() restarts
-// on the session's first bar, which the /trading chart cannot find without
-// session hours, so this anchors it by date.
+// on the session's first bar, which needs session hours from the host, so
+// this anchors it by date and works wherever a timezone is known.
 newDay = isNone(time[1]) or not date.isSameDay(time, time[1], "Asia/Kolkata")
 v = vwapAnchor(hlc3, newDay)
 plot(v, "VWAP", orange, width = 2)
@@ -32475,7 +32503,7 @@ if crossDown(fast, slow)
 | | `signal()` | `alert()` | `print()` | `notify()` |
 |---|---|---|---|---|
 | Produces | A marker on the bar | A message about the bar | A line in the script's log | A message to a named channel |
-| On the /trading page | Drawn on the chart | A notification on the page, and a row in the Log tab of the Alerts panel, when it fires; while the market is open it may not fire, as [Alerts](#alerts) explains | Not shown in this release | Planned |
+| On the /trading page | Drawn on the chart | A notification on the page, and a row in the Log tab of the Alerts panel, once for the bar when that bar closes, as [Alerts](#alerts) explains | Not shown in this release | Planned |
 | On the history already loaded | Drawn on every past bar that matched | Fires for none of them | Written for every bar that ran it | Planned |
 | On a bar still forming | Waits for the close | Waits for the close | Waits for the close | Planned |
 
@@ -32521,7 +32549,7 @@ First value: bar 0
 
 Declares a watched condition and the message it sends. The condition is the chain of `if` guards that reaches the call, and the message is evaluated on the bar where they held, so every value in it is that bar's value. The host, the application running the study such as the /trading page, watches it as bars arrive and raises the alert on each new bar where the guards hold; the script polls nothing.
 
-On the /trading page an alert is watched as soon as its study is on the chart, and each firing shows as a notification and is recorded in the Log tab of the Alerts panel. In this release, though, the chart judges a script's alerts once, when a bar first arrives. During market hours a bar arrives with its first tick, before it has closed, so an alert that waits for the close (every alert, unless the study sets `onUnconfirmed = true`) has nothing to report yet, and the chart does not look at that bar again. Such an alert fires only for a bar that reaches the chart already closed. To be told reliably, plot the condition as 1 or 0 and create a study alert on that plot from the chart's **Create alert** dialog, with **Study plot** as the source, as [Alerts on a script condition](/script/alerts/alerts-in-trading#alerts-on-a-script-condition) shows.
+On the /trading page an alert is watched as soon as its study is on the chart. When a bar closes, the chart judges the study's alerts on it, and each one whose guards hold fires once for that bar: a notification on the page and a row in the Log tab of the Alerts panel. Only bars that close while the chart is open are judged, never the history loaded with it, and alerts are held back while a replay or a change of workspace has the chart. In a study that sets `onUnconfirmed = true` an alert may fire on the forming bar instead, and still fires at most once for it. A study alert on a plotted condition, created from the chart's **Create alert** dialog, is the other way to be told, as [Alerts on a script condition](/script/alerts/alerts-in-trading#alerts-on-a-script-condition) shows.
 
 ```openscript
 version 1
@@ -32557,7 +32585,7 @@ if close > open
     alert("Rising", id = "rising", frequency = "everyUpdate")
 ```
 
-On the /trading chart in this release every alert fires at most once per bar, whatever its `frequency` says: the chart checks each condition once for each new bar and has nowhere to keep the setting. For one alert per session, hold a `var` flag and test it in the condition. The example finds each session's first bar with `session.isFirstBar` where the host states session hours, and with a new IST date where it does not, which includes the /trading chart:
+On the /trading chart every alert fires at most once per bar, whatever its `frequency` says: the chart judges each condition once for each bar and has nowhere to keep the setting. For one alert per session, hold a `var` flag and test it in the condition. The example finds each session's first bar with `session.isFirstBar` where the host states session hours, as the /trading chart does, and with a new IST date where it does not:
 
 ```openscript
 version 1
@@ -32580,7 +32608,7 @@ if not newSession and not alerted and close > rangeHigh
     alert(chart.symbol + " closed above its first bar high at " + text(close, 2), id = "first-bar-break", title = "First bar break")
 ```
 
-**Remarks.** Adding a study to a chart fires nothing for the bars already loaded: an alert is a statement about now. Nested guards join with `and`, so an `alert()` two `if`s deep has both conditions. A condition that is `none` takes the false branch, so an alert guarded by a comparison stays quiet during warmup; if an alert never fires, plot its condition as `cond ? 1 : 0` and look at the line. If the line shows the condition held and the /trading chart still sent nothing, that is the limit described under the entry above, and the same plotted line is what a study alert can watch. Test a change, with `crossUp()`, `crossDown()` or a comparison with `[1]`, rather than a state, or the alert fires on every bar the state lasts. Routing, retries and where a message is delivered belong to the host; see [Alerts in /trading](/script/alerts/alerts-in-trading).
+**Remarks.** Adding a study to a chart fires nothing for the bars already loaded: an alert is a statement about now. Nested guards join with `and`, so an `alert()` two `if`s deep has both conditions. A condition that is `none` takes the false branch, so an alert guarded by a comparison stays quiet during warmup; if an alert never fires, plot its condition as `cond ? 1 : 0` and look at the line. If the line shows the condition held on a bar that closed while the chart was open, and the /trading chart still sent nothing, [Alerts in /trading](/script/alerts/alerts-in-trading) lists what else to check; the same plotted line is also what a study alert can watch. Test a change, with `crossUp()`, `crossDown()` or a comparison with `[1]`, rather than a state, or the alert fires on every bar the state lasts. Routing, retries and where a message is delivered belong to the host; see [Alerts in /trading](/script/alerts/alerts-in-trading).
 
 **See also.** `signal()`, `text()`, `date.format()`, [Alerts from scripts](/script/alerts/overview)
 
@@ -32818,11 +32846,11 @@ Each distinct symbol, exchange and timeframe is one series the host fetches and 
 | Where the script runs | `req.timeframe()` | `req.symbol()` |
 |---|---|---|
 | On the chart, as a study | Folded from the chart's bars. Day, week and month reads use the chart's timezone, Asia/Kolkata unless changed in the chart settings | Fetched through the chart's own data feed |
-| In the Backtest panel | Intraday reads work. Day, week and month reads are absent on every bar, because the run is not told the chart's timezone | The run is refused before its first bar with `OS6006` |
+| In the Backtest panel | Folded from the run's bars. Day, week and month reads use the exchange's zone, Asia/Kolkata for Indian exchanges | The run is refused before its first bar with `OS6006` |
 
-The /trading chart does not tell a study its instrument's exchange, so `chart.exchange` is `none` there. A `req.symbol()` call that names no `exchange` is fetched on the chart's own exchange, which suits a peer stock on the same exchange; name `exchange` whenever the other instrument trades elsewhere, such as `NIFTY` on `NSE_INDEX` from an NSE stock chart.
+A `req.symbol()` call that names no `exchange` is fetched on the chart's own exchange, `chart.exchange`, which suits a peer stock on the same exchange; name `exchange` whenever the other instrument trades elsewhere, such as `NIFTY` on `NSE_INDEX` from an NSE stock chart.
 
-/trading calls its daily interval `D`, which is not a timeframe the language reads, so on a daily chart a read that passes `chart.interval` stops the study with `OS6001`. Write `"1D"` there instead.
+The /trading chart calls its daily interval `D`, which is not a timeframe the language reads, so on a daily chart a read that passes `chart.interval` stops the study with `OS6001`. Write `"1D"` there instead.
 
 ## Reading another timeframe
 
@@ -33063,7 +33091,7 @@ trigger   = isNone(rangeHigh) ? none : roundToTick(rangeHigh)
 stopPrice = isNone(trigger) ? none : roundToTick(trigger - stopMult * atrValue)
 ready     = not isNone(trigger) and not isNone(stopPrice)
 
-// The zone is written out so the windows also work in the Backtest panel.
+// The zone is written out so the windows read Indian time on any host.
 inHours = session.isIn("0930-1430", "Asia/Kolkata")
 lateDay = not session.isIn("0915-1500", "Asia/Kolkata")
 
@@ -33096,11 +33124,11 @@ plot(entryStop, "Protective stop", red, style = "step")
 plot(pos.isFlat ? none : pos.avgPrice, "Average price", fade(silver, 40), style = "step")
 ```
 
-Three things in it are there because of how version 0.5.0 behaves:
+Three things in it are worth knowing before you adapt it:
 
 - **The stop is also tested by the script** (`low <= entryStop`). The stop sent with `exit()` is handed on as an instruction, and neither the backtest nor the chart fills it, so without the script's own test no trade in a backtest would ever stop out.
-- **The time windows name their zone**, `"Asia/Kolkata"`. The Backtest panel does not pass the chart's time zone to a run, so `session.isIn()` with no zone has no value on any bar of a backtest, and a strategy guarded by it never trades. [Backtesting](/script/strategies/backtesting) lists the other things the panel does not supply yet.
-- **It is for the chart and the Backtest panel.** The Strategies panel refuses to start a strategy that calls `exit()`, and one that reads the clock with `session.isIn()` on an Indian instrument. [Sessions and time](/script/data/sessions-and-time#sessions-and-the-clock-in-trading-today) shows a time window that works there too.
+- **The time windows name their zone**, `"Asia/Kolkata"`. The /trading chart, its Backtest panel and the Strategies panel all state the instrument's zone, so there the zone only makes the intent plain; on a host that states none, `session.isIn()` with no zone has no value on any bar, and a strategy guarded by it never trades. [Backtesting](/script/strategies/backtesting) lists what the Backtest panel does not act on yet.
+- **It is for the chart and the Backtest panel.** The Strategies panel refuses to start a strategy that calls `exit()`. [Sandbox and live](/script/strategies/sandbox-and-live) lists what the runner needs from a script.
 
 The fills of a strategy are marked on the chart where they happened, as in this run of another strategy on a 15-minute NSE chart:
 
@@ -34445,7 +34473,7 @@ strategy("Sell the option on the chart", overlay = true, precision = 2,
 lots    = input(1,  "Lots", min = 1, max = 50)
 stopPct = input(30, "Stop, percent above the entry premium", min = 5, max = 300)
 
-// The zone is written out so the windows also work in the Backtest panel.
+// The zone is written out so the windows read Indian time on any host.
 zone        = "Asia/Kolkata"
 lotUnits    = max(orElse(chart.lotSize, 1), 1)
 entryWindow = session.isIn("0920-0935", zone)
@@ -34468,7 +34496,7 @@ else if entryWindow and pos.isFlat and not doneToday
 plot(stopLevel, "Stop", red, style = "step")
 ```
 
-The size is counted in units from the lot size, and the stop is a rule the script tests, for the reasons on [Strategy orders](/script/reference/strategy). On the chart the lot size is not stated to the script yet, so there `chart.lotSize` is absent and this file falls back to one unit per lot; the Backtest panel uses the lot size OpenAlgo holds for the instrument.
+The size is counted in units from the lot size, and the stop is a rule the script tests, for the reasons on [Strategy orders](/script/reference/strategy). The chart and the Backtest panel both state the lot size OpenAlgo holds for the instrument; where a host states none, `chart.lotSize` is absent and this file falls back to one unit per lot.
 
 Every order call except `cancel()` and `cancelAll()` accepts a `leg` argument, and in version 0.5.0 writing it is refused with OS3023, whatever it names: a file that declares no leg has no name the argument could refer to. Take the argument out and the order acts on the chart's instrument.
 
@@ -34908,7 +34936,7 @@ lockAt     = input(2000, "Then keep at least this much", min = 0)
 stepMoney  = input(2000, "Raise the floor for every further", min = 100)
 advance    = input(1500, "Raise it by", min = 0)
 
-// The zone is written out so the windows also work in the Backtest panel.
+// The zone is written out so the windows read Indian time on any host.
 zone       = "Asia/Kolkata"
 lotUnits   = max(orElse(chart.lotSize, 1), 1)
 pointValue = orElse(chart.pointValue, 1)
@@ -35626,7 +35654,7 @@ This line is indented with a tab.
 
 Fix: Replace the leading tabs with spaces. Four spaces per level is the convention and the formatter's output.
 
-The line is indented with a tab. A tab is drawn at a different width in every editor, so a block marked with tabs could mean one thing on your screen and another on someone else's, and the language accepts spaces only. In the /trading editor the Tab key moves the focus out of the editor rather than typing anything, so a tab almost always arrives in pasted code. Replace each leading tab with four spaces.
+The line is indented with a tab. A tab is drawn at a different width in every editor, so a block marked with tabs could mean one thing on your screen and another on someone else's, and the language accepts spaces only. In the /trading editor the Tab key indents with four spaces and never types a tab, so a tab almost always arrives in pasted code. Replace each leading tab with four spaces.
 
 ### OS1003 Indentation does not match this block
 
@@ -36342,7 +36370,7 @@ This page covers the OS4xxx codes of OpenScript (also called OpenAlgo Script): t
 A runtime error is raised on the bar that produced the value, which may be deep in history or the newest bar. The message fills in the real value it met, such as `sma's len was 7.5 on this bar`, so you can see which value went wrong. The script never skips the bar silently, because a gap with no explanation looks exactly like a gap the script meant.
 
 - **On a chart**, the study draws nothing. When you add it, /trading shows a notice with the code, the message and the fix. If a study already on the chart starts failing later, for example when a new bar arrives, the **Objects** panel lists it with the status Error.
-- **In the Backtest panel**, the strategy stops trading at that bar: the report lists only the trades made before it, and the equity curve runs flat from there to the end of the range. The panel does not show the error itself, so a curve that goes flat and stays flat is worth checking for one. See [Backtesting](/script/strategies/backtesting).
+- **In the Backtest panel**, the strategy stops trading at that bar: the report lists only the trades made before it, and the equity curve runs flat from there to the end of the range. Above the figures the panel says which bar the run stopped on and when, what went wrong with its fix, and the code with its line and column, so the figures are not mistaken for the whole range. See [Backtesting](/script/strategies/backtesting).
 - **In a deployed strategy**, the run stops at that bar, sends nothing further and writes the code, the bar, the line and the column to the run's log. See [Sandbox and live](/script/strategies/sandbox-and-live).
 
 Some of these problems have a compile-time twin: a literal the compiler can see is refused before any bar runs ([OS3004](/script/errors/arguments#os3004) for some whole-number arguments, such as the rows of a `table()`, and [OS3008](/script/errors/arguments#os3008) for a name outside an accepted set). In version 0.5.0 that check does not cover history indexes or lengths: `close[1.5]`, `close[-1]`, `sma(close, 7.5)` and `str.repeat("ab", 2.5)` all compile and then stop on bar 0.
@@ -36809,7 +36837,7 @@ The units are case sensitive:
 
 So `"1M"` is one month and `"1m"` is one minute, and `"60"` and `"1h"` are the same timeframe. Anything else is refused: a word such as `"hourly"`, a lower-case day or week such as `"1d"`, or `"D"` with no count. A timeframe written in the source is checked when the script compiles; one that comes from an `input()` is checked when the study loads, with the same code.
 
-One case catches people out on /trading. The chart's daily interval is named `D`, which is not a timeframe the language reads, so `req.timeframe(chart.interval, close)` compiles and is then refused with this code when the study loads on a daily chart. Write `"1D"` in the request instead of passing `chart.interval`.
+One case catches people out on /trading. The chart's daily interval is named `D`, which is not a timeframe the language reads, so `req.timeframe(chart.interval, close)` compiles and is then refused with this code when the study loads on a daily chart. Write `"1D"` in the request instead of passing `chart.interval`. The Backtest panel states the same chart as `"1D"`, so there the request runs.
 
 ### OS6002 The requested timeframe is lower than the chart's
 
@@ -36895,7 +36923,7 @@ Fix: Act on {reason} in the host: it is a connection, permission or quota proble
 
 The host knows the instrument and could not get its bars: the data source refused, did not answer, or limited how often it may be asked. The message carries the host's own reason, and that reason is the thing to act on: it describes a connection, permission or quota problem, not a problem in your script. The read is absent and `req.error()` carries the message.
 
-If the value can be worked out from the chart's own bars, such as the day's high on an intraday chart, derive it and drop the request, as the fix below does with `session.isFirstBar`. That fix needs the instrument's session hours, which the /trading chart does not state in this release, so there reset on a new IST date instead:
+If the value can be worked out from the chart's own bars, such as the day's high on an intraday chart, derive it and drop the request, as the fix below does with `session.isFirstBar`. That fix needs the instrument's session hours, which /trading reads from the market calendar. On a host that states none, reset on a new IST date instead, which works everywhere:
 
 ```openscript
 newDay = isNone(time[1]) or not date.isSameDay(time, time[1], "Asia/Kolkata")
@@ -36917,7 +36945,7 @@ Fix: Supply {fact} in the host's instrument record, or stop depending on it: rou
 
 Tick size, lot size, the trading session and the timezone come from the host's record of the instrument, not from the bars. In version 0.5.0 the engine raises this code when it loads a program and that record cannot be read: a session stated without the timezone it is measured in, a timezone the calendar does not know, or session hours not written as `HH:MM`. It is a problem in the host's record, not in your script.
 
-A fact the host simply leaves out does not raise this code. `chart.tickSize` or `chart.lotSize` reads as absent, `roundToTick()` returns absent, and an order priced or sized from them stops with [OS7002](/script/errors/orders#os7002). On the /trading chart `chart.lotSize` is absent, so a study that works in money takes the lot size from an `input()`, as the fix below does. You can also meet this code's message without an error: a daily, weekly or monthly read on a host that states no timezone is absent, and `req.error()` returns this message for it.
+A fact the host simply leaves out does not raise this code. `chart.tickSize` or `chart.lotSize` reads as absent, `roundToTick()` returns absent, and an order priced or sized from them stops with [OS7002](/script/errors/orders#os7002). On /trading `chart.lotSize` comes from the platform's record of the instrument, and it is absent for a symbol whose contract the platform does not hold, so a study that works in money can take the lot size from an `input()` instead, as the fix below does. You can also meet this code's message without an error: a daily, weekly or monthly read on a host that states no timezone is absent, and `req.error()` returns this message for it.
 
 ### OS6005 Unknown timezone
 
@@ -37083,7 +37111,7 @@ This page covers the OS7xxx codes of OpenScript (also called OpenAlgo Script): t
 A refusal while the run is going stops it at that bar in every place a strategy runs:
 
 - **On the chart**, where a strategy's plots and trades are simulated in the browser, the strategy draws nothing and /trading shows the code and the message in a notice, as for any [runtime error](/script/errors/runtime#when-they-appear).
-- **In the Backtest panel**, the report lists only the trades made before the refusal, the equity curve runs flat from there to the end, and the panel does not show the error. A backtest with far fewer trades than the chart suggests is worth checking for one first. See [Backtesting](/script/strategies/backtesting).
+- **In the Backtest panel**, the report lists only the trades made before the refusal and the equity curve runs flat from there to the end. Above the figures the panel says which bar the run stopped on and when, what went wrong with its fix, and the code with its line and column. See [Backtesting](/script/strategies/backtesting).
 - **In a deployment** from the Strategies panel, sandbox trading (analyzer mode in OpenAlgo) or live, the run stops at that bar, sends nothing further, and writes the code and the bar to the run's log on the server. See [Sandbox and live](/script/strategies/sandbox-and-live).
 
 ## A strategy written to avoid them
@@ -37238,7 +37266,7 @@ Fix: Guard entries with session.isOpen, and set closeOnSessionEnd = true to flat
 
 An exchange works orders only during its session, 09:15 to 15:30 IST for NSE equities and NFO contracts. This code is planned to refuse an order placed outside the session, rather than hold it until the open and fill it at a price the script never saw.
 
-**Not raised yet.** In version 0.5.0 nothing checks the session before an order is sent. Guard entries yourself with `session.isIn()`, as the example below does, and name the zone, as in `session.isIn("0915-1530", "Asia/Kolkata")`: the /trading Backtest panel states no timezone, so there a window without one is absent and the guard never lets an entry through. `session.isOpen`, which the fix line names, is planned and does not compile in this release. The declaration's `closeOnSessionEnd = true` is accepted but not yet acted on either, so close an intraday position yourself before 15:30, as [Exiting on the clock](/script/strategies/exits-and-brackets#exiting-on-the-clock) shows. See [Sessions and time](/script/data/sessions-and-time).
+**Not raised yet.** In version 0.5.0 nothing checks the session before an order is sent. Guard entries yourself with `session.isIn()`, as the example below does, and name the zone, as in `session.isIn("0915-1530", "Asia/Kolkata")`, so the window means IST wherever the script runs and whatever timezone a chart is set to. `session.isOpen`, which the fix line names, is planned and does not compile in this release. The declaration's `closeOnSessionEnd = true` is accepted but not yet acted on either, so close an intraday position yourself before 15:30, as [Exiting on the clock](/script/strategies/exits-and-brackets#exiting-on-the-clock) shows. See [Sessions and time](/script/data/sessions-and-time).
 
 ### OS7013 Two opposite orders on one bar
 
@@ -38314,7 +38342,7 @@ A member is present only when the script declares something for it, so a study w
 
 On every calculation the chart hands the adapter what it knows: the symbol, the interval, its timezone, the chart clock for `chart.now()`, and the tick size from the price pane. Everything else comes from the `instrument` option, and the adapter merges the two.
 
-**State the session.** A chart holds an interval and a timezone, and no exchange calendar. `session.isFirstBar`, `session.isLastBar` and every study anchored to them, `vwap()` among them, read the session in the instrument record. A host that states no session gets those facts absent on every bar, which is honest and leaves a VWAP study with an empty pane. For NSE and BSE equities and NFO contracts the session is `09:15` to `15:30`, Monday to Friday, in `Asia/Kolkata`.
+**State the session.** A chart holds an interval and a timezone, and no exchange calendar. `session.isFirstBar`, `session.isLastBar` and every study anchored to them, `vwap()` among them, read the session in the instrument record. A host that states no session gets those facts absent on every bar, which is honest and leaves a VWAP study with an empty pane. For NSE and BSE equities and NFO contracts the regular session is `09:15` to `15:30`, Monday to Friday, in `Asia/Kolkata`. Read it from your own market calendar rather than writing it in, since special sessions and changed timings happen. The /trading page does this: it fetches each instrument's record, session included, from OpenAlgo when a study is first drawn, and builds the study again when the record arrives. The adapter reads every session and calendar call in the chart's timezone, which it takes over the record's, so a session written for `Asia/Kolkata` on a chart the user has set to another zone would land hours off. Leave the session out when the two zones differ, as /trading does; the session facts are then absent rather than wrong.
 
 ## Settings, and when to build again
 
@@ -39859,7 +39887,7 @@ Source: https://openalgo.in/script/integrate/host-interface
 
 A **host** is whatever already owns the data and the account: a charting product, a trading terminal, a backtest service, a research notebook. The engine assumes none of them. It asks the host a small, fixed set of questions, and this page is that contract: the exact shape of each answer, when it is read, and what happens when you cannot give it. It applies whichever engine you run, the JavaScript library, the Python engine or one of your own.
 
-On OpenAlgo there are two hosts. The /trading page hosts charts and backtests: it supplies the bars of the chart, the settings dialog, alert delivery and some of the instrument record. In this release the chart states the symbol, interval, tick size and timezone, and the Backtest panel states no interval, timezone or session; [chart.*](/script/reference/chart#where-the-facts-come-from) lists which fact each one states. A deployed strategy is hosted by OpenAlgo's server, which runs it with the Python engine and sends its orders either to sandbox trading (analyzer mode in OpenAlgo) or to your broker account, whichever the platform is set to.
+On OpenAlgo there are two hosts. The /trading page hosts charts and backtests: it supplies the bars of the chart, the settings dialog, alert delivery and the instrument record, read from OpenAlgo's instrument data (the exchange, tick size, lot size, instrument type and whether the instrument has volume and open interest) and from its market calendar (the timezone and the regular trading session). The chart states its own symbol, interval, tick size and timezone beside them; [chart.*](/script/reference/chart#where-the-facts-come-from) lists which fact each part of the page states. A deployed strategy is hosted by OpenAlgo's server, which runs it with the Python engine and sends its orders either to sandbox trading (analyzer mode in OpenAlgo) or to your broker account, whichever the platform is set to.
 
 ## The six duties
 
@@ -40844,7 +40872,7 @@ Reading it with the glossary's words:
 
 **Error.** A diagnostic in the ranges OS1xxx to OS7xxx. An error found before the first bar stops compilation. An error raised while a bar runs stops the run at that bar: earlier bars keep what they drew, and nothing is drawn from that bar on.
 
-**Exchange.** The venue an instrument trades on, read as `chart.exchange` in the host's own naming where the host states it (the /trading chart does not in this release). OpenAlgo uses NSE and BSE for equities, NFO for index and stock futures and options, MCX for commodities and NSE_INDEX for the NSE indices.
+**Exchange.** The venue an instrument trades on, read as `chart.exchange` in the host's own naming where the host states it, as the /trading chart, the Backtest panel and a deployed strategy all do. OpenAlgo uses NSE and BSE for equities, NFO for index and stock futures and options, MCX for commodities and NSE_INDEX for the NSE indices.
 
 **Expectancy.** The average net result of one closed trade in a backtest: net profit divided by the number of closed trades. A positive expectancy means the strategy made money per trade on average, after charges.
 
@@ -40922,7 +40950,7 @@ plot(move, "Change from the previous close")
 
 **Lookback.** How many bars a calculation reads, such as the 20 in `sma(close, 20)`. The reference calls it the length, `len`, and it must be a whole number.
 
-**Lot.** The number of units that trade together, read as `chart.lotSize` where the host states it: the /trading Backtest panel does, and the /trading chart does not in this release. NFO futures and options and MCX contracts trade in whole lots, and a strategy declared with `qtyType = "lots"` counts its orders in lots, though the Strategies panel runs only a strategy that counts in units. See [Position and sizing](/script/strategies/position-and-sizing).
+**Lot.** The number of units that trade together, read as `chart.lotSize` where the host states it: on /trading the chart, the Backtest panel and a deployed strategy all state it from the platform's instrument record. NFO futures and options and MCX contracts trade in whole lots, and a strategy declared with `qtyType = "lots"` counts its orders in lots, though the Strategies panel runs only a strategy that counts in units. See [Position and sizing](/script/strategies/position-and-sizing).
 
 ## M
 
@@ -41028,7 +41056,7 @@ background(noPrev ? fade(gray, 90) : none)
 
 **Series.** The per-bar history of a value, written `series number`, `series bool` and so on. Reading it bare gives this bar's value and `[n]` gives the value `n` bars back. See [Types and values](/script/language/types-and-values).
 
-**Session.** The instrument's trading hours as the host defines them, such as 09:15 to 15:30 IST for NSE equities and derivatives. The `session` namespace reports the first bar, the last bar and whether a bar falls in a window you state. The first and last bar need the host to supply the hours, and are absent where it has not. See [Sessions and time](/script/data/sessions-and-time).
+**Session.** The instrument's trading hours as the host defines them, such as 09:15 to 15:30 IST for NSE equities and derivatives. The `session` namespace reports the first bar, the last bar and whether a bar falls in a window you state. The first and last bar need the host to supply the hours, and are absent where it has not. On /trading the hours come from the market calendar. See [Sessions and time](/script/data/sessions-and-time).
 
 **Settings dialog.** The panel of one row per `input()`, plus the style rows the host adds for every plot. It is built once, before the first bar, which is why inputs must be at the top level. See [Settings and style](/script/inputs/settings-and-style).
 
@@ -41104,7 +41132,7 @@ background(noPrev ? fade(gray, 90) : none)
 
 **Warning.** A diagnostic in the OS8xxx range. It stops nothing, and describes a shape that is valid but almost never what the author meant. See [OS8xxx Warnings](/script/errors/warnings).
 
-**Watched condition.** What one `alert()` call becomes in the chart contract: its id, title, message and the conditions that lead to it. In /trading, the chart that shows the study checks it while the page is open, with nothing more for you to set up, and raises a notification when it holds. In this release the chart judges each bar once, when it first arrives, so during market hours an alert that waits for the bar to close may not fire; a study alert on a plotted condition is the dependable route. See [Alerts in /trading](/script/alerts/alerts-in-trading).
+**Watched condition.** What one `alert()` call becomes in the chart contract: its id, title, message and the conditions that lead to it. In /trading, the chart that shows the study checks it while the page is open, with nothing more for you to set up, judging each bar when it closes, and raises a notification when it holds. See [Alerts in /trading](/script/alerts/alerts-in-trading).
 
 **Whole number.** A number with no fractional part, which lengths and array indices require. A fractional length is refused rather than rounded, because a length of 14.5 is a mistake in the script and rounding it would hide the mistake.
 
@@ -41207,7 +41235,7 @@ A condition must be a `bool` or absent. There is no truthiness (treating a numbe
 
 ### How do I write a block?
 
-With indentation, using spaces. There are no braces, no `end` and no semicolons. Every line of one block carries exactly the same indentation, and four spaces is the convention. A tab is OS1002 and a line out by one space is OS1003. See [Script structure](/script/language/script-structure).
+With indentation, using spaces. There are no braces, no `end` and no semicolons. Every line of one block carries exactly the same indentation, and four spaces is the convention. A tab character is OS1002 and a line out by one space is OS1003. In the /trading editor the Tab key inserts four spaces, and Shift+Tab takes them away, so pressing Tab never puts a tab character in the file. See [Script structure](/script/language/script-structure).
 
 ### Why can I not write `a < b < c`?
 
@@ -41360,19 +41388,19 @@ plot(nifty, "NIFTY")
 
 `session.isIn()` tells you whether a bar falls inside a window you state, such as `session.isIn("0915-1530")`, and `bar.isFirst or not date.isSameDay(time, time[1])` finds the first bar of each day. Both read the bar's time in the chart's timezone. `session.isFirstBar` and `session.isLastBar` also need the instrument's trading hours.
 
-All of these come from facts the host supplies, and a fact the host has not supplied makes the read absent rather than guessed. In this release the /trading chart supplies its timezone but not the trading hours, so `session.isFirstBar` is absent there, and a new IST date, `isNone(time[1]) or not date.isSameDay(time, time[1], "Asia/Kolkata")`, is the test to use for the first bar of an NSE day. A backtest run from the Backtest panel is given neither, so there a session or calendar read that relies on the chart's timezone is absent, and so is a daily read. Name the zone, as in `session.isIn("0915-1530", "Asia/Kolkata")`, and the read works in a backtest too. See [Sessions and time](/script/data/sessions-and-time).
+All of these come from facts the host supplies, and a fact the host has not supplied makes the read absent rather than guessed. On /trading the chart, the Backtest panel and a deployed strategy all state the instrument's timezone and its regular trading session, taken from the market calendar, so `session.isFirstBar` marks the first bar of each NSE session in all three. A deployed strategy still refuses `session.isLastBar`. On the chart the session is read in the chart's timezone: set the chart to a zone other than the exchange's and the session is left out, so `session.isFirstBar` is absent. A new IST date, `isNone(time[1]) or not date.isSameDay(time, time[1], "Asia/Kolkata")`, finds the first bar of an NSE day without needing anything from the host, and naming the zone, as in `session.isIn("0915-1530", "Asia/Kolkata")`, keeps a window right whatever zone the chart is set to. See [Sessions and time](/script/data/sessions-and-time).
 
 ## Alerts
 
 ### How do I raise an alert?
 
-Put `alert(message, id = "...")` inside the `if` that describes the condition. There is no separate function to declare a condition: the condition is the `if` you would have written anyway. In /trading, once the study is on a chart, the chart checks the condition as new bars arrive, shows a notification when it fires, and the Alerts panel keeps a log of every firing. Alerts are checked by the chart that is open, so they fire only while /trading is open.
+Put `alert(message, id = "...")` inside the `if` that describes the condition. There is no separate function to declare a condition: the condition is the `if` you would have written anyway. In /trading, once the study is on a chart, the chart judges the condition when each bar closes, shows a notification when it fires, and the Alerts panel keeps a log of every firing. Alerts are checked by the chart that is open, so they fire only while /trading is open, and only for bars that close while it is: history loaded when the page opens is never alerted on.
 
-In this release the chart judges a script's alert once, when a bar first arrives, and during market hours that is before the bar has closed, so an alert that waits for the close may not fire at all. To be told reliably, plot the condition as 1 or 0 and create a study alert on that plot from the chart's **Create alert** dialog, with **Study plot** as what to watch. See [Alerts from scripts](/script/alerts/overview) and [Alerts on a script condition](/script/alerts/alerts-in-trading#alerts-on-a-script-condition).
+A script alert reaches you on the page. To send a condition your script computes to Telegram or WhatsApp, or to give it an expiry, plot the condition as 1 or 0 and create a study alert on that plot from the chart's **Create alert** dialog, with **Study plot** as what to watch. See [Alerts from scripts](/script/alerts/overview) and [Alerts on a script condition](/script/alerts/alerts-in-trading#alerts-on-a-script-condition).
 
 ### Why does my alert not fire on the bar where I can see it should?
 
-Because that bar is still forming. Alerts, signals and orders wait until the bar closes, and if the condition is no longer true by then they never fire. That is what stops an alert from firing on a cross that is gone a minute later. On the /trading chart there is a second reason, the one in the answer above: the chart has already judged the bar before it closed.
+Because that bar is still forming. Alerts, signals and orders wait until the bar closes, and if the condition is no longer true by then they never fire. That is what stops an alert from firing on a cross that is gone a minute later.
 
 ### Why did adding the study not fire alerts for all the past bars?
 
@@ -41393,7 +41421,7 @@ version 1
 strategy("EMA cross", overlay = true, capital = 500000, qtyType = "units")
 
 // One lot, counted in units. chart.lotSize is absent, not 1, where the host
-// states no lot size, as on the /trading chart.
+// states no lot size, such as a symbol whose contract is not downloaded.
 lotUnits = max(orElse(chart.lotSize, 1), 1)
 
 fast = ema(close, 9)
@@ -41409,7 +41437,7 @@ if crossDown(fast, slow) and pos.isLong
     close()
 ```
 
-The size is one lot, stated in units, which is how NFO futures and MCX contracts are best sized in this release: the Backtest panel states the lot size, the chart does not (so there the example trades one unit), and the Strategies panel runs only a strategy that counts in units. See [Position and sizing](/script/strategies/position-and-sizing).
+The size is one lot, stated in units, which is how NFO futures and MCX contracts are best sized in this release: the chart, the Backtest panel and a deployed strategy all state the lot size from the platform's instrument record, and the Strategies panel runs only a strategy that counts in units. See [Position and sizing](/script/strategies/position-and-sizing).
 
 ### Why did my order fill at the next bar's open?
 
@@ -41730,7 +41758,7 @@ The version is 0.5.0 rather than 1.0 on purpose. The studies surface is finished
 | Tables and drawing objects (lines, labels, boxes, polylines) | Works | A study that declares two tables draws only the first |
 | Inputs and the settings dialog | Works | A plot's `style` chosen through an `input()` is drawn in its default style |
 | Higher timeframe and other instrument reads | Works | `req.candle()` and `req.events()` are planned |
-| Alerts and markers from scripts | Works | `alert()` and `signal()` work; `notify()` is planned. The /trading chart judges a script's alert once, when a bar first arrives, so during market hours an alert that waits for the close may not fire there: see [Alerts in /trading](/script/alerts/alerts-in-trading) |
+| Alerts and markers from scripts | Works | `alert()` and `signal()` work; `notify()` is planned. The /trading chart judges a script's alert when its bar closes, while the page is open: see [Alerts in /trading](/script/alerts/alerts-in-trading) |
 | Editor functions: highlighting, completion, hover, signature help, diagnostics, formatting | Works, in the library | For anyone building an editor. The /trading editor uses the highlighting and the compiler's diagnostics on every save; it has no completion, hover or signature help in this release |
 | Strategies on one instrument | Works | `buy()`, `sell()`, `exit()`, `close()`, `cancel()`, `cancelAll()`, `order.place()`, `order.bracket()` and `order.reverse()`. A backtest does not fill the levels `exit()` and `order.bracket()` set |
 | Position facts | Partly | `pos.size`, `pos.avgPrice`, `pos.isFlat`, `pos.isLong` and `pos.isShort` work; the money figures such as `pos.equity` and `pos.netProfit` are planned |

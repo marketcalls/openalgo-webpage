@@ -116,7 +116,7 @@ plot(showVolume ? avgVolume : none, "20 bar mean", orange)
 
 **Remarks.** `volume` is absent, not zero, on a bar for which the host supplies no volume. Zero is a real reading that means nobody traded; a volume nobody reported is a different fact. Anything computed from an absent `volume` is absent too, so a volume study draws a gap there rather than a flat line. Whether an index such as the NIFTY 50 arrives with no volume or with zeros depends on the data source, so use the futures contract when you need volume for an index.
 
-[[chart.hasVolume]] says whether the host supplies volume at all, but a host may leave it unstated, and the /trading chart does in this release. That is why the example writes `chart.hasVolume != false`: it hides the volume only when the host says there is none.
+[[chart.hasVolume]] says whether the host supplies volume at all, but a host may leave it unstated, and on the /trading chart it is unstated for a moment, until the instrument's facts arrive. That is why the example writes `chart.hasVolume != false`: it hides the volume only when the host says there is none.
 
 **See also.** [[chart.hasVolume]], [[vwap()]], [[obv()]], [[relativeVolume()]]
 

@@ -15,7 +15,7 @@ The version is 0.5.0 rather than 1.0 on purpose. The studies surface is finished
 | Tables and drawing objects (lines, labels, boxes, polylines) | Works | A study that declares two tables draws only the first |
 | Inputs and the settings dialog | Works | A plot's `style` chosen through an `input()` is drawn in its default style |
 | Higher timeframe and other instrument reads | Works | [[req.candle()]] and [[req.events()]] are planned |
-| Alerts and markers from scripts | Works | [[alert()]] and [[signal()]] work; [[notify()]] is planned. The /trading chart judges a script's alert once, when a bar first arrives, so during market hours an alert that waits for the close may not fire there: see [Alerts in /trading](/script/alerts/alerts-in-trading) |
+| Alerts and markers from scripts | Works | [[alert()]] and [[signal()]] work; [[notify()]] is planned. The /trading chart judges a script's alert when its bar closes, while the page is open: see [Alerts in /trading](/script/alerts/alerts-in-trading) |
 | Editor functions: highlighting, completion, hover, signature help, diagnostics, formatting | Works, in the library | For anyone building an editor. The /trading editor uses the highlighting and the compiler's diagnostics on every save; it has no completion, hover or signature help in this release |
 | Strategies on one instrument | Works | [[buy()]], [[sell()]], [[exit()]], [[close()]], [[cancel()]], [[cancelAll()]], [[order.place()]], [[order.bracket()]] and [[order.reverse()]]. A backtest does not fill the levels [[exit()]] and [[order.bracket()]] set |
 | Position facts | Partly | [[pos.size]], [[pos.avgPrice]], [[pos.isFlat]], [[pos.isLong]] and [[pos.isShort]] work; the money figures such as [[pos.equity]] and [[pos.netProfit]] are planned |

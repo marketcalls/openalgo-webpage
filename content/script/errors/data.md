@@ -69,7 +69,7 @@ The units are case sensitive:
 
 So `"1M"` is one month and `"1m"` is one minute, and `"60"` and `"1h"` are the same timeframe. Anything else is refused: a word such as `"hourly"`, a lower-case day or week such as `"1d"`, or `"D"` with no count. A timeframe written in the source is checked when the script compiles; one that comes from an [[input()]] is checked when the study loads, with the same code.
 
-One case catches people out on /trading. The chart's daily interval is named `D`, which is not a timeframe the language reads, so `req.timeframe(chart.interval, close)` compiles and is then refused with this code when the study loads on a daily chart. Write `"1D"` in the request instead of passing [[chart.interval]].
+One case catches people out on /trading. The chart's daily interval is named `D`, which is not a timeframe the language reads, so `req.timeframe(chart.interval, close)` compiles and is then refused with this code when the study loads on a daily chart. Write `"1D"` in the request instead of passing [[chart.interval]]. The Backtest panel states the same chart as `"1D"`, so there the request runs.
 
 {{error: OS6002}}
 
@@ -123,7 +123,7 @@ For NFO and MCX contracts, which expire on a fixed schedule, read the contract t
 
 The host knows the instrument and could not get its bars: the data source refused, did not answer, or limited how often it may be asked. The message carries the host's own reason, and that reason is the thing to act on: it describes a connection, permission or quota problem, not a problem in your script. The read is absent and [[req.error()]] carries the message.
 
-If the value can be worked out from the chart's own bars, such as the day's high on an intraday chart, derive it and drop the request, as the fix below does with [[session.isFirstBar]]. That fix needs the instrument's session hours, which the /trading chart does not state in this release, so there reset on a new IST date instead:
+If the value can be worked out from the chart's own bars, such as the day's high on an intraday chart, derive it and drop the request, as the fix below does with [[session.isFirstBar]]. That fix needs the instrument's session hours, which /trading reads from the market calendar. On a host that states none, reset on a new IST date instead, which works everywhere:
 
 ```openscript
 newDay = isNone(time[1]) or not date.isSameDay(time, time[1], "Asia/Kolkata")
@@ -141,7 +141,7 @@ plot(dayHigh, "Day high so far", aqua, style = "step")
 
 Tick size, lot size, the trading session and the timezone come from the host's record of the instrument, not from the bars. In version 0.5.0 the engine raises this code when it loads a program and that record cannot be read: a session stated without the timezone it is measured in, a timezone the calendar does not know, or session hours not written as `HH:MM`. It is a problem in the host's record, not in your script.
 
-A fact the host simply leaves out does not raise this code. [[chart.tickSize]] or [[chart.lotSize]] reads as absent, [[roundToTick()]] returns absent, and an order priced or sized from them stops with [OS7002](/script/errors/orders#os7002). On the /trading chart `chart.lotSize` is absent, so a study that works in money takes the lot size from an [[input()]], as the fix below does. You can also meet this code's message without an error: a daily, weekly or monthly read on a host that states no timezone is absent, and [[req.error()]] returns this message for it.
+A fact the host simply leaves out does not raise this code. [[chart.tickSize]] or [[chart.lotSize]] reads as absent, [[roundToTick()]] returns absent, and an order priced or sized from them stops with [OS7002](/script/errors/orders#os7002). On /trading `chart.lotSize` comes from the platform's record of the instrument, and it is absent for a symbol whose contract the platform does not hold, so a study that works in money can take the lot size from an [[input()]] instead, as the fix below does. You can also meet this code's message without an error: a daily, weekly or monthly read on a host that states no timezone is absent, and [[req.error()]] returns this message for it.
 
 {{error: OS6005}}
 

@@ -161,19 +161,20 @@ The language is young, and these pages say plainly what works today.
 - **Planned.** Some names in the library are declared but not implemented yet, for example the risk-based sizing helpers such as [[order.qtyForRisk()]] and the account figures such as [[pos.equity]]. The compiler refuses a planned name where you wrote it, with [OS2020](/script/errors/names-and-types#os2020) and a message that says it is planned, rather than letting the script fail later. The reference marks every planned entry.
 - **Not modelled yet.** A stop and target attached with [[exit()]] are not filled by the 0.5.0 backtest, and a strategy that calls `exit()` is refused by the Strategies panel. Manage exits in the script with [[close()]] for now, as [Your first strategy](/script/getting-started/first-strategy) shows.
 
-### What the /trading page does not supply yet
+### What each part of the /trading page supports
 
-A script can ask for facts about the market that the /trading page does not pass to the engine in this release. Where a fact is missing, the value that reads it has no value on any bar, and a condition built on it is never true. The script still compiles, so it is worth knowing before you wonder why a study drew nothing.
+The /trading page reads each instrument's facts from OpenAlgo itself: the tick size and lot size from the instrument record, and the timezone and trading session from the market calendar, whose timings an admin can edit. Some features still work in one part of the page and not another. Where a fact is missing, the value that reads it has no value on any bar, and a condition built on it is never true. The script still compiles, so it is worth knowing before you wonder why a study drew nothing.
 
 | Fact or feature | On the chart | Backtest panel | Strategies panel |
 |---|---|---|---|
-| Session hours, read by [[session.isFirstBar]] and the other `session.*` values | No value | No value | Refused |
-| Lot size, read by [[chart.lotSize]] | No value | Stated | Stated |
-| Another timeframe, read with [[req.timeframe()]] | Works | No value, because the panel does not state the chart's interval | Refused |
+| Session hours, read by [[session.isFirstBar]] and [[session.isLastBar]] | Stated | Stated | `session.isFirstBar` works; `session.isLastBar` is refused |
+| Lot size, read by [[chart.lotSize]] | Stated | Stated | Stated |
+| The calendar, read by the `date.*` functions and [[session.isIn()]] | Works, in the chart's timezone | Works, in the exchange's timezone | Works, in the exchange's timezone |
+| Another timeframe, read with [[req.timeframe()]] | Works | Works | Refused |
 | Another instrument, read with [[req.symbol()]] | Works | Refused with [OS6006](/script/errors/data#os6006) | Refused |
 | Drawing objects and tables | Work | Run, but a backtest shows only trades | Refused |
 
-The Strategies panel also refuses a strategy that reads the calendar (the `date.*` functions) or sizes its orders in anything but units, and every refusal names its reason. [Example scripts](/script/getting-started/example-scripts) shows what these limits mean for twelve complete scripts.
+The Strategies panel also refuses a strategy that sizes its orders in anything but units, and every refusal names its reason. [Example scripts](/script/getting-started/example-scripts) shows what these limits mean for twelve complete scripts.
 
 The [Release notes](/script/resources/release-notes) list every change and what is still to come.
 

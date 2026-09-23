@@ -139,7 +139,9 @@ State quantities in units. A strategy sized with `qtyType = "cash"` or `"equityP
 
 ### The instrument's own facts
 
-The run reads the instrument's tick size and lot size from the platform's own record of the symbol. The tick size is what a tick of `slippage` is worth and what [[chart.tickSize]] answers; the lot size is what [[chart.lotSize]] answers and what converts a quantity stated in lots. The line under the figures states both, for example **Tick 0.05, lot 1**. When the platform holds no record for an instrument, the run uses a tick of 0.05 and a lot of 1 and the line says so, because a guessed tick size makes every slippage charge wrong without anything else looking wrong. Money is shown in rupees, to two decimal places, and each charge is rounded to the paisa.
+The run reads the instrument's tick size and lot size from the platform's own record of the symbol. The tick size is what a tick of `slippage` is worth and what [[chart.tickSize]] answers; the lot size is what [[chart.lotSize]] answers and what converts a quantity stated in lots. The line under the figures states both, for example **Tick 0.05, lot 1**. When the platform holds no record for an instrument, the run uses a tick of 0.05 and a lot of 1 and the line says so, because a guessed tick size makes every slippage charge wrong without anything else looking wrong.
+
+The run is also told the chart's interval (a `D`, `W` or `M` chart as `"1D"`, `"1W"` or `"1M"`), the exchange's timezone and its regular trading session from the market calendar, the instrument type, and whether the instrument reports volume and open interest. So [[chart.interval]], `date.*` calls written without a zone, [[session.isFirstBar]], [[session.isLastBar]], [[vwap()]] and day, week and month reads all answer in a backtest as they do on the chart. The session is the regular one for every day of the range, since the engine holds one session for a whole run. Money is shown in rupees, to two decimal places, and each charge is rounded to the paisa.
 
 ## What runs where
 
@@ -181,8 +183,8 @@ version 1
 strategy("Traded window", overlay = true, precision = 2,
          capital = 500000, qty = 1)
 
-// Dates, not times of day: the Backtest panel gives the run no time zone, so a
-// written time of day would be read as UTC rather than as Indian time.
+// Dates, not times of day: the Backtest panel reads a written time as UTC
+// rather than as Indian time, so a time of day would land 5 hours 30 minutes late.
 tradeFrom = input("2025-01-01", "Trade from",      kind = "time")
 tradeTo   = input("2026-01-01", "Stop trading on", kind = "time")
 
@@ -207,7 +209,7 @@ plot(slow, "Slow", orange, width = 2)
 background(inWindow ? none : fade(silver, 92))
 ```
 
-Set **From** a few weeks before **Trade from** and **To** on or after **Stop trading on**, and the grey background shows the bars that were computed and not traded. Time inputs are for backtesting only: the strategy runner refuses to start a script that declares one, so take the window out before you [deploy](/script/strategies/sandbox-and-live).
+Set **From** a few weeks before **Trade from** and **To** on or after **Stop trading on**, and the grey background shows the bars that were computed and not traded. A deployment reads the same inputs, in the instrument's zone, so the window works there too. A window whose **Stop trading on** date has passed keeps a deployment out of the market for good, so move it past today, or take the window out, before you [deploy](/script/strategies/sandbox-and-live).
 
 The second way is to state the guard in the script, which is worth doing anyway because the chart then shows the bar the strategy became honest on rather than leaving you to infer it from the first marker:
 
@@ -245,15 +247,12 @@ Some parts of a strategy compile and are not acted on by the backtest in this re
 |---|---|---|
 | A stop or target set with [[exit()]] or [[order.bracket()]] | Not filled | Write the stop as a rule tested on each close. [Costs and fills](/script/strategies/costs-and-fills) shows one |
 | `closeOnSessionEnd = true` | Not acted on: a position is carried past the close | Close it in the script as well |
-| A calendar read with no time zone, such as `date.hour(time)` or `session.isIn("0915-1530")` | Absent on every bar, because the panel does not state the chart's time zone to the run, so a condition built on it is never true | Pass the zone: `date.hour(time, "Asia/Kolkata")`, `session.isIn("0915-1530", "Asia/Kolkata")` |
-| [[session.isFirstBar]], [[session.isLastBar]] | No value, so never true: the run is given no session boundaries | Anchor on a time window you write with an explicit zone |
-| A day, week or month read, such as `req.timeframe("1D", close)` | Absent on every bar, because the run has no time zone to group days in | Filter on an intraday read such as `"1h"`, or test the strategy drawn on the chart |
-| [[chart.interval]], [[chart.intervalMinutes]], [[chart.isIntraday]] | Absent: the panel does not state the chart's interval to the run | Take a length in bars as an input |
-| Another instrument, read with [[req.symbol()]] | The run is refused before it starts | Backtest on the instrument itself; an intraday [[req.timeframe()]] read of the chart's own instrument works |
+| An input with `kind = "time"` | Read as a UTC clock, not as Indian time: `2025-01-02 09:15` is 14:45 IST | Type the time in UTC, 5 hours 30 minutes earlier, or use dates only |
+| Another instrument, read with [[req.symbol()]] | The run is refused before it starts | Backtest on the instrument itself; a [[req.timeframe()]] read of the chart's own instrument works |
 | `qtyType = "lots"` | Entries are converted from lots to units, but an exit that sizes itself, such as `close()`, is not: it sends the position's unit count as a number of lots, sells many times what is held and opens a large position the other way | Use `qtyType = "units"` |
 | `qtyType = "cash"` or `"equityPercent"` | The run is refused before it starts | Use `qtyType = "units"` |
 
-One more behaviour is worth knowing. An order the strategy is not allowed to place, such as a second entry while one is open and `pyramiding` is `1`, is an error that stops the script at that bar (OS7008). Nothing after that bar is placed or filled: the trade list ends there, and the equity curve carries whatever position was open, marked to every later close, to the end of the range. The Backtest panel does not show the error, so a run that shows far fewer trades than the chart suggests, or ends on one long open trade, is worth checking for this first. Guarding every entry with [[pos.isFlat]], or with the side you mean to add to, keeps a strategy from reaching one. [Orders](/script/strategies/orders) lists the refusals.
+One more behaviour is worth knowing. An order the strategy is not allowed to place, such as a second entry while one is open and `pyramiding` is `1`, is an error that stops the script at that bar (OS7008). Nothing after that bar is placed or filled: the trade list ends there, and the equity curve carries whatever position was open, marked to every later close, to the end of the range. Above the figures the Backtest panel says which bar the run stopped on and when, what went wrong with its fix, and the code with its line and column, so a report that ends early is not read as the whole range. Guarding every entry with [[pos.isFlat]], or with the side you mean to add to, keeps a strategy from reaching one. [Orders](/script/strategies/orders) lists the refusals.
 
 ## Reproducing a run
 

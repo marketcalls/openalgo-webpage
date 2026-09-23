@@ -41,7 +41,7 @@ A tab with nothing on it is greyed out, so a study with no inputs opens straight
 
 ## The Inputs tab
 
-The Inputs tab has one row per `input()` call, in the order they appear in the source, with the input's title as the label and a control chosen by the input's kind:
+The Inputs tab has one row per `input()` call, in the order they appear in the source, with the input's title as the label and a control chosen by the input's kind. An input's `group` is a heading above its rows, and its `tooltip` is a line of help under its row:
 
 | Kind of input | Control |
 |---|---|
@@ -49,12 +49,12 @@ The Inputs tab has one row per `input()` call, in the order they appear in the s
 | Switch (`true` or `false`) | A tick box |
 | Choice (`options = [...]`) | A menu of the listed values |
 | Source (`close`, `hlc3` and so on) | A menu of Open, High, Low, Close, Hl2, Hlc3 and Ohlc4 |
-| Interval (`kind = "interval"`) | A menu of Chart interval and the intervals your data feed serves |
+| Interval (`kind = "interval"`) | A menu of Chart interval and the intervals your data feed serves that a read can build from the chart's bars, stored in the language's spelling, such as `1D` for the feed's `D` |
 | Colour | A colour swatch |
 | Text | A text box |
-| Time (`kind = "time"`) | A text box with the hint `YYYY-MM-DD HH:MM`, read as a UTC clock in /trading today |
+| Time (`kind = "time"`) | A text box with the hint `YYYY-MM-DD HH:MM`, read in the chart's timezone |
 
-The dialog does not show group headings or tooltips today, so write labels that say what a row is and in which unit. [Inputs](/script/inputs/inputs) covers every kind, its bounds and the values it hands the script.
+Headings and help lines do not replace a clear label, so still write labels that say what a row is and in which unit. [Inputs](/script/inputs/inputs) covers every kind, its bounds and the values it hands the script.
 
 ## The Style tab
 
@@ -255,7 +255,7 @@ plot(sma(close, 20), "Average", precision = 1)
 The full list of options for `study()` and `strategy()` is in the [declarations reference](/script/reference/declarations).
 
 :::note
-An `input()` can be written as a declaration option, such as `precision = input(2, "Decimals")`, or as a plot's `width` or `style`. In /trading today, the chart reads those at their defaults when it loads the study, so changing such a row in the settings dialog does not change the drawing. Colour inputs, level styles and a pane's `range` do follow the dialog.
+An `input()` can be written as a declaration option, such as `precision = input(2, "Decimals")`, or as a plot's `width` or `style`. In /trading, the chart reads those at their defaults when it loads the study, so changing such a row in the settings dialog does not change the drawing. Colour inputs, level styles and a pane's `range` do follow the dialog.
 :::
 
 ## What /trading keeps

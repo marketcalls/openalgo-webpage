@@ -12,7 +12,7 @@ study("Opening bar range", precision = 2)
 sessions = input(10, "Sessions to average", min = 2, max = 60)
 
 // The session's first bar, or the first bar of each IST day where the host
-// states no session hours, as on the /trading chart.
+// states no session hours.
 newSession = orElse(session.isFirstBar, isNone(time[1]) or not date.isSameDay(time, time[1], "Asia/Kolkata"))
 
 // One number per session, the range of its first bar (09:15 on NSE),
@@ -28,7 +28,7 @@ plot(avg(ranges), "Average opening bar range", aqua)
 plot(newSession ? high - low : none, "This session's opening bar", orange, style = "column")
 ```
 
-`newSession` is [[session.isFirstBar]] where the host states the instrument's session hours. The /trading chart does not in this release, so there a new IST date marks the first bar instead, which for an NSE session is the same bar. The `var` keeps the array from bar to bar, [[push()]] adds this session's number, [[shift()]] drops the oldest, and [[avg()]] summarises what is left. Until the first session's opening bar, the array is empty and its average is absent, so nothing is drawn.
+`newSession` is [[session.isFirstBar]] where the host states the instrument's session hours, as the /trading chart does. Where a host states none, a new IST date marks the first bar instead, which for an NSE session is the same bar. The `var` keeps the array from bar to bar, [[push()]] adds this session's number, [[shift()]] drops the oldest, and [[avg()]] summarises what is left. Until the first session's opening bar, the array is empty and its average is absent, so nothing is drawn.
 
 ## Rules every array follows
 

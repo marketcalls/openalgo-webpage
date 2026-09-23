@@ -16,7 +16,7 @@ This page covers the OS7xxx codes of OpenScript (also called OpenAlgo Script): t
 A refusal while the run is going stops it at that bar in every place a strategy runs:
 
 - **On the chart**, where a strategy's plots and trades are simulated in the browser, the strategy draws nothing and /trading shows the code and the message in a notice, as for any [runtime error](/script/errors/runtime#when-they-appear).
-- **In the Backtest panel**, the report lists only the trades made before the refusal, the equity curve runs flat from there to the end, and the panel does not show the error. A backtest with far fewer trades than the chart suggests is worth checking for one first. See [Backtesting](/script/strategies/backtesting).
+- **In the Backtest panel**, the report lists only the trades made before the refusal and the equity curve runs flat from there to the end. Above the figures the panel says which bar the run stopped on and when, what went wrong with its fix, and the code with its line and column. See [Backtesting](/script/strategies/backtesting).
 - **In a deployment** from the Strategies panel, sandbox trading (analyzer mode in OpenAlgo) or live, the run stops at that bar, sends nothing further, and writes the code and the bar to the run's log on the server. See [Sandbox and live](/script/strategies/sandbox-and-live).
 
 ## A strategy written to avoid them
@@ -127,7 +127,7 @@ A backtest that could spend money it does not have would report returns nobody c
 
 An exchange works orders only during its session, 09:15 to 15:30 IST for NSE equities and NFO contracts. This code is planned to refuse an order placed outside the session, rather than hold it until the open and fill it at a price the script never saw.
 
-**Not raised yet.** In version 0.5.0 nothing checks the session before an order is sent. Guard entries yourself with [[session.isIn()]], as the example below does, and name the zone, as in `session.isIn("0915-1530", "Asia/Kolkata")`: the /trading Backtest panel states no timezone, so there a window without one is absent and the guard never lets an entry through. [[session.isOpen]], which the fix line names, is planned and does not compile in this release. The declaration's `closeOnSessionEnd = true` is accepted but not yet acted on either, so close an intraday position yourself before 15:30, as [Exiting on the clock](/script/strategies/exits-and-brackets#exiting-on-the-clock) shows. See [Sessions and time](/script/data/sessions-and-time).
+**Not raised yet.** In version 0.5.0 nothing checks the session before an order is sent. Guard entries yourself with [[session.isIn()]], as the example below does, and name the zone, as in `session.isIn("0915-1530", "Asia/Kolkata")`, so the window means IST wherever the script runs and whatever timezone a chart is set to. [[session.isOpen]], which the fix line names, is planned and does not compile in this release. The declaration's `closeOnSessionEnd = true` is accepted but not yet acted on either, so close an intraday position yourself before 15:30, as [Exiting on the clock](/script/strategies/exits-and-brackets#exiting-on-the-clock) shows. See [Sessions and time](/script/data/sessions-and-time).
 
 {{error: OS7013}}
 

@@ -5,7 +5,7 @@ description: Raise an alert from an OpenScript study with alert(), mark the bar 
 
 An alert is how a script tells you about a condition while you are looking somewhere else: a crossover on a five-minute SBIN chart, a break of the opening range on NIFTY futures, an RSI turning back from an extreme. This page covers the three calls OpenScript (also called OpenAlgo Script) gives you for it, [[alert()]], [[signal()]] and the planned [[notify()]]: what each one takes, exactly when it fires, how to build a message that carries the numbers you need, and how the three differ.
 
-What happens after an alert fires depends on where the script runs. For the /trading page, including what works there in this release, read [Alerts in /trading](/script/alerts/alerts-in-trading).
+What happens after an alert fires depends on where the script runs. For the /trading page, including how its chart judges a script's alerts and where each firing goes, read [Alerts in /trading](/script/alerts/alerts-in-trading).
 
 ## A first alert
 
@@ -42,8 +42,8 @@ Three things are worth seeing before any detail:
 
 By the rules of the language, this study raises one alert on the bar where a crossing is confirmed (the bar has closed), and nothing for the crossings already in the chart's history.
 
-:::warn On the /trading chart in this release
-The /trading chart checks each bar for a script's alerts once, when the bar first reaches the chart. During trading hours a bar arrives with its first tick, before it has closed, so an `alert()` waiting for the close (every alert, unless the file opts out) has nothing to report yet, and the chart does not look at that bar again. Such an alert can still fire for a bar that arrives late, after its time has passed, but you cannot rely on it. To be told about a script's condition on /trading today, plot the condition and put a study alert on that plot, as [Alerts on a script condition](/script/alerts/alerts-in-trading#alerts-on-a-script-condition) shows. A strategy deployed from the Strategies panel is not affected: it runs on the OpenAlgo server and writes its alerts to the run's log.
+:::note On the /trading chart
+The /trading chart follows the same rule. When a bar closes, the chart judges it with the script's conditions and fires each alert that holds, once for that bar, as a toast, the alert sound, a desktop notification when the tab is hidden, and a row in the Log tab of the Alerts panel. Only bars that close while the chart is open are judged. To send a script's condition to Telegram or WhatsApp as well, plot the condition and put a study alert on that plot, as [Alerts on a script condition](/script/alerts/alerts-in-trading#alerts-on-a-script-condition) shows. A strategy deployed from the Strategies panel runs on the OpenAlgo server instead and writes its alerts to the run's log.
 :::
 
 ## The three calls at a glance
@@ -139,7 +139,7 @@ Where a script's message does come out absent, the /trading chart shows the aler
 
 | Want in the message | Write |
 |---|---|
-| The instrument | `chart.symbol`, and `orElse(chart.exchange, "")`: the /trading chart does not state the exchange, and an absent part would make the whole message absent |
+| The instrument | `chart.symbol`, and `orElse(chart.exchange, "")`: the exchange arrives a moment after the study is first drawn, and on a host that states none an absent part would make the whole message absent |
 | The chart's interval | `chart.interval` |
 | The bar's price | `text(close, 2)` |
 | A computed value | `text(atr(14), 2)` |
@@ -345,7 +345,7 @@ if crossDown(close, lower)
 
 ### An alert and a marker, once per session
 
-The high and low of the first minutes of each session, with one alert and one marker for the first break of either side. On an NSE chart the session opens at 09:15, so the default range is 09:15 to 09:30. The session's first bar is [[session.isFirstBar]] where the host states session hours; the /trading chart does not in this release, so the study falls back to the first bar of each IST day, which on NSE is the same bar.
+The high and low of the first minutes of each session, with one alert and one marker for the first break of either side. On an NSE chart the session opens at 09:15, so the default range is 09:15 to 09:30. The session's first bar is [[session.isFirstBar]], which the /trading chart works out from the exchange's session in the market calendar. On a host that states no session hours the study falls back to the first bar of each IST day, which on NSE is the same bar.
 
 ```openscript title="Opening range break"
 version 1
@@ -456,13 +456,13 @@ plot(slow, "Slow EMA", orange)
 
 The alert describes the order being sent, not a fill. By default a market order fills at the next bar's open, so on the bar that raises the exit alert the long is still open, and [[pos.avgPrice]] still reads the price it was entered at.
 
-A strategy added to the /trading chart is drawn like a study, and the chart judges its alerts the same way it judges a study's (see the warning near the top of this page). A strategy deployed from the Strategies panel runs on the OpenAlgo server rather than on the chart. It sends nothing while it replays history at the start; after that, each alert it raises is written as a line in that run's log, such as `Alert exit: Exit Exit signal: closing the long entered at 812.45`, rather than being sent anywhere. See [Sandbox and live](/script/strategies/sandbox-and-live).
+A strategy added to the /trading chart is drawn like a study, and the chart judges its alerts the same way it judges a study's, when each bar closes (see the note near the top of this page). A strategy deployed from the Strategies panel runs on the OpenAlgo server rather than on the chart. It sends nothing while it replays history at the start; after that, each alert it raises is written as a line in that run's log, such as `Alert exit: Exit Exit signal: closing the long entered at 812.45`, rather than being sent anywhere. See [Sandbox and live](/script/strategies/sandbox-and-live).
 
 ## What goes wrong
 
 | Symptom | Cause | Fix |
 |---|---|---|
-| A study's alert does not fire on the /trading chart | In this release the chart checks each bar only as it arrives, before a waiting alert can fire | Plot the condition and put a study alert on it: [Alerts on a script condition](/script/alerts/alerts-in-trading#alerts-on-a-script-condition) |
+| A study's alert fired on the /trading chart but did not reach Telegram or WhatsApp | A script alert goes to the sound, the desktop notification and the Log tab only | Plot the condition and put a study alert on it: [Alerts on a script condition](/script/alerts/alerts-in-trading#alerts-on-a-script-condition) |
 | Nothing fires, ever, anywhere | The condition is absent during warmup and false afterwards, or it is never true | Plot the condition as `cond ? 1 : 0` from a study of its own and look at the line |
 | Fires on every bar of a trend | The condition tests a state, not a change | Test the change: [[crossUp()]], a comparison with `[1]`, or a `var` flag |
 | Fired, and then the bar closed the other way | `onUnconfirmed = true` without a `bar.isConfirmed` guard | Remove `onUnconfirmed`, or add the guard |

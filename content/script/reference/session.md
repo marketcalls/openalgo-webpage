@@ -9,12 +9,14 @@ Three members work today, and they get their answers from two different places. 
 
 | Member | Answers from | Where it is `none` |
 |---|---|---|
-| [[session.isFirstBar]], [[session.isLastBar]] | The instrument's own session hours, which the host states | Wherever the host states no session hours, which includes the /trading chart and Backtest panel in this release |
+| [[session.isFirstBar]], [[session.isLastBar]] | The instrument's own session hours, which the host states | Wherever the host states no session hours. The /trading chart and Backtest panel state them, from the platform's market calendar |
 | [[session.isIn()]] | A window of clock times you write in the script | Wherever no timezone is known; name one with the `zone` argument to be safe |
 
 The rest of the namespace is planned and listed at the end of this page.
 
-So on the /trading page today, build session logic on [[session.isIn()]], and use the first two where the host states the hours, with a fallback for where it does not. The example below needs nothing from the host except a timezone: it holds the high and low of the first fifteen minutes of each NSE day.
+On the /trading chart and in its Backtest panel all three work. A strategy running from the Strategies panel has [[session.isFirstBar]] and [[session.isIn()]], read in the instrument's own zone, and is refused when it starts if it reads [[session.isLastBar]], which the server's engine does not have yet.
+
+Use [[session.isIn()]] when the window is yours rather than the exchange's, such as the first fifteen minutes, and the first two for the exchange's own hours, with a fallback in a script meant to run where no hours are stated. The example below needs nothing from the host except a timezone: it holds the high and low of the first fifteen minutes of each NSE day.
 
 ```openscript title="Opening range, reset every session"
 version 1
@@ -71,7 +73,9 @@ plot(dayLow, "Session low", red, style = "step")
 
 **Remarks.** It is the first bar delivered inside the session's hours, so a session that opened late still has a first bar. The oldest bar of the chart counts as a first bar too when the data starts in the middle of a session, which makes the first session on the chart a partial one. A bar outside the session's hours has `false`.
 
-It comes from the session hours in the instrument's record, read in the instrument's timezone. When the host states no session for the instrument, the value is `none`, and an `if` on it never runs. That is why the example wraps it in [[orElse()]]: on the /trading page, which states no session hours in this release, the example falls back to a change of calendar day, which is the same thing for an NSE session.
+It comes from the session hours in the instrument's record, read in the instrument's timezone. When the host states no session for the instrument, the value is `none`, and an `if` on it never runs. That is why the example wraps it in [[orElse()]]: where no session hours are stated, it falls back to a change of calendar day, which is the same thing for an NSE session.
+
+The /trading chart and Backtest panel state the instrument's regular hours from the platform's market calendar, the same hours for every day on the chart, so a special session outside them, such as an evening session on a holiday, has no first bar there. On a chart whose timezone you have set to one other than the exchange's, the chart states no session at all rather than hours read in the wrong zone, and the value is `none`.
 
 **See also.** [[session.isLastBar]], [[bar.isFirst]], [[vwap()]]
 
@@ -98,7 +102,7 @@ if crossDown(fast, slow) or squareOff
 
 **Remarks.** Waiting for the next session's first bar to flatten is too late: by then the position has been carried overnight. Watch the fill rule too. With the default `fillOn = "nextOpen"`, an order decided on the last bar fills at the next bar's open, which is the next session's first bar. The example declares `fillOn = "close"` so the exit fills at the close of the bar that decided it. The other way is to decide earlier, with a window such as `session.isIn("1515-1530")`, and keep the default fill.
 
-It needs the chart's interval as well as the session hours, to know which bar slot is last. When the host does not state both, the value is `none`, which is why the example falls back to a window. The window names its zone because the /trading Backtest panel states no timezone.
+It needs the chart's interval as well as the session hours, to know which bar slot is last. When the host does not state both, the value is `none`, which is why the example falls back to a window. The window names its zone so it reads Indian time on any host. A strategy running from the Strategies panel is refused when it reads `session.isLastBar`, so for a deployed strategy use the window alone.
 
 **See also.** [[session.isFirstBar]], [[close()]], [[bar.isLast]]
 
@@ -138,7 +142,7 @@ The `spec` string is `"HHMM-HHMM"`, with an optional list of days after a colon.
 
 Days are numbered 1 for Monday through 7 for Sunday, the same as [[date.dayOfWeek()]]. For a window that crosses midnight, the day list names the day the window opened on: `"2300-0100:1"` covers Monday 23:00 to Tuesday 01:00.
 
-The times are read in the chart's timezone unless `zone` names another IANA zone (the standard `Area/City` form), such as `"Asia/Kolkata"`. Where no timezone is known, as in the /trading Backtest panel in this release, the result is `none` unless you pass `zone`. A zone the host does not know stops the script with `OS6005`; abbreviations such as `"IST"` are not zone names.
+The times are read in the chart's timezone unless `zone` names another IANA zone (the standard `Area/City` form), such as `"Asia/Kolkata"`. Where no timezone is known, the result is `none` unless you pass `zone`. The /trading chart, its Backtest panel and a strategy running from the Strategies panel all state one. A zone the host does not know stops the script with `OS6005`; abbreviations such as `"IST"` are not zone names.
 
 A spec that does not follow the form above, such as `"9:15-15:30"`, is not caught by the compiler and matches no bar: the result is `none`, so a condition built on it never holds. Check the spelling when a window never lights up.
 

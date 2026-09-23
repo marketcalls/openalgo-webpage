@@ -5,7 +5,7 @@ description: The chart namespace, facts about the instrument and the chart it is
 
 The `chart` namespace answers questions about what the script is running on: which instrument, on which exchange, at what interval, in which timezone, and with what contract arithmetic (tick size, lot size, point value). A script that reads these facts instead of typing numbers in can work unchanged on an NSE stock, an NFO index future and an MCX contract, wherever the host states them.
 
-Not every host states every fact. The /trading chart in this release passes the script only the symbol, the interval, the tick size and the timezone, so [[chart.exchange]], [[chart.lotSize]], [[chart.instrumentType]], [[chart.hasVolume]] and the rest read as `none` there. The table under [Where the facts come from](#where-the-facts-come-from) shows what each part of /trading states, and each entry below says what to do where its fact is missing.
+Not every host states every fact. The /trading chart states all of them except [[chart.pointValue]] and [[chart.currency]], and its Backtest panel states all of them except [[chart.now()]]. The table under [Where the facts come from](#where-the-facts-come-from) shows what each part of /trading states, and each entry below says what to do where its fact is missing.
 
 Every entry except [[chart.now()]] is a single value, fixed for the whole run. None of them has a history, so `chart.tickSize[1]` is `OS2004`: the answer could not have been different one bar ago.
 
@@ -13,18 +13,22 @@ Every entry except [[chart.now()]] is a single value, fixed for the whole run. N
 
 Every fact here comes from the host, the application that runs the script, and any of them may be missing. A fact the host does not state reads as `none`, never as a guess, so a script can tell "one lot is 75 units" from "nobody said".
 
-In this release the /trading page states these facts:
+The /trading page states these facts:
 
 | Fact | On the /trading chart | In the /trading Backtest panel |
 |---|---|---|
 | [[chart.symbol]] | Yes | Yes |
-| [[chart.exchange]] | `none` | Yes |
-| [[chart.interval]], and [[chart.intervalMinutes]] and [[chart.isIntraday]] worked out from it | Yes | `none` |
-| [[chart.timezone]] | Yes, `"Asia/Kolkata"` unless the chart is set otherwise | `none` |
+| [[chart.exchange]] | Yes | Yes |
+| [[chart.interval]], and [[chart.intervalMinutes]] and [[chart.isIntraday]] worked out from it | Yes, as the chart names it (`"D"` on a daily chart) | Yes, in the language's spelling (`"1D"` on a daily chart); `none` on a chart of seconds |
+| [[chart.timezone]] | Yes, `"Asia/Kolkata"` unless the chart is set otherwise | Yes, the exchange's zone: `"Asia/Kolkata"` for Indian exchanges |
 | [[chart.tickSize]] | Yes | Yes |
-| [[chart.lotSize]], [[chart.pointValue]], [[chart.currency]] | `none` | Yes |
-| [[chart.instrumentType]], [[chart.hasVolume]], [[chart.hasOpenInterest]] | `none` | `none` |
+| [[chart.lotSize]] | Yes, where the platform holds the instrument's contract | Yes |
+| [[chart.pointValue]], [[chart.currency]] | `none` | Yes |
+| [[chart.instrumentType]] | Yes, where the platform holds the instrument's contract | Yes, where the platform holds the instrument's contract |
+| [[chart.hasVolume]], [[chart.hasOpenInterest]] | Yes | Yes |
 | [[chart.now()]] | Yes | `none` |
+
+Both also state the instrument's regular trading session, from the platform's market calendar, which the [session facts](/script/reference/session) are worked out from. On the chart, the facts that come from the platform's instrument record (the exchange, the lot size, the instrument type, whether it has volume and open interest, and the session) arrive a moment after the study is first drawn. Until they do, or when the platform cannot read them, they are `none`, and the study is drawn again as soon as they arrive. A strategy running from the Strategies panel is told the same instrument facts as the Backtest panel, except the point value and the currency.
 
 So test a fact with [[isNone()]], or give it a fallback with [[orElse()]], before a calculation depends on it. The example below shows each fact, or "not stated" where the host gave none.
 
@@ -75,7 +79,7 @@ if bar.isLast
 
 {{entry: chart.exchange}}
 
-The exchange the instrument trades on, as the host codes it: for example `"NSE"` or `"BSE"` for cash equities, `"NFO"` for NSE futures and options, `"MCX"` for commodities, or `none` where the host does not say, as on the /trading chart. It is also the default exchange of [[req.symbol()]], so a read of another instrument looks on the same exchange unless you name one.
+The exchange the instrument trades on, as the host codes it: for example `"NSE"` or `"BSE"` for cash equities, `"NFO"` for NSE futures and options, `"MCX"` for commodities, or `none` where the host does not say. It is also the default exchange of [[req.symbol()]], so a read of another instrument looks on the same exchange unless you name one.
 
 ```openscript
 version 1
@@ -85,7 +89,7 @@ isDerivative = chart.exchange == "NFO" or chart.exchange == "MCX"
 background(isDerivative ? fade(purple, 95) : none)
 ```
 
-**Remarks.** The /trading chart does not state the exchange in this release, so there the value is `none` and both comparisons above are `false`: `==` never returns `none`, which keeps the example safe to run anywhere.
+**Remarks.** The /trading chart and its Backtest panel both state the exchange. Where a host states none, the value is `none` and both comparisons above are `false`: `==` never returns `none`, which keeps the example safe to run anywhere.
 
 **See also.** [[chart.symbol]], [[chart.instrumentType]]
 
@@ -104,7 +108,7 @@ plain = sma(close, 20)
 plot(isIndex ? plain : weighted, "Mean of 20 bars", isIndex ? orange : aqua)
 ```
 
-**Remarks.** Pair this check with [[chart.hasVolume]] and [[chart.hasOpenInterest]] rather than assuming what each type supplies. The /trading page does not state the instrument type in this release.
+**Remarks.** Pair this check with [[chart.hasVolume]] and [[chart.hasOpenInterest]] rather than assuming what each type supplies. The /trading chart and its Backtest panel state the instrument type where the platform holds the instrument's contract, and leave it `none` otherwise.
 
 **See also.** [[chart.hasVolume]], [[chart.optionType]]
 
@@ -146,7 +150,7 @@ plot(roundToTick(stopLevel), "Stop", red, style = "step")
 
 {{entry: chart.lotSize}}
 
-How many units make up one lot. On NFO futures and options and on MCX, orders are placed in whole lots, and lot sizes are set by the exchange and revised from time to time, so read this value rather than typing a number into a script. It is `none` when the host has not said, which on /trading means on the chart: only the Backtest panel states it.
+How many units make up one lot. On NFO futures and options and on MCX, orders are placed in whole lots, and lot sizes are set by the exchange and revised from time to time, so read this value rather than typing a number into a script. It is `none` when the host has not said. The /trading chart and its Backtest panel both state it, from the platform's instrument record.
 
 ```openscript
 version 1
@@ -156,7 +160,7 @@ lotValue = close * chart.lotSize
 plot(lotValue, "Value of one lot", aqua)
 ```
 
-**Remarks.** The /trading Backtest panel states the lot size, from the platform's instrument record. The /trading chart does not in this release, so there the example draws nothing, which is the honest answer: without a lot size there is no lot value. A strategy that sizes in lots can declare `qtyType = "lots"`, and then every order quantity is a count of lots of this size. See [Declarations](/script/reference/declarations#qtytype).
+**Remarks.** On an instrument whose contract the platform does not hold, the /trading chart states no lot size, and the example draws nothing, which is the honest answer: without a lot size there is no lot value. A strategy that sizes in lots can declare `qtyType = "lots"`, and then every order quantity is a count of lots of this size. See [Declarations](/script/reference/declarations#qtytype).
 
 **See also.** [[order.roundToLot()]], [[chart.pointValue]]
 
@@ -173,7 +177,7 @@ atrMoney = atr(14) * perLot
 plot(atrMoney, "Average true range in money, per lot", orange)
 ```
 
-**Remarks.** The /trading Backtest panel states a point value of 1. The /trading chart does not state one in this release, so there the example draws nothing.
+**Remarks.** The /trading Backtest panel states a point value of 1. The /trading chart does not state one, so there the example draws nothing.
 
 **See also.** [[chart.lotSize]], [[chart.currency]], [[atr()]]
 
@@ -192,7 +196,7 @@ showVolume = chart.hasVolume != false
 plot(showVolume ? volume : none, "Volume", fade(aqua, 40), style = "column")
 ```
 
-**Remarks.** The /trading page does not state this fact in this release, so it is `none` there. `chart.hasVolume ? volume : none` would then hide the volume that is actually present; `chart.hasVolume != false` does not, because `none != false` is `true`.
+**Remarks.** The /trading chart and its Backtest panel both state this fact; an index is stated as having no volume. A host may leave it unstated, and on the chart it is `none` for a moment until the instrument's facts arrive. `chart.hasVolume ? volume : none` would then hide the volume that is actually present; `chart.hasVolume != false` does not, because `none != false` is `true`.
 
 **See also.** [[volume]], [[chart.hasOpenInterest]]
 
@@ -214,7 +218,7 @@ plot(showOi ? oi : none, "Open interest", purple)
 
 {{entry: chart.interval}}
 
-The chart's interval as the host names it: a count and a unit such as `"1m"`, `"5m"` or `"1h"`, a bare number of minutes such as `"60"`, or a letter such as `"D"`, `"W"` or `"M"`, which is how the /trading chart names its daily, weekly and monthly intervals. The unit letter is case sensitive: `"1M"` is a month and `"1m"` is a minute.
+The chart's interval as the host names it: a count and a unit such as `"1m"`, `"5m"` or `"1h"`, a bare number of minutes such as `"60"`, or a letter such as `"D"`, `"W"` or `"M"`, which is how the /trading chart names its daily, weekly and monthly intervals. The /trading Backtest panel states those three as `"1D"`, `"1W"` and `"1M"`. The unit letter is case sensitive: `"1M"` is a month and `"1m"` is a minute.
 
 ```openscript
 version 1
@@ -273,7 +277,7 @@ if bar.isLast
     cell(panel, 1, 1, date.format(time, "dd MMM HH:mm"))
 ```
 
-**Remarks.** The /trading Backtest panel states no timezone in this release. There a date or session call that relies on the default returns `none`; pass the zone explicitly, as in `date.hour(time, "Asia/Kolkata")`, in a strategy you backtest.
+**Remarks.** The /trading chart states the zone its axis is set to, `"Asia/Kolkata"` unless you change it. The Backtest panel states the exchange's own zone, from the platform's market calendar, so a date or session call that relies on the default reads Indian time in a backtest as well. A host that states no zone leaves every such call `none`; pass the zone explicitly, as in `date.hour(time, "Asia/Kolkata")`, where a script must run on one.
 
 **See also.** [[date.hour()]], [[session.isIn()]]
 
