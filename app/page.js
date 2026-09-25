@@ -239,7 +239,7 @@ export default function Home() {
 
             <ProductScreen
               id="trading-terminal"
-              alt="OpenAlgo trading terminal with a candlestick chart, drawing tools and one-click buy and sell"
+              alt="OpenAlgo trading terminal showing AXISBANK 15-minute candles with the HalfTrend indicator and its buy and sell signals"
               rounded="rounded-3xl"
               className="mb-6 shadow-sm"
             />
