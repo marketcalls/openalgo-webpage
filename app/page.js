@@ -47,6 +47,7 @@ import {
   Puzzle,
   Calculator,
   Users,
+  Terminal,
 } from "lucide-react"
 
 function ProjectIcon({ icon: Icon, size = "h-5 w-5" }) {
@@ -130,6 +131,7 @@ export default function Home() {
     { title: "AI Agents", description: "Multi-agent AI trading research framework", icon: Bot, url: "https://github.com/marketcalls/TradingAgent" },
     { title: "AlgoMirror", description: "Multi Account OpenAlgo Orchestrator", icon: Layers, url: "https://github.com/marketcalls/algomirror" },
     { title: "MCP", description: "Model Context Protocol integration", icon: Network, url: "/mcp" },
+    { title: "OpenAlgo CLI", description: "Agent-first command line for the OpenAlgo API (Go)", icon: Terminal, url: "https://github.com/marketcalls/openalgo-cli" },
     { title: "Indicator Skills", description: "AI agent skills for 100+ indicators, charts & scanners", icon: BarChart3, url: "/skills" },
     { title: "Backtesting Skills", description: "VectorBT backtesting skills for Claude Code, Cursor, Codex", icon: FlaskConical, url: "/skills" },
     { title: "OpenAlgo Mobile", description: "Flutter Mobile Trading App", icon: Smartphone, url: "https://github.com/marketcalls/openalgo-mobile" },
