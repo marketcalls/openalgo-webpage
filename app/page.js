@@ -2,6 +2,7 @@
 
 import { Button } from "@/components/ui/button"
 import { useI18n } from "@/components/i18n/LanguageProvider"
+import ProductScreen from "@/components/ProductScreen"
 import {
   Github,
   Code2,
@@ -192,6 +193,12 @@ export default function Home() {
             </Button>
           </div>
 
+          <ProductScreen
+            id="dashboard"
+            alt="OpenAlgo trading dashboard with account summary cards and quick access tools"
+            className="reveal reveal-5 mb-20 shadow-sm"
+          />
+
           <div className="reveal reveal-6">
             <p className="mb-4 font-label text-label-md uppercase text-on-surface-variant">
               {t('hero.integrates')}
@@ -229,6 +236,13 @@ export default function Home() {
                 {t('platform.sub')}
               </p>
             </div>
+
+            <ProductScreen
+              id="trading-terminal"
+              alt="OpenAlgo trading terminal with a candlestick chart, drawing tools and one-click buy and sell"
+              rounded="rounded-3xl"
+              className="mb-6 shadow-sm"
+            />
 
             <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
               {platformBlocks.map(({ icon: Icon, title, desc }) => (
@@ -304,6 +318,12 @@ export default function Home() {
                   {t('suite.sub')}
                   <span className="mt-2 block font-semibold text-on-surface">{t('suite.note')}</span>
                 </p>
+              </div>
+
+              <div className="mb-6 grid gap-4 md:grid-cols-3">
+                <ProductScreen id="straddle" alt="OpenAlgo Straddle Chart showing the NIFTY ATM straddle price over three days" />
+                <ProductScreen id="vol-surface" alt="OpenAlgo 3D implied volatility surface for NIFTY across strikes and expiries" />
+                <ProductScreen id="gex" alt="OpenAlgo GEX Dashboard with OI walls and net GEX by strike for NIFTY" />
               </div>
 
               <div className="grid gap-px overflow-hidden rounded-3xl border bg-border sm:grid-cols-2 lg:grid-cols-3">

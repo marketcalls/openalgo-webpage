@@ -2,6 +2,7 @@
 
 import { Button } from "@/components/ui/button"
 import { useI18n } from "@/components/i18n/LanguageProvider"
+import ProductScreen from "@/components/ProductScreen"
 import {
   ArrowRight,
   CheckCircle2,
@@ -169,6 +170,12 @@ export default function BeginnerPage() {
             <p className="text-sm sm:text-base text-on-surface-variant leading-relaxed mb-4 sm:mb-6">
               {t('gs.what.p2')}
             </p>
+            <ProductScreen
+              id="dashboard"
+              alt="OpenAlgo trading dashboard with account summary cards and quick access tools"
+              rounded="rounded-lg sm:rounded-xl"
+              className="mb-4 sm:mb-6"
+            />
             <div className="rounded-lg sm:rounded-xl surface-container p-4 sm:p-6">
               <p className="font-label text-label-md sm:text-label-lg text-primary mb-3 sm:mb-4 uppercase tracking-wider">{t('gs.what.factsLabel')}</p>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -723,6 +730,12 @@ export default function BeginnerPage() {
             <p className="text-sm sm:text-base text-on-surface-variant leading-relaxed mb-5 sm:mb-6">
               {t('gs.tv.p1')}
             </p>
+            <ProductScreen
+              id="tradingview"
+              alt="OpenAlgo TradingView webhook configuration with a localhost warning and generated alert JSON"
+              rounded="rounded-lg sm:rounded-xl"
+              className="mb-5 sm:mb-6"
+            />
 
             <div className="grid sm:grid-cols-3 gap-3 sm:gap-4 mb-5 sm:mb-6">
               {[
