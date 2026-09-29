@@ -97,6 +97,9 @@ under `/fundamentals`, `/python`, `/quant`, etc., indexed by `/learn`.
 - Measured 2026-09-23: the Worker is ~5.50 MiB gzipped after adding the /script
   docs (the docs data alone is ~0.96 MiB gzipped). Still under the 10 MiB
   paid-plan limit; measure again before adding more server-side content.
+- Measured 2026-09-30: ~5.72 MiB gzipped (wrangler: 5,854 KiB) after the
+  openalgo-script 0.8.0 docs, the two product roadmaps (/charts/roadmap and
+  /script/roadmap, rendered from lib/roadmaps/*.json) and the section layouts.
 
 ## /script documentation (OpenScript)
 
