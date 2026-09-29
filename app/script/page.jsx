@@ -17,7 +17,7 @@ const MANUAL_NAMES = Object.values(manual.counts).reduce((n, c) => n + c, 0)
 const TITLE = "OpenScript: write a study or a strategy once"
 const DESCRIPTION =
   "OpenScript, also called OpenAlgo Script, is an open trading language. Write a study or a strategy once, then plot it, backtest it and trade it through OpenAlgo. Documentation, full reference and an editable playground."
-const OG_IMAGE = "/assets/images/og-image.png"
+const OG_IMAGE = "/assets/og/script.png"
 
 export const metadata = {
   title: { absolute: `${TITLE} | OpenAlgo` },
@@ -92,7 +92,7 @@ const FEATURES = [
   {
     mark: "spec + 2 engines",
     title: "An open specification",
-    body: "The language is written down as a specification with a conformance suite. The JavaScript and Python engines run the same compiled programs and are held to the same results.",
+    body: "The language is written down as a specification with a conformance suite. The JavaScript and Python engines run the same compiled programs and agree to the last bit on every numerical function and on every conformance case both can run.",
   },
 ]
 
@@ -101,7 +101,7 @@ const LIBRARIES = [
     name: "openalgo-script",
     registry: "npm",
     runtime: "JavaScript and TypeScript",
-    body: "The compiler, the engine, the six editor functions and a charts adapter, as ES modules for the browser and Node.",
+    body: "The compiler, the engine, the backtest, the six editor functions, a charts adapter and an importer for scripts written in another chart language, as ES modules for the browser and Node.",
     install: "npm install openalgo-script",
     registryHref: NPM,
     doc: ["integrate", "javascript"],
@@ -110,7 +110,7 @@ const LIBRARIES = [
     name: "openscript",
     registry: "PyPI",
     runtime: "Python",
-    body: "Runs compiled OpenScript programs in pure Python, on a server next to your data and your order routing.",
+    body: "Runs compiled OpenScript programs in pure Python, with the same library as the JavaScript engine, on a server next to your data and your order routing.",
     install: "pip install openscript",
     registryHref: PYPI,
     doc: ["integrate", "python-engine"],

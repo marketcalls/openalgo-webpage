@@ -509,6 +509,14 @@
           "sources": [
             "docs/writing/publishing.md"
           ]
+        },
+        {
+          "slug": "importing-a-script",
+          "title": "Importing a script",
+          "brief": "Translating a script written in another chart language with importScript: what comes across exactly, what comes across with a stated difference, and what you translate by hand.",
+          "sources": [
+            "docs/writing/importing-a-script.md"
+          ]
         }
       ]
     },
@@ -1107,7 +1115,7 @@
         {
           "slug": "overview",
           "title": "Reading an error",
-          "brief": "How a diagnostic is laid out: code, severity, message, cause and fix, and the eight code ranges.",
+          "brief": "How a diagnostic is laid out: code, severity, message, cause and fix, and the nine code ranges.",
           "sources": [
             "docs/errors/overview.md",
             "spec/errors.md"
@@ -1192,6 +1200,17 @@
             "spec/errors.md"
           ],
           "errorPrefix": "OS8"
+        },
+        {
+          "slug": "import",
+          "title": "OS9xxx Import",
+          "brief": "Every OS9 code: what the importer reports about a script translated from another chart language, and what to do about each.",
+          "sources": [
+            "spec/errors.json",
+            "spec/errors.md",
+            "docs/writing/importing-a-script.md"
+          ],
+          "errorPrefix": "OS9"
         }
       ]
     },

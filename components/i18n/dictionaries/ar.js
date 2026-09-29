@@ -262,6 +262,7 @@ const dict = {
   'road.f18d': 'توفير مكتبات SDK رسمية للغات Java وC# وRust لتمكين المطورين من بناء تطبيقات تداول بلغة البرمجة التي يفضلونها.',
   'road.cta': 'تريد المساهمة أو اقتراح مزايا جديدة؟',
   'road.ctaDiscord': 'انضم إلى Discord',
+  'road.products': "خرائط طريق المنتجات",
   'road.ctaGithub': 'GitHub',
 
   // Discord redirect page

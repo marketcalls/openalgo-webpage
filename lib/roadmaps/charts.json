@@ -1,0 +1,1173 @@
+{
+  "product": "OpenAlgo Charts",
+  "tagline": "After 2.6.0: trusted in production, measured by evals, built by people working with agents.",
+  "vision": "OpenAlgo Charts is a dependency-free chart library that a broker or trading platform can put in front of traders. It should be correct to the last value, fast on long histories and usable by everyone, and it stays lean because a host pays only for the tiers it imports. After 2.6.0 the work moves from adding features to earning trust in production: getting OpenAlgo ready to upgrade comes first, then the gaps real use shows. Every task below is sized for one person working with an agent, and each one is checked by commands rather than opinions and measured by evals built from real tasks.",
+  "principles": [
+    {
+      "title": "Real use first",
+      "text": "OpenAlgo's move to 2.6 is our main feedback loop, and its timing is OpenAlgo's to set. A production report becomes a failing test here before it becomes a fix, and we reproduce every report on the version under test before we act on it."
+    },
+    {
+      "title": "Every byte earns its place",
+      "text": "Each change states its Brotli bytes per tier and the size of the chart-only import against the previous release. The base engine carries only what a plain chart needs, and everything else is an opt-in import. We reuse before we add, delete dead code in the same change, and raise a budget only to a measured need."
+    },
+    {
+      "title": "Promises kept within a major",
+      "text": "Within 2.x the public types only grow. Removals wait for 3.0.0 and come with a migration example. Saved charts, drawings, alerts and workspaces keep their own format versions, and documents written by the version OpenAlgo pins load in tests. Release gates run as scripts, and each one has a fixture that proves it can fail."
+    },
+    {
+      "title": "Measure, then change",
+      "text": "Every performance claim states its noise floor. Text written for agents changes only when an eval built from real tasks improves on a held-out test set, following Automating eval design and hillclimbing. Correctness gates stay at 100 percent and are never tuned."
+    },
+    {
+      "title": "People with agents, people in charge",
+      "text": "Agents write the code, cases and patches. People approve eval cases and graders, look at the pixels, read every changed line and decide merges. Review time sets the pace, not typing speed, so tasks are small and their checks are mechanical."
+    },
+    {
+      "title": "Horizons, not dates",
+      "text": "We publish what comes next and how we will know it is done, not when. A short list of finishable tasks beats a wish list, and the list of what we are not doing is part of the plan."
+    }
+  ],
+  "horizons": [
+    {
+      "name": "Next",
+      "window": "First three months after 2.6.0 ships",
+      "goal": "Get the library ready for OpenAlgo's move to 2.6 and turn real reports into failing tests. Lay the foundations others build on: a front door for contributors, a CI that can be required, release gates as scripts, and the eval harness with its first grader. Ten tasks, because review time sets the pace.",
+      "themes": [
+        {
+          "id": "next-production",
+          "title": "Ready for OpenAlgo's move to 2.6",
+          "outcome": "When OpenAlgo moves from 2.5.1 to 2.6, every behaviour change and every change it must make on its own side is known in advance, its users' saved charts survive the move, and every chart report from its users has an outcome.",
+          "measure": "a dry-run report classes every consumer-harness failure in chromium, firefox and webkit on the 2.6.x build; documents written by the published 2.5.1 load and round-trip on 2.6.x in CI, and the rollback behaviour is written down; and every open OpenAlgo chart report has one of four outcomes. OpenAlgo's move itself waits for its server migration and human testing, so it is tracked as an outside milestone and is not part of this measure.",
+          "tasks": [
+            {
+              "id": "CH-N1",
+              "title": "A dry run of OpenAlgo's move from 2.5.1 to 2.6",
+              "why": "OpenAlgo's /trading page pins openalgo-charts 2.5.1 and openalgo-script 0.5.0, and will move both after its own server migration and human testing. The jump crosses several default changes: the desktop layout on tablets in auto mode, IndexedDB as the default workspace store, conflation on by default, drawings kept per instrument, and version 3 drawings documents. The progress log also records that the pin bump needs migrations on OpenAlgo's side (the 2.5.2 drawTools catalogue and the 2.5.3 grouped ObjectsPanel), and CLAUDE.md says a dependency upgrade cannot substitute for a required consumer migration. So the useful output is a classified list, not a green run.",
+              "deliverable": "A dry-run report on the tracking issue: the consumer harness run in three engines on the packed 2.6.x build, together with the openalgo-script version OpenAlgo will ship, with every failure classed as a library regression, a required consumer migration, or a flag that does not apply to OpenAlgo's frontend. A section in website/pages/docs/openalgo-compatibility.mdx lists the moves from 2.5.1 to 2.6: each behaviour change links its entry in website/pages/docs/upgrading.mdx or CHANGELOG.md (never restating it) and names the setting that restores the old behaviour where one exists, and each required consumer migration is described for OpenAlgo. Out of scope: fixing library regressions (each becomes its own issue) and any change to OpenAlgo's code.",
+              "acceptance": [
+                "node scripts/check-openalgo-compat.mjs passes its setup checks against a linked git worktree of OpenAlgo whose frontend dependencies are installed, not symlinked",
+                "The harness summary lines for chromium, firefox and webkit are pasted, with every flag that applies to OpenAlgo's frontend, and every failure is classed as library regression, required consumer migration or flag not applicable",
+                "Every library regression has an issue here with a failing test, and every consumer migration is listed for OpenAlgo with the release that requires it",
+                "Every behaviour change in the new section links its upgrading.mdx or CHANGELOG.md entry, and npm run verify passes"
+              ],
+              "eval": "keeps green the OpenAlgo consumer harness",
+              "size": "M",
+              "skills": [
+                "TypeScript",
+                "Playwright",
+                "git worktrees",
+                "reading changelogs"
+              ],
+              "goodFirst": false,
+              "dependsOn": [],
+              "agentBrief": "Task CH-N1 in marketcalls/openalgo-charts: a dry run of OpenAlgo's move from openalgo-charts 2.5.1 to 2.6.\nRead CLAUDE.md (the release process, its OpenAlgo consumer dry run, and the rule that a dependency upgrade cannot substitute for a required consumer migration), COMPATIBILITY.md, website/pages/docs/upgrading.mdx, website/pages/docs/openalgo-compatibility.mdx, CHANGELOG.md from 2.5.2 to the current 2.6.x, and the header of scripts/check-openalgo-compat.mjs.\nGoal: a classified dry-run report and a linked list of moves. Out of scope: fixing anything you find, and any change to OpenAlgo's code.\nSteps:\n1. Clone marketcalls/openalgo, then create a scratch linked worktree with git worktree add. The harness refuses a plain clone. Install the frontend's dependencies inside that worktree; do not symlink node_modules.\n2. Run npm run build and npm pack here, install the tarball into that frontend, and install the openalgo-script version I name on the issue (the one OpenAlgo will ship).\n3. Run node scripts/check-openalgo-compat.mjs --frontend <that frontend> with each flag that applies to OpenAlgo's frontend, once each with --browser chromium, firefox and webkit. --objects applies only if the frontend includes the shared Objects integration. Say which flags you left out and why.\n4. Class every failure: library regression, required consumer migration (for example the 2.5.2 drawTools catalogue or the 2.5.3 grouped ObjectsPanel), or flag not applicable.\n5. For each library regression, write a failing test and open an issue with it. Do not fix it here.\n6. Add a section to openalgo-compatibility.mdx listing the moves from 2.5.1 to 2.6. Link each behaviour change to its upgrading.mdx or CHANGELOG.md entry instead of restating it, and name the setting that restores the old behaviour where one exists.\nRules: no new dependency; no change under src/; name no other product; no emoji, no em or en dashes; never tag, publish or dispatch a workflow.\nDone when the three engines' summary lines are pasted with every failure classed, the section links every change, and npm run verify passes.\nIf a failure needs a decision this brief does not make, stop and ask me."
+            },
+            {
+              "id": "CH-N2",
+              "title": "Saved charts written by 2.5.1 load on 2.6, and rollback is written down",
+              "why": "CLAUDE.md's compatibility gate requires state written by the version OpenAlgo pins to load and round-trip in tests, but no test uses documents written by 2.5.1. The 2.5.9 changelog says drawings documents may now be version 3, and that an older build refuses a version 3 clipboard payload and drops the ranges from a version 3 layout. If OpenAlgo rolled back after the move, its users would lose data without seeing why.",
+              "deliverable": "A generator script that installs the published 2.5.1 package into a temp folder and writes golden documents through its public API: a drawings document, a saved chart state, a layout or workspace document, an alert list and the widget's persisted keys. The documents are committed under tests/fixtures/state-2.5.1/ with the generator, so anyone can regenerate them. Tests load each one on the current build and check that it round-trips. The generator also writes the same kinds from the current build and loads them in 2.5.1, and the result (what loads, what is refused, what is dropped) becomes a rollback section in website/pages/docs/upgrading.mdx. Out of scope: changing the current formats.",
+              "acceptance": [
+                "Running the generator twice gives byte-identical documents, apart from fields the generator documents as time-dependent",
+                "Each golden document loads on the current build, and saving it again gives an equivalent document; the test names each field that may change and why",
+                "Deleting one field the loader needs makes its test fail",
+                "The rollback section names each document kind and what 2.5.1 does with the 2.6 version of it, and npm run verify passes"
+              ],
+              "eval": "extends the compatibility gate with documents written by OpenAlgo's pinned version",
+              "size": "M",
+              "skills": [
+                "TypeScript",
+                "Playwright",
+                "saved-state formats"
+              ],
+              "goodFirst": false,
+              "dependsOn": [],
+              "agentBrief": "Task CH-N2 in marketcalls/openalgo-charts: prove that documents written by 2.5.1, the version OpenAlgo pins, load and round-trip on the current build, and record what a rollback to 2.5.1 does.\nRead CLAUDE.md (Quality gates: Compatibility), COMPATIBILITY.md, website/pages/docs/upgrading.mdx (the 2.5.9 note on version 3 drawings documents), website/pages/docs/state.mdx and workspaces.mdx, and the existing tests for drawings migration and workspace revisions.\nGoal:\n1. scripts/golden-state.mjs: npm pack openalgo-charts@2.5.1 into a temp folder. Then, in a Playwright page, write through its public API a drawings document, a saved chart state, a layout or workspace document, an alert list and the widget's persisted keys, using bars from a seeded random walk. Commit the output under tests/fixtures/state-2.5.1/ with the script.\n2. Tests that load each document on the current build and save it again. Name in the test each field that may change and why.\n3. The reverse: write the same kinds from the current build and load them in 2.5.1. Write what loads, what is refused and what is dropped as a rollback section in upgrading.mdx.\nBefore writing the round-trip tests, delete one required field from one golden document and show me the loader failing on it.\nRules: no change under src/ (a load failure becomes an issue with the failing test, not a fix here); no new dependency; no account data; name no other product; no emoji, no em or en dashes; never publish.\nDone when two generator runs match, every golden document round-trips, the rollback section covers every document kind, and npm run verify passes."
+            },
+            {
+              "id": "CH-N3",
+              "title": "Every open OpenAlgo chart report gets an outcome",
+              "why": "Production reports land in the OpenAlgo repository, not this one, and most of the open ones are not library defects. Of the ten open issues with chart in the title, several are feature requests (#2041, #2053, #2002, #1538) and one is a test task (#1838). Some are host issues: #2136, an option badge on cash symbols, comes from OpenAlgo's own symbol search. #2131, drawings stored per pane, was addressed by drawings per instrument in 2.5.9. A report becomes a regression test here only after it is reproduced in the library on the version under test.",
+              "deliverable": "A table on the tracking issue with one row per open OpenAlgo issue that has chart in its title, and one of four outcomes per row. Reproduced in the library: a new issue here with a failing test and its output. Fixed on 2.6.x: a drafted comment with the steps that show it. Host issue: a drafted comment naming the OpenAlgo file or behaviour where it belongs. Feature request: linked to a roadmap task, or listed for a maintainer decision. Out of scope: fixes, and committing any failing or skipped test.",
+              "acceptance": [
+                "Every issue returned by gh issue list --repo marketcalls/openalgo --state open --search \"chart in:title\" has a row with one of the four outcomes",
+                "Every row marked reproduced links an issue here with the test as a code block, the command and its failing output on 2.6.x",
+                "Every row marked host issue names the host file or behaviour, and every row marked fixed gives steps a person can repeat",
+                "No failing or skipped test is committed to the repository"
+              ],
+              "eval": "proposes integration eval cases from real reports (the maintainer decides whether each goes to train or test)",
+              "size": "M",
+              "skills": [
+                "TypeScript",
+                "Playwright",
+                "reading bug reports"
+              ],
+              "goodFirst": false,
+              "dependsOn": [],
+              "agentBrief": "Task CH-N3 in marketcalls/openalgo-charts: give every open OpenAlgo chart report an outcome on the current 2.6.x.\nRead CLAUDE.md (Testing traps) and .github/skills/openalgo-charts/references/pitfalls.md. Then read the reports listed by: gh issue list --repo marketcalls/openalgo --state open --search \"chart in:title\".\nGoal: one outcome per report. Out of scope: fixes.\nFor each report:\n1. Restate it in one sentence and decide which kind it is: a possible library defect, a host issue, a feature request, or something else.\n2. For a possible library defect, find the public API path it goes through and write the smallest test that fails for that reason: a unit test, or a Playwright spec for anything that draws. Run it. If it fails, open an issue here with the test as a code block, the command, its output and a link to the report; do not commit the test. If it passes, draft a comment with the 2.6.x steps and the result.\n3. For a host issue, draft a comment naming the OpenAlgo file or behaviour where it belongs (for #2136, the symbol search's type badge).\n4. For a feature request, link the roadmap task that covers it, or list it for my decision.\nRules: commit no failing or skipped test; use synthetic bars from a seeded random walk, never account data; name no other product; no emoji, no em or en dashes.\nDone when the tracking issue for CH-N3 has a table covering every open report with its outcome and links.\nAsk me before posting anything on the OpenAlgo repository."
+            }
+          ]
+        },
+        {
+          "id": "next-front-door",
+          "title": "A front door for contributors and their agents",
+          "outcome": "A contributor and their agent find the rules, the task and the checks in the repository itself. Outside pull requests arrive with their byte costs and command output attached, and a green CI run means something, because it can be required.",
+          "measure": "every Next task has a GitHub issue titled with its id; the issue forms, pull request template and AGENTS.md are on master; the skills facts check runs in CI beside skills coverage; five consecutive three-engine e2e runs at the documented worker count have no failure; CI runs on a supported Node release; and the maintainer has made CI required on the default branch.",
+          "tasks": [
+            {
+              "id": "CH-N4",
+              "title": "A roadmap task form, a pull request template and AGENTS.md",
+              "why": "The repository has no issue template, no pull request template and no AGENTS.md. Agents that do not read CLAUDE.md miss its rules, and outside pull requests arrive without byte costs or the checks that were run. Pull request #37 shows the shape that is quickest to review: problem, change, and what is unchanged.",
+              "deliverable": "Four files plus one new section. .github/ISSUE_TEMPLATE/roadmap-task.yml and bug.yml. .github/pull_request_template.md, asking for the commands run, the regression test, bytes per tier, public .d.ts impact, screenshots, a statement that the work is original, and whether an agent helped. An AGENTS.md of at most 30 lines that links CLAUDE.md, CONTRIBUTING.md and the skills rather than restating them. A 'Working with an agent' section in CONTRIBUTING.md. Out of scope: labels and branch protection (maintainer settings).",
+              "acceptance": [
+                "Both forms appear in the new-issue chooser on a fork (a screenshot is in the pull request)",
+                "AGENTS.md is at most 30 lines and restates no rule text from CLAUDE.md; each rule is a link",
+                "A search of the new files for the characters U+2013 and U+2014 finds nothing, and the CI product-name step passes",
+                "npm run verify passes"
+              ],
+              "eval": "none now; AGENTS.md and CONTRIBUTING.md later become surfaces of the bug-fix eval (CH-S8)",
+              "size": "S",
+              "skills": [
+                "Markdown",
+                "GitHub issue forms"
+              ],
+              "goodFirst": true,
+              "dependsOn": [],
+              "agentBrief": "Task CH-N4 in marketcalls/openalgo-charts: add a roadmap task issue form, a bug form, a pull request template and a short AGENTS.md.\nRead CLAUDE.md, CONTRIBUTING.md, pull request #37 (the shape to copy: problem, change, what is unchanged) and the Contribute section of openalgo.in/charts/roadmap.\nBuild:\n- .github/ISSUE_TEMPLATE/roadmap-task.yml asking for: the task id, a plan in 3 to 5 lines, whether an agent is assisting (yes or no), and an expected finish.\n- .github/ISSUE_TEMPLATE/bug.yml asking for: version, browser and device, steps, expected and actual result, and a minimal reproduction. Include a note never to paste account data.\n- .github/pull_request_template.md with these sections:\n  - task id and issue link;\n  - problem, change, and what is unchanged;\n  - commands run, with their summary lines;\n  - the regression test and 'reverted the fix and watched it fail: yes';\n  - Brotli bytes per tier and the chart-only import;\n  - lines added and removed;\n  - public .d.ts: none, additive (approved in the issue) or deprecation;\n  - screenshots for anything that draws;\n  - skills updated;\n  - original work, or the source and licence of a ported algorithm;\n  - agent assisted, and 'I have read every changed line and can explain it'.\n- AGENTS.md of at most 30 lines that links CLAUDE.md, CONTRIBUTING.md and .github/skills instead of restating them.\n- A 'Working with an agent' section in CONTRIBUTING.md.\nRules: restate no rule that already lives in CLAUDE.md, link it instead; name no other product; no emoji, no em or en dashes; change nothing under src/.\nDone when the forms render in the new-issue chooser on your fork (attach a screenshot), a search for U+2013 and U+2014 in the new files finds nothing, and npm run verify passes."
+            },
+            {
+              "id": "CH-N5",
+              "title": "Skills facts that cannot go stale",
+              "why": "The skills README still describes an eight-tier bundle model, 23 reference files and 102 built-ins, and says the references target 2.1.9; the indicator skill says 102 three times. At 2.5.9 the library has nine tiers, 26 reference files and 105 built-ins. Agents read these files first, so a wrong count becomes wrong code. The only automated skills check today, a separate CI step, covers export names.",
+              "deliverable": "scripts/check-skills-facts.mjs, run after the build. It takes the true numbers from package.json exports (tiers), the references folder (reference files), the built dist with the indicators and draw tiers imported (registeredIndicators, registeredChartTypes, and registeredDrawingTools, which lives in the draw tier), and package.json (version). It matches count phrases such as 'N built-ins', 'N-tier', 'nine tiers' and 'N reference files', in digits or words, never bare numbers, so sample bar data such as high: 102 does not trigger it. It runs as npm run skills:facts and as a CI step beside skills coverage, and the stale text is fixed. Out of scope: README.md and the website.",
+              "acceptance": [
+                "node scripts/check-skills-facts.mjs exits 1 on a fixture that says '103 built-ins' and names the file and line",
+                "It does not flag the sample bar data in core-api.md or data-and-time.md",
+                "The script exits 0 on the branch after the text fixes, and CI runs it beside npm run skills:coverage",
+                "npm run skills:coverage and npm run verify pass"
+              ],
+              "eval": "keeps green skills coverage; the skills are the first surface the integration eval hillclimbs",
+              "size": "S",
+              "skills": [
+                "Node scripting",
+                "Markdown"
+              ],
+              "goodFirst": true,
+              "dependsOn": [],
+              "agentBrief": "Task CH-N5 in marketcalls/openalgo-charts: make the counts and versions in the agent skills come from the build, and fix the stale ones.\nRead CLAUDE.md, .github/skills/README.md, .github/skills/openalgo-charts/SKILL.md, .github/skills/openalgo-chart-indicator/SKILL.md, scripts/check-skills-coverage.mjs and the skills step in .github/workflows/ci.yml (it is a separate CI step, not part of npm run verify).\nGoal: scripts/check-skills-facts.mjs, run after npm run build. It reads:\n- the tier count from package.json exports;\n- the reference file count from .github/skills/openalgo-charts/references;\n- the indicator and chart type counts from the built dist after importing the indicators tier (registeredIndicators, registeredChartTypes), and the drawing tool count after importing the draw tier (registeredDrawingTools lives there);\n- the version from package.json.\nIt matches count phrases only ('N built-ins', 'N-tier', 'nine tiers', 'N reference files', 'references target X'), in digits or words. It must not flag bare numbers: the skills contain sample bars such as high: 102. It fails when a phrase states a different number, naming the file and line. Add npm run skills:facts and a CI step beside skills coverage. Then fix the text it flags.\nBefore fixing the text, run the script on master and show me the failures it finds.\nRules: no new dependency; change nothing under src/; name no other product; no emoji, no em or en dashes; never publish.\nDone when the script exits 1 on a fixture saying '103 built-ins', ignores the sample bar data, exits 0 after your text fixes, and npm run skills:coverage and npm run verify pass. Paste their summary lines."
+            },
+            {
+              "id": "CH-N6",
+              "title": "A CI that can be required before a merge",
+              "why": "The maintainer's full local e2e runs show page-load timeouts under six workers that pass when run alone (four in the 2.5.9 run). CLAUDE.md forbids retrying a flaky test into green, yet playwright.config.ts retries once on CI and nothing reports which tests needed it. CI still runs Node 20, which reached end of life on 2026-04-30, and the default branch does not require CI. Contributors need a suite that is green for the right reason before the maintainer can require it.",
+              "deliverable": "A script that runs the three-engine e2e suite a given number of times at a given worker count and reports a failure rate per spec. A fix for each flaky spec's cause, or an issue with its failure rate when the cause is not found. CI prints Playwright's flaky list (tests that passed only on retry) in the job summary. CONTRIBUTING.md documents a worker count that stays green on a four-core laptop and the focused runs for a typical change. Every workflow moves from Node 20 to Node 22; the engines field stays at >=20 unless the maintainer decides otherwise. Last, the maintainer turns on branch protection that requires CI.",
+              "acceptance": [
+                "Flake reports for five runs, before and after, are attached at 6 workers and at the documented worker count",
+                "No retry, timeout increase or skip is added to make a spec pass, and each fix names its cause",
+                "CI passes on Node 22, and its job summary lists any test that passed only on retry",
+                "The maintainer has enabled required CI on the default branch, recorded on the issue"
+              ],
+              "eval": "keeps green the three-engine browser suite, and makes its flake rate visible",
+              "size": "M",
+              "skills": [
+                "Playwright",
+                "GitHub Actions",
+                "debugging timing issues"
+              ],
+              "goodFirst": false,
+              "dependsOn": [],
+              "agentBrief": "Task CH-N6 in marketcalls/openalgo-charts: make CI reliable enough that I can require it before a merge.\nRead CLAUDE.md (Quality gates: Tests, and the rule never to retry a flaky test into green), playwright.config.ts (projects, retries, workers), every file in .github/workflows, CONTRIBUTING.md, and the Playwright notes in the last three CHANGELOG.md entries.\nGoal:\n1. scripts/e2e-flake.mjs: run the three-engine e2e suite N times at a given worker count and print a failure rate per spec. Run it five times at 6 workers and five times at 2, on an idle machine, and attach both reports.\n2. For each spec that failed at least once, find the cause (for example a wait on a load event that a busy machine misses) and fix it in the test. If you cannot find it, open an issue with the spec, its failure rate and the logs.\n3. Make CI print Playwright's flaky list (tests that passed only on retry) in the job summary. Do not change the retry count.\n4. In CONTRIBUTING.md, document a worker count that stays green on a four-core laptop and the focused runs for a typical change.\n5. Move every node-version in .github/workflows from 20 to 22. Leave the engines field in package.json alone.\nI then enable required CI on the default branch; you do not change repository settings.\nRules: never add a retry, raise a timeout or skip a test to make it pass; no change under src/ (a library defect becomes an issue first); no new dependency; name no other product; no emoji, no em or en dashes; never publish.\nDone when the before and after flake reports are attached, every flaky spec is fixed or has an issue with its rate, CI passes on Node 22 with the flaky list in its summary, and npm run verify passes."
+            }
+          ]
+        },
+        {
+          "id": "next-gates",
+          "title": "Release gates become scripts",
+          "outcome": "The gates CLAUDE.md marks as checked at release run as scripts, each with a fixture that makes it fail, and the public API comparison is a report rather than a hand diff. The maintainer's attention goes to judgment, not to lists.",
+          "measure": "import cycles (including imports between tiers), unused exports and skip reasons are checked in npm run verify with shrink-only allow files; lint allows zero warnings; and the public API report runs in npm run verify, with the 2.6.x comparison against 2.5.1 as its output.",
+          "tasks": [
+            {
+              "id": "CH-N7",
+              "title": "Script the checked-at-release gates: import cycles, unused exports and skip reasons",
+              "why": "CLAUDE.md lists three gates as checked at release with no script: no import cycles between modules, no unused exports, and no skipped test without a written reason. It says scripting each one is the preferred fix. All 34 skip calls in tests/e2e carry a reason today and lint reports zero warnings, so part of this locks in a state that is already right. Cycles need care: 188 imports under src/ go through package names such as openalgo-charts/workspace rather than relative paths, so a checker that walks only relative imports would miss cycles between tiers.",
+              "deliverable": "Three dependency-free scripts, one pull request each, all wired into npm run verify. scripts/check-cycles.mjs walks runtime imports and re-exports under src/, resolving package names through the paths map in tsconfig.json and ignoring import type, and prints each cycle as a chain of files. scripts/check-unused-exports.mjs lists exports under src/ that no module imports and no tier entry point re-exports. scripts/check-skips.mjs fails when a test.skip, describe.skip, it.skip or test.fixme has no reason string. Findings that exist today go in shrink-only allow files, following scripts/line-caps.json. Lint runs with --max-warnings 0.",
+              "acceptance": [
+                "Fixtures fail each checker: a two-file cycle through a package-name import, an export nobody uses, and a skip without a reason",
+                "master passes all three with their allow files, and a test fails when an entry is added to an allow file",
+                "A seeded lint warning makes npm run lint fail",
+                "Each script runs in under five seconds, and npm run verify passes"
+              ],
+              "eval": "keeps green npm run verify with three new gates",
+              "size": "M",
+              "skills": [
+                "Node scripting",
+                "TypeScript module graphs"
+              ],
+              "goodFirst": true,
+              "dependsOn": [],
+              "agentBrief": "Task CH-N7 in marketcalls/openalgo-charts: script the three gates CLAUDE.md marks as checked at release. One pull request per script; claim one at a time.\nRead CLAUDE.md (Quality gates for every release; Keep the code lean), tsconfig.json (the paths map), scripts/line-caps.json and tests/line-caps.test.ts (the shrink-only pattern), and package.json (verify and lint). First check that 2.6.0 has not already added one of these checks; if it has, stop and tell me.\nGoal:\n1. scripts/check-cycles.mjs: walk runtime imports and re-exports under src/. Resolve relative paths, and resolve package names (openalgo-charts, openalgo-charts/draw and the rest) through the tsconfig paths map. Ignore import type and export type. Print each cycle as a chain of files.\n2. scripts/check-unused-exports.mjs: list exports under src/ that no other module imports and no tier entry point re-exports, directly or through another index.\n3. scripts/check-skips.mjs: fail when test.skip, describe.skip, it.skip or test.fixme has no reason string. Every skip has one today; this keeps it that way.\nFindings that exist today go in a shrink-only allow file per script (a test fails if an entry is added). Wire each script into npm run verify, and make lint run with --max-warnings 0.\nBefore writing each checker, add a fixture it must reject and a test that expects the rejection. Show me the failure.\nRules: no new dependency (use the TypeScript compiler already in devDependencies if you need a parser); change nothing under src/; never raise a cap or budget; name no other product; no emoji, no em or en dashes; never publish.\nDone when each fixture fails its checker, master passes with the allow files, each script runs in under five seconds, and npm run verify passes. Paste the summary lines and the allow lists."
+            },
+            {
+              "id": "CH-N8",
+              "title": "A public API report for every tier",
+              "why": "Every 2.x release promises additive change, and OpenAlgo pins versions across its installs. Yet the release comparison of public declarations against the previous release is done by hand; at 2.5.7 that meant comparing nine .d.ts files, setting comments and private members aside, with a known difference in block order in dist/index.d.ts between Linux and Windows builds.",
+              "deliverable": "scripts/api-report.mjs, which writes each tier's public exports to api/<tier>.api.txt (committed): one entry per exported name, sorted by name, with its declaration text, with JSDoc comments and private members removed and declaration blocks in a normalised order, so Linux and Windows builds give the same file. A --check mode, wired into verify, fails when the build no longer matches. An --against <version> mode packs a published version into a temp folder and prints additions, removals and narrowed signatures, for the release step and for OpenAlgo's pin.",
+              "acceptance": [
+                "The write mode gives byte-identical files on two runs, and on Linux (CI) and Windows",
+                "Changing only a JSDoc comment leaves the report unchanged",
+                "A fixture that removes one export makes node scripts/api-report.mjs --check exit 1 and name the export",
+                "node scripts/api-report.mjs --against 2.5.1 prints a readable difference from OpenAlgo's pin, and npm run verify passes"
+              ],
+              "eval": "keeps green a new public API report gate that later releases and 3.0.0 rely on",
+              "size": "M",
+              "skills": [
+                "TypeScript declarations",
+                "Node scripting"
+              ],
+              "goodFirst": false,
+              "dependsOn": [],
+              "agentBrief": "Task CH-N8 in marketcalls/openalgo-charts: a committed report of each tier's public API that CI keeps current.\nRead CLAUDE.md (Quality gates for every release), COMPATIBILITY.md, scripts/check-dts.mjs, package.json (exports and files), and the dist/*.d.ts files after npm run build. First check that 2.6.0 has not already added such a report; if it has, stop and tell me.\nGoal: scripts/api-report.mjs with three modes.\n- write: for each of the nine tier entry points, one entry per exported name, sorted by name, with its declaration text. Remove JSDoc comments and private members, and normalise the order of declaration blocks (dist/index.d.ts orders some blocks differently on Linux and Windows). Write api/<tier>.api.txt.\n- --check: exits 1 when the built dist differs from the committed reports, naming each added, removed or changed export. Wire it into npm run verify.\n- --against <version>: fetches that published version into a temp folder (npm pack openalgo-charts@<version>) and prints additions, removals and narrowed signatures. The release step uses it, and so does OpenAlgo's pin (2.5.1).\nBefore writing the checker, write a test in which a fixture removes one export and --check is expected to name it. Show me the failure.\nRules: no new dependency (use the TypeScript compiler already in devDependencies to parse); no change under src/; name no other product; no emoji, no em or en dashes; never publish.\nDone when two runs of write give byte-identical files, a comment-only change leaves the report unchanged, the fixture fails --check, --against 2.5.1 prints a readable difference, and npm run verify passes. Paste the summary lines and the first 30 lines of the 2.5.1 difference."
+            }
+          ]
+        },
+        {
+          "id": "next-evals",
+          "title": "Eval foundations",
+          "outcome": "The harness and the first grader exist, so whether an agent can integrate the library using only the published package and our skills can be measured instead of assumed.",
+          "measure": "the harness runs a sample case end to end twice with the same verdict and classes a forced infrastructure failure correctly; and the integration grader passes ten human-written references and fails ten mutants in their intended buckets, twice in a row. The train set, the private test set and the baseline follow in Soon.",
+          "tasks": [
+            {
+              "id": "CH-N9",
+              "title": "An eval harness: clean sandboxes, three runs, transcripts and statistics",
+              "why": "No eval in either project measures whether an agent using our skills and docs succeeds at a real task. Nothing runs an agent against a clean sandbox holding only the surface under test, and nothing records the transcript, tokens, time and verdict. The OpenScript roadmap uses the same harness, so one issue in the shared eval repository covers both.",
+              "deliverable": "Four parts, in the shared eval repository the maintainer creates, as three pull requests (runner, statistics, linter). A case format: task.md, meta.json, and a grader/ folder that never enters the sandbox. A runner in which the agent's model loop runs outside the container and only its tool calls run inside; the container holds the packed library tarball, the surface under test and an npm registry mirror, with no secrets and no other network. Three runs per case with a log per run, and an infrastructure-error verdict only when the case's reference solution fails the same step in the same environment. Statistics: bootstrap intervals, paired comparison, an A/A noise floor and the keep or revert rule. A patch linter that flags only case-specific strings.",
+              "acceptance": [
+                "One sample case runs end to end twice and gets the same verdict both times",
+                "A registry outage that also fails the reference solution is reported as an infrastructure error, while a dependency the agent got wrong (the reference installs) is reported as a fail",
+                "Unit tests on synthetic results reproduce known 95 percent intervals and the expected keep or revert decisions",
+                "A test proves the grader folder and every secret are absent inside the container",
+                "The patch linter rejects a diff seeded with an eight-word run or a case-specific identifier, and passes a diff that uses only names found in the published .d.ts files and docs"
+              ],
+              "eval": "builds the harness every eval uses",
+              "size": "L",
+              "skills": [
+                "Node or Python",
+                "containers",
+                "basic statistics"
+              ],
+              "goodFirst": false,
+              "dependsOn": [],
+              "agentBrief": "Task CH-N9: the shared eval harness. The OpenScript roadmap uses the same one; one issue in the eval repository covers both.\nRead the eval section of openalgo.in/charts/roadmap, the article it links (Automating eval design and hillclimbing), and the README of the eval repository the maintainer links from the issue.\nBuild, in the eval repository, as three pull requests (runner, statistics, linter):\n- A case format: one folder per case holding:\n  - task.md: the request as a person would write it, plus a fixed harness contract;\n  - meta.json: source, why a human finds it hard, the target failure bucket, the version under test and the approval;\n  - grader/: the reference solution, expected values and hidden tests.\n- A runner. The agent's model loop runs outside the container, and only its tool calls (shell, file edits) run inside. The container holds only the task, the packed library tarball at a pinned version, the surface bundle under test and an npm registry mirror. It has no secrets, no network except the mirror, and never the grader folder. Model and effort are pinned per campaign.\n- Three runs per case. Each run logs its transcript, input, cached and output tokens, wall time, verdict and failure bucket.\n- An infrastructure-error verdict only when the case's reference solution fails the same step in the same environment and run (registry down, browser fails to launch). Such runs are retried once, counted, and excluded from the score. A step that fails only for the agent's solution is a fail.\n- Statistics:\n  - a 95 percent bootstrap interval over cases;\n  - a paired comparison of two configurations on the same cases;\n  - the A/A noise floor;\n  - the keep or revert rule: keep only if train and test both improve beyond noise and no bucket regresses; stop after three rounds with nothing kept.\n- A patch linter for surface diffs. It flags identifiers, numbers and titles that appear in a case but not in the published .d.ts files or docs pages, and any run of eight words shared with a case. Public API names such as createChart and addIndicator are allowed.\nRules: no secrets in the repository or the container; case text names no other product and uses no account data; no emoji, no em or en dashes.\nDone when:\n- one sample case runs end to end twice with the same verdict;\n- a registry outage is reported as an infrastructure error, and an agent's bad dependency as a fail;\n- unit tests on synthetic results reproduce known intervals and keep or revert decisions;\n- a test proves grader/ and secrets are absent inside the container;\n- the linter rejects a diff seeded with a case string and passes one that uses only public names.\nPaste the outputs."
+            },
+            {
+              "id": "CH-N10",
+              "title": "An integration eval grader with ten seed cases",
+              "why": "Programmatic graders come first, and this repository already has the pieces: render parity's check that a canvas painted, public state through getState() and series data through getData(), and the adapter contract. The integration eval therefore needs no LLM judge.",
+              "deliverable": "A browser grader in the eval repository that runs its steps in order, with the first failure setting the bucket: install and build; strict typecheck against the published types; a page load with no errors; a painted canvas; public state after a scripted tick and a symbol switch; and no leaks after mounting and unmounting twice. The task.md harness contract tells the app to expose its chart instance as window.__evalChart, which is where the grader reads state: getState() for series, indicators, settings and time zone, and the main series' getData() for the last bar, since getState() carries no bars. The task also includes ten seed cases across two frameworks and five task types, each with a human-written reference and one mutant.",
+              "acceptance": [
+                "The grader passes 10 of 10 references",
+                "It fails 10 of 10 mutants, each in the bucket the mutant targets",
+                "A second run of all 20 gives identical verdicts",
+                "Case text passes the product-name check and contains no account data"
+              ],
+              "eval": "builds the integration eval grader with 10 seed cases",
+              "size": "M",
+              "skills": [
+                "TypeScript",
+                "Playwright",
+                "one frontend framework"
+              ],
+              "goodFirst": false,
+              "dependsOn": [
+                "CH-N9"
+              ],
+              "agentBrief": "Task CH-N10: the integration eval grader, in the shared eval repository.\nRead the eval section of openalgo.in/charts/roadmap. In marketcalls/openalgo-charts, read .github/skills/openalgo-charts/references/pitfalls.md, website/pages/docs/frameworks.mdx, tests/e2e/render-parity.spec.ts (how it decides a canvas painted), website/pages/docs/state.mdx, and the Series interface in src/model/series.ts (getData).\nGoal: a programmatic grader that runs these steps in order. The first failure sets the verdict's bucket.\n1. Install and build succeed.\n2. tsc --strict passes against the published package types. TS2339 and TS2305 map to the invented-API bucket.\n3. A headless Chromium page loads with no page errors.\n4. The chart canvas painted: at least 10 distinct colours.\n5. After a scripted feed tick and a symbol switch, state matches the case's expected values. The harness contract in task.md tells the app to assign its chart to window.__evalChart. Read series, indicator ids, settings and time zone through __evalChart.getState(), and the last bar through the main series' getData(); getState() carries no bars.\n6. Mounting, unmounting and mounting again leaves no leaked listeners or canvases.\nThen write ten seed cases across two frameworks (vanilla, plus one of React, Vue or Next.js) and five task types. Each has a human-written reference and one mutant that breaks one thing the case is about.\nRules: no LLM judge; the grader never runs inside the agent's container; case text uses synthetic data and names no other product; no emoji, no em or en dashes.\nDone when the grader passes 10 of 10 references, fails 10 of 10 mutants in the intended bucket, and gives identical verdicts on a second run of all 20. Paste the verdict table."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Soon",
+      "window": "Three to nine months after 2.6.0",
+      "goal": "Close the biggest technical gap, live updates that slow down as history grows. Build the train set, the private test set and the baseline, and run the first hillclimbing campaign against held-out tests. Make the chart usable by more people, and give the next adopter kits instead of promises.",
+      "themes": [
+        {
+          "id": "soon-live-path",
+          "title": "The live path at deep history",
+          "outcome": "A live tick costs about the same however much history is loaded, and every claimed gain is larger than its noise.",
+          "measure": "calcTail covers at least 30 built-ins (16 at 2.5.9); the study-list tick cell from CH-S2 falls by more than its noise at 200,000 bars as tails land; on the release bench the ten-study tick at 200,000 bars takes under three times as long as at 10,000 (about 7.4 times at 2.5.9); and the browser endurance workload passes its gates at 10,000 bars. If the CH-S2 profile shows either target is out of reach, it is revised in public with the evidence.",
+          "tasks": [
+            {
+              "id": "CH-S1",
+              "title": "Publish the 2.6 performance baseline and its noise floor",
+              "why": "The endurance table in docs/browser-endurance.md is still from 2.5.5, when the workload failed its gates at 10,000 bars (frame p95 134 ms) and at 50,000 (717 ms). The release bench takes five runs per build, and in one cell of 2.5.8 the runs of a single build spread by 57 percent, so a claimed gain under about 10 to 20 percent cannot be told apart from noise. The CI budgets rest on a single hosted-runner run.",
+              "deliverable": "Three things. scripts/bench-noise.mjs, which prints the within-session spread of each cell for both builds of every release in benchmarks/releases.json. New endurance rows at 2,000, 10,000 and 50,000 bars per chart on 2.6.x in docs/browser-endurance.md. A re-derived CI budget table, from recent nightly artifacts with its margin stated, proposed in the pull request description for the maintainer to decide on. Out of scope: any change under src/ and any change to a budget file.",
+              "acceptance": [
+                "node scripts/bench-noise.mjs reports a spread of about 57 percent for the 2.5.8 canvas2d 50k tick cell",
+                "The endurance rows name device, OS, browser, backend and version, and the raw JSON outputs are attached to the pull request",
+                "The proposed budget table is in the pull request description, and no budget file changes in the diff",
+                "node scripts/check-render-bench-docs.mjs and npm run verify pass"
+              ],
+              "eval": "extends the render bench with a published noise floor for every cell",
+              "size": "M",
+              "skills": [
+                "Node scripting",
+                "reading benchmarks",
+                "patience with long runs"
+              ],
+              "goodFirst": false,
+              "dependsOn": [],
+              "agentBrief": "Task CH-S1 in marketcalls/openalgo-charts: publish the 2.6 performance baseline and the noise floor of the release bench.\nRead docs/browser-endurance.md, docs/performance-notes.md (Budgets), scripts/browser-endurance.mjs (its flags), scripts/render-bench-budgets.mjs, benchmarks/releases.json and .github/workflows/nightly.yml.\nGoal:\n1. scripts/bench-noise.mjs: for each release in benchmarks/releases.json and each cell, print the spread of the five runs of each build (max minus min, divided by min). Flag cells where the release's claimed change falls inside that spread.\n2. On an idle machine, run npm run endurance:browser on the current 2.6.x build with --bars 2000, 10000 and 50000. Replace the 2.5.5 table in docs/browser-endurance.md with the new rows, naming device, OS, browser, backend and version. Attach the raw JSON outputs to the pull request.\n3. Re-derive the CI budget table from the last several nightly render-bench artifacts (gh run download), using scripts/render-bench-budgets.mjs where it applies, and state the margin. Put the table in the pull request description as a proposal. I decide whether any budget changes; do not edit a budget file.\nOut of scope: any change under src/.\nRules: no new dependency; never hand-edit a measured number; never change a budget; name no other product; no emoji, no em or en dashes; never publish.\nDone when bench-noise reports a spread of about 57 percent for the 2.5.8 canvas2d 50k tick cell, the endurance table is in the docs, the proposal is in the description, and node scripts/check-render-bench-docs.mjs and npm run verify pass. Paste the summary lines."
+            },
+            {
+              "id": "CH-S2",
+              "title": "Profile the ten-study tick at 200,000 bars",
+              "why": "A live tick with ten studies gets slower as more history loads, even with the same 200 bars in view: at 2.5.9 on canvas2d the p95 was about 20 ms at 10,000 bars and 149.6 ms at 200,000, about 7.4 times as long. The performance notes say the remaining cost has not been profiled. Nine of the bench's ten studies already have an incremental calcTail, so the growth is elsewhere; the pitfalls reference names two per-tick costs over the whole history, a copy of each output column and a comparison of every plot point.",
+              "deliverable": "A repeatable profile of the ten-study tick at 10,000 and 200,000 bars on canvas2d, recorded by a mode of the render bench. docs/performance-notes.md gets a table of JavaScript self time by group (calc, calcTail, output column copies, plot point comparison, rendering calls, other) at both sizes, the remainder of the measured frame time (raster and compositing, which a JavaScript profile does not see), and a ranked list of the costs that grow with history, each naming its file and function. The same pull request adds a second bench cell that ticks the studies listed on the CH-S3 issue, so tail work has its own measure. No optimisation in this task.",
+              "acceptance": [
+                "Two runs give group shares within 5 percentage points of each other",
+                "The groups add up to the profiled JavaScript time of the tick within 10 percent, and the remainder of the frame time is reported separately",
+                "Every file and function named in the ranked list exists",
+                "The study-list cell runs in the release bench, and npm run verify passes"
+              ],
+              "eval": "keeps green the render bench, adds the study-list cell, and supplies the train cells for CH-S4",
+              "size": "M",
+              "skills": [
+                "browser profiling",
+                "TypeScript",
+                "performance analysis"
+              ],
+              "goodFirst": false,
+              "dependsOn": [],
+              "agentBrief": "Task CH-S2 in marketcalls/openalgo-charts: profile the ten-study live tick at 200,000 bars and publish where the time goes.\nRead docs/performance-notes.md, tests/e2e/render-bench.perf.ts (the STUDIES list), .github/skills/openalgo-charts/references/pitfalls.md (the entry on longer histories), src/indicators/tail.ts and ARCHITECTURE.md.\nGoal: a repeatable profile, not an optimisation.\n- Add a mode to the render bench that records a CPU profile of the ten-study tick at 10,000 and 200,000 bars on canvas2d.\n- Group JavaScript self time into calc, calcTail, output column copies, plot point comparison, rendering calls and other, at both sizes. A JavaScript profile does not include raster and compositing, so report the remainder of the measured frame time as its own line.\n- Add a table to docs/performance-notes.md, plus a ranked list of the costs that grow with history, each naming its file and function.\n- Add a bench cell that ticks the studies listed on the CH-S3 issue at 10,000 and 200,000 bars, so incremental tails have their own measure.\nOut of scope: any change to src/ beyond what the profile needs in order to run (ideally nothing).\nRules: no new dependency; do not change budgets; name no other product; no emoji, no em or en dashes; never publish.\nDone when two runs give group shares within 5 percentage points of each other, the groups add up to the profiled JavaScript time within 10 percent, every named function exists, the new cell runs, and npm run verify passes. Paste the table."
+            },
+            {
+              "id": "CH-S3",
+              "title": "Incremental updates for more built-ins, one per pull request",
+              "why": "Only 16 of 105 built-ins have calcTail; every other study recomputes its whole history on each tick. Nine of the render bench's ten studies are already among the 16, so new tails do not move the ten-study cell; they move the tick of the studies people add from the widget's menu, which the study-list cell from CH-S2 measures. The existing tails take one of two shapes: a rerun of a bounded window, or a resume from a checkpoint.",
+              "deliverable": "calcTail for one built-in per pull request, added through withTail, in the order listed on the issue. Claim the indicator on the issue first. Window-rerun indicators are good first tasks. Checkpoint resumes are harder, because equality under Object.is (signed zero included) forces the tail to repeat the full calculation's floating-point order, so they need a maintainer's go-ahead on the plan.",
+              "acceptance": [
+                "tests/indicator-tail.test.ts covers the indicator: after each tick over random histories with gaps, NaN, ties and overflow, the tail equals a full calc bar by bar under Object.is",
+                "tests/e2e/indicator-tail-parity.spec.ts passes (it runs in the chromium project)",
+                "Changing one constant in the new tail makes the property test fail",
+                "The study-list bench cell is pasted before and after; npm run size shows only the indicators tier growing, with the bytes stated; and npm run verify passes"
+              ],
+              "eval": "extends incremental parity with one built-in per pull request",
+              "size": "S",
+              "skills": [
+                "TypeScript",
+                "technical indicators",
+                "numerics"
+              ],
+              "goodFirst": true,
+              "dependsOn": [
+                "CH-S2"
+              ],
+              "agentBrief": "Task CH-S3 in marketcalls/openalgo-charts: give one more built-in indicator an incremental calcTail. Claim the indicator on the issue first; the issue lists the order. If this is your first task, claim one marked window rerun.\nRead CLAUDE.md, src/indicators/tail.ts and src/indicators/steppers.ts (the two shapes: rerun a bounded window, or resume from a checkpoint), one existing tail of the same shape (RSI or BOLLINGER), tests/indicator-tail.test.ts, tests/e2e/indicator-tail-parity.spec.ts, and the indicator's own descriptor and hand-computed tests.\nGoal: wrap the descriptor with withTail. After each tick, the tail spliced onto the previous result must equal a full calc value for value (Object.is, NaN and signed zero included). For a checkpoint resume, that means repeating the full calculation's floating-point order; post your plan on the issue and wait for a go-ahead.\nFirst add the indicator to the property test's list and show me the test failing because the descriptor has no calcTail.\nRules: no new dependency; no public .d.ts change; bytes only in the indicators tier; reuse the existing kernels and steppers and never write a second copy of the formula; do not touch src/core/chart.ts or src/core/pane.ts; name no other product; no emoji, no em or en dashes; never weaken the property test, raise a budget or publish.\nDone when:\n- tests/indicator-tail.test.ts passes over random histories with gaps, NaN, ties and overflow;\n- the tail parity spec passes;\n- changing one constant in your tail makes the test fail (show it, then restore);\n- npm run verify passes.\nReport the study-list bench cell before and after, Brotli bytes per tier before and after (npm run size), and lines added and removed."
+            },
+            {
+              "id": "CH-S4",
+              "title": "Remove per-tick work that grows with history",
+              "why": "Once the CH-S2 profile has named the history-proportional costs of a tick, each one should go, with identical output. Fixing one cost per pull request keeps every gain attributable and every regression easy to find.",
+              "deliverable": "One pull request per ranked cost. Any change that needs src/core/chart.ts or src/core/pane.ts is written up for the maintainer, their only writer, instead of being made. Out of scope: a worker executor and a typed-array data layer (each would be a maintainer decision, taken only if the profile shows it is needed).",
+              "acceptance": [
+                "The ten-study 200,000-bar tick cell improves by more than the larger within-session spread of the two builds (from CH-S1)",
+                "No held-out workload regresses beyond its noise: soak heap slope, npm run endurance:browser at 10,000 bars, the tick and tail parity specs, and 500 drawings under hover",
+                "Render parity shows zero differing pixels",
+                "npm run size shows no tier growing beyond the stated need, and npm run verify passes"
+              ],
+              "eval": "hillclimbs the render bench on one hot path at a time, with the untouched workloads as the held-out test and human review of every kept change",
+              "size": "M",
+              "skills": [
+                "TypeScript",
+                "performance profiling",
+                "canvas rendering"
+              ],
+              "goodFirst": false,
+              "dependsOn": [
+                "CH-S1",
+                "CH-S2"
+              ],
+              "agentBrief": "Task CH-S4 in marketcalls/openalgo-charts: remove one per-tick cost that grows with loaded history. Take it from the ranked list in docs/performance-notes.md (CH-S2). One cost per pull request; name it on the issue first.\nRead CLAUDE.md (Keep the code lean; Concurrency), docs/performance-notes.md (the profile, and the noise floor from CH-S1), the file and function the cost names, and tests/e2e/render-bench.perf.ts.\nGoal: the live tick does bounded work for this cost, whatever the history length, and produces identical output.\nIf the change needs src/core/chart.ts or src/core/pane.ts, stop and write it up as a proposal for me instead. I am their only writer.\nBefore changing code, record the ten-study tick cell five times on the current build.\nRules: no new dependency; no public .d.ts change; no new option; nothing added to the base beyond the measured need; no worker and no data-layout rewrite; never accept a new render baseline; name no other product; no emoji, no em or en dashes; never publish.\nDone when:\n- the targeted cell improves by more than the larger within-session spread of both builds;\n- the held-out workloads do not regress beyond their noise (soak heap slope, npm run endurance:browser at 10,000 bars, the tick and tail parity specs, 500 drawings under hover);\n- render parity shows zero differing pixels;\n- npm run verify passes.\nPaste the before and after tables, npm run size and npm run shake."
+            }
+          ]
+        },
+        {
+          "id": "soon-evals",
+          "title": "Evals drive the text agents read",
+          "outcome": "The integration eval has a train set, a private test set and a baseline. A change to the skills is kept only because a held-out test improved, and a bug-fix eval measures how well the contributor briefs work.",
+          "measure": "20 approved train cases and at least 15 private test cases, 10 of them a fixed anchor subset; a baseline on both with three runs per case, the A/A noise floor, grader stability and 20 read transcripts; the best configuration under about 95 percent on test, or harder human-judged cases added before any hillclimbing; one skills campaign finished with its report (a flat result counts as finished); the bug-fix eval with 30 verified cases and a baseline; and the indicator coverage script showing every built-in with at least three hand-computed cases, or an open issue for it.",
+          "tasks": [
+            {
+              "id": "CH-S5",
+              "title": "An integration eval train set: twenty cases from real reports",
+              "why": "The method samples the tasks developers actually bring, in this order: real reports, then cases maintainers judge hard, then synthetic variants. A case is never chosen because today's model fails it, since that captures one model's weak spots instead of the task.",
+              "deliverable": "The public train set grown from the ten seed cases to 20, spread across frameworks (vanilla, React with Vite, Next.js, Vue) and families (setup and lifecycle, streaming updates, indicators, drawings, widget, persistence). The cases come from charts issues, OpenAlgo chart reports and the pitfalls reference. Each case's meta.json says why a human finds it hard. The maintainer writes the private test cases separately (CH-S6).",
+              "acceptance": [
+                "The maintainer approves each case on the issue before any model is run on it",
+                "Every reference passes the CH-N10 grader, every mutant fails it, and a rerun gives identical verdicts",
+                "Each meta.json records its source; no case was selected by running a model"
+              ],
+              "eval": "extends the integration eval to 20 train cases from issues and pitfalls",
+              "size": "M",
+              "skills": [
+                "TypeScript",
+                "frontend frameworks",
+                "reading issues"
+              ],
+              "goodFirst": false,
+              "dependsOn": [
+                "CH-N10"
+              ],
+              "agentBrief": "Task CH-S5: the integration eval train set, in the shared eval repository.\nRead the case format (CH-N9) and the grader (CH-N10). Also read charts issues #1, #6, #9, #12, #13, #16 and #25, the open and closed OpenAlgo issues with chart in the title (and the CH-N3 table), and .github/skills/openalgo-charts/references/pitfalls.md.\nGoal: grow the train set to 20 cases, spread across frameworks (vanilla, React with Vite, Next.js, Vue) and families (setup and lifecycle, streaming updates, indicators, drawings, widget, persistence).\nSources, in this order:\n1. Real reports, reframed as integration tasks.\n2. Traps a maintainer judges hard: never cache the forming bar; bar times are in seconds; the IST default versus named time zones; teardown on route change; lazy history paging; drawings per instrument.\n3. Synthetic variants of those, across frameworks.\nEach case has:\n- task.md, written the way a developer would ask, with every parameter fixed so the answer is unambiguous, plus the harness contract (the chart exposed as window.__evalChart);\n- meta.json, giving its source and why a human finds it hard;\n- a reference solution and a mutant.\nRules: run no model on a case before the maintainer approves it; never choose or change a case because a model failed it; no account data and no real credentials; name no other product; no emoji, no em or en dashes.\nDone when the maintainer has approved each case on the issue, every reference passes and every mutant fails the grader, and a rerun gives identical verdicts."
+            },
+            {
+              "id": "CH-S6",
+              "title": "The private test set and the first baseline",
+              "why": "The method needs a test set that the agents being improved never see, and only the maintainer can hold it. Test cases need the same care as train (a reference and a mutant each), and the baseline needs the A/A noise floor, grader stability and a read of the transcripts before anyone hillclimbs. Rotating the whole test set every quarter would cost fifteen new cases a quarter and break comparison across quarters, so a fixed anchor subset stays put.",
+              "deliverable": "Maintainer-owned. At least 15 private test cases in the private repository, stratified by framework and task family like train, 10 of them a fixed anchor subset that never rotates. A baseline on train and test: three runs per case, the baseline run twice for the A/A noise floor, one run by an agent from another vendor, and each graded output scored twice for grader stability. 20 scored transcripts read by a person, with notes. A public baseline report with aggregate scores, intervals, cost per task and failure buckets, and no test case text. A contributor can draft the report template and the baseline configuration, never the test cases.",
+              "acceptance": [
+                "Every private case's reference passes and its mutant fails the grader, twice",
+                "The report gives train and test scores with 95 percent intervals, the A/A noise floor, grader agreement between two scorings, cost per task and infrastructure-error counts",
+                "The best configuration scores under about 95 percent on test, or harder human-judged cases are added and the baseline rerun before any campaign",
+                "The public report contains no test case text, identifier or title"
+              ],
+              "eval": "builds the integration eval's private test set and baseline",
+              "size": "M",
+              "skills": [
+                "evals",
+                "the library's API",
+                "writing test cases"
+              ],
+              "goodFirst": false,
+              "dependsOn": [
+                "CH-N10",
+                "CH-S5"
+              ],
+              "agentBrief": "Task CH-S6 (maintainer only, except the parts marked public): the private test set and the first baseline of the integration eval.\nRead the eval section of openalgo.in/charts/roadmap, the harness README (CH-N9), the grader (CH-N10) and the train set (CH-S5).\nGoal:\n1. Private: write at least 15 test cases in the private repository, stratified by framework and task family like train. Mark 10 as the anchor subset, which never rotates. Each has a reference and a mutant.\n2. Private: run the baseline on train and test, three runs per case, twice for the A/A noise floor, plus one run by an agent from another vendor. Score each graded output twice to check that the grader agrees with itself.\n3. Private: read 20 scored transcripts across buckets, and note any verdict you disagree with.\n4. Public (a contributor may draft this): the report template and the harness configuration for the baseline.\n5. Publish the report: train and test scores with 95 percent intervals, noise floor, grader agreement, cost per task, infrastructure-error counts and failure buckets.\nRules: no test case text, identifier or title in any public file; stay within the eval spend cap; no account data; name no other product; no emoji, no em or en dashes.\nDone when every private reference passes and every mutant fails twice, the report is published, and the headroom check is met, or harder cases are added and the baseline rerun."
+            },
+            {
+              "id": "CH-S7",
+              "title": "The first hillclimb on the skills text",
+              "why": "The skills are the cheapest and most attributable surface to improve: plain text that agents read first, coupled directly to the integration eval. Cheaper surfaces come before code.",
+              "deliverable": "One campaign against the integration eval. Each round, an agent reads the train failures only and proposes one root-cause patch to .github/skills. The maintainer's scored run compares train and the private test set with the baseline and the noise floor. Kept patches land as pull requests, and reverted ones are logged. The campaign ends with a report.",
+              "acceptance": [
+                "Each kept patch raised both train and test beyond the noise floor in a paired comparison, and no bucket regressed",
+                "The patch linter passed every merged patch",
+                "npm run skills:coverage stays at 100 percent, and every name in the skills exists in dist",
+                "The campaign stayed within its cost cap",
+                "The report gives the test score with its 95 percent interval before and after, cost per task, flip rate and bucket counts; a flat campaign is reported as flat"
+              ],
+              "eval": "hillclimbs the integration eval on the skills text",
+              "size": "M",
+              "skills": [
+                "writing for agents",
+                "the library's API",
+                "reading transcripts"
+              ],
+              "goodFirst": false,
+              "dependsOn": [
+                "CH-N5",
+                "CH-S6"
+              ],
+              "agentBrief": "Task CH-S7: run the first hillclimbing campaign on the charts skills text, against the integration eval.\nRead the eval section of openalgo.in/charts/roadmap, the harness README (CH-N9), the baseline report (CH-S6), .github/skills/README.md and scripts/check-skills-coverage.mjs.\nThe maintainer runs every scored run (train and test) on the maintainer's account within the campaign cap. You and your agent see train transcripts and verdicts, and only the aggregate test score. You may run train cases on your own account while drafting a patch, but only scored runs decide.\nEach round:\n1. Your agent reads the train failures only and groups them by bucket.\n2. It proposes one patch to one file under .github/skills that fixes one root cause as a general rule. The patch contains no case-specific text, identifiers, numbers or titles.\n3. The patch linter must pass; then the maintainer scores train and test against the baseline and the noise floor.\n4. Keep the patch only if train and test both improve beyond the noise floor and no bucket regresses. Otherwise revert it and log it.\nStop after two or three rounds with nothing kept, or at the cost cap, and write a root-cause note. If failures point at a missing library API, file an issue for a human decision; never change the library during this campaign.\nRules: never read the private test set or ask for test transcripts; npm run skills:coverage stays at 100 percent and every name in the skills exists in dist; name no other product; no emoji, no em or en dashes.\nDone when the kept patches are merged as pull requests, the keep or revert log is in the eval repository, and a report gives the test score with its 95 percent interval before and after, cost per task, flip rate and bucket counts. A flat campaign is a finished campaign."
+            },
+            {
+              "id": "CH-S8",
+              "title": "A bug-fix eval mined from past fixes",
+              "why": "This roadmap depends on contributors fixing defects with agents, but nothing measures whether CLAUDE.md, CONTRIBUTING.md, AGENTS.md and the task card lead an agent to a correct fix. Between 2.5.5 and 2.5.9 there were about 60 fix commits, and about 45 to 50 of them touched tests/. Fewer will pass the check that the test fails on the parent commit, so reaching 30 verified cases may need fix commits from before 2.5.5.",
+              "deliverable": "In the eval repository: a miner that checks, mechanically, that each fix's test fails on the parent commit and passes on the fix. Case skeletons: the parent as an archive without history, the hidden test, and a bug report slot. A registry mirror per case that holds no openalgo-charts version published after the case's parent commit, so the fix cannot be downloaded. 30 verified cases, each with a bug report a person wrote in user terms. A temporal split: train from older releases, and test from the newest, handed to the maintainer for the private repository.",
+              "acceptance": [
+                "Each of the 30 cases has a log showing the hidden test failing on the parent and passing on the fix",
+                "A test proves each case sandbox contains no .git folder and no grader files, and that its mirror serves no openalgo-charts version newer than the parent commit",
+                "One case runs end to end through the harness",
+                "The maintainer approves the bug reports as written in user terms, not copied from commit messages"
+              ],
+              "eval": "builds the bug-fix eval (30 cases, temporal split)",
+              "size": "L",
+              "skills": [
+                "git",
+                "Node scripting",
+                "the repository's test suite"
+              ],
+              "goodFirst": false,
+              "dependsOn": [
+                "CH-N9"
+              ],
+              "agentBrief": "Task CH-S8: a bug-fix eval mined from past fixes in marketcalls/openalgo-charts.\nRead CLAUDE.md (Testing traps: write the regression test, then revert the fix and watch it fail), the harness README (CH-N9), and the output of git log --grep '^fix' in the charts repository.\nGoal, in the eval repository:\n- Scripts that list the fix commits touching tests/. For each one, they check mechanically that the new or changed test fails on the parent commit and passes on the fix, and record the exact test command. Expect about 45 to 50 candidates between 2.5.5 and 2.5.9 and a lower yield after the check; go back before 2.5.5 if you need more.\n- A case skeleton for each verified commit: the parent as an archive with no git history, the hidden test in grader/, and a slot for a bug report.\n- A registry mirror per case that holds no openalgo-charts version published after the parent commit.\n- 30 verified cases, unit-level first. Each has a bug report written in user terms by a person, not the commit message.\n- A temporal split: train from the older releases, test from the newest. Hand the test cases to the maintainer for the private repository.\nRules: no case sandbox may contain history, the fix, the hidden test or a later library version; no account data; name no other product; no emoji, no em or en dashes.\nDone when:\n- each of the 30 cases has a log showing a fail on the parent and a pass on the fix;\n- a test proves the sandbox has no .git folder and no grader files, and the mirror no later version;\n- one case runs end to end through the harness;\n- the maintainer has approved the bug reports."
+            },
+            {
+              "id": "CH-S9",
+              "title": "Every built-in has hand-computed cases",
+              "why": "About 340 hand-computed cases pin built-in values, with every number worked by hand in a comment. A scan found about eleven built-ins that none of the parity or audit files name. For this gate the metric is coverage, not pass rate, since the pass rate stays at 100 percent.",
+              "deliverable": "scripts/indicator-coverage.mjs, which crosses registeredIndicators() with the hand-computed test files and lists each id with its case count. Then one pull request per three uncovered built-ins, adding at least three cases each (including a warmup case and an absent-value case) with the arithmetic in comments.",
+              "acceptance": [
+                "The coverage script lists every registered id and agrees with a manual check of five ids",
+                "For each new set of cases, changing one constant in the indicator makes them fail",
+                "Any defect a case exposes becomes an issue with the failing case, not a code change in this pull request",
+                "npm run verify passes"
+              ],
+              "eval": "extends the hand-computed indicator cases toward every built-in",
+              "size": "M",
+              "skills": [
+                "technical indicators",
+                "careful arithmetic",
+                "TypeScript"
+              ],
+              "goodFirst": false,
+              "dependsOn": [],
+              "agentBrief": "Task CH-S9 in marketcalls/openalgo-charts: find out which built-ins lack hand-computed cases, then add cases for them three at a time.\nRead tests/parity-momentum.test.ts (the convention: every number is worked by hand in a comment and never read back from the code), the other tests/parity-*.test.ts and tests/indicator-audit-*.test.ts files, and registeredIndicators in src/model/indicator-registry.ts.\nGoal:\n1. scripts/indicator-coverage.mjs: from the built dist, list every registered indicator id with the number of hand-computed cases that name it across the test files, and list the ids with fewer than three.\n2. Then open one pull request per three uncovered built-ins. Add at least three cases for each, including a warmup case and an absent-value case, worked from the published definition with the arithmetic in comments.\nBefore adding cases, show me the coverage output and check five ids by hand.\nRules: never derive an expected value by running the indicator; no change under src/ (if a case exposes a defect, stop and open an issue with the failing case); no new dependency; name no other product; no emoji, no em or en dashes.\nDone when the script agrees with your manual check, changing one constant in each covered indicator makes its new cases fail (show it, then restore), and npm run verify passes."
+            }
+          ]
+        },
+        {
+          "id": "soon-access",
+          "title": "Usable by more people",
+          "outcome": "The chart works for people who use assistive technology and on the phones and tablets traders carry, and Indian number formats on the series axes are one tested recipe away.",
+          "measure": "an accessibility audit is done with at least three assistive-technology users (or the gap is stated on the page if they cannot be found) and every finding is triaged; bar reading from the keyboard passes in three engines; the lakh and crore axis recipe has a passing browser test; and at least three real devices are on record.",
+          "tasks": [
+            {
+              "id": "CH-S10",
+              "title": "An accessibility audit with people who use assistive technology",
+              "why": "The chart exposes a role, a label and one live summary, and the widget has strong ARIA support and contrast checks. But every check is automated, and nothing records testing with people who rely on a screen reader, the keyboard or magnification.",
+              "deliverable": "Sessions with at least three people who use assistive technology daily, run on a bare chart and on the widget from a script the agent drafts and the maintainer approves. Each finding is filed as an issue with a severity. A page, website/pages/docs/accessibility.mdx, says what was tested, on which version, what works and what does not, with no personal data. If three participants cannot be found within eight weeks of claiming, the page states how many sessions ran and what was not tested, and the task closes with that gap on record.",
+              "acceptance": [
+                "Each session is summarised as notes taken with the participant's consent, or the page states the gap",
+                "Every finding is an issue labelled needs human or with an area label",
+                "npm --prefix website run build passes and the page appears in the docs navigation"
+              ],
+              "eval": "none (human evidence)",
+              "size": "M",
+              "skills": [
+                "accessibility testing",
+                "access to participants",
+                "technical writing"
+              ],
+              "goodFirst": false,
+              "dependsOn": [],
+              "agentBrief": "Task CH-S10 in marketcalls/openalgo-charts: run an accessibility audit with people who use assistive technology every day.\nThis task needs people; your agent helps you prepare and write up. Read website/pages/docs/interactions.mdx and keyboard-shortcuts.mdx, website/pages/docs/widget.mdx, and the chart's live region in src/core/chart.ts (read only).\n1. With your agent, draft a session script. It covers tasks on a bare chart page and on the widget demo: find the latest price, read the last five bars, add an indicator, change the interval, draw a line and remove it, and move between charts in a grid. It also says what to observe, and includes a consent note. Post it on the issue for the maintainer to approve.\n2. Run sessions with at least three people: a desktop screen reader user, a phone screen reader user, and a keyboard-only or screen magnification user. Record notes, not identities. If you cannot find three people within eight weeks, run what you can and say so.\n3. File each finding as an issue with steps, expected result, actual result and severity.\n4. Write website/pages/docs/accessibility.mdx: what was tested, on which version, what works and what does not, and any gap in who was tested, with links to the issues.\nRules: no personal data anywhere; no change under src/; name no other product; no emoji, no em or en dashes.\nDone when the sessions are summarised (or the gap is stated), every finding is an issue, and npm --prefix website run build passes with the page in the docs navigation."
+            },
+            {
+              "id": "CH-S11",
+              "title": "Read the chart bar by bar from the keyboard",
+              "why": "Today the arrow keys pan: ArrowLeft and ArrowRight are panLeft and panRight in the default keymap, and Home is resetScale. A screen reader user cannot learn a bar's date, open, high, low, close or volume. Users can rebind keys in the keymap editor, so bar reading has to be a command in that keymap, not a fixed key. The one live announcement is hardcoded English.",
+              "deliverable": "A new ShortcutManager command that enters bar-reading mode, listed and rebindable in the keymap editor, with a default binding approved on the issue that collides with no default or reserved combination. In the mode, Left and Right move a focus bar and announce its values through the existing live region, Home and End jump to the first and last loaded bar, and Escape leaves the mode and gives the arrow keys back to their bound commands. The announcement comes from a formatter the host can replace. Keyboard input already runs through _runShortcut in src/core/chart-input.ts; if a change in src/core/chart.ts is still needed, it is written up for the maintainer, its only writer. The public option is approved on the issue first, and the bytes decide the tier: base only if the feature costs under 0.5 kB Brotli, otherwise the widget. website/pages/docs/keyboard-shortcuts.mdx documents the command. Where findings from CH-S10 conflict with this plan, the findings win.",
+              "acceptance": [
+                "A new spec, added to the widget-loading-* testMatch in playwright.config.ts, enters the mode, presses Right three times and reads three announcements in chromium, firefox and webkit",
+                "The announced values match the bars from the main series' getData(), and after Escape the arrow keys pan again",
+                "Rebinding the command in the keymap editor moves the mode to the new combination",
+                "npm run size and npm run shake are pasted, any base growth is under 0.5 kB Brotli, and npm run verify passes"
+              ],
+              "eval": "keeps green the three-engine browser suite",
+              "size": "M",
+              "skills": [
+                "TypeScript",
+                "ARIA live regions",
+                "Playwright"
+              ],
+              "goodFirst": false,
+              "dependsOn": [],
+              "agentBrief": "Task CH-S11 in marketcalls/openalgo-charts: read the chart bar by bar from the keyboard.\nRead CLAUDE.md (Keep the code lean; Concurrency), src/input/shortcuts.ts (DEFAULT_KEYMAP and the reserved combinations), _runShortcut in src/core/chart-input.ts, the live region and its summary in src/core/chart.ts (read only), website/pages/docs/keyboard-shortcuts.mdx and interactions.mdx, playwright.config.ts (projects), and any findings from CH-S10.\nGoal: a new ShortcutManager command that enters bar-reading mode. It appears in the keymap editor and can be rebound. Propose its default binding on the issue; it must collide with no default or reserved combination. While the mode is on:\n- Left and Right move a focus bar and announce its date, open, high, low, close and volume through the existing live region;\n- Home and End jump to the first and last loaded bar;\n- Escape leaves the mode and gives the arrow keys back to their bound commands (pan by default).\nThe text comes from a formatter the host can replace, so it can be localised. Put the mode and the announcer in a new module, reached through the existing shortcut path. If you still need a change in src/core/chart.ts, describe it in the pull request instead of editing the file; I am its only writer. Propose the public option on the issue and wait for approval before adding it.\nMeasure first: if the feature adds more than 0.5 kB Brotli to the base, it belongs in the widget tier instead.\nBefore writing it, add a Playwright spec that enters the mode, presses Right three times and expects three announcements. Add it to the widget-loading-* testMatch in playwright.config.ts (and to the chromium project's testIgnore, as vue-integration is) so it runs once in each of chromium, firefox and webkit. Show me it failing.\nRules: no new dependency; no public .d.ts change beyond the approved option; reuse the existing bar lookup helpers; name no other product; no emoji, no em or en dashes; never raise a budget or publish.\nDone when the spec passes in three engines, the announced values match getData() on the main series, rebinding works, Escape restores panning, keyboard-shortcuts.mdx documents the command, and npm run verify passes. Paste npm run size, npm run shake, and lines added and removed."
+            },
+            {
+              "id": "CH-S12",
+              "title": "Lakh and crore on the series axes: a tested recipe",
+              "why": "The library's default market is India, yet volume compaction uses only K, M and B and the base time axis uses English month names. Hosts can already localise the series axes through priceFormatter and timeFormatter, so a tested recipe costs no library bytes. A recipe cannot reach three other places that compact numbers with K, M and B: indicator legend values (src/model/indicator-instance.ts), the measure tool (src/draw/tools.ts) and the footprint (src/profile/footprint-primitive.ts).",
+              "deliverable": "examples/axis-locale/ with Intl-based price and time formatters (Hindi month names as the sample) and a volume formatter in lakh and crore for the series axes, plus a recipe page, website/pages/docs/axis-localization.mdx, that shows the same code and says plainly that legend values, the measure tool and the footprint still use K, M and B. Those three are listed on the issue for a maintainer decision (for example, one opt-in number formatter). Out of scope: any library option.",
+              "acceptance": [
+                "Unit tests pass for the formatters, including 1,50,000 as 1.5 L, 2,50,00,000 as 2.5 Cr, and the boundaries at 1 L and 1 Cr",
+                "A Playwright spec, added to the widget-loading-* testMatch in playwright.config.ts, loads the example in chromium, firefox and webkit and, through a wrapper around the formatters, confirms that the chart requested and received lakh or crore and Hindi month labels",
+                "npm run size shows no tier change, and npm --prefix website run build passes"
+              ],
+              "eval": "keeps green the website checks, with no tier change",
+              "size": "S",
+              "skills": [
+                "JavaScript",
+                "Intl number and date formats",
+                "Indian number notation"
+              ],
+              "goodFirst": true,
+              "dependsOn": [],
+              "agentBrief": "Task CH-S12 in marketcalls/openalgo-charts: a tested recipe for Indian number formats and localised month names on the series axes.\nRead website/pages/docs/constants.mdx (volume compaction), website/pages/docs/series-and-styling.mdx, the priceFormatter and timeFormatter options in src/core/chart-types.ts (read only), examples/vue for the example layout, and playwright.config.ts (projects).\nGoal: examples/axis-locale/ with:\n- an Intl-based priceFormatter and timeFormatter, with Hindi month names as the sample;\n- a volume formatter in lakh and crore for the series axes (for example, 1,50,000 shows as 1.5 L and 2,50,00,000 as 2.5 Cr).\nAdd a recipe page, website/pages/docs/axis-localization.mdx, that shows the same code and says that indicator legend values, the measure tool and the footprint still use K, M and B. List those three places on the issue for my decision. The library does not change.\nBefore writing the formatters, write unit tests for them, including the boundaries at 1 L and 1 Cr, and show me they fail.\nRules: no change under src/; no new dependency; example bars come from a seeded random walk, never a sine wave; name no other product; no emoji, no em or en dashes.\nDone when:\n- the unit tests pass;\n- a Playwright spec, added to the widget-loading-* testMatch in playwright.config.ts, loads the example in chromium, firefox and webkit and, through a wrapper around the formatters, confirms the chart received lakh or crore and Hindi month labels;\n- npm run size shows no tier change;\n- npm --prefix website run build passes."
+            },
+            {
+              "id": "CH-S13",
+              "title": "Real phones and tablets on record",
+              "why": "Every automated test runs a desktop engine with emulated viewports. COMPATIBILITY.md notes that WebKit automation does not prove Safari on a real device, and the mobile docs name no real device. Traders use OpenAlgo from their phones.",
+              "deliverable": "A checklist page, website/pages/docs/device-checks.mdx, drafted with an agent. It covers pinch, pan, drawing and moving a trend line, each mobile sheet, the tablet layout in auto mode, a grid of four charts, and a minute of live updates. The page has a results table filled in by people who ran the checklist on their own devices, and each failed step is filed as an issue with a screenshot or screen recording. One device per pull request is fine.",
+              "acceptance": [
+                "npm --prefix website run build passes and the page appears in the docs navigation",
+                "Across the horizon, the table has rows for at least a low-end Android phone, an iPhone and an iPad, each giving device, OS, browser, device pixel ratio, backend, library version and date",
+                "Every failed step links an issue"
+              ],
+              "eval": "none (human evidence from real devices)",
+              "size": "S",
+              "skills": [
+                "access to a real phone or tablet",
+                "Markdown"
+              ],
+              "goodFirst": true,
+              "dependsOn": [],
+              "agentBrief": "Task CH-S13 in marketcalls/openalgo-charts: put real phones and tablets on record.\nRead website/pages/docs/mobile.mdx, COMPATIBILITY.md (the runtime boundary) and website/pages/docs/_meta.ts.\nYour agent drafts; you run the checks on real devices.\n1. With your agent, write website/pages/docs/device-checks.mdx.\n   It has a numbered checklist:\n   - open the widget demo;\n   - pinch to zoom, and pan;\n   - draw a trend line and move it;\n   - open and close each mobile sheet;\n   - on a tablet, confirm the desktop layout in auto mode;\n   - open a grid of four charts;\n   - watch one minute of live updates on the live demo and note any stutter.\n   It also has a results table with these columns: device, OS, browser, device pixel ratio, backend, library version, date, result.\n2. Run the checklist on your own devices. The horizon needs at least three rows: a low-end Android phone, an iPhone and an iPad. One device per pull request is fine.\n3. File each failed step as an issue with a screenshot or screen recording, and link it from the table.\nRules: no change under src/; no personal data in screenshots; name no other product; no emoji, no em or en dashes.\nDone when npm --prefix website run build passes, the page appears in the docs navigation, and your device row is filled in with links to any issues."
+            }
+          ]
+        },
+        {
+          "id": "soon-adopters",
+          "title": "Kits for the next adopter",
+          "outcome": "A broker or platform can test its own feed, start from a tested framework example, name its own symbols in chart expressions and follow one go-live guide, without us writing vendor adapters.",
+          "measure": "the feed conformance kit runs in a scratch project under node:test; a tested React example runs in three engines; hosts can declare hyphenated symbols to the expression parser; and the adoption guide has been reviewed by someone who has integrated a broker or platform.",
+          "tasks": [
+            {
+              "id": "CH-S14",
+              "title": "A feed conformance kit for any host's adapter",
+              "why": "The adapter contract in tests/conformance checks statuses, duplicates, repairs, and invalid and provider-error payloads. It is the best test a host could run against its own feed, but it is not published, it imports source paths, and it leans on vitest's fake timers (useFakeTimers, setSystemTime, advanceTimersByTimeAsync, and getTimerCount for the teardown check) and deep matchers. Vendor adapters remain the host's job; the kit is how we help with them.",
+              "deliverable": "kit/feed-conformance/, a copy-in folder excluded from the npm package, so it adds zero runtime bytes. It contains the contract rewritten against the public types. It takes an assert function, a deepEqual and a clock adapter (install, set time, advance asynchronously, count pending timers), so it runs under any test runner. This repository's own conformance test runs through the kit with a vitest adapter, so the two cannot drift. kit/ is typechecked and linted. Docs explain how to copy it in. Out of scope: a separately published package, which would be a new release train.",
+              "acceptance": [
+                "npx vitest run tests/adapter-conformance.test.ts passes through the kit, with a vitest adapter for the clock and deepEqual",
+                "A copy of the kit in a scratch project using node:test and its mock timers passes against a reference adapter",
+                "A broken adapter fixture that skips duplicate repair fails with a named check, and one that leaves a timer running fails the teardown check",
+                "kit/ is in the tsconfig include list and the lint run, npm pack --dry-run lists no kit file, and npm run verify passes"
+              ],
+              "eval": "keeps green the feed adapter contract, which then becomes the grader for adapter tasks in the integration eval",
+              "size": "M",
+              "skills": [
+                "TypeScript",
+                "testing",
+                "data feeds"
+              ],
+              "goodFirst": false,
+              "dependsOn": [],
+              "agentBrief": "Task CH-S14 in marketcalls/openalgo-charts: publish the feed adapter contract as a copy-in kit.\nRead docs/adapter-conformance.md, tests/conformance/adapter-contract.ts, controlled-transport.ts and reference-adapters.ts, tests/adapter-conformance.test.ts (its fake timers and the getTimerCount teardown check), COMPATIBILITY.md (host responsibilities), tsconfig.json, the ESLint config and package.json (files).\nGoal: kit/feed-conformance/, a folder a host copies into its own tests. It holds the contract rewritten against the public types exported by openalgo-charts (no src/ paths). It takes three things from the host's runner: an assert function, a deepEqual, and a clock adapter that can install a fake clock, set the time, advance timers asynchronously and count pending timers. Write a vitest adapter for this repository's own test, which then runs through the kit so the two cannot drift. Add kit/ to the tsconfig include list and to lint. Document copy-in use in docs/adapter-conformance.md and on a website page.\nOut of scope: a separately published package, vendor adapters, and any runtime code.\nBefore moving code, add a broken adapter fixture that skips duplicate repair, and show me today's contract failing it.\nRules: no new dependency; no change to the library's runtime or public .d.ts; name no other product; no emoji, no em or en dashes; never publish.\nDone when:\n- npx vitest run tests/adapter-conformance.test.ts passes through the kit;\n- a copy of the kit in a scratch project using node:test and its mock timers passes against a reference adapter;\n- the broken fixtures fail with named checks (duplicate repair, and a timer left running);\n- npm pack --dry-run lists no kit file;\n- npm run verify passes."
+            },
+            {
+              "id": "CH-S15",
+              "title": "A tested React example",
+              "why": "website/pages/docs/frameworks.mdx covers six frameworks, but only Vue has a tested example (examples/vue with tests/e2e/vue-integration.spec.ts). React lifecycle mistakes (a double mount in development, missed teardown, resize) are among the first traps an integration eval hits. React 19 on npm ships CommonJS only, so unlike Vue's browser build it cannot be imported by a plain ES module page without a bundling step.",
+              "deliverable": "examples/react/ on the Vue pattern: a hook and a component written with createElement (the JSX form stays in frameworks.mdx), bundled for the test by a small rollup config and one npm script. This card approves react, react-dom, @rollup/plugin-node-resolve and @rollup/plugin-commonjs as dev dependencies only, beside the rollup already in devDependencies. A three-engine Playwright spec is added to the widget-loading-* testMatch as vue-integration is. Next.js and other framework examples follow the same card once this one lands.",
+              "acceptance": [
+                "tests/e2e/react-integration.spec.ts mounts twice in strict mode, switches symbol and unmounts in chromium, firefox and webkit, and finds no leaked listeners or canvases",
+                "The example bundle builds from a clean checkout with one npm script, and npm pack --dry-run shows the package contents unchanged",
+                "npm run size shows no tier change, and npm run verify passes"
+              ],
+              "eval": "keeps green the three-engine browser suite; the example becomes a reference for integration eval cases",
+              "size": "M",
+              "skills": [
+                "React",
+                "TypeScript",
+                "Playwright",
+                "rollup"
+              ],
+              "goodFirst": true,
+              "dependsOn": [],
+              "agentBrief": "Task CH-S15 in marketcalls/openalgo-charts: a tested React example, following the pattern of the Vue one.\nRead website/pages/docs/frameworks.mdx (the React section), examples/vue/, tests/e2e/vue-integration.spec.ts and how playwright.config.ts runs it (the chromium project's testIgnore and the widget-loading-* testMatch), the existing rollup config, and .github/skills/openalgo-charts/references/pitfalls.md (lifecycle).\nGoal: examples/react/ with a hook and a component that:\n- create the chart on mount;\n- handle resize and theme;\n- subscribe to a live feed;\n- switch symbol;\n- remove everything on unmount.\nWrite them with createElement so no JSX transform is needed, and keep the JSX form in frameworks.mdx, linking the example from there. React 19 on npm is CommonJS only, so bundle the example for the test with a small rollup config using @rollup/plugin-node-resolve and @rollup/plugin-commonjs, built by one npm script before the spec runs. This card approves react, react-dom and those two plugins as dev dependencies only.\nBefore writing the component, write tests/e2e/react-integration.spec.ts. It mounts twice (strict mode), switches symbol, unmounts, and checks that no listeners or canvases remain. Register it the way vue-integration is registered, so it runs once in each of chromium, firefox and webkit. Show me it failing.\nRules: no other new dependency; no change under src/; bars from a seeded random walk; name no other product; no emoji, no em or en dashes; never publish.\nDone when the spec passes in chromium, firefox and webkit, the bundle builds from a clean checkout, npm pack --dry-run shows the package contents unchanged, npm run size shows no tier change, and npm run verify passes."
+            },
+            {
+              "id": "CH-S16",
+              "title": "An adopting-in-production guide",
+              "why": "The repository presents itself to brokers and trading platforms, but the facts needed to go live are spread across COMPATIBILITY.md, SECURITY.md, the performance and operations page, the instruments page and the adapter conformance docs. No single checklist exists.",
+              "deliverable": "website/pages/docs/adopting-in-production.mdx, a go-live checklist. It covers what the host supplies (transport, symbol resolution, session metadata); the credential boundary (a backend the broker owns sits between the browser and the credentials); testing in sandbox mode or analyzer mode before live orders; bounded history per device class, with the published numbers; pinning a version and testing an upgrade with a consumer harness; rollback, with the saved-state notes from CH-N2; and what support means. Each fact links its source rather than being restated.",
+              "acceptance": [
+                "npm --prefix website run build passes and the page appears in the docs navigation",
+                "Every claim links the file or page it comes from",
+                "A person who has integrated a broker or trading platform reviews the pull request, and their comments are resolved",
+                "The product-name check and a search for em and en dashes find nothing in the page"
+              ],
+              "eval": "none",
+              "size": "M",
+              "skills": [
+                "technical writing",
+                "trading platform experience"
+              ],
+              "goodFirst": false,
+              "dependsOn": [],
+              "agentBrief": "Task CH-S16 in marketcalls/openalgo-charts: one guide for a broker or platform taking the library to production.\nRead COMPATIBILITY.md, SECURITY.md (supported versions and the broker-owned backend), website/pages/docs/performance-and-operations.mdx, instruments.mdx, openalgo-compatibility.mdx, upgrading.mdx (the rollback section), docs/adapter-conformance.md and docs/browser-endurance.md.\nGoal: website/pages/docs/adopting-in-production.mdx, a go-live checklist covering:\n- what the host supplies (transport, symbol resolution, session metadata);\n- the credential boundary;\n- testing in sandbox mode or analyzer mode before live orders;\n- bounded history per device class, with the published numbers;\n- pinning a version, and testing an upgrade with a consumer harness like the OpenAlgo one;\n- rollback, and what an older build does with newer saved documents;\n- what support means.\nLink each fact to its source page instead of restating it.\nRules: no change under src/; for simulated trading, say sandbox mode or analyzer mode and use no other term; name no other product, broker or platform; no emoji, no em or en dashes.\nDone when npm --prefix website run build passes with the page in the docs navigation, every claim links its source, and a person who has integrated a broker or platform has reviewed the pull request and had their comments resolved."
+            },
+            {
+              "id": "CH-S17",
+              "title": "Hosts can declare hyphenated symbols in chart expressions",
+              "why": "Issue #16 was closed after OpenAlgo fixed its own side (openalgo#2084). The library's expression parser still reads a hyphenated symbol as a subtraction, because SYM_BODY in src/transform/expression.ts has no '-'. Hosts call isPlainSymbol before parseExpression (OpenAlgo does, in its symbol search and its expression feed), and neither function takes options today. The maintainer proposed on the issue a hook through which the host says which names exist.",
+              "deliverable": "An optional options argument with knownSymbol(name) on both parseExpression and isPlainSymbol. When a run of symbol characters joined by '-' is a known symbol, it is one instrument; otherwise '-' stays a subtraction, exactly as today. The change stays in the transform tier and is documented in website/pages/docs/transforms.mdx and the skills reference. The additive .d.ts change is approved by this card, following the issue. Out of scope: any list of symbols inside the library.",
+              "acceptance": [
+                "Unit tests with a made-up symbol ABC-DEF fail before the change and pass after it, including isPlainSymbol('ABC-DEF', { knownSymbol }) returning true",
+                "Without the option, parseExpression and isPlainSymbol return exactly what they return today for ABC-DEF",
+                "npm run size shows only the transform tier changing, with the bytes stated",
+                "npm run verify and npm run skills:coverage pass"
+              ],
+              "eval": "keeps green npm run verify and the transform expression tests",
+              "size": "S",
+              "skills": [
+                "TypeScript",
+                "parsers"
+              ],
+              "goodFirst": false,
+              "dependsOn": [],
+              "agentBrief": "Task CH-S17 in marketcalls/openalgo-charts: let the host say which hyphenated names are symbols, so the chart expression parser reads them as one instrument (issue #16).\nRead CLAUDE.md, CONTRIBUTING.md, issue #16 with its comments, src/transform/expression.ts (SYM_BODY, the tokenizer, parseExpression and isPlainSymbol) and website/pages/docs/transforms.mdx. Hosts call isPlainSymbol before parseExpression, so both need the option.\nGoal: an optional options argument, { knownSymbol?: (name: string) => boolean }, on parseExpression and on isPlainSymbol. When a run of symbol characters joined by '-' is a known symbol, it is one instrument. Otherwise '-' stays a subtraction, exactly as today. Out of scope: any list of symbols inside the library.\nBefore changing code, write unit tests with a made-up symbol such as ABC-DEF that fail for this reason, including isPlainSymbol('ABC-DEF', { knownSymbol }) expected to be true. Run them and show me the failures. Also test that without the option both functions return exactly what they return today.\nRules: no new dependency; the only public .d.ts change allowed is this optional argument on these two functions; bytes only in the transform tier; extend the existing tokenizer, never add a second one; do not touch src/core/chart.ts or src/core/pane.ts; name no other product; no emoji, no em or en dashes; never skip or weaken a test, raise a budget or cap, or publish.\nDone when npm run verify and npm run skills:coverage pass, and the docs and the skills reference describe the option. Paste Brotli bytes per tier before and after (npm run size), npm run shake, and lines added and removed."
+            }
+          ]
+        },
+        {
+          "id": "soon-hardening",
+          "title": "Hardening",
+          "outcome": "Untrusted input cannot crash a parser, and the writing rules are checked by a script instead of by memory.",
+          "measure": "seeded fuzz tests cover all six kinds of input SECURITY.md names (bar data, WebSocket frames, broker responses, saved chart state, clipboard payloads and restored drawings); the writing checker replaces the product-name grep in CI and scans src, tests, scripts, docs, examples, the website and .github; and no budget rose during the horizon without a measured need stated in the changelog.",
+          "tasks": [
+            {
+              "id": "CH-S18",
+              "title": "Writing rules checked by a script",
+              "why": "CI checks two product names today, with a grep over src and tests. The other writing rules (no emoji, no em or en dashes, and the user-interface wording the maintainer uses across OpenAlgo) are not machine-checked, and that wording rule is not yet written in CLAUDE.md. About 227 lines in 57 source files and 68 lines in 26 test files carry dashes. Some are not prose: two base error messages (in src/model/indicator-registry.ts and src/model/chart-type-registry.ts), and a dash painted on the canvas as the placeholder for a missing value in the Buy and Sell quantity chip (base) and in the footprint (profile tier). Some alert wording is also a stored value and a public type, and its widget message keys are already scheduled for removal in 3.0.0, so a blind rewrite would break saved alerts.",
+              "deliverable": "First, on the issue, the maintainer writes the user-interface wording rule into CLAUDE.md and decides what replaces the missing-value placeholder. Then scripts/check-writing.mjs replaces the grep step in ci.yml and runs in npm run verify. It scans src, tests, scripts, website/pages, docs, examples and .github for product names from an encoded list (the maintainer supplies it on the issue, so the file names nobody in plain text), em and en dashes, emoji, and the wording rule in user-interface strings. Identifiers, stored values, public types and names on the Deprecated APIs list are exempt. The pull request cleans up every other finding except in src/core/chart.ts and src/core/pane.ts, whose lines go in a shrink-only allow file the maintainer clears.",
+              "acceptance": [
+                "One fixture per rule fails the checker, master passes it, and a product name in tests/ is still caught",
+                "The public API report (CH-N8) shows no change, and no stored value or scheduled message key changes",
+                "Render parity shows zero changed pixels, or each changed glyph or label follows the maintainer's decision and is listed with before and after screenshots",
+                "npm run size states the bytes per tier that changed with the error text, and npm run verify passes"
+              ],
+              "eval": "keeps green render parity and npm run verify",
+              "size": "M",
+              "skills": [
+                "Node scripting",
+                "regular expressions",
+                "careful editing"
+              ],
+              "goodFirst": false,
+              "dependsOn": [
+                "CH-N8"
+              ],
+              "agentBrief": "Task CH-S18 in marketcalls/openalgo-charts: check the project's writing rules with one script, and clean up what it finds. Start only after I have added the user-interface wording rule to CLAUDE.md and decided the missing-value placeholder on the issue.\nRead CLAUDE.md (writing rules and the new wording rule), .github/workflows/ci.yml (the product-name step, which scans src and tests), COMPATIBILITY.md (Deprecated APIs), src/alerts/types.ts and src/alerts/document.ts (alert states are stored values), and the encoded word list I post on the issue.\nGoal: scripts/check-writing.mjs. It scans src, tests, scripts, website/pages, docs, examples and .github for four things:\n- product names from the encoded list, stored encoded so the file names nobody in plain text;\n- em and en dashes;\n- emoji;\n- the wording rule in user-interface strings.\nIt exempts identifiers, stored values, public types and names on the Deprecated APIs list. It replaces the grep step in ci.yml and runs in npm run verify. Then fix every finding, except in src/core/chart.ts and src/core/pane.ts; their lines go in scripts/writing-allow.json, which may only shrink, and I will clear those. The canvas placeholder for a missing value (the Buy and Sell quantity chip, and the footprint) changes only as I decided on the issue.\nBefore the cleanup, run the checker on master and show me its counts by rule and folder.\nRules: no new dependency; rewrite each sentence with a comma, colon, parentheses or full stop; change no behaviour, stored value or public type; name no other product; never publish.\nDone when:\n- fixtures for each rule fail the checker, master passes it, and a product name in tests/ is still caught;\n- the public API report shows no change;\n- render parity shows zero changed pixels, or each changed glyph or label is listed with before and after screenshots;\n- npm run size states the bytes per tier that changed;\n- npm run verify passes.\nPaste the summary lines."
+            },
+            {
+              "id": "CH-S19",
+              "title": "Seeded fuzz tests for every kind of untrusted input",
+              "why": "SECURITY.md puts six kinds of input in scope: bar data, WebSocket frames, broker responses, saved chart state, clipboard payloads and restored drawings. None of their parsers has fuzz or property tests, and a parser must never throw past its documented report shape.",
+              "deliverable": "A small seeded generator in the test folder, with no new dependency, that mutates valid documents and feeds them to: bar data through series setData and update; OpenAlgo WebSocket frames; broker responses through mapHistoryResponse and decodeOrder; restoreState; drawings fromJSON and migrateDrawings; clipboard payloads; workspace documents; and alert lists. CI runs a fixed seed; the nightly workflow runs a longer random one. Three pull requests: saved state and drawings first, then feeds and broker responses, then the rest. Crashes are reported privately, as SECURITY.md describes.",
+              "acceptance": [
+                "10,000 seeded inputs per parser run in CI with no throw outside each parser's documented shape, covering all six kinds SECURITY.md names",
+                "A failure prints its seed, and running that seed replays it exactly",
+                "The fuzz tests add under 30 seconds to npm run verify",
+                "npm run verify passes"
+              ],
+              "eval": "extends the unit suite with seeded fuzz tests",
+              "size": "M",
+              "skills": [
+                "TypeScript",
+                "property testing",
+                "a security mindset"
+              ],
+              "goodFirst": false,
+              "dependsOn": [],
+              "agentBrief": "Task CH-S19 in marketcalls/openalgo-charts: seeded fuzz tests for every parser of untrusted input.\nRead SECURITY.md (scope: bar data, WebSocket frames, broker responses, saved chart state, clipboard payloads, restored drawings) and CLAUDE.md, then the parsers: series setData and update; the OpenAlgo WebSocket frame handling in src/feed/openalgo-ws.ts; mapHistoryResponse in src/feed/openalgo-rest.ts and decodeOrder in src/feed/openalgo-trade.ts; restoreState; drawings fromJSON and migrateDrawings; clipboard payloads; workspace documents; alert lists. Note each parser's documented error or report shape.\nGoal: a small seeded generator in the test folder, with no new dependency. It mutates valid documents (drop, duplicate, retype, truncate, deep nesting, huge numbers, NaN, prototype keys) and feeds each parser.\n- Three pull requests: saved state and drawings; then bar data, WebSocket frames and broker responses; then the rest.\n- CI runs a fixed seed with 10,000 inputs per parser; the nightly workflow runs a longer random seed.\nIf you find a crash, stop. Do not open a public issue; send it to me as SECURITY.md describes.\nRules: no change under src/ in these pull requests; no new dependency; name no other product; no emoji, no em or en dashes; never publish.\nDone when every parser handles its inputs with no throw outside its documented shape, all six kinds are covered, a failure prints the seed and replays exactly, the fuzz tests add under 30 seconds to npm run verify, and npm run verify passes."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Later",
+      "window": "Nine to eighteen months after 2.6.0",
+      "goal": "Ship 3.0.0 once its trigger is met. Decide on GPU rendering from real-hardware evidence. Ship widget text in other languages as data files. Extend evals to where the chart meets OpenAlgo's agent and OpenScript. If a second broker or platform comes forward, its integration gaps become issues and task cards here.",
+      "themes": [
+        {
+          "id": "later-major",
+          "title": "3.0.0, when its trigger is met",
+          "outcome": "The scheduled removals ship together in one major release with a migration guide, and OpenAlgo moves with it.",
+          "measure": "every row of the Deprecated APIs table, including the widget-only chrome glyphs deprecated in 2.x, has been removed with a migration entry whose code compiles; OpenAlgo's consumer harness passes on 3.0.0; and the release started only after its trigger was met: OpenAlgo running 2.6 or later in production (an outside milestone) and a final deprecation list.",
+          "tasks": [
+            {
+              "id": "CH-L1",
+              "title": "Deprecate the widget-only glyphs, then remove the 3.0.0 deprecations one row per pull request",
+              "why": "COMPATIBILITY.md schedules removals for 3.0.0, including mapOrder, level.dashed, depth_level, older widget message keys, flags on ChartClickEvent, Chart.renderer, movePriceAxis, PriceAxisState.movable and priceAxisMoved; 2.6.0 adds the string event overloads and the public emit. The chrome icon set is documented public API of the draw tier (chromeIconSvg, and chromeIconIds, which lists every id), the reference host imports it, and it grew to about 110 ids by 2.5.10, many used only by the widget. A draw-only host pays for those glyphs, but they cannot leave draw within 2.x without narrowing a public API; they can be deprecated in a 2.x release and moved in 3.0.0. Removals happen only in a major, each with a migration example.",
+              "deliverable": "First, in a 2.x release: a measurement of what a draw-only import pays for the widget-only chrome glyphs, those ids marked @deprecated naming 3.0.0, and a row added to the Deprecated APIs table; chromeIconIds and chromeIconSvg keep serving every id until then. Then, on the 3.0 branch the maintainer names, one row per pull request: the API removed with its uses, the row moved to a Removed in 3.0.0 table, and a before and after entry in docs/migrating-to-3.md and the website migration page. The glyph row moves the widget-only glyphs into the widget tier. depth_level goes only after the maintainer confirms that OpenAlgo's server no longer sends it. Removals inside src/core/chart.ts are made by its single writer.",
+              "acceptance": [
+                "The public API report shows exactly this row's removal and nothing else (for the 2.x deprecation, no removal at all)",
+                "The after code in the migration entry compiles in a test against the 3.0 branch",
+                "The OpenAlgo consumer harness passes, or its failure is listed in the migration entry for OpenAlgo",
+                "For the glyph row, the draw tier shrinks, the widget tier grows by no more than draw shrank, and tests/e2e/icon-raster.spec.ts shows zero differing pixels in three engines",
+                "Every tier's size is the same or smaller, and npm run verify passes"
+              ],
+              "eval": "keeps green the public API report and the OpenAlgo consumer harness",
+              "size": "S",
+              "skills": [
+                "TypeScript",
+                "API migration"
+              ],
+              "goodFirst": false,
+              "dependsOn": [
+                "CH-N8"
+              ],
+              "agentBrief": "Task CH-L1 in marketcalls/openalgo-charts: finish the 3.0.0 deprecation list and remove it, one row per pull request. Claim one row on the issue.\nRead COMPATIBILITY.md (Deprecated APIs), ARCHITECTURE.md (the rule for major releases), docs/migrating-to-2.md (the tone and shape to copy), website/pages/docs/drawing-tools.mdx (the chrome icon section), src/draw/icons.ts and src/draw/icon-svg.ts, and every use of the API in src, tests, examples, website and .github/skills.\nThe glyph row has two steps:\n- In a 2.x release: measure what an import of openalgo-charts/draw alone pays for the glyphs only the widget uses. Mark those ids @deprecated naming 3.0.0 and add a row to the Deprecated APIs table. chromeIconIds and chromeIconSvg keep serving every id until 3.0.0.\n- On the 3.0 branch: move those glyphs into the widget tier.\nEvery other row, on the 3.0 branch I name:\n- remove the API and its uses;\n- move its row to a Removed in 3.0.0 table;\n- add a before and after entry to docs/migrating-to-3.md and to the website migration page.\nRemove depth_level only after I confirm OpenAlgo's server no longer sends it.\nRules: remove nothing else; add no new API in this pull request; no new dependency; do not touch src/core/chart.ts or src/core/pane.ts unless I name you their writer for this row; name no other product; no emoji, no em or en dashes; never publish.\nDone when:\n- the public API report shows exactly this removal (or no removal, for the 2.x deprecation);\n- the migration entry's after code compiles in a test against the 3.0 branch;\n- the OpenAlgo consumer harness passes, or its failure is listed in the migration entry for OpenAlgo;\n- every tier is the same size or smaller, and for the glyph row draw shrinks with zero differing pixels in tests/e2e/icon-raster.spec.ts;\n- npm run verify passes."
+            }
+          ]
+        },
+        {
+          "id": "later-hardware",
+          "title": "Evidence from real hardware",
+          "outcome": "Decisions about GPU rendering rest on measurements from real GPUs and phones.",
+          "measure": "at least five real devices have bench rows with their spreads, and the maintainer has published a decision, either to stay manual or to switch automatically, that cites those rows.",
+          "tasks": [
+            {
+              "id": "CH-L2",
+              "title": "WebGL2 against Canvas 2D on real GPUs",
+              "why": "The WebGL2 backend's frame time has only been measured on an emulated GPU in CI. Whether to switch to GPU rendering automatically above some visible-bar count should be decided only from real-hardware evidence.",
+              "deliverable": "A bench page that runs the render bench's pan, zoom and tick cells for both backends in the visitor's own browser and prints the results as JSON. A results page, website/pages/docs/gpu-measurements.mdx, with rows from at least three desktops or laptops and two phones. A written recommendation for the maintainer. Out of scope: changing the default backend.",
+              "acceptance": [
+                "Every row states device, OS, browser, GPU, device pixel ratio, backend and library version",
+                "Every cell has five runs with their spread, and the raw outputs are attached",
+                "The recommendation cites only cells whose difference exceeds their spread",
+                "npm --prefix website run build passes"
+              ],
+              "eval": "extends the render bench with real-hardware rows",
+              "size": "M",
+              "skills": [
+                "performance measurement",
+                "access to devices",
+                "WebGL basics"
+              ],
+              "goodFirst": false,
+              "dependsOn": [
+                "CH-S1"
+              ],
+              "agentBrief": "Task CH-L2 in marketcalls/openalgo-charts: measure WebGL2 against Canvas 2D on real GPUs.\nRead docs/performance-notes.md (the webgl2 rows time an emulated GPU), tests/e2e/render-bench.perf.ts, scripts/render-bench.mjs, README.md (what the GPU backend draws) and the noise floor from CH-S1.\nGoal:\n- A bench page that runs the render bench's pan, zoom and tick cells for both backends in the visitor's own browser (desktop or phone) and prints the results as JSON. Reuse the existing bench code; add no dependency.\n- A results page, website/pages/docs/gpu-measurements.mdx, with rows from at least three desktops or laptops (discrete and integrated GPUs) and two phones, five runs per cell, with the spread.\n- A closing recommendation for me: stay manual, or switch automatically above a stated visible-bar count. Cite only cells whose difference exceeds their spread.\nRules: no change to the default backend or to the rendering code under src/; never hand-edit a measured number; name no other product; no emoji, no em or en dashes.\nDone when every row states device, OS, browser, GPU, device pixel ratio, backend and library version, the raw outputs are attached, and npm --prefix website run build passes."
+            }
+          ]
+        },
+        {
+          "id": "later-languages",
+          "title": "Widget text in other languages",
+          "outcome": "A host can show the widget in Hindi without paying bytes for it, and the next language is a data file and a reviewer away.",
+          "measure": "a reviewed Hindi catalog ships as a data file with no tier growing, and a parity test keeps every catalog in step with the widget's message keys.",
+          "tasks": [
+            {
+              "id": "CH-L3",
+              "title": "Widget text as data files, Hindi first",
+              "why": "The widget has a typed translate callback covering more than 300 keys, but it ships only English fallback text. The key set exists only as a type union, WidgetMessageKey, which also admits open-ended schema keys, so there is no runtime list to check a catalog against. Compiling catalogs into the widget would make every host pay for every language.",
+              "deliverable": "Four parts. A build-time script that generates the widget's message key list from the WidgetBuiltinMessage union with the TypeScript compiler, plus the schema keys from the settings schemas, into a JSON file used only by tests; no runtime key array is added to the widget. A catalog format: one JSON file per language in dist/locales, copied at build and never imported by any tier. A parity test for keys and placeholders. A loader recipe in docs/widget-localization.md, and a Hindi catalog drafted with an agent and reviewed by a native speaker who is not the author.",
+              "acceptance": [
+                "The generated key list changes when a message is added to the union, and the parity test fails when a catalog is missing a key, has an extra key or changes a placeholder",
+                "npm run size and npm run shake show no tier change, and npm pack --dry-run lists dist/locales/hi.json",
+                "A spec added to the widget-loading-* testMatch reads three Hindi labels from the widget DOM in chromium, firefox and webkit",
+                "A native Hindi speaker who is not the author approves the pull request"
+              ],
+              "eval": "keeps green the size budgets, and adds a catalog parity test",
+              "size": "M",
+              "skills": [
+                "TypeScript compiler API",
+                "build tooling",
+                "Hindi (reviewer)"
+              ],
+              "goodFirst": false,
+              "dependsOn": [],
+              "agentBrief": "Task CH-L3 in marketcalls/openalgo-charts: widget text in other languages as data files, starting with Hindi.\nRead docs/widget-localization.md, website/pages/docs/widget.mdx, src/widget/localization.ts (WidgetBuiltinMessage, WidgetMessageKey and its schema keys), the settings schemas, package.json (files), playwright.config.ts (projects) and CLAUDE.md (Keep the code lean).\nGoal:\n- A build-time script that uses the TypeScript compiler (already in devDependencies) to list every member of the WidgetBuiltinMessage union, plus the schema keys found in the settings schemas, into a JSON file that only tests read. Never add a runtime array of keys to the widget.\n- A catalog format: one JSON file per language (dist/locales/<lang>.json) holding every key. It is copied into dist at build and never imported by any tier, so no host pays for a language it does not load.\n- A test that fails when a catalog is missing a key, has an extra key, or changes a placeholder.\n- A loader recipe in docs/widget-localization.md: fetch or import the JSON, then pass it to the translate callback.\n- hi.json, drafted with your agent and reviewed by a native Hindi speaker who is not you.\nBefore writing the catalog, write the parity test against an empty hi.json and show me it failing.\nRules: no new dependency; no public .d.ts change; no tier bundle may grow; name no other product; no emoji, no em or en dashes; never publish.\nDone when:\n- the parity test passes, and adding a message to the union makes it fail until the catalog follows;\n- npm run size and npm run shake show no tier change;\n- npm pack --dry-run lists dist/locales/hi.json;\n- a spec added to the widget-loading-* testMatch reads three Hindi labels from the widget DOM in chromium, firefox and webkit;\n- the reviewer has approved the pull request."
+            }
+          ]
+        },
+        {
+          "id": "later-evals",
+          "title": "Evals across products",
+          "outcome": "Evals cover the places where the chart meets OpenAlgo's in-app agent and OpenScript.",
+          "measure": "the joint agent eval has a baseline agreed with OpenAlgo; every overlapping indicator has a cross-engine test or a documented difference; and the integration eval's test set has had its first yearly rotation, with the anchor subset kept.",
+          "tasks": [
+            {
+              "id": "CH-L4",
+              "title": "A joint eval with OpenAlgo's in-app agent",
+              "why": "OpenAlgo's in-app agent already draws on the operator's chart through a contract of draw and clear operations into named groups. Whether it draws what the operator asked for is a production task worth measuring. OpenAlgo owns the agent's prompts and tool descriptions; charts supplies the grader.",
+              "deliverable": "A grader in the eval repository. It loads fixture bars, applies the agent's operations, recomputes the requested levels from the bars, and compares them with the drawing document the chart holds, including requests the contract must reject. It comes with 20 cases: requests written by maintainers, plus requests operators choose to share after a privacy review. OpenAlgo collects no telemetry, and this task adds none.",
+              "acceptance": [
+                "The grader passes 20 references and fails a mutant for each",
+                "A rerun gives identical verdicts",
+                "The OpenAlgo maintainer approves the case set"
+              ],
+              "eval": "builds the joint agent eval; OpenAlgo hillclimbs its own tool descriptions against it",
+              "size": "M",
+              "skills": [
+                "Python or TypeScript",
+                "the chart drawing contract",
+                "evals"
+              ],
+              "goodFirst": false,
+              "dependsOn": [
+                "CH-N9"
+              ],
+              "agentBrief": "Task CH-L4: a joint eval with OpenAlgo's in-app agent, which draws on the operator's chart.\nRead services/agent/chart_contract.py and the agent's chart tools in marketcalls/openalgo; in this repository, read website/pages/docs/drawing-tools.mdx and state.mdx; and read the harness README (CH-N9). OpenAlgo owns the agent's prompts and tool descriptions; this task builds only the grader and the cases.\nGoal, in the eval repository: a grader that:\n1. loads fixture bars into the chart;\n2. applies the draw and clear operations the agent emitted into named groups;\n3. recomputes, from the bars, the levels the request asked for (for example, the previous day's high and low);\n4. compares them with the drawing document the chart holds, including requests the contract must reject.\nWrite 20 cases: requests written by maintainers, plus requests operators choose to share after a privacy review that strips account data. OpenAlgo collects no telemetry, and this task adds none.\nRules: no account data, no credentials, no real orders; synthetic bars from a seeded random walk; name no other product; no emoji, no em or en dashes.\nDone when the grader passes 20 references and fails a mutant for each, a rerun gives identical verdicts, and the OpenAlgo maintainer has approved the case set."
+            },
+            {
+              "id": "CH-L5",
+              "title": "Charts and OpenScript agree on shared indicators",
+              "why": "A study written in OpenScript and a chart built-in of the same name should show the same numbers. OpenScript's numerical audit leaves the wider mapping to chart built-ins as an open item, and a trader who compares the two must not find a difference that nobody has explained.",
+              "deliverable": "A table of the built-ins that overlap an OpenScript library function, with their parameters mapped. Tests here feed the published library vectors to each built-in, with the vectors copied into tests/fixtures and their source commit recorded. Every difference is classed either as a documented default difference or as a defect with an issue.",
+              "acceptance": [
+                "Every overlapping pair has a test or a written reason",
+                "Every defect found has an issue with a failing case",
+                "No comparison was loosened to make it pass, and npm run verify passes"
+              ],
+              "eval": "extends the hand-computed indicator cases with cross-engine vectors",
+              "size": "M",
+              "skills": [
+                "technical indicators",
+                "numerics",
+                "TypeScript"
+              ],
+              "goodFirst": false,
+              "dependsOn": [
+                "CH-S9"
+              ],
+              "agentBrief": "Task CH-L5 in marketcalls/openalgo-charts: make the chart's built-ins agree with OpenScript's library, or say why they do not.\nRead docs/integrating/library-vectors.md, docs/integrating/numerical-audit.md and spec/vectors/library/ in marketcalls/openscript. In this repository, read the indicator docs and scripts/indicator-coverage.mjs (CH-S9).\nGoal:\n- A table of the built-ins that overlap an OpenScript library function, with their parameters mapped (length, source, smoothing).\n- Tests here that feed each vector's inputs to the built-in and compare the outputs. Copy the vectors under tests/fixtures and record their source commit.\n- Each difference classed as either a documented default difference (written in both projects' docs) or a defect (an issue with the failing case).\nRules: no change under src/ in this pull request; no new dependency; never loosen a comparison to make it pass; name no other product; no emoji, no em or en dashes.\nDone when every overlapping pair has a test or a written reason, every defect has an issue, and npm run verify passes."
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "evals": {
+    "intro": "We keep two kinds of measurement apart. Correctness gates are public and deterministic, and they stay at 100 percent: render parity, hand-computed indicator values, incremental parity, the feed adapter contract, the OpenAlgo consumer harness and the bench budgets. Nobody tunes them. Capability evals measure whether an agent can do the real tasks developers and contributors bring, using only our package, skills and docs. Those evals keep headroom, have a public train set and a private test set, and are what we improve against. Graders are programmatic first. An LLM judge is used only for open-ended output, and then with a yes-or-no rubric, never a 1 to 5 scale.",
+    "suites": [
+      {
+        "name": "Render parity (existing gate)",
+        "measures": "The pixels of candles at seven bar spacings and of every series type at device pixel ratios 1 and 2, in Chromium, against the newest release tag the commit descends from. A separate WebGL parity spec compares the webgl2 backend with canvas2d. Drawings are not in render parity yet",
+        "cases": "The render parity and WebGL parity specs, with a baseline built from the release tag. Glyphs and widget pixels are covered by three-engine specs such as icon raster",
+        "grader": "Pixel comparison: zero differing pixels unless a change is approved",
+        "split": "None: a gate, not an eval",
+        "target": "100 percent on every pull request",
+        "surface": "None. Gates are never hillclimbed",
+        "status": "Existing, runs in CI (Chromium)"
+      },
+      {
+        "name": "Indicator values (existing gate)",
+        "measures": "Built-in indicator values, and that the incremental calcTail equals a full calc bar by bar",
+        "cases": "About 340 hand-computed cases, each number worked by hand in a comment; property tests over random histories with gaps and NaN; the browser tail parity spec (Chromium)",
+        "grader": "Exact equality (Object.is for incremental parity)",
+        "split": "None: a gate. Coverage per built-in is the growth metric",
+        "target": "100 percent pass; every built-in with at least three hand-computed cases",
+        "surface": "None",
+        "status": "Existing; coverage map and new cases in Soon (CH-S9)"
+      },
+      {
+        "name": "Feed adapter contract (existing gate)",
+        "measures": "That a feed adapter reports statuses, repairs duplicates, rejects invalid and provider-error payloads, and tears down its timers the way the chart expects",
+        "cases": "Reference adapters for OpenAlgo and the website demo feed, under fake timers",
+        "grader": "The shared contract runner",
+        "split": "None: a gate",
+        "target": "100 percent",
+        "surface": "None",
+        "status": "Existing; published as a copy-in kit in Soon (CH-S14)"
+      },
+      {
+        "name": "OpenAlgo consumer harness (existing gate)",
+        "measures": "The real OpenAlgo /trading app on the packed build, with every API and socket mocked",
+        "cases": "Checks selected by flags: correctness, workspaces, open interest, alerts, templates and more, each flag used only where the host includes that integration",
+        "grader": "Assertions on the app's real series, drawings, feed and replay state",
+        "split": "None: a gate",
+        "target": "Passes in three engines before every minor and major release, with every failure classed as library regression, required consumer migration or flag not applicable",
+        "surface": "None",
+        "status": "Existing; the 2.5.1 to 2.6 dry run in Next (CH-N1)"
+      },
+      {
+        "name": "Render bench and endurance (existing gate)",
+        "measures": "Pan, zoom and live tick at 10,000, 50,000 and 200,000 bars on both backends, plus heap and frame time over long sessions",
+        "cases": "Bench cells with budgets; a nightly engine soak and 30-minute browser endurance run; a release bench against the previous release",
+        "grader": "Lowest p95 of five runs against the budgets; a change counts only if it exceeds the within-session spread",
+        "split": "For optimisation work: the targeted cells are train, and untouched workloads are the held-out test",
+        "target": "Within budget; any claimed gain larger than its noise floor",
+        "surface": "Performance code, one hot path at a time, with a person reviewing every kept change",
+        "status": "Existing; noise floor and 2.6 baseline in Soon (CH-S1), study-list cell in Soon (CH-S2)"
+      },
+      {
+        "name": "Integration eval (new)",
+        "measures": "Whether a developer's agent, given only the published package and our skills, can add a working chart to an app: setup and teardown, streaming updates, indicators, drawings, the widget and persistence",
+        "cases": "20 public train cases and at least 15 private test cases to start, growing toward 40 in total. Sources in order: charts and OpenAlgo issue reports, then traps maintainers judge hard (forming bar, symbol switch, time zones, teardown), then synthetic variants across frameworks",
+        "grader": "Programmatic: install and build, strict typecheck against the published types, a headless page load with no errors, a painted canvas, chart state read after a scripted tick and symbol switch (getState() through the chart instance the task's harness contract exposes, and the main series' getData() for the last bar), and no leaks after mounting twice. No LLM judge",
+        "split": "Public train and private test, stratified by framework and task family. A fixed anchor subset of 10 test cases never rotates; the rest rotates once a year, and retired cases join train",
+        "target": "At baseline the best configuration scores under about 95 percent on test; if it does not, harder human-judged cases are added before any hillclimbing. A kept change raises test beyond the noise floor",
+        "surface": "Skills reference files first, then TSDoc on the public types, then docs pages. Runtime error text comes last, because it costs bytes",
+        "status": "New: harness and grader in Next (CH-N9, CH-N10); train set, test set and baseline in Soon (CH-S5, CH-S6); first campaign in Soon (CH-S7)"
+      },
+      {
+        "name": "Bug-fix eval (new)",
+        "measures": "Whether a contributor's agent, following CLAUDE.md, CONTRIBUTING.md, AGENTS.md and the task card, fixes a real past defect correctly",
+        "cases": "30 verified cases mined from fix commits that added a regression test (about 45 to 50 candidates between 2.5.5 and 2.5.9 before verification, so older releases may be needed), each with a bug report written in user terms by a person",
+        "grader": "The hidden regression test passes, along with the affected unit suite, lint, line caps and size budgets; render parity holds unless the defect was a pixel defect",
+        "split": "Temporal: train from older releases, test from the newest (less likely to be in any model's training data)",
+        "target": "Measured at baseline first; a change is kept only if test rises beyond noise",
+        "surface": "CLAUDE.md (Testing traps, Shipping a change), CONTRIBUTING.md, AGENTS.md and the task card template",
+        "status": "New, in Soon (CH-S8)"
+      },
+      {
+        "name": "Joint agent eval with OpenAlgo (new)",
+        "measures": "Whether OpenAlgo's in-app agent draws on the chart the levels the operator asked for",
+        "cases": "Requests written by maintainers, plus requests operators choose to share after a privacy review; no telemetry",
+        "grader": "Recompute the requested levels from fixture bars and compare them with the drawing document the chart holds, including requests that must be rejected",
+        "split": "Public train and private test",
+        "target": "Set at baseline together with OpenAlgo",
+        "surface": "OpenAlgo's tool descriptions and prompts, owned by OpenAlgo",
+        "status": "New, in Later (CH-L4)"
+      },
+      {
+        "name": "Release review as claims (planned)",
+        "measures": "Each product area, through yes or no claims backed by file and test evidence, instead of a numeric score",
+        "cases": "Claims converted from the release reviewer brief after the 2.6.0 review",
+        "grader": "Reviewer agents answer each claim yes or no with evidence, and a person checks a sample",
+        "split": "None; each reviewer runs twice on the same tag",
+        "target": "Act only on differences larger than the disagreement between two runs",
+        "surface": "None: it measures the library",
+        "status": "Planned, after the 2.6.0 review; run once per minor release"
+      }
+    ],
+    "loop": [
+      "The maintainer approves the cases, the grader and the objective before any model is run on them.",
+      "Validate the grader: it passes every reference solution, fails every deliberately broken one, and gives the same verdict twice. A person reads 20 scored transcripts.",
+      "Run the baseline: three runs per case on train and test, and the baseline twice to measure the noise floor. Check headroom: the best configuration should score under about 95 percent on test. A run counts as an infrastructure error only when the case's reference solution fails the same step in the same environment; those runs are retried once and counted separately.",
+      "Pick one surface to change, cheapest first: skills text, then TSDoc, then docs pages. Library code and the public API are never changed automatically.",
+      "An agent reads the train failures only (transcripts and verdicts), groups them into failure buckets, and proposes one root-cause patch for this round.",
+      "The patch linter checks the patch for case-specific strings, then the maintainer's scored run compares train and test with the baseline and the noise floor in a paired comparison.",
+      "Keep the patch only if train and test both improve beyond noise and no bucket regresses. Revert it if test stays flat (that is overfitting) or if anything regresses.",
+      "Stop after two or three rounds with nothing kept, or when the campaign reaches its cost cap, and write a root-cause note. If the failures point at the library, a person decides what to change.",
+      "Publish the test score with its 95 percent interval, plus cost per task, time per task and flip rate, beside the Benchmarks page. A flat result is published too."
+    ],
+    "guards": [
+      "The test set lives in a private repository, and only the maintainer triggers test runs. The agent doing the hillclimbing sees aggregate test scores, never test transcripts.",
+      "A patch linter rejects any surface change that shares with an eval case an identifier, number or title not found in the published .d.ts files or docs, or any run of eight words. Public API names are allowed, and no failing transcript text reaches the skills.",
+      "Reference solutions, graders and secrets never enter the agent's sandbox. The model loop runs outside the container; the container is built from the packed release without repository history, and its registry mirror holds no library version newer than the case under test.",
+      "A case is admitted because people judge it hard or it came from a real report, and it is admitted before any model runs on it. It is never chosen because today's model fails it.",
+      "At least one agent from another vendor runs on the test set at every baseline, so the text is not tuned to one model's quirks.",
+      "A fixed anchor subset of test cases never rotates, so scores compare across rotations. The rest of the test set rotates once a year, and retired cases join the public train set, because public text reaches future models.",
+      "Correctness gates are never hillclimbed. Public API, options and library behaviour change only by a person's decision on evidence.",
+      "Spend is capped: a campaign stops at its cap, and test-set runs happen once per minor release or when a surface under test changes, never per patch release.",
+      "Small test sets detect only large effects (15 cases give an interval of about plus or minus 25 points), so every published result states its interval."
+    ]
+  },
+  "contribute": {
+    "steps": [
+      "Pick a task on this page. If it is your first, pick a Good first task.",
+      "Find its GitHub issue: every Next task has one, titled with the task id. For a later task, open one with the Roadmap task form. Comment to claim it, and a maintainer assigns it within three working days.",
+      "Newcomers hold one claimed task at a time, and two after two merges. Each repository has at most five claimed tasks at once, so reviews keep up.",
+      "For an M or L task, post your agent's plan on the issue (the files it will touch and the failing test it will write) and wait for a maintainer's go-ahead.",
+      "Work in a fresh branch on your fork. Paste the task's agent brief into your agent; it reads AGENTS.md, CLAUDE.md and the matching skill.",
+      "Write the failing test first, then the change. Revert the change once and watch the test fail.",
+      "Run npm run verify, the focused tests, Playwright in chromium, firefox and webkit for anything that draws, npm run size and npm run shake. Paste the summary lines in the pull request.",
+      "Read every changed line yourself. Open a draft pull request early and mark it ready when the checks pass. Put a two-line changelog note in the description.",
+      "A maintainer reviews in at most two rounds and merges with a merge commit, which keeps the render parity baseline reachable from master. You are credited by your GitHub handle in the release notes.",
+      "If a claim has no update for 7 days (14 for an L task), you get one reminder. After 7 more days the task is released for the next person, and your branch stays for them."
+    ],
+    "agentRules": [
+      "Never publish, tag, create a release, dispatch a workflow or deploy the website. Publishing belongs to the maintainer.",
+      "Do not change the public .d.ts (removing, narrowing or adding) unless the issue approves it first.",
+      "Add no dependency. Runtime dependencies stay at zero, and a new dev dependency needs approval on the card.",
+      "Add nothing to the base engine or the chart-only import unless the card says so, and report Brotli bytes per tier for every change.",
+      "Never skip, delete or weaken a test. Never raise a size budget, line cap or tolerance, accept a new render baseline, or retry a flaky test until it goes green.",
+      "Do not edit src/core/chart.ts or src/core/pane.ts unless the card names you as their writer for that run.",
+      "A spec that must run in three engines is added to the widget-loading-* testMatch in playwright.config.ts; the default chromium project alone is one engine.",
+      "Name no other charting product, trading platform or broker. Copy no code, SVG path, glyph or label from another project. No emoji, no em or en dashes.",
+      "Commit no credentials, keys, account data or orders. Use synthetic data; examples use seeded random walks, never sine waves.",
+      "Never read or paste held-out eval cases, and never claim a check passed without running it.",
+      "Do not reformat or rename code outside the task.",
+      "For simulated trading, say sandbox mode or analyzer mode, and use no other term.",
+      "Never merge. Only a maintainer merges."
+    ],
+    "reviewChecklist": [
+      "The change stays inside the files and scope the card names.",
+      "The regression test fails on the old code: read it for an S task, and run the revert for an M or L task.",
+      "The byte cost per tier and for the chart-only import is stated and justified, and the base is unchanged unless the card allows it.",
+      "There is no duplicate helper, no abstraction with a single caller and no option nobody asked for, and dead code is removed in the same change.",
+      "The public .d.ts is unchanged or the change was approved, and any @deprecated names its removal release.",
+      "Anything that draws looks right in real browsers, not only in assertions, and a new three-engine spec is registered for all three engines.",
+      "Tests assert behaviour, not implementation details.",
+      "The skills reference is updated, and skills coverage stays at 100 percent.",
+      "The work is original, and any ported algorithm names its source and licence.",
+      "The contributor can explain every line. CI passing is necessary, never sufficient."
+    ],
+    "labels": [
+      "roadmap",
+      "horizon: next",
+      "horizon: soon",
+      "horizon: later",
+      "size: S",
+      "size: M",
+      "size: L",
+      "good first issue",
+      "help wanted",
+      "needs human",
+      "needs decision",
+      "eval",
+      "area: rendering",
+      "area: drawings",
+      "area: analysis",
+      "area: shell",
+      "area: engineering",
+      "area: icons",
+      "area: website"
+    ]
+  },
+  "notDoing": [
+    {
+      "item": "Features a plain chart does not use, in the base",
+      "why": "The base engine and the chart-only import carry only what a plain chart needs. Everything else is an opt-in import, and a budget rises only to a measured need stated in the changelog."
+    },
+    {
+      "item": "Vendor data adapters, or an API that imitates another library",
+      "why": "Transport, symbol resolution and session data belong to the host. Instead we publish the feed conformance kit, so any host can prove its own adapter works."
+    },
+    {
+      "item": "A file replay feed example, for now",
+      "why": "The conformance kit, the OpenAlgo adapter and the demo feed cover feeds, and the evals use scripted ticks on fixture bars. We add a replay example when a host or an eval needs one."
+    },
+    {
+      "item": "Moving public exports between tiers within 2.x",
+      "why": "A documented export stays in its tier until the next major. The widget-only chrome glyphs are deprecated in 2.x and move in 3.0.0 (CH-L1)."
+    },
+    {
+      "item": "A CommonJS build",
+      "why": "A second copy of the registries on one page is a correctness bug. A default exports condition covers require() without one."
+    },
+    {
+      "item": "Translation catalogs inside the widget bundle",
+      "why": "Every host would pay for every language. Catalogs ship as data files that a host loads only when it needs them."
+    },
+    {
+      "item": "A plugin loader or marketplace runtime",
+      "why": "The chart type, indicator and drawing registries are the extension model. A loader would add bytes and a security surface that no host has asked for."
+    },
+    {
+      "item": "Framework wrapper packages",
+      "why": "Each published wrapper is another release train to maintain. Tested examples come first, and a package follows only if issues or downloads show demand."
+    },
+    {
+      "item": "Real-time multi-user editing",
+      "why": "It needs a server, identity and conflict resolution, all of which belong to the host. Workspace documents already carry revisions and detect conflicts."
+    },
+    {
+      "item": "Server-side rendering in the library",
+      "why": "No server host has asked, and the one known need for server images runs in Python. Browser export (screenshot, SVG, CSV) already exists, and if a server need appears, a recipe using a headless browser costs no library bytes."
+    },
+    {
+      "item": "Continuous futures stitching",
+      "why": "Closed as not planned (#17): brokers supply the individual contracts."
+    },
+    {
+      "item": "An order and position panel inside the widget",
+      "why": "OpenAlgo already has one. If a second host asks, a slot for the host's own content comes before a built-in panel."
+    },
+    {
+      "item": "GPU rendering for everything",
+      "why": "Text, drawings and primitives stay on Canvas 2D by design. Automatic use of the GPU waits for the real-hardware measurements in CH-L2."
+    },
+    {
+      "item": "Right-to-left widget layout",
+      "why": "No one has asked for it, and it touches most of the widget's styles. We will revisit it when a host needs it."
+    },
+    {
+      "item": "A worker executor or a typed-array data layer, now",
+      "why": "Both are large changes. We build one only if the profile in CH-S2 shows that calculation or the bar layout still dominates after CH-S3 and CH-S4."
+    },
+    {
+      "item": "Automated changes to the library itself",
+      "why": "Eval campaigns change text: skills, docs and briefs. Public API, options and behaviour change only by a person's decision based on evidence, and correctness gates stay at 100 percent."
+    },
+    {
+      "item": "Dates",
+      "why": "We publish horizons and done-when checks. A date we cannot defend helps nobody plan."
+    }
+  ],
+  "realism": "Today one maintainer, working with agents, writes almost every change, and one outside contributor has landed code. We plan for three to six people to land at least one pull request in the first three months after this page goes up, with one or two of them coming back. We expect about four to eight merged outside tasks a month by the third month, and close to none in the first weeks: about six to twelve outside merges across Next.\n\nThat is why Next holds ten tasks and Soon nineteen over six months, and why the harness (CH-N9), the gates (CH-N7) and the bug-fix eval (CH-S8) split into several pull requests. Review takes about an hour for an S task and two for an M, so we budget about five hours of review a week. Maintainer-only work sits outside that budget and gets about five more hours a week: approving eval cases, the private test set and every scored run, the decisions cards hand up, and anything in src/core/chart.ts or src/core/pane.ts. We keep 10 to 15 tasks open at once, about five of them good first tasks, with at most five claimed per repository.\n\nEvery task on a release's critical path has the maintainer as owner or fallback. Two milestones sit outside this project. OpenAlgo's move to 2.6 waits for its own server migration and human testing, so Next is measured as ready for the move, not the move itself. 3.0.0 waits for that move; if it is late, 3.0.0 waits and nothing else in Later does.\n\nEval runs cost money. These are estimates until the first runs replace them with measured cost:\n- A full integration-eval run (35 cases, three runs each) is estimated at 60 to 180 US dollars, and a full bug-fix eval run at 100 to 300.\n- A hillclimbing campaign takes about six full runs (the baseline twice, one run by an agent from another vendor, and train and test for each of three rounds): about 360 to 1,080 US dollars for the integration eval.\n- A release review as claims (two reviewer runs on one tag) is estimated at 50 to 150 US dollars.\n- Caps: one campaign at a time, a campaign stops at 1,100 US dollars, and charts eval spend stops at 1,500 US dollars a month unless the maintainer raises it.\n- Test-set runs and release reviews happen once per minor release or when a surface under test changes, never per patch release.\n- The maintainer's account pays for every scored run. A contributor may run train cases on their own account while drafting a patch, but only scored runs decide whether a patch is kept.\n\nSix weeks after publishing we will count claims, merges, days from claim to merge, review rounds and first-pass CI rate, and resize the next horizon from those numbers."
+}

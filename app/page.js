@@ -139,7 +139,7 @@ export default function Home() {
     { title: "Web Portal", description: "NextJS + ShadcnUI web interface", icon: Globe, url: "https://github.com/marketcalls/openalgo-webpage" },
     { title: "Chrome Plugin", description: "Browser extension for OpenAlgo", icon: Puzzle, url: "https://github.com/marketcalls/openalgo-chrome" },
     { title: "Fast Scalper", description: "High-performance app (Rust + Tauri)", icon: Gauge, url: "https://github.com/marketcalls/fastscalper-tauri" },
-    { title: "OpenAlgo Charts", description: "Dependency-free HTML5 canvas charting engine, 76.52 KB Brotli", icon: LineChart, url: "https://github.com/marketcalls/openalgo-charts" },
+    { title: "OpenAlgo Charts", description: "Dependency-free HTML5 canvas charting engine, 131.68 kB Brotli", icon: LineChart, url: "https://github.com/marketcalls/openalgo-charts" },
     { title: "OpenStatz", description: "Portfolio analytics for quants - Quant Tearsheets", icon: PieChart, url: "https://github.com/marketcalls/openstatz" },
     { title: "OpenAlgo Heatmap", description: "Finviz-style market heatmap (React Component)", icon: LayoutGrid, url: "https://github.com/marketcalls/openalgo-heatmap" },
     { title: "OpenQuest", description: "Realtime Stock Data Aggregator with TradingView Charts", icon: Activity, url: "https://github.com/marketcalls/openquest" },
@@ -166,9 +166,9 @@ export default function Home() {
 
           <div className="reveal reveal-4 mb-12 flex flex-wrap items-center justify-center gap-x-12 gap-y-6">
             {[
-              { icon: Download, value: "4,80,000+", label: t('hero.statDownloads') },
+              { icon: Download, value: "4,85,000+", label: t('hero.statDownloads') },
               { icon: Code2, value: "100%", label: t('hero.statOpenSource') },
-              { icon: Star, value: "2,700+", label: t('hero.statStars') },
+              { icon: Star, value: "2,800+", label: t('hero.statStars') },
             ].map(({ icon: Icon, value, label }) => (
               <div key={label} className="flex items-center gap-3">
                 <Icon className="h-5 w-5 text-on-surface-variant" aria-hidden="true" />

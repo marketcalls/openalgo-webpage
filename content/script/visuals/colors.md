@@ -90,7 +90,7 @@ plot(sma(close, 20), "Basis", rgb(255, 136, 0), width = 2)
 plot(sma(close, 50), "Slow", rgba(0, 150, 255, 0.6))
 ```
 
-Two more are named in the language and not available yet: [[hsl()]], for hue, saturation and lightness, and [[gradient()]], for positioning a value between two colours. Calling either is [OS2020](/script/errors/names-and-types#os2020) in version 0.5.0:
+Two more are named in the language and not available yet: [[hsl()]], for hue, saturation and lightness, and [[gradient()]], for positioning a value between two colours. Calling either is [OS2020](/script/errors/names-and-types#os2020) in version 0.8.0:
 
 ```openscript expect=OS2020
 plot(close, "Close", hsl(200, 80, 50))
@@ -106,7 +106,7 @@ A channel written as a number that is out of range, or not a whole number, is re
 plot(close, "Close", rgb(300, 0, 0))
 ```
 
-A channel computed from data is a different case. It is meant to raise runtime error [OS4009](/script/errors/runtime#os4009), because a colour computed from data that lands at 300 is a bug in the computation. In version 0.5.0 nothing raises OS4009 yet: the engine rounds the channel to a whole number, clamps it to 0 to 255, and the bar carries on. Do not rely on that. Where a computed channel can run past its end, clamp it where you compute it with [[clamp()]], so a reader can see the decision:
+A channel computed from data is a different case. It is meant to raise runtime error [OS4009](/script/errors/runtime#os4009), because a colour computed from data that lands at 300 is a bug in the computation. In version 0.8.0 nothing raises OS4009 yet: the engine rounds the channel to a whole number, clamps it to 0 to 255, and the bar carries on. Do not rely on that. Where a computed channel can run past its end, clamp it where you compute it with [[clamp()]], so a reader can see the decision:
 
 ```openscript
 // How far the close sits above its 20 bar low, in average true ranges,
@@ -137,7 +137,7 @@ plot(sma(close, 50), "Alpha 0.4", withAlpha(aqua, 0.4))
 
 The Opacity control in the settings dialog's Style tab runs the way `withAlpha` does, from 0 (invisible) to 100 (solid), so a user who sets it to 40 sees roughly what `fade(c, 60)` gives. Keep the two directions straight when you tell a user what to change.
 
-Apply `fade` once, to an opaque colour such as a named one. Fading a colour that is already transparent gives different answers in version 0.5.0 depending on where the colour is worked out: in a colour fixed before the first bar the outer fade replaces the inner one, and in a colour computed on a bar the two multiply. To give an exact alpha to a colour that already carries some transparency, use `withAlpha`, which always sets the alpha outright.
+Apply `fade` once, to an opaque colour such as a named one. Fading a colour that is already transparent gives different answers in version 0.8.0 depending on where the colour is worked out: in a colour fixed before the first bar the outer fade replaces the inner one, and in a colour computed on a bar the two multiply. To give an exact alpha to a colour that already carries some transparency, use `withAlpha`, which always sets the alpha outright.
 
 The right amount of transparency depends entirely on what the colour lands on:
 
@@ -215,7 +215,7 @@ Not every surface takes a per-bar colour:
 | `barColor(color)` | Every bar the same | Yes, the usual case |
 | `background(color)` | Every bar the same | Yes, the usual case |
 | `cell(..., textColor, bgColor)` | The cell's colours | Yes: they are read each time the cell is written |
-| `fill(a, b, color, colorUp, colorDown)` | The band's colours | Accepted, but the /trading chart does not draw it in this release: the band takes its first plot's colour at twelve percent instead |
+| `fill(a, b, color, colorUp, colorDown)` | The band's colours | Yes, on a chart that draws a band colour per bar. [Fills](/script/visuals/fills#the-call) says which charts do; on any other the study is refused with [OS6024](/script/errors/data#os6024) |
 | `level(price, title, color)` | The line's colour | No: [OS3003](/script/errors/arguments#os3003) |
 | `signal(text, color)` | The marker's colour | No: [OS3003](/script/errors/arguments#os3003) |
 | `table(..., textColor, bgColor)` | The grid's colours | No: [OS3003](/script/errors/arguments#os3003) |
@@ -229,6 +229,8 @@ level(70, "Overbought", OVERBOUGHT)
 
 Write `fade(red, 40)` in the `level` call instead, or declare a colour input with that default.
 
+The band row is the one that depends on the chart rather than the language. The /trading page in current OpenAlgo releases still runs library 0.5.0, which draws a band given a colour per bar in its first plot's colour at twelve percent.
+
 ## An absent colour
 
 `none` is a valid colour, and passing it is never an error. What it does depends on the surface:
@@ -238,7 +240,7 @@ Write `fade(red, 40)` in the `level` call instead, or declare a colour input wit
 | `barColor` | The candle keeps its own colour |
 | `background` | The bar's column is not shaded |
 | `plot` | The bar is drawn in the plot's own colour from the Style tab. To hide a plot on a bar, make its value `none`, not its colour |
-| `fill` | `none` means the band has no colour of its own, so it takes its first plot's colour at twelve percent |
+| `fill` | `none` written as the band's colour means the band has no colour of its own, so it takes its first plot's colour at twelve percent. A colour computed per bar that is absent on a bar leaves that bar unshaded, on a chart that draws a colour per bar |
 
 For the two paint calls this is how a conditional paint switches itself off, so a script never needs a separate call to clear one:
 
@@ -305,7 +307,7 @@ fill(upper, lower, color = bandColor, opacity = 0.1)
 
 When a plot's colour is a colour input passed by its own name, the plot's colour in the Style tab and the input are one setting, so the user has one value to change rather than two that disagree. A band given the input follows it too, and `opacity` keeps it faint whatever colour the user picks.
 
-Two things break that link, because each turns the colour into a per-bar colour: copying the input into another name (`LINE = bandColor`) and fading it in the call (`fade(bandColor, 45)`). A plot still draws such a colour, but the Style tab no longer changes it; a band in the /trading chart falls back to its first plot's colour; and a `level` or `signal` refuses it. When you want a faded version the user can change, declare it as its own input with a faded default, such as `input(fade(aqua, 45), "Edge colour")`.
+Two things break that link, because each turns the colour into a per-bar colour: copying the input into another name (`LINE = bandColor`) and fading it in the call (`fade(bandColor, 45)`). A plot still draws such a colour, but the Style tab no longer changes it; a band then needs a chart that draws a colour per bar, as [A colour per bar](#a-colour-per-bar) explains; and a `level` or `signal` refuses it, with [OS3003](/script/errors/arguments#os3003) for the copy and [OS3025](/script/errors/arguments#os3025) for the fade. When you want a faded version the user can change, declare it as its own input with a faded default, such as `input(fade(aqua, 45), "Edge colour")`.
 
 See [Inputs](/script/inputs/inputs) for colour inputs and [Settings and style](/script/inputs/settings-and-style) for the rows the settings dialog generates.
 
@@ -320,7 +322,7 @@ See [Inputs](/script/inputs/inputs) for colour inputs and [Settings and style](/
 | [OS3004](/script/errors/arguments#os3004) on an `rgb` call | A channel literal outside 0 to 255, or not whole | Fix the number |
 | A computed channel gives an unexpected colour | The channel ran past its range | `clamp` it where you compute it |
 | [OS3003](/script/errors/arguments#os3003) on a `level` or `signal` colour | The colour was computed, or taken from a name | Write it in the call, or pass an input by its own name |
-| A band ignores the colour you computed for it | The /trading chart does not draw a per-bar band colour | Give the band fixed colours |
+| A band ignores the colour you computed for it, or the study is refused with [OS6024](/script/errors/data#os6024) | The chart takes one band colour per side for the whole run | Give the band fixed colours |
 | The Style tab does not change a plot's colour | The colour is computed per bar, or held in another name | Pass the colour input straight to the plot |
 | [OS2020](/script/errors/names-and-types#os2020) on `hsl` or `gradient` | Both are planned, not yet available | Use `rgb`, or `mix` with a computed weight |
 | The study is invisible on a dark chart | `black` used as a line colour | `gray` or `silver`, or a mid-tone hue |

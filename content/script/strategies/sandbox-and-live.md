@@ -3,16 +3,16 @@ title: Sandbox and live
 description: Deploying a strategy from the Strategies panel in /trading, running it in sandbox trading (analyzer mode in OpenAlgo) first and then live, what the strategy runner needs from a script, and how to pause and stop one safely.
 ---
 
-A backtest says what a strategy would have done. A deployment runs it: a process on the OpenAlgo server executes the same compiled script on each bar as it closes and sends real orders through the platform's own order path. This page covers deploying a strategy from the **Strategies** panel in /trading, running it in sandbox trading (analyzer mode in OpenAlgo) first, what changes when it runs live, what the strategy runner needs from a script in release 0.5.0, and how to pause, stop and restart one without losing track of a position.
+A backtest says what a strategy would have done. A deployment runs it: a process on the OpenAlgo server executes the same compiled script on each bar as it closes and sends real orders through the platform's own order path. This page covers deploying a strategy from the **Strategies** panel in /trading, running it in sandbox trading (analyzer mode in OpenAlgo) first, what changes when it runs live, what the strategy runner needs from a script, and how to pause, stop and restart one without losing track of a position.
 
 ## A strategy ready to deploy
 
-The strategy runner in release 0.5.0 runs a subset of what the backtest runs. This file stays inside it: its quantity is in units, and its stop is a rule the script tests on each close rather than a bracket.
+The strategy runner runs a subset of what the backtest runs. This file stays inside it: its quantity is in units, and its stop is a rule the script tests on each close rather than a bracket.
 
 ```openscript title="EMA cross, deployable"
 version 1
 
-// Written for the 0.5.0 strategy runner: units, and a stop written as a rule
+// Written for the strategy runner: units, and a stop written as a rule
 // rather than exit(), which the runner does not send yet. The costs are for
 // the backtest; a deployment pays whatever the market charges.
 strategy("EMA cross, deployable", overlay = true, precision = 2,
@@ -111,9 +111,9 @@ With more than six deployments, a search box finds one by strategy or instrument
 
 The server does not compile anything. It runs the compiled program the editor stores beside the script each time a save compiles with no errors; a save with errors removes the stored program, so the program always matches the script as saved. Pressing Start on a script with no compiled program is refused in the panel, with a message telling you to open it in the chart and save it once the console shows no errors.
 
-The server runs that program on `openscript`, the Python library of the language, rather than on the engine in your browser. A script that calls something the server's engine does not implement yet is refused when the run loads, and the log names the diagnostic code.
+The server runs that program on `openscript`, the Python library of the language, rather than on the engine in your browser. In current OpenAlgo releases that is version 0.5.0 of the Python library, which does not implement every call the browser's engine has. A script that calls one it does not implement is refused when the run loads, and the log names the diagnostic code. From version 0.6.0 the Python library holds every library entry the browser's engine does.
 
-When a run starts, the runner checks the program before it sends anything. In release 0.5.0 it refuses a script that:
+When a run starts, the runner checks the program before it sends anything. It refuses a script that:
 
 | The script | Why the runner refuses it | What to do |
 |---|---|---|

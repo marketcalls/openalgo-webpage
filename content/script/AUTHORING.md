@@ -174,4 +174,6 @@ cause, for any you do not override; prefer one `{{error:}}` per code.
   npm (JavaScript and TypeScript) and `openscript` on PyPI (Python), both
   Apache 2.0.
 - Be honest about the release: say what is planned rather than implying it
-  works. The package version is 0.5.0.
+  works. The package version is 0.8.0. The /trading page of OpenAlgo ships its
+  own pinned copy of the library, which is still 0.5.0 in current OpenAlgo
+  releases: a sentence about what /trading does must be true of /trading.

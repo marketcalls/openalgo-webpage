@@ -157,7 +157,7 @@ Read the columns, not the rows.
 
 - **Confirmed** is flat for the whole hour and steps once, at 11:30, to the value the 10:30 hour finished at. Everything it shows at 11:00 was knowable at 11:00. It is one hour behind by construction, and that lag is the price of never being wrong about the past.
 - **Developing** moves with the market. At 11:00 it says what the hour has done so far, which is true and useful. It is also a statement about an hour that has not finished: the 11:00 value is not the hour's result, it changes with every price update while the newest bar forms, and a signal built on it at 11:00 can be contradicted by the time the hour closes.
-- **Lookahead** shows 104.0 at 10:30, which nobody could have known at 10:30. On a historical chart this column looks brilliant: every breakout is anticipated. It is the shape of a study that looks perfect on history and loses money when traded.
+- **Lookahead** shows 104.0 at 10:30, which nobody could have known at 10:30. On a historical chart this column looks brilliant: every breakout is anticipated. A backtest reads it the same way, the hour's final value from its first chart bar, so a strategy that trades from it reports results nobody could have had. It is the shape of a study that looks perfect on history and loses money when traded.
 
 ### The three modes in one script
 
@@ -298,6 +298,8 @@ Drawing a coarse bar as a candle currently takes four reads, one per price. A si
 | In the Backtest panel | Folded from the chart's bars | Folded in the exchange's timezone, Asia/Kolkata for an Indian exchange |
 
 The chart folds days in the chart's timezone and the Backtest panel in the exchange's, so the two agree unless the chart's timezone has been changed away from the exchange's. A strategy that filters its trades with a daily read, as in the bias example above, trades the same days in both.
+
+The Backtest panel in current OpenAlgo releases still runs library 0.5.0, whose backtest answers a `"lookahead"` read with the coarse bar so far, the developing value, while the chart shows each coarse bar's final value from its first chart bar.
 
 The rules for the timeframe need the chart's interval. On the chart, /trading names its daily, weekly and monthly charts `D`, `W` and `M`, which the language cannot read, so on those charts OS6002 and OS6015 are never raised. A `"1h"` read on a /trading daily chart is not refused there: every day becomes its own coarse bar, and the read quietly hands back the previous day's value. The Backtest panel states the same chart as `"1D"`, so there the `"1h"` read is refused with OS6002. On a daily chart, read only `"1D"` or coarser.
 

@@ -114,6 +114,8 @@ The alert fires once, on the live bar, when it closes. The 74 bars of history ra
 
 `time` is the open instant because the open is how a bar can be identified while it is still forming. A feed that stamps bars by their close converts once, in the host.
 
+**The fields are the interface, and the representation is yours.** A history may be handed over as one record per bar or as one array per field, and an engine reads the same bars from either. Over a long range, columns cost less than half the memory of records; a column that cannot hold an absent value writes it as not-a-number. A live bar, which arrives one at a time, is a record. [JavaScript library](/script/integrate/javascript#bars-as-columns) has the shape.
+
 ### The order they arrive in
 
 - **Oldest first.** Position 0 is the oldest bar you supplied, and that position is [[bar.index]].
@@ -141,6 +143,7 @@ You may hand the newest bar back with new values. That is an **update**, not a n
 | Situation | What happens |
 |---|---|
 | No bars at all | [OS6010](/script/errors/data#os6010). An empty pane with no message would look like a study that drew nothing |
+| A bar with no time at all | [OS6025](/script/errors/data#os6025), naming that bar. A bar dated nothing cannot be put in order; date it, or leave it out |
 | A bar whose time does not follow the one before it | [OS6011](/script/errors/data#os6011), naming that bar. The run stops there; bars before it stand |
 | A price or volume you do not have | The absent value |
 | Fewer bars than the script's warmup needs | Not an error. The study is absent until it has enough bars, and draws from the first bar it can |
@@ -197,6 +200,8 @@ The spellings:
 
 **Why exactly one fact is required.** Every other fact has an honest answer for "nobody said": absent, which a script can test. `hasVolume` does not, because an instrument that never reports volume and one whose figures are late produce the same empty column. A tick size is absent rather than a guessed `0.05` for the same reason: a script sizing a stop in ticks has to tell "the smallest increment is five paise" from "nobody said".
 
+**A fact you leave out reads as `none` and never stops a bar.** A bare read of [[chart.tickSize]], [[chart.lotSize]] or any other fact on the table is absent: a script tests it with [[isNone()]] and supplies a fallback with [[orElse()]]. [OS6012](/script/errors/data#os6012) is kept for the other case, something that needs a fact and cannot default it, which in version 1 is a stated session the engine cannot read, below.
+
 ### The session
 
 ```json
@@ -207,7 +212,7 @@ The spellings:
 
 The session earns its place through the scheduled close: [[session.isLastBar]] is true on the last bar of the schedule even when trading stopped early, so a strategy that must be flat by 15:30 acts on it rather than on the appearance of a new bar, which arrives too late.
 
-**A stated session is checked against itself at load**, and refused with [OS6012](/script/errors/data#os6012) naming what is missing when it has no `timezone`, a time not spelled `"HH:MM"` (`"9:15"` is the one a host writes first), or a `days` entry outside 1 to 7. A host that states no session at all is not refused: that is the honest record of a schedule it does not hold, and the per-bar session facts are then absent.
+**A stated session is checked against itself at load**, and refused with [OS6012](/script/errors/data#os6012) naming what is missing when it has no `timezone`, a `timezone` the calendar cannot read (an abbreviation such as `"IST"` or a fixed offset such as `"+05:30"`), a time not spelled `"HH:MM"` (`"9:15"` is the one a host writes first), or a `days` entry outside 1 to 7. A host that states no session at all is not refused: that is the honest record of a schedule it does not hold, and the per-bar session facts are then absent.
 
 **A session study is only as good as the session.** [[vwap()]] restarts at the session's first bar, and [[session.isFirstBar]] and [[session.isLastBar]] are derived from the window. A host that holds a schedule and does not state it gets every one of them absent on every bar, with nothing on the chart to say why.
 
@@ -243,7 +248,7 @@ Every identity is already resolved when it reaches you, so you resolve an identi
 
 | Answer | Means |
 |---|---|
-| `{ bars }` | Your own bars for that instrument at that timeframe, oldest first, in the shape of duty 1. Never padded, extended or synthesised |
+| `{ bars }` | Your own bars for that instrument at that timeframe, oldest first, in the shape of duty 1, as records or as columns. Never padded, extended or synthesised |
 | `{ pending: true }` | Still fetching. The read is absent and [[req.isReady()]] is false; when the bars arrive, load again and recalculate over the whole history |
 | `{ refused }` | You cannot answer. Below |
 | Nothing | You do not serve this read. On a timeframe read the engine folds the chart's own bars; on another instrument it is OS6007 |
@@ -434,7 +439,7 @@ The style rows no script declares, a plot's colour, thickness, line style and vi
 
 **The engine never parses an instrument identity.** It compares identities for equality and hands them back unchanged: it never splits one on a separator, changes its case, builds one from parts, or infers an underlying, an expiry, a strike or a right from one. A naming scheme built around one market's derivatives means nothing on another, and a parsing rule in the language would make every renamed contract a compiler release. Your symbology is yours, which makes you the only participant that can own it correctly.
 
-A script names a contract by what it is, and you resolve the description to whatever your symbology calls it. **A relative contract is resolved once, at the start of a run**, and every later bar request, order, report line and restart uses that resolved identity. "The at-the-money call of the nearest NFO expiry" is a different contract at the exit than at the entry if the price moved or the expiry rolled, and an exit that re-resolved would open a second position in a contract nobody chose while leaving the first one open. So persist the resolved identity with the run, treat a new expiry or a new trading day as a new run, and refuse a run whose description you cannot resolve at its start. The script-side surface for describing relative contracts, [[leg.relative()]] among it, is planned in 0.5.0; the host's side of the rule is fixed now.
+A script names a contract by what it is, and you resolve the description to whatever your symbology calls it. **A relative contract is resolved once, at the start of a run**, and every later bar request, order, report line and restart uses that resolved identity. "The at-the-money call of the nearest NFO expiry" is a different contract at the exit than at the entry if the price moved or the expiry rolled, and an exit that re-resolved would open a second position in a contract nobody chose while leaving the first one open. So persist the resolved identity with the run, treat a new expiry or a new trading day as a new run, and refuse a run whose description you cannot resolve at its start. The script-side surface for describing relative contracts, [[leg.relative()]] among it, is planned in 0.8.0; the host's side of the rule is fixed now.
 
 ## A conforming host
 

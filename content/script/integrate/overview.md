@@ -14,17 +14,17 @@ OpenScript is not a feature locked inside OpenAlgo. OpenAlgo itself is built on 
 | Registry | npm | PyPI |
 | Language | JavaScript and TypeScript (types included) | Python |
 | Runtime | Any modern browser; Node.js 22 or newer on a server | Python 3.12 or newer |
-| Holds | The compiler, the engine, the backtest, six headless editor functions (functions that return data and draw nothing), a chart adapter and a drop-in editor adapter | An engine that runs compiled programs. No compiler |
+| Holds | The compiler, the engine, the backtest, the importer, six headless editor functions (functions that return data and draw nothing), a chart adapter and a drop-in editor adapter | An engine that runs compiled programs. No compiler |
 | Runtime dependencies | None | None (the Python standard library only) |
 | Licence | Apache 2.0 | Apache 2.0 |
-| Version | 0.5.0 | 0.5.0 |
+| Version | 0.8.0 | 0.8.0 |
 
 ```bash
 npm install openalgo-script
 pip install openscript
 ```
 
-The two are released together at the same version. The source, the specification and the conformance suite are in the project repository at [github.com/marketcalls/openscript](https://github.com/marketcalls/openscript).
+The two are released together at the same version. The source, the specification and the conformance suite are in the project repository at [github.com/marketcalls/openscript](https://github.com/marketcalls/openscript). The /trading page in current OpenAlgo releases ships its own pinned copy, `openalgo-script` 0.5.0 with openalgo-charts 2.5.1, so a behaviour these pages describe as new in 0.6.0 or later is not what that page does.
 
 Apache 2.0 was chosen on purpose. A platform can embed the language in a commercial product without publishing its own source, which is what a shared language needs.
 
@@ -130,7 +130,7 @@ The JavaScript library is one package with an entry point per tier, so a consume
 
 | Import | Is | Depends on |
 |---|---|---|
-| `openalgo-script` | The compiler, the engine and the backtest | Nothing |
+| `openalgo-script` | The compiler, the engine, the backtest and the importer for scripts written in another chart language | Nothing |
 | `openalgo-script/editor` | Six headless language functions: highlight, complete, diagnose, hover, signature and format | The compiler |
 | `openalgo-script/adapters/charts` | Turns a compiled study into an indicator for openalgo-charts, the OpenAlgo charting engine | The compiler, and the chart as an optional peer dependency |
 | `openalgo-script/adapters/codemirror` | The drop-in editor adapter: wires the six functions into a popular open-source editor component | The editor functions, and that component as an optional peer dependency |
@@ -176,7 +176,7 @@ No instrument naming scheme, exchange rule or broker concept appears in the lang
 | A script cannot reach anything | It can only do what the instruction set exposes. There is no network, no file system and no access to the page or process it runs in |
 | A runaway script stops | The engine owns the loop, so loop, instruction, memory and time budgets are counters inside it |
 | One failing script takes nothing else down | Loading and running never throw. A failure is a diagnostic with a code and a source line, returned for that script alone |
-| Same program, same bars, same numbers | Arithmetic order, rounding and every library function's accumulation order are specified, so every conforming engine agrees to the last bit. The one exception in 0.5.0 is the transcendental functions, such as [[exp()]], [[pow()]] and the trigonometric family, which still use the platform's own maths library and can differ in the last bit between machines |
+| Same program, same bars, same numbers | Arithmetic order, rounding and every library function's accumulation order are specified, so every conforming engine agrees to the last bit. That includes [[exp()]], [[log()]], [[pow()]] and the trigonometric family: since 0.7.0 both engines compute them with portable algorithms and one final rounding, never with the platform's own maths library |
 | No runtime dependencies | Both packages declare none, and the project's build checks every import against that |
 
 Those properties are why a platform can run many customers' scripts in one process, which a design that generates code cannot offer. A content security policy is the set of rules a web page sends the browser about what it may run; `unsafe-eval` is the permission that lets a page turn text into code, and the engine never needs it.
@@ -189,14 +189,14 @@ node --disallow-code-generation-from-strings server.mjs
 
 The switch refuses those two names in that one process and nothing wider. A child process gets its own options, so set it on every process you start, and keep anything that evaluates user text away from the engine's process. In a browser, a content security policy without `unsafe-eval` does the same job. If you run the engine in a web worker, serve the worker as a file from your own origin rather than building it from a blob, because a policy that allows scripts from your origin refuses a worker built from a blob URL.
 
-## Where 0.5.0 stands
+## Where 0.8.0 stands
 
 Stated plainly, so nothing on this list surprises you later:
 
-- **Studies are the finished surface.** Plots, fills, levels, markers, bar colours, backgrounds, drawing objects, tables, alerts and reads of other timeframes and instruments all run, on a chart and headless.
+- **Studies are the finished surface.** Plots, fills, levels, markers, bar colours, backgrounds, drawing objects, tables, alerts and reads of other timeframes and instruments all run, on a chart and headless. On openalgo-charts, a study with more than one table or a band coloured per bar needs chart version 2.5.4 or newer, stated to the [chart adapter](/script/integrate/charts-adapter#the-chart-version); without it such a study is refused before any bar runs rather than drawn in part.
 - **The backtest does not model everything, and says which.** A stop or target attached with [[exit()]] or [[order.bracket()]] does not fill yet. A quantity stated in cash or as a percentage of equity is refused before the first bar rather than filled. A strategy that scales in is charted at the size it ended up entering, which can overstate its drawdown. A script cannot read its own equity during a run.
-- **The Python engine runs less than the JavaScript one.** It has no drawing objects, tables or reads of other data, and no array functions, [[print()]], date functions or a few chart and session facts. A script that needs one is refused at load, naming what is missing; [Python engine](/script/integrate/python-engine#what-this-engine-runs-and-what-it-refuses) has the list.
-- **The portability claim is still being tested.** The JavaScript and Python engines agree to the last bit on every case they both run, but both were written in the same repository. No engine written by anyone else has run the conformance suite yet, and no case yet asserts a per-bar indicator value.
+- **The Python engine holds the whole library and draws nothing.** It has every library entry the JavaScript engine does, arrays, [[print()]], the calendar, drawing objects, tables and reads of other data included. It has no chart surface for markers, fills, levels, bar colours or backgrounds, and its calendar reads one timezone, UTC; [Python engine](/script/integrate/python-engine#what-this-engine-runs-and-what-it-refuses) has the details.
+- **The portability claim is still being tested.** The JavaScript and Python engines agree to the last bit on all 107 conformance cases they both run, per-bar indicator values among them, but both were written in the same repository. No engine written by anyone else has run the conformance suite yet.
 - **Some library names are planned.** The compiler refuses a planned name with [OS2020](/script/errors/names-and-types#os2020) where it is written.
 
 [Release notes](/script/resources/release-notes) carries the full list, release by release.

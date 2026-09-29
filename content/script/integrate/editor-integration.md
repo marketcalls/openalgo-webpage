@@ -164,6 +164,8 @@ With the pointer on `rsi` in the third line, `hover` answers:
 
 `span` is the word to underline. Fields with nothing to say, such as `declaredAt` for a library name, are left out.
 
+Version 0.6.0 corrected the one-line description `hover` gives for six drawing calls. In 0.5.0 it was cut short, so [[draw.setFrom()]] was described as "nothing" and [[draw.delete()]] as "box"; an editor on 0.6.0 or newer shows the full sentences.
+
 | The word is | You get |
 |---|---|
 | A library name | Every signature, its one-line description, and `warmup`: the first bar it can have a value on |
@@ -197,7 +199,7 @@ The call being written, and which parameter the cursor is in. It works on a call
 
 **The default shown is the default the compiler applies**, for an ordinary library call and for the output declarations, [[plot()]], [[plotCandles()]], [[fill()]], [[level()]], [[signal()]], [[alert()]], [[input()]], [[table()]], [[barColor()]] and [[background()]], whose optional arguments become fields of the compiled program. Inside `plot(close, ` it reports `color` defaulting to `none`, `width` to `1.5` and `style` to `"line"`, the values the compiler writes. A written label decides the active parameter, because a named argument may sit anywhere after the positional ones. While a call is unfinished its overload is chosen by the number of arguments alone; once the arguments are written, `diagnose` reports any call that resolves to something other than what was meant.
 
-In 0.5.0 `signature` returns nothing inside `study(` or `strategy(`: the two declaration lines have no entry for it to read. Link those to the [declarations reference](/script/reference/declarations) instead.
+In 0.8.0 `signature` returns nothing inside `study(` or `strategy(`: the two declaration lines have no entry for it to read. Link those to the [declarations reference](/script/reference/declarations) instead.
 
 ## format
 

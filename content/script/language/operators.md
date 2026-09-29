@@ -91,7 +91,7 @@ The presence guard `not isNone(x) and x > 5` needs no extra parentheses, because
 
 Two remainders exist because both are wanted. `%` suits a "distance past a multiple" calculation; `mod` suits an index into a repeating cycle. The two agree whenever both operands are positive, which covers wrapping a bar count or a position in a session.
 
-There is no power operator: `pow(x, y)` is the power function. See [[pow()]].
+There is no power operator: `pow(x, y)` is the power function. See [[pow()]]. Since version 0.7.0 it is computed with a portable algorithm and one final rounding, as [[exp()]], [[log()]] and the `math` trigonometric functions are, so the JavaScript and Python engines give the same result to the last bit. A value stored from an earlier version may differ in its final bits.
 
 Every arithmetic operator propagates absence: if either operand is absent, so is the result, including `none * 0`. Arithmetic with no finite answer gives `none` rather than infinity or an error. [Absent values](/script/language/absent-values) covers both rules.
 

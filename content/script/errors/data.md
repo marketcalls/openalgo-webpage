@@ -1,9 +1,9 @@
 ---
 title: OS6xxx Data
-description: The errors about the data a script runs on: timeframes, request expressions, other instruments, the bars themselves, the compiled program and backtest settings.
+description: The errors about the data a script runs on: timeframes, request expressions, other instruments, the bars themselves, the compiled program, backtest settings and what a chart can draw.
 ---
 
-This page covers the OS6xxx codes of OpenScript (also called OpenAlgo Script): the errors about the data a script is given and the data it asks for. They cover timeframes written in a request, other instruments, the bars the engine receives, the facts about an instrument, the compiled program a host loads, and the settings of a backtest run. Many of them are not mistakes in your script at all but answers from the host or faults in the data, and the explanations below say so wherever that is the case, so you know whether to change the script or look elsewhere.
+This page covers the OS6xxx codes of OpenScript (also called OpenAlgo Script): the errors about the data a script is given and the data it asks for. They cover timeframes written in a request, other instruments, the bars the engine receives, the facts about an instrument, the compiled program a host loads, the settings of a backtest run, and what a chart can draw. Many of them are not mistakes in your script at all but answers from the host or faults in the data, and the explanations below say so wherever that is the case, so you know whether to change the script or look elsewhere.
 
 ## When they appear
 
@@ -11,10 +11,11 @@ This page covers the OS6xxx codes of OpenScript (also called OpenAlgo Script): t
 |---|---|---|
 | When the script compiles | [OS6001](#os6001), [OS6003](#os6003) | Shown in the console under the editor. Nothing runs |
 | When the program loads, before bar 0 | [OS6001](#os6001) for a timeframe from an input, [OS6002](#os6002), [OS6004](#os6004), [OS6006](#os6006), [OS6012](#os6012), [OS6015](#os6015) to [OS6019](#os6019) | The study or run is refused whole and nothing is drawn. On a chart, /trading shows the code and the message in a notice |
-| When the bars arrive, or while they run | [OS6010](#os6010), [OS6011](#os6011), [OS6005](#os6005) | The run stops at that bar, as for any [runtime error](/script/errors/runtime#when-they-appear) |
+| When the bars arrive, or while they run | [OS6010](#os6010), [OS6011](#os6011), [OS6025](#os6025), [OS6005](#os6005) | The run stops at that bar, as for any [runtime error](/script/errors/runtime#when-they-appear) |
 | When the host answers a request | [OS6007](#os6007), [OS6008](#os6008), [OS6009](#os6009), [OS6014](#os6014) | Nothing stops. The read is absent, and [[req.error()]] returns the message |
 | Before a backtest's first bar | [OS6020](#os6020), [OS6021](#os6021), [OS6023](#os6023), and [OS6022](#os6022) on a replay | The run is refused and nothing is computed. Of these, only OS6021 can appear in the Backtest panel, which shows the code and the message |
-| Not raised in version 0.5.0 | [OS6013](#os6013) | The shape it describes is refused earlier, when the script compiles |
+| When the chart adapter builds the study, before bar 0 | [OS6024](#os6024) | The study is refused whole and nothing is drawn. It comes from the library's chart adapter, when the chart cannot draw everything the study declares |
+| Not raised in version 0.8.0 | [OS6013](#os6013) | The shape it describes is refused earlier, when the script compiles |
 
 The **host** named throughout this page is the application the engine runs inside. It supplies the bars and the facts about the instrument, and answers requests for other data. In OpenAlgo it is the /trading page for charts and backtests, and the strategy runner on the OpenAlgo server for a deployed strategy.
 
@@ -87,7 +88,7 @@ A timeframe can be well formed and still be one the data source does not store f
 
 The symbol and the timeframe of a request are settled once, before the first bar, so that the host can fetch each series once and keep it in step with the chart. A request whose identity changed from bar to bar would need a new fetch on a bar that had already been drawn.
 
-**Not raised yet.** In version 0.5.0 nothing raises OS6013, because nothing can reach it: a timeframe or a symbol computed from bar data, like the one in the example below, is refused when the script compiles, with [OS3003](/script/errors/arguments#os3003). Take the timeframe from a literal or from an [[input()]] with `kind = "interval"`, as the fix does.
+**Not raised yet.** In version 0.8.0 nothing raises OS6013, because nothing can reach it: a timeframe or a symbol computed from bar data, like the one in the example below, is refused when the script compiles, with [OS3003](/script/errors/arguments#os3003). Take the timeframe from a literal or from an [[input()]] with `kind = "interval"`, as the fix does.
 
 ## Request expressions
 
@@ -95,7 +96,7 @@ The symbol and the timeframe of a request are settled once, before the first bar
 
 The expression passed to [[req.timeframe()]] or [[req.symbol()]] is computed on the requested bars, in their own time: daily bars for a `"1D"` read, the other instrument's bars for a symbol read. A value computed on the chart's own bars, such as a 20 bar average of 5 minute closes, has no meaning on a daily bar, so the compiler refuses it.
 
-In version 0.5.0 the only names from the rest of the file the expression can read are inputs, the names an [[input()]] assigns. Every other name is refused, even one that holds a plain number:
+In version 0.8.0 the only names from the rest of the file the expression can read are inputs, the names an [[input()]] assigns. Every other name is refused, even one that holds a plain number:
 
 ```openscript expect=OS6003
 k = 20
@@ -139,9 +140,9 @@ plot(dayHigh, "Day high so far", aqua, style = "step")
 
 {{error: OS6012}}
 
-Tick size, lot size, the trading session and the timezone come from the host's record of the instrument, not from the bars. In version 0.5.0 the engine raises this code when it loads a program and that record cannot be read: a session stated without the timezone it is measured in, a timezone the calendar does not know, or session hours not written as `HH:MM`. It is a problem in the host's record, not in your script.
+Tick size, lot size, the trading session and the timezone come from the host's record of the instrument, not from the bars. A fact the host leaves out is simply absent, and that is not this error: [[chart.tickSize]] or [[chart.lotSize]] reads as `none`, which you can test with [[isNone()]] or replace with [[orElse()]], [[roundToTick()]] returns absent, and an order priced or sized from them stops with [OS7002](/script/errors/orders#os7002). On /trading `chart.lotSize` comes from the platform's record of the instrument, and it is absent for a symbol whose contract the platform does not hold, so a study that works in money can fall back on an [[input()]]: `orElse(chart.lotSize, lotSize)`, where `lotSize` is the input.
 
-A fact the host simply leaves out does not raise this code. [[chart.tickSize]] or [[chart.lotSize]] reads as absent, [[roundToTick()]] returns absent, and an order priced or sized from them stops with [OS7002](/script/errors/orders#os7002). On /trading `chart.lotSize` comes from the platform's record of the instrument, and it is absent for a symbol whose contract the platform does not hold, so a study that works in money can take the lot size from an [[input()]] instead, as the fix below does. You can also meet this code's message without an error: a daily, weekly or monthly read on a host that states no timezone is absent, and [[req.error()]] returns this message for it.
+OS6012 is for a fact that is needed and cannot default. A session stated without the timezone it is measured in is a window with no clock to read it by, so the engine refuses the record when it loads the program, before any bar runs. So are a timezone the calendar does not know, session hours not written as `HH:MM`, and session days not numbered 1 to 7, Monday being 1. It is a problem in the host's record, not in your script. You can also meet this code's message without an error: a daily, weekly or monthly read on a host that states no timezone is absent, and [[req.error()]] returns this message for it.
 
 {{error: OS6005}}
 
@@ -162,6 +163,12 @@ It means the instrument has no history at that interval in the range loaded: a c
 Everything in the language assumes that bar times strictly increase: the history operator, warmup and every session test depend on it. When the host hands over a bar whose time is not after the one before it, a duplicate or a bar out of order, the engine refuses it rather than computing quietly wrong values, and names the bar.
 
 This is a problem in the data feed or the host, not in your script. Reload the history. If the same bar repeats, the feed is sending duplicates, and the host has to sort and deduplicate the bars before the engine runs.
+
+{{error: OS6025}}
+
+Every bar carries the time it opened, and the order of the bars, the history operator, warmup and every session and calendar test are built on it. A bar handed over with no time cannot be placed after the bar before it, so the engine refuses it and names the bar, rather than reading the time as absent and drawing a gap where the host has data. The run stops at that bar.
+
+Like [OS6011](#os6011), it is a problem in the data or the host, not in your script: OS6011 is two stated times in the wrong order, and this is a bar with no time at all. A host that hands the bars over as columns meets it for a time of `NaN` as well. The host should leave out a bar it cannot date rather than pass it on without a time.
 
 ## Loading a compiled program
 
@@ -189,7 +196,7 @@ Recompile the script from its source with the compiler that matches the engine: 
 
 {{error: OS6017}}
 
-The first line of a script, `version 1`, names its language version, and the program compiled from it carries that number. An engine runs every language version it implements exactly as before, and refuses one it does not have rather than running it approximately, because a saved script has to keep producing the same numbers. Version 0.5.0 implements language version 1.
+The first line of a script, `version 1`, names its language version, and the program compiled from it carries that number. An engine runs every language version it implements exactly as before, and refuses one it does not have rather than running it approximately, because a saved script has to keep producing the same numbers. Version 0.8.0 implements language version 1.
 
 A program compiled from a newer language version needs a newer engine, or a recompile against a version this engine has.
 
@@ -197,7 +204,7 @@ A program compiled from a newer language version needs a newer engine, or a reco
 
 Before an engine runs a program, it checks that the program is well formed: every instruction points at something that exists, and every field has the shape the format requires. A program that fails is refused whole, before any bar, and the message says where it failed. A program straight from the compiler passes, so a failure means the stored program was damaged or edited after it was compiled. Recompile it from the source.
 
-In version 0.5.0 the compiler itself can also report OS6018 on a line, beside another error such as [OS2005](/script/errors/names-and-types#os2005) for a function that calls itself, or [OS3003](/script/errors/arguments#os3003). Fix the other error and it goes with it. If OS6018 is the only diagnostic on an unchanged script, the fault is in the compiler, and its message asks you to report it with the script. See [Reading an error](/script/errors/overview).
+In version 0.8.0 the compiler itself can also report OS6018 on a line, beside another error such as [OS2005](/script/errors/names-and-types#os2005) for a function that calls itself, [OS3003](/script/errors/arguments#os3003) or [OS3025](/script/errors/arguments#os3025). Fix the other error and it goes with it. If OS6018 is the only diagnostic on an unchanged script, the fault is in the compiler, and its message asks you to report it with the script. See [Reading an error](/script/errors/overview).
 
 {{error: OS6019}}
 
@@ -219,7 +226,7 @@ Widen the window, or choose one that overlaps the loaded bars. Both ends are inc
 
 {{error: OS6021}}
 
-A setting can be well formed and still impossible to carry out on this run. In version 0.5.0 the common cause is sizing: a backtest fills in units and keeps no running equity, so `qtyType = "cash"` and `qtyType = "equityPercent"` are refused, and so is `qtyType = "lots"` on an instrument whose lot size is not known. Slippage stated in ticks when there is no tick size to measure a tick in is refused the same way, and so is a charge levied on another charge that is declared after it. The message names the setting and the reason.
+A setting can be well formed and still impossible to carry out on this run. In version 0.8.0 the common cause is sizing: a backtest fills in units and keeps no running equity, so `qtyType = "cash"` and `qtyType = "equityPercent"` are refused, and so is `qtyType = "lots"` on an instrument whose lot size is not known. Slippage stated in ticks when there is no tick size to measure a tick in is refused the same way, and so is a charge levied on another charge that is declared after it. The message names the setting and the reason.
 
 Count in units, or in lots on an instrument that states its lot size. In the Backtest panel only the refusal of `"cash"` and `"equityPercent"` can happen: the panel reads the tick and lot size from OpenAlgo's record of the instrument, and when it has none it runs with a tick of 0.05 and a lot of 1 and says so under the report, so check that line before trusting a result counted in lots. See [Position and sizing](/script/strategies/position-and-sizing) and [Costs and fills](/script/strategies/costs-and-fills).
 
@@ -234,5 +241,13 @@ You meet this only when you replay records through the library. Replay against t
 A strategy's own `commission` and a charge schedule supplied by the host running the backtest describe the same money. Applied together they would charge it twice, and applied one at a time they would charge whichever an engine happened to prefer, which is a rule nobody wrote down. So a run that has both is refused before the first bar. The message gives the commission the declaration states.
 
 Keep one of the two: leave `commission` at its default of 0 when a schedule is supplied, or supply no schedule. A schedule can say more, such as a floor, a cap, a charge on another charge, or a cost on one side of the trade only. The Backtest panel supplies no schedule, so there the declaration's `commission` always applies and this code never appears.
+
+## What the chart can draw
+
+{{error: OS6024}}
+
+A compiled program carries everything a study declares, and a chart draws what its own surface has room for. Two things a study can declare need a newer chart: a second [[table()]], and a [[fill()]] whose colour the script computes bar by bar. The library's chart adapter, which turns a compiled program into a study the chart library can draw, refuses such a study before any bar runs rather than drawing part of it, which would be the first table alone or a band in a colour the script never chose. The message names the second table by its title, or says it is a band colour computed per bar, and ends by saying which chart version the host stated.
+
+The cure is on the host's side. A host that passes the chart library's own version string, as `descriptorFor(program, { chartVersion: VERSION })`, on openalgo-charts 2.5.4 or newer, has every table drawn in the corner its own `position` names and a computed band shaded bar by bar in the colour the script chose there. No version, an older chart, a prerelease of 2.5.4 or a string the adapter cannot read is refused as before. On such a host, fold two tables into one, as the example below does, and give a band one colour, or one per side. The /trading page in current OpenAlgo releases still runs library 0.5.0 with openalgo-charts 2.5.1, which draws the first table only and a band in one colour per side, without a word. See [Charts adapter](/script/integrate/charts-adapter).
 
 **Related.** [Timeframes](/script/data/timeframes), [Higher timeframes](/script/data/higher-timeframes), [Other instruments](/script/data/other-instruments), [Sessions and time](/script/data/sessions-and-time), [Backtesting](/script/strategies/backtesting), [Reading an error](/script/errors/overview)

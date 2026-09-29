@@ -821,7 +821,7 @@ What to notice:
 - **[[pos.size]] and [[pos.avgPrice]]** read the position from fills.
 
 :::note
-In version 0.5.0 the backtest does not fill the levels [[exit()]] sets, so in the Backtest panel every trade of this script closes on the downward cross, and the stop and target lines are drawn but never filled. The Strategies panel refuses to start a strategy that calls `exit()`. To trade this idea today, manage the stop and target in the script with `close()`, as [Your first strategy](/script/getting-started/first-strategy) does.
+In version 0.8.0 the backtest does not fill the levels [[exit()]] sets, so in the Backtest panel every trade of this script closes on the downward cross, and the stop and target lines are drawn but never filled. The Strategies panel refuses to start a strategy that calls `exit()`. To trade this idea today, manage the stop and target in the script with `close()`, as [Your first strategy](/script/getting-started/first-strategy) does.
 :::
 
 ## 11. Opening range breakout
@@ -886,7 +886,7 @@ if ready and ok and close < rangeLow
 
 // The clock exit is neither a stop nor a target: it is the admission that a
 // position that has not worked in five hours is not going to. closeOnSessionEnd
-// is declared as well; version 0.5.0 accepts it and does not act on it yet, so
+// is declared as well; version 0.8.0 accepts it and does not act on it yet, so
 // this exit is the one that flattens the position.
 if pos.size != 0 and not isNone(elapsed) and elapsed >= holdMinutes * 60000
     close()
@@ -905,7 +905,7 @@ What to notice:
 - **A time exit.** `elapsed >= holdMinutes * 60000` flattens with [[close()]] five hours after the open, before the NSE close at 15:30 IST.
 
 :::note
-The /trading chart and the Backtest panel take each exchange's session hours from the market calendar, so [[session.isFirstBar]] marks each session's open, the range forms and the script trades. In version 0.5.0 the backtest does not fill the levels [[exit()]] sets, so in the Backtest panel each trade closes on the clock exit. The Strategies panel refuses it, because it calls `exit()` and sizes in lots.
+The /trading chart and the Backtest panel take each exchange's session hours from the market calendar, so [[session.isFirstBar]] marks each session's open, the range forms and the script trades. In version 0.8.0 the backtest does not fill the levels [[exit()]] sets, so in the Backtest panel each trade closes on the clock exit. The Strategies panel refuses it, because it calls `exit()` and sizes in lots.
 :::
 
 ## 12. Short premium, combined stop
@@ -1011,7 +1011,7 @@ What to notice:
 - **The second leg is an alert.** The strategy trades the chart's leg; the other leg's orders go out as [[alert()]] messages with their own ids. On /trading this script runs on the chart only, as the note below explains.
 
 :::note
-The Backtest panel refuses this script with [OS6006](/script/errors/data#os6006), because a backtest holds only the chart's own bars and this script reads another instrument. On the /trading chart it draws the combined premium and simulates its trades on the chosen weekday, with [[session.isFirstBar]] taken from the exchange's session in the market calendar. The Strategies panel refuses it, because it reads another instrument and sizes in lots. A strategy that wants both legs in its own books declares them with [[leg.relative()]], which is planned; see [Legs and books](/script/strategies/multi-leg-and-books).
+The Backtest panel refuses this script with [OS6006](/script/errors/data#os6006), because the panel hands a backtest only the chart's own bars and this script reads another instrument. On the /trading chart it draws the combined premium and simulates its trades on the chosen weekday, with [[session.isFirstBar]] taken from the exchange's session in the market calendar. The Strategies panel refuses it, because it reads another instrument and sizes in lots. A strategy that wants both legs in its own books declares them with [[leg.relative()]], which is planned; see [Legs and books](/script/strategies/multi-leg-and-books).
 :::
 
 ## Showcase scripts
@@ -1043,9 +1043,9 @@ meanLow = sma(low, amplitude)
 prevHigh = bar.isFirst ? high : high[1]
 prevLow = bar.isFirst ? low : low[1]
 
-// trend is 0 while up and 1 while down; armed is the flip being watched for.
+// trend is 0 while up and 1 while down; nextFlip is the flip being watched for.
 var trend = 0
-var armed = 0
+var nextFlip = 0
 var maxLow = low
 var minHigh = high
 var upLevel = low
@@ -1053,17 +1053,17 @@ var downLevel = high
 
 wasTrend = bar.isFirst ? -1 : trend
 
-if armed == 1
+if nextFlip == 1
     maxLow = max(orElse(rollLow, maxLow), maxLow)
     if not isNone(meanHigh) and meanHigh < maxLow and close < prevLow
         trend = 1
-        armed = 0
+        nextFlip = 0
         minHigh = orElse(rollHigh, high)
 else
     minHigh = min(orElse(rollHigh, minHigh), minHigh)
     if not isNone(meanLow) and meanLow > minHigh and close > prevHigh
         trend = 0
-        armed = 1
+        nextFlip = 1
         maxLow = orElse(rollLow, low)
 
 flipUp = trend == 0 and wasTrend == 1
@@ -1097,7 +1097,7 @@ On a BHEL 15 minute NSE chart with the default settings:
 
 What it shows:
 
-- **State carried across bars.** `trend`, `armed`, `maxLow`, `minHigh`, `upLevel` and `downLevel` are declared with `var`, so each is set once, on the first bar, and then starts every bar from the value the previous bar left. `wasTrend` reads `trend` above the lines that reassign it, so it holds the previous bar's trend, and `-1` on the first bar, so nothing there counts as a flip. See [Persistence](/script/language/persistence).
+- **State carried across bars.** `trend`, `nextFlip`, `maxLow`, `minHigh`, `upLevel` and `downLevel` are declared with `var`, so each is set once, on the first bar, and then starts every bar from the value the previous bar left. `wasTrend` reads `trend` above the lines that reassign it, so it holds the previous bar's trend, and `-1` on the first bar, so nothing there counts as a flip. See [Persistence](/script/language/persistence).
 - **Two plots, so the line can change colour.** `Up trend` has a value only while the trend is up and `Down trend` only while it is down; each is `none` on the other side. A flip is a clean step from one line to the other, never a diagonal drawn through the candles.
 - **Fills to a channel edge.** Each level has a faint edge plot `dev` away from it, below the up level and above the down level, and [[fill()]] shades between the level and its edge. The fill colours are written in the call with [[fade()]], so the chart draws them as given.
 - **A label on a flip.** `flipUp` and `flipDown` compare this bar's trend with `wasTrend`, and [[signal()]] with `shape = "label"` puts a Buy plate on the bar that turned up (`at = "below"`) and a Sell plate on the bar that turned down (`at = "above"`).

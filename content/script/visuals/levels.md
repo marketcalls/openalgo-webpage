@@ -64,7 +64,7 @@ r = rsi(close, 14)
 level(70, "Overbought", r > 70 ? red : gray)
 ```
 
-A level whose colour the user can change takes a colour input straight into the call. To make that colour faded, put the fade in the input's default, because wrapping `fade()` around the input inside the call is refused:
+A level whose colour the user can change takes a colour input straight into the call. To make that colour faded, put the fade in the input's default, because wrapping `fade()` around the input inside the call is refused with [OS3025](/script/errors/arguments#os3025), which says a fixed option holds an input only as the whole of its value:
 
 ```openscript
 obColor = input(fade(red, 40), "Overbought line")
@@ -315,7 +315,7 @@ Because the last bar wins, these two lines show the trade that is open now, and 
 |---|---|---|
 | Wrapping `level` in an `if` | [OS3006](/script/errors/arguments#os3006) | Give the price `none` on the bars where there is none |
 | A colour that changes per bar | [OS3003](/script/errors/arguments#os3003) | A level has one colour. Use a plot for a line whose colour changes |
-| `fade()` around a colour input inside the call | Refused when the script compiles | Put the fade in the input's default |
+| `fade()` around a colour input inside the call | [OS3025](/script/errors/arguments#os3025) when the script compiles | Put the fade in the input's default |
 | A level whose price is set on one bar only | Usually nothing is drawn, because the last bar decides | Hold the value in a `var` |
 | Expecting to scroll back and see where the level was | A level has no history | Use `plot(..., style = "step")` |
 | Trying to `fill` between a plot and a level | A level is not a plot and cannot be one end of a fill | Plot the constant, fully transparent if it should not show. See [Fills](/script/visuals/fills#filling-between-a-plot-and-a-fixed-value) |

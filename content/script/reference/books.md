@@ -1,13 +1,13 @@
 ---
 title: book.*
-description: Books. Every leg a strategy declares, managed as one position, with a combined stop and target, a profit lock, an entry window, a time exit, an expiry square-off and a daily loss limit. Planned in version 0.5.0.
+description: Books. Every leg a strategy declares, managed as one position, with a combined stop and target, a profit lock, an entry window, a time exit, an expiry square-off and a daily loss limit. Planned in version 0.8.0.
 ---
 
 A strategy's **book** is every leg it has declared, taken together (a leg is one contract the strategy trades; see [leg.*](/script/reference/legs)). The `book` namespace will manage that whole position as one: enter all the legs in one decision, stop out on their combined profit, lock in profit as it grows, take entries only inside a time window, **square off** (close every leg) at a set time or before expiry, and stop trading for the day after a set loss.
 
 It matters most for option structures on NFO. A short straddle or strangle is two options sold together, a call and a put, each hedging the other. Stopping each leg on its own is the classic way to take two losses on a day the pair was doing its job. **Measure the stop on the sum, never on a leg.** The book is the language's place for rules measured on the sum.
 
-**Every entry on this page is planned.** In version 0.5.0 a strategy trades one leg, the instrument on its chart, and calling any `book.*` name is refused where you write it with OS2020. This page documents what each call will do, and shows the same rules written by hand for the one leg you can trade today.
+**Every entry on this page is planned.** In version 0.8.0 a strategy trades one leg, the instrument on its chart, and calling any `book.*` name is refused where you write it with OS2020. This page documents what each call will do, and shows the same rules written by hand for the one leg you can trade today.
 
 ## What you can write today
 
@@ -97,7 +97,7 @@ The line stays empty until you type the put's symbol into the study's settings, 
 
 ## The shape a book will take
 
-Declared, a short strangle on NIFTY weekly options (a call two strikes above the money and a put two strikes below it, both sold) becomes two legs and a handful of rules. The block below is the planned shape, and version 0.5.0 refuses it with OS2020.
+Declared, a short strangle on NIFTY weekly options (a call two strikes above the money and a put two strikes below it, both sold) becomes two legs and a handful of rules. The block below is the planned shape, and version 0.8.0 refuses it with OS2020.
 
 ```openscript expect=OS2020 title="Planned: a short strangle managed as one book"
 version 1
@@ -222,7 +222,7 @@ Will square off a leg `minutesBefore` minutes before its contract expires, so a 
 
 Will square off every leg and take no new entry for the rest of the day once the day's loss reaches `amount`. It tests [[book.dayProfit]], which is measured from this session's open, so the limit means today and not the whole run.
 
-**Remarks.** The end-of-day square-off is not a book call. It is the declaration's `closeOnSessionEnd` option, one spelling of one rule. In version 0.5.0 the option is accepted and not yet acted on, so write the exit in the script as well; [Exiting on the clock](/script/strategies/exits-and-brackets#exiting-on-the-clock) shows how.
+**Remarks.** The end-of-day square-off is not a book call. It is the declaration's `closeOnSessionEnd` option, one spelling of one rule. In version 0.8.0 the option is accepted and not yet acted on, so write the exit in the script as well; [Exiting on the clock](/script/strategies/exits-and-brackets#exiting-on-the-clock) shows how.
 
 ## Reading the book
 

@@ -449,7 +449,7 @@ A constant colour and a colour computed per bar go in the same argument. Some su
 | Surface | Takes a colour per bar |
 |---|---|
 | [[plot()]] `color` | Yes |
-| [[fill()]] `color`, `colorUp`, `colorDown` | Yes |
+| [[fill()]] `color`, `colorUp`, `colorDown` | Yes, where the chart draws a band colour per bar; [Fills](/script/visuals/fills#the-call) says which charts do |
 | [[barColor()]] and [[background()]] | Yes, the usual case |
 | [[cell()]] `textColor` and `bgColor` | Yes, read each time the cell is written |
 | [[table()]] `textColor` and `bgColor` | No, fixed before the first bar |

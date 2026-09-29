@@ -116,7 +116,7 @@ function hoverProvider(data) {
       if (info.d) contents.push({ value: sentence(info.d) })
       if (info.p) {
         contents.push({
-          value: `**Planned.** Named in the language and not available in version ${data.version || "0.5.0"}. Calling it is error \`OS2020\`.`,
+          value: `**Planned.** Named in the language and not available in ${data.version ? `version ${data.version}` : "this release"}. Calling it is error \`OS2020\`.`,
         })
       }
       if (info.u) {

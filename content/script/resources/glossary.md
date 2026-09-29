@@ -86,9 +86,9 @@ Reading it with the glossary's words:
 
 **Block.** The lines indented under a header line such as `if`, `for` or `case`. Indentation is spaces only, every line of one block has exactly the same indentation, and there are no braces. See [Script structure](/script/language/script-structure).
 
-**Book.** A planned feature: a group of legs managed as one position, with a combined stop, target, daily loss limit and square-off rules, through the `book.*` functions such as [[book.stop()]]. It is not available in version 0.5.0. See [Legs and books](/script/strategies/multi-leg-and-books).
+**Book.** A planned feature: a group of legs managed as one position, with a combined stop, target, daily loss limit and square-off rules, through the `book.*` functions such as [[book.stop()]]. It is not available in version 0.8.0. See [Legs and books](/script/strategies/multi-leg-and-books).
 
-**Bracket.** A target, a stop or both attached to an open position, set with [[exit()]] or [[order.bracket()]]. In version 0.5.0 a backtest does not fill either level, so test an exit rule in a backtest with an explicit [[close()]]. See [Exits and brackets](/script/strategies/exits-and-brackets).
+**Bracket.** A target, a stop or both attached to an open position, set with [[exit()]] or [[order.bracket()]]. In version 0.8.0 a backtest does not fill either level, so test an exit rule in a backtest with an explicit [[close()]]. See [Exits and brackets](/script/strategies/exits-and-brackets).
 
 **Broadcast.** The automatic treatment of a plain value as that same value on every bar, which is how `ema(close, 9)` accepts the literal `9` where a series would also be allowed. It is the only automatic widening in the language and it never changes a value.
 
@@ -144,19 +144,19 @@ Reading it with the glossary's words:
 
 **Element access.** Reading one element of an array with `arr[i]` or [[element()]]. The compiler tells it apart from the history operator by the type of the value on the left.
 
-**Engine.** A program that runs a compiled program bar by bar. The JavaScript library and the Python engine are two engines, and they must agree to the last decimal. See [Two libraries](/script/integrate/overview).
+**Engine.** A program that runs a compiled program bar by bar. The JavaScript library and the Python engine are two engines, and they must agree to the last decimal. The Python engine has the JavaScript engine's library entry for entry, arrays and [[print()]] among them, and no compiler. Of what a study draws, it keeps drawing objects and tables, and not markers, fills, levels, bar colours or backgrounds. See [Two libraries](/script/integrate/overview).
 
-**Equity.** Starting capital plus realised and unrealised profit. Reading it from inside a script, as [[pos.equity]], is planned and not available in version 0.5.0.
+**Equity.** Starting capital plus realised and unrealised profit. Reading it from inside a script, as [[pos.equity]], is planned and not available in version 0.8.0.
 
 **Equity curve.** The account's equity plotted bar by bar over a backtest. Drawdown and run-up are both measured on it. See [Reading a report](/script/strategies/reading-a-report).
 
-**Error.** A diagnostic in the ranges OS1xxx to OS7xxx. An error found before the first bar stops compilation. An error raised while a bar runs stops the run at that bar: earlier bars keep what they drew, and nothing is drawn from that bar on.
+**Error.** A diagnostic in the ranges OS1xxx to OS7xxx. An error found before the first bar stops compilation. An error raised while a bar runs stops the run at that bar: earlier bars keep what they drew, and nothing is drawn from that bar on. The importer's range, OS9xxx, holds errors too, each marking a statement it could not translate.
 
 **Exchange.** The venue an instrument trades on, read as [[chart.exchange]] in the host's own naming where the host states it, as the /trading chart, the Backtest panel and a deployed strategy all do. OpenAlgo uses NSE and BSE for equities, NFO for index and stock futures and options, MCX for commodities and NSE_INDEX for the NSE indices.
 
 **Expectancy.** The average net result of one closed trade in a backtest: net profit divided by the number of closed trades. A positive expectancy means the strategy made money per trade on average, after charges.
 
-**Expiry.** The day a futures or options contract ends. Reading the chart instrument's expiry, as [[chart.expiry]], is planned and not available in version 0.5.0.
+**Expiry.** The day a futures or options contract ends. Reading the chart instrument's expiry, as [[chart.expiry]], is planned and not available in version 0.8.0.
 
 ## F
 
@@ -206,6 +206,8 @@ plot(move, "Change from the previous close")
 
 **Identifier.** A name in the source: an ASCII letter or underscore followed by ASCII letters, digits and underscores. Identifiers are case sensitive, so `fast` and `Fast` are two names.
 
+**Importer.** The `importScript` function of the `openalgo-script` library, which translates a script written in another chart scripting language into OpenScript. Each statement is translated with its meaning, translated with a warning that states the difference, or kept as a comment with an error, and every finding carries a code in the OS9xxx range. The /trading page does not offer it. See [Importing a script](/script/writing/importing-a-script).
+
 **Input.** A setting declared with [[input()]] at the top level, which builds one row of the settings dialog. The default value comes first because its type decides the kind of field. See [Inputs](/script/inputs/inputs).
 
 **Instrument fact.** Something the host knows about the instrument, read through the `chart` namespace: tick size, lot size, point value, exchange, instrument type. A fact the host has not supplied is absent rather than guessed.
@@ -216,7 +218,7 @@ plot(move, "Change from the previous close")
 
 ## L
 
-**Leg.** A planned feature: one instrument a multi-leg strategy trades, declared with [[leg.fixed()]] or [[leg.relative()]], for positions such as a straddle on NFO index options. In version 0.5.0 a strategy trades one instrument, the chart's. See [Legs and books](/script/strategies/multi-leg-and-books).
+**Leg.** A planned feature: one instrument a multi-leg strategy trades, declared with [[leg.fixed()]] or [[leg.relative()]], for positions such as a straddle on NFO index options. In version 0.8.0 a strategy trades one instrument, the chart's. See [Legs and books](/script/strategies/multi-leg-and-books).
 
 **Level.** A fixed horizontal reference line in the study's pane, created with [[level()]] at the top level, such as 70 and 30 on an RSI. See [Levels](/script/visuals/levels).
 
@@ -312,7 +314,7 @@ background(noPrev ? fade(gray, 90) : none)
 
 ## R
 
-**Range (of codes).** One block of a thousand error codes, OS1xxx to OS8xxx, saying what kind of thing went wrong, never how serious it is.
+**Range (of codes).** One block of a thousand error codes, OS1xxx to OS9xxx, saying what kind of thing went wrong, never how serious it is.
 
 **Range (of a pane).** The declaration option `range = [min, max]`, which fixes a study pane's scale, as in `[0, 100]` for an oscillator.
 
@@ -354,7 +356,7 @@ background(noPrev ? fade(gray, 90) : none)
 
 **Square off.** Close a position completely, bringing it back to flat. Intraday positions are squared off before the session ends.
 
-**Stage.** Where a diagnostic is raised: reading the characters, building the structure, checking, running a bar, or the host answering. The stage tells you when you find out.
+**Stage.** Where a diagnostic is raised: reading the characters, building the structure, checking, running a bar, the host answering, or the importer translating a script from another chart language. The stage tells you when you find out.
 
 **State slot.** The storage a stateful call keeps between bars. It belongs to the place in the source where the call is written, which is what makes one helper function reusable in several places, and why a function cannot call itself.
 
@@ -366,7 +368,7 @@ background(noPrev ? fade(gray, 90) : none)
 
 **Strategy.** A file declared with `strategy()`: a study that can also place orders, so the numbers you plot and the numbers you trade are the same numbers. See [Strategies overview](/script/strategies/overview).
 
-**Strike.** The price at which an option can be exercised. Reading the chart instrument's strike, as [[chart.strike]], is planned and not available in version 0.5.0.
+**Strike.** The price at which an option can be exercised. Reading the chart instrument's strike, as [[chart.strike]], is planned and not available in version 0.8.0.
 
 **Study.** A file declared with `study()`: a calculation and what it draws on the chart, with no ability to place an order. Also called an indicator.
 
@@ -392,7 +394,7 @@ background(noPrev ? fade(gray, 90) : none)
 
 **Trade.** One position from the fill that opens it to the fill that brings it back to flat. Adding to a position adds entries to the same trade, and a reversal is two trades.
 
-**Trailing stop.** A stop that follows the price as a trade moves in your favour and never moves back. The trailing rules of the `leg` namespace are planned; in version 0.5.0 you keep the trailing level yourself in a `var` and close the position when the price crosses it.
+**Trailing stop.** A stop that follows the price as a trade moves in your favour and never moves back. The trailing rules of the `leg` namespace are planned; in version 0.8.0 you keep the trailing level yourself in a `var` and close the position when the price crosses it.
 
 **Truthiness.** Treating a number or a string as true or false. It does not exist in OpenScript: `if 1` is error OS2011, and a condition must be a `bool` or absent.
 
@@ -410,7 +412,7 @@ background(noPrev ? fade(gray, 90) : none)
 
 **Warmup.** The bars at the start of the data on which a calculation cannot produce a value yet, shown as the absent value. `sma(close, 20)` first has a value on bar 19. Every function states its warmup exactly. See [Warmup](/script/language/warmup).
 
-**Warning.** A diagnostic in the OS8xxx range. It stops nothing, and describes a shape that is valid but almost never what the author meant. See [OS8xxx Warnings](/script/errors/warnings).
+**Warning.** A diagnostic in the OS8xxx range. It stops nothing, and describes a shape that is valid but almost never what the author meant. See [OS8xxx Warnings](/script/errors/warnings). The importer's range, OS9xxx, also holds warnings, each stating how a translated statement differs from the original.
 
 **Watched condition.** What one [[alert()]] call becomes in the chart contract: its id, title, message and the conditions that lead to it. In /trading, the chart that shows the study checks it while the page is open, with nothing more for you to set up, judging each bar when it closes, and raises a notification when it holds. See [Alerts in /trading](/script/alerts/alerts-in-trading).
 

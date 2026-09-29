@@ -56,7 +56,7 @@ No, but always do. Without it the file is compiled with the newest language vers
 
 ### Will my script keep working after an update?
 
-A script that declares `version 1` keeps compiling under the version 1 rules in every later release, because the compiler keeps every past version of the language. A release can still correct how a library function computes. When one does, the [Release notes](/script/resources/release-notes) list it under the changes a script can observe: 0.5.0, for example, changed what [[text()]] and [[round()]] give in a few extreme cases that no ordinary price reaches.
+A script that declares `version 1` keeps compiling under the version 1 rules in every later release, because the compiler keeps every past version of the language. A release can still correct how a library function computes. When one does, the [Release notes](/script/resources/release-notes) list it under the changes a script can observe: 0.5.0, for example, changed what [[text()]] and [[round()]] give in a few extreme cases that no ordinary price reaches, and 0.7.0 moved the final bits of some results of [[pow()]], [[exp()]], [[log()]] and the trigonometric functions when it made both engines agree on them to the last bit.
 
 ### What is the difference between a study and a strategy?
 
@@ -304,7 +304,7 @@ Because `fillOn` defaults to `"nextOpen"`. A decision made from a bar's close ca
 
 ### Can I hold a long and a short position at the same time?
 
-Not in version 0.5.0. A strategy holds one net position in the chart's instrument, positive when long and negative when short, read as [[pos.size]]. Positions made of several legs, such as a straddle or a hedge, are planned through the `leg` and `book` functions. See [Legs and books](/script/strategies/multi-leg-and-books).
+Not in version 0.8.0. A strategy holds one net position in the chart's instrument, positive when long and negative when short, read as [[pos.size]]. Positions made of several legs, such as a straddle or a hedge, are planned through the `leg` and `book` functions. See [Legs and books](/script/strategies/multi-leg-and-books).
 
 ### How do I size a position?
 
@@ -341,7 +341,7 @@ plot(slow, "Slow", orange)
 plot(pos.isLong ? stopLevel : none, "Stop", red, style = "step")
 ```
 
-The stop is the lowest low of the last 10 bars, fixed at the entry. The two crossings are worked out at the top level, before the `if` lines, because a crossing call inside the right side of `and` or `or` would skip bars and the compiler would warn with OS8001. The exit is checked on each bar's close and fills at the next open, so a gap through the stop can lose more than the amount you set. A stop set with [[exit()]] is not used here because a backtest does not fill one in version 0.5.0.
+The stop is the lowest low of the last 10 bars, fixed at the entry. The two crossings are worked out at the top level, before the `if` lines, because a crossing call inside the right side of `and` or `or` would skip bars and the compiler would warn with OS8001. The exit is checked on each bar's close and fills at the next open, so a gap through the stop can lose more than the amount you set. A stop set with [[exit()]] is not used here because a backtest does not fill one in version 0.8.0.
 
 The sizing helpers [[order.qtyForRisk()]], [[order.qtyForCash()]], [[order.qtyForEquityPercent()]] and [[order.roundToLot()]] are planned, and a backtest refuses a quantity counted in `"cash"` or `"equityPercent"` in this release. See [Position and sizing](/script/strategies/position-and-sizing).
 
@@ -363,7 +363,7 @@ Backtest first, then run the strategy in sandbox trading (analyzer mode in OpenA
 
 ### What does a code like OS2002 mean?
 
-The first digit is the kind of problem: OS1xxx syntax, OS2xxx names and types, OS3xxx arguments, OS4xxx runtime, OS5xxx limits, OS6xxx data, OS7xxx orders, OS8xxx warnings. Every diagnostic carries a message and a fix. See [Reading an error](/script/errors/overview).
+The first digit is the kind of problem: OS1xxx syntax, OS2xxx names and types, OS3xxx arguments, OS4xxx runtime, OS5xxx limits, OS6xxx data, OS7xxx orders, OS8xxx warnings, and OS9xxx import, the findings of the library's importer when it translates a script written in another chart scripting language ([Importing a script](/script/writing/importing-a-script)). Every diagnostic carries a message and a fix. See [Reading an error](/script/errors/overview).
 
 {{screen: editor-diagnostics}}
 
@@ -391,11 +391,11 @@ The Errors section, one page per range, starting at [Reading an error](/script/e
 
 ### Are the examples on these pages tested?
 
-Yes. Every OpenScript example on these pages is checked with the real compiler, the same version the /trading editor uses, and every signature, default and warmup in the reference is read from that compiler rather than typed in.
+Yes. Every OpenScript example on these pages is checked with the real compiler, from `openalgo-script` 0.8.0, and every signature, default and warmup in the reference is read from that compiler rather than typed in. The /trading editor in current OpenAlgo releases runs version 0.5.0 of the same compiler, which has the same library names and signatures.
 
 ### Can I use OpenScript outside OpenAlgo?
 
-Yes. The JavaScript library (`openalgo-script` on npm) compiles and runs scripts, draws them on a chart and backtests strategies. The Python engine (`openscript` on PyPI) runs compiled programs on a server. Both are Apache 2.0, and neither needs another package to run. See [Two libraries](/script/integrate/overview).
+Yes. The JavaScript library (`openalgo-script` on npm) compiles and runs scripts, draws them on a chart, backtests strategies and imports a script written in another chart scripting language. The Python engine (`openscript` on PyPI) runs compiled programs on a server, with the same library entry for entry, arrays and [[print()]] among them. Both are Apache 2.0, and neither needs another package to run. See [Two libraries](/script/integrate/overview).
 
 ### Can I write my own engine?
 

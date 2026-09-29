@@ -261,6 +261,7 @@ const dict = {
   'road.f18d': "Incorporando librerías SDK oficiales para Java, C# y Rust, para que los desarrolladores puedan crear aplicaciones de trading en su lenguaje de programación preferido.",
   'road.cta': "¿Quieres contribuir o sugerir nuevas funciones?",
   'road.ctaDiscord': "Únete a Discord",
+  'road.products': "Hojas de ruta de los productos",
   'road.ctaGithub': "GitHub",
 
   'disc.redirecting': "Redirigiendo a Discord...",

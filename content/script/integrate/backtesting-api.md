@@ -3,7 +3,7 @@ title: Backtesting API
 description: Run a compiled OpenScript strategy over bars from code with backtest(), choose the contract, costs, fill rules and report window, and read, store, replay, rerun and compare the run record it returns.
 ---
 
-This page covers backtesting from code with `openalgo-script`: one call that runs a compiled strategy over your bars against a simulated order destination and returns a **run record**. It is the same backtest the Backtest panel in the /trading page runs in the browser, so a report your server produces agrees with the one a trader sees. Read it to build a backtest service, a batch job over many instruments, or a report page of your own.
+This page covers backtesting from code with `openalgo-script`: one call that runs a compiled strategy over your bars against a simulated order destination and returns a **run record**. It is the same backtest the Backtest panel in the /trading page runs in the browser, so a report your server produces agrees with the one a trader sees when both run the same library version. Read it to build a backtest service, a batch job over many instruments, or a report page of your own.
 
 The run record is the product, not a number printed at the end. It carries the program, the bars, the settings you chose, every order, every fill, the ledger and the report, so a result can be checked again months later and handed to another engine as a test case.
 
@@ -122,6 +122,8 @@ backtest(program, bars, settings, options?) -> { ok: true, record } | { ok: fals
 
 Every bar you hand over executes. The report window decides which of them the report is about.
 
+The backtest hands the whole of `bars` to every read of another timeframe before bar 0, so a `"lookahead"` read of [[req.timeframe()]] reads a higher timeframe bar's final value from its first chart bar, as the mode says. Confirmed and developing reads stop at the bar being executed. Releases before 0.6.0 read a lookahead bucket in a backtest only as far as it had run, so a lookahead backtest stored under an earlier release can trade differently when run again on 0.8.0. The /trading page in current OpenAlgo releases still runs library 0.5.0, which reads a lookahead bucket in its Backtest panel that earlier way.
+
 ### The contract
 
 The contract is the instrument the money is priced under, and the one part of the settings you must state:
@@ -223,7 +225,7 @@ A failure on a bar during the run does not refuse the run: it is recorded in the
 
 | Field | Holds |
 |---|---|
-| `recordVersion` | The record format's version, 4 in 0.5.0 |
+| `recordVersion` | The record format's version, 4 in 0.8.0 |
 | `engine` | The engine's name and version |
 | `languageVersion` | The language version the program was compiled under |
 | `program`, `programHash` | The compiled program itself, and its hash |
@@ -320,7 +322,7 @@ A backtest over years of minute bars is pure computation with no pause in it. Th
 
 Put the honest limit of any backtest in your own interface as well: a backtest assumes the fills it models. It cannot know that your order would have moved the price, that the spread was wider than the bar suggests, or that the exchange was slow that morning. Modelled costs are an estimate, and modelled slippage is a guess with a number attached.
 
-## What the 0.5.0 backtest does not model
+## What the 0.8.0 backtest does not model
 
 - **A bracket's stop and target do not fill.** A strategy that attaches them with [[exit()]] or [[order.bracket()]] runs, but those levels are never filled. Manage exits in the script with [[close()]].
 - **Quantities in cash or a percentage of equity are refused**, as above. State quantities in units or lots.

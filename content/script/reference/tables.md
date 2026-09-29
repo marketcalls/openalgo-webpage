@@ -50,11 +50,11 @@ if bar.isLast
 
 **Cells hold text.** The text argument is a `string`, and a number passed there is error `OS3011`, so convert it with [[text()]]. A text that is `none` leaves the cell blank. Because a condition that is `none` takes the false branch, `b ? "up" : "down"` says "down" on every bar before `b` has a value; test [[isNone()]] first and say "warming up".
 
-**Addresses start at zero.** A grid of 4 rows and 2 columns has rows 0 to 3 and columns 0 to 1. Writing outside the grid is error `OS4004`, which stops the script on that bar.
+**Addresses start at zero.** A grid of 4 rows and 2 columns has rows 0 to 3 and columns 0 to 1. Writing outside the grid is error `OS4008`, which stops the script on that bar and names the row, the column and the grid's shape.
 
 **Colour has three levels.** The grid's `textColor` and `bgColor` apply to every cell that says nothing else; a cell's own `textColor` and `bgColor` override them for that cell; leave both out and the chart's defaults apply. Give the grid a translucent background, such as `fade(black, 25)`, so the candles behind it stay faintly visible.
 
-**On the /trading chart, one grid per study is drawn.** A study may declare several grids and the compiler accepts them, but the chart draws only the first one declared; the others compile, are written to and never appear. The grid's title is not shown on the chart either. Declare one grid with the rows you need, and write a second study for a second panel.
+**How many grids are drawn depends on the chart.** A study may declare several grids, and the compiled study carries every one. The [chart adapter](/script/integrate/charts-adapter) in library 0.8.0 draws them all on openalgo-charts 2.5.4 or newer when the host passes `chartVersion`, each in the corner its own `position` names, so two pinned to the same corner are drawn one over the other. On an older chart, or where the host states no chart version, it refuses a study that declares a second grid with `OS6024` before the first bar runs. The /trading page in current OpenAlgo releases still runs library 0.5.0, which draws the first grid and ignores the rest, so a study meant for /trading declares one grid with the rows it needs and leaves a second panel to a second study. The grid's title is not shown on the chart.
 
 ## Declaring a grid
 

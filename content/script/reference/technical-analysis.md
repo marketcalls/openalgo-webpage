@@ -3,7 +3,7 @@ title: Technical analysis
 description: Every indicator function in OpenScript, grouped by purpose: moving averages, trend, oscillators and momentum, volatility and bands, volume, and swings. Each entry says what the indicator measures, how to read it and gives a script you can paste.
 ---
 
-This page is the reference for every indicator built into OpenScript, also called OpenAlgo Script: sixty-eight functions from the simple moving average to the Ichimoku cloud. Fifty-five of them work in version 0.5.0; the other thirteen are named in the language and marked Planned, so you can see what is coming. Each entry tells you what the indicator measures, how traders read it, the exact arithmetic where it matters, and the first bar on which it has a value. Every example is a complete script: paste it into the Scripts panel of the /trading page, save it, and press **Apply to chart**.
+This page is the reference for every indicator built into OpenScript, also called OpenAlgo Script: sixty-eight functions from the simple moving average to the Ichimoku cloud. Fifty-five of them work in version 0.8.0; the other thirteen are named in the language and marked Planned, so you can see what is coming. Each entry tells you what the indicator measures, how traders read it, the exact arithmetic where it matters, and the first bar on which it has a value. Every example is a complete script: paste it into the Scripts panel of the /trading page, save it, and press **Apply to chart**.
 
 You need this page whenever a study or strategy reads price through an indicator. Indicators are where most scripts start, and most surprises in a new script (a line that starts late, a crossing that never fires, a band that is missing on the left of the chart) come from the details written here.
 
@@ -36,7 +36,7 @@ plot(close > open ? avg20 : none, "EMA 20 on up bars", aqua)
 ```
 
 :::note
-Three calls on this page, [[alma()]], [[chop()]] and [[hv()]], take an exponential or a logarithm. Those two operations can differ in the last binary digit from one computer to another, so these three readings carry no bit-for-bit guarantee across platforms. The difference is far below anything a chart shows.
+Three calls on this page, [[alma()]], [[chop()]] and [[hv()]], take an exponential or a logarithm. Both libraries work those two operations out with one portable method, rounded once to the nearest representable number, rather than with the computer's own maths library, so these three readings are the same to the last binary digit on every computer and in both the JavaScript and the Python engine. A value stored from a release before 0.7.0 may differ from today's in its last binary digit.
 :::
 
 ## Functions that return several values
@@ -480,7 +480,7 @@ level(20, "Weak", fade(gray, 60), "dotted")
 
 An ADX above about 25 and rising is commonly read as a trending market, and one below 20 as a weak or sideways one. ADX says how strong the trend is, not which way it runs: for the direction, compare the two DI lines. `+DI` above `-DI` says buyers own the move.
 
-**Remarks.** Upward movement is `high - high[1]` and downward movement is `low[1] - low`; on each bar only the larger one counts, and only if it is positive. Both movements and the true range are smoothed with [[rma()]] over `diLen`, and each DI is `smoothed movement / smoothed range * 100`. ADX is the [[rma()]] over `adxLen` of `abs(+DI - -DI) / (+DI + -DI) * 100`. The two DI lines start on bar `diLen` (bar 14 by default) because movement needs the previous bar, and ADX starts on bar `diLen + adxLen - 1` (bar 27). The DI values are absent where the smoothed range is zero, and the ratio inside ADX counts as 0 on a bar where both DI values are zero.
+**Remarks.** Upward movement is `high - high[1]` and downward movement is `low[1] - low`; on each bar only the larger one counts, and only if it is positive. Both movements and the true range are smoothed with [[rma()]] over `diLen`, and each DI is `smoothed movement / smoothed range * 100`. ADX is the [[rma()]] over `adxLen` of `abs(+DI - -DI) / (+DI + -DI) * 100`. The two DI lines start on bar `diLen` (bar 14 by default) because movement needs the previous bar, and ADX starts on bar `diLen + adxLen - 1` (bar 27). Where the two movements are equal, neither counts. A movement that overflows is treated as absent before it is smoothed, so the smoothed values keep their state and the readings carry on from the next valid bar. The DI values are absent where the smoothed range is absent or zero, and the ratio inside ADX counts as 0 on a bar where both DI values are zero.
 
 **See also.** [[aroon()]], [[chop()]], [[rma()]], [[trueRange()]]
 
@@ -1195,7 +1195,7 @@ plot(dayVwap, "Day VWAP", orange, width = 2)
 barColor(close > dayVwap ? lime : close < dayVwap ? red : none)
 ```
 
-**Remarks.** It is `sum(src * volume) / sum(volume)` over the session so far, with `src` defaulting to [[hlc3]]. Both running totals restart on the session's first bar before that bar is added, so the first bar of each session is the first bar of the new average. On a daily or longer chart every bar is its own session and the result equals `src`; the compiler does not warn about that yet. A bar with absent data gives an absent result and leaves the totals as they were.
+**Remarks.** It is `sum(src * volume) / sum(volume)` over the session so far, with `src` defaulting to [[hlc3]]. Both running totals restart on the session's first bar before that bar is added, so the first bar of each session is the first bar of the new average. On a daily or longer chart every bar is its own session and the result equals `src`; the compiler does not warn about that yet. A bar with absent data gives an absent result and leaves the totals as they were, and so does a bar whose price times volume overflows: the next bar carries on from the totals before it. If a total itself overflows, the average reads `none` until the next session starts both totals again.
 
 **See also.** [[vwapAnchor()]], [[vwma()]], [[session.isFirstBar]], [Sessions and time](/script/data/sessions-and-time)
 
@@ -1216,7 +1216,7 @@ plot(vwapAnchor(hlc3, newMonth), "Monthly VWAP", fuchsia, width = 2)
 
 The conditions compare this bar's week and month with the previous bar's, so a week whose Monday is a market holiday still resets on its first trading day.
 
-**Remarks.** The result is absent until `resetWhen` is first true, because there is no anchor to measure from. On an anchor bar both totals are reset before the bar's own price and volume are added, so the anchor bar opens the new average. On the chart's first bar `time[1]` is absent and `!=` is true, so the example's first average starts there.
+**Remarks.** The result is absent until `resetWhen` is first true, because there is no anchor to measure from. On an anchor bar both totals are reset before the bar's own price and volume are added, so the anchor bar opens the new average. On the chart's first bar `time[1]` is absent and `!=` is true, so the example's first average starts there. Overflow behaves as in [[vwap()]]: a bar whose price times volume overflows reads `none` and changes neither total, and a total that overflows reads `none` until the next bar where `resetWhen` is true.
 
 **See also.** [[vwap()]], [[date.startOfWeek()]], [[date.month()]]
 
@@ -1249,7 +1249,7 @@ study("Accumulation distribution", format = "volume")
 plot(ad(), "A/D", lime, width = 2)
 ```
 
-**Remarks.** Each bar adds `((close - low) - (high - close)) / (high - low) * volume`. A bar with no range, where high equals low, adds 0 rather than ending the total. The total starts at 0 before the first bar.
+**Remarks.** Each bar adds `((close - low) - (high - close)) / (high - low) * volume`. A bar with no range, where high equals low, adds an exact 0 and keeps its reading rather than ending the total. A bar whose high to low span overflows reads `none` and adds nothing, and the total carries on from the bar before it. [[adOsc()]] and [[cmf()]] use the same per-bar term, so [[cmf()]] reads `none` while such a bar is in its window. The total starts at 0 before the first bar.
 
 **See also.** [[adOsc()]], [[cmf()]], [[obv()]]
 
@@ -1323,7 +1323,7 @@ plot(p, "PVT", olive, width = 2)
 plot(ema(p, 21), "PVT average", fade(orange, 30))
 ```
 
-**Remarks.** Each bar adds `(close - close[1]) / close[1] * volume` to a total that starts at 0. The first bar has no change behind it and is absent; the second bar already carries its own term.
+**Remarks.** Each bar adds `(close - close[1]) / close[1] * volume` to a total that starts at 0. The first bar has no change behind it and is absent; the second bar already carries its own term. A bar whose change, proportion or product with the volume overflows reads `none` and leaves the total as it was, so the next bar carries on from it. A total that itself overflows reads `none` from then on.
 
 **See also.** [[obv()]], [[roc()]]
 

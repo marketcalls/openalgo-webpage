@@ -292,6 +292,6 @@ The outward channels are tried together, and each is tried once. When one refuse
 
 Pressing Delete over the chart removes a drawing first when one is selected or under the pointer, and an alert's line only when nothing else claims the key.
 
-Alerts belong to the chart pane they were made on and are saved with that chart in your browser, so they come back when you reopen /trading. A Repeat Only once alert that has fired comes back as Fired, not armed again, so it does not fire twice for the same price.
+Alerts belong to the chart pane they were made on and are saved with that chart in your browser, so they come back when you reopen /trading. A Repeat Only once alert that has fired comes back as Fired, not active again, so it does not fire twice for the same price.
 
 **Related.** [Alerts from scripts](/script/alerts/overview), [Realtime and confirmation](/script/language/realtime-and-confirmation), [The editor](/script/getting-started/the-editor), [Plots](/script/visuals/plots), [Sandbox and live](/script/strategies/sandbox-and-live), [Troubleshooting](/script/writing/troubleshooting)

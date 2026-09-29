@@ -117,7 +117,7 @@ plot(slow, "Slow", orange)
 
 The declaration sets the default size and the unit it is counted in. An order that names no quantity uses the default; an order that names one overrides it, in the same unit.
 
-| `qtyType` | `qty = 2` means | Backtest panel, 0.5.0 | Strategies panel, 0.5.0 |
+| `qtyType` | `qty = 2` means | Backtest panel | Strategies panel |
 |---|---|---|---|
 | `"units"` | Two units: two shares, or two units of a contract | Filled as written | Runs |
 | `"lots"` | Two lots, that is `2 * chart.lotSize` units | Converted through the instrument's lot size, with the closing defect below | Refused before it starts |
@@ -126,8 +126,8 @@ The declaration sets the default size and the unit it is counted in. An order th
 
 A backtest fills in units and keeps no running equity to size against, so it cannot convert cash or a percentage of equity, and says so with OS6021 before any bar runs rather than filling the number as written. The runner behind the Strategies panel sends only a quantity the script states in units.
 
-:::warn Lots and closing orders in the 0.5.0 backtest
-Under `qtyType = "lots"` the orders you size are converted correctly, but a close whose size the engine works out for you is not. A bare `close()`, a tagged `close(tag = ...)` and [[order.reverse()]] all work their size out in units, and the 0.5.0 backtest converts that size from lots a second time. With a lot size of 50, closing a two-lot position (100 units) sells 100 lots, 5,000 units, and leaves the strategy short 4,900.
+:::warn Lots and closing orders in the backtest
+Under `qtyType = "lots"` the orders you size are converted correctly, but a close whose size the engine works out for you is not. A bare `close()`, a tagged `close(tag = ...)` and [[order.reverse()]] all work their size out in units, and the backtest in version 0.8.0 converts that size from lots a second time. With a lot size of 50, closing a two-lot position (100 units) sells 100 lots, 5,000 units, and leaves the strategy short 4,900.
 
 Count in units and compute the size from [[chart.lotSize]], as the complete example does: that is also the only unit a deployment accepts. If you keep `qtyType = "lots"` for a backtest, flatten with a close that states its size in lots, such as `close(qty = lots)`. Do not flatten with `sell(qty = lots)`: under lots that opens a separate short beside the long, and the trade list then shows both as open trades that never close.
 :::
@@ -146,7 +146,7 @@ Index futures and options on NFO, and most MCX contracts, cannot be traded in si
 
 **Absent is not 1.** When the host has not stated a lot size, `chart.lotSize` is absent, and absence propagates through arithmetic, so a size computed from it is absent too and the order is refused with OS7002. Decide once what a missing lot size means in your script: `max(orElse(chart.lotSize, 1), 1)` treats it as one unit. In /trading that fallback matters where OpenAlgo holds no contract for the symbol: the chart then states no lot size, and the Backtest panel runs on a lot of 1 and a tick of 0.05 and says so in the line under the report's figures.
 
-**Round down to whole lots yourself.** A quantity that is not a whole number of lots is catalogued as OS7005, and in version 0.5.0 nothing raises it: the order is sent as written and the destination is left to reject it. [[order.roundToLot()]] is planned. Until it lands, round with arithmetic:
+**Round down to whole lots yourself.** A quantity that is not a whole number of lots is catalogued as OS7005, and in version 0.8.0 nothing raises it: the order is sent as written and the destination is left to reject it. [[order.roundToLot()]] is planned. Until it lands, round with arithmetic:
 
 ```openscript title="Whole lots"
 version 1
@@ -233,7 +233,7 @@ plot(entryStop, "Stop", red, style = "step")
 
 The comparison `stopDistance > 0` does two jobs. It keeps the division away from zero, and because an ordered comparison with an absent value is absent and an absent condition takes the false branch, it also covers the warmup bars where [[atr()]] has no value yet.
 
-The stop is a rule the script tests on each bar rather than a level set with [[exit()]], because /trading does not act on `exit()` levels in 0.5.0; [Exits and brackets](/script/strategies/exits-and-brackets) explains.
+The stop is a rule the script tests on each bar rather than a level set with [[exit()]], because a backtest in version 0.8.0 does not fill `exit()` levels, and neither does /trading; [Exits and brackets](/script/strategies/exits-and-brackets) explains.
 
 This risks a fixed amount of money rather than a percentage of equity, because [[pos.equity]] is planned. [[order.qtyForRisk()]], also planned, will do the division in one call and return `none` when the entry and the stop are equal.
 
@@ -279,7 +279,7 @@ Run it on a daily chart for "a day" to mean a day: [[atr()]] measures the averag
 
 ## Sizing helpers
 
-Four helpers will turn a sentence about money into a quantity. All four are planned in version 0.5.0.
+Four helpers will turn a sentence about money into a quantity. All four are planned in version 0.8.0.
 
 | Helper | Returns | For |
 |---|---|---|
@@ -330,7 +330,7 @@ plot(pos.isFlat ? none : pos.avgPrice, "Average", fade(silver, 40), style = "ste
 
 [[pos.avgPrice]] moves as you add, which is the point of plotting it: a stop measured from the average of three entries is a different stop from one measured from the first.
 
-:::note How the 0.5.0 report marks a scale-in
+:::note How the report marks a scale-in in version 0.8.0
 The report's equity curve marks a trade at the size it ended up at, and at its final average price, from the bar it first opened. A position built in three adds is therefore marked, before the second add, on units it did not yet hold. For a strategy that adds as the price rises, like this one, that shows a drawdown the account never had, and the report's maximum drawdown is taken from the same curve. A partial close is misread the same way: after it settles the trade is still marked at its full size, so the part already closed is counted twice in the open profit. The realised profit is unaffected.
 :::
 

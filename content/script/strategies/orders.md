@@ -202,9 +202,9 @@ else if wantedSize < 0
     sell(qty = -wantedSize)
 ```
 
-## One leg in version 0.5.0
+## One leg in version 0.8.0
 
-A strategy trades legs, and a leg is one contract. In version 0.5.0 a file declares no legs, so it has exactly one: the instrument on its chart. Every order acts on it and none of them names it. The `leg` argument that every order call accepts is there for the planned [multi-leg strategies](/script/strategies/multi-leg-and-books), and writing it today is refused with OS3023, whatever you pass:
+A strategy trades legs, and a leg is one contract. In version 0.8.0 a file declares no legs, so it has exactly one: the instrument on its chart. Every order acts on it and none of them names it. The `leg` argument that every order call accepts is there for the planned [multi-leg strategies](/script/strategies/multi-leg-and-books), and writing it today is refused with OS3023, whatever you pass:
 
 ```openscript expect=OS3023
 version 1
@@ -269,7 +269,7 @@ There are three sane policies. Write the script so a reader can tell which one i
 | First come, first served | Remember that an order is working and place nothing new until it fills or is cancelled | An entry taken at its price or not at all |
 | Age out | Count the bars an order has been working and cancel it | A signal that goes stale, like the complete example above |
 
-[[order.working()]] and [[order.pending]] will answer "is this order still working" from the ledger. Both are planned, so in version 0.5.0 a script keeps that fact itself in a [`var`](/script/language/persistence), set when the order is placed and cleared when the position opens or the order is cancelled. The pullback and opening range examples above both do exactly that.
+[[order.working()]] and [[order.pending]] will answer "is this order still working" from the ledger. Both are planned, so in version 0.8.0 a script keeps that fact itself in a [`var`](/script/language/persistence), set when the order is placed and cleared when the position opens or the order is cancelled. The pullback and opening range examples above both do exactly that.
 
 [[cancelAll()]] is for the moments a script has lost confidence in everything it has working: the session ending, a risk switch turned off in the inputs. It cancels working orders only, and does not close a position; an order that has filled is not working any more. With nothing working it sends nothing and refuses nothing, so it is safe to call on any bar.
 
@@ -389,9 +389,9 @@ Use the bare functions where the direction is written in the source, and `order.
 
 ## Refusals
 
-Every refused order reports a code and a reason, naming the line that placed it. In version 0.5.0 a refusal while the run is going also stops the run at that bar: nothing the bar decided is sent, and no later bar executes. The Backtest panel then reports only the trades made before the refusal, and says above the figures which bar the run stopped on and why. Codes marked "At compile time" are caught before any bar runs.
+Every refused order reports a code and a reason, naming the line that placed it. In version 0.8.0 a refusal while the run is going also stops the run at that bar: nothing the bar decided is sent, and no later bar executes. The Backtest panel then reports only the trades made before the refusal, and says above the figures which bar the run stopped on and why. Codes marked "At compile time" are caught before any bar runs.
 
-| Code | Means | Usual cause | In 0.5.0 |
+| Code | Means | Usual cause | In 0.8.0 |
 |---|---|---|---|
 | OS7001 | An order call in a study | The declaration says `study` | At compile time |
 | OS7002 | An order argument is absent | A price or size from a window that has not warmed up | Raised |
@@ -410,7 +410,7 @@ Every refused order reports a code and a reason, naming the line that placed it.
 | OS7015 | The strategy has no order destination | Nothing configured to receive orders | Not raised yet |
 | OS7016 | A close names a tag nothing places | A typo in a tag | At compile time |
 | OS7017 | A close states more than it is closing | A scale-out fired twice | Raised |
-| OS3023 | An order names a leg | `leg = ...` written in version 0.5.0 | At compile time |
+| OS3023 | An order names a leg | `leg = ...` written in version 0.8.0 | At compile time |
 
 OS7008 is the pyramiding limit doing its job. Silently building a position the declaration forbade would report a return the stated rules never earned, so the order is refused instead. The [order error pages](/script/errors/orders) give a before and after for each code.
 

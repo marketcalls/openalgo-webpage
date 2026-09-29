@@ -23,9 +23,9 @@ meanLow = sma(low, amplitude)
 prevHigh = bar.isFirst ? high : high[1]
 prevLow = bar.isFirst ? low : low[1]
 
-// trend is 0 while up and 1 while down; armed is the flip being watched for.
+// trend is 0 while up and 1 while down; nextFlip is the flip being watched for.
 var trend = 0
-var armed = 0
+var nextFlip = 0
 var maxLow = low
 var minHigh = high
 var upLevel = low
@@ -33,17 +33,17 @@ var downLevel = high
 
 wasTrend = bar.isFirst ? -1 : trend
 
-if armed == 1
+if nextFlip == 1
     maxLow = max(orElse(rollLow, maxLow), maxLow)
     if not isNone(meanHigh) and meanHigh < maxLow and close < prevLow
         trend = 1
-        armed = 0
+        nextFlip = 0
         minHigh = orElse(rollHigh, high)
 else
     minHigh = min(orElse(rollHigh, minHigh), minHigh)
     if not isNone(meanLow) and meanLow > minHigh and close > prevHigh
         trend = 0
-        armed = 1
+        nextFlip = 1
         maxLow = orElse(rollLow, low)
 
 flipUp = trend == 0 and wasTrend == 1

@@ -141,7 +141,7 @@ Each level can stand wherever a later one is accepted: a constant works anywhere
 :::warn
 A name bound to a literal is not a constant to the compiler. `corner = "topLeft"` followed by `table("T", 1, 1, position = corner)` is `OS3003`. Write the literal in place, or make it a setting with `corner = input("topLeft", "Corner")`, which is accepted.
 
-An input must also be used as it is. A fixed field holds a value or a reference to one setting, so an expression computed from an input, such as `input(2, "Decimals") + 1` or `fade(tint, 50)` where `tint` is an input, is refused there. In release 0.5.0 that refusal is reported as `OS6018`, a message about a program that failed verification; the cause is the expression, and the fix is to make the setting itself hold the value the field needs.
+An input must also be used as it is. A fixed field holds a value or a reference to one setting, so an expression computed from an input, such as `input(2, "Decimals") + 1` or `fade(tint, 50)` where `tint` is an input, is refused there with `OS3025`, and the compiler reports `OS6018`, a message about a program that failed verification, beside it. The fix is to make the setting itself hold the value the field needs. A plot's `style` takes no input at all (`OS3026`). The /trading page in current OpenAlgo releases still runs library 0.5.0, which reports only `OS6018` for such an expression.
 :::
 
 ```openscript

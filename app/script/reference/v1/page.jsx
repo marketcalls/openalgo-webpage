@@ -12,7 +12,7 @@ import { SCRIPT_REPO, SITE } from "@/lib/scriptDocs"
 
 import "./reference-manual.css"
 
-const OG_IMAGE = "/assets/images/og-image.png"
+const OG_IMAGE = "/assets/og/script.png"
 const PATH = "/script/reference/v1"
 const TITLE = "OpenScript Reference Manual v1"
 const DESCRIPTION =

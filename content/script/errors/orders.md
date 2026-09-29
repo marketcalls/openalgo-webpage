@@ -11,7 +11,7 @@ This page covers the OS7xxx codes of OpenScript (also called OpenAlgo Script): t
 |---|---|---|
 | When the script compiles | [OS7001](#os7001), [OS7003](#os7003), [OS7016](#os7016) | Shown in the console under the editor. The strategy cannot run until it is fixed |
 | When an order is placed on a bar | [OS7002](#os7002), [OS7004](#os7004), [OS7006](#os7006) to [OS7010](#os7010), [OS7013](#os7013), [OS7017](#os7017) | The run stops at that bar, and nothing further is sent |
-| Not raised in version 0.5.0 | [OS7005](#os7005), [OS7011](#os7011), [OS7012](#os7012), [OS7014](#os7014), [OS7015](#os7015), [OS7018](#os7018), [OS7019](#os7019) | Reserved for checks that arrive later. Each entry says what happens today |
+| Not raised in version 0.8.0 | [OS7005](#os7005), [OS7011](#os7011), [OS7012](#os7012), [OS7014](#os7014), [OS7015](#os7015), [OS7018](#os7018), [OS7019](#os7019) | Reserved for checks that arrive later. Each entry says what happens today |
 
 A refusal while the run is going stops it at that bar in every place a strategy runs:
 
@@ -55,7 +55,7 @@ plot(slow, "Slow EMA", orange)
 plot(pos.isLong ? stopAt : none, "Stop", red, style = "step")
 ```
 
-The crosses are computed at the top level, above the `if`, because a stateful call such as [[crossDown()]] inside a branch only advances on the bars where the branch runs (warning [OS8001](/script/errors/warnings#os8001)). The stop is also tested by the script itself, because the version 0.5.0 backtest does not fill a stop set with [[exit()]]; see [Exits and brackets](/script/strategies/exits-and-brackets).
+The crosses are computed at the top level, above the `if`, because a stateful call such as [[crossDown()]] inside a branch only advances on the bars where the branch runs (warning [OS8001](/script/errors/warnings#os8001)). The stop is also tested by the script itself, because the version 0.8.0 backtest does not fill a stop set with [[exit()]]; see [Exits and brackets](/script/strategies/exits-and-brackets).
 
 ## Where orders can be placed
 
@@ -89,7 +89,7 @@ Test the size before the call, and use [[sell()]] to go the other way. See [Posi
 
 NFO futures and options, and MCX contracts, trade in lots: an order must be a whole multiple of the contract's lot size, and the exchange rejects anything else. This code is planned to refuse such a quantity in the engine too, so a backtest never reports a trade that could not have happened.
 
-**Not raised yet.** In version 0.5.0 nothing compares an order's quantity with the lot size, so `buy(qty = 100)` on a contract whose lot is 75 units is sent as written. Size in lots yourself: declare `qtyType = "lots"` and pass a number of lots, as the fix below does (with a lot of 75, `buy(qty = 2)` is 150 units). The fix line also names [[order.roundToLot()]], which is planned and does not compile in this release; until it arrives, round a computed quantity down to whole lots with `floor(qty / lot) * lot`.
+**Not raised yet.** In version 0.8.0 nothing compares an order's quantity with the lot size, so `buy(qty = 100)` on a contract whose lot is 75 units is sent as written. Size in lots yourself: declare `qtyType = "lots"` and pass a number of lots, as the fix below does (with a lot of 75, `buy(qty = 2)` is 150 units). The fix line also names [[order.roundToLot()]], which is planned and does not compile in this release; until it arrives, round a computed quantity down to whole lots with `floor(qty / lot) * lot`.
 
 {{error: OS7006}}
 
@@ -121,13 +121,13 @@ The check is made against an open position, so an entry and its stop placed on t
 
 A backtest that could spend money it does not have would report returns nobody could have earned. This code is planned to refuse an order that needs more capital than the strategy has left, and to record the refusal so the equity curve stays honest.
 
-**Not raised yet.** In version 0.5.0 nothing compares an order's cost with the strategy's capital, so `buy(qty = 100)` at a price near 100 fills in full under `capital = 1000`. Keep quantity times price within the `capital` you declared yourself. Neither route the fix names works in this release: the backtest refuses `qtyType = "equityPercent"` with [OS6021](/script/errors/data#os6021), and [[pos.equity]] is planned. In the Backtest panel count in units or lots.
+**Not raised yet.** In version 0.8.0 nothing compares an order's cost with the strategy's capital, so `buy(qty = 100)` at a price near 100 fills in full under `capital = 1000`. Keep quantity times price within the `capital` you declared yourself. Neither route the fix names works in this release: the backtest refuses `qtyType = "equityPercent"` with [OS6021](/script/errors/data#os6021), and [[pos.equity]] is planned. In the Backtest panel count in units or lots.
 
 {{error: OS7012}}
 
 An exchange works orders only during its session, 09:15 to 15:30 IST for NSE equities and NFO contracts. This code is planned to refuse an order placed outside the session, rather than hold it until the open and fill it at a price the script never saw.
 
-**Not raised yet.** In version 0.5.0 nothing checks the session before an order is sent. Guard entries yourself with [[session.isIn()]], as the example below does, and name the zone, as in `session.isIn("0915-1530", "Asia/Kolkata")`, so the window means IST wherever the script runs and whatever timezone a chart is set to. [[session.isOpen]], which the fix line names, is planned and does not compile in this release. The declaration's `closeOnSessionEnd = true` is accepted but not yet acted on either, so close an intraday position yourself before 15:30, as [Exiting on the clock](/script/strategies/exits-and-brackets#exiting-on-the-clock) shows. See [Sessions and time](/script/data/sessions-and-time).
+**Not raised yet.** In version 0.8.0 nothing checks the session before an order is sent. Guard entries yourself with [[session.isIn()]], as the example below does, and name the zone, as in `session.isIn("0915-1530", "Asia/Kolkata")`, so the window means IST wherever the script runs and whatever timezone a chart is set to. [[session.isOpen]], which the fix line names, is planned and does not compile in this release. The declaration's `closeOnSessionEnd = true` is accepted but not yet acted on either, so close an intraday position yourself before 15:30, as [Exiting on the clock](/script/strategies/exits-and-brackets#exiting-on-the-clock) shows. See [Sessions and time](/script/data/sessions-and-time).
 
 {{error: OS7013}}
 
@@ -159,30 +159,30 @@ Use the tag the entry was placed with, or leave the tag out to close the whole p
 
 ## The destination
 
-The destination is where orders go: the simulator in the Backtest panel, or sandbox trading (analyzer mode in OpenAlgo) or a live account when a strategy is deployed. The last four codes are about the conversation between the engine and the destination, and none is raised in version 0.5.0.
+The destination is where orders go: the simulator in the Backtest panel, or sandbox trading (analyzer mode in OpenAlgo) or a live account when a strategy is deployed. The last four codes are about the conversation between the engine and the destination, and none is raised in version 0.8.0.
 
 {{error: OS7014}}
 
 The order left the strategy well formed and the destination refused it: a product the account cannot trade, not enough margin, or a symbol the account has no permission for. The reason comes from the destination, not from the script, and the same order will be refused again until the account or the order changes.
 
-**Not raised yet.** In version 0.5.0 a refusal that comes back is recorded against the order as rejected, with the destination's own reason, but no diagnostic points at the line that placed it. See [Sandbox and live](/script/strategies/sandbox-and-live).
+**Not raised yet.** In version 0.8.0 a refusal that comes back is recorded against the order as rejected, with the destination's own reason, but no diagnostic points at the line that placed it. See [Sandbox and live](/script/strategies/sandbox-and-live).
 
 {{error: OS7015}}
 
 A strategy needs somewhere for its orders to go. This code is planned for a host that runs a strategy with nowhere to send orders, which would compute a position nobody ever took.
 
-**Not raised yet.** In version 0.5.0 nothing raises OS7015. An engine given no order route at all refuses a strategy when it loads, with [OS6006](/script/errors/data#os6006) naming `orders`. In /trading a strategy always has a destination: the simulator when you backtest it, and the one its deployment names when it runs.
+**Not raised yet.** In version 0.8.0 nothing raises OS7015. An engine given no order route at all refuses a strategy when it loads, with [OS6006](/script/errors/data#os6006) naming `orders`. In /trading a strategy always has a destination: the simulator when you backtest it, and the one its deployment names when it runs.
 
 {{error: OS7018}}
 
 A destination reports on an order by the id the engine gave it when the order was sent. This code is for a report naming an order this strategy never placed, such as a destination answering for another strategy's order or for a run that has already ended. It is a problem in the host, not in your script.
 
-**Not raised yet.** In version 0.5.0 such a report is refused and the refusal is recorded, but no diagnostic is raised. It concerns you only if you build your own host on the library: answer with the id the engine sent. See [Host interface](/script/integrate/host-interface).
+**Not raised yet.** In version 0.8.0 such a report is refused and the refusal is recorded, but no diagnostic is raised. It concerns you only if you build your own host on the library: answer with the id the engine sent. See [Host interface](/script/integrate/host-interface).
 
 {{error: OS7019}}
 
 A report that says more quantity has filled must also carry the average fill price, because a position needs a price as well as a size before it has an average entry, a profit or an equity point. A report with a quantity and no price is refused whole.
 
-**Not raised yet.** In version 0.5.0 such a report is refused and recorded, but no diagnostic is raised. Like [OS7018](#os7018), it concerns hosts built on the library: report the destination's average fill price over the whole filled quantity on every report that adds quantity.
+**Not raised yet.** In version 0.8.0 such a report is refused and recorded, but no diagnostic is raised. Like [OS7018](#os7018), it concerns hosts built on the library: report the destination's average fill price over the whole filled quantity on every report that adds quantity.
 
 **Related.** [Orders](/script/strategies/orders), [Exits and brackets](/script/strategies/exits-and-brackets), [Position and sizing](/script/strategies/position-and-sizing), [Backtesting](/script/strategies/backtesting), [Sandbox and live](/script/strategies/sandbox-and-live), [Reading an error](/script/errors/overview)

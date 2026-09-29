@@ -75,7 +75,8 @@ plot(basis - dev, "Lower", aqua)
 **Remarks.** The settings dialog is built once, before the first bar, from the `input()` calls the compiler can see. Every rule about `input()` follows from that:
 
 - It is written at the top level of the file, outside any block: as an assignment, inside a larger expression, as a declaration option such as `study("B", precision = input(2, "Decimals"))`, or inside the expression of a [[req.timeframe()]] read. Inside an `if`, a loop or a function it is [OS3007](/script/errors/arguments#os3007).
-- The default is fixed before any data arrives: a literal, arithmetic over literals, a colour built from literals such as `fade(aqua, 50)`, or, for a source, one of the price series. A default computed from bar data is [OS3003](/script/errors/arguments#os3003).
+- The default is fixed before any data arrives: a literal, arithmetic over literals, a colour built from literals such as `fade(aqua, 50)`, or, for a source, one of the price series. A default computed from bar data is [OS3003](/script/errors/arguments#os3003), and a default, `min`, `max` or `step` that reads another input is [OS3025](/script/errors/arguments#os3025).
+- Where a value is fixed before the first bar, such as a declaration option, a plot's width or a table's size, an input must be the whole of the value: `study("B", precision = input(2, "Decimals") + 1)` is [OS3025](/script/errors/arguments#os3025). A plot's `style` takes no input at all ([OS3026](/script/errors/arguments#os3026)).
 - The title is written as a string literal on the line. When the input is assigned to a name, the title can be left out and defaults to that name.
 - An input has no warmup: its value exists on bar 0.
 

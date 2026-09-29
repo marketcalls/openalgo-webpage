@@ -131,7 +131,7 @@ if not newSession and not alerted and close > rangeHigh
 
 {{entry: notify()}}
 
-Will send a message to a channel the platform has already configured, named by `channel`, rather than as an alert. It is planned and not part of version 0.5.0; until it arrives, [[alert()]] is how a script sends a message.
+Will send a message to a channel the platform has already configured, named by `channel`, rather than as an alert. It is planned and not part of version 0.8.0; until it arrives, [[alert()]] is how a script sends a message.
 
 ## Markers
 

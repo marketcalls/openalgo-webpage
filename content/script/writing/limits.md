@@ -7,7 +7,7 @@ This page lists every limit an OpenScript script (OpenScript is also called Open
 
 ## Every limit at a glance
 
-The values below are the ones the engine in `openalgo-script` 0.5.0 applies when the host sets nothing else, which is how scripts run on the /trading page. Two of them, the loop budget and the array ceiling, are fixed by the language itself. The others are the engine's defaults, and a host is allowed to set its own.
+The values below are the ones the engine in `openalgo-script` 0.8.0 applies when the host sets nothing else. They are the same in version 0.5.0, which the /trading page in current OpenAlgo releases runs, so they are also how scripts run there. Two of them, the loop budget and the array ceiling, are fixed by the language itself. The others are the engine's defaults, and a host is allowed to set its own.
 
 | Limit | Value | Can the script change it | Checked | Reported as |
 |---|---|---|---|---|

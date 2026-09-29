@@ -109,7 +109,7 @@ The parameter tables below mark every argument that is **fixed before the first 
 | A colour built from literals | `fade(gray, 55)` |
 | An [[input()]], at the call or held in a name of its own | `width = input(2, "Width")` |
 
-Anything that depends on bar data is error `OS3003`. So is a name that holds a plain value: `w = 2` followed by `width = w` is refused, so write the `2` at the call or make it an input. Arithmetic on an input, such as `offset = -rightBars`, is refused too; declare the input with the value you want instead.
+Anything that depends on bar data is error `OS3003`. So is a name that holds a plain value: `w = 2` followed by `width = w` is refused, so write the `2` at the call or make it an input. An input must be the whole of the value: arithmetic on one, such as `offset = -rightBars` or `width = w + 1`, is error `OS3025`, so declare the input with the value you want instead. A plot's `style` is the one fixed argument that takes no input at all: `style = input("line", "Style")` is error `OS3026`, and the reader changes the style in the Style tab of the settings dialog instead.
 
 The fixed arguments are a plot's title, width, style, offset, `overlay`, `precision`, `format` and `scale`; a level's title, colour, style and width; and a band's `opacity` and `overlay`. The value you draw is read on every bar, and so is the colour of [[plot()]], [[plotCandles()]] and [[fill()]].
 
@@ -165,7 +165,7 @@ ph = pivotHigh(high, 5, 5)
 plot(ph, "Pivot high", orange, style = "lineWithMarkers", offset = -5)
 ```
 
-The offset is a whole number fixed before the first bar, so `offset = -rightBars` on an input is refused. When the pivot's right side is an input, declare a second input with the negative default, or write the literal as above.
+The offset is a whole number fixed before the first bar, so `offset = -rightBars` on an input is error `OS3025`. When the pivot's right side is an input, declare a second input with the negative default, or write the literal as above.
 
 **Pane and axis.** A plot lands in the pane the declaration chose. `overlay = true` on one plot moves just that column onto the price pane. `scale` picks the axis within the pane:
 
@@ -289,7 +289,7 @@ pMid = plot(50, "Midline", fade(gray, 100))
 fill(pRsi, pMid, colorUp = fade(lime, 86), colorDown = fade(red, 86))
 ```
 
-**Remarks.** A band stops wherever either of its plots is `none` and resumes where both return, so it inherits their warmup with no code from you. `opacity` is a dimmer from 0 to 1 that multiplies whatever transparency the colours already have. It defaults to 1 and is fixed before the first bar; dimming with both `opacity` and [[fade()]] compounds, so pick one. A band and the two plots it names must end up in the same pane, and the compiler does not check it: give both plots the same `overlay` and `offset`, and the band the same `overlay`. On the /trading chart in this release a band takes one colour: a colour computed per bar, such as `color = squeezed ? orange : none`, is not applied bar by bar, and the band is drawn in `plotA`'s colour faded instead. To switch a band off on some bars there, make one of its plots `none` on those bars.
+**Remarks.** A band stops wherever either of its plots is `none` and resumes where both return, so it inherits their warmup with no code from you. `opacity` is a dimmer from 0 to 1 that multiplies whatever transparency the colours already have. It defaults to 1 and is fixed before the first bar; dimming with both `opacity` and [[fade()]] compounds, so pick one. A band and the two plots it names must end up in the same pane, and the compiler does not check it: give both plots the same `overlay` and `offset`, and the band the same `overlay`. A colour computed per bar, such as `color = squeezed ? orange : none`, needs a chart that can draw it: the [chart adapter](/script/integrate/charts-adapter) in library 0.8.0 shades such a band bar by bar on openalgo-charts 2.5.4 or newer when the host passes `chartVersion`, leaving a bar whose colour is absent unshaded, and on an older chart, or where the host states no chart version, it refuses the study with `OS6024` before the first bar. The /trading page in current OpenAlgo releases still runs library 0.5.0, which draws such a band in `plotA`'s colour faded. To switch a band off on some bars on any chart, make one of its plots `none` on those bars.
 
 **See also.** [[plot()]], [[level()]], [[fade()]], [Fills](/script/visuals/fills)
 

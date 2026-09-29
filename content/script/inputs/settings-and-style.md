@@ -78,7 +78,7 @@ Two consequences save a script work.
 
 What the Style tab does **not** offer in /trading:
 
-- **The plot's style.** Whether a plot is a line, a step line, a histogram, columns or an area is decided by its `style` argument in the script.
+- **The plot's style.** Whether a plot is a line, a step line, a histogram, columns or an area is decided by its `style` argument in the script, written as a string literal.
 - **Rows for anything but plots.** [[level()]], [[fill()]], [[background()]], [[barColor()]] and tables have no Style rows. If a reader should be able to recolour one of those, give it a colour input, as the next section shows.
 
 ## A colour with a meaning
@@ -255,7 +255,7 @@ plot(sma(close, 20), "Average", precision = 1)
 The full list of options for `study()` and `strategy()` is in the [declarations reference](/script/reference/declarations).
 
 :::note
-An `input()` can be written as a declaration option, such as `precision = input(2, "Decimals")`, or as a plot's `width` or `style`. In /trading, the chart reads those at their defaults when it loads the study, so changing such a row in the settings dialog does not change the drawing. Colour inputs, level styles and a pane's `range` do follow the dialog.
+An `input()` can be written as a declaration option, such as `precision = input(2, "Decimals")`, or as a plot's `width`, as long as it is the whole of the value: an expression over it, such as `precision = input(2, "Decimals") + 1`, is OS3025. A plot's `style` cannot be a setting at all, because the compiled program holds it as plain text: `style = input("line", "Style", options = ["line", "step"])` is OS3026. In /trading, the chart reads declaration options and a plot's width at their defaults when it loads the study, so changing such a row in the settings dialog does not change the drawing. Colour inputs, level styles and a pane's `range` do follow the dialog. The /trading page in current OpenAlgo releases still runs library 0.5.0, which accepts an input as a plot's style and draws the plot as a line, the default style, whatever the setting says.
 :::
 
 ## What /trading keeps

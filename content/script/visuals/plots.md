@@ -45,7 +45,7 @@ Each `plot` call adds one line to the chart and its current value to the study's
 | `format` | the declaration's, in a study with its own pane | `"price"`, `"percent"` or `"volume"`, on that same scale |
 | `scale` | `"right"` | `"right"`, `"left"` or `"none"` |
 
-Only `value` and `color` are read on every bar. The rest (`title`, `width`, `style`, `offset`, `overlay`, `precision`, `format` and `scale`) describe the column itself and are **fixed before the first bar**. Write each one as a literal in the call, or pass an [[input()]] so the user can change it. A name you computed, even from constants, counts as bar data and raises [OS3003](/script/errors/arguments#os3003):
+Only `value` and `color` are read on every bar. The rest (`title`, `width`, `style`, `offset`, `overlay`, `precision`, `format` and `scale`) describe the column itself and are **fixed before the first bar**. Write each one as a literal in the call or, for every one but `style`, pass an [[input()]] so the user can change it. A name you computed, even from constants, counts as bar data and raises [OS3003](/script/errors/arguments#os3003):
 
 ```openscript expect=OS3003
 thick = 1 + 1
@@ -56,6 +56,17 @@ plot(close, "Close", aqua, width = thick)
 thick = input(2, "Line width", min = 1, max = 5)
 plot(close, "Close", aqua, width = thick)
 ```
+
+An input must be the whole of the value. Arithmetic on it in the call, such as `width = thick + 1`, is [OS3025](/script/errors/arguments#os3025): declare the input with the value the option needs instead.
+
+`style` is the exception: it cannot come from an input at all, and trying is [OS3026](/script/errors/arguments#os3026). The user already changes a plot's style in the Style tab, so write the style you want as a literal:
+
+```openscript expect=OS3026
+shape = input("line", "Plot style", options = ["line", "step", "histogram"])
+plot(close, "Close", aqua, style = shape)
+```
+
+The /trading page in current OpenAlgo releases still runs library 0.5.0, which accepts a style from an input and draws the plot in its default style.
 
 Two plots in one file may not share a title ([OS3017](/script/errors/arguments#os3017)), because the Style tab tells plots apart by their titles.
 
@@ -164,7 +175,7 @@ plot(ph, "Pivot high", orange, style = "lineWithMarkers", offset = -5)
 
 This does not make the script know the pivot any earlier. The lag is real and stays real; `offset` only stops the picture lying about which bar the value belongs to.
 
-If you want the shift as a setting, give the input the exact value to pass, such as `input(-5, "Shift")`. Arithmetic on an input inside the call, such as putting a minus sign in front of it, is refused, because the value must be fixed before the first bar.
+If you want the shift as a setting, give the input the exact value to pass, such as `input(-5, "Shift")`. Arithmetic on an input inside the call, such as putting a minus sign in front of it, is [OS3025](/script/errors/arguments#os3025), because an option fixed before the first bar holds an input only as the whole of its value.
 
 ## Pane and scale
 
@@ -375,7 +386,9 @@ Note the order of the three plots: the histogram is declared first so that it si
 |---|---|---|
 | An `if` wrapped around a `plot` | [OS3006](/script/errors/arguments#os3006) | `plot(cond ? value : none, "Title")` |
 | A stateful call such as `ema` inside the branch that uses it | Warning [OS8001](/script/errors/warnings#os8001), and a line with holes in it | Compute it at the top level and use the result in the branch |
-| `width`, `style` or `offset` taken from a computed name | [OS3003](/script/errors/arguments#os3003) | Write a literal, or pass an `input()` |
+| `width`, `style` or `offset` taken from a computed name | [OS3003](/script/errors/arguments#os3003) | Write a literal, or pass an `input()` to `width` or `offset` |
+| Arithmetic on an input in a fixed option, such as `width = w + 1` | [OS3025](/script/errors/arguments#os3025) | Declare the input with the value the option needs |
+| `style` taken from an `input()` | [OS3026](/script/errors/arguments#os3026) | Write the style as a literal; the user changes it in the Style tab |
 | Two plots with the same title | [OS3017](/script/errors/arguments#os3017) | Give every plot its own title |
 | `precision` or `format` on a plot in an overlay study | Warning [OS8007](/script/errors/warnings#os8007), and the instrument's axis is reformatted | Leave them off, or draw the reading in a study with its own pane |
 | Expecting `format = "percent"` to multiply by 100 | A fraction such as 0.015 reads as 0.015 percent | Compute the percentage yourself |

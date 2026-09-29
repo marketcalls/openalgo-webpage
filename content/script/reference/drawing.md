@@ -72,7 +72,7 @@ The examples on this page that reset once per session find the session's first b
 
 **The newest bar is rolled back.** On a moving chart the newest bar runs again on every update, and before each run the set of objects is restored to what it was at the end of the previous bar, exactly as `var` values are. A script that creates a label on the newest bar gets one label, not one per update. Keep handles in `var`, never in `live var`: a `live var` survives the rollback, so after the next update it holds a handle to an object the rollback removed, and changes made through it draw nothing.
 
-**A deleted object stays deleted.** A setter called on an object that has been deleted is error `OS4005`, which stops the script on that bar. A setter given `none` does nothing, and so does [[draw.delete()]] given `none` or an object already deleted. So assign `none` to the name on the same lines that delete the object, test [[isNone()]] before changing it, and when objects live in an array, remove the element as well: deleting the object does not.
+**A deleted object stays deleted.** A setter called on an object that has been deleted is error `OS4005`, which stops the script on that bar. A setter given `none` does nothing, and so does [[draw.delete()]] given `none` or an object already deleted. So assign `none` to the name on the same lines that delete the object, test [[isNone()]] before changing it, and when objects live in an array, remove the element as well: deleting the object does not. The compiler warns with `OS8019` where a name or an array element still holds an object deleted earlier, such as `draw.delete(element(zones, 0))` with no [[shift()]] or [[remove()]] after it. The /trading page in current OpenAlgo releases still runs library 0.5.0, which does not give that warning.
 
 **Absent values draw nothing.** An object whose anchor has no time or no price is not drawn, and a colour of `none` is fully transparent rather than a default colour.
 
@@ -613,7 +613,7 @@ if not isNone(marker) and close < sma50
     marker = none
 ```
 
-**Remarks.** A setter given a deleted object is error `OS4005`, which stops the script on that bar and names the bar the object was deleted on. Deleting an object that sits in an array leaves the element in the array; `draw.delete(shift(list))` deletes the oldest object and removes it from the list in one line. When removing several elements in a loop, walk the list downwards, `for i = size(list) - 1 to 0 step -1`, so a removal never skips the element after it.
+**Remarks.** A setter given a deleted object is error `OS4005`, which stops the script on that bar and names the bar the object was deleted on. A name left holding the deleted object gets warning `OS8019` when the script compiles. Deleting an object that sits in an array leaves the element in the array; `draw.delete(shift(list))` deletes the oldest object and removes it from the list in one line. When removing several elements in a loop, walk the list downwards, `for i = size(list) - 1 to 0 step -1`, so a removal never skips the element after it.
 
 **See also.** [[draw.deleteAll()]], [[shift()]], [[remove()]]
 

@@ -146,13 +146,24 @@ for the grid's colours too: `bgColor = input(black, "Panel colour")`.
 kept and passed to a function, and it is never deleted: the grid lives as long as
 the study does.
 
-### One grid per study
+### How many grids reach the chart
 
-A study may declare several grids and the compiler accepts it, but a chart pane
-has room for one: **the chart draws the first grid a study declares.** A second
-`table()` compiles and its cells are written, yet nothing appears for it, and no
-diagnostic says so yet. Declare one grid and give it the rows you need. If you
-want two panels, write two studies and put them in different corners.
+A study may declare as many grids as it likes, and the compiled study carries
+every one of them. How many a chart draws depends on the chart:
+
+- The [chart adapter](/script/integrate/charts-adapter) in library 0.8.0 draws
+  every grid on openalgo-charts 2.5.4 or newer, when the host (the application
+  drawing the chart) passes the chart's version as `chartVersion`. Each grid sits
+  in the corner its own `position` names, so give each grid a corner of its own:
+  two pinned to the same corner are drawn one over the other.
+- On an older chart, or where the host states no chart version, a pane has room
+  for one grid, and the adapter refuses a study that declares a second before
+  any bar runs, with [OS6024](/script/errors/data#os6024) naming the second grid.
+
+The /trading page in current OpenAlgo releases still runs library 0.5.0, which
+draws the first grid a study declares and ignores the rest without a message. So
+a study meant for /trading declares one grid and gives it the rows it needs. If
+you want two panels there, write two studies and put them in different corners.
 
 ## Writing cells
 
@@ -171,9 +182,10 @@ every bar, so a cell can change colour with the reading it shows.
 
 Rows and columns count from zero, so a grid declared with 4 rows and 2 columns
 has rows 0 to 3 and columns 0 and 1. Writing outside the grid stops the script
-with [OS4004](/script/errors/runtime#os4004), so keep the declared size and the
-rows you write in step. A second write to the same cell on the same bar replaces
-the first.
+with [OS4008](/script/errors/runtime#os4008), whose message names the row, the
+column and the grid's shape, so keep the declared size and the rows you write in
+step. (Before library 0.6.0 the code was the array error OS4004.) A second write
+to the same cell on the same bar replaces the first.
 
 A helper function keeps a long panel short, because a table object can be passed
 to a function like any other value:
@@ -436,13 +448,15 @@ a list belongs in the [print log](/script/writing/debugging) or a
 | OS3006 on the `table()` line | Declared inside an `if`, a loop or a function | Declare at the top level and guard the `cell` writes instead |
 | OS3003 on the `table()` line | A size, corner or colour that depends on bar data | Use a literal or an input; put per-bar colour on the cell |
 | OS3011 on a `cell` call | A number passed where text is expected | `text(value, decimals)` |
-| OS4004 on a `cell` call | A row or column outside the declared grid | Declare enough rows, or check the index |
+| OS4008 on a `cell` call (OS4004 before library 0.6.0) | A row or column outside the declared grid | Declare enough rows, or check the index |
 | The panel is empty | Cells written under a condition that is false on the newest bar | Write every cell inside `if bar.isLast` |
 | A reading is blank | `text(value, decimals)` of an absent value | Use a `show` helper that says "warming up" |
 | Every row says "down" on a fresh chart | An absent condition took the false branch | Test `isNone` first and say so |
 | The chart is slow with a table on it | Cells written on every bar of history | Write inside `if bar.isLast` |
 | The panel hides the candles under it | A solid `bgColor` | `fade(black, 25)` or similar |
-| A second panel never appears | The chart draws only the first grid a study declares | Declare one grid, or split the study in two |
+| OS6024 naming a second table | The host's chart draws one grid per study, or the host did not state its chart version | Run it on a host with a newer chart, declare one grid, or split the study in two |
+| A second panel never appears | Library 0.5.0 draws only the first grid a study declares | Declare one grid, or split the study in two |
+| Two grids drawn over each other | Both pinned to the same corner | Give each grid its own `position` |
 | Numbers do not line up | Cells are left aligned by default | `align = "right"` on the value column |
 | An empty block stays in the corner with the panel switched off | The grid has a `bgColor` or a border, which is drawn at the declared size | Put the background on the cells you write instead |
 | A cell is blank, or says "warming up" for ever, on the /trading chart | It reads a fact the chart does not state, such as `chart.pointValue` or `chart.currency`, or the lot size of a symbol whose contract has not been downloaded | Test the fact with `isNone` and say "not stated", or leave that reading out of a panel meant for the chart |

@@ -314,7 +314,7 @@ if crossDown(fast, slow)
 | The same data read written twice | Two requests against the host's ceiling ([OS5006](/script/errors/limits#os5006)) | Read once, name it, reuse the name |
 
 :::note
-The error reference lists a warning for a persistent value holding a bar index, [OS8014](/script/errors/warnings#os8014), but the compiler in version 0.5.0 does not raise it yet: it does not follow a bar index into a `var`. Until it does, the rule above is yours to keep.
+The error reference lists a warning for a persistent value holding a bar index, [OS8014](/script/errors/warnings#os8014), but the compiler in version 0.8.0 does not raise it yet: it does not follow a bar index into a `var`. Until it does, the rule above is yours to keep.
 :::
 
 ## Treat warnings as part of the style

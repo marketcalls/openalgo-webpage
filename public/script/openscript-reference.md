@@ -1,4 +1,4 @@
-# OpenScript 0.5.0 complete reference
+# OpenScript 0.8.0 complete reference
 
 OpenScript (also called OpenAlgo Script) is an open trading language for studies and strategies. This file holds the whole documentation at https://openalgo.in/script as plain markdown.
 
@@ -142,11 +142,11 @@ The [Compiled program](/script/integrate/compiled-program) page describes the fo
 
 ## Two libraries for your own portal
 
-OpenScript is an open project, not a feature locked inside one product. The language ships as two libraries that anyone can build into their own financial portal, trading terminal or research tool, commercial or not. Both are licensed under Apache 2.0, both have zero runtime dependencies, and both are at version 0.5.0.
+OpenScript is an open project, not a feature locked inside one product. The language ships as two libraries that anyone can build into their own financial portal, trading terminal or research tool, commercial or not. Both are licensed under Apache 2.0, both have zero runtime dependencies, and both are at version 0.8.0.
 
 | Library | Install | Language | What it gives you |
 |---|---|---|---|
-| `openalgo-script` | npm | JavaScript and TypeScript | The compiler and the engine; six headless editor functions, meaning functions with no screen of their own that an editor calls (highlight, complete, diagnose, hover, signature and format); an adapter that draws a compiled study on openalgo-charts; the backtest |
+| `openalgo-script` | npm | JavaScript and TypeScript | The compiler and the engine; six headless editor functions, meaning functions with no screen of their own that an editor calls (highlight, complete, diagnose, hover, signature and format); an adapter that draws a compiled study on openalgo-charts; the backtest; an importer that translates a script written in another chart scripting language into OpenScript |
 | `openscript` | PyPI | Python 3.12 or newer | An engine that runs compiled programs on a server, with no compiler in it |
 
 ```bash
@@ -156,13 +156,13 @@ pip install openscript
 
 The /trading page itself is built this way: the Scripts panel, the chart and the Backtest panel use `openalgo-script` in the browser, and the Strategies panel runs deployed strategies with `openscript` on the server. A platform with its own chart or its own editor replaces the adapter for that piece and keeps the rest. The [Two libraries](/script/integrate/overview) page explains the pieces and how to adopt them one at a time.
 
-## What version 0.5.0 does, and what is planned
+## What version 0.8.0 does, and what is planned
 
-The language is young, and these pages say plainly what works today.
+The language is young, and these pages say plainly what works today. They describe version 0.8.0 of the two libraries. The /trading page in current OpenAlgo releases runs version 0.5.0, which has the same library names and signatures; where the two versions behave differently in a way you can see on that page, the page that covers it says so.
 
-- **Works now.** Studies with plots, fills, levels, markers, bar colours, backgrounds, drawing objects, tables and alerts. Reading another timeframe or another instrument on the chart. Strategies with market, limit and stop orders, backtested in the browser with commission and slippage, simulated on the chart, and deployed from the Strategies panel.
+- **Works now.** Studies with plots, fills, levels, markers, bar colours, backgrounds, drawing objects, tables and alerts. Reading another timeframe or another instrument on the chart. Strategies with market, limit and stop orders, backtested in the browser with commission and slippage, simulated on the chart, and deployed from the Strategies panel. In the library, an importer that translates a script written in another chart scripting language, statement by statement, and says what it could not carry across; the /trading page does not offer it. See [Importing a script](/script/writing/importing-a-script).
 - **Planned.** Some names in the library are declared but not implemented yet, for example the risk-based sizing helpers such as `order.qtyForRisk()` and the account figures such as `pos.equity`. The compiler refuses a planned name where you wrote it, with [OS2020](/script/errors/names-and-types#os2020) and a message that says it is planned, rather than letting the script fail later. The reference marks every planned entry.
-- **Not modelled yet.** A stop and target attached with `exit()` are not filled by the 0.5.0 backtest, and a strategy that calls `exit()` is refused by the Strategies panel. Manage exits in the script with `close()` for now, as [Your first strategy](/script/getting-started/first-strategy) shows.
+- **Not modelled yet.** A stop and target attached with `exit()` are not filled by the backtest in version 0.8.0, and a strategy that calls `exit()` is refused by the Strategies panel. Manage exits in the script with `close()` for now, as [Your first strategy](/script/getting-started/first-strategy) shows.
 
 ### What each part of the /trading page supports
 
@@ -410,7 +410,7 @@ The background marks the newest bar while it is still forming. [Price and volume
 
 ### Arithmetic
 
-`+`, `-`, `*`, `/` and `%` work on numbers. `/` is always real division, so `7 / 2` is `3.5`. `%` is the remainder with the sign of the left operand, so `-7 % 3` is `-1`. Division by zero gives `none`, not an error. There is no power operator: write `pow()`, as `pow(x, 2)`.
+`+`, `-`, `*`, `/` and `%` work on numbers. `/` is always real division, so `7 / 2` is `3.5`. `%` is the remainder with the sign of the left operand, so `-7 % 3` is `-1`. Division by zero gives `none`, not an error. There is no power operator: write `pow()`, as `pow(x, 2)`. Like `exp()`, `log()` and the trigonometric functions, it is computed with a portable algorithm and one final rounding, so every engine gives the same result to the last bit.
 
 `+` also joins two strings, and does nothing else. There is no implicit conversion anywhere, so `"Close " + 5` is `OS2003`. Convert with `text()`: `"Close " + text(close, 2)`.
 
@@ -1099,7 +1099,7 @@ How it works:
 - `not isNone(atrValue)` skips the entry while the ATR is still warming up. On the first 13 bars `atr()` has no value, so a stop computed from it would be `none` too. A trade entered then would have no stop at all: `close < entryStop` is never true while `entryStop` is `none`. The guard makes sure every trade starts with both levels set.
 - The exit tests the bar's close against the levels and calls `close()`, which fills at the next bar's open. On a gap, that open can be beyond the level, and the backtest reports the price you would really have got.
 
-> **The language also has `exit()`, which attaches a stop and a target to a position in one call. In version 0.5.0 the backtest does not fill the levels `exit()` sets, and the Strategies panel refuses to start a strategy that calls `exit()` or `order.bracket()`, because OpenAlgo's order path has no single order that pairs a stop with a target yet. Until both are in place, manage exits in the script with `close()`, as this page does.**
+> **The language also has `exit()`, which attaches a stop and a target to a position in one call. In version 0.8.0 the backtest does not fill the levels `exit()` sets, and the Strategies panel refuses to start a strategy that calls `exit()` or `order.bracket()`, because OpenAlgo's order path has no single order that pairs a stop with a target yet. Until both are in place, manage exits in the script with `close()`, as this page does.**
 
 ## The finished strategy
 
@@ -1432,13 +1432,14 @@ Every script you wrote carries a braces button, `{}`, on its legend row, beside 
 
 ## What the editor does not do yet
 
-The `openalgo-script` library ships six editor functions: highlighting, completion, diagnostics, hover, signature help and formatting. The /trading panel uses the highlighting, and shows the compiler's diagnostics when you open or save a script rather than as you type.
+The `openalgo-script` library ships six editor functions: highlighting, completion, diagnostics, hover, signature help and formatting. The /trading panel uses the highlighting, and shows the compiler's diagnostics when you open or save a script rather than as you type. The /trading page in current OpenAlgo releases runs version 0.5.0 of the library, and the six functions are the same in version 0.8.0, which these pages describe.
 
 So, in this release, the panel does not:
 
 - offer completion as you type, or show a function's signature while you fill in its arguments;
 - show a card when you hover over a name;
-- format the file for you.
+- format the file for you;
+- translate a script written in another chart scripting language. The library's importer does that, and reports what it could not carry across with codes in a ninth range, OS9. See [Importing a script](/script/writing/importing-a-script).
 
 The reference covers what those features would show you. Every entry in the [Reference](/script/reference/technical-analysis) section lists a function's signature, its arguments with their defaults and accepted values, and the first bar it has a value on, all read from the compiler. If you build OpenScript into your own portal, all six functions are available to you: see [Editor integration](/script/integrate/editor-integration).
 
@@ -2266,7 +2267,7 @@ What to notice:
 - **Levels held in `var`** are the levels actually sent, so the plotted stop is the stop the trade was opened with.
 - **`pos.size` and `pos.avgPrice`** read the position from fills.
 
-> **In version 0.5.0 the backtest does not fill the levels `exit()` sets, so in the Backtest panel every trade of this script closes on the downward cross, and the stop and target lines are drawn but never filled. The Strategies panel refuses to start a strategy that calls `exit()`. To trade this idea today, manage the stop and target in the script with `close()`, as [Your first strategy](/script/getting-started/first-strategy) does.**
+> **In version 0.8.0 the backtest does not fill the levels `exit()` sets, so in the Backtest panel every trade of this script closes on the downward cross, and the stop and target lines are drawn but never filled. The Strategies panel refuses to start a strategy that calls `exit()`. To trade this idea today, manage the stop and target in the script with `close()`, as [Your first strategy](/script/getting-started/first-strategy) does.**
 
 ## 11. Opening range breakout
 
@@ -2330,7 +2331,7 @@ if ready and ok and close < rangeLow
 
 // The clock exit is neither a stop nor a target: it is the admission that a
 // position that has not worked in five hours is not going to. closeOnSessionEnd
-// is declared as well; version 0.5.0 accepts it and does not act on it yet, so
+// is declared as well; version 0.8.0 accepts it and does not act on it yet, so
 // this exit is the one that flattens the position.
 if pos.size != 0 and not isNone(elapsed) and elapsed >= holdMinutes * 60000
     close()
@@ -2348,7 +2349,7 @@ What to notice:
 - **One trade per session**, held in `var traded`, reset on `session.isFirstBar`.
 - **A time exit.** `elapsed >= holdMinutes * 60000` flattens with `close()` five hours after the open, before the NSE close at 15:30 IST.
 
-> **The /trading chart and the Backtest panel take each exchange's session hours from the market calendar, so `session.isFirstBar` marks each session's open, the range forms and the script trades. In version 0.5.0 the backtest does not fill the levels `exit()` sets, so in the Backtest panel each trade closes on the clock exit. The Strategies panel refuses it, because it calls `exit()` and sizes in lots.**
+> **The /trading chart and the Backtest panel take each exchange's session hours from the market calendar, so `session.isFirstBar` marks each session's open, the range forms and the script trades. In version 0.8.0 the backtest does not fill the levels `exit()` sets, so in the Backtest panel each trade closes on the clock exit. The Strategies panel refuses it, because it calls `exit()` and sizes in lots.**
 
 ## 12. Short premium, combined stop
 
@@ -2452,7 +2453,7 @@ What to notice:
 - **One exit with a reason.** A single `close()` carries the reason in its `signal()` marker, so the position can never be closed three times over.
 - **The second leg is an alert.** The strategy trades the chart's leg; the other leg's orders go out as `alert()` messages with their own ids. On /trading this script runs on the chart only, as the note below explains.
 
-> **The Backtest panel refuses this script with [OS6006](/script/errors/data#os6006), because a backtest holds only the chart's own bars and this script reads another instrument. On the /trading chart it draws the combined premium and simulates its trades on the chosen weekday, with `session.isFirstBar` taken from the exchange's session in the market calendar. The Strategies panel refuses it, because it reads another instrument and sizes in lots. A strategy that wants both legs in its own books declares them with `leg.relative()`, which is planned; see [Legs and books](/script/strategies/multi-leg-and-books).**
+> **The Backtest panel refuses this script with [OS6006](/script/errors/data#os6006), because the panel hands a backtest only the chart's own bars and this script reads another instrument. On the /trading chart it draws the combined premium and simulates its trades on the chosen weekday, with `session.isFirstBar` taken from the exchange's session in the market calendar. The Strategies panel refuses it, because it reads another instrument and sizes in lots. A strategy that wants both legs in its own books declares them with `leg.relative()`, which is planned; see [Legs and books](/script/strategies/multi-leg-and-books).**
 
 ## Showcase scripts
 
@@ -2483,9 +2484,9 @@ meanLow = sma(low, amplitude)
 prevHigh = bar.isFirst ? high : high[1]
 prevLow = bar.isFirst ? low : low[1]
 
-// trend is 0 while up and 1 while down; armed is the flip being watched for.
+// trend is 0 while up and 1 while down; nextFlip is the flip being watched for.
 var trend = 0
-var armed = 0
+var nextFlip = 0
 var maxLow = low
 var minHigh = high
 var upLevel = low
@@ -2493,17 +2494,17 @@ var downLevel = high
 
 wasTrend = bar.isFirst ? -1 : trend
 
-if armed == 1
+if nextFlip == 1
     maxLow = max(orElse(rollLow, maxLow), maxLow)
     if not isNone(meanHigh) and meanHigh < maxLow and close < prevLow
         trend = 1
-        armed = 0
+        nextFlip = 0
         minHigh = orElse(rollHigh, high)
 else
     minHigh = min(orElse(rollHigh, minHigh), minHigh)
     if not isNone(meanLow) and meanLow > minHigh and close > prevHigh
         trend = 0
-        armed = 1
+        nextFlip = 1
         maxLow = orElse(rollLow, low)
 
 flipUp = trend == 0 and wasTrend == 1
@@ -2536,7 +2537,7 @@ On a BHEL 15 minute NSE chart with the default settings:
 
 What it shows:
 
-- **State carried across bars.** `trend`, `armed`, `maxLow`, `minHigh`, `upLevel` and `downLevel` are declared with `var`, so each is set once, on the first bar, and then starts every bar from the value the previous bar left. `wasTrend` reads `trend` above the lines that reassign it, so it holds the previous bar's trend, and `-1` on the first bar, so nothing there counts as a flip. See [Persistence](/script/language/persistence).
+- **State carried across bars.** `trend`, `nextFlip`, `maxLow`, `minHigh`, `upLevel` and `downLevel` are declared with `var`, so each is set once, on the first bar, and then starts every bar from the value the previous bar left. `wasTrend` reads `trend` above the lines that reassign it, so it holds the previous bar's trend, and `-1` on the first bar, so nothing there counts as a flip. See [Persistence](/script/language/persistence).
 - **Two plots, so the line can change colour.** `Up trend` has a value only while the trend is up and `Down trend` only while it is down; each is `none` on the other side. A flip is a clean step from one line to the other, never a diagonal drawn through the candles.
 - **Fills to a channel edge.** Each level has a faint edge plot `dev` away from it, below the up level and above the down level, and `fill()` shades between the level and its edge. The fill colours are written in the call with `fade()`, so the chart draws them as given.
 - **A label on a flip.** `flipUp` and `flipDown` compare this bar's trend with `wasTrend`, and `signal()` with `shape = "label"` puts a Buy plate on the bar that turned up (`at = "below"`) and a Sell plate on the bar that turned down (`at = "above"`).
@@ -3238,7 +3239,7 @@ If two runs of your script disagree, the data disagreed.
 
 ## What reaches the chart
 
-At the end of each bar the engine has one value for every plotted column, plus whatever markers, colours, table cells and drawings the bar asked for. The chart receives the study as one description: plotted columns, fills, levels, markers, the table, drawings, the pane background, bar colours, a fixed pane range and the settings.
+At the end of each bar the engine has one value for every plotted column, plus whatever markers, colours, table cells and drawings the bar asked for. The chart receives the study as one description: plotted columns, fills, levels, markers, the tables, drawings, the pane background, bar colours, a fixed pane range and the settings.
 
 Here is one such description drawn: a [HalfTrend](/script/getting-started/example-scripts#halftrend) study on a BHEL 15 minute chart, which hands the chart four plotted columns (the trend level twice, once per direction, and a faint channel edge for each), two fills and a marker on each flip:
 
@@ -4682,7 +4683,7 @@ The presence guard `not isNone(x) and x > 5` needs no extra parentheses, because
 
 Two remainders exist because both are wanted. `%` suits a "distance past a multiple" calculation; `mod` suits an index into a repeating cycle. The two agree whenever both operands are positive, which covers wrapping a bar count or a position in a session.
 
-There is no power operator: `pow(x, y)` is the power function. See `pow()`.
+There is no power operator: `pow(x, y)` is the power function. See `pow()`. Since version 0.7.0 it is computed with a portable algorithm and one final rounding, as `exp()`, `log()` and the `math` trigonometric functions are, so the JavaScript and Python engines give the same result to the last bit. A value stored from an earlier version may differ in its final bits.
 
 Every arithmetic operator propagates absence: if either operand is absent, so is the result, including `none * 0`. Arithmetic with no finite answer gives `none` rather than infinity or an error. [Absent values](/script/language/absent-values) covers both rules.
 
@@ -6058,7 +6059,7 @@ if climbing and crossed
 ```
 
 > **History of a whole array**
-The compiler accepts `history(arr, 1)` on an array, but in release 0.5.0 it gives the absent value on every bar rather than last bar's array, and indexing that result, as in `history(m, 1)[0]`, stops the script with OS4004 on the first bar. Name the element you need at the top level, as above, and read that name's history.
+The compiler accepts `history(arr, 1)` on an array, but in release 0.8.0 it gives the absent value on every bar rather than last bar's array, and indexing that result, as in `history(m, 1)[0]`, stops the script with OS4004 on the first bar. Name the element you need at the top level, as above, and read that name's history.
 
 [Collections](/script/language/collections) covers arrays in full.
 
@@ -6680,7 +6681,7 @@ Three details in that script are warmup decisions:
 - `span > 0` guards the division. Dividing by zero gives the absent value rather than an error, so the guard is not strictly needed, but it tells the reader that a flat window is a known case.
 - Nothing tries to fill in the first 71 bars. The pane is empty there, and that is the report.
 
-A length can also be a series that changes from bar to bar. What a call does after its length changes is not the same for every call: some carry on at once with the new length, and others go absent again until they have enough bars for it. Use a fixed length, usually an `input()`, whenever you need to know the first bar exactly.
+A length can also be a series that changes from bar to bar. The warmup is then measured against the largest length the call has been given so far, counted from the first bar of the data. A call carries on at once with a shorter length, or with a longer one the bars it has seen already cover, and is absent after a longer length only until those bars do: `sma(close, len)` whose `len` rises from 10 to 50 on bar 20 is absent from bar 20 and has a value again from bar 49, the first bar a fixed length of 50 gives. The /trading page in current OpenAlgo releases still runs library 0.5.0, in which a windowed call such as `sma()` or `highest()` starts its warmup again after every change of length. Use a fixed length, usually an `input()`, whenever you need to know the first bar exactly.
 
 ## What an absent value does downstream
 
@@ -7432,6 +7433,7 @@ plot(levels[0], "Lowest")
 | [OS2015](/script/errors/names-and-types#os2015) | An empty literal with no type | Annotate it |
 | [OS2019](/script/errors/names-and-types#os2019) | An array of arrays, or of plots | Flatten it |
 | [OS3012](/script/errors/arguments#os3012) | `sort` without an order | Say `"asc"` or `"desc"` |
+| [OS8019](/script/errors/warnings#os8019) | A warning: an element still holds a drawing deleted earlier | Take the element out as you delete, as `draw.delete(shift(arr))` does |
 
 The error list also includes [OS4006](/script/errors/runtime#os4006), for taking an element from an empty array, and [OS4007](/script/errors/runtime#os4007), for a slice whose bounds are not `0 <= from <= to <= size`. The compiler and engine raise neither in this release. Instead, `pop` and `shift` on an empty array raise OS4004, summarising an empty array gives the values in the table above, and `slice()` takes whatever part of the range falls inside the array, returning a shorter or empty array. Test `size(arr) > 0` before taking an element, and keep slice bounds inside the array, so the script behaves the same when those codes arrive.
 
@@ -7538,7 +7540,7 @@ if crossUp(line, sig)
 The returned array is never absent and never changes length. Each element has its own first bar and is absent until then, so `m[2]` is a valid read on bar 0 that simply holds nothing yet. The crossing is read from the named series, which have history because they are top-level names: `m[1]` is element 1, not one bar ago.
 
 > **History of a whole array**
-`history(m, 1)` compiles, but in release 0.5.0 it gives the absent value on every bar rather than last bar's array. To look back at an output, name it at the top level, as `line` and `sig` are above, and read `line[1]`.
+`history(m, 1)` compiles, but in release 0.8.0 it gives the absent value on every bar rather than last bar's array. To look back at an output, name it at the top level, as `line` and `sig` are above, and read `line[1]`.
 
 ## Parallel arrays
 
@@ -7963,7 +7965,7 @@ if not isNone(zone)
 The supply and demand study in [Example scripts](/script/getting-started/example-scripts#9-supply-and-demand-zones) applies the same pattern to many zones at once, on both sides of price:
 
 
-Take out the two lines that set `zone` and `zoneBottom` back to `none` and the study still compiles, draws correctly for a while, and then stops with OS4005 on the first bar a zone is broken, because `draw.setTo()` is handed a box that no longer exists.
+Take out the two lines that set `zone` and `zoneBottom` back to `none` and the study still compiles, with warning [OS8019](/script/errors/warnings#os8019) on the delete: `zone` still holds the box deleted there. Run it anyway and it draws correctly for a while, then stops with OS4005 on the first bar a zone is broken, because `draw.setTo()` is handed a box that no longer exists.
 
 That is an error rather than a call that quietly does nothing because a script changing a deleted object has lost track of its own state, and it will keep losing track. The silent version of this bug is a study that appears to work while half its drawing calls land nowhere.
 
@@ -8051,7 +8053,7 @@ if bar.isLast
 The dashboard in [Example scripts](/script/getting-started/example-scripts#8-dashboard) is built the same way, with more rows, and also writes only on the newest bar:
 
 
-`table()` is top level only, for the same reason `plot()` is. `cell()` and `clear(panel)` may appear anywhere, and `clear` empties every cell so a table can be rebuilt from scratch. There is no `draw.delete` for a table: it is a fixed part of the study, like a plot, and lives as long as the study does. A cell outside the declared rows and columns stops the script; in this release it raises [OS4004](/script/errors/runtime#os4004), naming the index, while the more specific [OS4008](/script/errors/runtime#os4008) in the error list is not raised yet. [Tables](/script/visuals/tables) covers layout and styling.
+`table()` is top level only, for the same reason `plot()` is. `cell()` and `clear(panel)` may appear anywhere, and `clear` empties every cell so a table can be rebuilt from scratch. There is no `draw.delete` for a table: it is a fixed part of the study, like a plot, and lives as long as the study does. A cell outside the declared rows and columns stops the script with [OS4008](/script/errors/runtime#os4008), which names the row, the column and the table's shape. The /trading page in current OpenAlgo releases still runs library 0.5.0, which reports the same mistake as the array code [OS4004](/script/errors/runtime#os4004). [Tables](/script/visuals/tables) covers layout and styling.
 
 ## Errors you will meet
 
@@ -8060,7 +8062,9 @@ The dashboard in [Example scripts](/script/getting-started/example-scripts#8-das
 | [OS4005](/script/errors/runtime#os4005) | A change call was given an object that was deleted | Set the handle to `none` when you delete, and guard with `isNone` |
 | [OS3011](/script/errors/arguments#os3011) | A change call was given the wrong kind of object | Check the "applies to" column above |
 | [OS3006](/script/errors/arguments#os3006) | `plot`, `fill`, `level` or `table` inside a block | Move it to the top level; hide a plot by plotting `none` |
-| [OS4004](/script/errors/runtime#os4004) | A cell outside the table, or an index outside an array of handles | Declare enough rows and columns, or check the index |
+| [OS8019](/script/errors/warnings#os8019) | A warning: a name or an array element still holds an object deleted earlier | Set the name to `none`, or take the handle out of its array in the same block, as `draw.delete(shift(zones))` does |
+| [OS4008](/script/errors/runtime#os4008) | A cell outside the table | Declare enough rows and columns |
+| [OS4004](/script/errors/runtime#os4004) | An index outside an array of handles | Check the index against `size` |
 | [OS5010](/script/errors/limits#os5010) | More objects than a script may hold | Cap the set and delete as you drop handles |
 | [OS2001](/script/errors/names-and-types#os2001) | Method syntax such as `zone.setText(...)` | Write `draw.setText(zone, ...)` |
 
@@ -8855,7 +8859,7 @@ Read the columns, not the rows.
 
 - **Confirmed** is flat for the whole hour and steps once, at 11:30, to the value the 10:30 hour finished at. Everything it shows at 11:00 was knowable at 11:00. It is one hour behind by construction, and that lag is the price of never being wrong about the past.
 - **Developing** moves with the market. At 11:00 it says what the hour has done so far, which is true and useful. It is also a statement about an hour that has not finished: the 11:00 value is not the hour's result, it changes with every price update while the newest bar forms, and a signal built on it at 11:00 can be contradicted by the time the hour closes.
-- **Lookahead** shows 104.0 at 10:30, which nobody could have known at 10:30. On a historical chart this column looks brilliant: every breakout is anticipated. It is the shape of a study that looks perfect on history and loses money when traded.
+- **Lookahead** shows 104.0 at 10:30, which nobody could have known at 10:30. On a historical chart this column looks brilliant: every breakout is anticipated. A backtest reads it the same way, the hour's final value from its first chart bar, so a strategy that trades from it reports results nobody could have had. It is the shape of a study that looks perfect on history and loses money when traded.
 
 ### The three modes in one script
 
@@ -8996,6 +9000,8 @@ Drawing a coarse bar as a candle currently takes four reads, one per price. A si
 | In the Backtest panel | Folded from the chart's bars | Folded in the exchange's timezone, Asia/Kolkata for an Indian exchange |
 
 The chart folds days in the chart's timezone and the Backtest panel in the exchange's, so the two agree unless the chart's timezone has been changed away from the exchange's. A strategy that filters its trades with a daily read, as in the bias example above, trades the same days in both.
+
+The Backtest panel in current OpenAlgo releases still runs library 0.5.0, whose backtest answers a `"lookahead"` read with the coarse bar so far, the developing value, while the chart shows each coarse bar's final value from its first chart bar.
 
 The rules for the timeframe need the chart's interval. On the chart, /trading names its daily, weekly and monthly charts `D`, `W` and `M`, which the language cannot read, so on those charts OS6002 and OS6015 are never raised. A `"1h"` read on a /trading daily chart is not refused there: every day becomes its own coarse bar, and the read quietly hands back the previous day's value. The Backtest panel states the same chart as `"1D"`, so there the `"1h"` read is refused with OS6002. On a daily chart, read only `"1D"` or coarser.
 
@@ -9250,6 +9256,8 @@ plot(dayMid, "NIFTY previous day mid", style = "step")
 ## Chart facts describe the chart's instrument
 
 `chart.tickSize`, `chart.lotSize`, `chart.exchange` and the rest of the `chart` namespace describe the instrument **the chart is showing**, never the one a read names. There is no per-read equivalent, so a study that reads another instrument and needs its lot size takes it as an input and says so in the title.
+
+A fact the host has not stated reads as `none` rather than a guess, because a script that rounds to a tick or sizes in lots cannot invent one, and a guess produces orders the exchange rejects. Test it with `isNone()`, or write the assumption in the open with `orElse()`: `orElse(chart.lotSize, 1)` says that the script counts one unit per lot when nobody said otherwise, and an input says it in the settings dialog.
 
 On the /trading chart, `chart.exchange` and `chart.lotSize` are the chart instrument's own, read from the platform's instrument record a moment after the study is first drawn. They are still the chart's, so a study that works in money on the legs it reads takes their lot size as an input.
 
@@ -9762,7 +9770,7 @@ dayClose = req.timeframe("1D", close, mode = "lookahead")
 plot(dayClose, "Day's close", style = "step")
 ```
 
-`"lookahead"` gives a coarse bar's final value from its first chart bar. On a five minute NSE chart with a daily read, it hands 09:15 the number the day will close at. Every study built on it anticipates the day perfectly on history, and knows nothing extra when traded, because at the time there is no future to read.
+`"lookahead"` gives a coarse bar's final value from its first chart bar. On a five minute NSE chart with a daily read, it hands 09:15 the number the day will close at. Every study built on it anticipates the day perfectly on history, and knows nothing extra when traded, because at the time there is no future to read. A backtest reads it the same way, the day's final value from its first bar, so a strategy traded from it reports a result that no real run can repeat.
 
 The mode exists for one honest purpose, drawing a finished coarse candle across history as a picture, and its name makes sure nobody reaches it by accident. The compiler warns about it with OS8005. The compiled study also records the mode, so a host can mark the study as repainting; the /trading legend does not show such a mark today, so the warning and the word in the source are the disclosure.
 
@@ -10285,7 +10293,7 @@ Each `plot` call adds one line to the chart and its current value to the study's
 | `format` | the declaration's, in a study with its own pane | `"price"`, `"percent"` or `"volume"`, on that same scale |
 | `scale` | `"right"` | `"right"`, `"left"` or `"none"` |
 
-Only `value` and `color` are read on every bar. The rest (`title`, `width`, `style`, `offset`, `overlay`, `precision`, `format` and `scale`) describe the column itself and are **fixed before the first bar**. Write each one as a literal in the call, or pass an `input()` so the user can change it. A name you computed, even from constants, counts as bar data and raises [OS3003](/script/errors/arguments#os3003):
+Only `value` and `color` are read on every bar. The rest (`title`, `width`, `style`, `offset`, `overlay`, `precision`, `format` and `scale`) describe the column itself and are **fixed before the first bar**. Write each one as a literal in the call or, for every one but `style`, pass an `input()` so the user can change it. A name you computed, even from constants, counts as bar data and raises [OS3003](/script/errors/arguments#os3003):
 
 ```openscript
 thick = 1 + 1
@@ -10296,6 +10304,17 @@ plot(close, "Close", aqua, width = thick)
 thick = input(2, "Line width", min = 1, max = 5)
 plot(close, "Close", aqua, width = thick)
 ```
+
+An input must be the whole of the value. Arithmetic on it in the call, such as `width = thick + 1`, is [OS3025](/script/errors/arguments#os3025): declare the input with the value the option needs instead.
+
+`style` is the exception: it cannot come from an input at all, and trying is [OS3026](/script/errors/arguments#os3026). The user already changes a plot's style in the Style tab, so write the style you want as a literal:
+
+```openscript
+shape = input("line", "Plot style", options = ["line", "step", "histogram"])
+plot(close, "Close", aqua, style = shape)
+```
+
+The /trading page in current OpenAlgo releases still runs library 0.5.0, which accepts a style from an input and draws the plot in its default style.
 
 Two plots in one file may not share a title ([OS3017](/script/errors/arguments#os3017)), because the Style tab tells plots apart by their titles.
 
@@ -10404,7 +10423,7 @@ plot(ph, "Pivot high", orange, style = "lineWithMarkers", offset = -5)
 
 This does not make the script know the pivot any earlier. The lag is real and stays real; `offset` only stops the picture lying about which bar the value belongs to.
 
-If you want the shift as a setting, give the input the exact value to pass, such as `input(-5, "Shift")`. Arithmetic on an input inside the call, such as putting a minus sign in front of it, is refused, because the value must be fixed before the first bar.
+If you want the shift as a setting, give the input the exact value to pass, such as `input(-5, "Shift")`. Arithmetic on an input inside the call, such as putting a minus sign in front of it, is [OS3025](/script/errors/arguments#os3025), because an option fixed before the first bar holds an input only as the whole of its value.
 
 ## Pane and scale
 
@@ -10614,7 +10633,9 @@ Note the order of the three plots: the histogram is declared first so that it si
 |---|---|---|
 | An `if` wrapped around a `plot` | [OS3006](/script/errors/arguments#os3006) | `plot(cond ? value : none, "Title")` |
 | A stateful call such as `ema` inside the branch that uses it | Warning [OS8001](/script/errors/warnings#os8001), and a line with holes in it | Compute it at the top level and use the result in the branch |
-| `width`, `style` or `offset` taken from a computed name | [OS3003](/script/errors/arguments#os3003) | Write a literal, or pass an `input()` |
+| `width`, `style` or `offset` taken from a computed name | [OS3003](/script/errors/arguments#os3003) | Write a literal, or pass an `input()` to `width` or `offset` |
+| Arithmetic on an input in a fixed option, such as `width = w + 1` | [OS3025](/script/errors/arguments#os3025) | Declare the input with the value the option needs |
+| `style` taken from an `input()` | [OS3026](/script/errors/arguments#os3026) | Write the style as a literal; the user changes it in the Style tab |
 | Two plots with the same title | [OS3017](/script/errors/arguments#os3017) | Give every plot its own title |
 | `precision` or `format` on a plot in an overlay study | Warning [OS8007](/script/errors/warnings#os8007), and the instrument's axis is reformatted | Leave them off, or draw the reading in a study with its own pane |
 | Expecting `format = "percent"` to multiply by 100 | A fraction such as 0.015 reads as 0.015 percent | Compute the percentage yourself |
@@ -10690,7 +10711,7 @@ r = rsi(close, 14)
 level(70, "Overbought", r > 70 ? red : gray)
 ```
 
-A level whose colour the user can change takes a colour input straight into the call. To make that colour faded, put the fade in the input's default, because wrapping `fade()` around the input inside the call is refused:
+A level whose colour the user can change takes a colour input straight into the call. To make that colour faded, put the fade in the input's default, because wrapping `fade()` around the input inside the call is refused with [OS3025](/script/errors/arguments#os3025), which says a fixed option holds an input only as the whole of its value:
 
 ```openscript
 obColor = input(fade(red, 40), "Overbought line")
@@ -10941,7 +10962,7 @@ Because the last bar wins, these two lines show the trade that is open now, and 
 |---|---|---|
 | Wrapping `level` in an `if` | [OS3006](/script/errors/arguments#os3006) | Give the price `none` on the bars where there is none |
 | A colour that changes per bar | [OS3003](/script/errors/arguments#os3003) | A level has one colour. Use a plot for a line whose colour changes |
-| `fade()` around a colour input inside the call | Refused when the script compiles | Put the fade in the input's default |
+| `fade()` around a colour input inside the call | [OS3025](/script/errors/arguments#os3025) when the script compiles | Put the fade in the input's default |
 | A level whose price is set on one bar only | Usually nothing is drawn, because the last bar decides | Hold the value in a `var` |
 | Expecting to scroll back and see where the level was | A level has no history | Use `plot(..., style = "step")` |
 | Trying to `fill` between a plot and a level | A level is not a plot and cannot be one end of a fill | Plot the constant, fully transparent if it should not show. See [Fills](/script/visuals/fills#filling-between-a-plot-and-a-fixed-value) |
@@ -11019,7 +11040,7 @@ The band and the markers say the same thing at two distances. The markers give y
 
 With none of the three colours given, the band takes `plotA`'s colour at twelve percent strength, faint enough not to drown what is behind it, and it follows that plot if the user restyles it. `opacity` and `overlay` are fixed before the first bar, so write them as literals or pass an `input()`.
 
-**Give a band fixed colours.** A colour counts as fixed when it is written in the call (a named colour, a hex literal, or a colour built from literals such as `fade(lime, 85)`) or when it is a colour input passed by its own name, which then follows the settings dialog. The language also accepts a colour worked out per bar, such as `cond ? orange : none` or a colour held in a name, but the /trading chart in this release draws each band in fixed colours and does not draw a per-bar one: such a band falls back to its first plot's colour at twelve percent. To switch a band on and off, use its ends, as [Where a fill stops](#where-a-fill-stops) shows.
+**Give a band fixed colours, unless you know the chart draws a colour per bar.** A colour counts as fixed when it is written in the call (a named colour, a hex literal, or a colour built from literals such as `fade(lime, 85)`) or when it is a colour input passed by its own name, which then follows the settings dialog. The language also accepts a colour worked out per bar, such as `cond ? orange : none` or a colour held in a name. The [chart adapter](/script/integrate/charts-adapter) in library 0.8.0 draws it bar by bar on openalgo-charts 2.5.4 or newer, when the host passes the chart's version as `chartVersion`: each bar is shaded in the colour the script computed there for the side the band is on, an absent colour leaves that bar unshaded, and `opacity` dims the computed colour as it dims a fixed one. On an older chart, or where the host states no chart version, a band takes one colour per side for the whole run, so the adapter refuses the study before any bar runs with [OS6024](/script/errors/data#os6024) rather than draw the band in a colour the script did not choose. The /trading page in current OpenAlgo releases still runs library 0.5.0, which draws such a band in its first plot's colour at twelve percent. To switch a band on and off on any chart, use its ends, as [Where a fill stops](#where-a-fill-stops) shows.
 
 `color` sets both sides at once, so giving it together with `colorUp` or `colorDown` is [OS3010](/script/errors/arguments#os3010):
 
@@ -11297,7 +11318,7 @@ The same picture on a BHEL 15 minute chart, from a Supertrend study with a 10 ba
 | `fill(fast, slow)` with series rather than handles | [OS3020](/script/errors/arguments#os3020) | Assign the plots to names and pass those |
 | `color` together with `colorUp` or `colorDown` | [OS3010](/script/errors/arguments#os3010) | Use `color` alone, or the two sides alone |
 | `colorUp` on the wrong side | A picture that says the opposite, convincingly | `colorUp` is where the **first** argument is above the second |
-| A band colour worked out per bar, or held in a name | The /trading chart draws the first plot's colour at twelve percent instead | Write the colour in the call, or pass a colour input by its own name |
+| A band colour worked out per bar, or held in a name | [OS6024](/script/errors/data#os6024) where the chart cannot draw it bar by bar; library 0.5.0 draws the first plot's colour at twelve percent instead | Write the colour in the call, pass a colour input by its own name, or run the study on a chart that draws a colour per bar |
 | No colour, and an invisible first plot | An invisible band | Name the band's colour |
 | `fade` on the colour and a low `opacity` as well | A band nobody can see, and two numbers to guess between | Use one or the other |
 | Wrapping `fill` in an `if` | [OS3006](/script/errors/arguments#os3006) | Make the ends `none` on the off bars |
@@ -11399,7 +11420,7 @@ plot(sma(close, 20), "Basis", rgb(255, 136, 0), width = 2)
 plot(sma(close, 50), "Slow", rgba(0, 150, 255, 0.6))
 ```
 
-Two more are named in the language and not available yet: `hsl()`, for hue, saturation and lightness, and `gradient()`, for positioning a value between two colours. Calling either is [OS2020](/script/errors/names-and-types#os2020) in version 0.5.0:
+Two more are named in the language and not available yet: `hsl()`, for hue, saturation and lightness, and `gradient()`, for positioning a value between two colours. Calling either is [OS2020](/script/errors/names-and-types#os2020) in version 0.8.0:
 
 ```openscript
 plot(close, "Close", hsl(200, 80, 50))
@@ -11415,7 +11436,7 @@ A channel written as a number that is out of range, or not a whole number, is re
 plot(close, "Close", rgb(300, 0, 0))
 ```
 
-A channel computed from data is a different case. It is meant to raise runtime error [OS4009](/script/errors/runtime#os4009), because a colour computed from data that lands at 300 is a bug in the computation. In version 0.5.0 nothing raises OS4009 yet: the engine rounds the channel to a whole number, clamps it to 0 to 255, and the bar carries on. Do not rely on that. Where a computed channel can run past its end, clamp it where you compute it with `clamp()`, so a reader can see the decision:
+A channel computed from data is a different case. It is meant to raise runtime error [OS4009](/script/errors/runtime#os4009), because a colour computed from data that lands at 300 is a bug in the computation. In version 0.8.0 nothing raises OS4009 yet: the engine rounds the channel to a whole number, clamps it to 0 to 255, and the bar carries on. Do not rely on that. Where a computed channel can run past its end, clamp it where you compute it with `clamp()`, so a reader can see the decision:
 
 ```openscript
 // How far the close sits above its 20 bar low, in average true ranges,
@@ -11446,7 +11467,7 @@ plot(sma(close, 50), "Alpha 0.4", withAlpha(aqua, 0.4))
 
 The Opacity control in the settings dialog's Style tab runs the way `withAlpha` does, from 0 (invisible) to 100 (solid), so a user who sets it to 40 sees roughly what `fade(c, 60)` gives. Keep the two directions straight when you tell a user what to change.
 
-Apply `fade` once, to an opaque colour such as a named one. Fading a colour that is already transparent gives different answers in version 0.5.0 depending on where the colour is worked out: in a colour fixed before the first bar the outer fade replaces the inner one, and in a colour computed on a bar the two multiply. To give an exact alpha to a colour that already carries some transparency, use `withAlpha`, which always sets the alpha outright.
+Apply `fade` once, to an opaque colour such as a named one. Fading a colour that is already transparent gives different answers in version 0.8.0 depending on where the colour is worked out: in a colour fixed before the first bar the outer fade replaces the inner one, and in a colour computed on a bar the two multiply. To give an exact alpha to a colour that already carries some transparency, use `withAlpha`, which always sets the alpha outright.
 
 The right amount of transparency depends entirely on what the colour lands on:
 
@@ -11524,7 +11545,7 @@ Not every surface takes a per-bar colour:
 | `barColor(color)` | Every bar the same | Yes, the usual case |
 | `background(color)` | Every bar the same | Yes, the usual case |
 | `cell(..., textColor, bgColor)` | The cell's colours | Yes: they are read each time the cell is written |
-| `fill(a, b, color, colorUp, colorDown)` | The band's colours | Accepted, but the /trading chart does not draw it in this release: the band takes its first plot's colour at twelve percent instead |
+| `fill(a, b, color, colorUp, colorDown)` | The band's colours | Yes, on a chart that draws a band colour per bar. [Fills](/script/visuals/fills#the-call) says which charts do; on any other the study is refused with [OS6024](/script/errors/data#os6024) |
 | `level(price, title, color)` | The line's colour | No: [OS3003](/script/errors/arguments#os3003) |
 | `signal(text, color)` | The marker's colour | No: [OS3003](/script/errors/arguments#os3003) |
 | `table(..., textColor, bgColor)` | The grid's colours | No: [OS3003](/script/errors/arguments#os3003) |
@@ -11538,6 +11559,8 @@ level(70, "Overbought", OVERBOUGHT)
 
 Write `fade(red, 40)` in the `level` call instead, or declare a colour input with that default.
 
+The band row is the one that depends on the chart rather than the language. The /trading page in current OpenAlgo releases still runs library 0.5.0, which draws a band given a colour per bar in its first plot's colour at twelve percent.
+
 ## An absent colour
 
 `none` is a valid colour, and passing it is never an error. What it does depends on the surface:
@@ -11547,7 +11570,7 @@ Write `fade(red, 40)` in the `level` call instead, or declare a colour input wit
 | `barColor` | The candle keeps its own colour |
 | `background` | The bar's column is not shaded |
 | `plot` | The bar is drawn in the plot's own colour from the Style tab. To hide a plot on a bar, make its value `none`, not its colour |
-| `fill` | `none` means the band has no colour of its own, so it takes its first plot's colour at twelve percent |
+| `fill` | `none` written as the band's colour means the band has no colour of its own, so it takes its first plot's colour at twelve percent. A colour computed per bar that is absent on a bar leaves that bar unshaded, on a chart that draws a colour per bar |
 
 For the two paint calls this is how a conditional paint switches itself off, so a script never needs a separate call to clear one:
 
@@ -11614,7 +11637,7 @@ fill(upper, lower, color = bandColor, opacity = 0.1)
 
 When a plot's colour is a colour input passed by its own name, the plot's colour in the Style tab and the input are one setting, so the user has one value to change rather than two that disagree. A band given the input follows it too, and `opacity` keeps it faint whatever colour the user picks.
 
-Two things break that link, because each turns the colour into a per-bar colour: copying the input into another name (`LINE = bandColor`) and fading it in the call (`fade(bandColor, 45)`). A plot still draws such a colour, but the Style tab no longer changes it; a band in the /trading chart falls back to its first plot's colour; and a `level` or `signal` refuses it. When you want a faded version the user can change, declare it as its own input with a faded default, such as `input(fade(aqua, 45), "Edge colour")`.
+Two things break that link, because each turns the colour into a per-bar colour: copying the input into another name (`LINE = bandColor`) and fading it in the call (`fade(bandColor, 45)`). A plot still draws such a colour, but the Style tab no longer changes it; a band then needs a chart that draws a colour per bar, as [A colour per bar](#a-colour-per-bar) explains; and a `level` or `signal` refuses it, with [OS3003](/script/errors/arguments#os3003) for the copy and [OS3025](/script/errors/arguments#os3025) for the fade. When you want a faded version the user can change, declare it as its own input with a faded default, such as `input(fade(aqua, 45), "Edge colour")`.
 
 See [Inputs](/script/inputs/inputs) for colour inputs and [Settings and style](/script/inputs/settings-and-style) for the rows the settings dialog generates.
 
@@ -11629,7 +11652,7 @@ See [Inputs](/script/inputs/inputs) for colour inputs and [Settings and style](/
 | [OS3004](/script/errors/arguments#os3004) on an `rgb` call | A channel literal outside 0 to 255, or not whole | Fix the number |
 | A computed channel gives an unexpected colour | The channel ran past its range | `clamp` it where you compute it |
 | [OS3003](/script/errors/arguments#os3003) on a `level` or `signal` colour | The colour was computed, or taken from a name | Write it in the call, or pass an input by its own name |
-| A band ignores the colour you computed for it | The /trading chart does not draw a per-bar band colour | Give the band fixed colours |
+| A band ignores the colour you computed for it, or the study is refused with [OS6024](/script/errors/data#os6024) | The chart takes one band colour per side for the whole run | Give the band fixed colours |
 | The Style tab does not change a plot's colour | The colour is computed per bar, or held in another name | Pass the colour input straight to the plot |
 | [OS2020](/script/errors/names-and-types#os2020) on `hsl` or `gradient` | Both are planned, not yet available | Use `rgb`, or `mix` with a computed weight |
 | The study is invisible on a dark chart | `black` used as a line colour | `gray` or `silver`, or a mid-tone hue |
@@ -12888,6 +12911,13 @@ it happened. A setter given `none`, on the other hand, does nothing. So the fix
 is one line: **set the handle to `none` beside every delete**, and test
 `isNone()` before every change.
 
+The compiler helps before the first bar runs: a name or an array element still
+holding an object deleted earlier gets warning
+[OS8019](/script/errors/warnings#os8019), such as a `draw.delete(zone)` with no
+`zone = none` after it, or a `draw.delete(element(zones, 0))` that leaves the
+element in the list. The /trading page in current OpenAlgo releases still runs
+library 0.5.0, which does not give that warning.
+
 ```openscript
 var zone       = none
 var zoneTop    = none
@@ -13088,6 +13118,7 @@ if bar.isLast
 | The study gets slower the longer the chart is open, or stops with OS5010 | Create and forget | Cap the list, or keep one object and move it |
 | A line marks a bar exactly `rightBars` too late | Anchored at `time` on the bar that reported the pivot | Anchor at `time[rightBars]` |
 | OS4005 long after a delete | The handle was not cleared when the object was deleted | Set the handle to `none` beside the `draw.delete` |
+| Warning OS8019 on a `draw.delete` | A name or an array element still holds the deleted object | Set the name to `none`, or delete with `draw.delete(shift(list))` or remove the element |
 | OS3011 on a setter | The setter does not take that kind of object | Check the setter table: only lines have a style, only labels and boxes have text |
 | OS2015 on an empty array | Nothing tells the compiler what the array holds | Push to it, or write `var zones: array<box> = []` |
 | A box's right edge lands differently on each timeframe | A guessed bar length | Move the right edge to `time`, or use a line with `extendRight` |
@@ -13251,13 +13282,24 @@ for the grid's colours too: `bgColor = input(black, "Panel colour")`.
 kept and passed to a function, and it is never deleted: the grid lives as long as
 the study does.
 
-### One grid per study
+### How many grids reach the chart
 
-A study may declare several grids and the compiler accepts it, but a chart pane
-has room for one: **the chart draws the first grid a study declares.** A second
-`table()` compiles and its cells are written, yet nothing appears for it, and no
-diagnostic says so yet. Declare one grid and give it the rows you need. If you
-want two panels, write two studies and put them in different corners.
+A study may declare as many grids as it likes, and the compiled study carries
+every one of them. How many a chart draws depends on the chart:
+
+- The [chart adapter](/script/integrate/charts-adapter) in library 0.8.0 draws
+  every grid on openalgo-charts 2.5.4 or newer, when the host (the application
+  drawing the chart) passes the chart's version as `chartVersion`. Each grid sits
+  in the corner its own `position` names, so give each grid a corner of its own:
+  two pinned to the same corner are drawn one over the other.
+- On an older chart, or where the host states no chart version, a pane has room
+  for one grid, and the adapter refuses a study that declares a second before
+  any bar runs, with [OS6024](/script/errors/data#os6024) naming the second grid.
+
+The /trading page in current OpenAlgo releases still runs library 0.5.0, which
+draws the first grid a study declares and ignores the rest without a message. So
+a study meant for /trading declares one grid and gives it the rows it needs. If
+you want two panels there, write two studies and put them in different corners.
 
 ## Writing cells
 
@@ -13276,9 +13318,10 @@ every bar, so a cell can change colour with the reading it shows.
 
 Rows and columns count from zero, so a grid declared with 4 rows and 2 columns
 has rows 0 to 3 and columns 0 and 1. Writing outside the grid stops the script
-with [OS4004](/script/errors/runtime#os4004), so keep the declared size and the
-rows you write in step. A second write to the same cell on the same bar replaces
-the first.
+with [OS4008](/script/errors/runtime#os4008), whose message names the row, the
+column and the grid's shape, so keep the declared size and the rows you write in
+step. (Before library 0.6.0 the code was the array error OS4004.) A second write
+to the same cell on the same bar replaces the first.
 
 A helper function keeps a long panel short, because a table object can be passed
 to a function like any other value:
@@ -13541,13 +13584,15 @@ a list belongs in the [print log](/script/writing/debugging) or a
 | OS3006 on the `table()` line | Declared inside an `if`, a loop or a function | Declare at the top level and guard the `cell` writes instead |
 | OS3003 on the `table()` line | A size, corner or colour that depends on bar data | Use a literal or an input; put per-bar colour on the cell |
 | OS3011 on a `cell` call | A number passed where text is expected | `text(value, decimals)` |
-| OS4004 on a `cell` call | A row or column outside the declared grid | Declare enough rows, or check the index |
+| OS4008 on a `cell` call (OS4004 before library 0.6.0) | A row or column outside the declared grid | Declare enough rows, or check the index |
 | The panel is empty | Cells written under a condition that is false on the newest bar | Write every cell inside `if bar.isLast` |
 | A reading is blank | `text(value, decimals)` of an absent value | Use a `show` helper that says "warming up" |
 | Every row says "down" on a fresh chart | An absent condition took the false branch | Test `isNone` first and say so |
 | The chart is slow with a table on it | Cells written on every bar of history | Write inside `if bar.isLast` |
 | The panel hides the candles under it | A solid `bgColor` | `fade(black, 25)` or similar |
-| A second panel never appears | The chart draws only the first grid a study declares | Declare one grid, or split the study in two |
+| OS6024 naming a second table | The host's chart draws one grid per study, or the host did not state its chart version | Run it on a host with a newer chart, declare one grid, or split the study in two |
+| A second panel never appears | Library 0.5.0 draws only the first grid a study declares | Declare one grid, or split the study in two |
+| Two grids drawn over each other | Both pinned to the same corner | Give each grid its own `position` |
 | Numbers do not line up | Cells are left aligned by default | `align = "right"` on the value column |
 | An empty block stays in the corner with the panel switched off | The grid has a `bgColor` or a border, which is drawn at the declared size | Put the background on the cells you write instead |
 | A cell is blank, or says "warming up" for ever, on the /trading chart | It reads a fact the chart does not state, such as `chart.pointValue` or `chart.currency`, or the lot size of a symbol whose contract has not been downloaded | Test the fact with `isNone` and say "not stated", or leave that reading out of a panel meant for the chart |
@@ -13749,11 +13794,19 @@ if useBand
 
 Declare the input at the top level and read its name inside the block instead.
 
-**The default must be fixed before the first bar**: a literal, arithmetic over literals, or another input. A default computed from bar data is OS3003:
+**The default must be fixed before the first bar**: a literal, or arithmetic over literals. A default computed from bar data is OS3003:
 
 ```openscript
 lookback = input(round(close / 100), "Lookback")
 plot(sma(close, lookback), "Average")
+```
+
+A default may not read another input either, and neither may `min`, `max` or `step`. They are what the settings dialog shows before anybody has chosen anything, so none of them may depend on another setting, and reading one there is OS3025:
+
+```openscript
+fastLen = input(9, "Fast length", min = 1)
+slowLen = input(21, "Slow length", min = fastLen + 1)
+plot(ema(close, fastLen) - ema(close, slowLen), "Spread")
 ```
 
 An `input()` may also be the value of a declaration option, which is how a reader changes something the declaration decides, and it may be written inside the expression of a [higher timeframe read](/script/data/higher-timeframes#what-the-expression-means-inside-a-read):
@@ -13769,6 +13822,17 @@ plot(dailyRsi, "Daily RSI", purple, style = "step")
 ```
 
 The input inside the read follows the dialog like any other. The one in the declaration is a different case in /trading: the chart reads declaration options when it loads the study, at their defaults, so changing the Decimals row does not change the drawing there. [Settings and style](/script/inputs/settings-and-style#what-the-declaration-decides) lists what follows the dialog.
+
+**An input in a field fixed before the first bar must be the whole of its value.** The compiled program holds such a field as a value or as a reference to one input, and an expression over a setting is neither. So arithmetic, a ternary or a colour call over an input there is OS3025, and the compiler reports OS6018 beside it, which says the same thing from the compiled program's side:
+
+```openscript
+version 1
+
+study("Decimals plus one", precision = input(2, "Decimals", min = 0, max = 8) + 1)
+plot(close, "Close")
+```
+
+Declare the setting as the value itself instead, here `precision = input(3, "Decimals", min = 0, max = 9)`. The same rule holds for the fixed options of a call, such as a plot's `width`, a level's colour or a marker's `color`, `at` and `shape`. A plot's `style` cannot be a setting at all: written from an input it is OS3026. The /trading page in current OpenAlgo releases still runs library 0.5.0, which accepts a default or a bound read from another input and an input as a plot's style, and reports an expression over an input in a fixed field only as OS6018.
 
 ## Names, titles and saved values
 
@@ -13858,7 +13922,7 @@ A value passes three checks, and which one catches a mistake matters, because on
 
 | When | What is checked | On failure |
 |---|---|---|
-| Compile | The declaration itself: placement, a fixed default, a default inside `options`, a title, a unique key | OS3007, OS3003, OS3018, OS3017, OS3021, OS3022, OS3024. The script does not compile |
+| Compile | The declaration itself: placement, a fixed default and bounds that read no other input, a default inside `options`, a title, a unique key. And where the input is used: as the whole of a fixed option, and never as a plot's style | OS3007, OS3003, OS3025, OS3018, OS3017, OS3021, OS3022, OS3024, OS3026. The script does not compile |
 | Load | The reader's saved value against the input's type, `min`, `max` and `options` | OS6019, naming the setting and the rule. The study does not run |
 | Each bar | A legal setting that becomes an illegal argument, such as a length computed down to zero | OS4003. The study stops on that bar |
 
@@ -13906,6 +13970,9 @@ The opposite matters as much. Some things must not be inputs even though the dia
 |---|---|---|
 | `input()` inside an `if` or a function | OS3007 | Move it to the top level and read the name inside the block |
 | A default computed from bar data | OS3003 | Use a literal, or an input for the thing the default depended on |
+| A default, `min`, `max` or `step` that reads another input | OS3025 | Write it as a literal |
+| An input inside a larger expression in a fixed option, such as `width = w + 1` | OS3025 | Pass the input as the whole value, or write the value out |
+| An input as a plot's `style` | OS3026 | Write the style as a string literal, such as `style = "step"` |
 | Two rows with one title | OS3017 | Rename one; the title is part of the key |
 | A row with no name and no title | OS3021 | Give it a title written as a string literal |
 | A row with no name and an empty title | OS3024 | Give the title something to say |
@@ -14040,7 +14107,7 @@ Two consequences save a script work.
 
 What the Style tab does **not** offer in /trading:
 
-- **The plot's style.** Whether a plot is a line, a step line, a histogram, columns or an area is decided by its `style` argument in the script.
+- **The plot's style.** Whether a plot is a line, a step line, a histogram, columns or an area is decided by its `style` argument in the script, written as a string literal.
 - **Rows for anything but plots.** `level()`, `fill()`, `background()`, `barColor()` and tables have no Style rows. If a reader should be able to recolour one of those, give it a colour input, as the next section shows.
 
 ## A colour with a meaning
@@ -14213,7 +14280,7 @@ plot(sma(close, 20), "Average", precision = 1)
 
 The full list of options for `study()` and `strategy()` is in the [declarations reference](/script/reference/declarations).
 
-> **An `input()` can be written as a declaration option, such as `precision = input(2, "Decimals")`, or as a plot's `width` or `style`. In /trading, the chart reads those at their defaults when it loads the study, so changing such a row in the settings dialog does not change the drawing. Colour inputs, level styles and a pane's `range` do follow the dialog.**
+> **An `input()` can be written as a declaration option, such as `precision = input(2, "Decimals")`, or as a plot's `width`, as long as it is the whole of the value: an expression over it, such as `precision = input(2, "Decimals") + 1`, is OS3025. A plot's `style` cannot be a setting at all, because the compiled program holds it as plain text: `style = input("line", "Style", options = ["line", "step"])` is OS3026. In /trading, the chart reads declaration options and a plot's width at their defaults when it loads the study, so changing such a row in the settings dialog does not change the drawing. Colour inputs, level styles and a pane's `range` do follow the dialog. The /trading page in current OpenAlgo releases still runs library 0.5.0, which accepts an input as a plot's style and draws the plot as a line, the default style, whatever the setting says.**
 
 ## What /trading keeps
 
@@ -14329,7 +14396,7 @@ The /trading chart follows the same rule. When a bar closes, the chart judges it
 | Where it shows | Off the chart, wherever the platform delivers it | On the chart, on the bar | A channel the platform has configured |
 | On the bars already in history | Fires for none of them | Draws on every past bar that matched | Not applicable |
 | On a bar that is still forming | Waits for the bar to close, unless the file sets `onUnconfirmed = true` | The same as `alert()` | Not applicable |
-| Status in version 0.5.0 | Available | Available | Planned, refused by the compiler with OS2020 |
+| Status in version 0.8.0 | Available | Available | Planned, refused by the compiler with OS2020 |
 
 A marker is a record of what the script saw, drawn back over the whole history so you can judge the rule by eye. An alert is a message about the bar in front of you. Most useful studies want both, and each costs one line.
 
@@ -14577,7 +14644,7 @@ Like `alert()`, a signal waits for the bar to close unless the file sets `onUnco
 
 ## notify(): planned
 
-`notify(message, channel)` is specified as a way for a script to send a message to a channel the platform has already configured, by name. It is **planned and not in version 0.5.0**, and the compiler refuses it with OS2020:
+`notify(message, channel)` is specified as a way for a script to send a message to a channel the platform has already configured, by name. It is **planned and not in version 0.8.0**, and the compiler refuses it with OS2020:
 
 ```openscript
 if crossUp(close, sma(close, 50))
@@ -15038,7 +15105,7 @@ The outward channels are tried together, and each is tried once. When one refuse
 
 Pressing Delete over the chart removes a drawing first when one is selected or under the pointer, and an alert's line only when nothing else claims the key.
 
-Alerts belong to the chart pane they were made on and are saved with that chart in your browser, so they come back when you reopen /trading. A Repeat Only once alert that has fired comes back as Fired, not armed again, so it does not fire twice for the same price.
+Alerts belong to the chart pane they were made on and are saved with that chart in your browser, so they come back when you reopen /trading. A Repeat Only once alert that has fired comes back as Fired, not active again, so it does not fire twice for the same price.
 
 **Related.** [Alerts from scripts](/script/alerts/overview), [Realtime and confirmation](/script/language/realtime-and-confirmation), [The editor](/script/getting-started/the-editor), [Plots](/script/visuals/plots), [Sandbox and live](/script/strategies/sandbox-and-live), [Troubleshooting](/script/writing/troubleshooting)
 
@@ -15049,7 +15116,7 @@ Alerts belong to the chart pane they were made on and are saved with that chart 
 
 Source: https://openalgo.in/script/strategies/overview
 
-A strategy is an OpenScript file (OpenScript is also called OpenAlgo Script) that draws like a study and can also place orders. This page covers what changes when you declare `strategy()` instead of `study()`, the options only a strategy has, what happens to an order on every bar, where a strategy runs in /trading, and which parts of the strategy surface run in version 0.5.0. Read it before the other strategy pages: they all build on the loop described here.
+A strategy is an OpenScript file (OpenScript is also called OpenAlgo Script) that draws like a study and can also place orders. This page covers what changes when you declare `strategy()` instead of `study()`, the options only a strategy has, what happens to an order on every bar, where a strategy runs in /trading, and which parts of the strategy surface run in version 0.8.0. Read it before the other strategy pages: they all build on the loop described here.
 
 ## A first strategy
 
@@ -15127,11 +15194,11 @@ These are the options `strategy()` adds to the ones every study has (`title`, `s
 
 A **tick** is the smallest step the instrument's price can move, such as 0.05 rupees, and **slippage** is the difference between the price you expected and the one you got. **Pyramiding** means adding to a position you already hold.
 
-Every option value must be fixed before the first bar: a literal, arithmetic over literals, or an `input()` call. The settings dialog and the legend are built before any data arrives, so an option that depended on a bar would have nothing to be built from, and the compiler refuses it with OS3003.
+Every option value must be fixed before the first bar: a literal, arithmetic over literals, or an `input()` call written as the whole of the value. The settings dialog and the legend are built before any data arrives, so an option that depended on a bar would have nothing to be built from, and the compiler refuses it with OS3003. An expression over an input, such as `qty = input(1, "Lots") * 75`, is refused with OS3025: declare the input on its own line, `lots = input(1, "Lots")`, and do the arithmetic in the order, `buy(qty = lots * 75)`. The /trading page in current OpenAlgo releases still runs library 0.5.0, which refuses that line with OS6018 instead.
 
 Two defaults are deliberately set against you. `fillOn = "nextOpen"` because a decision made from a bar's close cannot be filled at that same close in the real market. `pyramiding = 1` because a script that adds to a position by accident reports a return its stated rules never earned.
 
-> **What /trading does with these options in 0.5.0**
+> **What /trading does with these options**
 - `qtyType = "cash"` and `qtyType = "equityPercent"` are accepted by the compiler and refused by the Backtest panel before the run starts: a backtest fills in units and keeps no running equity to size against.
 - `qtyType = "lots"` has a known backtest defect with closing orders, and the Strategies panel refuses to start a strategy that counts in anything but `"units"`. Count in units, as [Position and sizing](/script/strategies/position-and-sizing) shows.
 - `closeOnSessionEnd = true` is accepted and not acted on by the backtest or by a deployment: a position is carried past the session close. Write the exit in the script, as [Exits and brackets](/script/strategies/exits-and-brackets) shows.
@@ -15159,7 +15226,7 @@ These three calls look alike in a file and do entirely different things:
 A bar is **confirmed** once it has closed and its prices can no longer change. A marker is a statement about the chart, and nothing can stop it being drawn. An order is a request, and it can be refused: for an absent price or size (OS7002), a size of zero or less (OS7004), a price off the tick (OS7006), a resting order with no price (OS7007), an entry beyond the pyramiding limit (OS7008), cancelling a tag that is not working (OS7009), a stop or target on the wrong side of an open position (OS7010), two opposite orders on one bar (OS7013), or a close larger than what it closes (OS7017). [Orders](/script/strategies/orders) lists every refusal with its usual cause.
 
 > **A refused order stops the script**
-In version 0.5.0 a refused order stops the run at the bar it happened on. Nothing that bar decided is sent, and no later bar executes. In the Backtest panel the report then holds only the trades made before it, and above the figures the panel says which bar the run stopped on, what went wrong and the code, so the figures are not read as the whole range. The guards below are what keep a strategy from ever reaching one.
+In version 0.8.0 a refused order stops the run at the bar it happened on. Nothing that bar decided is sent, and no later bar executes. In the Backtest panel the report then holds only the trades made before it, and above the figures the panel says which bar the run stopped on, what went wrong and the code, so the figures are not read as the whole range. The guards below are what keep a strategy from ever reaching one.
 
 ## What happens on every bar
 
@@ -15273,11 +15340,11 @@ The same compiled strategy runs in three places, and the numbers it computes do 
 The Strategies panel shows the platform's current mode in its header, and its start button names the destination it is about to use:
 
 
-The runner that executes a deployment supports a subset of the language in version 0.5.0: quantities in units only, no `exit()` or `order.bracket()`, and no `session.isLastBar`. It refuses anything else before the first order, and [Sandbox and live](/script/strategies/sandbox-and-live) lists each refusal with its fix.
+The runner that executes a deployment supports a subset of the language: quantities in units only, no `exit()` or `order.bracket()`, and no `session.isLastBar`. It refuses anything else before the first order, and [Sandbox and live](/script/strategies/sandbox-and-live) lists each refusal with its fix.
 
 A strategy that wants its stop or target drawn plots it like any other value. The chart shows what happened; the destination decides what happens.
 
-## What runs in version 0.5.0
+## What runs in version 0.8.0
 
 The strategy surface is designed in full and partly built. The names that are not built yet are still in the language, and calling one is refused at the call with OS2020, so you find out where you wrote it.
 
@@ -15308,7 +15375,7 @@ Every script on this page trades one instrument, the one on its chart, and opens
 | Trades at the wrong time of day | A trading window written without a zone, such as `session.isIn("0930-1500")`, on a chart set to another timezone | Name the zone: `session.isIn("0930-1500", "Asia/Kolkata")` |
 | The backtest is much better than the account | `fillOn = "close"`, no slippage, no commission | Keep the defaults, then add real costs |
 | Orders appear on history and not on the forming bar | The condition is true inside the bar and false at its close | Nothing to fix: that is the deferral working |
-| A stop plotted on the chart never exits the backtest | Levels from `exit()` are not filled in 0.5.0 | Test the level in the script, as [Exits and brackets](/script/strategies/exits-and-brackets) shows |
+| A stop plotted on the chart never exits the backtest | Levels from `exit()` are not filled in 0.8.0 | Test the level in the script, as [Exits and brackets](/script/strategies/exits-and-brackets) shows |
 
 **Related.** [Orders](/script/strategies/orders), [Exits and brackets](/script/strategies/exits-and-brackets), [Position and sizing](/script/strategies/position-and-sizing), [Costs and fills](/script/strategies/costs-and-fills), [Backtesting](/script/strategies/backtesting), [Sandbox and live](/script/strategies/sandbox-and-live), [Your first strategy](/script/getting-started/first-strategy), [Strategy orders reference](/script/reference/strategy)
 
@@ -15515,9 +15582,9 @@ else if wantedSize < 0
     sell(qty = -wantedSize)
 ```
 
-## One leg in version 0.5.0
+## One leg in version 0.8.0
 
-A strategy trades legs, and a leg is one contract. In version 0.5.0 a file declares no legs, so it has exactly one: the instrument on its chart. Every order acts on it and none of them names it. The `leg` argument that every order call accepts is there for the planned [multi-leg strategies](/script/strategies/multi-leg-and-books), and writing it today is refused with OS3023, whatever you pass:
+A strategy trades legs, and a leg is one contract. In version 0.8.0 a file declares no legs, so it has exactly one: the instrument on its chart. Every order acts on it and none of them names it. The `leg` argument that every order call accepts is there for the planned [multi-leg strategies](/script/strategies/multi-leg-and-books), and writing it today is refused with OS3023, whatever you pass:
 
 ```openscript
 version 1
@@ -15582,7 +15649,7 @@ There are three sane policies. Write the script so a reader can tell which one i
 | First come, first served | Remember that an order is working and place nothing new until it fills or is cancelled | An entry taken at its price or not at all |
 | Age out | Count the bars an order has been working and cancel it | A signal that goes stale, like the complete example above |
 
-`order.working()` and `order.pending` will answer "is this order still working" from the ledger. Both are planned, so in version 0.5.0 a script keeps that fact itself in a [`var`](/script/language/persistence), set when the order is placed and cleared when the position opens or the order is cancelled. The pullback and opening range examples above both do exactly that.
+`order.working()` and `order.pending` will answer "is this order still working" from the ledger. Both are planned, so in version 0.8.0 a script keeps that fact itself in a [`var`](/script/language/persistence), set when the order is placed and cleared when the position opens or the order is cancelled. The pullback and opening range examples above both do exactly that.
 
 `cancelAll()` is for the moments a script has lost confidence in everything it has working: the session ending, a risk switch turned off in the inputs. It cancels working orders only, and does not close a position; an order that has filled is not working any more. With nothing working it sends nothing and refuses nothing, so it is safe to call on any bar.
 
@@ -15702,9 +15769,9 @@ Use the bare functions where the direction is written in the source, and `order.
 
 ## Refusals
 
-Every refused order reports a code and a reason, naming the line that placed it. In version 0.5.0 a refusal while the run is going also stops the run at that bar: nothing the bar decided is sent, and no later bar executes. The Backtest panel then reports only the trades made before the refusal, and says above the figures which bar the run stopped on and why. Codes marked "At compile time" are caught before any bar runs.
+Every refused order reports a code and a reason, naming the line that placed it. In version 0.8.0 a refusal while the run is going also stops the run at that bar: nothing the bar decided is sent, and no later bar executes. The Backtest panel then reports only the trades made before the refusal, and says above the figures which bar the run stopped on and why. Codes marked "At compile time" are caught before any bar runs.
 
-| Code | Means | Usual cause | In 0.5.0 |
+| Code | Means | Usual cause | In 0.8.0 |
 |---|---|---|---|
 | OS7001 | An order call in a study | The declaration says `study` | At compile time |
 | OS7002 | An order argument is absent | A price or size from a window that has not warmed up | Raised |
@@ -15723,7 +15790,7 @@ Every refused order reports a code and a reason, naming the line that placed it.
 | OS7015 | The strategy has no order destination | Nothing configured to receive orders | Not raised yet |
 | OS7016 | A close names a tag nothing places | A typo in a tag | At compile time |
 | OS7017 | A close states more than it is closing | A scale-out fired twice | Raised |
-| OS3023 | An order names a leg | `leg = ...` written in version 0.5.0 | At compile time |
+| OS3023 | An order names a leg | `leg = ...` written in version 0.8.0 | At compile time |
 
 OS7008 is the pyramiding limit doing its job. Silently building a position the declaration forbade would report a return the stated rules never earned, so the order is refused instead. The [order error pages](/script/errors/orders) give a before and after for each code.
 
@@ -15750,8 +15817,8 @@ This page covers every way a strategy gets out of a position: a stop and a targe
 
 A **stop** (stop-loss) closes a losing position at a price you chose in advance. A **target** closes a winning one at a price you chose in advance. A **bracket** is the two together, attached to one entry.
 
-> **What /trading does with exit() and order.bracket() in 0.5.0**
-The compiler accepts both calls, and neither protects a position in /trading yet. On the chart and in the Backtest panel the levels they set are never filled, so a bracketed trade stays open until the script itself closes it. The Strategies panel refuses to start a script that calls either one. Until that changes, write every stop and target as a rule the script tests on each bar, as the runnable examples on this page do.
+> **What exit() and order.bracket() do in version 0.8.0**
+The compiler accepts both calls, and neither protects a position yet: in version 0.8.0 a backtest never fills the levels they set. On the /trading chart and in the Backtest panel a bracketed trade therefore stays open until the script itself closes it. The Strategies panel refuses to start a script that calls either one. Until that changes, write every stop and target as a rule the script tests on each bar, as the runnable examples on this page do.
 
 ## A complete example
 
@@ -15821,7 +15888,7 @@ Every exit is one of two things, and confusing them is the most expensive mistak
 | Acts | On the bar the level is reached, at the level | On the bar the condition is true, at the next fill point |
 | Sends | A stop order or a limit order at the level | An ordinary market order |
 | Keeps protecting if the strategy stops running | Yes, once it rests at the destination | No |
-| In /trading, 0.5.0 | Not acted on | Runs |
+| In version 0.8.0 and in /trading | Not acted on | Runs |
 
 A level is a promise someone else keeps. A rule is a promise you keep, checked when the script runs. A strategy whose exit is "when the trend reading turns" can only use a rule, because nobody but your script knows what the trend reading is. A stop that is the difference between a bad day and a ruinous one is what a level is for, once levels are acted on; until then, write it as a rule and watch the positions a paused strategy leaves behind.
 
@@ -15944,11 +16011,11 @@ plot(slow, "Slow", orange)
 
 Intraday strategies on NSE and NFO have to be flat before 15:30. Three facts decide how you write that.
 
-**`closeOnSessionEnd` is not acted on yet.** The option is accepted in the declaration and means "flatten at the session close", and in version 0.5.0 nothing flattens: a backtest carries the position into the next session, and so does a deployment. Write the exit in the script.
+**`closeOnSessionEnd` is not acted on yet.** The option is accepted in the declaration and means "flatten at the session close", and in version 0.8.0 nothing flattens: a backtest carries the position into the next session, and so does a deployment. Write the exit in the script.
 
 **An exit decided on the last bar fills in the next session.** With the default `fillOn = "nextOpen"`, a `close()` decided on the session's last bar fills at the next bar's open, which is the next session's first bar. To be flat by the close, decide on a bar that leaves another bar to fill in. `session.isIn()` tests the time each bar starts at: a bar is inside `"0915-1500"` when it starts at or after 09:15 and before 15:00. So `not session.isIn("0915-1500", "Asia/Kolkata")` is first true on the bar that starts at 15:00, and on 15-minute bars the close it sends fills at the 15:15 open.
 
-**Name the zone in a clock test.** The chart reads the clock in the chart's timezone, Asia/Kolkata unless you changed it, and the Backtest panel and a deployment read it in the exchange's zone. Naming `"Asia/Kolkata"`, as every example here does, keeps a clock test at the same time of day in all three, whatever a chart is set to. `session.isLastBar` answers on the chart and in the Backtest panel, from the market calendar's session hours, but a deployment refuses it when the run loads, so a strategy you mean to deploy exits on a cutoff time instead. [Sessions and time](/script/data/sessions-and-time#sessions-and-the-clock-in-trading-today) has the details for each place.
+**Name the zone in a clock test.** The chart reads the clock in the chart's timezone, Asia/Kolkata unless you changed it, and the Backtest panel and a deployment read it in the exchange's zone. Naming `"Asia/Kolkata"`, as every example here does, keeps a clock test at the same time of day in all three, whatever a chart is set to. `session.isLastBar` answers on the chart and in the Backtest panel, from the market calendar's session hours, but a deployment refuses it when the run loads, because the server in current OpenAlgo releases runs version 0.5.0 of the Python library, which does not have it (the Python library has it from version 0.6.0). So a strategy you mean to deploy exits on a cutoff time instead. [Sessions and time](/script/data/sessions-and-time#sessions-and-the-clock-in-trading-today) has the details for each place.
 
 | Exit kind | Written with | Good for |
 |---|---|---|
@@ -15956,7 +16023,7 @@ Intraday strategies on NSE and NFO have to be flat before 15:30. Three facts dec
 | Minutes in the trade | `time` minus a `var` set when the position opens | A rule stated in clock time |
 | Bars held | `bar.index` minus a `var` set when the position opens | A horizon in bars; `pos.barsHeld` is planned |
 | A weekday | `date.dayOfWeek()` with the zone named | A weekly rule, such as flat before a weekly expiry |
-| The session's last bar | `session.isLastBar` with `fillOn = "close"` | The chart and the Backtest panel; a deployment refuses it in 0.5.0 |
+| The session's last bar | `session.isLastBar` with `fillOn = "close"` | The chart and the Backtest panel; a deployment in current OpenAlgo releases refuses it |
 
 This strategy gives up on a trade that is not in profit after two hours, never holds more than sixty bars, and is flat before the close:
 
@@ -16009,7 +16076,7 @@ The comparisons with `heldMinutes` and `barsHeld` need no `isNone` test: an orde
 
 ## Levels the engine will hold
 
-The language defines protective levels at three scopes. In version 0.5.0 only the bracket set with `exit()` and `order.bracket()` exists, and /trading does not act on it yet; the rest are planned, and calling one is refused with OS2020.
+The language defines protective levels at three scopes. In version 0.8.0 only the bracket set with `exit()` and `order.bracket()` exists, and neither a backtest nor /trading acts on it yet; the rest are planned, and calling one is refused with OS2020.
 
 | Scope | Level | Call | Status |
 |---|---|---|---|
@@ -16058,7 +16125,7 @@ Events reach the run's record and the log, not the chart, and no call reads one:
 
 | Symptom | Cause | Fix |
 |---|---|---|
-| A bracketed trade never exits in the backtest | `exit()` and `order.bracket()` levels are not filled in 0.5.0 | Test the levels in the script and `close()`, as the complete example does |
+| A bracketed trade never exits in the backtest | `exit()` and `order.bracket()` levels are not filled in 0.8.0 | Test the levels in the script and `close()`, as the complete example does |
 | The Strategies panel will not start the strategy | It calls `exit()` or `order.bracket()` | Replace them with rules the script tests |
 | The run stops with OS7002 at the entry | A stop or target taken from `atr` before it warmed up | Test the level with `isNone` before the entry |
 | The run stops with OS7010 | A stop moved above a long's entry | Stop below a long, target above it |
@@ -16187,7 +16254,7 @@ plot(slow, "Slow", orange)
 
 The declaration sets the default size and the unit it is counted in. An order that names no quantity uses the default; an order that names one overrides it, in the same unit.
 
-| `qtyType` | `qty = 2` means | Backtest panel, 0.5.0 | Strategies panel, 0.5.0 |
+| `qtyType` | `qty = 2` means | Backtest panel | Strategies panel |
 |---|---|---|---|
 | `"units"` | Two units: two shares, or two units of a contract | Filled as written | Runs |
 | `"lots"` | Two lots, that is `2 * chart.lotSize` units | Converted through the instrument's lot size, with the closing defect below | Refused before it starts |
@@ -16196,8 +16263,8 @@ The declaration sets the default size and the unit it is counted in. An order th
 
 A backtest fills in units and keeps no running equity to size against, so it cannot convert cash or a percentage of equity, and says so with OS6021 before any bar runs rather than filling the number as written. The runner behind the Strategies panel sends only a quantity the script states in units.
 
-> **Lots and closing orders in the 0.5.0 backtest**
-Under `qtyType = "lots"` the orders you size are converted correctly, but a close whose size the engine works out for you is not. A bare `close()`, a tagged `close(tag = ...)` and `order.reverse()` all work their size out in units, and the 0.5.0 backtest converts that size from lots a second time. With a lot size of 50, closing a two-lot position (100 units) sells 100 lots, 5,000 units, and leaves the strategy short 4,900.
+> **Lots and closing orders in the backtest**
+Under `qtyType = "lots"` the orders you size are converted correctly, but a close whose size the engine works out for you is not. A bare `close()`, a tagged `close(tag = ...)` and `order.reverse()` all work their size out in units, and the backtest in version 0.8.0 converts that size from lots a second time. With a lot size of 50, closing a two-lot position (100 units) sells 100 lots, 5,000 units, and leaves the strategy short 4,900.
 
 Count in units and compute the size from `chart.lotSize`, as the complete example does: that is also the only unit a deployment accepts. If you keep `qtyType = "lots"` for a backtest, flatten with a close that states its size in lots, such as `close(qty = lots)`. Do not flatten with `sell(qty = lots)`: under lots that opens a separate short beside the long, and the trade list then shows both as open trades that never close.
 
@@ -16215,7 +16282,7 @@ Index futures and options on NFO, and most MCX contracts, cannot be traded in si
 
 **Absent is not 1.** When the host has not stated a lot size, `chart.lotSize` is absent, and absence propagates through arithmetic, so a size computed from it is absent too and the order is refused with OS7002. Decide once what a missing lot size means in your script: `max(orElse(chart.lotSize, 1), 1)` treats it as one unit. In /trading that fallback matters where OpenAlgo holds no contract for the symbol: the chart then states no lot size, and the Backtest panel runs on a lot of 1 and a tick of 0.05 and says so in the line under the report's figures.
 
-**Round down to whole lots yourself.** A quantity that is not a whole number of lots is catalogued as OS7005, and in version 0.5.0 nothing raises it: the order is sent as written and the destination is left to reject it. `order.roundToLot()` is planned. Until it lands, round with arithmetic:
+**Round down to whole lots yourself.** A quantity that is not a whole number of lots is catalogued as OS7005, and in version 0.8.0 nothing raises it: the order is sent as written and the destination is left to reject it. `order.roundToLot()` is planned. Until it lands, round with arithmetic:
 
 ```openscript
 version 1
@@ -16302,7 +16369,7 @@ plot(entryStop, "Stop", red, style = "step")
 
 The comparison `stopDistance > 0` does two jobs. It keeps the division away from zero, and because an ordered comparison with an absent value is absent and an absent condition takes the false branch, it also covers the warmup bars where `atr()` has no value yet.
 
-The stop is a rule the script tests on each bar rather than a level set with `exit()`, because /trading does not act on `exit()` levels in 0.5.0; [Exits and brackets](/script/strategies/exits-and-brackets) explains.
+The stop is a rule the script tests on each bar rather than a level set with `exit()`, because a backtest in version 0.8.0 does not fill `exit()` levels, and neither does /trading; [Exits and brackets](/script/strategies/exits-and-brackets) explains.
 
 This risks a fixed amount of money rather than a percentage of equity, because `pos.equity` is planned. `order.qtyForRisk()`, also planned, will do the division in one call and return `none` when the entry and the stop are equal.
 
@@ -16348,7 +16415,7 @@ Run it on a daily chart for "a day" to mean a day: `atr()` measures the average 
 
 ## Sizing helpers
 
-Four helpers will turn a sentence about money into a quantity. All four are planned in version 0.5.0.
+Four helpers will turn a sentence about money into a quantity. All four are planned in version 0.8.0.
 
 | Helper | Returns | For |
 |---|---|---|
@@ -16399,7 +16466,7 @@ plot(pos.isFlat ? none : pos.avgPrice, "Average", fade(silver, 40), style = "ste
 
 `pos.avgPrice` moves as you add, which is the point of plotting it: a stop measured from the average of three entries is a different stop from one measured from the first.
 
-> **How the 0.5.0 report marks a scale-in**
+> **How the report marks a scale-in in version 0.8.0**
 The report's equity curve marks a trade at the size it ended up at, and at its final average price, from the bar it first opened. A position built in three adds is therefore marked, before the second add, on units it did not yet hold. For a strategy that adds as the price rises, like this one, that shows a drawdown the account never had, and the report's maximum drawdown is taken from the same curve. A partial close is misread the same way: after it settles the trade is still marked at its full size, so the part already closed is counted twice in the open profit. The realised profit is unaffected.
 
 ## Pitfalls
@@ -16424,8 +16491,8 @@ Source: https://openalgo.in/script/strategies/multi-leg-and-books
 
 This page covers the multi-leg model of OpenScript: **legs**, each one contract a strategy trades, and the **book**, all of a strategy's legs taken together, with the rules that manage them. It is the model for option structures such as a short straddle or strangle on NIFTY or BANKNIFTY weekly options, where two or more contracts only make sense together and the risk belongs to the combination rather than to any one leg.
 
-> **Planned in version 0.5.0**
-Every `leg.*` and `book.*` name on this page is planned. In version 0.5.0 a strategy trades one instrument, the one on its chart, and a call to any `leg.*` or `book.*` name is refused where you wrote it with OS2020. This page describes the design so you can plan for it, and the last section shows what you can build today.
+> **Planned in version 0.8.0**
+Every `leg.*` and `book.*` name on this page is planned. In version 0.8.0 a strategy trades one instrument, the one on its chart, and a call to any `leg.*` or `book.*` name is refused where you wrote it with OS2020. This page describes the design so you can plan for it, and the last section shows what you can build today.
 
 ## Why multi-leg positions need their own model
 
@@ -16482,7 +16549,7 @@ Read it top to bottom: two legs declared once, the rules that manage the book se
 
 ## Legs
 
-A **leg** is one contract a strategy trades, named by a string you choose. A file declares its legs once, at the top level, before the first bar. A file that declares none has exactly one leg, the instrument on its chart, which is every strategy in version 0.5.0.
+A **leg** is one contract a strategy trades, named by a string you choose. A file declares its legs once, at the top level, before the first bar. A file that declares none has exactly one leg, the instrument on its chart, which is every strategy in version 0.8.0.
 
 There are two ways to declare one:
 
@@ -16534,7 +16601,7 @@ A strategy takes one of two shapes, and the calls you use decide which.
 | As a unit | `book.enter()`, `book.exit()` | A position whose legs only make sense together: straddles, strangles, spreads |
 | Per leg | `leg.enter()`, `leg.exit()`, and their short spellings `buy()`, `sell()`, `close()`, `exit()`, `order.place()`, `order.reverse()` | Legs that open and close on their own signals |
 
-`book.enter(tag)` sends every declared leg its declared side and quantity in one decision, and `book.exit(tag)` closes every open leg. `leg.enter(name, side, qty, limit, stop, tag)` and `leg.exit(name, qty, limit, stop, tag)` act on one leg at a time, filtered by `book.direction()`, which limits entries to `"long"`, `"short"` or `"both"`. Every single-instrument strategy in version 0.5.0 is already the per-leg shape, written the short way.
+`book.enter(tag)` sends every declared leg its declared side and quantity in one decision, and `book.exit(tag)` closes every open leg. `leg.enter(name, side, qty, limit, stop, tag)` and `leg.exit(name, qty, limit, stop, tag)` act on one leg at a time, filtered by `book.direction()`, which limits entries to `"long"`, `"short"` or `"both"`. Every single-instrument strategy in version 0.8.0 is already the per-leg shape, written the short way.
 
 **Why a combined stop fits only one shape.** `book.profit` is measured from the last moment the book was flat. In a strategy that enters as a unit, that moment is the start of the current trade, because the book goes flat between trades, so a combined stop is a stop on that trade: "square off when this straddle is six thousand down". In a per-leg strategy the book may never be flat: one leg closes as another opens and a third has been running since Tuesday. The window would start at a moment no rule chose and no reader could name, and a stop on an arbitrary window is worse than none, because it looks like a stop.
 
@@ -16639,7 +16706,7 @@ plot(leg.profit("ce"), "Call leg", orange)
 plot(leg.profit("pe"), "Put leg", teal)
 ```
 
-## What you can build in version 0.5.0
+## What you can build in version 0.8.0
 
 Until legs and books land, three patterns cover most of what options traders want from a script.
 
@@ -16690,9 +16757,9 @@ plot(targetLevel, "Target", lime, style = "step")
 plot(pos.isShort ? pos.avgPrice : none, "Premium sold", fade(silver, 40), style = "step")
 ```
 
-The entry window is tested against the time each bar starts, and its end is exclusive, so make it wider than the chart's interval: on a 15-minute chart no bar starts inside `"0920-0930"`, while `"0920-1000"` holds the 09:30 and 09:45 bars. The size counts in units computed from the lot size, for the reason [Position and sizing](/script/strategies/position-and-sizing#where-a-size-comes-from) gives. The stop and target are rules the script tests, because /trading does not act on `exit()` levels in 0.5.0. To deploy it from the Strategies panel, replace the clock tests with a window built from arithmetic on `time`, as [Sessions and time](/script/data/sessions-and-time#sessions-and-the-clock-in-trading-today) shows, because the runner refuses to start a script that reads the calendar.
+The entry window is tested against the time each bar starts, and its end is exclusive, so make it wider than the chart's interval: on a 15-minute chart no bar starts inside `"0920-0930"`, while `"0920-1000"` holds the 09:30 and 09:45 bars. The size counts in units computed from the lot size, for the reason [Position and sizing](/script/strategies/position-and-sizing#where-a-size-comes-from) gives. The stop and target are rules the script tests, because a backtest in version 0.8.0 does not fill `exit()` levels, and neither does /trading. To deploy it from the Strategies panel, replace the clock tests with a window built from arithmetic on `time`, as [Sessions and time](/script/data/sessions-and-time#sessions-and-the-clock-in-trading-today) shows, because the runner refuses to start a script that reads the calendar.
 
-**Manage two legs from one chart, with limits.** A strategy on one leg's chart can read the other leg with `req.symbol()`, manage the combined premium, trade its own leg, and raise an `alert()` for the other leg that you route yourself. The combined stop then measures the right thing, but only the chart's leg is in the strategy's books, the other leg's fills are not, and the version 0.5.0 backtest refuses such a strategy before the first bar with OS6006, because a backtest is given the chart's own bars and cannot supply another instrument's. Treat it as a bridge until `book.enter()` lands, not as a two-leg strategy.
+**Manage two legs from one chart, with limits.** A strategy on one leg's chart can read the other leg with `req.symbol()`, manage the combined premium, trade its own leg, and raise an `alert()` for the other leg that you route yourself. The combined stop then measures the right thing, but only the chart's leg is in the strategy's books, the other leg's fills are not, and the Backtest panel refuses such a strategy before the first bar with OS6006, because it hands the backtest only the chart's own bars. A backtest from version 0.6.0 on can be handed another instrument's bars by a host that has them; the /trading page in current OpenAlgo releases still runs library 0.5.0, which cannot take them. Treat it as a bridge until `book.enter()` lands, not as a two-leg strategy.
 
 **Related.** [Overview](/script/strategies/overview), [Orders](/script/strategies/orders), [Exits and brackets](/script/strategies/exits-and-brackets), [Position and sizing](/script/strategies/position-and-sizing), [Reading the books](/script/strategies/reading-the-books), [leg.* reference](/script/reference/legs), [book.* reference](/script/reference/books)
 
@@ -16793,8 +16860,8 @@ An order that fills inside a bar is only known to have filled once that bar is c
 
 `exit()` and `order.bracket()` attach a stop and a target to a position as price levels.
 
-> **Levels in release 0.5.0**
-The compiler accepts `exit()` and `order.bracket()`, but the 0.5.0 backtest does not fill the levels they set: the position simply stays open past them. The OpenAlgo strategy runner refuses to start a script that calls either one. Until they land, write a stop or a target as a rule the script tests on each close, as the example further down does. [Exits and brackets](/script/strategies/exits-and-brackets) covers both forms.
+> **Levels in version 0.8.0**
+The compiler accepts `exit()` and `order.bracket()`, but the backtest in version 0.8.0 does not fill the levels they set: the position simply stays open past them. The OpenAlgo strategy runner refuses to start a script that calls either one. Until they land, write a stop or a target as a rule the script tests on each close, as the example further down does. [Exits and brackets](/script/strategies/exits-and-brackets) covers both forms.
 
 When level fills arrive, they are planned to follow the same conservative rules as the resting orders above: a level fills at its own price, or at the open when the bar opens beyond it; the stop pays slippage and the target does not; and when one bar's range contains both the stop and the target, the stop is taken, because nothing in a bar says which came first.
 
@@ -16815,7 +16882,7 @@ How to choose the number, in order of how much it matters:
 | When do your signals fire? | The first and last minutes of the 09:15 to 15:30 session are the widest, so a strategy that trades there pays more |
 | How fast does the instrument move? | A fast instrument moves between your decision and your fill even with no spread |
 
-Then run the only test that matters: turn it up. A declaration option can be wired to an `input()`, and the Backtest panel then offers it as a field you can change between runs without editing the script:
+Then run the only test that matters: turn it up. A declaration option can be wired to an `input()` written as the whole of its value, and the Backtest panel then offers it as a field you can change between runs without editing the script:
 
 ```openscript
 version 1
@@ -17035,7 +17102,7 @@ None of these is an argument against backtesting. They are the reason a backtest
 | Wonderful equity curve, poor real results | Costs left at zero | Fill in the stack, then run again |
 | The edge halves when slippage goes from one tick to two | The edge was fill quality | Trade a slower version of the idea |
 | Entries sit exactly at the close that triggered them | `fillOn = "close"` | Leave the default unless you can name the honest case |
-| A stop level the script set never exits the backtest | Levels set with `exit()` are not filled in 0.5.0 | Write the stop as a rule tested on each close |
+| A stop level the script set never exits the backtest | Levels set with `exit()` are not filled in 0.8.0 | Write the stop as a rule tested on each close |
 | Cost per round trip looks twice what you expected | `"perTrade"` is charged on every fill, and a round trip is two | Halve the figure, or use the per fill amount |
 | Your rates changed and the backtest still charges the old ones | The cost is a bare number with no note of where it came from | Wire it to an `input()` with a comment on its source |
 
@@ -17046,7 +17113,7 @@ None of these is an argument against backtesting. They are the reason a backtest
 
 Source: https://openalgo.in/script/strategies/backtesting
 
-A backtest runs a strategy over the bars of the chart you are looking at, one bar at a time, oldest first, exactly as the chart runs a study, and reports what the strategy would have done. This page covers running one from the **Backtest** panel in the /trading page of OpenAlgo: what to pick, how far back to reach, how much history the first trade needs before it means anything, and which parts of a strategy the 0.5.0 backtest does not model yet.
+A backtest runs a strategy over the bars of the chart you are looking at, one bar at a time, oldest first, exactly as the chart runs a study, and reports what the strategy would have done. This page covers running one from the **Backtest** panel in the /trading page of OpenAlgo: what to pick, how far back to reach, how much history the first trade needs before it means anything, and which parts of a strategy the backtest in version 0.8.0 does not model yet.
 
 There is no separate backtest mode in the language and no backtest-only function. The file you backtest is the file you later [deploy](/script/strategies/sandbox-and-live), and the only thing that differs between the two is where the orders go. In a backtest they go to a fill model over history, and nothing is sent anywhere.
 
@@ -17176,7 +17243,7 @@ Under the settings, a line headed **Order size** says where the size comes from:
 | Writes a number other than 1, such as `qty = 5` | The script sets the size and it cannot be changed here |
 | Says nothing about size, or writes `qty = 1` | It trades 1 unit, which is also the default, and the line `qty = input(1, "Quantity", min = 1)` would hand the choice to you |
 
-State quantities in units. A strategy sized with `qtyType = "cash"` or `"equityPercent"` is refused by the 0.5.0 backtest before its first bar, and the OpenAlgo strategy runner sends only quantities stated in units. On an NFO future or option, a quantity in units is the number of units, so one lot of a contract whose lot size is 75 is `qty = 75`. [Position and sizing](/script/strategies/position-and-sizing) covers sizing from `chart.lotSize`.
+State quantities in units. A strategy sized with `qtyType = "cash"` or `"equityPercent"` is refused by the backtest before its first bar, with OS6021, and the OpenAlgo strategy runner sends only quantities stated in units. On an NFO future or option, a quantity in units is the number of units, so one lot of a contract whose lot size is 75 is `qty = 75`. [Position and sizing](/script/strategies/position-and-sizing) covers sizing from `chart.lotSize`.
 
 ### The instrument's own facts
 
@@ -17192,7 +17259,7 @@ The run is also told the chart's interval (a `D`, `W` or `M` chart as `"1D"`, `"
 | The chart | Draws the strategy's plots when it is applied or added from the indicators list, run against the same simulated fills the backtest uses, over the bars the chart has loaded | Nowhere: the chart draws and does not trade |
 | Strategies panel | Runs a deployment as a process on the server, bar by bar as bars close | The platform's own order path: the sandbox in analyzer mode, your broker in live mode |
 
-All three run the same compiled program, so the values a script computes from the same bars agree between them. What differs is where the orders go and, in release 0.5.0, which parts of a script each place supports. [Sandbox and live](/script/strategies/sandbox-and-live) covers the third row and lists what the server runner needs.
+All three run the same compiled program, so the values a script computes from the same bars agree between them. What differs is where the orders go and which parts of a script each place supports. [Sandbox and live](/script/strategies/sandbox-and-live) covers the third row and lists what the server runner needs.
 
 ## Warmup: how much history the first trade needs
 
@@ -17280,11 +17347,11 @@ plot(breakout, "Breakout level", orange, style = "step")
 background(warm ? none : fade(silver, 92))
 ```
 
-## What the 0.5.0 backtest does not model yet
+## What the backtest does not model yet
 
-Some parts of a strategy compile and are not acted on by the backtest in this release. Most of them fail quietly, with a report that looks normal, so know them before you read one. Two are refused before the run starts, with the reason shown in the panel:
+Some parts of a strategy compile and are not acted on by the backtest in version 0.8.0, or by the Backtest panel. Most of them fail quietly, with a report that looks normal, so know them before you read one. Two are refused before the run starts, with the reason shown in the panel:
 
-| In the script | In a 0.5.0 backtest | What to do |
+| In the script | In the Backtest panel | What to do |
 |---|---|---|
 | A stop or target set with `exit()` or `order.bracket()` | Not filled | Write the stop as a rule tested on each close. [Costs and fills](/script/strategies/costs-and-fills) shows one |
 | `closeOnSessionEnd = true` | Not acted on: a position is carried past the close | Close it in the script as well |
@@ -17292,6 +17359,9 @@ Some parts of a strategy compile and are not acted on by the backtest in this re
 | Another instrument, read with `req.symbol()` | The run is refused before it starts | Backtest on the instrument itself; a `req.timeframe()` read of the chart's own instrument works |
 | `qtyType = "lots"` | Entries are converted from lots to units, but an exit that sizes itself, such as `close()`, is not: it sends the position's unit count as a number of lots, sells many times what is held and opens a large position the other way | Use `qtyType = "units"` |
 | `qtyType = "cash"` or `"equityPercent"` | The run is refused before it starts | Use `qtyType = "units"` |
+| A `"lookahead"` read with `req.timeframe()` | Reads the higher timeframe bar as it stood on each bar, not its final value | Use the default `"confirmed"` mode, which never repaints. [Repainting](/script/data/repainting) explains the three modes |
+
+The Backtest panel runs the copy of the library the /trading page ships, which in current OpenAlgo releases is version 0.5.0. From version 0.6.0 a `"lookahead"` read in a backtest gives the higher timeframe bar's final value from that bar's first bar, as the mode says, and a backtest can be handed another instrument's bars by a host that has them. The panel does neither yet.
 
 One more behaviour is worth knowing. An order the strategy is not allowed to place, such as a second entry while one is open and `pyramiding` is `1`, is an error that stops the script at that bar (OS7008). Nothing after that bar is placed or filled: the trade list ends there, and the equity curve carries whatever position was open, marked to every later close, to the end of the range. Above the figures the Backtest panel says which bar the run stopped on and when, what went wrong with its fix, and the code with its line and column, so a report that ends early is not read as the whole range. Guarding every entry with `pos.isFlat`, or with the side you mean to add to, keeps a strategy from reaching one. [Orders](/script/strategies/orders) lists the refusals.
 
@@ -17323,7 +17393,7 @@ A run tells you what a fixed set of rules did over a fixed set of bars. It canno
 | Trading from the first bar of the range | The first trades fire on half-warm values | Load warmup bars before the traded window |
 | `fillOn = "close"` | Every entry at the price that triggered it | Leave the default |
 | Zero costs | A dense intraday script prints money | Set slippage and commission before reading anything |
-| A stop set with `exit()` | Losses run far past the stop level the script set | Write the stop as a rule in 0.5.0 |
+| A stop set with `exit()` | Losses run far past the stop level the script set | Write the stop as a rule: version 0.8.0 does not fill `exit()` levels |
 | One regime | A long-only strategy over a rising market | Extend or move the range |
 | Tuned on the whole range | Every parameter at a local peak | Hold a section back before tuning |
 | Too few trades | A 22 trade run with a 68 percent win rate | Longer range, finer interval, or drop the idea |
@@ -17585,7 +17655,7 @@ The rule behind all of it is short. **A strategy's position and profit are folde
 
 ## A script that reads its own books
 
-A strategy can put what it believes about its own position on the chart. This panel uses only calls that run in release 0.5.0:
+A strategy can put what it believes about its own position on the chart. This panel uses only calls that run in version 0.8.0:
 
 ```openscript
 version 1
@@ -17733,7 +17803,7 @@ A trade holds one entry price and one size for the whole position, so the equity
 
 ## Reading the books from a script
 
-### What runs in release 0.5.0
+### What runs in version 0.8.0
 
 | Call | When flat | Means |
 |---|---|---|
@@ -17831,7 +17901,7 @@ Two situations make them differ by design:
 | OS7017 on a `close` | The quantity is larger than what is left, usually a scale-out firing twice | Guard on `pos.size`, or leave the quantity out |
 | A late fill applied to the wrong trade | Expecting fills to settle the current position | They settle their own position; a reversal is two orders |
 | The strategy's position disagrees with the account's | Something else trades that contract, or the run restarted flat | Check the **Positions** tab and the account, then decide who owns the difference |
-| A planned read refused with OS2020 | `order.*` reads and most `pos.*` facts are planned in 0.5.0 | Keep the fact in a `var` |
+| A planned read refused with OS2020 | `order.*` reads and most `pos.*` facts are planned in 0.8.0 | Keep the fact in a `var` |
 | Drawdown looks worse than the trades suggest | A position that was added to is valued at its final size from its first bar | Read the trade list for the result |
 
 **Related.** [Orders](/script/strategies/orders), [Reading a report](/script/strategies/reading-a-report), [Legs and books](/script/strategies/multi-leg-and-books), [Position and sizing](/script/strategies/position-and-sizing), [Sandbox and live](/script/strategies/sandbox-and-live), [pos.* reference](/script/reference/position), [order.* reference](/script/reference/orders)
@@ -17841,16 +17911,16 @@ Two situations make them differ by design:
 
 Source: https://openalgo.in/script/strategies/sandbox-and-live
 
-A backtest says what a strategy would have done. A deployment runs it: a process on the OpenAlgo server executes the same compiled script on each bar as it closes and sends real orders through the platform's own order path. This page covers deploying a strategy from the **Strategies** panel in /trading, running it in sandbox trading (analyzer mode in OpenAlgo) first, what changes when it runs live, what the strategy runner needs from a script in release 0.5.0, and how to pause, stop and restart one without losing track of a position.
+A backtest says what a strategy would have done. A deployment runs it: a process on the OpenAlgo server executes the same compiled script on each bar as it closes and sends real orders through the platform's own order path. This page covers deploying a strategy from the **Strategies** panel in /trading, running it in sandbox trading (analyzer mode in OpenAlgo) first, what changes when it runs live, what the strategy runner needs from a script, and how to pause, stop and restart one without losing track of a position.
 
 ## A strategy ready to deploy
 
-The strategy runner in release 0.5.0 runs a subset of what the backtest runs. This file stays inside it: its quantity is in units, and its stop is a rule the script tests on each close rather than a bracket.
+The strategy runner runs a subset of what the backtest runs. This file stays inside it: its quantity is in units, and its stop is a rule the script tests on each close rather than a bracket.
 
 ```openscript
 version 1
 
-// Written for the 0.5.0 strategy runner: units, and a stop written as a rule
+// Written for the strategy runner: units, and a stop written as a rule
 // rather than exit(), which the runner does not send yet. The costs are for
 // the backtest; a deployment pays whatever the market charges.
 strategy("EMA cross, deployable", overlay = true, precision = 2,
@@ -17947,9 +18017,9 @@ With more than six deployments, a search box finds one by strategy or instrument
 
 The server does not compile anything. It runs the compiled program the editor stores beside the script each time a save compiles with no errors; a save with errors removes the stored program, so the program always matches the script as saved. Pressing Start on a script with no compiled program is refused in the panel, with a message telling you to open it in the chart and save it once the console shows no errors.
 
-The server runs that program on `openscript`, the Python library of the language, rather than on the engine in your browser. A script that calls something the server's engine does not implement yet is refused when the run loads, and the log names the diagnostic code.
+The server runs that program on `openscript`, the Python library of the language, rather than on the engine in your browser. In current OpenAlgo releases that is version 0.5.0 of the Python library, which does not implement every call the browser's engine has. A script that calls one it does not implement is refused when the run loads, and the log names the diagnostic code. From version 0.6.0 the Python library holds every library entry the browser's engine does.
 
-When a run starts, the runner checks the program before it sends anything. In release 0.5.0 it refuses a script that:
+When a run starts, the runner checks the program before it sends anything. It refuses a script that:
 
 | The script | Why the runner refuses it | What to do |
 |---|---|---|
@@ -18407,7 +18477,7 @@ if crossDown(fast, slow)
 | A name assigned and never read | It still runs on every bar and suggests something depends on it ([OS8010](/script/errors/warnings#os8010)) | Delete the line |
 | The same data read written twice | Two requests against the host's ceiling ([OS5006](/script/errors/limits#os5006)) | Read once, name it, reuse the name |
 
-> **The error reference lists a warning for a persistent value holding a bar index, [OS8014](/script/errors/warnings#os8014), but the compiler in version 0.5.0 does not raise it yet: it does not follow a bar index into a `var`. Until it does, the rule above is yours to keep.**
+> **The error reference lists a warning for a persistent value holding a bar index, [OS8014](/script/errors/warnings#os8014), but the compiler in version 0.8.0 does not raise it yet: it does not follow a bar index into a `var`. Until it does, the rule above is yours to keep.**
 
 ## Treat warnings as part of the style
 
@@ -18557,7 +18627,7 @@ plot(basis, "Basis", orange, width = 2)
 
 `bar.updates` (how many times the newest bar has run) and `bar.isConfirmed` (whether the bar has closed) are in that panel on purpose. During market hours the newest bar is still forming and runs again on every update, and those two facts explain most reports of "it worked in the backtest". See [Realtime and confirmation](/script/language/realtime-and-confirmation).
 
-> **The /trading chart draws the first table a study declares. If your study already has a table, add the debug rows to it rather than declaring a second one.**
+> **A study may declare more than one table. The chart adapter in version 0.8.0 draws each one in the corner its `position` names when the host states that it draws on openalgo-charts 2.5.4 or newer, and otherwise refuses the study with OS6024 before any bar runs rather than dropping a table in silence. The /trading page in current OpenAlgo releases still runs library 0.5.0, which draws only the first table a study declares, so there add the debug rows to the table you already have rather than declaring a second one.**
 
 ## Step through a script
 
@@ -18809,7 +18879,7 @@ This page lists every limit an OpenScript script (OpenScript is also called Open
 
 ## Every limit at a glance
 
-The values below are the ones the engine in `openalgo-script` 0.5.0 applies when the host sets nothing else, which is how scripts run on the /trading page. Two of them, the loop budget and the array ceiling, are fixed by the language itself. The others are the engine's defaults, and a host is allowed to set its own.
+The values below are the ones the engine in `openalgo-script` 0.8.0 applies when the host sets nothing else. They are the same in version 0.5.0, which the /trading page in current OpenAlgo releases runs, so they are also how scripts run there. Two of them, the loop budget and the array ceiling, are fixed by the language itself. The others are the engine's defaults, and a host is allowed to set its own.
 
 | Limit | Value | Can the script change it | Checked | Reported as |
 |---|---|---|---|---|
@@ -19561,7 +19631,7 @@ plot(mean, "Mean of three", aqua)
 
 Set **Check this bar index** to a bar after the first two, and the label appears on that bar with every number you need. `text()` with no decimals writes each value in full, so nothing is hidden by rounding.
 
-You can demand an exact match, because the language does. All arithmetic is 64-bit floating point with round-to-nearest-even, in the order the source writes it, and an engine may not reorder or fuse operations. `round()` takes halves away from zero. Arrays are always walked in index order. There is no randomness, and the only clock a script can read during a bar, `chart.now()`, is a value the host fixes. Every engine must produce the same result to the last bit, so a disagreement between your arithmetic and the script's is a real disagreement.
+You can demand an exact match, because the language does. All arithmetic is 64-bit floating point with round-to-nearest-even, in the order the source writes it, and an engine may not reorder or fuse operations. `round()` takes halves away from zero. Arrays are always walked in index order. There is no randomness, and the only clock a script can read during a bar, `chart.now()`, is a value the host fixes. Every engine must produce the same result to the last bit, so a disagreement between your arithmetic and the script's is a real disagreement. That includes `pow()`, `exp()`, `log()` and the trigonometric functions, which since version 0.7.0 use portable algorithms with one final rounding, and the JavaScript and Python engines are compared on every release over more than a million and a half library calls with no bit allowed to differ. That change moved the final bits of some results made by earlier versions, so compare a stored result only with one made by the same library version.
 
 Check three bars, not one: an early bar just after warmup ends, a bar in the middle, and a bar on a session boundary or a gap, such as the 09:15 bar after a weekend. Those are the three places the arithmetic differs for different reasons.
 
@@ -19771,7 +19841,7 @@ See [Repainting](/script/data/repainting) for the whole subject.
 
 | Check | Why |
 |---|---|
-| It is flat when you expect it to be | Test the script's own square-off on a real session end, 15:30 on NSE and NFO. `closeOnSessionEnd` is accepted and not acted on in version 0.5.0, so the exit has to be a rule in the script: see [Exiting on the clock](/script/strategies/exits-and-brackets#exiting-on-the-clock) |
+| It is flat when you expect it to be | Test the script's own square-off on a real session end, 15:30 on NSE and NFO. `closeOnSessionEnd` is accepted and not acted on in version 0.8.0, so the exit has to be a rule in the script: see [Exiting on the clock](/script/strategies/exits-and-brackets#exiting-on-the-clock) |
 | It behaves on a day with a gap, a halt or a missing bar | Absence reaches a plot as a gap; make sure it reaches your decisions as "do nothing" |
 | It has run in sandbox trading (analyzer mode in OpenAlgo), on real market data, long enough to see every branch | The Strategies panel starts a run in sandbox while OpenAlgo is in analyzer mode. Run there first, then live. See [Sandbox and live](/script/strategies/sandbox-and-live) |
 | You know what it does when a data read fails | `req.isReady()` and `req.error()` let a script say "not yet" instead of guessing |
@@ -19877,7 +19947,7 @@ See [Absent values](/script/language/absent-values).
 
 **Cause.** A cell written with an absent value is blank, just as a plot of an absent value is a gap. Also, the chart shows only the cells the newest bar wrote: a `cell()` call that did not run on the newest bar leaves its cell empty.
 
-**Fix.** Convert deliberately, so a reader can tell warmup from a value: `isNone(v) ? "warming up" : text(v, 2)`, or `text(v)`, which writes an absent value as the word `none`. Declare the `table()` at the top level and write its cells on the newest bar, with `if bar.isLast`. The /trading chart draws the first table a study declares, so keep one table per study. See [Tables](/script/visuals/tables).
+**Fix.** Convert deliberately, so a reader can tell warmup from a value: `isNone(v) ? "warming up" : text(v, 2)`, or `text(v)`, which writes an absent value as the word `none`. Declare the `table()` at the top level and write its cells on the newest bar, with `if bar.isLast`. A study may declare several tables: the chart adapter in version 0.8.0 draws each in the corner its `position` names when the host states that it draws on openalgo-charts 2.5.4 or newer, and otherwise refuses the study with OS6024 rather than leaving one out. The /trading page in current OpenAlgo releases still runs library 0.5.0, which draws only the first table a study declares, so keep one table per study there. See [Tables](/script/visuals/tables).
 
 ### The compiler refuses my plot inside an if
 
@@ -20030,7 +20100,7 @@ See [Variables and scope](/script/language/variables-and-scope).
 
 **Fix.** Store `time` and compare timestamps, because a bar's time never moves. Anchor a running value to something that does not move either, such as the start of a session or a date, rather than to the first bar on the chart.
 
-> **The error reference lists a warning for a stored bar index, [OS8014](/script/errors/warnings#os8014), but the compiler in version 0.5.0 does not raise it yet: it does not follow a bar index into a `var`.**
+> **The error reference lists a warning for a stored bar index, [OS8014](/script/errors/warnings#os8014), but the compiler in version 0.8.0 does not raise it yet: it does not follow a bar index into a `var`.**
 
 ### Warmup quietly changed an answer
 
@@ -20038,7 +20108,7 @@ See [Variables and scope](/script/language/variables-and-scope).
 
 **Fix.** Decide what warmup means and write it down: test `isNone(cond)` explicitly, or give the name a starting value above the `if` that you are happy to see on warmup bars.
 
-> **The error reference lists a warning for this shape, [OS8004](/script/errors/warnings#os8004), but the compiler in version 0.5.0 does not raise it yet: it does not yet follow which names a branch on a possibly absent condition assigns.**
+> **The error reference lists a warning for this shape, [OS8004](/script/errors/warnings#os8004), but the compiler in version 0.8.0 does not raise it yet: it does not yet follow which names a branch on a possibly absent condition assigns.**
 
 ## Signals and alerts
 
@@ -20095,7 +20165,7 @@ if crossed
 
 **Cause.** The call did not say where the marker goes, so it took the default, `at = "above"`. The side is never worked out from what the marker says.
 
-**Fix.** Say which: `at = "above"`, `"below"` or `"price"`, and choose a `shape`. The value must be written as a literal or come from an `input()`, because a marker's look is fixed before bar 0; a value that changes per bar is [OS3003](/script/errors/arguments#os3003).
+**Fix.** Say which: `at = "above"`, `"below"` or `"price"`, and choose a `shape`. The value must be written as a literal or come from an `input()`, because a marker's look is fixed before bar 0; a value that changes per bar is [OS3003](/script/errors/arguments#os3003). An input must be the whole of the value: an expression over one, such as `at = showAbove ? "above" : "below"` where `showAbove` is an input, is OS3025, so offer the choice as an input with `options` and pass it as it is.
 
 ```openscript
 fast = ema(close, 9)
@@ -20170,9 +20240,9 @@ See [Other instruments](/script/data/other-instruments).
 3. **The condition has not been true since it started.** Orders wait for a confirmed bar, and a strategy acts only on bars that arrive after it starts.
 4. **The instrument was outside its trading session.** Nothing in the script checks this for you.
 
-**Fix.** Check the deployment's row and the mode in the Strategies panel header. To check the logic itself, open the script in the Scripts panel and press **Apply to chart**: for a strategy, that runs a backtest over the chart's history and marks every fill on the price. Guard entries to the session with `session.isIn()` and a named zone, such as `session.isIn("0915-1530", "Asia/Kolkata")`. The same guard holds on the chart, in the Backtest panel and in a deployed strategy, which reads the calendar in the instrument's zone. `closeOnSessionEnd = true` is accepted and not acted on in version 0.5.0, so a strategy that must be flat at the close needs its own exit. See [Sandbox and live](/script/strategies/sandbox-and-live) and [Sessions and time](/script/data/sessions-and-time).
+**Fix.** Check the deployment's row and the mode in the Strategies panel header. To check the logic itself, open the script in the Scripts panel and press **Apply to chart**: for a strategy, that runs a backtest over the chart's history and marks every fill on the price. Guard entries to the session with `session.isIn()` and a named zone, such as `session.isIn("0915-1530", "Asia/Kolkata")`. The same guard holds on the chart, in the Backtest panel and in a deployed strategy, which reads the calendar in the instrument's zone. `closeOnSessionEnd = true` is accepted and not acted on in version 0.8.0, so a strategy that must be flat at the close needs its own exit. See [Sandbox and live](/script/strategies/sandbox-and-live) and [Sessions and time](/script/data/sessions-and-time).
 
-> **[OS7012](/script/errors/orders#os7012) (outside the session) is in the error reference, but nothing raises it in version 0.5.0: nothing compares the bar's time with the instrument's session before an order is sent. Guard the session yourself.**
+> **[OS7012](/script/errors/orders#os7012) (outside the session) is in the error reference, but nothing raises it in version 0.8.0: nothing compares the bar's time with the instrument's session before an order is sent. Guard the session yourself.**
 
 ### My strategy stopped on an order error
 
@@ -20208,8 +20278,8 @@ inSession = session.isIn("0915-1530", "Asia/Kolkata")
 distance = close - stop
 qty = distance > 0 ? floor(riskAmount / distance) : none
 
-// The script tests its own stop: the 0.5.0 backtest does not fill a stop
-// set with exit().
+// The script tests its own stop: the backtest in version 0.8.0 does not
+// fill a stop set with exit().
 var stopLevel = none
 
 if pos.isLong and close < stopLevel
@@ -20257,7 +20327,7 @@ if crossDown(fast, slow)
 
 For [OS7017](/script/errors/orders#os7017), leave the quantity off `close()` and it closes whatever is left, or guard a partial exit on `pos.size` so it cannot fire twice on one position. The engine will not send a smaller number for you: that would be a quantity you did not write.
 
-> **[OS7005](/script/errors/orders#os7005) (a quantity that is not a whole number of lots) and [OS7011](/script/errors/orders#os7011) (an order larger than the capital) are in the error reference, and nothing raises them in version 0.5.0. Round NFO and MCX quantities to the lot size yourself, using `chart.lotSize`.**
+> **[OS7005](/script/errors/orders#os7005) (a quantity that is not a whole number of lots) and [OS7011](/script/errors/orders#os7011) (an order larger than the capital) are in the error reference, and nothing raises them in version 0.8.0. Round NFO and MCX quantities to the lot size yourself, using `chart.lotSize`.**
 
 ### My strategy stopped after its first entry
 
@@ -20601,6 +20671,280 @@ See [Debugging](/script/writing/debugging) for what a harness is for.
 **When you want to change it**, go back to the top of this page. The change is a new version, the changelog says whether the numbers moved, and the old file stays where it is.
 
 **Related.** [Style guide](/script/writing/style-guide), [Testing scripts](/script/writing/testing), [Debugging](/script/writing/debugging), [Limits](/script/writing/limits), [Inputs](/script/inputs/inputs), [Example scripts](/script/getting-started/example-scripts), [Libraries](/script/language/libraries)
+
+
+## Importing a script
+
+Source: https://openalgo.in/script/writing/importing-a-script
+
+This page is for you if you have scripts written in another chart scripting language and want them in OpenScript. The `openalgo-script` library has an importer that translates them, statement by statement, and tells you exactly where the two languages part. By the end of the page you will know how to run it, what it reads, what it translates, what it keeps as a comment for you to translate by hand, and how to read what it hands back.
+
+The language it reads is the widely used chart scripting language whose scripts open with a version annotation comment, `//@version=5` or `//@version=6`, declare themselves with an `indicator` or `strategy` call, and reach their built-ins through namespaces such as `ta`, `math`, `input` and `strategy`. This page calls it the source dialect. Its examples are fenced as plain text, because they are not OpenScript.
+
+The importer's rule is the one every diagnostic in OpenScript follows: a translation that changes what a script means is worse than none. So it never approximates. Each statement is translated with the source dialect's meaning, or translated with a warning that says exactly how the meaning differs, or kept as a comment with an error that says why.
+
+> **Where it runs**
+The importer is a function in the `openalgo-script` package from version 0.6.0 on, for a host or an editor to call on a file a trader has pasted or uploaded. It has no command line. The /trading page does not offer it: current OpenAlgo releases ship version 0.5.0 of the library, which has no importer.
+
+## Running it
+
+`importScript` comes from the package's main entry point. It is pure: text in, text and findings out, and nothing is read, written or run on the way.
+
+```js
+import { importScript, renderDiagnostics, sourceFile } from "openalgo-script";
+
+const { source, findings } = importScript(text, { name: "breakout.txt" });
+console.log(renderDiagnostics(sourceFile("breakout.txt", text), findings));
+```
+
+`source` is the OpenScript text, or the empty string when nothing could be translated at all. `findings` are ordinary diagnostics: each has a code from the OS9xxx range, a severity, a message and a fix, and a span whose line and column are in the text you imported, not in the text that came out, so the caret lands under what the author of the original wrote. [OS9xxx Import](/script/errors/import) documents every code.
+
+**What comes back compiles.** The importer compiles its own output before it returns it. A statement the compiler refuses is kept as a comment with [OS9012](/script/errors/import#os9012), naming the compiler's own code, and the output is compiled again, so the text you are handed is a program whenever it is not empty.
+
+## What it reads
+
+**Versions 5 and 6.** The annotation has to come before the first line of code. A script written for an earlier version names its built-ins differently and differs in rules the importer does not model, so it is refused whole with [OS9001](/script/errors/import#os9001), and so is a script with no annotation.
+
+**One declaration.** The `indicator` or `strategy` call becomes [study()](/script/reference/declarations#study) or [strategy()](/script/reference/declarations#strategy), placed after the `version 1` line whatever the source put before it. A script with none, and a library, which has no declaration an OpenScript file can carry, are refused whole with [OS9004](/script/errors/import#os9004); a second declaration is kept as a comment with the same code.
+
+An option with an OpenScript equivalent is carried: the title and short title, the overlay, format, precision and scale, and for a strategy its starting capital, the size and unit of an order, pyramiding, commission, slippage, currency and whether orders fill on the close. **A default the two languages disagree about is written out.** The source dialect starts a strategy with a capital of 1,000,000 where OpenScript starts with 100,000, so a strategy that names none is given the source's, as `capital = 1000000`; a percentage sized order would otherwise be a tenth of the size. An option with no equivalent is left out of the declaration, because the file needs one, and reported: [OS9006](/script/errors/import#os9006) where it changes what is computed or traded, such as a declaration timeframe or a margin, and [OS9009](/script/errors/import#os9009) where it changes only what is shown or allocated, such as a count of labels to keep.
+
+## What is translated
+
+**Statements.** A declaration with `=`, a reassignment with `:=` and the compound assignments, `var`, and `varip`, which keeps its value across the updates of a moving bar exactly as OpenScript's `live var` does. A type written in a declaration is dropped, since OpenScript takes a name's type from its value. `if`, `else if` and `else`; `for` with and without `by`; `while`; `switch` with a subject and without one; `break` and `continue`; functions of one line and of several, with default arguments and named arguments.
+
+**Four built-ins that return a tuple**, `ta.macd`, `ta.bb`, `ta.supertrend` and `ta.dmi`, assigned to a tuple of names. Each becomes one call held under a name and one element read per name, in the order the source's tuple gives them, which for `ta.dmi` is not the order the OpenScript `adx()` returns.
+
+**Expressions.** The operators have the same precedence in both languages, and the output groups exactly as the source did. `na` is `none`. Strings keep their text whichever quote the source used. A colour written in hexadecimal is kept; a named colour the two languages share becomes the OpenScript colour of that name, drawn with OpenScript's channels, which are not the source dialect's exact shades.
+
+**Built-ins**, one row each. The third column says how far a translation can be trusted:
+
+- **exact** computes the same value on every bar on which the source's value is a finite number, and is absent where the source's is, since an OpenScript number is never infinite.
+- **warmup** computes the same quantity with OpenScript's own first bars, seeding, arithmetic order and handling of an absent value, and its first call raises the warning [OS9007](/script/errors/import#os9007).
+- **orders** is placed under OpenScript's order model, and its first call raises the warning [OS9010](/script/errors/import#os9010).
+
+A row written with brackets is a call, and one without is read as a value.
+
+| Source | OpenScript | Difference |
+|---|---|---|
+| `open` | `open` | exact |
+| `high` | `high` | exact |
+| `low` | `low` | exact |
+| `close` | `close` | exact |
+| `volume` | `volume` | exact |
+| `hl2` | `hl2` | exact |
+| `hlc3` | `hlc3` | exact |
+| `ohlc4` | `ohlc4` | exact |
+| `hlcc4` | `hlcc4` | exact |
+| `time` | `time` | exact |
+| `bar_index` | `bar.index` | exact |
+| `barstate.isfirst` | `bar.isFirst` | exact |
+| `barstate.islast` | `bar.isLast` | exact |
+| `barstate.isconfirmed` | `bar.isConfirmed` | exact |
+| `barstate.isrealtime` | `bar.isRealtime` | exact |
+| `barstate.isnew` | `bar.isNew` | exact |
+| `na` | `none` | exact |
+| `math.pi` | `math.pi` | exact |
+| `math.e` | `math.e` | exact |
+| `strategy.position_size` | `pos.size` | exact |
+| `strategy.position_avg_price` | `pos.avgPrice` | exact |
+| `ta.sma()` | `sma()` | warmup |
+| `ta.ema()` | `ema()` | warmup |
+| `ta.wma()` | `wma()` | warmup |
+| `ta.rma()` | `rma()` | warmup |
+| `ta.hma()` | `hma()` | warmup |
+| `ta.vwma()` | `vwma()` | warmup |
+| `ta.swma()` | `swma()` | warmup |
+| `ta.linreg()` | `linreg()` | warmup |
+| `ta.macd()` | `macd()` | warmup |
+| `ta.supertrend()` | `supertrend()` | warmup |
+| `ta.dmi()` | `adx()` | warmup |
+| `ta.rsi()` | `rsi()` | warmup |
+| `ta.mom()` | `mom()` | exact |
+| `ta.roc()` | `roc()` | warmup |
+| `ta.change()` | `change()` | exact |
+| `ta.atr()` | `atr()` | warmup |
+| `ta.tr()` | `trueRange()` | exact |
+| `ta.stdev()` | `stdev()` | warmup |
+| `ta.variance()` | `variance()` | warmup |
+| `ta.bb()` | `bollinger()` | warmup |
+| `ta.highest()` | `highest()` | warmup |
+| `ta.lowest()` | `lowest()` | warmup |
+| `ta.crossover()` | `crossUp()` | exact |
+| `ta.crossunder()` | `crossDown()` | exact |
+| `ta.cross()` | `cross()` | exact |
+| `ta.cum()` | `cum()` | warmup |
+| `ta.barssince()` | `barsSince()` | warmup |
+| `ta.valuewhen()` | `valueWhen()` | warmup |
+| `math.sum()` | `sum()` | warmup |
+| `math.abs()` | `abs()` | exact |
+| `math.sign()` | `sign()` | exact |
+| `math.floor()` | `floor()` | exact |
+| `math.ceil()` | `ceil()` | exact |
+| `math.sqrt()` | `sqrt()` | exact |
+| `math.pow()` | `pow()` | exact |
+| `math.exp()` | `exp()` | exact |
+| `math.log()` | `log()` | exact |
+| `math.log10()` | `log10()` | exact |
+| `math.sin()` | `math.sin()` | exact |
+| `math.cos()` | `math.cos()` | exact |
+| `math.tan()` | `math.tan()` | exact |
+| `math.asin()` | `math.asin()` | exact |
+| `math.acos()` | `math.acos()` | exact |
+| `math.atan()` | `math.atan()` | exact |
+| `math.todegrees()` | `math.toDegrees()` | exact |
+| `math.toradians()` | `math.toRadians()` | exact |
+| `math.max()` | `max()` | exact |
+| `math.min()` | `min()` | exact |
+| `na()` | `isNone()` | exact |
+| `nz()` | `orElse()` | exact |
+| `int()` | `trunc()` | exact |
+| `float()` | the value itself, in brackets | exact |
+| `color.new()` | `fade()` | exact |
+| `color.rgb()` | `rgb()` | exact |
+| `indicator()` | `study()` | exact |
+| `strategy()` | `strategy()` | exact |
+| `input()` | `input()` | exact |
+| `input.int()` | `input()` | exact |
+| `input.float()` | `input()` | exact |
+| `input.bool()` | `input()` | exact |
+| `input.color()` | `input()` | exact |
+| `input.string()` | `input()` | exact |
+| `input.source()` | `input()` | exact |
+| `plot()` | `plot()` | exact |
+| `hline()` | `level()` | exact |
+| `fill()` | `fill()` | exact |
+| `bgcolor()` | `background()` | exact |
+| `barcolor()` | `barColor()` | exact |
+| `plotshape()` | `signal()` | exact |
+| `strategy.entry()` | `buy()` or `sell()` | orders |
+| `strategy.close()` | `close()` | orders |
+| `strategy.close_all()` | `close()` | orders |
+| `strategy.exit()` | `exit()` | orders |
+
+A few rows are written as more than a renamed call, because their arguments do not line up one to one:
+
+- `ta.tr` read as a value is absent on the first bar in the source dialect, so it becomes `isNone(close[1]) ? none : trueRange()`; `ta.tr(true)` is `trueRange()`, whose first bar is the bar's own range.
+- `ta.stdev` and `ta.variance` take a `biased` flag that is the negation of the `sample` argument of `stdev()` and `variance()`.
+- `ta.highest` and `ta.lowest` with one argument read `high` and `low`.
+- `math.max` and `math.min` take any number of arguments and become nested calls of two.
+- `nz(x)` is `orElse(x, 0)`, `int(x)` truncates toward zero as `trunc()` does, and `float(x)` is `(x)`.
+- `color.new(c, t)` is `fade(c, t)`, since both take transparency as a percentage; `color.rgb` with a transparency is `fade()` over `rgb()`.
+- The input family becomes the one `input()`, with `minval` and `maxval` as `min` and `max`.
+- `hline` becomes `level()`, and `fill` is translated between two plots, which is all the OpenScript `fill()` takes.
+- `plotshape(cond, ...)` draws on the bars its series holds, so it becomes a `signal()` behind an `if`, with the shape and the side of the bar carried where OpenScript has them.
+
+**Names.** A name the source declares keeps its spelling, with two exceptions that both follow from a difference of meaning. A name OpenScript reserves or defines, such as `rsi`, `step` or `count`, which are ordinary names in the source dialect because its built-ins live in namespaces, gains `Value` at the end. And a declaration inside a block or a function that shares a spelling with an outer name is a new variable in the source dialect and an update of the outer one in OpenScript, so it gains a number. Every new spelling is checked against every name the script uses.
+
+## What is kept as a comment
+
+The unit is the statement at the top level: a block with one line missing would be a block that means something the original did not. Each of its source lines is written out behind a marker naming the code, so the original is there to translate from and the output still compiles:
+
+```text
+// not translated (OS9003): rank = ta.percentrank(close, 20)
+```
+
+| Code | Why the statement was kept as a comment |
+|---|---|
+| [OS9002](/script/errors/import#os9002) | A construct with no OpenScript form that keeps its meaning: an `if` or a `switch` used as a value, a tuple anywhere but the four built-ins above, a type, a method, an import, an array literal, a loop over a collection, and an equality test against `na`, which the source dialect answers false on every bar. A few more are written in forms the importer's reader does not accept |
+| [OS9003](/script/errors/import#os9003) | A built-in with no row in the table above, or a name the source never declares. It is not guessed at: a function with a similar name can differ in its arguments, its warmup or its arithmetic |
+| [OS9005](/script/errors/import#os9005) | A statement that reads a name a refused statement declared. It would not compile, so it follows its cause, and each one in the chain says which line started it |
+| [OS9006](/script/errors/import#os9006) | An argument that changes what a call computes or trades and has no equivalent: a limit price on an entry, a trailing exit, a quantity on a close, and a quantity on an entry in a strategy that sizes its orders in anything but units. On a declaration or an input the argument is left out instead, because the rest of the script needs the call |
+| [OS9012](/script/errors/import#os9012) | A translation the compiler refused. The importer does not type the source script, so a number standing where a condition belongs in version 5, or a history read of a name inside a block, is learned from the compiler |
+
+## What is translated with a stated difference
+
+Each of these is a warning, raised once per built-in or per order call rather than on every line that uses it.
+
+| Code | The difference |
+|---|---|
+| [OS9007](/script/errors/import#os9007) | A windowed built-in. Over a source with no absent values, and after the first bars, the translation computes the same quantity; on the first bars, and around an absent value inside its window, it follows OpenScript's rules, which the source dialect does not fix to the same precision |
+| [OS9008](/script/errors/import#os9008) | In version 5, a division of two whole-number constants, which that version answers without a fraction and OpenScript answers with one |
+| [OS9009](/script/errors/import#os9009) | A presentation argument left out: a tracking line, a label size, a legend title OpenScript has no place for, a plot style it does not offer |
+| [OS9010](/script/errors/import#os9010) | An order call. An entry is written as a close of any opposite position followed by the entry, guarded so that it never adds to a position already held on its side. An exit that names its entry is guarded by that entry's side, and a profit or loss given in ticks is multiplied by `chart.tickSize`. What still differs is the model: an OpenScript exit sets its level when it is called rather than when its entry fills, and a repeated entry past the pyramiding limit is refused rather than ignored |
+| [OS9011](/script/errors/import#os9011) | An equality whose two sides can both be absent on one bar, where OpenScript counts two absent values as equal |
+
+Some rewrites need no warning, because the output is the source dialect's meaning exactly:
+
+- The source dialect answers a comparison with an absent side false, and OpenScript answers it absent. The two agree wherever a condition decides a branch, so nothing changes there. Where they do not agree, the translation writes `orElse(x, false)`: under `not`, beside a boolean literal in an equality, and as the condition handed to `ta.barssince` or `ta.valuewhen`.
+- Version 5 always evaluates the right operand of `and` and `or`. Where that operand holds state, such as an average, leaving it in place would advance the average only on some bars in OpenScript, so it is moved to a line of its own named `everyBar` before the statement. Where the statement's condition runs only on some passes, in an `else if`, a `while` or a `switch` arm, there is nowhere to move it, and the statement is refused with OS9002.
+- Version 6 evaluates the right operand only when the left one is true, which OpenScript does as well, except that OpenScript also evaluates it when the left operand is absent. There the left operand is written over `orElse()`.
+- A `for` loop whose start is above its end counts down in the source dialect, so it is given `step -1`, or a step worked out from its bounds where they are not literals.
+
+## Reading the result
+
+A study in the source dialect:
+
+```text title="Source dialect"
+//@version=5
+indicator("Filtered cross", overlay = true)
+fastLen = input.int(9, "Fast", minval = 1)
+fast = ta.ema(close, fastLen)
+slow = ta.sma(close, 30)
+rsi = ta.rsi(close, 14)
+go = ta.crossover(fast, slow) and not (rsi > 70)
+rank = ta.percentrank(close, 50)
+plot(fast, "Fast", color = color.aqua)
+plotshape(go, title = "Go", style = shape.triangleup, location = location.belowbar)
+```
+
+What comes back from version 0.8.0:
+
+```openscript
+version 1
+
+study("Filtered cross", overlay = true)
+fastLen = input(9, "Fast", min = 1)
+fast = ema(close, fastLen)
+slow = sma(close, 30)
+rsiValue = rsi(close, 14)
+go = crossUp(fast, slow) and not orElse(rsiValue > 70, false)
+// not translated (OS9003): rank = ta.percentrank(close, 50)
+plot(fast, "Fast", aqua)
+if go
+    signal("Go", shape = "triangleUp", at = "below")
+```
+
+And four findings: [OS9007](/script/errors/import#os9007) at `ta.ema`, at `ta.sma` and at `ta.rsi`, one for each built-in, and [OS9003](/script/errors/import#os9003) at `ta.percentrank`. Notice the three rewrites: `rsi` became `rsiValue`, because `rsi()` is a library name; the `not` over a comparison became `not orElse(..., false)`, so a bar where `rsiValue` is still absent reads as the source dialect reads it; and the `plotshape` became a `signal()` behind an `if`.
+
+Read the errors first, because each one is a statement you have to write by hand. Here the rank has an OpenScript call that does the same job, `percentRank()`; check how it treats its first bars and absent values, then write the line yourself. Then read the warnings, and compare the first bars of the translated study with the original before you rely on them.
+
+A strategy comes across the same way. Its entries and exits are written under OpenScript's order model, with an [OS9010](/script/errors/import#os9010) warning on the first use of each order call:
+
+```text title="Source dialect"
+//@version=5
+strategy("Cross")
+fast = ta.sma(close, 10)
+slow = ta.sma(close, 30)
+if ta.crossover(fast, slow)
+    strategy.entry("Long", strategy.long)
+if ta.crossunder(fast, slow)
+    strategy.close("Long")
+```
+
+```openscript
+version 1
+
+strategy("Cross", capital = 1000000)
+fast = sma(close, 10)
+slow = sma(close, 30)
+if crossUp(fast, slow)
+    if pos.size < 0
+        close()
+    if pos.size <= 0
+        buy(tag = "Long")
+if crossDown(fast, slow)
+    close(tag = "Long")
+```
+
+The capital is written out because the source dialect's default differs, and the entry closes any short position before it buys, and never adds to a long one, which is what the source does at its default pyramiding. Backtest the translation beside the original and compare the two trade lists before you trade it: see [Backtesting](/script/strategies/backtesting).
+
+## See also
+
+- [OS9xxx Import](/script/errors/import) for every code the importer raises, with its fix.
+- [Absent values](/script/language/absent-values) for the rules most of the rewrites above are about.
+- [Warmup](/script/language/warmup) for the first bar each OpenScript function produces a value on.
+- [Orders](/script/strategies/orders) for the order model the translated entries and exits run under.
 
 
 # Reference
@@ -21808,7 +22152,7 @@ Each level can stand wherever a later one is accepted: a constant works anywhere
 
 > **A name bound to a literal is not a constant to the compiler. `corner = "topLeft"` followed by `table("T", 1, 1, position = corner)` is `OS3003`. Write the literal in place, or make it a setting with `corner = input("topLeft", "Corner")`, which is accepted.**
 
-An input must also be used as it is. A fixed field holds a value or a reference to one setting, so an expression computed from an input, such as `input(2, "Decimals") + 1` or `fade(tint, 50)` where `tint` is an input, is refused there. In release 0.5.0 that refusal is reported as `OS6018`, a message about a program that failed verification; the cause is the expression, and the fix is to make the setting itself hold the value the field needs.
+An input must also be used as it is. A fixed field holds a value or a reference to one setting, so an expression computed from an input, such as `input(2, "Decimals") + 1` or `fade(tint, 50)` where `tint` is an input, is refused there with `OS3025`, and the compiler reports `OS6018`, a message about a program that failed verification, beside it. The fix is to make the setting itself hold the value the field needs. A plot's `style` takes no input at all (`OS3026`). The /trading page in current OpenAlgo releases still runs library 0.5.0, which reports only `OS6018` for such an expression.
 
 ```openscript
 corner = input("topLeft", "Corner", options = ["topLeft", "topRight", "bottomLeft", "bottomRight"])
@@ -22064,7 +22408,7 @@ Both declarations are read once, before the first bar, because the legend, the a
 | A literal: `overlay = true`, `precision = 2` | Yes |
 | Arithmetic over literals: `capital = 5 * 100000` | Yes |
 | A bare `input()`, or a name bound to one: `precision = input(2, "Decimals")` | Yes |
-| An expression computed from an input: `precision = input(2, "Decimals") + 1` | No. In release 0.5.0 this is reported as `OS6018`, a message about a program that failed verification; the cause is the expression |
+| An expression computed from an input: `precision = input(2, "Decimals") + 1` | No, `OS3025`: an input must be the whole of the value. The compiler also reports `OS6018`, a message about a program that failed verification, beside it; the /trading page in current OpenAlgo releases still runs library 0.5.0, which reports only `OS6018` |
 | Anything that depends on bar data: `overlay = close > open` | No, `OS3003` |
 
 The first argument is the title and may be written positionally or as `title = "..."`. Every other option is written by name. The compiler checks each one like a function argument:
@@ -22314,7 +22658,7 @@ What the number in `qty`, and in an order's own `qty`, means.
 
 The backtest refuses cash and equity sizing because it keeps no running equity to size against, and it says so rather than filling the number as written.
 
-> **In release 0.5.0, a bare `close()` in a strategy declared with `qtyType = "lots"` sends the position's size in units as though it were a count of lots. On a contract whose lot is more than one unit, a backtest then sells far more than it holds and opens a large opposite position. Until this is fixed, close a lots strategy with the number of lots you hold, `close(qty = n)`, and guard it with `not pos.isFlat`: a close that states a quantity while the strategy is flat stops the run with `OS7017`. A strategy sized in units has no such problem.**
+> **In release 0.8.0, a bare `close()` in a strategy declared with `qtyType = "lots"` sends the position's size in units as though it were a count of lots. On a contract whose lot is more than one unit, a backtest then sells far more than it holds and opens a large opposite position. Until this is fixed, close a lots strategy with the number of lots you hold, `close(qty = n)`, and guard it with `not pos.isFlat`: a close that states a quantity while the strategy is flat stops the run with `OS7017`. A strategy sized in units has no such problem.**
 
 ```openscript
 version 1
@@ -22426,7 +22770,7 @@ if close < lowest(low, 10)[1]
 
 ### closeOnSessionEnd
 
-Asks for any open position to be flattened at the session's close, for an intraday strategy that must not carry a position overnight. It is recorded in the compiled strategy, but in release 0.5.0 the backtest does not act on it, so close explicitly before the session ends.
+Asks for any open position to be flattened at the session's close, for an intraday strategy that must not carry a position overnight. It is recorded in the compiled strategy, but in release 0.8.0 the backtest does not act on it, so close explicitly before the session ends.
 
 Two things decide how you do that:
 
@@ -24178,7 +24522,7 @@ Calendar arithmetic that respects month lengths and clock changes, such as addin
 
 Source: https://openalgo.in/script/reference/technical-analysis
 
-This page is the reference for every indicator built into OpenScript, also called OpenAlgo Script: sixty-eight functions from the simple moving average to the Ichimoku cloud. Fifty-five of them work in version 0.5.0; the other thirteen are named in the language and marked Planned, so you can see what is coming. Each entry tells you what the indicator measures, how traders read it, the exact arithmetic where it matters, and the first bar on which it has a value. Every example is a complete script: paste it into the Scripts panel of the /trading page, save it, and press **Apply to chart**.
+This page is the reference for every indicator built into OpenScript, also called OpenAlgo Script: sixty-eight functions from the simple moving average to the Ichimoku cloud. Fifty-five of them work in version 0.8.0; the other thirteen are named in the language and marked Planned, so you can see what is coming. Each entry tells you what the indicator measures, how traders read it, the exact arithmetic where it matters, and the first bar on which it has a value. Every example is a complete script: paste it into the Scripts panel of the /trading page, save it, and press **Apply to chart**.
 
 You need this page whenever a study or strategy reads price through an indicator. Indicators are where most scripts start, and most surprises in a new script (a line that starts late, a crossing that never fires, a band that is missing on the left of the chart) come from the details written here.
 
@@ -24210,7 +24554,7 @@ avg20 = ema(close, 20)
 plot(close > open ? avg20 : none, "EMA 20 on up bars", aqua)
 ```
 
-> **Three calls on this page, `alma()`, `chop()` and `hv()`, take an exponential or a logarithm. Those two operations can differ in the last binary digit from one computer to another, so these three readings carry no bit-for-bit guarantee across platforms. The difference is far below anything a chart shows.**
+> **Three calls on this page, `alma()`, `chop()` and `hv()`, take an exponential or a logarithm. Both libraries work those two operations out with one portable method, rounded once to the nearest representable number, rather than with the computer's own maths library, so these three readings are the same to the last binary digit on every computer and in both the JavaScript and the Python engine. A value stored from a release before 0.7.0 may differ from today's in its last binary digit.**
 
 ## Functions that return several values
 
@@ -24853,7 +25197,7 @@ level(20, "Weak", fade(gray, 60), "dotted")
 
 An ADX above about 25 and rising is commonly read as a trending market, and one below 20 as a weak or sideways one. ADX says how strong the trend is, not which way it runs: for the direction, compare the two DI lines. `+DI` above `-DI` says buyers own the move.
 
-**Remarks.** Upward movement is `high - high[1]` and downward movement is `low[1] - low`; on each bar only the larger one counts, and only if it is positive. Both movements and the true range are smoothed with `rma()` over `diLen`, and each DI is `smoothed movement / smoothed range * 100`. ADX is the `rma()` over `adxLen` of `abs(+DI - -DI) / (+DI + -DI) * 100`. The two DI lines start on bar `diLen` (bar 14 by default) because movement needs the previous bar, and ADX starts on bar `diLen + adxLen - 1` (bar 27). The DI values are absent where the smoothed range is zero, and the ratio inside ADX counts as 0 on a bar where both DI values are zero.
+**Remarks.** Upward movement is `high - high[1]` and downward movement is `low[1] - low`; on each bar only the larger one counts, and only if it is positive. Both movements and the true range are smoothed with `rma()` over `diLen`, and each DI is `smoothed movement / smoothed range * 100`. ADX is the `rma()` over `adxLen` of `abs(+DI - -DI) / (+DI + -DI) * 100`. The two DI lines start on bar `diLen` (bar 14 by default) because movement needs the previous bar, and ADX starts on bar `diLen + adxLen - 1` (bar 27). Where the two movements are equal, neither counts. A movement that overflows is treated as absent before it is smoothed, so the smoothed values keep their state and the readings carry on from the next valid bar. The DI values are absent where the smoothed range is absent or zero, and the ratio inside ADX counts as 0 on a bar where both DI values are zero.
 
 **See also.** `aroon()`, `chop()`, `rma()`, `trueRange()`
 
@@ -25948,7 +26292,7 @@ plot(dayVwap, "Day VWAP", orange, width = 2)
 barColor(close > dayVwap ? lime : close < dayVwap ? red : none)
 ```
 
-**Remarks.** It is `sum(src * volume) / sum(volume)` over the session so far, with `src` defaulting to `hlc3`. Both running totals restart on the session's first bar before that bar is added, so the first bar of each session is the first bar of the new average. On a daily or longer chart every bar is its own session and the result equals `src`; the compiler does not warn about that yet. A bar with absent data gives an absent result and leaves the totals as they were.
+**Remarks.** It is `sum(src * volume) / sum(volume)` over the session so far, with `src` defaulting to `hlc3`. Both running totals restart on the session's first bar before that bar is added, so the first bar of each session is the first bar of the new average. On a daily or longer chart every bar is its own session and the result equals `src`; the compiler does not warn about that yet. A bar with absent data gives an absent result and leaves the totals as they were, and so does a bar whose price times volume overflows: the next bar carries on from the totals before it. If a total itself overflows, the average reads `none` until the next session starts both totals again.
 
 **See also.** `vwapAnchor()`, `vwma()`, `session.isFirstBar`, [Sessions and time](/script/data/sessions-and-time)
 
@@ -25980,7 +26324,7 @@ plot(vwapAnchor(hlc3, newMonth), "Monthly VWAP", fuchsia, width = 2)
 
 The conditions compare this bar's week and month with the previous bar's, so a week whose Monday is a market holiday still resets on its first trading day.
 
-**Remarks.** The result is absent until `resetWhen` is first true, because there is no anchor to measure from. On an anchor bar both totals are reset before the bar's own price and volume are added, so the anchor bar opens the new average. On the chart's first bar `time[1]` is absent and `!=` is true, so the example's first average starts there.
+**Remarks.** The result is absent until `resetWhen` is first true, because there is no anchor to measure from. On an anchor bar both totals are reset before the bar's own price and volume are added, so the anchor bar opens the new average. On the chart's first bar `time[1]` is absent and `!=` is true, so the example's first average starts there. Overflow behaves as in `vwap()`: a bar whose price times volume overflows reads `none` and changes neither total, and a total that overflows reads `none` until the next bar where `resetWhen` is true.
 
 **See also.** `vwap()`, `date.startOfWeek()`, `date.month()`
 
@@ -26025,7 +26369,7 @@ study("Accumulation distribution", format = "volume")
 plot(ad(), "A/D", lime, width = 2)
 ```
 
-**Remarks.** Each bar adds `((close - low) - (high - close)) / (high - low) * volume`. A bar with no range, where high equals low, adds 0 rather than ending the total. The total starts at 0 before the first bar.
+**Remarks.** Each bar adds `((close - low) - (high - close)) / (high - low) * volume`. A bar with no range, where high equals low, adds an exact 0 and keeps its reading rather than ending the total. A bar whose high to low span overflows reads `none` and adds nothing, and the total carries on from the bar before it. `adOsc()` and `cmf()` use the same per-bar term, so `cmf()` reads `none` while such a bar is in its window. The total starts at 0 before the first bar.
 
 **See also.** `adOsc()`, `cmf()`, `obv()`
 
@@ -26136,7 +26480,7 @@ plot(p, "PVT", olive, width = 2)
 plot(ema(p, 21), "PVT average", fade(orange, 30))
 ```
 
-**Remarks.** Each bar adds `(close - close[1]) / close[1] * volume` to a total that starts at 0. The first bar has no change behind it and is absent; the second bar already carries its own term.
+**Remarks.** Each bar adds `(close - close[1]) / close[1] * volume` to a total that starts at 0. The first bar has no change behind it and is absent; the second bar already carries its own term. A bar whose change, proportion or product with the volume overflows reads `none` and leaves the total as it was, so the next bar carries on from it. A total that itself overflows reads `none` from then on.
 
 **See also.** `obv()`, `roc()`
 
@@ -26833,7 +27177,7 @@ if crossed and lastLow > priorLow
 **Remarks.** `occurrence = 0` is the most recent true bar, `1` the one before it, and so on. The result is absent until `cond` has been true `occurrence + 1` times. An absent `cond` counts as not true. `occurrence` must be a whole number, 0 or more; a fraction or a negative number gives `none` on every bar rather than stopping the script.
 
 > **Numbers only in this release**
-The signature accepts any type for `src`, but in release 0.5.0 `valueWhen` returns a value only when `src` is a number. With a `bool` or a `string` it compiles and gives `none` on every bar. Remember a number instead, such as `1` for up and `0` for down, and compare it.
+The signature accepts any type for `src`, but in release 0.8.0 `valueWhen` returns a value only when `src` is a number. With a `bool` or a `string` it compiles and gives `none` on every bar. Remember a number instead, such as `1` for up and `0` for down, and compare it.
 
 **See also.** `barsSince()`, `pivotLow()`, [Persistence](/script/language/persistence)
 
@@ -26891,7 +27235,7 @@ plot(history(close - open, 1), "Previous body", orange)
 **Remarks.** The first value is on bar `n`. Unlike the offset inside `[]`, `n` is a length: a whole number of 1 or more, so `history(close, 0)` stops the script with [OS4003](/script/errors/runtime#os4003) where `close[0]` simply reads this bar. [Bars and history](/script/language/bars-and-history) covers when to prefer a named value.
 
 > **Numbers only in this release**
-In release 0.5.0 `history` returns a value only when `src` is a number. On a `bool`, a `string` or an array it compiles and gives `none` on every bar. For a `bool` or a `string`, name the value at the top level and use the operator instead: `flag[1]` works where `history(flag, 1)` does not.
+In release 0.8.0 `history` returns a value only when `src` is a number. On a `bool`, a `string` or an array it compiles and gives `none` on every bar. For a `bool` or a `string`, name the value at the top level and use the operator instead: `flag[1]` works where `history(flag, 1)` does not.
 
 **See also.** `change()`, `valueWhen()`
 
@@ -27388,7 +27732,7 @@ The line between the rows that give `none` and the row that stops is the line be
 | `math.asin(2)` | `none` | Outside -1 to 1 |
 | `max(close, none)` | `none` | Absence passes through |
 
-> **`exp()`, `log()`, `log10()`, `math.log2()`, `pow()`, `math.hypot()` and the trigonometric functions can differ in the last binary digit from one computer to another. OpenScript does not yet fix one exact method for them, so these results carry no bit-for-bit guarantee across platforms. The difference is far below anything a chart shows. `sqrt()`, the rounding functions and every other function on this page give identical results everywhere.**
+> **`exp()`, `log()`, `log10()`, `math.log2()`, `pow()`, `math.hypot()` and the trigonometric functions are worked out with one portable method in both libraries, rather than with the computer's own maths library: each result is the true value rounded once to the nearest representable number, with an exact tie going to the even one. So they give identical results on every computer and in both the JavaScript and the Python engine, as `sqrt()`, the rounding functions and every other function on this page do. A result stored from a release before 0.7.0 may differ from today's in its last binary digit.**
 
 ## Sign and size
 
@@ -28625,7 +28969,7 @@ if bar.isLast
 
 **Remarks.** The difference shows wherever `none` would otherwise travel: `not (close > ema50)` is `none` during warmup, while `not toBool(close > ema50)` is `true`. Choose deliberately, because a warmup bar that reads as `false` is a claim about the market that nobody measured.
 
-It is not a way to read a number as a condition; there is no truthiness (no rule that treats `0` as false) in the language. In release 0.5.0 the compiler accepts a number or a string here, and the result is `false` whatever the value, so `toBool(1)` is `false`. Write the comparison you mean, such as `n != 0`. The call is spelled `toBool` because `bool` is a type name and cannot be called: `bool(x)` is `OS1019`.
+It is not a way to read a number as a condition; there is no truthiness (no rule that treats `0` as false) in the language. In release 0.8.0 the compiler accepts a number or a string here, and the result is `false` whatever the value, so `toBool(1)` is `false`. Write the comparison you mean, such as `n != 0`. The call is spelled `toBool` because `bool` is a type name and cannot be called: `bool(x)` is `OS1019`.
 
 **See also.** `isNone()`, `text()`
 
@@ -29915,7 +30259,7 @@ A constant colour and a colour computed per bar go in the same argument. Some su
 | Surface | Takes a colour per bar |
 |---|---|
 | `plot()` `color` | Yes |
-| `fill()` `color`, `colorUp`, `colorDown` | Yes |
+| `fill()` `color`, `colorUp`, `colorDown` | Yes, where the chart draws a band colour per bar; [Fills](/script/visuals/fills#the-call) says which charts do |
 | `barColor()` and `background()` | Yes, the usual case |
 | `cell()` `textColor` and `bgColor` | Yes, read each time the cell is written |
 | `table()` `textColor` and `bgColor` | No, fixed before the first bar |
@@ -30678,7 +31022,8 @@ plot(basis - dev, "Lower", aqua)
 **Remarks.** The settings dialog is built once, before the first bar, from the `input()` calls the compiler can see. Every rule about `input()` follows from that:
 
 - It is written at the top level of the file, outside any block: as an assignment, inside a larger expression, as a declaration option such as `study("B", precision = input(2, "Decimals"))`, or inside the expression of a `req.timeframe()` read. Inside an `if`, a loop or a function it is [OS3007](/script/errors/arguments#os3007).
-- The default is fixed before any data arrives: a literal, arithmetic over literals, a colour built from literals such as `fade(aqua, 50)`, or, for a source, one of the price series. A default computed from bar data is [OS3003](/script/errors/arguments#os3003).
+- The default is fixed before any data arrives: a literal, arithmetic over literals, a colour built from literals such as `fade(aqua, 50)`, or, for a source, one of the price series. A default computed from bar data is [OS3003](/script/errors/arguments#os3003), and a default, `min`, `max` or `step` that reads another input is [OS3025](/script/errors/arguments#os3025).
+- Where a value is fixed before the first bar, such as a declaration option, a plot's width or a table's size, an input must be the whole of the value: `study("B", precision = input(2, "Decimals") + 1)` is [OS3025](/script/errors/arguments#os3025). A plot's `style` takes no input at all ([OS3026](/script/errors/arguments#os3026)).
 - The title is written as a string literal on the line. When the input is assigned to a name, the title can be left out and defaults to that name.
 - An input has no warmup: its value exists on bar 0.
 
@@ -31020,7 +31365,7 @@ The parameter tables below mark every argument that is **fixed before the first 
 | A colour built from literals | `fade(gray, 55)` |
 | An `input()`, at the call or held in a name of its own | `width = input(2, "Width")` |
 
-Anything that depends on bar data is error `OS3003`. So is a name that holds a plain value: `w = 2` followed by `width = w` is refused, so write the `2` at the call or make it an input. Arithmetic on an input, such as `offset = -rightBars`, is refused too; declare the input with the value you want instead.
+Anything that depends on bar data is error `OS3003`. So is a name that holds a plain value: `w = 2` followed by `width = w` is refused, so write the `2` at the call or make it an input. An input must be the whole of the value: arithmetic on one, such as `offset = -rightBars` or `width = w + 1`, is error `OS3025`, so declare the input with the value you want instead. A plot's `style` is the one fixed argument that takes no input at all: `style = input("line", "Style")` is error `OS3026`, and the reader changes the style in the Style tab of the settings dialog instead.
 
 The fixed arguments are a plot's title, width, style, offset, `overlay`, `precision`, `format` and `scale`; a level's title, colour, style and width; and a band's `opacity` and `overlay`. The value you draw is read on every bar, and so is the colour of `plot()`, `plotCandles()` and `fill()`.
 
@@ -31095,7 +31440,7 @@ ph = pivotHigh(high, 5, 5)
 plot(ph, "Pivot high", orange, style = "lineWithMarkers", offset = -5)
 ```
 
-The offset is a whole number fixed before the first bar, so `offset = -rightBars` on an input is refused. When the pivot's right side is an input, declare a second input with the negative default, or write the literal as above.
+The offset is a whole number fixed before the first bar, so `offset = -rightBars` on an input is error `OS3025`. When the pivot's right side is an input, declare a second input with the negative default, or write the literal as above.
 
 **Pane and axis.** A plot lands in the pane the declaration chose. `overlay = true` on one plot moves just that column onto the price pane. `scale` picks the axis within the pane:
 
@@ -31267,7 +31612,7 @@ pMid = plot(50, "Midline", fade(gray, 100))
 fill(pRsi, pMid, colorUp = fade(lime, 86), colorDown = fade(red, 86))
 ```
 
-**Remarks.** A band stops wherever either of its plots is `none` and resumes where both return, so it inherits their warmup with no code from you. `opacity` is a dimmer from 0 to 1 that multiplies whatever transparency the colours already have. It defaults to 1 and is fixed before the first bar; dimming with both `opacity` and `fade()` compounds, so pick one. A band and the two plots it names must end up in the same pane, and the compiler does not check it: give both plots the same `overlay` and `offset`, and the band the same `overlay`. On the /trading chart in this release a band takes one colour: a colour computed per bar, such as `color = squeezed ? orange : none`, is not applied bar by bar, and the band is drawn in `plotA`'s colour faded instead. To switch a band off on some bars there, make one of its plots `none` on those bars.
+**Remarks.** A band stops wherever either of its plots is `none` and resumes where both return, so it inherits their warmup with no code from you. `opacity` is a dimmer from 0 to 1 that multiplies whatever transparency the colours already have. It defaults to 1 and is fixed before the first bar; dimming with both `opacity` and `fade()` compounds, so pick one. A band and the two plots it names must end up in the same pane, and the compiler does not check it: give both plots the same `overlay` and `offset`, and the band the same `overlay`. A colour computed per bar, such as `color = squeezed ? orange : none`, needs a chart that can draw it: the [chart adapter](/script/integrate/charts-adapter) in library 0.8.0 shades such a band bar by bar on openalgo-charts 2.5.4 or newer when the host passes `chartVersion`, leaving a bar whose colour is absent unshaded, and on an older chart, or where the host states no chart version, it refuses the study with `OS6024` before the first bar. The /trading page in current OpenAlgo releases still runs library 0.5.0, which draws such a band in `plotA`'s colour faded. To switch a band off on some bars on any chart, make one of its plots `none` on those bars.
 
 **See also.** `plot()`, `level()`, `fade()`, [Fills](/script/visuals/fills)
 
@@ -31413,7 +31758,7 @@ The examples on this page that reset once per session find the session's first b
 
 **The newest bar is rolled back.** On a moving chart the newest bar runs again on every update, and before each run the set of objects is restored to what it was at the end of the previous bar, exactly as `var` values are. A script that creates a label on the newest bar gets one label, not one per update. Keep handles in `var`, never in `live var`: a `live var` survives the rollback, so after the next update it holds a handle to an object the rollback removed, and changes made through it draw nothing.
 
-**A deleted object stays deleted.** A setter called on an object that has been deleted is error `OS4005`, which stops the script on that bar. A setter given `none` does nothing, and so does `draw.delete()` given `none` or an object already deleted. So assign `none` to the name on the same lines that delete the object, test `isNone()` before changing it, and when objects live in an array, remove the element as well: deleting the object does not.
+**A deleted object stays deleted.** A setter called on an object that has been deleted is error `OS4005`, which stops the script on that bar. A setter given `none` does nothing, and so does `draw.delete()` given `none` or an object already deleted. So assign `none` to the name on the same lines that delete the object, test `isNone()` before changing it, and when objects live in an array, remove the element as well: deleting the object does not. The compiler warns with `OS8019` where a name or an array element still holds an object deleted earlier, such as `draw.delete(element(zones, 0))` with no `shift()` or `remove()` after it. The /trading page in current OpenAlgo releases still runs library 0.5.0, which does not give that warning.
 
 **Absent values draw nothing.** An object whose anchor has no time or no price is not drawn, and a colour of `none` is fully transparent rather than a default colour.
 
@@ -32185,7 +32530,7 @@ if not isNone(marker) and close < sma50
     marker = none
 ```
 
-**Remarks.** A setter given a deleted object is error `OS4005`, which stops the script on that bar and names the bar the object was deleted on. Deleting an object that sits in an array leaves the element in the array; `draw.delete(shift(list))` deletes the oldest object and removes it from the list in one line. When removing several elements in a loop, walk the list downwards, `for i = size(list) - 1 to 0 step -1`, so a removal never skips the element after it.
+**Remarks.** A setter given a deleted object is error `OS4005`, which stops the script on that bar and names the bar the object was deleted on. A name left holding the deleted object gets warning `OS8019` when the script compiles. Deleting an object that sits in an array leaves the element in the array; `draw.delete(shift(list))` deletes the oldest object and removes it from the list in one line. When removing several elements in a loop, walk the list downwards, `for i = size(list) - 1 to 0 step -1`, so a removal never skips the element after it.
 
 **See also.** `draw.deleteAll()`, `shift()`, `remove()`
 
@@ -32308,11 +32653,11 @@ if bar.isLast
 
 **Cells hold text.** The text argument is a `string`, and a number passed there is error `OS3011`, so convert it with `text()`. A text that is `none` leaves the cell blank. Because a condition that is `none` takes the false branch, `b ? "up" : "down"` says "down" on every bar before `b` has a value; test `isNone()` first and say "warming up".
 
-**Addresses start at zero.** A grid of 4 rows and 2 columns has rows 0 to 3 and columns 0 to 1. Writing outside the grid is error `OS4004`, which stops the script on that bar.
+**Addresses start at zero.** A grid of 4 rows and 2 columns has rows 0 to 3 and columns 0 to 1. Writing outside the grid is error `OS4008`, which stops the script on that bar and names the row, the column and the grid's shape.
 
 **Colour has three levels.** The grid's `textColor` and `bgColor` apply to every cell that says nothing else; a cell's own `textColor` and `bgColor` override them for that cell; leave both out and the chart's defaults apply. Give the grid a translucent background, such as `fade(black, 25)`, so the candles behind it stay faintly visible.
 
-**On the /trading chart, one grid per study is drawn.** A study may declare several grids and the compiler accepts them, but the chart draws only the first one declared; the others compile, are written to and never appear. The grid's title is not shown on the chart either. Declare one grid with the rows you need, and write a second study for a second panel.
+**How many grids are drawn depends on the chart.** A study may declare several grids, and the compiled study carries every one. The [chart adapter](/script/integrate/charts-adapter) in library 0.8.0 draws them all on openalgo-charts 2.5.4 or newer when the host passes `chartVersion`, each in the corner its own `position` names, so two pinned to the same corner are drawn one over the other. On an older chart, or where the host states no chart version, it refuses a study that declares a second grid with `OS6024` before the first bar runs. The /trading page in current OpenAlgo releases still runs library 0.5.0, which draws the first grid and ignores the rest, so a study meant for /trading declares one grid with the rows it needs and leaves a second panel to a second study. The grid's title is not shown on the chart.
 
 ## Declaring a grid
 
@@ -32625,7 +32970,7 @@ notify(message: string, channel: string) -> nothing
 
 First value: bar 0
 
-Will send a message to a channel the platform has already configured, named by `channel`, rather than as an alert. It is planned and not part of version 0.5.0; until it arrives, `alert()` is how a script sends a message.
+Will send a message to a channel the platform has already configured, named by `channel`, rather than as an alert. It is planned and not part of version 0.8.0; until it arrives, `alert()` is how a script sends a message.
 
 ## Markers
 
@@ -32786,7 +33131,7 @@ A read computes a value; it does not act or draw. An order call inside the expre
 | `"developing"` | The coarse bar so far | On the newest bars, while the coarse bar forms | Once the first coarse bar has begun |
 | `"lookahead"` | The coarse bar's final value | On history, always | Wherever the coarse bar exists |
 
-On a five minute chart reading `req.timeframe("1D", high)`, a bar at 11:00 today holds yesterday's high in `"confirmed"`, today's high so far in `"developing"`, and today's final high in `"lookahead"`, which no one could have known at 09:15. Only the first is a number a rule could have acted on at 11:00, so for a timeframe coarser than the chart's it is the only mode a signal, an alert or an order should be built on. A backtest of a rule that reads `"lookahead"` looks excellent and means nothing.
+On a five minute chart reading `req.timeframe("1D", high)`, a bar at 11:00 today holds yesterday's high in `"confirmed"`, today's high so far in `"developing"`, and today's final high in `"lookahead"`, which no one could have known at 09:15. Only the first is a number a rule could have acted on at 11:00, so for a timeframe coarser than the chart's it is the only mode a signal, an alert or an order should be built on. A backtest reads `"lookahead"` the same way, the coarse bar's final value from its first chart bar on, so a backtest of a rule that reads it looks excellent and means nothing. The /trading page in current OpenAlgo releases still runs library 0.5.0, whose Backtest panel gives a `"lookahead"` read the coarse bar so far instead, the same value as `"developing"`.
 
 ### Reading at the chart's own interval
 
@@ -33037,7 +33382,7 @@ req.candle(timeframe: string, mode?: string) -> array<number>
 
 First value: as above
 
-Will return a whole coarser bar at once, its open, high, low and close as one array, so a higher timeframe candle can be drawn with one read instead of four. It is planned and not part of version 0.5.0; until then, make one `req.timeframe()` read per price and pass them to `plotCandles()`.
+Will return a whole coarser bar at once, its open, high, low and close as one array, so a higher timeframe candle can be drawn with one read instead of four. It is planned and not part of version 0.8.0; until then, make one `req.timeframe()` read per price and pass them to `plotCandles()`.
 
 ### req.events() (planned, not available yet)
 
@@ -33051,7 +33396,7 @@ req.events(kind: string) -> series number
 
 First value: host dependent
 
-Will read scheduled corporate events for the chart's instrument, such as dividends and splits, as a series. It is planned and not part of version 0.5.0.
+Will read scheduled corporate events for the chart's instrument, such as dividends and splits, as a series. It is planned and not part of version 0.8.0.
 
 ## Related
 
@@ -33062,7 +33407,7 @@ Will read scheduled corporate events for the chart's instrument, such as dividen
 
 Source: https://openalgo.in/script/reference/strategy
 
-This page documents the six calls a strategy uses to trade: `buy()` and `sell()` to enter, `close()` to flatten, `exit()` to attach a stop and a target, and `cancel()` and `cancelAll()` to withdraw orders that have not filled. Most OpenScript strategies (OpenScript is also called OpenAlgo Script) need nothing else. All six compile and run in version 0.5.0; the one with a caveat is `exit()`, whose levels are not filled yet, as its entry explains.
+This page documents the six calls a strategy uses to trade: `buy()` and `sell()` to enter, `close()` to flatten, `exit()` to attach a stop and a target, and `cancel()` and `cancelAll()` to withdraw orders that have not filled. Most OpenScript strategies (OpenScript is also called OpenAlgo Script) need nothing else. All six compile and run in version 0.8.0; the one with a caveat is `exit()`, whose levels are not filled yet, as its entry explains.
 
 Two words recur below. A **fill** is the execution of an order at a price, reported back by the order's **destination**, whatever receives it: the simulated venue of a backtest or of the chart, or OpenAlgo for a deployed strategy. A **resting** order is a limit or stop order that waits for the market to reach its price, and it is **working** until it fills or is cancelled.
 
@@ -33142,7 +33487,7 @@ The fills of a strategy are marked on the chart where they happened, as in this 
 | Left out is not absent | An argument you leave out takes its default: `buy()` uses the declaration's `qty` and, with no price, is a market order. An argument you write whose value comes out [absent](/script/language/absent-values) (`none`, no value on this bar) is refused with OS7002, naming the argument. |
 | A refusal stops the run | A refused order stops the script on the bar it happened, on the chart and in a backtest alike. Nothing that bar decided is sent, including orders from lines that ran before the refused one, and no later bar runs. |
 | No opposite orders on one bar | A buy and a sell decided on the same bar are refused with OS7013. A `close()` of a long position is a sell, so `close()` and `buy()` on one bar are refused as well (with OS7008 first, when the buy would also exceed `pyramiding`). Write your conditions as one `if` and `else if` chain. Two orders on the same side are ordinary. |
-| One leg | A file in version 0.5.0 trades exactly one instrument, the one on its chart. The `leg` argument that `buy()`, `sell()`, `close()` and `exit()` accept is for the planned [multi-leg strategies](/script/reference/legs), and writing it today is refused with OS3023. |
+| One leg | A file in version 0.8.0 trades exactly one instrument, the one on its chart. The `leg` argument that `buy()`, `sell()`, `close()` and `exit()` accept is for the planned [multi-leg strategies](/script/reference/legs), and writing it today is refused with OS3023. |
 
 **Whether a tag must name something is written in its default.** A tag is a name you give an order. A tag that defaults to `""` is a **label**: it rides along to the destination and to the trade list, and it names nothing that has to exist. `buy()`, `sell()` and `exit()` take labels. A tag that is required, or that defaults to `none`, is a **reference**: it names orders the strategy has already placed. `cancel()` requires one and `close()` defaults to `none`, and a tag there that names no order is a mistake the language reports. [Tags: naming an order](/script/strategies/orders#tags-naming-an-order) explains the habit of giving every order a tag.
 
@@ -33305,7 +33650,7 @@ The same rule covers a resting order that reduces the position. While a sell sto
 
 When the declaration counts in units (the default), a quantity you write may not exceed what is left: `close(qty = 5)` against a position of 3 is refused with OS7017, naming what you asked for and what is left, because it would flatten the position and open the opposite one under a call named close. A tag that no order in the file is placed with is refused before the first bar with OS7016, which almost always means a typo.
 
-Under `qtyType = "lots"` the 0.5.0 backtest converts the size of a bare or tagged `close()` from lots a second time, so it sells far more than the position holds. Count in units and size from `chart.lotSize`, as [Where a size comes from](/script/strategies/position-and-sizing#where-a-size-comes-from) explains.
+Under `qtyType = "lots"` the backtest in version 0.8.0 converts the size of a bare or tagged `close()` from lots a second time, so it sells far more than the position holds. Count in units and size from `chart.lotSize`, as [Where a size comes from](/script/strategies/position-and-sizing#where-a-size-comes-from) explains.
 
 ```openscript
 version 1
@@ -33344,7 +33689,7 @@ First value: bar 0
 
 Sets the position's protective stop and profit target. Give the levels as prices (`stop`, `limit`) or as distances from the entry price in the instrument's own price units (`loss`, `profit`). A position carries at most one stop and one target, and calling `exit` again replaces them. A stop and a target sent together like this are called a **bracket**.
 
-In version 0.5.0 the levels are not filled: the chart and the Backtest panel hand them on and never act on them, and the Strategies panel refuses to start a strategy that calls `exit`. So this example sends the levels with the entry and also tests them itself, which is what closes its trades today:
+In version 0.8.0 the levels are not filled: the chart and the Backtest panel hand them on and never act on them, and the Strategies panel refuses to start a strategy that calls `exit`. So this example sends the levels with the entry and also tests them itself, which is what closes its trades today:
 
 ```openscript
 version 1
@@ -33501,7 +33846,7 @@ Every `pos` fact is built from **this strategy's own fills**, the executions rep
 
 ## A complete example
 
-A strategy that is always in the market after the first crossover of two averages: long while the fast average is above the slow one, short while it is below. The first cross opens a position and every later cross reverses it. It shades the background by direction, draws the average price while a position is open, and writes the position into a small table in the top right corner on the newest bar. It uses only the five `pos` facts that run in version 0.5.0.
+A strategy that is always in the market after the first crossover of two averages: long while the fast average is above the slow one, short while it is below. The first cross opens a position and every later cross reverses it. It shades the background by direction, draws the average price while a position is open, and writes the position into a small table in the top right corner on the newest bar. It uses only the five `pos` facts that run in version 0.8.0.
 
 ```openscript
 version 1
@@ -33963,7 +34308,7 @@ When [multi-leg strategies](/script/reference/legs) land, the twelve entries tha
 
 Source: https://openalgo.in/script/reference/orders
 
-The `order` namespace holds the order calls a strategy reaches for less often than the six on [Strategy orders](/script/reference/strategy): a general form for a script that computes its side, a reversal in one call, a stop and target given as distances, the calls that will read an order back, and the helpers that will turn an amount of money into a quantity. Three of them run in version 0.5.0 and the rest are planned.
+The `order` namespace holds the order calls a strategy reaches for less often than the six on [Strategy orders](/script/reference/strategy): a general form for a script that computes its side, a reversal in one call, a stop and target given as distances, the calls that will read an order back, and the helpers that will turn an amount of money into a quantity. Three of them run in version 0.8.0 and the rest are planned.
 
 Everything here works only in a `strategy()` file; in a study it is refused with OS7001. A planned name is refused where you write it with OS2020, so you find out at the line that uses it.
 
@@ -34003,7 +34348,7 @@ plot(slow, "Slow", orange)
 plot(pos.isFlat ? none : pos.avgPrice, "Average price", fade(silver, 40), style = "step")
 ```
 
-A reader of `order.place(side, ...)` has to work out what `side` holds, so use it where the direction really is computed, and `buy()` or `sell()` where it is written in the source. In version 0.5.0 the chart and the Backtest panel do not fill a bracket, so there this strategy exits only when the side turns; and the Strategies panel refuses to start a strategy that calls `order.bracket()`.
+A reader of `order.place(side, ...)` has to work out what `side` holds, so use it where the direction really is computed, and `buy()` or `sell()` where it is written in the source. In version 0.8.0 a bracket is not filled, so on the chart and in the Backtest panel this strategy exits only when the side turns; and the Strategies panel refuses to start a strategy that calls `order.bracket()`.
 
 ## What runs and what is planned
 
@@ -34140,7 +34485,7 @@ plot(dir == 1  ? band : none, "Stop, short", red,  width = 2)
 
 **Remarks.** A reversal is always two orders, because no order crosses zero: one closes the outgoing position and one opens the replacement, each with its own position reference, so a late fill can say which position it settles. Long 2, `order.reverse(qty = 5)` sends a sell of 2 and a sell of 5 and leaves the strategy short 5. On a flat position it sends nothing.
 
-`order.reverse` sizes both halves itself in units. Under `qtyType = "lots"` the 0.5.0 backtest converts those sizes from lots a second time, the same defect as `close()`; count in units, as [Where a size comes from](/script/strategies/position-and-sizing#where-a-size-comes-from) explains.
+`order.reverse` sizes both halves itself in units. Under `qtyType = "lots"` the backtest in version 0.8.0 converts those sizes from lots a second time, the same defect as `close()`; count in units, as [Where a size comes from](/script/strategies/position-and-sizing#where-a-size-comes-from) explains.
 
 **See also.** `close()`, `sell()`, `pos.size`
 
@@ -34179,7 +34524,7 @@ else if pos.isLong and not trendUp
 
 **Remarks.** A position carries one stop and one target, so calling `order.bracket` or `exit()` again replaces the pair rather than adding a second one. A distance whose value is absent is refused with OS7002, and that takes the whole bar's orders with it, including the entry above it. The tag is a label that tells the destination which entry the levels protect; a tag that matches no order is not refused.
 
-In version 0.5.0 the chart and the Backtest panel do not fill a bracket, so in this example every trade closes when the trend turns. The Strategies panel refuses to start a strategy that calls `order.bracket`. Until both change, write the stop and target as rules the script tests, as [Exits and brackets](/script/strategies/exits-and-brackets) shows.
+In version 0.8.0 a bracket is not filled, so on the chart and in the Backtest panel every trade in this example closes when the trend turns. The Strategies panel refuses to start a strategy that calls `order.bracket`. Until both change, write the stop and target as rules the script tests, as [Exits and brackets](/script/strategies/exits-and-brackets) shows.
 
 **See also.** `exit()`, `leg.stop()`, `leg.trail()`
 
@@ -34452,13 +34797,13 @@ Source: https://openalgo.in/script/reference/legs
 
 A **leg** is one contract a strategy trades. The `leg` namespace is how a strategy will declare more than one: the call and the put of a straddle on NIFTY weekly options, the near and far months of a futures spread on NFO or MCX, a future hedged with an option. It will let a script name a contract outright or describe it ("nearest expiry, at the money, call"), read back the contract the host picked, hold one position per leg, and put a stop, a target and a trailing stop on each.
 
-**Every entry on this page is planned.** In version 0.5.0 a strategy has exactly one leg, the instrument on its chart, and every order acts on it without naming it. Calling any `leg.*` name is refused where you write it with OS2020. This page documents what each call will do, so you can see where the language is going and design around it, and shows what to write today.
+**Every entry on this page is planned.** In version 0.8.0 a strategy has exactly one leg, the instrument on its chart, and every order acts on it without naming it. Calling any `leg.*` name is refused where you write it with OS2020. This page documents what each call will do, so you can see where the language is going and design around it, and shows what to write today.
 
 A few option terms recur below. The **underlying** is the instrument a future or option is based on, such as the NIFTY index. The **expiry** is the day the contract ends. The **strike** is the price an option is written at, and the option **at the money** is the one whose strike is nearest the underlying's current price. The [Glossary](/script/resources/glossary) has the rest.
 
 ## One leg today
 
-Every strategy you write in version 0.5.0 is a one-leg strategy. To trade an option, find the option in symbol search, open its own chart and add the strategy there.
+Every strategy you write in version 0.8.0 is a one-leg strategy. To trade an option, find the option in symbol search, open its own chart and add the strategy there.
 
 
 This one sells the option on the chart once a day, on a bar that opens between 09:20 and 09:35 (on a 15-minute chart, the 09:30 bar). It stops out if the premium rises 30 percent above the entry, and closes from the first bar that opens at 15:00:
@@ -34498,7 +34843,7 @@ plot(stopLevel, "Stop", red, style = "step")
 
 The size is counted in units from the lot size, and the stop is a rule the script tests, for the reasons on [Strategy orders](/script/reference/strategy). The chart and the Backtest panel both state the lot size OpenAlgo holds for the instrument; where a host states none, `chart.lotSize` is absent and this file falls back to one unit per lot.
 
-Every order call except `cancel()` and `cancelAll()` accepts a `leg` argument, and in version 0.5.0 writing it is refused with OS3023, whatever it names: a file that declares no leg has no name the argument could refer to. Take the argument out and the order acts on the chart's instrument.
+Every order call except `cancel()` and `cancelAll()` accepts a `leg` argument, and in version 0.8.0 writing it is refused with OS3023, whatever it names: a file that declares no leg has no name the argument could refer to. Take the argument out and the order acts on the chart's instrument.
 
 ```openscript
 version 1
@@ -34514,7 +34859,7 @@ To read a second instrument today, for a signal or a combined premium, use `req.
 
 ## The shape a declared leg will take
 
-Declared, the same idea gets a name that every later call uses: here a leg on the near-month NIFTY future, entered on its own signal, with a standing stop and a trailing stop the engine holds. The block below is the planned shape, and version 0.5.0 refuses it with OS2020.
+Declared, the same idea gets a name that every later call uses: here a leg on the near-month NIFTY future, entered on its own signal, with a standing stop and a trailing stop the engine holds. The block below is the planned shape, and version 0.8.0 refuses it with OS2020.
 
 ```openscript
 version 1
@@ -34916,7 +35261,7 @@ A strategy's **book** is every leg it has declared, taken together (a leg is one
 
 It matters most for option structures on NFO. A short straddle or strangle is two options sold together, a call and a put, each hedging the other. Stopping each leg on its own is the classic way to take two losses on a day the pair was doing its job. **Measure the stop on the sum, never on a leg.** The book is the language's place for rules measured on the sum.
 
-**Every entry on this page is planned.** In version 0.5.0 a strategy trades one leg, the instrument on its chart, and calling any `book.*` name is refused where you write it with OS2020. This page documents what each call will do, and shows the same rules written by hand for the one leg you can trade today.
+**Every entry on this page is planned.** In version 0.8.0 a strategy trades one leg, the instrument on its chart, and calling any `book.*` name is refused where you write it with OS2020. This page documents what each call will do, and shows the same rules written by hand for the one leg you can trade today.
 
 ## What you can write today
 
@@ -35006,7 +35351,7 @@ The line stays empty until you type the put's symbol into the study's settings, 
 
 ## The shape a book will take
 
-Declared, a short strangle on NIFTY weekly options (a call two strikes above the money and a put two strikes below it, both sold) becomes two legs and a handful of rules. The block below is the planned shape, and version 0.5.0 refuses it with OS2020.
+Declared, a short strangle on NIFTY weekly options (a call two strikes above the money and a put two strikes below it, both sold) becomes two legs and a handful of rules. The block below is the planned shape, and version 0.8.0 refuses it with OS2020.
 
 ```openscript
 version 1
@@ -35244,7 +35589,7 @@ First value: bar 0
 
 Will square off every leg and take no new entry for the rest of the day once the day's loss reaches `amount`. It tests `book.dayProfit`, which is measured from this session's open, so the limit means today and not the whole run.
 
-**Remarks.** The end-of-day square-off is not a book call. It is the declaration's `closeOnSessionEnd` option, one spelling of one rule. In version 0.5.0 the option is accepted and not yet acted on, so write the exit in the script as well; [Exiting on the clock](/script/strategies/exits-and-brackets#exiting-on-the-clock) shows how.
+**Remarks.** The end-of-day square-off is not a book call. It is the declaration's `closeOnSessionEnd` option, one spelling of one rule. In version 0.8.0 the option is accepted and not yet acted on, so write the exit in the script as well; [Exiting on the clock](/script/strategies/exits-and-brackets#exiting-on-the-clock) shows how.
 
 ## Reading the book
 
@@ -35322,7 +35667,7 @@ To read a log after a bad day, find the last square-off event of the day first: 
 
 Source: https://openalgo.in/script/errors/overview
 
-Every time you open or save a script in /trading, the compiler checks it and reports what it found as **diagnostics**: numbered errors and warnings, each tied to a line of your script. This page shows how to read one, where each part comes from, and what the code alone tells you before you read another word. It applies to every script written in OpenScript (also called OpenAlgo Script), study or strategy, and it ends with the eight code ranges and the page that documents each one.
+Every time you open or save a script in /trading, the compiler checks it and reports what it found as **diagnostics**: numbered errors and warnings, each tied to a line of your script. This page shows how to read one, where each part comes from, and what the code alone tells you before you read another word. It applies to every script written in OpenScript (also called OpenAlgo Script), study or strategy, and it ends with the nine code ranges and the page that documents each one.
 
 ## A diagnostic in the console
 
@@ -35405,7 +35750,7 @@ Three details make the parts easier to use.
 
 | | Error | Warning |
 |---|---|---|
-| Codes | OS1xxx to OS7xxx | OS8xxx |
+| Codes | OS1xxx to OS7xxx, and the errors of OS9xxx | OS8xxx, and the warnings of OS9xxx |
 | Colour in the console | Red | Amber |
 | Status bar | "1 error, so it will not run yet" | "Ready, with 1 warning" |
 | Stops the script | Yes. A script with a compile error cannot be applied to the chart or backtested. An error raised while a bar runs stops the script on that bar | Never |
@@ -35414,6 +35759,8 @@ Three details make the parts easier to use.
 A script with errors is still saved when you press Ctrl+S, so nothing you typed is lost. It has no compiled program until it compiles, though, so it cannot be applied to a chart, backtested or deployed until the errors are fixed and it is saved again. See [The editor](/script/getting-started/the-editor#checking-and-the-console) for the console, the status bar and saving.
 
 Warnings are documented on [OS8xxx Warnings](/script/errors/warnings). Two worth meeting early are [OS8001](/script/errors/warnings#os8001), a stateful call (one that keeps its own state from bar to bar, such as `ema()`) inside an `if`, and [OS8010](/script/errors/warnings#os8010), a name assigned and never read.
+
+The OS9xxx range holds both kinds. It belongs to the importer, which turns a script written in another chart language into OpenScript, and its findings never appear in the /trading console. See [OS9xxx Import](/script/errors/import).
 
 ## The stage: when a problem is found
 
@@ -35426,6 +35773,7 @@ Every code belongs to one stage, shown as a badge beside it on the range pages. 
 | `check` | Names, types, scope and how each call is written, before any bar runs | OS2xxx, OS3xxx, OS8xxx, and a few OS6xxx and OS7xxx | The console, when you open or save the script |
 | `runtime` | Running one bar | OS4xxx, and parts of OS5xxx, OS6xxx and OS7xxx | When the script runs, on the chart or in a backtest |
 | `host` | The host answering the engine: data, budgets and order destinations | Most of OS6xxx, and parts of OS5xxx and OS7xxx | Mostly when the script is loaded or runs. [OS6018](/script/errors/data#os6018) can also appear in the console |
+| `import` | Reading a script written in another chart language and writing it as OpenScript | OS9xxx | In the findings the library's importer returns, never in the /trading console |
 
 The first three stages finish before the first bar. An error there means nothing ran and nothing was drawn, and it costs you one edit. The language moves as many mistakes as it can into those stages: a study that calls `buy()` is refused at `check` with [OS7001](/script/errors/orders#os7001), so it can never place an order on any bar, and a table written with 2.5 rows is refused at `check` with [OS3004](/script/errors/arguments#os3004).
 
@@ -35438,7 +35786,7 @@ A runtime error is not in the console, which reports what the compiler found whe
 
 [Debugging](/script/writing/debugging) shows how to make values visible and find the first bar where a script goes wrong.
 
-## The eight ranges
+## The nine ranges
 
 The first digit after `OS` says which kind of problem the diagnostic describes. It does not say how serious it is: that is the severity.
 
@@ -35446,23 +35794,25 @@ The first digit after `OS` says which kind of problem the diagnostic describes. 
 |---|---|---|---|---|
 | [OS1xxx](/script/errors/syntax) | Syntax | The text is not a program: characters, layout and grammar | Error | 29 |
 | [OS2xxx](/script/errors/names-and-types) | Names and types | The program parses, and a name or a type does not work out | Error | 20 |
-| [OS3xxx](/script/errors/arguments) | Arguments | A call or an option is wrong where it is written | Error | 24 |
+| [OS3xxx](/script/errors/arguments) | Arguments | A call or an option is wrong where it is written | Error | 26 |
 | [OS4xxx](/script/errors/runtime) | Runtime | A bar produced a value the engine cannot act on | Error | 13 |
 | [OS5xxx](/script/errors/limits) | Limits | A budget ran out: loops, memory, size or time | Error | 10 |
-| [OS6xxx](/script/errors/data) | Data | Bars, instruments, timeframes and the answers to data requests | Error | 23 |
+| [OS6xxx](/script/errors/data) | Data | Bars, instruments, timeframes and the answers to data requests | Error | 25 |
 | [OS7xxx](/script/errors/orders) | Orders | An order could not be placed as written | Error | 19 |
 | [OS8xxx](/script/errors/warnings) | Warnings | The script compiles and runs, and something in it is probably not meant | Warning | 19 |
+| [OS9xxx](/script/errors/import) | Import | A script written in another chart language could not be translated as written, or was translated with a stated difference | Error or warning | 12 |
 
-Version 0.5.0 catalogues 157 codes. What each range means for your next move:
+Version 0.8.0 catalogues 173 codes. What each range means for your next move:
 
 - **[OS1xxx Syntax errors](/script/errors/syntax).** Something in the text is not part of the language: a tab in the indentation, a semicolon, `&&` for `and`, a bracket that is never closed. Nothing has run. The fix is on the line reported, or on the line where the bracket or block it names was opened.
 - **[OS2xxx Names and types](/script/errors/names-and-types).** The text is a program and its meaning does not work out: a name read before it is assigned or misspelt, a name declared twice, a number added to a string, `[]` on a value that keeps no history. Nothing has run.
-- **[OS3xxx Arguments](/script/errors/arguments).** A call is wrong where it stands: too many arguments, an unknown argument name, a `plot` inside an `if`, a per-bar value in a setting that is fixed before the first bar. Nothing has run.
+- **[OS3xxx Arguments](/script/errors/arguments).** A call is wrong where it stands: too many arguments, an unknown argument name, a `plot` inside an `if`, a per-bar value or arithmetic on an input in a setting that is fixed before the first bar. Nothing has run.
 - **[OS4xxx Runtime errors](/script/errors/runtime).** A bar ran and produced something the engine cannot act on: an array index past the end, a history index that is not a whole number, a change to a drawing that was already deleted. This is the first range that depends on the data.
 - **[OS5xxx Limits](/script/errors/limits).** A budget ran out: loop iterations on one bar, the size of an array, the size of the compiled program, the time one bar may take. [Limits](/script/writing/limits) lists every budget.
 - **[OS6xxx Data](/script/errors/data).** The data is not what the script asked for: an unknown timeframe, a request finer than the chart, an instrument or exchange OpenAlgo does not know, bars out of order.
 - **[OS7xxx Orders](/script/errors/orders).** An order could not be placed as written: an absent price, a quantity of zero, a price that is not on the instrument's tick, a bracket on the wrong side of the entry.
 - **[OS8xxx Warnings](/script/errors/warnings).** The script runs. Read them anyway.
+- **[OS9xxx Import](/script/errors/import).** You imported a script written in another chart language with the library's importer, and this is its report on the translation. An error marks a statement kept as a comment, which you translate by hand; a warning marks a statement translated with a difference in meaning that the message states, which you check against the original. You never meet these when you save a script in /trading, which does not offer the importer. [Importing a script](/script/writing/importing-a-script) walks through the whole process.
 
 Numbers inside a range are given out in the order codes were added, not grouped by topic, and a code is never renumbered or reused. Searching for `OS2001` finds the same explanation in this release and in every later one. The range pages group related codes under headings so you can read them by topic.
 
@@ -35482,9 +35832,9 @@ Pasted under a declaration, it gives five errors and a warning. The bracket is n
 
 **Fix errors first, then read the warnings.** A warning never stops the script, but each one describes code that is almost always a mistake.
 
-**OS6018 beside another error.** In version 0.5.0 a few check errors, such as [OS3003](/script/errors/arguments#os3003) and [OS2005](/script/errors/names-and-types#os2005), bring [OS6018](/script/errors/data#os6018) ("The compiled program is malformed") onto the same line. Its message is long and technical; you can ignore it. Fix the other error and OS6018 goes with it.
+**OS6018 beside another error.** In version 0.8.0 a few check errors, such as [OS3003](/script/errors/arguments#os3003), [OS3025](/script/errors/arguments#os3025) and [OS2005](/script/errors/names-and-types#os2005), bring [OS6018](/script/errors/data#os6018) ("The compiled program is malformed") onto the same line. Its message is long and technical; you can ignore it. Fix the other error and OS6018 goes with it.
 
-**OS6018 on its own.** Its message then says the fault is in the compiler and asks you to report it together with the script. One case is known in version 0.5.0: a setting fixed before the first bar that does arithmetic on an input, such as `precision = input(2, "Decimals") + 1` or `width = w + 1` where `w` is an input. Pass the input on its own and put the arithmetic in its default: `precision = input(3, "Decimals")`.
+**OS6018 on its own.** Its message then says the fault is in the compiler and asks you to report it together with the script. The /trading page in current OpenAlgo releases still runs library 0.5.0, which reports a setting that does arithmetic on an input, such as `precision = input(2, "Decimals") + 1` or `width = w + 1` where `w` is an input, with OS6018 alone. Version 0.8.0 reports it as [OS3025](/script/errors/arguments#os3025), with OS6018 beside it. Either way, pass the input on its own and put the arithmetic in its default: `precision = input(3, "Decimals")`.
 
 **Look up the code.** Every code is on its range page with its message, a plain explanation of what usually causes it, the fix, and a before and after example. The before block is the shortest code that raises the code. It may use names such as `fast`, `trending` or a function `band` that a real script would define above it, so pasted on its own it also reports [OS2001](/script/errors/names-and-types#os2001) for those names. The after block is the same code, fixed. For problems described by what you see rather than by a code, use [Troubleshooting](/script/writing/troubleshooting).
 
@@ -35941,7 +36291,7 @@ Built-in values such as `volume`, `high` and `bar.index` are read bare, without 
 
 Fix: Compute what {name} would give from names the library implements today, or take the line out until a version implements it. Do not reach for the nearest name that compiles: a neighbour computes something else, and a plot that quietly changes meaning is worse than one that refuses to compile.
 
-The name is part of the language and is not implemented in this release. It is spelt correctly, and no line above it would help. The reference marks such names as Planned. Examples in version 0.5.0 include `kama()`, `session.isOpen` and the multi-leg `leg.fixed()`.
+The name is part of the language and is not implemented in this release. It is spelt correctly, and no line above it would help. The reference marks such names as Planned. Examples in version 0.8.0 include `kama()`, `session.isOpen` and the multi-leg `leg.fixed()`.
 
 Compute the value from functions that exist today, or take the line out until a release implements it. Do not swap in a function with a similar name just because it compiles: it computes something else, and a plot that quietly changes meaning is worse than one that refuses to compile.
 
@@ -36033,7 +36383,7 @@ An array element is a `number`, a `string`, a `bool`, a `color`, or a `line`, `l
 
 Fix: Rewrite it as a loop, or split the work into two functions that do not call each other.
 
-A function cannot call itself, directly or through other functions, and the message names the cycle, such as `a calls b calls a`. Each place in the file that calls a function keeps its own state for `var` and for stateful calls such as `ema()`, set up before the first bar, and a recursive call would need an unknown number of them. Rewrite the work as a `for` or `while` loop. In version 0.5.0 the console also shows [OS6018](/script/errors/data#os6018) on the function's line, with a long technical message; it clears when the recursion does.
+A function cannot call itself, directly or through other functions, and the message names the cycle, such as `a calls b calls a`. Each place in the file that calls a function keeps its own state for `var` and for stateful calls such as `ema()`, set up before the first bar, and a recursive call would need an unknown number of them. Rewrite the work as a `for` or `while` loop. In version 0.8.0 the compiler also reports [OS6018](/script/errors/data#os6018) on the function's line, with a long technical message; it clears when the recursion does.
 
 ### OS2014 A function cannot be used as a value
 
@@ -36189,7 +36539,7 @@ Fix: Pass a whole number inside {range}, and wrap a computed value in floor() or
 
 Some arguments count things, so they must be whole numbers inside a fixed range: a table's rows and columns (1 or more), a cell's row and column (0 or more), a plot's `precision` (0 to 10) and `offset`, an `rgb()` channel (0 to 255), and a loop's `step`, which must not be 0 because that loop could never finish. When you write the number in the script, the checker tests it and refuses a fraction rather than rounding it, because 2.5 rows is a mistake in the script. Round a value you compute with `floor()` or `round()`.
 
-Only the arguments listed above are tested before the first bar. A whole number the script computes, such as the length in `sma(close, len / 2)`, is tested when the bar runs instead, as runtime error [OS4003](/script/errors/runtime#os4003). In version 0.5.0 that includes an indicator's length written as a number: `sma(close, 14.5)` compiles, and the study stops on its first bar with OS4003.
+Only the arguments listed above are tested before the first bar. A whole number the script computes, such as the length in `sma(close, len / 2)`, is tested when the bar runs instead, as runtime error [OS4003](/script/errors/runtime#os4003). In version 0.8.0 that includes an indicator's length written as a number: `sma(close, 14.5)` compiles, and the study stops on its first bar with OS4003.
 
 ### OS3008 The value is not valid for this parameter
 
@@ -36227,7 +36577,7 @@ Fix: Plot both edges at the top level, name each one, and pass the two names to 
 
 ## Fixed before the first bar
 
-The chart builds a study's legend, pane, axis and settings dialog once, before the first bar runs. Everything that feeds them must be known at that moment: a literal such as `2`, arithmetic on literals such as `1 + 1`, or an `input()`, which is read from the settings before the first bar. The reference marks each such parameter as fixed before the first bar in its parameter table.
+The chart builds a study's legend, pane, axis and settings dialog once, before the first bar runs. Everything that feeds them must be known at that moment: a literal such as `2`, arithmetic on literals such as `1 + 1`, or an `input()` written as the whole of the value, which is read from the settings before the first bar. The reference marks each such parameter as fixed before the first bar in its parameter table.
 
 | Written as | Accepted |
 |---|---|
@@ -36236,7 +36586,10 @@ The chart builds a study's legend, pane, axis and settings dialog once, before t
 | `dp = input(2, "Decimals")`, then `precision = dp` | Yes |
 | `var dp = 2`, then `precision = dp` | No, [OS3003](#os3003): a `var` can change on later bars |
 | `precision = round(close / 1000)` | No, [OS3003](#os3003): it depends on the bar |
-| `precision = input(2, "Decimals") + 1` | No. In version 0.5.0 this reports only [OS6018](/script/errors/data#os6018); put the arithmetic in the default instead: `input(3, "Decimals")` |
+| `precision = input(2, "Decimals") + 1` | No, [OS3025](#os3025): arithmetic on an input. Put it in the default instead: `input(3, "Decimals")` |
+| `style = st` on a plot, where `st` is an input | No, [OS3026](#os3026): a plot's style is written out as a string |
+
+The /trading page in current OpenAlgo releases still runs library 0.5.0, which reports arithmetic on an input with [OS6018](/script/errors/data#os6018) alone and draws a plot whose style comes from an input in its default style, without a word.
 
 ### OS3003 This option must be a constant
 
@@ -36244,9 +36597,9 @@ The chart builds a study's legend, pane, axis and settings dialog once, before t
 
 Fix: Use a literal, or make it tunable with an input(): {option} = input(2, "{option}").
 
-The argument feeds something that is built before the first bar, and the value you wrote can change from bar to bar. This covers every option of `study()` and `strategy()`, a plot's title, width and style, a signal's `color`, `at` and `shape`, a table's title, size and corner, and an alert's `id`, `title` and `frequency`. Use a literal, or an `input()` so the user can change it in the settings dialog. A name assigned from an input works too, as in `dp = input(2, "Decimals")` followed by `precision = dp`, but a `var` does not, because a `var` can change on later bars. The table above shows each form.
+The argument feeds something that is built before the first bar, and the value you wrote can change from bar to bar. This covers every option of `study()` and `strategy()`, a plot's title, width and style, a signal's `color`, `at` and `shape`, a table's title, size and corner, and an alert's `id`, `title` and `frequency`. Use a literal, or an `input()` so the user can change it in the settings dialog. A name assigned from an input works too, as in `dp = input(2, "Decimals")` followed by `precision = dp`, but a `var` does not, because a `var` can change on later bars. Arithmetic on an input, such as `dp + 1`, is [OS3025](#os3025) instead. The table above shows each form.
 
-The fix's sample input always uses 2 as its default; write the default that suits the option, such as `input(true, "Overlay")` for `overlay`. A plot's `color` is not on this list, so a colour chosen per bar is fine. In version 0.5.0 the console also shows [OS6018](/script/errors/data#os6018) on the same line, with a long technical message; it goes away when this error is fixed.
+The fix's sample input always uses 2 as its default; write the default that suits the option, such as `input(true, "Overlay")` for `overlay`. A plot's `color` is not on this list, so a colour chosen per bar is fine. In version 0.8.0 the compiler also reports [OS6018](/script/errors/data#os6018) on the same line, with a long technical message; it goes away when this error is fixed.
 
 ### OS3006 This call must be at the top level
 
@@ -36281,6 +36634,24 @@ range is [{low}, {high}]; it takes two numbers and the first must be below the s
 Fix: Write two numbers, lowest first: range = [0, 100].
 
 The `range` option of a declaration fixes the scale of the study's own pane, and it is written as two numbers in square brackets, the lower first: `range = [0, 100]` for an oscillator such as RSI. A reversed pair such as `[100, 0]`, a list with one number or two equal numbers leave no scale to draw. A bare number with no brackets, `range = 50`, is [OS3011](#os3011) instead.
+
+### OS3025 A setting is part of a larger expression here
+
+{option} is fixed before the first bar and holds an input() only as the whole of its value, so it cannot hold an expression over one.
+
+Fix: Declare the setting as the value itself, with an input() written as the whole of {option}, or write the value out as a literal.
+
+A value fixed before the first bar is stored in the compiled program as one of two things: a value written out, or one input, which the settings dialog fills in when the study loads. An expression over an input is neither. That covers `precision = input(2, "Decimals") + 1`, `width = w + 1` where `w` is an input, a ternary that picks a width or a corner by an input, and a colour built from an input with `fade()`. Give the input the value you want as its default and pass it on its own, as the fix does. The compiler also reports [OS6018](/script/errors/data#os6018) on the same line, with a long technical message; it goes away when this error is fixed.
+
+An input's own default, `min`, `max` and `step` are held tighter still: they may not read another input at all, not even on its own, as in `input(5, "Stop", max = len)`. They are what the settings dialog shows before anyone has chosen anything, so each one is written out as a number.
+
+### OS3026 This option cannot be a setting
+
+{option} is written into the compiled program as a plain value, so a setting cannot choose it in this format version.
+
+Fix: Write the option out as a string literal and drop the input(): style = "step", for instance, is one of the values OS3008 names.
+
+Almost every option fixed before the first bar can take an input. A plot's `style` is the exception: the compiled program stores it as a plain string, with no room for a setting, so an input there could only ever be read at its default and its row in the settings dialog would change nothing. Write the style out as one of the values [OS3008](#os3008) lists, such as `style = "step"`. To let the user choose the look, draw two plots and give each one `none` when the other is chosen: `plot(useStep ? close : none, "Close in steps", aqua, style = "step")` beside `plot(useStep ? none : close, "Close", aqua)`, where `useStep` is a `bool` input.
 
 ## limits()
 
@@ -36354,7 +36725,7 @@ An input assigned to a name is stored under that name, and an input written in p
 
 Fix: Leave {argument} out. A file that declares no leg has exactly one, and every order acts on it.
 
-An order call was given a `leg` argument, but the file declares no legs. A strategy with no legs trades exactly one instrument, the one on the chart, and every order acts on it, so a leg name there names nothing. Remove the `leg` argument. Declaring legs with `leg.fixed()` or `leg.relative()` for multi-leg option positions is planned and not available in version 0.5.0; see [Legs and books](/script/strategies/multi-leg-and-books).
+An order call was given a `leg` argument, but the file declares no legs. A strategy with no legs trades exactly one instrument, the one on the chart, and every order acts on it, so a leg name there names nothing. Remove the `leg` argument. Declaring legs with `leg.fixed()` or `leg.relative()` for multi-leg option positions is planned and not available in version 0.8.0; see [Legs and books](/script/strategies/multi-leg-and-books).
 
 **Related.** [Reading an error](/script/errors/overview), [Declarations](/script/reference/declarations), [Inputs](/script/inputs/inputs), [Plots](/script/visuals/plots), [Fills](/script/visuals/fills), [Limits](/script/writing/limits), [OS2xxx Names and types](/script/errors/names-and-types), [OS4xxx Runtime errors](/script/errors/runtime)
 
@@ -36373,7 +36744,7 @@ A runtime error is raised on the bar that produced the value, which may be deep 
 - **In the Backtest panel**, the strategy stops trading at that bar: the report lists only the trades made before it, and the equity curve runs flat from there to the end of the range. Above the figures the panel says which bar the run stopped on and when, what went wrong with its fix, and the code with its line and column, so the figures are not mistaken for the whole range. See [Backtesting](/script/strategies/backtesting).
 - **In a deployed strategy**, the run stops at that bar, sends nothing further and writes the code, the bar, the line and the column to the run's log. See [Sandbox and live](/script/strategies/sandbox-and-live).
 
-Some of these problems have a compile-time twin: a literal the compiler can see is refused before any bar runs ([OS3004](/script/errors/arguments#os3004) for some whole-number arguments, such as the rows of a `table()`, and [OS3008](/script/errors/arguments#os3008) for a name outside an accepted set). In version 0.5.0 that check does not cover history indexes or lengths: `close[1.5]`, `close[-1]`, `sma(close, 7.5)` and `str.repeat("ab", 2.5)` all compile and then stop on bar 0.
+Some of these problems have a compile-time twin: a literal the compiler can see is refused before any bar runs ([OS3004](/script/errors/arguments#os3004) for some whole-number arguments, such as the rows of a `table()`, and [OS3008](/script/errors/arguments#os3008) for a name outside an accepted set). In version 0.8.0 that check does not cover history indexes or lengths: `close[1.5]`, `close[-1]`, `sma(close, 7.5)` and `str.repeat("ab", 2.5)` all compile and then stop on bar 0.
 
 ## A script that guards against them
 
@@ -36420,18 +36791,18 @@ plot(stretch, "Average distance above the mean since the cross", orange)
 
 ## Every code at a glance
 
-Seven of the thirteen codes are reserved for checks the engine does not make yet. The table says what happens today in each case, so you know which guard to write now.
+Six of the thirteen codes are reserved for checks the engine does not make yet. The table says what happens today in each case, so you know which guard to write now.
 
-| Code | What it catches | In version 0.5.0 |
+| Code | What it catches | In version 0.8.0 |
 |---|---|---|
 | [OS4001](#os4001) | A history index that is fractional or negative | Raised |
 | [OS4002](#os4002) | A history read deeper than `limits(history = n)` keeps | Raised |
 | [OS4003](#os4003) | A length, count or position that is fractional, or below what the function accepts | Raised |
-| [OS4004](#os4004) | An array index outside the array | Raised, and also covers OS4006 and OS4008 |
+| [OS4004](#os4004) | An array index outside the array | Raised, and also covers OS4006 |
 | [OS4005](#os4005) | A setter on a deleted drawing object | Raised |
 | [OS4006](#os4006) | Taking an element from an empty array | Not raised yet: OS4004, or absent |
 | [OS4007](#os4007) | A reversed or out of range slice | Not raised yet: the slice is shortened, or OS4003 for a negative bound |
-| [OS4008](#os4008) | A table cell outside the table | Not raised yet: OS4004 |
+| [OS4008](#os4008) | A table cell outside the table | Raised |
 | [OS4009](#os4009) | A colour channel out of range | Not raised yet: the channel is clamped |
 | [OS4010](#os4010) | A calendar field out of range | Not raised yet: the date rolls over |
 | [OS4011](#os4011) | A string position outside the string | Not raised yet: a shorter or empty string |
@@ -36474,7 +36845,7 @@ Lengths, counts and positions passed to a function are whole numbers: `sma()` av
 
 The same code stops a value that is whole but below what the parameter accepts: `sma(close, 0)`, `sma(close, -3)` and a negative position in `slice()` all raise it, although the message still says "a whole number was required". Read it as "a usable whole number". The message names the function, the parameter and the value it received on that bar, for example `sma's len was 0 on this bar`.
 
-In version 0.5.0 a literal such as `sma(close, 7.5)` also compiles and stops on bar 0. Round every length you compute with `floor()`, `round()` or `ceil()`, and keep it at 1 or more with `max()` when it can shrink.
+In version 0.8.0 a literal such as `sma(close, 7.5)` also compiles and stops on bar 0. Round every length you compute with `floor()`, `round()` or `ceil()`, and keep it at 1 or more with `max()` when it can shrink.
 
 ### OS4012 That value is not one of the accepted names
 
@@ -36484,7 +36855,7 @@ Fix: Produce the value from an input() with an options list, so only accepted na
 
 Some parameters accept only a fixed set of names, such as the `order` of `sort()` (`"asc"` or `"desc"`) or the `type` of `ma()`. A name written as a literal is checked when the script compiles, with [OS3008](/script/errors/arguments#os3008). This code is for a name the script computes, such as a ternary that picks between two strings, when one of them is not in the set.
 
-**Not raised yet.** In version 0.5.0 nothing raises OS4012, and what happens instead is quieter than an error, and depends on the call. `ma(close, 20, kind)` with `kind` computed as `"exponential"` is absent on every bar and plots nothing. `sort()` given a computed name it does not accept, such as `"ascending"` or `"descending"`, sorts in ascending order, so a computed `"descending"` quietly sorts the wrong way. Take the choice from an `input()` with an `options` list, so only accepted names can reach the call.
+**Not raised yet.** In version 0.8.0 nothing raises OS4012, and what happens instead is quieter than an error, and depends on the call. `ma(close, 20, kind)` with `kind` computed as `"exponential"` is absent on every bar and plots nothing. `sort()` given a computed name it does not accept, such as `"ascending"` or `"descending"`, sorts in ascending order, so a computed `"descending"` quietly sorts the wrong way. Take the choice from an `input()` with an `options` list, so only accepted names can reach the call.
 
 ## Arrays
 
@@ -36498,7 +36869,7 @@ Fix: Guard the read with size({name}), and index from size({name}) - 1 for the l
 
 Reading or writing an array outside its elements is an error, not absence, because the extent is something your script chose: an index past the end means the script has lost count, while a read before the start of a price history is only data that does not exist yet. Common causes are reading `values[10]` before eleven elements have been pushed, using `size(values)` as the index of the last element (it is `size(values) - 1`), and a loop that runs one step too far. `element()` and `set()` are held to the same rule.
 
-In version 0.5.0 this code also covers two cases that have their own codes planned. `shift()` or `pop()` on an empty array raise it, with the index described as "the first element" or "the last element" ([OS4006](#os4006)), and so does a `cell()` written outside a table's grid, with the index given as a row and column pair ([OS4008](#os4008)).
+In version 0.8.0 this code also covers one case that has its own code planned: `shift()` or `pop()` on an empty array raise it, with the index described as "the first element" or "the last element" ([OS4006](#os4006)). A `cell()` written outside a table's grid has a code of its own, [OS4008](#os4008).
 
 ### OS4006 The array is empty
 
@@ -36508,7 +36879,7 @@ Fix: Test size(arr) > 0 before the call.
 
 Taking an element out of an empty array has no answer, and neither has the average, the lowest or the highest of no values. This code is planned to stop the bar in all of those cases, rather than let a script drain an array without noticing.
 
-**Not raised yet.** In version 0.5.0 nothing raises OS4006. `shift()` and `pop()` on an empty array raise [OS4004](#os4004) instead, and `avg()`, `min()` and `max()` of an empty array return absent. Test `size(arr) > 0` before any of these calls: it is correct today and stays correct when this code arrives.
+**Not raised yet.** In version 0.8.0 nothing raises OS4006. `shift()` and `pop()` on an empty array raise [OS4004](#os4004) instead, and `avg()`, `min()` and `max()` of an empty array return absent. Test `size(arr) > 0` before any of these calls: it is correct today and stays correct when this code arrives.
 
 ### OS4007 Slice range is invalid
 
@@ -36518,7 +36889,7 @@ Fix: Clamp the bounds: from = max(0, from) and to = min(size(arr), to), with fro
 
 `slice()` takes the elements from `from`, included, up to `to`, not included, so a usable range satisfies `0 <= from <= to <= size`. A reversed range, or one that runs outside the array, is always a calculation that went wrong: a slice is never read backwards.
 
-**Not raised yet.** In version 0.5.0 nothing raises OS4007. `slice()` takes whatever range it is given: a reversed range gives an empty array, and a range that runs past the end stops at the last element. A negative bound is the one case that does stop the bar, with [OS4003](#os4003). Clamp both bounds yourself, as the fix below shows, so the script does not depend on any of that.
+**Not raised yet.** In version 0.8.0 nothing raises OS4007. `slice()` takes whatever range it is given: a reversed range gives an empty array, and a range that runs past the end stops at the last element. A negative bound is the one case that does stop the bar, with [OS4003](#os4003). Clamp both bounds yourself, as the fix below shows, so the script does not depend on any of that.
 
 ## Drawing objects and tables
 
@@ -36540,7 +36911,7 @@ Fix: Declare the table with the shape the script writes: table("Summary", {rows}
 
 A table's rows and columns are fixed when the script declares it with `table()`, because the grid is part of the study's layout on the chart. A `cell()` written outside that grid has nowhere to go. Rows and columns are numbered from 0, so a table declared with 2 rows has rows 0 and 1, and writing to row 2 is the classic off-by-one.
 
-**Not raised yet.** In version 0.5.0 nothing raises OS4008: a cell outside the grid stops the run with the broader [OS4004](#os4004), whose message gives the row and column pair and the number of cells. Declare the table with the shape you write. See [Tables](/script/visuals/tables).
+The bar stops, and the message names the row and the column you wrote to and the shape the table was declared with, such as `Cell (2, 0) is outside a table of 2 rows and 2 columns`. Declare the table with the shape you write, or keep the row and the column you compute below the counts you declared. See [Tables](/script/visuals/tables). The /trading page in current OpenAlgo releases still runs library 0.5.0, which stops such a bar with the broader [OS4004](#os4004) instead.
 
 ## Colours, dates and strings
 
@@ -36552,7 +36923,7 @@ Fix: Clamp the value where it is computed: rgb(min(255, max(0, r)), g, b).
 
 The red, green and blue channels of `rgb()` and `rgba()` run from 0 to 255, and the alpha (opacity) of `rgba()` and `withAlpha()` runs from 0 to 1. A red, green or blue value written as a literal outside 0 to 255 is refused when the script compiles ([OS3004](/script/errors/arguments#os3004)). This code is for a channel computed from data, such as a heat colour scaled by a strength that can run past 1, which is a bug in the calculation.
 
-**Not raised yet.** In version 0.5.0 nothing raises OS4009: the colour is built with the channel clamped to its range, so a red channel computed as 300 is drawn as 255 and an alpha computed as 2 is drawn fully opaque, and the bar carries on. Clamp the value yourself where you compute it, with `clamp()`, so the decision is visible in the script. See [Colors](/script/visuals/colors).
+**Not raised yet.** In version 0.8.0 nothing raises OS4009: the colour is built with the channel clamped to its range, so a red channel computed as 300 is drawn as 255 and an alpha computed as 2 is drawn fully opaque, and the bar carries on. Clamp the value yourself where you compute it, with `clamp()`, so the decision is visible in the script. See [Colors](/script/visuals/colors).
 
 ### OS4010 Calendar field is out of range
 
@@ -36562,7 +36933,7 @@ Fix: Pass a value inside {range}, carrying the overflow into the field above it 
 
 `date.from()` builds a timestamp from a year, a month, a day and optional time fields, and each field has a range: a month runs from 1 to 12, a day from 1 to the length of the month, an hour from 0 to 23. A month of 13 is a script bug, usually `month + 1` in December. In a session test, a date that silently moves is a whole day of wrong signals.
 
-**Not raised yet.** In version 0.5.0 nothing raises OS4010: a field past its range rolls over into the next one, so `date.from(2026, 13, 1)` is 1 January 2027 and `date.from(2026, 2, 30)` is 2 March 2026. Carry the overflow yourself with `mod()` and `floor()`, as the fix below does, so the script says what it means. See [Sessions and time](/script/data/sessions-and-time).
+**Not raised yet.** In version 0.8.0 nothing raises OS4010: a field past its range rolls over into the next one, so `date.from(2026, 13, 1)` is 1 January 2027 and `date.from(2026, 2, 30)` is 2 March 2026. Carry the overflow yourself with `mod()` and `floor()`, as the fix below does, so the script says what it means. See [Sessions and time](/script/data/sessions-and-time).
 
 ### OS4011 String position is outside the string
 
@@ -36572,7 +36943,7 @@ Fix: Guard with str.length(s), or clamp the position with min() before the call.
 
 `str.substring()` counts characters from 0, and the positions it is given have to address characters that exist. A position past the end usually comes from a parser that assumed a symbol was longer than it is, for example taking the eleventh character of a short NSE symbol such as `SBIN`.
 
-**Not raised yet.** In version 0.5.0 nothing raises OS4011: a range that runs past the end gives the part that exists, which can be an empty string. Check `str.length()` before you take part of a string, as the fix below does.
+**Not raised yet.** In version 0.8.0 nothing raises OS4011: a range that runs past the end gives the part that exists, which can be an empty string. Check `str.length()` before you take part of a string, as the fix below does.
 
 ## Loops
 
@@ -36768,7 +37139,7 @@ Every read written in the file counts, even two identical ones: `req.timeframe("
 
 Source: https://openalgo.in/script/errors/data
 
-This page covers the OS6xxx codes of OpenScript (also called OpenAlgo Script): the errors about the data a script is given and the data it asks for. They cover timeframes written in a request, other instruments, the bars the engine receives, the facts about an instrument, the compiled program a host loads, and the settings of a backtest run. Many of them are not mistakes in your script at all but answers from the host or faults in the data, and the explanations below say so wherever that is the case, so you know whether to change the script or look elsewhere.
+This page covers the OS6xxx codes of OpenScript (also called OpenAlgo Script): the errors about the data a script is given and the data it asks for. They cover timeframes written in a request, other instruments, the bars the engine receives, the facts about an instrument, the compiled program a host loads, the settings of a backtest run, and what a chart can draw. Many of them are not mistakes in your script at all but answers from the host or faults in the data, and the explanations below say so wherever that is the case, so you know whether to change the script or look elsewhere.
 
 ## When they appear
 
@@ -36776,10 +37147,11 @@ This page covers the OS6xxx codes of OpenScript (also called OpenAlgo Script): t
 |---|---|---|
 | When the script compiles | [OS6001](#os6001), [OS6003](#os6003) | Shown in the console under the editor. Nothing runs |
 | When the program loads, before bar 0 | [OS6001](#os6001) for a timeframe from an input, [OS6002](#os6002), [OS6004](#os6004), [OS6006](#os6006), [OS6012](#os6012), [OS6015](#os6015) to [OS6019](#os6019) | The study or run is refused whole and nothing is drawn. On a chart, /trading shows the code and the message in a notice |
-| When the bars arrive, or while they run | [OS6010](#os6010), [OS6011](#os6011), [OS6005](#os6005) | The run stops at that bar, as for any [runtime error](/script/errors/runtime#when-they-appear) |
+| When the bars arrive, or while they run | [OS6010](#os6010), [OS6011](#os6011), [OS6025](#os6025), [OS6005](#os6005) | The run stops at that bar, as for any [runtime error](/script/errors/runtime#when-they-appear) |
 | When the host answers a request | [OS6007](#os6007), [OS6008](#os6008), [OS6009](#os6009), [OS6014](#os6014) | Nothing stops. The read is absent, and `req.error()` returns the message |
 | Before a backtest's first bar | [OS6020](#os6020), [OS6021](#os6021), [OS6023](#os6023), and [OS6022](#os6022) on a replay | The run is refused and nothing is computed. Of these, only OS6021 can appear in the Backtest panel, which shows the code and the message |
-| Not raised in version 0.5.0 | [OS6013](#os6013) | The shape it describes is refused earlier, when the script compiles |
+| When the chart adapter builds the study, before bar 0 | [OS6024](#os6024) | The study is refused whole and nothing is drawn. It comes from the library's chart adapter, when the chart cannot draw everything the study declares |
+| Not raised in version 0.8.0 | [OS6013](#os6013) | The shape it describes is refused earlier, when the script compiles |
 
 The **host** named throughout this page is the application the engine runs inside. It supplies the bars and the facts about the instrument, and answers requests for other data. In OpenAlgo it is the /trading page for charts and backtests, and the strategy runner on the OpenAlgo server for a deployed strategy.
 
@@ -36871,7 +37243,7 @@ Fix: Compute the symbol and the timeframe from literals or inputs, not from bar 
 
 The symbol and the timeframe of a request are settled once, before the first bar, so that the host can fetch each series once and keep it in step with the chart. A request whose identity changed from bar to bar would need a new fetch on a bar that had already been drawn.
 
-**Not raised yet.** In version 0.5.0 nothing raises OS6013, because nothing can reach it: a timeframe or a symbol computed from bar data, like the one in the example below, is refused when the script compiles, with [OS3003](/script/errors/arguments#os3003). Take the timeframe from a literal or from an `input()` with `kind = "interval"`, as the fix does.
+**Not raised yet.** In version 0.8.0 nothing raises OS6013, because nothing can reach it: a timeframe or a symbol computed from bar data, like the one in the example below, is refused when the script compiles, with [OS3003](/script/errors/arguments#os3003). Take the timeframe from a literal or from an `input()` with `kind = "interval"`, as the fix does.
 
 ## Request expressions
 
@@ -36883,7 +37255,7 @@ Fix: Move the calculation inside the request expression, or pass a constant: a l
 
 The expression passed to `req.timeframe()` or `req.symbol()` is computed on the requested bars, in their own time: daily bars for a `"1D"` read, the other instrument's bars for a symbol read. A value computed on the chart's own bars, such as a 20 bar average of 5 minute closes, has no meaning on a daily bar, so the compiler refuses it.
 
-In version 0.5.0 the only names from the rest of the file the expression can read are inputs, the names an `input()` assigns. Every other name is refused, even one that holds a plain number:
+In version 0.8.0 the only names from the rest of the file the expression can read are inputs, the names an `input()` assigns. Every other name is refused, even one that holds a plain number:
 
 ```openscript
 k = 20
@@ -36941,11 +37313,11 @@ plot(dayHigh, "Day high so far", aqua, style = "step")
 
 The host did not supply {fact} for {symbol}.
 
-Fix: Supply {fact} in the host's instrument record, or stop depending on it: round with a number the script chooses rather than chart.tickSize.
+Fix: Supply {fact} in the host's instrument record for {symbol}, or leave the session out of the record, which makes every session read absent rather than wrong.
 
-Tick size, lot size, the trading session and the timezone come from the host's record of the instrument, not from the bars. In version 0.5.0 the engine raises this code when it loads a program and that record cannot be read: a session stated without the timezone it is measured in, a timezone the calendar does not know, or session hours not written as `HH:MM`. It is a problem in the host's record, not in your script.
+Tick size, lot size, the trading session and the timezone come from the host's record of the instrument, not from the bars. A fact the host leaves out is simply absent, and that is not this error: `chart.tickSize` or `chart.lotSize` reads as `none`, which you can test with `isNone()` or replace with `orElse()`, `roundToTick()` returns absent, and an order priced or sized from them stops with [OS7002](/script/errors/orders#os7002). On /trading `chart.lotSize` comes from the platform's record of the instrument, and it is absent for a symbol whose contract the platform does not hold, so a study that works in money can fall back on an `input()`: `orElse(chart.lotSize, lotSize)`, where `lotSize` is the input.
 
-A fact the host simply leaves out does not raise this code. `chart.tickSize` or `chart.lotSize` reads as absent, `roundToTick()` returns absent, and an order priced or sized from them stops with [OS7002](/script/errors/orders#os7002). On /trading `chart.lotSize` comes from the platform's record of the instrument, and it is absent for a symbol whose contract the platform does not hold, so a study that works in money can take the lot size from an `input()` instead, as the fix below does. You can also meet this code's message without an error: a daily, weekly or monthly read on a host that states no timezone is absent, and `req.error()` returns this message for it.
+OS6012 is for a fact that is needed and cannot default. A session stated without the timezone it is measured in is a window with no clock to read it by, so the engine refuses the record when it loads the program, before any bar runs. So are a timezone the calendar does not know, session hours not written as `HH:MM`, and session days not numbered 1 to 7, Monday being 1. It is a problem in the host's record, not in your script. You can also meet this code's message without an error: a daily, weekly or monthly read on a host that states no timezone is absent, and `req.error()` returns this message for it.
 
 ### OS6005 Unknown timezone
 
@@ -36978,6 +37350,16 @@ Fix: Reload the history; if the same bar repeats, the feed is sending duplicates
 Everything in the language assumes that bar times strictly increase: the history operator, warmup and every session test depend on it. When the host hands over a bar whose time is not after the one before it, a duplicate or a bar out of order, the engine refuses it rather than computing quietly wrong values, and names the bar.
 
 This is a problem in the data feed or the host, not in your script. Reload the history. If the same bar repeats, the feed is sending duplicates, and the host has to sort and deduplicate the bars before the engine runs.
+
+### OS6025 A bar has no time
+
+Bar {index} was handed over with no time.
+
+Fix: State the bar's open instant in whole milliseconds since the Unix epoch, UTC, and leave out a bar the host cannot date rather than handing it over without a time.
+
+Every bar carries the time it opened, and the order of the bars, the history operator, warmup and every session and calendar test are built on it. A bar handed over with no time cannot be placed after the bar before it, so the engine refuses it and names the bar, rather than reading the time as absent and drawing a gap where the host has data. The run stops at that bar.
+
+Like [OS6011](#os6011), it is a problem in the data or the host, not in your script: OS6011 is two stated times in the wrong order, and this is a bar with no time at all. A host that hands the bars over as columns meets it for a time of `NaN` as well. The host should leave out a bar it cannot date rather than pass it on without a time.
 
 ## Loading a compiled program
 
@@ -37021,7 +37403,7 @@ This program was compiled from language version {found}, and this engine impleme
 
 Fix: Upgrade the engine to one that implements language version {found}, or recompile the source against a version it has.
 
-The first line of a script, `version 1`, names its language version, and the program compiled from it carries that number. An engine runs every language version it implements exactly as before, and refuses one it does not have rather than running it approximately, because a saved script has to keep producing the same numbers. Version 0.5.0 implements language version 1.
+The first line of a script, `version 1`, names its language version, and the program compiled from it carries that number. An engine runs every language version it implements exactly as before, and refuses one it does not have rather than running it approximately, because a saved script has to keep producing the same numbers. Version 0.8.0 implements language version 1.
 
 A program compiled from a newer language version needs a newer engine, or a recompile against a version this engine has.
 
@@ -37033,7 +37415,7 @@ Fix: Recompile the script from its source; a program that fails verification cam
 
 Before an engine runs a program, it checks that the program is well formed: every instruction points at something that exists, and every field has the shape the format requires. A program that fails is refused whole, before any bar, and the message says where it failed. A program straight from the compiler passes, so a failure means the stored program was damaged or edited after it was compiled. Recompile it from the source.
 
-In version 0.5.0 the compiler itself can also report OS6018 on a line, beside another error such as [OS2005](/script/errors/names-and-types#os2005) for a function that calls itself, or [OS3003](/script/errors/arguments#os3003). Fix the other error and it goes with it. If OS6018 is the only diagnostic on an unchanged script, the fault is in the compiler, and its message asks you to report it with the script. See [Reading an error](/script/errors/overview).
+In version 0.8.0 the compiler itself can also report OS6018 on a line, beside another error such as [OS2005](/script/errors/names-and-types#os2005) for a function that calls itself, [OS3003](/script/errors/arguments#os3003) or [OS3025](/script/errors/arguments#os3025). Fix the other error and it goes with it. If OS6018 is the only diagnostic on an unchanged script, the fault is in the compiler, and its message asks you to report it with the script. See [Reading an error](/script/errors/overview).
 
 ### OS6019 A host setting fails the input's validation
 
@@ -37067,7 +37449,7 @@ Widen the window, or choose one that overlaps the loaded bars. Both ends are inc
 
 Fix: State the setting so it can be carried out: declare a charge line after every line it is levied on, supply the tick size a slippage in ticks is measured in, write down the reason a tolerance needs a bound, or bring a bound past the cap back inside it. Nothing has been computed at the point this is refused, so correcting the setting and running again costs one run.
 
-A setting can be well formed and still impossible to carry out on this run. In version 0.5.0 the common cause is sizing: a backtest fills in units and keeps no running equity, so `qtyType = "cash"` and `qtyType = "equityPercent"` are refused, and so is `qtyType = "lots"` on an instrument whose lot size is not known. Slippage stated in ticks when there is no tick size to measure a tick in is refused the same way, and so is a charge levied on another charge that is declared after it. The message names the setting and the reason.
+A setting can be well formed and still impossible to carry out on this run. In version 0.8.0 the common cause is sizing: a backtest fills in units and keeps no running equity, so `qtyType = "cash"` and `qtyType = "equityPercent"` are refused, and so is `qtyType = "lots"` on an instrument whose lot size is not known. Slippage stated in ticks when there is no tick size to measure a tick in is refused the same way, and so is a charge levied on another charge that is declared after it. The message names the setting and the reason.
 
 Count in units, or in lots on an instrument that states its lot size. In the Backtest panel only the refusal of `"cash"` and `"equityPercent"` can happen: the panel reads the tick and lot size from OpenAlgo's record of the instrument, and when it has none it runs with a tick of 0.05 and a lot of 1 and says so under the report, so check that line before trusting a result counted in lots. See [Position and sizing](/script/strategies/position-and-sizing) and [Costs and fills](/script/strategies/costs-and-fills).
 
@@ -37091,6 +37473,18 @@ A strategy's own `commission` and a charge schedule supplied by the host running
 
 Keep one of the two: leave `commission` at its default of 0 when a schedule is supplied, or supply no schedule. A schedule can say more, such as a floor, a cap, a charge on another charge, or a cost on one side of the trade only. The Backtest panel supplies no schedule, so there the declaration's `commission` always applies and this code never appears.
 
+## What the chart can draw
+
+### OS6024 The host cannot draw something this study declares
+
+This host cannot draw {what}: {limit}.
+
+Fix: Declare what this host draws, or run the study on a host that draws {what}.
+
+A compiled program carries everything a study declares, and a chart draws what its own surface has room for. Two things a study can declare need a newer chart: a second `table()`, and a `fill()` whose colour the script computes bar by bar. The library's chart adapter, which turns a compiled program into a study the chart library can draw, refuses such a study before any bar runs rather than drawing part of it, which would be the first table alone or a band in a colour the script never chose. The message names the second table by its title, or says it is a band colour computed per bar, and ends by saying which chart version the host stated.
+
+The cure is on the host's side. A host that passes the chart library's own version string, as `descriptorFor(program, { chartVersion: VERSION })`, on openalgo-charts 2.5.4 or newer, has every table drawn in the corner its own `position` names and a computed band shaded bar by bar in the colour the script chose there. No version, an older chart, a prerelease of 2.5.4 or a string the adapter cannot read is refused as before. On such a host, fold two tables into one, as the example below does, and give a band one colour, or one per side. The /trading page in current OpenAlgo releases still runs library 0.5.0 with openalgo-charts 2.5.1, which draws the first table only and a band in one colour per side, without a word. See [Charts adapter](/script/integrate/charts-adapter).
+
 **Related.** [Timeframes](/script/data/timeframes), [Higher timeframes](/script/data/higher-timeframes), [Other instruments](/script/data/other-instruments), [Sessions and time](/script/data/sessions-and-time), [Backtesting](/script/strategies/backtesting), [Reading an error](/script/errors/overview)
 
 
@@ -37106,7 +37500,7 @@ This page covers the OS7xxx codes of OpenScript (also called OpenAlgo Script): t
 |---|---|---|
 | When the script compiles | [OS7001](#os7001), [OS7003](#os7003), [OS7016](#os7016) | Shown in the console under the editor. The strategy cannot run until it is fixed |
 | When an order is placed on a bar | [OS7002](#os7002), [OS7004](#os7004), [OS7006](#os7006) to [OS7010](#os7010), [OS7013](#os7013), [OS7017](#os7017) | The run stops at that bar, and nothing further is sent |
-| Not raised in version 0.5.0 | [OS7005](#os7005), [OS7011](#os7011), [OS7012](#os7012), [OS7014](#os7014), [OS7015](#os7015), [OS7018](#os7018), [OS7019](#os7019) | Reserved for checks that arrive later. Each entry says what happens today |
+| Not raised in version 0.8.0 | [OS7005](#os7005), [OS7011](#os7011), [OS7012](#os7012), [OS7014](#os7014), [OS7015](#os7015), [OS7018](#os7018), [OS7019](#os7019) | Reserved for checks that arrive later. Each entry says what happens today |
 
 A refusal while the run is going stops it at that bar in every place a strategy runs:
 
@@ -37150,7 +37544,7 @@ plot(slow, "Slow EMA", orange)
 plot(pos.isLong ? stopAt : none, "Stop", red, style = "step")
 ```
 
-The crosses are computed at the top level, above the `if`, because a stateful call such as `crossDown()` inside a branch only advances on the bars where the branch runs (warning [OS8001](/script/errors/warnings#os8001)). The stop is also tested by the script itself, because the version 0.5.0 backtest does not fill a stop set with `exit()`; see [Exits and brackets](/script/strategies/exits-and-brackets).
+The crosses are computed at the top level, above the `if`, because a stateful call such as `crossDown()` inside a branch only advances on the bars where the branch runs (warning [OS8001](/script/errors/warnings#os8001)). The stop is also tested by the script itself, because the version 0.8.0 backtest does not fill a stop set with `exit()`; see [Exits and brackets](/script/strategies/exits-and-brackets).
 
 ## Where orders can be placed
 
@@ -37204,7 +37598,7 @@ Fix: Size in lots: declare qtyType = "lots" and pass the lot count, or round a c
 
 NFO futures and options, and MCX contracts, trade in lots: an order must be a whole multiple of the contract's lot size, and the exchange rejects anything else. This code is planned to refuse such a quantity in the engine too, so a backtest never reports a trade that could not have happened.
 
-**Not raised yet.** In version 0.5.0 nothing compares an order's quantity with the lot size, so `buy(qty = 100)` on a contract whose lot is 75 units is sent as written. Size in lots yourself: declare `qtyType = "lots"` and pass a number of lots, as the fix below does (with a lot of 75, `buy(qty = 2)` is 150 units). The fix line also names `order.roundToLot()`, which is planned and does not compile in this release; until it arrives, round a computed quantity down to whole lots with `floor(qty / lot) * lot`.
+**Not raised yet.** In version 0.8.0 nothing compares an order's quantity with the lot size, so `buy(qty = 100)` on a contract whose lot is 75 units is sent as written. Size in lots yourself: declare `qtyType = "lots"` and pass a number of lots, as the fix below does (with a lot of 75, `buy(qty = 2)` is 150 units). The fix line also names `order.roundToLot()`, which is planned and does not compile in this release; until it arrives, round a computed quantity down to whole lots with `floor(qty / lot) * lot`.
 
 ### OS7006 Price is not on a tick
 
@@ -37256,7 +37650,7 @@ Fix: Size from equity with qtyType = "equityPercent", or test pos.equity before 
 
 A backtest that could spend money it does not have would report returns nobody could have earned. This code is planned to refuse an order that needs more capital than the strategy has left, and to record the refusal so the equity curve stays honest.
 
-**Not raised yet.** In version 0.5.0 nothing compares an order's cost with the strategy's capital, so `buy(qty = 100)` at a price near 100 fills in full under `capital = 1000`. Keep quantity times price within the `capital` you declared yourself. Neither route the fix names works in this release: the backtest refuses `qtyType = "equityPercent"` with [OS6021](/script/errors/data#os6021), and `pos.equity` is planned. In the Backtest panel count in units or lots.
+**Not raised yet.** In version 0.8.0 nothing compares an order's cost with the strategy's capital, so `buy(qty = 100)` at a price near 100 fills in full under `capital = 1000`. Keep quantity times price within the `capital` you declared yourself. Neither route the fix names works in this release: the backtest refuses `qtyType = "equityPercent"` with [OS6021](/script/errors/data#os6021), and `pos.equity` is planned. In the Backtest panel count in units or lots.
 
 ### OS7012 The instrument is outside its session
 
@@ -37266,7 +37660,7 @@ Fix: Guard entries with session.isOpen, and set closeOnSessionEnd = true to flat
 
 An exchange works orders only during its session, 09:15 to 15:30 IST for NSE equities and NFO contracts. This code is planned to refuse an order placed outside the session, rather than hold it until the open and fill it at a price the script never saw.
 
-**Not raised yet.** In version 0.5.0 nothing checks the session before an order is sent. Guard entries yourself with `session.isIn()`, as the example below does, and name the zone, as in `session.isIn("0915-1530", "Asia/Kolkata")`, so the window means IST wherever the script runs and whatever timezone a chart is set to. `session.isOpen`, which the fix line names, is planned and does not compile in this release. The declaration's `closeOnSessionEnd = true` is accepted but not yet acted on either, so close an intraday position yourself before 15:30, as [Exiting on the clock](/script/strategies/exits-and-brackets#exiting-on-the-clock) shows. See [Sessions and time](/script/data/sessions-and-time).
+**Not raised yet.** In version 0.8.0 nothing checks the session before an order is sent. Guard entries yourself with `session.isIn()`, as the example below does, and name the zone, as in `session.isIn("0915-1530", "Asia/Kolkata")`, so the window means IST wherever the script runs and whatever timezone a chart is set to. `session.isOpen`, which the fix line names, is planned and does not compile in this release. The declaration's `closeOnSessionEnd = true` is accepted but not yet acted on either, so close an intraday position yourself before 15:30, as [Exiting on the clock](/script/strategies/exits-and-brackets#exiting-on-the-clock) shows. See [Sessions and time](/script/data/sessions-and-time).
 
 ### OS7013 Two opposite orders on one bar
 
@@ -37314,7 +37708,7 @@ Use the tag the entry was placed with, or leave the tag out to close the whole p
 
 ## The destination
 
-The destination is where orders go: the simulator in the Backtest panel, or sandbox trading (analyzer mode in OpenAlgo) or a live account when a strategy is deployed. The last four codes are about the conversation between the engine and the destination, and none is raised in version 0.5.0.
+The destination is where orders go: the simulator in the Backtest panel, or sandbox trading (analyzer mode in OpenAlgo) or a live account when a strategy is deployed. The last four codes are about the conversation between the engine and the destination, and none is raised in version 0.8.0.
 
 ### OS7014 The destination rejected the order
 
@@ -37324,7 +37718,7 @@ Fix: Act on {reason}: it comes from the destination, not from the script, and th
 
 The order left the strategy well formed and the destination refused it: a product the account cannot trade, not enough margin, or a symbol the account has no permission for. The reason comes from the destination, not from the script, and the same order will be refused again until the account or the order changes.
 
-**Not raised yet.** In version 0.5.0 a refusal that comes back is recorded against the order as rejected, with the destination's own reason, but no diagnostic points at the line that placed it. See [Sandbox and live](/script/strategies/sandbox-and-live).
+**Not raised yet.** In version 0.8.0 a refusal that comes back is recorded against the order as rejected, with the destination's own reason, but no diagnostic points at the line that placed it. See [Sandbox and live](/script/strategies/sandbox-and-live).
 
 ### OS7015 The strategy has no order destination
 
@@ -37334,7 +37728,7 @@ Fix: Connect a destination in the host, or run the file as a study(): replace bu
 
 A strategy needs somewhere for its orders to go. This code is planned for a host that runs a strategy with nowhere to send orders, which would compute a position nobody ever took.
 
-**Not raised yet.** In version 0.5.0 nothing raises OS7015. An engine given no order route at all refuses a strategy when it loads, with [OS6006](/script/errors/data#os6006) naming `orders`. In /trading a strategy always has a destination: the simulator when you backtest it, and the one its deployment names when it runs.
+**Not raised yet.** In version 0.8.0 nothing raises OS7015. An engine given no order route at all refuses a strategy when it loads, with [OS6006](/script/errors/data#os6006) naming `orders`. In /trading a strategy always has a destination: the simulator when you backtest it, and the one its deployment names when it runs.
 
 ### OS7018 A frame names an order this strategy did not place
 
@@ -37344,7 +37738,7 @@ Fix: Answer with the intent id the engine sent. A destination's own reference is
 
 A destination reports on an order by the id the engine gave it when the order was sent. This code is for a report naming an order this strategy never placed, such as a destination answering for another strategy's order or for a run that has already ended. It is a problem in the host, not in your script.
 
-**Not raised yet.** In version 0.5.0 such a report is refused and the refusal is recorded, but no diagnostic is raised. It concerns you only if you build your own host on the library: answer with the id the engine sent. See [Host interface](/script/integrate/host-interface).
+**Not raised yet.** In version 0.8.0 such a report is refused and the refusal is recorded, but no diagnostic is raised. It concerns you only if you build your own host on the library: answer with the id the engine sent. See [Host interface](/script/integrate/host-interface).
 
 ### OS7019 A fill was reported with no price
 
@@ -37354,7 +37748,7 @@ Fix: Report the average fill price the destination computed over the cumulative 
 
 A report that says more quantity has filled must also carry the average fill price, because a position needs a price as well as a size before it has an average entry, a profit or an equity point. A report with a quantity and no price is refused whole.
 
-**Not raised yet.** In version 0.5.0 such a report is refused and recorded, but no diagnostic is raised. Like [OS7018](#os7018), it concerns hosts built on the library: report the destination's average fill price over the whole filled quantity on every report that adds quantity.
+**Not raised yet.** In version 0.8.0 such a report is refused and recorded, but no diagnostic is raised. Like [OS7018](#os7018), it concerns hosts built on the library: report the destination's average fill price over the whole filled quantity on every report that adds quantity.
 
 **Related.** [Orders](/script/strategies/orders), [Exits and brackets](/script/strategies/exits-and-brackets), [Position and sizing](/script/strategies/position-and-sizing), [Backtesting](/script/strategies/backtesting), [Sandbox and live](/script/strategies/sandbox-and-live), [Reading an error](/script/errors/overview)
 
@@ -37370,7 +37764,7 @@ This page covers the OS8xxx codes of OpenScript (also called OpenAlgo Script): t
 Warnings come from the compiler, so you see them when you save a script in the Scripts panel, before anything runs. Each one is listed in the console under the editor with its line, its message and its fix, and the status bar reads "Ready, with 1 warning" instead of "Ready". A script with warnings can still be applied to a chart, backtested and deployed. See [The editor](/script/getting-started/the-editor#checking-and-the-console).
 
 
-Five of the nineteen codes are reserved for checks the compiler does not make yet: [OS8004](#os8004), [OS8006](#os8006), [OS8013](#os8013), [OS8014](#os8014) and [OS8019](#os8019). Their entries say so, and describe the shape to avoid by hand until the warning arrives.
+Four of the nineteen codes are reserved for checks the compiler does not make yet: [OS8004](#os8004), [OS8006](#os8006), [OS8013](#os8013) and [OS8014](#os8014). Their entries say so, and describe the shape to avoid by hand until the warning arrives.
 
 ## A script with nothing to warn about
 
@@ -37418,7 +37812,7 @@ Fix: Replace {name} with {replacement}; the two compute the same values.
 
 When a function or an option turns out to be a mistake, it is never removed and never changes meaning, because a saved script must keep producing the same numbers. It is marked deprecated instead, and this warning names its replacement, which computes the same values.
 
-**Not raised yet.** In version 0.5.0 no name in the library is deprecated, so this warning never appears. The example below uses placeholder names to show its shape.
+**Not raised yet.** In version 0.8.0 no name in the library is deprecated, so this warning never appears. The example below uses placeholder names to show its shape.
 
 ## Where a call runs
 
@@ -37440,7 +37834,7 @@ Fix: Decide what warmup means: test isNone({condition}) explicitly, or give {nam
 
 A condition that is absent takes the false branch. During warmup, while an indicator in the condition has no value yet, a block under `if rsi(close, 14) > 70` does not run, so a name it assigns keeps whatever it held before. Those bars sit off the left edge of the chart, which is why the shape can change an answer without anyone noticing.
 
-**Not raised yet.** In version 0.5.0 the checker does not follow names assigned under a possibly absent condition, so this shape compiles without a warning. The before block below is refused for a different reason in this release: `zone` is first assigned inside the `if`, so it does not exist after the block ([OS2001](/script/errors/names-and-types#os2001)). The shape the warning describes needs a name that already exists above the `if`, such as a `var`. Decide what warmup means yourself: give the name its starting value above the `if`, as the fix does, or test the condition with `isNone()`. See [Warmup](/script/language/warmup).
+**Not raised yet.** In version 0.8.0 the checker does not follow names assigned under a possibly absent condition, so this shape compiles without a warning. The before block below is refused for a different reason in this release: `zone` is first assigned inside the `if`, so it does not exist after the block ([OS2001](/script/errors/names-and-types#os2001)). The shape the warning describes needs a name that already exists above the `if`, such as a `var`. Decide what warmup means yourself: give the name its starting value above the `if`, as the fix does, or test the condition with `isNone()`. See [Warmup](/script/language/warmup).
 
 ### OS8011 live var makes live and backtest differ
 
@@ -37460,7 +37854,7 @@ Fix: Store time instead and compare timestamps; the bar's time does not move.
 
 `bar.index` is a position in the bars the engine was given, not a fixed address. When more history loads, every bar is renumbered, so a `var` that stored a bar index and compares it later is comparing against a number that has moved.
 
-**Not raised yet.** In version 0.5.0 the checker does not follow a bar index into a persistent value, so this compiles without a warning. Store `time` instead, as the fix does: a bar's time never changes. See [Bars and history](/script/language/bars-and-history).
+**Not raised yet.** In version 0.8.0 the checker does not follow a bar index into a persistent value, so this compiles without a warning. Store `time` instead, as the fix does: a bar's time never changes. See [Bars and history](/script/language/bars-and-history).
 
 ## Repainting
 
@@ -37496,7 +37890,7 @@ Fix: Use an intraday interval for a session anchored average, or plot the source
 
 A session anchored average such as `vwap()` starts again at the first bar of each session and accumulates through the day. On a daily or longer chart every bar is a whole session, so the average covers one bar and equals that bar's own price: the plot adds nothing, while its legend suggests it does.
 
-**Not raised yet.** In version 0.5.0 the checker does not compare the call with the chart's interval, so this compiles without a warning. Use a session average on an intraday chart, such as 5 or 15 minute bars across the 09:15 to 15:30 session. On the /trading chart, `vwap()` has no value in this release, because the chart does not state the session hours it restarts on; anchor the average by date with `vwapAnchor()`, as in `vwapAnchor(hlc3, isNone(time[1]) or not date.isSameDay(time, time[1], "Asia/Kolkata"))`.
+**Not raised yet.** In version 0.8.0 the checker does not compare the call with the chart's interval, so this compiles without a warning. Use a session average on an intraday chart, such as 5 or 15 minute bars across the 09:15 to 15:30 session. On the /trading chart, `vwap()` has no value in this release, because the chart does not state the session hours it restarts on; anchor the average by date with `vwapAnchor()`, as in `vwapAnchor(hlc3, isNone(time[1]) or not date.isSameDay(time, time[1], "Asia/Kolkata"))`.
 
 ### OS8007 A plot sets the price pane's own formatting
 
@@ -37578,7 +37972,7 @@ Fix: Restore the test that was meant, or delete the branch that never runs.
 
 An `if` or `else if` whose condition is the literal `true` or `false` has the same answer on every bar, so one of its branches can never run. It is usually a test pinned while debugging and left behind.
 
-In version 0.5.0 the warning covers only a bare `true` or `false`. A condition that is just as constant but written as an expression, such as `if 1 > 2` or `if not true`, compiles without it, so look for those yourself.
+In version 0.8.0 the warning covers only a bare `true` or `false`. A condition that is just as constant but written as an expression, such as `if 1 > 2` or `if not true`, compiles without it, so look for those yourself.
 
 Restore the condition you meant, or delete the branch that never runs. See [Debugging](/script/writing/debugging).
 
@@ -37598,11 +37992,165 @@ Use the input, or delete it. See [Inputs](/script/inputs/inputs).
 
 Fix: Assign none to the name on the same path as the delete, and where the object came out of an array, remove the element as well as deleting the object.
 
-Deleting a drawing object with `draw.delete()` does not clear the name or the array element that refers to it: both still hold the deleted object. The next setter that reaches it stops the run with [OS4005](/script/errors/runtime#os4005), often many bars after the line that caused it.
+Deleting a drawing object with `draw.delete()` does not clear the name or the array element that refers to it: both still hold the deleted object. The next setter that reaches it stops the run with [OS4005](/script/errors/runtime#os4005), often many bars after the line that caused it. The compiler follows each delete to the names and arrays that still hold the object, and the message names the one it found and the line of the delete, such as `zones still holds the box deleted at line 6`.
 
-**Not raised yet.** In version 0.5.0 the checker does not follow a reference to a deleted object, so this compiles without a warning. Assign `none` to the name next to the delete, and when the object came out of an array, remove its element with `shift()` or `remove()` as well, as the fix does. See [Lines and boxes](/script/visuals/lines-and-boxes).
+Assign `none` to the name on the same path as the delete, and when the object came out of an array, remove its element with `shift()` or `remove()` as well, as the fix does. See [Lines and boxes](/script/visuals/lines-and-boxes). The /trading page in current OpenAlgo releases still runs library 0.5.0, which compiles this shape without the warning.
 
 **Related.** [Reading an error](/script/errors/overview), [The editor](/script/getting-started/the-editor), [Repainting](/script/data/repainting), [Execution model](/script/language/execution-model), [Style guide](/script/writing/style-guide), [OS4xxx Runtime errors](/script/errors/runtime)
+
+
+## OS9xxx Import
+
+Source: https://openalgo.in/script/errors/import
+
+This page covers the OS9xxx codes of OpenScript (also called OpenAlgo Script): the findings of the importer. The importer is `importScript`, a function in the `openalgo-script` package that reads a script written in the version-annotated chart dialect, versions 5 and 6, and writes it as OpenScript. Its rule is that a translation that changes what a script means is worse than none, so it never approximates. An **error** is a statement it kept as a comment, because it could not translate it with its meaning, and you translate that statement by hand. A **warning** is a statement it did translate, whose meaning differs from the original in the way the message states. The importer is a library function for a host or an editor to call, and the /trading page does not offer it: current OpenAlgo releases ship library 0.5.0, and the importer arrived in 0.6.0.
+
+## How to read these
+
+The importer takes the text of a script and returns two things: the OpenScript it wrote, and its findings.
+
+```js
+import { importScript } from "openalgo-script";
+
+const { source, findings } = importScript(text, { name: "breakout.txt" });
+for (const f of findings) console.log(f.code, f.severity, f.span.line, f.message);
+```
+
+- **The findings point into the script you imported.** Each one is an ordinary diagnostic, with a code, a severity, a message and a fix, and its line and column are in the text you gave the importer, not in the OpenScript it wrote, so the caret lands under what the original author wrote.
+- **What comes back compiles.** The importer compiles its own output before it returns it, so `source` is a program whenever it is not empty. It is the empty string when nothing could be translated at all, as for [OS9001](#os9001), and for a script with no declaration or a library ([OS9004](#os9004)).
+- **A statement it did not translate is kept as a comment.** The unit is the whole statement at the top level, because a block with one line missing would mean something the original did not. Each of its source lines is written out behind a marker naming the code:
+
+```text
+// not translated (OS9003): rank = ta.percentrank(close, 20)
+```
+
+Read the errors first, because each one is a statement you have to write yourself, and one refusal can hold back the statements after it ([OS9005](#os9005)). Then read the warnings, and compare the first bars of the translated study with the original before you rely on it. Each entry below shows a short script in the source dialect, as plain text, beside the OpenScript it ends up as. [Importing a script](/script/writing/importing-a-script) walks through a whole import.
+
+## Errors: statements kept as a comment or not translated
+
+### OS9001 Version not read by the importer
+
+The importer reads scripts written for version 5 or 6 of the source dialect, and this one {found}.
+
+Fix: Bring the script up to version 5 or 6 in the source dialect, or translate it by hand, and import it again.
+
+A script in the source dialect opens with an annotation comment naming the dialect version it was written for, `//@version=5` or `//@version=6`, above its first line of code. The importer's table of built-ins and every rule it applies are written for those two versions. An earlier version names its built-ins differently and follows rules the importer does not model, so reading it as version 5 would give a translation that compiles and means something else. The whole script is refused: the source that comes back is empty, and this is the only finding. A script with no annotation is refused the same way, and the message says it declares no version.
+
+Bring the script up to version 5 or 6 and import it again, or translate it by hand.
+
+### OS9002 Construct with no equivalent
+
+The importer cannot translate {construct}, so the statement holding it was kept as a comment.
+
+Fix: Translate that statement by hand from the comment that holds it: the rest of the script was translated around it.
+
+Some forms of the source dialect have no OpenScript spelling that keeps their meaning: an `if` or a `switch` used as a value, a tuple other than the four the importer unpacks (from the source dialect's MACD, Bollinger band, supertrend and directional movement built-ins), a type, a method, an import, an array literal, a loop over a collection, and an equality test against `na`. A few more are written in forms the importer's reader does not accept. The message names the form in a few words, such as "an if used as a value" or "a comparison with na", and the whole statement holding it is kept as a comment.
+
+Translate the statement from its comment. An `if` used as a value is usually a ternary, as in the example: `side = close > open ? 1 : -1`. For a comparison with `na`, decide what the original meant before you write it: the source dialect answers it false on every bar, so the original never took that branch, while `isNone()` is true wherever the value is absent.
+
+### OS9003 Built-in with no mapping
+
+{name} is not one of the built-ins the importer maps, so the statement holding it was kept as a comment.
+
+Fix: Find the OpenScript library call that does the same job, check how it treats its first bars and absent values, and write the statement by hand.
+
+The importer translates a built-in only where its table says which OpenScript call computes the same thing and how the arguments line up. A built-in with no row in that table, or a name the source script never declares, is not guessed at: a function with a similar name can differ in its arguments, its warmup or its arithmetic, and a translation built on the wrong one would draw a line that looks right and is not. The message names the built-in as the source writes it, namespace included, and the whole statement holding it is kept as a comment.
+
+Find the OpenScript call that does the same job in the [reference](/script/reference/technical-analysis), check how it treats its first bars and absent values, and write the statement by hand. The example's built-in becomes `percentRank()`, which the importer's table does not hold.
+
+### OS9004 Declaration the importer cannot place
+
+The importer writes the declaration from one indicator or strategy call at the top level, and this script {found}.
+
+Fix: Give the source script exactly one indicator or strategy declaration at the top level, and import it again.
+
+An OpenScript file has exactly one declaration, `study()` or `strategy()`, and it decides whether the file may place orders. The importer writes it from the source's `indicator` or `strategy` call and from nothing else, because a declaration it invented would make that decision for you. A script with no declaration, and a library, which has no declaration an OpenScript file can carry, are refused whole: the source that comes back is empty and this is the only finding. A second declaration is kept as a comment, and the first one is used.
+
+Give the source script exactly one `indicator` or `strategy` declaration at the top level, and import it again.
+
+### OS9005 Reads a statement that was not translated
+
+{name} is declared by the statement at line {line}, which was not translated, so this statement that reads it was kept as a comment too.
+
+Fix: Translate the statement at line {line} by hand first, then this one, which was kept as a comment only because it reads {name}.
+
+A statement kept as a comment declares nothing in the output, so a later statement that reads one of its names would not compile. Rather than hand back a file that fails, the importer keeps each such statement as a comment too, in source order, and the message names the line that started the chain. One refusal can therefore produce several findings: in the example, the built-in with no mapping on line 3 is [OS9003](#os9003), and the average on line 4 that reads its result is OS9005, as is the plot of that average.
+
+Translate the statement at the line the message names first, then the statements that read it, which were kept only because of it.
+
+### OS9006 Argument with no equivalent
+
+{argument} changes what {call} computes or trades, and OpenScript has no equivalent the importer can write.
+
+Fix: Translate the call by hand, deciding what OpenScript should do in place of {argument}, or remove {argument} from the source script if the script does not depend on it.
+
+Some arguments change the numbers a script produces or the orders it sends, and OpenScript has nothing the importer can write for them: a declaration's timeframe, a strategy's margin or a pyramiding above one, a limit price on an entry, a trailing exit, a quantity on a close, and a quantity on an entry in a strategy that sizes its orders in anything but units, because the source dialect counts that quantity in contracts and OpenScript in the declaration's own unit. Left out in silence, any of them would give a translation that computes or trades something else.
+
+On the declaration or an input, the argument is left out and the call is kept, because the rest of the script needs them, so the translation runs without that argument's meaning until you put it back. Any other call carrying one is kept as a comment. Decide what OpenScript should do in its place: the example reads the daily timeframe the original declared with `req.timeframe()`.
+
+### OS9012 The translation does not compile
+
+The OpenScript compiler refused the translation of this statement with {code}, so the statement was kept as a comment.
+
+Fix: Look up {code} in this catalogue and translate the statement by hand in the form that code's fix describes.
+
+The importer compiles its own output before it returns it, so what it hands back always compiles. A statement can translate piece by piece and still be refused as a whole, because the importer does not work out the types of the source script: version 5 of the source dialect lets a number stand where a condition is expected, and the source dialect lets a name inside a block keep a history and lets values of two types meet where OpenScript refuses. The importer learns of these from the compiler, keeps the statement as a comment, and compiles again. The message names the code the compiler raised.
+
+Look that code up on its range page and translate the statement in the form its fix describes. In the example the compiler raised [OS2011](/script/errors/names-and-types#os2011), a condition that is not a `bool`, and the fix writes the test out: `volume > 0`.
+
+## Warnings: translated with a stated difference
+
+### OS9007 Warmup and absent bars follow OpenScript
+
+{call} became {target} here and wherever else the script calls it, and {target} follows OpenScript's own warmup, arithmetic and handling of absent values, which the original is not guaranteed to share.
+
+Fix: Compare the first bars of the translation with the original, and where the script depends on them, write the value as an explicit recurrence held in var, seeded the way the original seeds it.
+
+A windowed built-in, such as an average, an RSI or a highest high, is translated to the OpenScript call that computes the same quantity. What the two languages may not share is the detail: the first bar a value appears on, how a seeded average is seeded, the order the arithmetic is done in, and what an absent value inside the window does, which OpenScript carries through where the source dialect skips it. Over data with no absent values, and after the first bars, the two compute the same quantity, though the last digits can differ. On the first bars, and around a gap, the translation follows OpenScript's rules, which [Warmup](/script/language/warmup) and [Absent values](/script/language/absent-values) describe. The warning is given once per built-in, at its first call.
+
+Nothing needs to change unless the script depends on its first bars. Compare them with the original, and where they matter, write the value as an explicit recurrence held in a `var`, seeded the way the original seeds it.
+
+### OS9008 Whole-number division in version 5
+
+Both sides of this division are whole-number constants, which version 5 of the source dialect divides without a fractional part, and OpenScript keeps the fraction.
+
+Fix: If the script relied on the whole-number result, wrap the translated division in trunc(); otherwise leave it as it is.
+
+Version 5 of the source dialect divides two whole-number constants without a fractional part, so `7 / 2` is 3 there. Version 6 and OpenScript both keep the fraction, 3.5. A constant here is a whole-number literal, or a name the script sets once to one and never changes. The importer writes the division as OpenScript does and tells you, rather than guessing which result the author relied on. A version 6 script never raises this warning.
+
+If the original relied on the whole-number result, wrap the division in `trunc()`, as the example does; otherwise leave it as it is.
+
+### OS9009 Presentation argument left out
+
+{argument} changes how {call} is displayed or what it may allocate, not what it computes, and OpenScript has no equivalent, so the translation leaves it out.
+
+Fix: Nothing needs to change unless the display mattered; where it did, restyle the translated call with the arguments OpenScript does have, such as its colour, width and style.
+
+Many arguments in the source dialect are about the picture rather than the numbers: a line that tracks the price, a label size, a legend entry, a count of drawings to keep, a plot style OpenScript does not offer. Leaving one out changes how the chart looks and nothing the script computes or trades, so the call is translated without it, and the argument is reported rather than dropped in silence. The message names the argument and the call.
+
+Nothing needs to change unless the look mattered. Where it did, restyle the translated call with the options OpenScript has, such as its colour, width and style. See [Plots](/script/visuals/plots).
+
+### OS9010 Order placed under OpenScript's order model
+
+{call} was translated into OpenScript's order calls here and wherever else the script uses it, and OpenScript decides when an order fills, how a reversal and a repeated entry are handled and when an exit level starts to apply by its own order model.
+
+Fix: Backtest the translation beside the original and compare the two trade lists before relying on it, and adjust the order calls by hand where they part.
+
+An order call is translated into OpenScript's order calls as closely as the two order models allow. An entry becomes a close of any opposite position followed by the entry, guarded so that it never adds to a position already held on its side, which is what the source dialect does at its default pyramiding. An exit that names its entry is guarded by that entry's side, and a profit or loss given in ticks is multiplied by `chart.tickSize`. What still differs is the model: an OpenScript exit sets its level when it is called rather than when its entry fills, and a repeated entry past the pyramiding limit is refused rather than ignored. The warning is given once per order call, at its first use.
+
+Backtest the translation beside the original and compare the two trade lists before you rely on it, and adjust the order calls by hand where they part. A strategy that names no capital is given the source dialect's starting capital of 1,000,000, as the example shows, because OpenScript's own default is 100,000 and an order sized as a percentage would otherwise be a tenth of the size. See [Orders](/script/strategies/orders) and [Backtesting](/script/strategies/backtesting).
+
+### OS9011 Equality over two absent values
+
+Both sides of {operator} can be absent on the same bar, and OpenScript counts two absent values as equal, which the original is not guaranteed to do.
+
+Fix: If the original relied on two absent values never comparing equal, guard the translated comparison with isNone() on either side.
+
+OpenScript's equality is total: `none == none` is true and `none != none` is false, so a test for absence can be written as a comparison. The source dialect does not count two absent values as equal. Where both sides of `==` or `!=` can be absent on the same bar, which is every warmup bar of two averages, the translation and the original can take different branches on exactly those bars.
+
+If the original relied on two absent values never comparing equal, guard the comparison with `isNone()`, as the example does: `not isNone(fast) and fast == slow`. See [Absent values](/script/language/absent-values).
+
+**Related.** [Importing a script](/script/writing/importing-a-script), [Reading an error](/script/errors/overview), [OS2xxx Names and types](/script/errors/names-and-types), [Absent values](/script/language/absent-values), [Warmup](/script/language/warmup), [JavaScript library](/script/integrate/javascript)
 
 
 # Integrate
@@ -37622,17 +38170,17 @@ OpenScript is not a feature locked inside OpenAlgo. OpenAlgo itself is built on 
 | Registry | npm | PyPI |
 | Language | JavaScript and TypeScript (types included) | Python |
 | Runtime | Any modern browser; Node.js 22 or newer on a server | Python 3.12 or newer |
-| Holds | The compiler, the engine, the backtest, six headless editor functions (functions that return data and draw nothing), a chart adapter and a drop-in editor adapter | An engine that runs compiled programs. No compiler |
+| Holds | The compiler, the engine, the backtest, the importer, six headless editor functions (functions that return data and draw nothing), a chart adapter and a drop-in editor adapter | An engine that runs compiled programs. No compiler |
 | Runtime dependencies | None | None (the Python standard library only) |
 | Licence | Apache 2.0 | Apache 2.0 |
-| Version | 0.5.0 | 0.5.0 |
+| Version | 0.8.0 | 0.8.0 |
 
 ```bash
 npm install openalgo-script
 pip install openscript
 ```
 
-The two are released together at the same version. The source, the specification and the conformance suite are in the project repository at [github.com/marketcalls/openscript](https://github.com/marketcalls/openscript).
+The two are released together at the same version. The source, the specification and the conformance suite are in the project repository at [github.com/marketcalls/openscript](https://github.com/marketcalls/openscript). The /trading page in current OpenAlgo releases ships its own pinned copy, `openalgo-script` 0.5.0 with openalgo-charts 2.5.1, so a behaviour these pages describe as new in 0.6.0 or later is not what that page does.
 
 Apache 2.0 was chosen on purpose. A platform can embed the language in a commercial product without publishing its own source, which is what a shared language needs.
 
@@ -37738,7 +38286,7 @@ The JavaScript library is one package with an entry point per tier, so a consume
 
 | Import | Is | Depends on |
 |---|---|---|
-| `openalgo-script` | The compiler, the engine and the backtest | Nothing |
+| `openalgo-script` | The compiler, the engine, the backtest and the importer for scripts written in another chart language | Nothing |
 | `openalgo-script/editor` | Six headless language functions: highlight, complete, diagnose, hover, signature and format | The compiler |
 | `openalgo-script/adapters/charts` | Turns a compiled study into an indicator for openalgo-charts, the OpenAlgo charting engine | The compiler, and the chart as an optional peer dependency |
 | `openalgo-script/adapters/codemirror` | The drop-in editor adapter: wires the six functions into a popular open-source editor component | The editor functions, and that component as an optional peer dependency |
@@ -37784,7 +38332,7 @@ No instrument naming scheme, exchange rule or broker concept appears in the lang
 | A script cannot reach anything | It can only do what the instruction set exposes. There is no network, no file system and no access to the page or process it runs in |
 | A runaway script stops | The engine owns the loop, so loop, instruction, memory and time budgets are counters inside it |
 | One failing script takes nothing else down | Loading and running never throw. A failure is a diagnostic with a code and a source line, returned for that script alone |
-| Same program, same bars, same numbers | Arithmetic order, rounding and every library function's accumulation order are specified, so every conforming engine agrees to the last bit. The one exception in 0.5.0 is the transcendental functions, such as `exp()`, `pow()` and the trigonometric family, which still use the platform's own maths library and can differ in the last bit between machines |
+| Same program, same bars, same numbers | Arithmetic order, rounding and every library function's accumulation order are specified, so every conforming engine agrees to the last bit. That includes `exp()`, `log()`, `pow()` and the trigonometric family: since 0.7.0 both engines compute them with portable algorithms and one final rounding, never with the platform's own maths library |
 | No runtime dependencies | Both packages declare none, and the project's build checks every import against that |
 
 Those properties are why a platform can run many customers' scripts in one process, which a design that generates code cannot offer. A content security policy is the set of rules a web page sends the browser about what it may run; `unsafe-eval` is the permission that lets a page turn text into code, and the engine never needs it.
@@ -37797,14 +38345,14 @@ node --disallow-code-generation-from-strings server.mjs
 
 The switch refuses those two names in that one process and nothing wider. A child process gets its own options, so set it on every process you start, and keep anything that evaluates user text away from the engine's process. In a browser, a content security policy without `unsafe-eval` does the same job. If you run the engine in a web worker, serve the worker as a file from your own origin rather than building it from a blob, because a policy that allows scripts from your origin refuses a worker built from a blob URL.
 
-## Where 0.5.0 stands
+## Where 0.8.0 stands
 
 Stated plainly, so nothing on this list surprises you later:
 
-- **Studies are the finished surface.** Plots, fills, levels, markers, bar colours, backgrounds, drawing objects, tables, alerts and reads of other timeframes and instruments all run, on a chart and headless.
+- **Studies are the finished surface.** Plots, fills, levels, markers, bar colours, backgrounds, drawing objects, tables, alerts and reads of other timeframes and instruments all run, on a chart and headless. On openalgo-charts, a study with more than one table or a band coloured per bar needs chart version 2.5.4 or newer, stated to the [chart adapter](/script/integrate/charts-adapter#the-chart-version); without it such a study is refused before any bar runs rather than drawn in part.
 - **The backtest does not model everything, and says which.** A stop or target attached with `exit()` or `order.bracket()` does not fill yet. A quantity stated in cash or as a percentage of equity is refused before the first bar rather than filled. A strategy that scales in is charted at the size it ended up entering, which can overstate its drawdown. A script cannot read its own equity during a run.
-- **The Python engine runs less than the JavaScript one.** It has no drawing objects, tables or reads of other data, and no array functions, `print()`, date functions or a few chart and session facts. A script that needs one is refused at load, naming what is missing; [Python engine](/script/integrate/python-engine#what-this-engine-runs-and-what-it-refuses) has the list.
-- **The portability claim is still being tested.** The JavaScript and Python engines agree to the last bit on every case they both run, but both were written in the same repository. No engine written by anyone else has run the conformance suite yet, and no case yet asserts a per-bar indicator value.
+- **The Python engine holds the whole library and draws nothing.** It has every library entry the JavaScript engine does, arrays, `print()`, the calendar, drawing objects, tables and reads of other data included. It has no chart surface for markers, fills, levels, bar colours or backgrounds, and its calendar reads one timezone, UTC; [Python engine](/script/integrate/python-engine#what-this-engine-runs-and-what-it-refuses) has the details.
+- **The portability claim is still being tested.** The JavaScript and Python engines agree to the last bit on all 107 conformance cases they both run, per-bar indicator values among them, but both were written in the same repository. No engine written by anyone else has run the conformance suite yet.
 - **Some library names are planned.** The compiler refuses a planned name with [OS2020](/script/errors/names-and-types#os2020) where it is written.
 
 [Release notes](/script/resources/release-notes) carries the full list, release by release.
@@ -38035,6 +38583,30 @@ console.log(loaded.ok); // true
 
 > **`sourceHash` hashes exactly the text you give it. The program's own `source.hash` is taken over the normalised text, with a byte order mark dropped and CRLF line endings turned into LF, so hash `file.text` from the compile rather than the raw file. On a file saved with CRLF line endings the two differ.**
 
+### Importing a script
+
+`importScript(text, { name })`, from the main entry point, turns a script written in another chart language, the version-annotated chart dialect at versions 5 and 6, into OpenScript. It returns `{ source, findings }`:
+
+```js title="import.mjs"
+import { readFileSync } from "node:fs";
+import { importScript, renderDiagnostics, sourceFile } from "openalgo-script";
+import { compile } from "./compile.mjs";
+
+const text = readFileSync("imported.txt", "utf8");
+const { source, findings } = importScript(text, { name: "imported.txt" });
+
+// Findings point into the imported text, so render them against it.
+console.log(renderDiagnostics(sourceFile("imported.txt", text), findings));
+
+// The source is OpenScript that compiles, or "" when nothing could be translated.
+if (source !== "") {
+  const compiled = compile("imported.os", source);
+  console.log(compiled.ok); // true
+}
+```
+
+`source` is the OpenScript text, compiled by the importer before it is returned. `findings` are ordinary diagnostics in the [OS9xxx range](/script/errors/import), whose spans point into the text you imported: each statement is translated with its meaning, translated with a warning stating the difference, or kept as a comment line with an error. The function is pure, text in and text and findings out, and there is no command line. [Importing a script](/script/writing/importing-a-script) covers what it reads and what it refuses.
+
 ## Loading
 
 `load(program, options)` verifies a program in full before a single bar runs, then resolves its inputs. It never throws. It answers either `{ ok: true, engine, inputs }` or `{ ok: false, diagnostic }`, so a program that cannot run says so before your chart has drawn anything.
@@ -38081,7 +38653,7 @@ What each field turns on is decided at load, not discovered on bar four thousand
 
 | Field left out | What happens |
 |---|---|
-| `instrument` | Every `chart.tickSize`, `chart.lotSize` and other instrument fact reads as absent. With no `session`, the per-bar session facts are absent too, and `vwap()` never starts. A `session` stated without a `timezone` is refused at load with [OS6012](/script/errors/data#os6012), because a wall clock window with no zone is not a window |
+| `instrument` | Every `chart.tickSize`, `chart.lotSize` and other instrument fact reads as absent, and nothing stops the bar: a script tests it with `isNone()` or supplies a fallback with `orElse()`. With no `session`, the per-bar session facts are absent too, and `vwap()` never starts. A `session` stated without a `timezone` is refused at load with [OS6012](/script/errors/data#os6012), because a wall clock window with no zone is not a window |
 | `route` | The engine has no `orders` capability. A strategy is refused at load with [OS6006](/script/errors/data#os6006) naming it; every study still runs |
 | `requestBars` | The engine has no `req.symbol` capability, so a script that calls `req.symbol()` is refused at load. `req.timeframe()` needs no provider: the engine folds the chart's own bars |
 
@@ -38119,11 +38691,52 @@ The engine takes one plain object per bar, oldest first:
 
 The engine derives `hl2`, `hlc3`, `ohlc4` and `hlcc4` itself, with a fixed order of operations, so do not supply them.
 
-Two things are refused rather than run on. A run over no bars is [OS6010](/script/errors/data#os6010). A bar whose `time` is not strictly after the one before it is [OS6011](/script/errors/data#os6011), naming that bar. The engine never sorts, deduplicates or repairs what it is given, so either one is a fix on your side.
+Three things are refused rather than run on. A run over no bars is [OS6010](/script/errors/data#os6010). A bar handed over with no `time` at all is [OS6025](/script/errors/data#os6025), naming that bar. A bar whose `time` is not strictly after the one before it is [OS6011](/script/errors/data#os6011), naming that bar. The engine never sorts, deduplicates, dates or repairs what it is given, so each one is a fix on your side.
+
+### Bars as columns
+
+`engine.run` also takes the history as columns, one array per field, which is the form to use over a long range:
+
+```js title="columns.mjs"
+import { readFileSync } from "node:fs";
+import { load } from "openalgo-script";
+import { compile } from "./compile.mjs";
+
+const { program, file } = compile("ema-cross.os", readFileSync("ema-cross.os", "utf8"));
+const { engine } = load(program, { source: file, settings: { fast: 9, slow: 21 } });
+
+// The same two sessions as run.mjs, held as one typed array per field.
+const n = 150;
+const time = new Float64Array(n), open = new Float64Array(n), high = new Float64Array(n);
+const low = new Float64Array(n), close = new Float64Array(n), volume = new Float64Array(n).fill(12_000);
+for (let i = 0; i < n; i++) {
+  time[i] = Date.UTC(2025, 0, 6 + Math.floor(i / 75), 3, 45) + (i % 75) * 300_000;
+  close[i] = 820 + 6 * Math.sin(i / 8);
+  open[i] = close[i] - 0.4;
+  high[i] = close[i] + 0.9;
+  low[i] = close[i] - 1.1;
+}
+
+const run = engine.run({ time, open, high, low, close, volume });
+if (run.diagnostic) throw new Error(run.diagnostic.message);
+const fast = program.outputs.plots.find((p) => p.title === "Fast EMA");
+console.log("Fast EMA on the last bar:", engine.column(fast.channel).at(-1));
+```
+
+It prints `Fast EMA on the last bar: 816.7267522123716`, the same number `run.mjs` printed from records. The rules:
+
+| Rule | Means |
+|---|---|
+| Fields | `time`, `open`, `high`, `low` and `close`, with `volume` and `oi` optional, each any array-like of numbers: a plain array or a typed array such as `Float64Array` |
+| Absence | `null`, or `NaN`, because a typed array cannot hold `null`. A `NaN` in `time` is a bar with no time, OS6025 |
+| Length | The number of bars is the length of `time`. A shorter column reads as absent past its end |
+| Where | `engine.run`, and the answer to a request for another instrument's bars. `append` and `update` still take one record, because a live bar arrives one at a time |
 
 ## Running over history
 
-`engine.run(bars, states?)` runs the whole dataset in one call and returns `{ bars, diagnostic }`, one result per bar. It stops at the first bar that fails. The optional `states` array gives each bar's state (below); without it every bar is history.
+`engine.run(bars, states?)` runs the whole dataset in one call, as an array of records or as columns, and returns `{ bars, diagnostic }`, one result per bar. It stops at the first bar that fails. The optional `states` array gives each bar's state (below); without it every bar is history.
+
+`run` hands the whole dataset to every read of another timeframe before bar 0, so a `"lookahead"` read sees each higher timeframe bar in full from its first chart bar. A driver that appends settled history one bar at a time gets the same answer by calling `engine.history(bars)` first; without it, a lookahead read over appended bars reads each bucket only as far as it has arrived.
 
 An engine keeps every bar it has been given. A second `run` on the same engine continues after the last bar rather than starting again, so handing it the same history twice is refused with [OS6011](/script/errors/data#os6011) at its first bar. To start over, for a new instrument, a new interval or a corrected history, call `load` again and use the new engine. `engine.barCount` says how many bars an engine holds.
 
@@ -38231,7 +38844,7 @@ A script's own `limits` line sets its loop budget and retained history; [Limits]
 
 Run the engine in its own worker process, not on the thread that handles requests: an engine pass over a long history is pure computation with no pause in it. Treat a long run as a job, return an identifier at once and report progress on a channel you already keep open, because a proxy's read timeout will end a request long before a multi-year backtest does. Start that process with `--disallow-code-generation-from-strings`, as [Two libraries](/script/integrate/overview#what-the-design-guarantees) explains.
 
-The engine takes one object per bar rather than columnar arrays. That costs roughly three times the memory of typed arrays over a decade of one minute bars, which matters for a very long backtest inside a browser tab and not on a server. Build the bar objects straight from your data response rather than parsing into one shape and copying into another, so you hold one copy.
+Over a long range, hand the history over as [columns](#bars-as-columns). Measured over 900,000 one minute bars, about ten years of one market, the records held 104 MB against 43 MB for six columns, and a run of a one line study peaked at 877 MB of heap against 346 MB and took 9.7 seconds against 5.0. Inside a browser tab that is the difference between a backtest that runs and one that does not; on a server it decides little. Whichever form you use, build it straight from your data response rather than parsing into one shape and copying into another, so you hold one copy.
 
 **Related.** [Two libraries](/script/integrate/overview), [Chart adapter](/script/integrate/charts-adapter), [Editor integration](/script/integrate/editor-integration), [Backtesting API](/script/integrate/backtesting-api), [Host interface](/script/integrate/host-interface), [Compiled program](/script/integrate/compiled-program), [Execution model](/script/language/execution-model)
 
@@ -38240,7 +38853,7 @@ The engine takes one object per bar rather than columnar arrays. That costs roug
 
 Source: https://openalgo.in/script/integrate/charts-adapter
 
-The chart adapter draws a compiled study on openalgo-charts, the OpenAlgo charting engine. One call, `descriptorFor`, turns a compiled program into the chart's indicator descriptor: the legend row, the settings dialog, the plots and everything else the script declares. The chart then calls back into the adapter whenever it needs values, and the adapter runs the engine. This page covers wiring it up, the options you pass, how a live bar and a settings change reach the study, and what the chart does not draw in 0.5.0.
+The chart adapter draws a compiled study on openalgo-charts, the OpenAlgo charting engine. One call, `descriptorFor`, turns a compiled program into the chart's indicator descriptor: the legend row, the settings dialog, the plots and everything else the script declares. The chart then calls back into the adapter whenever it needs values, and the adapter runs the engine. This page covers wiring it up, the options you pass, which chart version draws what, how a live bar and a settings change reach the study, and what the chart does not draw in 0.8.0.
 
 The adapter computes nothing itself. Every value on the chart is the engine's, so the chart and a backtest of the same script cannot disagree.
 
@@ -38257,7 +38870,7 @@ The chart is an optional peer dependency of `openalgo-script`, and the adapter n
 The script is the EMA cross from [JavaScript library](/script/integrate/javascript). This module runs in the browser page that holds the chart, and uses the `compile` helper from that page:
 
 ```js title="chart.mjs"
-import { createChart, registerIndicator } from "openalgo-charts";
+import { createChart, registerIndicator, VERSION } from "openalgo-charts";
 import { descriptorFor } from "openalgo-script/adapters/charts";
 import { compile } from "./compile.mjs";
 
@@ -38273,6 +38886,7 @@ if (!compiled.ok) throw new Error(compiled.diagnostics.map((d) => `${d.code} lin
 // 3. Turn it into an indicator descriptor and register it with the chart.
 const descriptor = descriptorFor(compiled.program, {
   source: compiled.file,
+  chartVersion: VERSION, // the chart library's own version: see The chart version
   category: "My scripts",
   instrument: {
     exchange: "NSE",
@@ -38308,11 +38922,11 @@ Everything a script declares is fixed before its first bar, so the descriptor ca
 | `range` in `study()` | `range`: the pane's fixed scale |
 | Each `input()` | One row of `inputs`: the settings dialog, with each input's label, default, bounds, options and group |
 | Each `plot()` and `plotCandles()` | One entry of `plots`, with its style, colour, width, scale and price format |
-| Each `fill()` | One entry of `fills`, a band between two plots |
+| Each `fill()` | One entry of `fills`, a band between two plots. A band whose colour the script computes per bar also carries `colorBy`, on a chart that reads it |
 | Each `level()` | `levels`, drawn at the last bar's price |
 | Each `signal()` | `markers`: every marker the last calculation produced |
 | `barColor()` and `background()` | `barColors` and `background`: one colour per bar, `null` for none |
-| `table()` and `cell()` | `table`: the grid as the last executed bar left it |
+| `table()` and `cell()` | `table`: the first grid as the last executed bar left it. On a chart that reads it, `tables` as well: every grid, each under its declaration's key |
 | `draw.line()`, `draw.box()` and the other drawing objects | `draws`: every object the script currently holds |
 | Each `alert()` | One entry of `alerts`, the conditions a user can subscribe to |
 | A read of another instrument with `req.symbol()` | `attach`: the lifecycle that fetches its bars |
@@ -38329,6 +38943,7 @@ A member is present only when the script declares something for it, so a study w
 |---|---|
 | `id` | The registry id. Defaults to the source hash, as above |
 | `category` | The picker category, used when the script's own `group` is empty |
+| `chartVersion` | The chart library's exported `VERSION` string, which says what the chart can draw. See [The chart version](#the-chart-version) |
 | `settings` | The stored settings, for declaration options written with `input()`. See below |
 | `instrument` | Instrument facts the chart does not hold: the exchange, the lot size, `hasVolume`, the session, and anything else in the [instrument record](/script/integrate/host-interface#instrument-facts) |
 | `markerColor` | The colour of a marker whose script named none. Defaults to a neutral grey |
@@ -38344,13 +38959,46 @@ On every calculation the chart hands the adapter what it knows: the symbol, the 
 
 **State the session.** A chart holds an interval and a timezone, and no exchange calendar. `session.isFirstBar`, `session.isLastBar` and every study anchored to them, `vwap()` among them, read the session in the instrument record. A host that states no session gets those facts absent on every bar, which is honest and leaves a VWAP study with an empty pane. For NSE and BSE equities and NFO contracts the regular session is `09:15` to `15:30`, Monday to Friday, in `Asia/Kolkata`. Read it from your own market calendar rather than writing it in, since special sessions and changed timings happen. The /trading page does this: it fetches each instrument's record, session included, from OpenAlgo when a study is first drawn, and builds the study again when the record arrives. The adapter reads every session and calendar call in the chart's timezone, which it takes over the record's, so a session written for `Asia/Kolkata` on a chart the user has set to another zone would land hours off. Leave the session out when the two zones differ, as /trading does; the session facts are then absent rather than wrong.
 
+## The chart version
+
+Two things a study can declare need hooks that openalgo-charts added in its version 2.5.4: a band whose colour the script computes per bar, and more than one `table()`. A chart ignores a hook it does not know, so the adapter has to be told which chart it is drawing on. Pass the chart library's own exported `VERSION` string as `chartVersion`, as `chart.mjs` above does:
+
+```js
+import { VERSION } from "openalgo-charts";
+
+const descriptor = descriptorFor(compiled.program, { chartVersion: VERSION });
+```
+
+It is a version rather than a switch per feature because it is one fact you already hold, and it moves with the chart you actually installed.
+
+| Chart version you state | What the adapter does |
+|---|---|
+| 2.5.4 or newer | Draws every table and shades a computed band colour bar by bar |
+| None, a version before 2.5.4, a prerelease of 2.5.4 such as `2.5.4-rc.1`, or a string that is not a version | Refuses a study that declares either with [OS6024](/script/errors/data#os6024), before any bar runs. Every other study draws in full either way |
+
+On a chart that reads the two hooks:
+
+- **Every table is drawn**, each in the corner its own `position` names. Each grid reaches the chart under its declaration's key, which does not change between recalculations, so the chart keeps a grid rather than building it again on every tick. The single `table` hook still carries the first grid, for a chart without the list. Two tables in the same corner are drawn one over the other, so give each its own `position`.
+- **A computed band colour is shaded bar by bar.** Each bar takes the colour the script computed there for the side the band is on, decided the way the chart decides it: the first plot at or above the second. An absent colour leaves that bar unshaded, a side the script did not compute keeps the colour it declared, and `opacity` dims a computed colour exactly as it dims a constant one.
+
+**The refusal names the version you stated.** OS6024 is thrown on the first calculation as an `IndicatorInputError`, before any bar runs, and its message ends by saying what the host stated, so you can tell a missing option from an old chart:
+
+```text
+This host cannot draw the table "Detail", the second grid this study declares: a chart pane draws one grid before chart version 2.5.4, and this host stated version 2.5.1.
+This host cannot draw a band's colour that is computed per bar: a chart's band takes one colour for the whole run before chart version 2.5.4, and this host stated no chart version.
+```
+
+A host that type checks the descriptor finds these as optional members: `ChartFill.colorBy`, called with a `ChartFillContext` for one bar, and `ChartDescriptor.tables`, which returns `ChartTableSpec` entries. Both context and spec types are exported from `openalgo-script/adapters/charts`.
+
+The /trading page in current OpenAlgo releases still runs library 0.5.0 on openalgo-charts 2.5.1, which draws only a study's first table and draws a band whose colour is computed per bar in its first plot's colour, faded.
+
 ## Settings, and when to build again
 
 Some parts of the descriptor are values fixed when it is built; others are functions the chart calls with its current settings each time.
 
 | Resolved when `descriptorFor` runs | Resolved again on every call |
 |---|---|
-| `id`, `name`, `category`, `placement`, `inputs`, `plots`, `fills`, `alerts` | `calc`, `calcTail`, `range`, `levels`, `barColors`, `background`, `markers`, `table`, `draws`, `attach` |
+| `id`, `name`, `category`, `placement`, `inputs`, `plots`, `fills`, `alerts` | `calc`, `calcTail`, `range`, `levels`, `barColors`, `background`, `markers`, `table`, `tables`, `draws`, `attach` |
 
 Most settings changes need nothing from you: `study.setSettings` reaches the second column at once. The first column matters only for a declaration option a script writes from an input, such as `study("Bands", precision = input(2, "Decimals"))` or a plot width written `width = input(2, "Width")`. Those are part of the declared shape, so they read the `settings` you passed to `descriptorFor`. A host that keeps one descriptor per study instance passes that instance's stored settings and builds the descriptor again when the user changes one of them.
 
@@ -38375,7 +39023,7 @@ The engine never throws, and a chart's calculation has nowhere to put a failure 
 
 | `error.name` | Raised when | What the user can do |
 |---|---|---|
-| `IndicatorInputError` | The program was refused before any bar ran: a setting ([OS6019](/script/errors/data#os6019)), a limit, or a capability the host did not give ([OS6006](/script/errors/data#os6006)) | For a setting, correct it in the study's dialog; the chart treats this name as an input error the user can fix. A limit or a capability is the host's to fix |
+| `IndicatorInputError` | The program was refused before any bar ran: a setting ([OS6019](/script/errors/data#os6019)), a limit, a capability the host did not give ([OS6006](/script/errors/data#os6006)), or something the chart cannot draw ([OS6024](/script/errors/data#os6024)) | For a setting, correct it in the study's dialog; the chart treats this name as an input error the user can fix. A limit, a capability or a chart version is the host's to fix |
 | `OpenScriptError` | The program ran and stopped on a bar | Fix the script. `error.diagnostic.span.line` says where |
 
 `error.diagnostic` has the catalogue code, the message, the fix and the source position, the same record [JavaScript library](/script/integrate/javascript#reading-a-diagnostic) describes. Show those rather than a generic failure.
@@ -38436,18 +39084,17 @@ const owner = candleOwner([
 
 Backgrounds need no such rule. Every colour carries its own alpha, and two translucent backgrounds compose.
 
-## What the chart does not draw in 0.5.0
+## What the chart does not draw in 0.8.0
 
 The compiled program carries all of a script's outputs; a few have no field on the chart's descriptor to land in, and are left out rather than approximated:
 
 | Script feature | On the chart |
 |---|---|
-| A `fill()` whose colour changes per bar | Drawn in its first plot's colour, faded. The chart's band takes one colour |
 | A table's title | Not shown. The chart's grid has no heading |
-| A second `table()` in one study | Only the first grid is drawn |
 | An alert's `frequency` | Every alert is checked once per new bar, which is `"oncePerBar"` |
+| A band that computes one side's colour and names none for the other | The side with no colour is drawn in the chart's own default band colour |
 
-Each of these is a fact about this chart's descriptor, not about the language. Another host reading the same compiled program may draw all of it.
+A second table and a band coloured per bar are not on this list: they are drawn on a chart of version 2.5.4 or newer and refused on any other, as [The chart version](#the-chart-version) explains, never drawn in part. Each of these is a fact about this chart's descriptor, not about the language. Another host reading the same compiled program may draw all of it.
 
 ## Writing an adapter for another chart
 
@@ -38623,6 +39270,8 @@ With the pointer on `rsi` in the third line, `hover` answers:
 
 `span` is the word to underline. Fields with nothing to say, such as `declaredAt` for a library name, are left out.
 
+Version 0.6.0 corrected the one-line description `hover` gives for six drawing calls. In 0.5.0 it was cut short, so `draw.setFrom()` was described as "nothing" and `draw.delete()` as "box"; an editor on 0.6.0 or newer shows the full sentences.
+
 | The word is | You get |
 |---|---|
 | A library name | Every signature, its one-line description, and `warmup`: the first bar it can have a value on |
@@ -38656,7 +39305,7 @@ The call being written, and which parameter the cursor is in. It works on a call
 
 **The default shown is the default the compiler applies**, for an ordinary library call and for the output declarations, `plot()`, `plotCandles()`, `fill()`, `level()`, `signal()`, `alert()`, `input()`, `table()`, `barColor()` and `background()`, whose optional arguments become fields of the compiled program. Inside `plot(close, ` it reports `color` defaulting to `none`, `width` to `1.5` and `style` to `"line"`, the values the compiler writes. A written label decides the active parameter, because a named argument may sit anywhere after the positional ones. While a call is unfinished its overload is chosen by the number of arguments alone; once the arguments are written, `diagnose` reports any call that resolves to something other than what was meant.
 
-In 0.5.0 `signature` returns nothing inside `study(` or `strategy(`: the two declaration lines have no entry for it to read. Link those to the [declarations reference](/script/reference/declarations) instead.
+In 0.8.0 `signature` returns nothing inside `study(` or `strategy(`: the two declaration lines have no entry for it to read. Link those to the [declarations reference](/script/reference/declarations) instead.
 
 ## format
 
@@ -38748,7 +39397,7 @@ A platform with its own editor writes its own adapter in the same shape and keep
 
 Source: https://openalgo.in/script/integrate/backtesting-api
 
-This page covers backtesting from code with `openalgo-script`: one call that runs a compiled strategy over your bars against a simulated order destination and returns a **run record**. It is the same backtest the Backtest panel in the /trading page runs in the browser, so a report your server produces agrees with the one a trader sees. Read it to build a backtest service, a batch job over many instruments, or a report page of your own.
+This page covers backtesting from code with `openalgo-script`: one call that runs a compiled strategy over your bars against a simulated order destination and returns a **run record**. It is the same backtest the Backtest panel in the /trading page runs in the browser, so a report your server produces agrees with the one a trader sees when both run the same library version. Read it to build a backtest service, a batch job over many instruments, or a report page of your own.
 
 The run record is the product, not a number printed at the end. It carries the program, the bars, the settings you chose, every order, every fill, the ledger and the report, so a result can be checked again months later and handed to another engine as a test case.
 
@@ -38867,6 +39516,8 @@ backtest(program, bars, settings, options?) -> { ok: true, record } | { ok: fals
 
 Every bar you hand over executes. The report window decides which of them the report is about.
 
+The backtest hands the whole of `bars` to every read of another timeframe before bar 0, so a `"lookahead"` read of `req.timeframe()` reads a higher timeframe bar's final value from its first chart bar, as the mode says. Confirmed and developing reads stop at the bar being executed. Releases before 0.6.0 read a lookahead bucket in a backtest only as far as it had run, so a lookahead backtest stored under an earlier release can trade differently when run again on 0.8.0. The /trading page in current OpenAlgo releases still runs library 0.5.0, which reads a lookahead bucket in its Backtest panel that earlier way.
+
 ### The contract
 
 The contract is the instrument the money is priced under, and the one part of the settings you must state:
@@ -38968,7 +39619,7 @@ A failure on a bar during the run does not refuse the run: it is recorded in the
 
 | Field | Holds |
 |---|---|
-| `recordVersion` | The record format's version, 4 in 0.5.0 |
+| `recordVersion` | The record format's version, 4 in 0.8.0 |
 | `engine` | The engine's name and version |
 | `languageVersion` | The language version the program was compiled under |
 | `program`, `programHash` | The compiled program itself, and its hash |
@@ -39065,7 +39716,7 @@ A backtest over years of minute bars is pure computation with no pause in it. Th
 
 Put the honest limit of any backtest in your own interface as well: a backtest assumes the fills it models. It cannot know that your order would have moved the price, that the spread was wider than the bar suggests, or that the exchange was slow that morning. Modelled costs are an estimate, and modelled slippage is a guess with a number attached.
 
-## What the 0.5.0 backtest does not model
+## What the 0.8.0 backtest does not model
 
 - **A bracket's stop and target do not fill.** A strategy that attaches them with `exit()` or `order.bracket()` runs, but those levels are never filled. Manage exits in the script with `close()`.
 - **Quantities in cash or a percentage of equity are refused**, as above. State quantities in units or lots.
@@ -39100,7 +39751,8 @@ pip install openscript
 | Python | 3.12 or newer |
 | Dependencies | None. The standard library only, and not the parts of it that would stop two runs agreeing: no network, threads, randomness or locale inside the package |
 | Licence | Apache 2.0 |
-| Version | 0.5.0, released together with `openalgo-script` |
+| Version | 0.8.0, released together with `openalgo-script` |
+| Publishing | Since 0.6.0, uploaded by the project's release workflow through trusted publishing, with no stored token. Each file on the index carries a signed attestation of the workflow run that built it |
 | Code generation | None. No string evaluator, no statement executor, no import by a computed name and no objects loaded out of bytes, so many people's scripts can run in one process |
 
 ## Getting a program to Python
@@ -39169,7 +39821,7 @@ closes = [100.0, 102.0, 101.0, 105.0]
 previous = None
 for index, close in enumerate(closes):
     bar = Bar(time=float(start + index * 60000), open=close, high=close, low=close, close=close)
-    library.at_bar({"high": bar.high, "low": bar.low, "close": bar.close,
+    library.at_bar({"time": bar.time, "high": bar.high, "low": bar.low, "close": bar.close,
                     "previousClose": previous, "volume": bar.volume,
                     "isSessionFirst": index == 0}, index == 0)
     result = run.execute_bar(index, bar, CLOSED, supplied=len(closes), instrument=INSTRUMENT)
@@ -39181,8 +39833,8 @@ for index, close in enumerate(closes):
 # The newest bar is still moving: execute it twice at the same index.
 for close in (106.0, 104.0):
     bar = Bar(time=float(start + 4 * 60000), open=close, high=close, low=close, close=close)
-    library.at_bar({"high": close, "low": close, "close": close, "previousClose": previous,
-                    "volume": bar.volume, "isSessionFirst": False}, False)
+    library.at_bar({"time": bar.time, "high": close, "low": close, "close": close,
+                    "previousClose": previous, "volume": bar.volume, "isSessionFirst": False}, False)
     result = run.execute_bar(4, bar, MOVING, supplied=5, instrument=INSTRUMENT)
     print("moving", close, result.columns, result.applied_channels)
 ```
@@ -39204,7 +39856,7 @@ Column 0 is the plot and column 1 the marker. Bar 0 has no mean yet, so the plot
 from openscript.run import load, load_text
 ```
 
-`load_text(text, settings, library, limits, capabilities, read_time)` reads the canonical text and then does everything `load` does. `load(raw, ...)` takes a program object built in the same process, which never was text and has nothing to be canonical about. Both return a `LoadResult` with `.run`, `.diagnostic` and the property `.ok`; exactly one of the first two is `None`.
+`load_text(text, settings, library, limits, capabilities, read_time, instrument, provider)` reads the canonical text and then does everything `load` does. `load(raw, ...)` takes a program object built in the same process, which never was text and has nothing to be canonical about. Both return a `LoadResult` with `.run`, `.diagnostic` and the property `.ok`; exactly one of the first two is `None`.
 
 | Argument | What it is |
 |---|---|
@@ -39214,10 +39866,14 @@ from openscript.run import load, load_text
 | `limits` | `openscript.budget.EngineLimits`. Leave the default, `DEFAULT_LIMITS`, unless you have a reason |
 | `capabilities` | The capability tags this run serves, from `capabilities(...)` |
 | `read_time` | How a written date becomes an instant, for a `time` input. Without it the date is read as UTC |
+| `instrument` | The instrument record, which reads of another timeframe or instrument are planned against: the interval they are compared with and the zone a day is dated in |
+| `provider` | For `req.symbol()`: a function that takes a `RequestQuery` and answers with `Answered(bars)`, `Pending()`, `Refusal(code, reason)` or `None`, all from `openscript.request_plan`. A run given a provider serves the `req.symbol` tag; without one, a program that reads another instrument is refused at load naming it |
 
 **The library is a seam, not an import.** The machine asks the library for its manifest at load and for each call during a bar. `Serving` from `openscript.adapter.serving` joins the engine's library tables to that seam. Build one per run: `Serving()` for a study, `Serving(ledger)` for a strategy.
 
-**Capabilities are what this run serves.** A program needing a tag missing from the list is refused at load, naming it, rather than run with a hole in it. `capabilities()` gives the machine's own tags; `capabilities("orders")` adds the tag a strategy needs.
+**Capabilities are what this run serves.** A program needing a tag missing from the list is refused at load, naming it, rather than run with a hole in it. `capabilities()` gives the machine's own tags, which cover arrays, user functions, loops, alerts and `req.timeframe()`. Add the tags your host serves: `capabilities("orders")` for a strategy, and `capabilities("objects", "tables")` to run drawing objects and tables.
+
+**A run over settled history can see the whole of it.** `run.history(bars)`, called before bar 0 with the list of `Bar` records you are about to execute, hands the dataset to every read of another timeframe, which is what a `"lookahead"` read reads: each higher timeframe bar in full from its first chart bar. A live runner does not call it.
 
 ### When a load is refused
 
@@ -39253,23 +39909,23 @@ Four of those mean "this engine does not have that" rather than "the program is 
 
 ## What this engine runs, and what it refuses
 
-The Python engine is built for strategies and for studies that produce numbers. It does not carry a chart's drawing surface, and in 0.5.0 some of the library is still missing from it. Each gap is refused at load, by name, never answered with an empty value:
+The Python engine is built for strategies and for studies that produce numbers. In 0.8.0 it holds every library entry the JavaScript engine does, 251 of 251, which the project's build checks every time it runs. What it does not carry is a chart's drawing surface. A capability your run does not serve is refused at load, by name, never answered with an empty value:
 
 | Script uses | In the Python engine |
 |---|---|
-| Plots, fills, levels, markers, bar colour, background, alerts | Run. The values arrive in the bar result |
+| Plots, fills, levels, markers, bar colour, background | Computed. Each value arrives in its channel in the bar result's `.columns`; drawing them is yours |
+| Alerts | Run. A decided realtime bar returns them in `.alerts` |
 | Orders, positions and the strategy ledger | Run, with `capabilities("orders")` and `Serving(ledger)` |
-| User functions, loops, `var`, and array literals read by index | Run |
+| User functions, loops, `var`, arrays and the array functions such as `push()`, `sort()` and `avg()` | Run |
 | Moving averages, oscillators and the other indicators, the maths, string and colour functions | Run |
-| Array functions such as `push()`, `size()`, `sort()` and `avg()` | Refused: OS6004 naming the function |
-| `print()` | Refused: OS6004 naming `print` |
-| The `date` functions, such as `date.hour()` and `date.dayOfWeek()` | Refused: OS6004 naming the function |
-| `session.isIn()`, `session.isLastBar`, `chart.intervalMinutes`, `chart.isIntraday` | Refused: OS6004 naming the function |
-| Drawing objects such as `draw.line()` | Refused: OS6006 naming `objects` |
-| `table()` | Refused: OS6006 naming `tables` |
-| `req.timeframe()` and `req.symbol()` | Refused: OS6006 naming the tag. The engine is handed no other bars |
+| `print()` | Run. Each call comes back in `.applied` as a log record: see [What comes back](#what-comes-back) |
+| Drawing objects such as `draw.line()`, and `table()` | Run, with `capabilities("objects", "tables")`. `run.objects.drawings()` gives the objects the script holds and `run.objects.grids` the cells the last bar wrote. Without the tags: OS6006 naming `objects` or `tables` |
+| `req.timeframe()` | Run, in all three modes, folded from the bars you execute. Pass `instrument` to `load_text`. An intraday timeframe such as `"15"` folds in any zone; a day, week or month is dated by the calendar, in the `date` row below |
+| `req.symbol()` | Run, with a `provider` passed to `load_text`. Without one: OS6006 naming `req.symbol` |
+| The `date` functions, such as `date.hour()`, `session.isIn()`, and a read of a day, week or month | Run, but the engine's calendar reads one timezone, `UTC`. In any other zone, `Asia/Kolkata` included, they read as absent |
+| `session.isFirstBar`, `session.isLastBar`, `chart.intervalMinutes`, `chart.isIntraday` | Run. The two session facts are the ones you state in `at_bar`, below |
 
-Run a script that needs any of those on the JavaScript engine, which serves them all. `capabilities()` lists `arrays` even though the array functions are missing, so check a script against this table, or load it once, before you deploy it to a Python server.
+The calendar is the gap that matters on an Indian market: a script that reads the hour of a bar, tests a time window or reads the daily timeframe in `Asia/Kolkata` gets absent values from this engine. Run such a script on the JavaScript engine, which reads every zone, or load it once over a day of bars and check its columns before you deploy it to a Python server.
 
 ## The bar cycle
 
@@ -39282,7 +39938,7 @@ One call is one execution of one bar, all eleven steps of the bar cycle in order
 | Argument | What it means |
 |---|---|
 | `index` | Which bar, counting from 0. **The same index twice is a re-execution of that bar, not a new one** |
-| `bar` | `Bar(time, open, high, low, close, volume, oi)`. `time` is the bar's open instant in UTC milliseconds. A price or volume you do not have is left absent, never zero and never carried forward |
+| `bar` | `Bar(time, open, high, low, close, volume, oi)`. `time` is the bar's open instant in UTC milliseconds. A price or volume you do not have is left absent, never zero and never carried forward. A bar with no time is refused with [OS6025](/script/errors/data#os6025), and a time not after the bar before it with [OS6011](/script/errors/data#os6011), before any step runs |
 | `state` | `BarState(is_new, is_confirmed, is_realtime, updates)`: the four facts only the side that built the bar knows |
 | `supplied` | How many bars you have supplied. It decides `bar.isLast` and nothing else |
 | `instrument` | The instrument record as a dictionary, the same fields as on [Host interface](/script/integrate/host-interface#instrument-facts). The `chart` namespace and tick rounding read it |
@@ -39300,10 +39956,12 @@ Three of those decide more than they look like they do:
 
 | Fact | Value |
 |---|---|
+| `time` | This bar's open time, UTC milliseconds. The `date` functions and `session.isIn()` read it |
 | `high`, `low`, `close` | This bar's prices |
 | `previousClose` | The previous bar's close, `None` on the first bar |
 | `volume` | This bar's volume, or absent |
-| `isSessionFirst` | Whether this bar opens a trading session, by your own calendar. For NSE, the 09:15 IST bar |
+| `isSessionFirst` | Whether this bar opens a trading session, by your own calendar. For NSE, the 09:15 IST bar. `session.isFirstBar` and `vwap()` read it |
+| `isSessionLast` | Whether this bar is the last of the session's schedule. For NSE, the bar that ends at 15:30 IST. `session.isLastBar` reads it |
 
 The second argument is whether this is bar 0. **This is the one place a forgotten line produces a study that runs and is wrong.** A fact you do not state is absent, so a study built on it draws an empty line, `trueRange()` and everything built on it among them, and nothing says why.
 
@@ -39314,11 +39972,24 @@ The second argument is whether this is bar 0. **This is the one place a forgotte
 | `.index` | The bar this was |
 | `.columns` | One value per channel, by channel index. `None` where nothing wrote the channel |
 | `.applied_channels` | The deferred channels (markers and alert conditions) this execution committed. Empty on a bar that is not decided |
-| `.applied` | The order calls a decided bar left behind, in the order the bar made them. Each has `.name`, `.arguments` and `.position` |
+| `.applied` | The order calls and `print()` calls a decided bar left behind, in the order the bar made them. Each is a `PendingEffect` with `.name`, `.effect`, `.arguments` and `.position`, and `.effect` says whose it is: `"order"` for the ledger, `"log"` for a print |
 | `.alerts` | `Alert(key, title, message, bar, time)`, raised only on a decided realtime bar |
 | `.diagnostic` | What stopped the bar, or `None`. Read `.ok` |
 
 `.columns` always carries every channel, so a line redraws on every tick of a moving bar; `.applied_channels` says which of the marker and alert channels count. Draw the line, and commit the marker only when its channel is in `.applied_channels`.
+
+A script's log is built from the same records. `Logbook` from `openscript.logbook` turns the print records of each execution into log lines, each carrying the bar it was written on:
+
+```python
+from openscript.logbook import Logbook
+
+book = Logbook()
+# After each execution of bar `index`:
+book.write(result.applied, index, bar.time)
+# book.rows(): [{"barIndex": 0, "time": 1735703100000.0, "value": 100.5}, ...]
+```
+
+`write` takes only the print records and passes over the orders, so hand it `.applied` whole. `Logbook(limit=n)` keeps at most `n` lines and counts the rest in `.dropped` rather than cutting the log short in silence.
 
 **A bar that fails stops there.** Its later steps do not run, its result's `.columns` is empty, and `.diagnostic` has the code and position. The failure never escapes as an exception, so a process running many scripts gets a diagnostic about one of them and nothing else. The run is still loaded afterwards; whether a failed bar ends it is your decision.
 
@@ -39350,7 +40021,7 @@ The order of the moments between two bars is fixed:
 1. Deliver every frame your destination sent since the last bar: `ledger.deliver(frame)`.
 2. Fold them: `ledger.settle()`.
 3. Execute the bar.
-4. Place what the bar decided, from `result.applied`.
+4. Place what the bar decided, from the `"order"` records in `result.applied`.
 
 A driver that folded after the bar would let a script react inside the bar its own order was sent in, and one that folded during the bar would give two executions of a forming bar two different positions to read.
 
@@ -39414,16 +40085,16 @@ for index, bar in enumerate(bars):
     waiting = []
 
     # 3. Execute the bar.
-    library.at_bar({"high": bar.high, "low": bar.low, "close": bar.close,
+    library.at_bar({"time": bar.time, "high": bar.high, "low": bar.low, "close": bar.close,
                     "previousClose": previous, "volume": bar.volume,
                     "isSessionFirst": index == 0}, index == 0)
     result = run.execute_bar(index, bar, CLOSED, supplied=len(bars), instrument=INSTRUMENT)
     if not result.ok:
         raise SystemExit(f"bar {index}: {result.diagnostic.code}")
 
-    # 4. Place what the bar decided.
+    # 4. Place what the bar decided. Print records are the log's, not the ledger's.
     appended = len(ledger.rows())
-    for effect in result.applied:
+    for effect in (one for one in result.applied if one.effect == "order"):
         placed = ledger.place(effect.name, effect.arguments,
                               IntentBar(index=index, time=bar.time), effect.position)
         if placed.refusal is not None:
@@ -39471,10 +40142,10 @@ python -m openscript --actual <case-directory>
 ```
 
 ```json
-{"engineOnly":true,"languageVersions":[1],"name":"openscript","profile":"strategy","schemaVersion":"1.1","version":"0.5.0"}
+{"engineOnly":true,"languageVersions":[1],"name":"openscript","profile":"strategy","schemaVersion":"1.1","version":"0.8.0"}
 ```
 
-`--describe` states what the engine claims. The other two run one case directory and read one JSON object on standard input, `{"program": "<the canonical program text>"}`, because the engine has no compiler to turn the case's `script.os` into a program itself: the first compares against the case's expected files, the second prints what the engine computed so two engines can be compared directly.
+`--describe` states what the engine claims, and since 0.6.0 it answers from a copy installed with `pip`, reading its name and version from the record the installer wrote. The other two run one case directory and read one JSON object on standard input, `{"program": "<the canonical program text>"}`, because the engine has no compiler to turn the case's `script.os` into a program itself: the first compares against the case's expected files, the second prints what the engine computed so two engines can be compared directly.
 
 **Related.** [Two libraries](/script/integrate/overview), [JavaScript library](/script/integrate/javascript), [Compiled program](/script/integrate/compiled-program), [Host interface](/script/integrate/host-interface), [Backtesting API](/script/integrate/backtesting-api), [Your own engine](/script/integrate/conformance), [Sandbox and live](/script/strategies/sandbox-and-live)
 
@@ -39510,7 +40181,7 @@ The compiler turns that into this program, shown laid out for reading:
 {
   "openscript": { "format": "1.1", "language": 1 },
   "requires": ["core.1"],
-  "compiler": { "name": "openscript", "version": "0.5.0" },
+  "compiler": { "name": "openscript", "version": "0.8.0" },
   "source": {
     "hash": "sha256:b17e0f0cb4173846316ce2c59f7ee22ce1f7b031eaca75e27596dd4456b2a493",
     "lines": 13,
@@ -39647,7 +40318,7 @@ A program is one object with these fields. An empty table is written as an empty
 
 ### Two versions, two jobs
 
-`openscript.format` versions the **format**: field names, the instruction set, the encoding. It is `"1.1"` in 0.5.0. `openscript.language` versions **meaning**: which front end parsed the source, and which behaviour of each library function an engine must apply. An engine selects library behaviour by the program's `language`, never by the newest it has, so a saved script never changes its numbers. The two move independently, because a new field and a corrected calculation have nothing to do with each other.
+`openscript.format` versions the **format**: field names, the instruction set, the encoding. It is `"1.1"` in 0.8.0, and releases 0.6.0 to 0.8.0 left it unchanged, so a program stored under 0.5.0 loads as it did. `openscript.language` versions **meaning**: which front end parsed the source, and which behaviour of each library function an engine must apply. An engine selects library behaviour by the program's `language`, never by the newest it has, so a saved script never changes its numbers. The two move independently, because a new field and a corrected calculation have nothing to do with each other.
 
 ### Capability tags
 
@@ -39797,7 +40468,7 @@ Two engines running the same program over the same bars must produce the same ou
 
 - reorder, reassociate or fuse floating point operations, use extended precision, flush subnormal numbers to zero, or change the rounding mode;
 - compute a library function in any order other than the one the specification fixes for it, because a moving average is a sum and a sum has an order;
-- use the platform's own maths library for `exp`, `log`, `pow` and the trigonometric functions once the portable reference algorithm exists. **None is written yet**, so those calls and the indicators built on them, `alma()`, `hv()` and `chop()` among them, carry no cross-engine guarantee in the last bit in 0.5.0;
+- use the platform's own maths library for `exp`, `log`, `pow`, `hypot` or the trigonometric functions. The specification writes down a portable algorithm for each, rounded once to the nearest value, and since 0.7.0 both engines use them, so those calls and the indicators built on them, `alma()`, `hv()` and `chop()` among them, agree to the last bit like every other call;
 - read randomness, the wall clock (except the host-supplied `chart.now()`), the locale or the environment's timezone;
 - let a script observe hash table order or concurrency.
 
@@ -39855,7 +40526,7 @@ An engine loading a program refuses at the first failure, in this order, and eve
 | The program exceeds the engine's instruction, state region or call depth ceilings | OS5009, OS5004, OS5005 |
 | The program fails verification | OS6018 |
 
-A newer minor version loads in an older engine, and an older one loads in a newer engine with any table it lacks read as empty. **A program that ran yesterday runs today and produces the same numbers**, whatever engine, version or machine runs it.
+A newer minor version loads in an older engine, and an older one loads in a newer engine with any table it lacks read as empty. **A program that ran yesterday runs today and produces the same numbers**, whatever engine, version or machine runs it. That is the rule an engine is held to, and a release that finds an engine short of it brings the engine back to the specification: 0.7.0 to 0.7.2 did so for several library functions, so a result stored under an earlier release can differ from a rerun in its last bits, at a warmup boundary, or where an input was invalid or overflowed.
 
 ## Errors an engine raises
 
@@ -39865,6 +40536,7 @@ A newer minor version loads in an older engine, and an older one loads in a newe
 | [OS4001](/script/errors/runtime#os4001) | A history offset is negative or not a whole number |
 | [OS4002](/script/errors/runtime#os4002) | A history offset reaches past the retained depth |
 | [OS4004](/script/errors/runtime#os4004) | An array index is outside the array |
+| [OS4008](/script/errors/runtime#os4008) | A table cell is written outside the table's declared rows and columns |
 | [OS4013](/script/errors/runtime#os4013) | A `for` loop's start, limit or step is absent |
 | [OS5001](/script/errors/limits#os5001) | The per-bar loop budget is spent |
 | OS5003, OS5004, OS5005, OS5009 | The program asks for more than the host or engine allows |
@@ -39877,6 +40549,8 @@ A load refusal names the instruction index or the field, because the failure is 
 ## Becoming a chart
 
 An engine computes columns; drawing them is a separate job. The program's tables map one to one onto a chart: `meta` onto the study's name, pane and scale, `inputs` onto the settings dialog, `outputs` onto series, bands, levels, markers, grids and alerts, the heap's drawing objects onto free drawings handed over whole after every bar, and `requests` onto the host's fetches. The [chart adapter](/script/integrate/charts-adapter) is that mapping for openalgo-charts. One rule is part of the format rather than any chart: only one study may colour the instrument's candles, the latest in the host's own study order that paints them.
+
+A host's surface may be narrower than what a program can carry: a pane with room for one grid, or a band drawn in one colour for the whole run. That difference is allowed, and hiding it is not. A host that cannot draw something a program declares refuses the program before any bar runs with [OS6024](/script/errors/data#os6024), naming the declaration and its own reason, rather than drawing part of the study and saying nothing. It is the host's refusal and never the compiler's: the program is correct, and another host may draw all of it.
 
 **Related.** [Two libraries](/script/integrate/overview), [JavaScript library](/script/integrate/javascript), [Python engine](/script/integrate/python-engine), [Host interface](/script/integrate/host-interface), [Your own engine](/script/integrate/conformance), [Execution model](/script/language/execution-model), [Absent values](/script/language/absent-values)
 
@@ -39996,6 +40670,8 @@ The alert fires once, on the live bar, when it closes. The 74 bars of history ra
 
 `time` is the open instant because the open is how a bar can be identified while it is still forming. A feed that stamps bars by their close converts once, in the host.
 
+**The fields are the interface, and the representation is yours.** A history may be handed over as one record per bar or as one array per field, and an engine reads the same bars from either. Over a long range, columns cost less than half the memory of records; a column that cannot hold an absent value writes it as not-a-number. A live bar, which arrives one at a time, is a record. [JavaScript library](/script/integrate/javascript#bars-as-columns) has the shape.
+
 ### The order they arrive in
 
 - **Oldest first.** Position 0 is the oldest bar you supplied, and that position is `bar.index`.
@@ -40023,6 +40699,7 @@ You may hand the newest bar back with new values. That is an **update**, not a n
 | Situation | What happens |
 |---|---|
 | No bars at all | [OS6010](/script/errors/data#os6010). An empty pane with no message would look like a study that drew nothing |
+| A bar with no time at all | [OS6025](/script/errors/data#os6025), naming that bar. A bar dated nothing cannot be put in order; date it, or leave it out |
 | A bar whose time does not follow the one before it | [OS6011](/script/errors/data#os6011), naming that bar. The run stops there; bars before it stand |
 | A price or volume you do not have | The absent value |
 | Fewer bars than the script's warmup needs | Not an error. The study is absent until it has enough bars, and draws from the first bar it can |
@@ -40079,6 +40756,8 @@ The spellings:
 
 **Why exactly one fact is required.** Every other fact has an honest answer for "nobody said": absent, which a script can test. `hasVolume` does not, because an instrument that never reports volume and one whose figures are late produce the same empty column. A tick size is absent rather than a guessed `0.05` for the same reason: a script sizing a stop in ticks has to tell "the smallest increment is five paise" from "nobody said".
 
+**A fact you leave out reads as `none` and never stops a bar.** A bare read of `chart.tickSize`, `chart.lotSize` or any other fact on the table is absent: a script tests it with `isNone()` and supplies a fallback with `orElse()`. [OS6012](/script/errors/data#os6012) is kept for the other case, something that needs a fact and cannot default it, which in version 1 is a stated session the engine cannot read, below.
+
 ### The session
 
 ```json
@@ -40089,7 +40768,7 @@ The spellings:
 
 The session earns its place through the scheduled close: `session.isLastBar` is true on the last bar of the schedule even when trading stopped early, so a strategy that must be flat by 15:30 acts on it rather than on the appearance of a new bar, which arrives too late.
 
-**A stated session is checked against itself at load**, and refused with [OS6012](/script/errors/data#os6012) naming what is missing when it has no `timezone`, a time not spelled `"HH:MM"` (`"9:15"` is the one a host writes first), or a `days` entry outside 1 to 7. A host that states no session at all is not refused: that is the honest record of a schedule it does not hold, and the per-bar session facts are then absent.
+**A stated session is checked against itself at load**, and refused with [OS6012](/script/errors/data#os6012) naming what is missing when it has no `timezone`, a `timezone` the calendar cannot read (an abbreviation such as `"IST"` or a fixed offset such as `"+05:30"`), a time not spelled `"HH:MM"` (`"9:15"` is the one a host writes first), or a `days` entry outside 1 to 7. A host that states no session at all is not refused: that is the honest record of a schedule it does not hold, and the per-bar session facts are then absent.
 
 **A session study is only as good as the session.** `vwap()` restarts at the session's first bar, and `session.isFirstBar` and `session.isLastBar` are derived from the window. A host that holds a schedule and does not state it gets every one of them absent on every bar, with nothing on the chart to say why.
 
@@ -40125,7 +40804,7 @@ Every identity is already resolved when it reaches you, so you resolve an identi
 
 | Answer | Means |
 |---|---|
-| `{ bars }` | Your own bars for that instrument at that timeframe, oldest first, in the shape of duty 1. Never padded, extended or synthesised |
+| `{ bars }` | Your own bars for that instrument at that timeframe, oldest first, in the shape of duty 1, as records or as columns. Never padded, extended or synthesised |
 | `{ pending: true }` | Still fetching. The read is absent and `req.isReady()` is false; when the bars arrive, load again and recalculate over the whole history |
 | `{ refused }` | You cannot answer. Below |
 | Nothing | You do not serve this read. On a timeframe read the engine folds the chart's own bars; on another instrument it is OS6007 |
@@ -40316,7 +40995,7 @@ The style rows no script declares, a plot's colour, thickness, line style and vi
 
 **The engine never parses an instrument identity.** It compares identities for equality and hands them back unchanged: it never splits one on a separator, changes its case, builds one from parts, or infers an underlying, an expiry, a strike or a right from one. A naming scheme built around one market's derivatives means nothing on another, and a parsing rule in the language would make every renamed contract a compiler release. Your symbology is yours, which makes you the only participant that can own it correctly.
 
-A script names a contract by what it is, and you resolve the description to whatever your symbology calls it. **A relative contract is resolved once, at the start of a run**, and every later bar request, order, report line and restart uses that resolved identity. "The at-the-money call of the nearest NFO expiry" is a different contract at the exit than at the entry if the price moved or the expiry rolled, and an exit that re-resolved would open a second position in a contract nobody chose while leaving the first one open. So persist the resolved identity with the run, treat a new expiry or a new trading day as a new run, and refuse a run whose description you cannot resolve at its start. The script-side surface for describing relative contracts, `leg.relative()` among it, is planned in 0.5.0; the host's side of the rule is fixed now.
+A script names a contract by what it is, and you resolve the description to whatever your symbology calls it. **A relative contract is resolved once, at the start of a run**, and every later bar request, order, report line and restart uses that resolved identity. "The at-the-money call of the nearest NFO expiry" is a different contract at the exit than at the entry if the price moved or the expiry rolled, and an exit that re-resolved would open a second position in a contract nobody chose while leaving the first one open. So persist the resolved identity with the run, treat a new expiry or a new trading day as a new run, and refuse a run whose description you cannot resolve at its start. The script-side surface for describing relative contracts, `leg.relative()` among it, is planned in 0.8.0; the host's side of the rule is fixed now.
 
 ## A conforming host
 
@@ -40375,7 +41054,7 @@ Every operation is IEEE-754 binary64 with round-to-nearest-even, in the order th
 
 ## Check your library against the vectors first
 
-Before a single case, you can check each library function on its own. The repository publishes a **vector file** for each arithmetic function, in its `spec/vectors/library` folder: a file of inputs and the exact outputs the reference engine produced for them, named by the function and its argument count, such as `sma-2.json`. An `index.json` beside them lists every file, and every function that has none and why: colours, strings, array operations, drawing calls, host and ledger reads and the calendar functions are checked other ways, and `pow()` is held out because its last bit comes from the platform's maths library.
+Before a single case, you can check each library function on its own. The repository publishes a **vector file** for each arithmetic function, in its `spec/vectors/library` folder: a file of inputs and the exact outputs the reference engine produced for them, named by the function and its argument count, such as `sma-2.json`. An `index.json` beside them lists every file, and every function that has none and why: colours, strings, array operations, drawing calls, host and ledger reads and the calendar functions are checked other ways. `pow()`, `exp()`, `log()` and the trigonometric functions have vector files like every other arithmetic function: since 0.7.0 their last bit comes from a portable algorithm the specification writes down, not from the platform's maths library.
 
 Every number in a vector file is a binary64 bit pattern: sixteen lower case hexadecimal digits, big-endian. A case is a run of `bars` bars with one column per argument and one per output; a cell is `null` for absent, and each output column's `warmup` is the index of its first bar with a value. The `holes`, `short` and `absent-args` cases check what a function does with a gap, too little history and an argument that has no value yet.
 
@@ -40453,7 +41132,7 @@ cases/
 | `instrument.json` | No | The instrument record. Defaults below |
 | `settings.json` | No | Values for the script's inputs. Absent means every default |
 | `backtest.json` | For a strategy case | The money digits, a supplied charge schedule and the report window |
-| `bars.<name>.csv` | No | A second bar series, for a read of another timeframe or instrument |
+| `bars.<SYMBOL>.csv` | No | Another instrument's bars, named after the instrument a read resolves to. A read of the chart's own instrument at another timeframe needs no file: it is folded from `bars.csv` |
 | `ticks.csv` | No | Updates inside the newest bar, for a case about the forming bar |
 | `frames.csv` | No | Order frames delivered between bars, for a case about the ledger |
 | `notes.md` | No | Why the case exists and what it defends against |
@@ -40525,7 +41204,7 @@ Those four rows are a working frame, a fill, the same fill repeated, and a quant
 
 ### The expected files
 
-`expected.csv` holds per-bar values, one row per input bar. No shipped case asserts per-bar values yet, so this excerpt illustrates the format, with rows 2 to 18 left out:
+`expected.csv` holds per-bar values, one row per input bar, and seventy of the shipped cases have one. This excerpt illustrates the format, with rows 2 to 18 left out:
 
 ```text title="expected.csv"
 bar,ema20,signal
@@ -40566,7 +41245,7 @@ bar,ema20,signal
 
 Profiles are cumulative. An engine with no compiler reports itself `engineOnly` beside its profile and is not handed the compiler categories. A case outside your claimed profile is skipped, and a skipped case is never a pass.
 
-**Some calls carry no cross-engine guarantee yet.** The transcendental functions, `exp`, `log`, `log10`, `log2`, `pow`, `hypot` and the trigonometric family, and the indicators built on them, `alma()`, `hv()` and `chop()`, have no portable reference algorithm written down. No case may assert a value that reaches one, and an engine is told plainly which calls those are.
+**A few readings still carry no cross-engine guarantee.** The specification records each place it does not yet fix an answer: the inner length of `hma()`, the scaling of `eom()` and the exact channel values of the named colours. No case may assert a value that reaches one, and an engine is told plainly which calls those are. The transcendental functions are no longer on that list. Since 0.7.0, `exp`, `log`, `log10`, `log2`, `pow`, `hypot` and the trigonometric family have portable algorithms with one final rounding, so they, and the indicators built on them such as `alma()`, `hv()` and `chop()`, are compared exactly like any other call.
 
 ## Running the suite
 
@@ -40600,7 +41279,7 @@ Your engine takes part through an **adapter**: a program the runner starts once 
 The runner starts every adapter with Node.js, so an engine in another language ships a small JavaScript file that starts the real engine and relays its output. The Python engine does exactly that, and compiles `script.os` with the reference compiler on the way, handing the engine the canonical program text on standard input:
 
 ```json
-{"engineOnly":true,"languageVersions":[1],"name":"openscript","profile":"strategy","schemaVersion":"1.1","version":"0.5.0"}
+{"engineOnly":true,"languageVersions":[1],"name":"openscript","profile":"strategy","schemaVersion":"1.1","version":"0.8.0"}
 ```
 
 ### Comparing numbers
@@ -40634,11 +41313,11 @@ Strings compare as exact sequences of code points, colours channel by channel as
 | `unsupported` | The engine does not implement the feature, which it names |
 | `skipped` | The case is outside the claimed profile. Never a pass |
 
-A run with any `fail`, `nonFinite`, `error`, or `unsupported` inside the claimed profile does not pass. The result document records the suite revision, your engine's identity, the platform the runner ran on, one row per case and a summary. The rows below show the three shapes a row takes; the second and third are illustrations, since no shipped case asserts an indicator value or a drawing yet:
+A run with any `fail`, `nonFinite`, `error`, or `unsupported` inside the claimed profile does not pass. The result document records the suite revision, your engine's identity, the platform the runner ran on, one row per case and a summary. The rows below show the three shapes a row takes; the second and third are illustrations, not shipped cases:
 
 ```json
 {
-  "suiteRevision": "0.5.0",
+  "suiteRevision": "0.8.0+8ebc9e705bb4",
   "engine": { "name": "my-engine", "version": "1.0.0", "profile": "strategy" },
   "languageVersions": [1],
   "schemaVersion": "1.1",
@@ -40657,6 +41336,8 @@ A run with any `fail`, `nonFinite`, `error`, or `unsupported` inside the claimed
 ```
 
 The failing row is the shape to expect: two values one unit apart in the last bit, which a tolerance would have hidden, and which is exactly the disagreement the suite exists to find. `bound` names what the failure broke: `exact` for a case with no tolerance, `abs` or `rel` for one that declares a bound, and `absence` when one side was absent.
+
+`suiteRevision` names the exact cases a result was run against: the package version the cases shipped with, a plus sign, and the first twelve hexadecimal digits of a SHA-256 digest over every file under the suite root. A suite that differs by one byte has a revision of its own, and anyone holding the cases can recompute it. `0.8.0+8ebc9e705bb4` is the revision of the cases shipped with 0.8.0.
 
 ## Two engines disagreeing is a release blocker
 
@@ -40704,15 +41385,23 @@ A record can become a case only when it carries the script's own text, checked a
 
 **It does not mean** correctness on anything the suite does not cover; correctness in any financial sense, since engines that follow a specification together are wrong together; robustness against hostile input; performance; security, which depends on your isolation rather than your arithmetic; fitness for trading real money; an endorsement, since the project certifies nobody; or anything about another revision or another profile.
 
-A conformance badge carries four things and is not valid without all four: the engine and its version, the suite revision, the profile, and a link to the published result document.
+A conformance badge carries four things and is not valid without all four: the engine and its version, the suite revision, the profile, and a link to the published result document. The repository makes one from a passing result:
+
+```bash
+node scripts/run-suite.mjs --adapter path/to/your-adapter.mjs --out result.json
+npm run badge -- result.json --link <where result.json is published> --out badge.svg
+```
+
+The second command writes `badge.svg` and prints the line that embeds it. It refuses, and writes nothing, when the document is not a passing run of the profile it claims, when it compares two engines rather than running one, when it lacks any of the four things, or when its revision is not the one it recomputes from the cases. The project shows no badge of its own, and will not until an engine written by someone else passes, because until then a badge would be two engines from one repository agreeing with each other.
 
 ## Where the suite stands
 
 Stated plainly, because a green run reads as wide as the reader imagines it:
 
-- **What it reaches today:** the compiler's diagnostics from tokenising, parsing and checking; the runtime errors; behaviour at a declared limit; and strategies, through their ledger, trades and performance summary, including partial fills, rejections, cancellations, expiries and a fill after a terminal status.
-- **What it does not reach yet:** no case asserts a per-bar indicator value, so the `semantics` and `numerics` categories are specified but not yet exercised. Two engines can agree on every case and still disagree on what a moving average is, which is why the library vectors above matter. No case yet supplies a host's own charge schedule, a repeated frame or two frames in the wrong order, more than one entry in a direction, or more than one instrument.
-- **Who has run it:** the JavaScript and Python engines agree to the last bit on every case they both run, and the build stops on any disagreement. The Python engine has no compiler, so the compiler cases are skipped for it, and the cases the two share are the strategy cases plus those about loops, limits and stored settings. It also lacks the array functions and the log, and cases that would reach those are held back until it has them, so its agreement does not cover them. Both engines were written in the same repository, so their agreement is evidence about that repository rather than about the specification. **No engine written by anyone else has passed the suite yet.** If you are building one, the project would rather work with you than have you find the gaps alone.
+- **How big it is:** 126 cases in 0.8.0, 72 in the `core` profile, 46 in `chart` and 8 in `strategy`.
+- **What it reaches today:** the compiler's diagnostics from tokenising, parsing and checking; the runtime errors; behaviour at a declared limit; per-bar values, in seventy cases across the `semantics`, `numerics`, `time`, `external` and `surface` categories, each with expected values computed independently of both engines; drawing objects and table cells; the log; and strategies, through their ledger, trades and performance summary, including partial fills, rejections, cancellations, expiries and a fill after a terminal status. The channels asserted are `diagnostics`, `values`, `log`, `drawings`, `table`, `orders`, `trades` and `performance`.
+- **What it does not reach yet:** no case asserts `markers`, `fills`, `levels`, `barColors`, `background` or `alerts`, and neither engine's adapter answers those channels. No case replays a forming bar from `ticks.csv`. No strategy case yet supplies a host's own charge schedule, a repeated frame or two frames in the wrong order, more than one entry in a direction, or more than one instrument.
+- **Who has run it:** the JavaScript and Python engines, against each other, exactly. `npm run suite:agree` in the repository reports 107 pass and 19 skipped of the 126, the skips being the compiler-diagnostic cases the Python engine has no compiler for, and the build stops on any disagreement. Both engines were written in the same repository, so their agreement is evidence about that repository rather than about the specification. **No engine written by anyone else has run the suite yet.** If you are building one, the project would rather work with you than have you find the gaps alone.
 
 **Related.** [Compiled program](/script/integrate/compiled-program), [Host interface](/script/integrate/host-interface), [Python engine](/script/integrate/python-engine), [Backtesting API](/script/integrate/backtesting-api), [Two libraries](/script/integrate/overview), [Testing](/script/writing/testing)
 
@@ -40806,9 +41495,9 @@ Reading it with the glossary's words:
 
 **Block.** The lines indented under a header line such as `if`, `for` or `case`. Indentation is spaces only, every line of one block has exactly the same indentation, and there are no braces. See [Script structure](/script/language/script-structure).
 
-**Book.** A planned feature: a group of legs managed as one position, with a combined stop, target, daily loss limit and square-off rules, through the `book.*` functions such as `book.stop()`. It is not available in version 0.5.0. See [Legs and books](/script/strategies/multi-leg-and-books).
+**Book.** A planned feature: a group of legs managed as one position, with a combined stop, target, daily loss limit and square-off rules, through the `book.*` functions such as `book.stop()`. It is not available in version 0.8.0. See [Legs and books](/script/strategies/multi-leg-and-books).
 
-**Bracket.** A target, a stop or both attached to an open position, set with `exit()` or `order.bracket()`. In version 0.5.0 a backtest does not fill either level, so test an exit rule in a backtest with an explicit `close()`. See [Exits and brackets](/script/strategies/exits-and-brackets).
+**Bracket.** A target, a stop or both attached to an open position, set with `exit()` or `order.bracket()`. In version 0.8.0 a backtest does not fill either level, so test an exit rule in a backtest with an explicit `close()`. See [Exits and brackets](/script/strategies/exits-and-brackets).
 
 **Broadcast.** The automatic treatment of a plain value as that same value on every bar, which is how `ema(close, 9)` accepts the literal `9` where a series would also be allowed. It is the only automatic widening in the language and it never changes a value.
 
@@ -40864,19 +41553,19 @@ Reading it with the glossary's words:
 
 **Element access.** Reading one element of an array with `arr[i]` or `element()`. The compiler tells it apart from the history operator by the type of the value on the left.
 
-**Engine.** A program that runs a compiled program bar by bar. The JavaScript library and the Python engine are two engines, and they must agree to the last decimal. See [Two libraries](/script/integrate/overview).
+**Engine.** A program that runs a compiled program bar by bar. The JavaScript library and the Python engine are two engines, and they must agree to the last decimal. The Python engine has the JavaScript engine's library entry for entry, arrays and `print()` among them, and no compiler. Of what a study draws, it keeps drawing objects and tables, and not markers, fills, levels, bar colours or backgrounds. See [Two libraries](/script/integrate/overview).
 
-**Equity.** Starting capital plus realised and unrealised profit. Reading it from inside a script, as `pos.equity`, is planned and not available in version 0.5.0.
+**Equity.** Starting capital plus realised and unrealised profit. Reading it from inside a script, as `pos.equity`, is planned and not available in version 0.8.0.
 
 **Equity curve.** The account's equity plotted bar by bar over a backtest. Drawdown and run-up are both measured on it. See [Reading a report](/script/strategies/reading-a-report).
 
-**Error.** A diagnostic in the ranges OS1xxx to OS7xxx. An error found before the first bar stops compilation. An error raised while a bar runs stops the run at that bar: earlier bars keep what they drew, and nothing is drawn from that bar on.
+**Error.** A diagnostic in the ranges OS1xxx to OS7xxx. An error found before the first bar stops compilation. An error raised while a bar runs stops the run at that bar: earlier bars keep what they drew, and nothing is drawn from that bar on. The importer's range, OS9xxx, holds errors too, each marking a statement it could not translate.
 
 **Exchange.** The venue an instrument trades on, read as `chart.exchange` in the host's own naming where the host states it, as the /trading chart, the Backtest panel and a deployed strategy all do. OpenAlgo uses NSE and BSE for equities, NFO for index and stock futures and options, MCX for commodities and NSE_INDEX for the NSE indices.
 
 **Expectancy.** The average net result of one closed trade in a backtest: net profit divided by the number of closed trades. A positive expectancy means the strategy made money per trade on average, after charges.
 
-**Expiry.** The day a futures or options contract ends. Reading the chart instrument's expiry, as `chart.expiry`, is planned and not available in version 0.5.0.
+**Expiry.** The day a futures or options contract ends. Reading the chart instrument's expiry, as `chart.expiry`, is planned and not available in version 0.8.0.
 
 ## F
 
@@ -40926,6 +41615,8 @@ plot(move, "Change from the previous close")
 
 **Identifier.** A name in the source: an ASCII letter or underscore followed by ASCII letters, digits and underscores. Identifiers are case sensitive, so `fast` and `Fast` are two names.
 
+**Importer.** The `importScript` function of the `openalgo-script` library, which translates a script written in another chart scripting language into OpenScript. Each statement is translated with its meaning, translated with a warning that states the difference, or kept as a comment with an error, and every finding carries a code in the OS9xxx range. The /trading page does not offer it. See [Importing a script](/script/writing/importing-a-script).
+
 **Input.** A setting declared with `input()` at the top level, which builds one row of the settings dialog. The default value comes first because its type decides the kind of field. See [Inputs](/script/inputs/inputs).
 
 **Instrument fact.** Something the host knows about the instrument, read through the `chart` namespace: tick size, lot size, point value, exchange, instrument type. A fact the host has not supplied is absent rather than guessed.
@@ -40936,7 +41627,7 @@ plot(move, "Change from the previous close")
 
 ## L
 
-**Leg.** A planned feature: one instrument a multi-leg strategy trades, declared with `leg.fixed()` or `leg.relative()`, for positions such as a straddle on NFO index options. In version 0.5.0 a strategy trades one instrument, the chart's. See [Legs and books](/script/strategies/multi-leg-and-books).
+**Leg.** A planned feature: one instrument a multi-leg strategy trades, declared with `leg.fixed()` or `leg.relative()`, for positions such as a straddle on NFO index options. In version 0.8.0 a strategy trades one instrument, the chart's. See [Legs and books](/script/strategies/multi-leg-and-books).
 
 **Level.** A fixed horizontal reference line in the study's pane, created with `level()` at the top level, such as 70 and 30 on an RSI. See [Levels](/script/visuals/levels).
 
@@ -41032,7 +41723,7 @@ background(noPrev ? fade(gray, 90) : none)
 
 ## R
 
-**Range (of codes).** One block of a thousand error codes, OS1xxx to OS8xxx, saying what kind of thing went wrong, never how serious it is.
+**Range (of codes).** One block of a thousand error codes, OS1xxx to OS9xxx, saying what kind of thing went wrong, never how serious it is.
 
 **Range (of a pane).** The declaration option `range = [min, max]`, which fixes a study pane's scale, as in `[0, 100]` for an oscillator.
 
@@ -41074,7 +41765,7 @@ background(noPrev ? fade(gray, 90) : none)
 
 **Square off.** Close a position completely, bringing it back to flat. Intraday positions are squared off before the session ends.
 
-**Stage.** Where a diagnostic is raised: reading the characters, building the structure, checking, running a bar, or the host answering. The stage tells you when you find out.
+**Stage.** Where a diagnostic is raised: reading the characters, building the structure, checking, running a bar, the host answering, or the importer translating a script from another chart language. The stage tells you when you find out.
 
 **State slot.** The storage a stateful call keeps between bars. It belongs to the place in the source where the call is written, which is what makes one helper function reusable in several places, and why a function cannot call itself.
 
@@ -41086,7 +41777,7 @@ background(noPrev ? fade(gray, 90) : none)
 
 **Strategy.** A file declared with `strategy()`: a study that can also place orders, so the numbers you plot and the numbers you trade are the same numbers. See [Strategies overview](/script/strategies/overview).
 
-**Strike.** The price at which an option can be exercised. Reading the chart instrument's strike, as `chart.strike`, is planned and not available in version 0.5.0.
+**Strike.** The price at which an option can be exercised. Reading the chart instrument's strike, as `chart.strike`, is planned and not available in version 0.8.0.
 
 **Study.** A file declared with `study()`: a calculation and what it draws on the chart, with no ability to place an order. Also called an indicator.
 
@@ -41112,7 +41803,7 @@ background(noPrev ? fade(gray, 90) : none)
 
 **Trade.** One position from the fill that opens it to the fill that brings it back to flat. Adding to a position adds entries to the same trade, and a reversal is two trades.
 
-**Trailing stop.** A stop that follows the price as a trade moves in your favour and never moves back. The trailing rules of the `leg` namespace are planned; in version 0.5.0 you keep the trailing level yourself in a `var` and close the position when the price crosses it.
+**Trailing stop.** A stop that follows the price as a trade moves in your favour and never moves back. The trailing rules of the `leg` namespace are planned; in version 0.8.0 you keep the trailing level yourself in a `var` and close the position when the price crosses it.
 
 **Truthiness.** Treating a number or a string as true or false. It does not exist in OpenScript: `if 1` is error OS2011, and a condition must be a `bool` or absent.
 
@@ -41130,7 +41821,7 @@ background(noPrev ? fade(gray, 90) : none)
 
 **Warmup.** The bars at the start of the data on which a calculation cannot produce a value yet, shown as the absent value. `sma(close, 20)` first has a value on bar 19. Every function states its warmup exactly. See [Warmup](/script/language/warmup).
 
-**Warning.** A diagnostic in the OS8xxx range. It stops nothing, and describes a shape that is valid but almost never what the author meant. See [OS8xxx Warnings](/script/errors/warnings).
+**Warning.** A diagnostic in the OS8xxx range. It stops nothing, and describes a shape that is valid but almost never what the author meant. See [OS8xxx Warnings](/script/errors/warnings). The importer's range, OS9xxx, also holds warnings, each stating how a translated statement differs from the original.
 
 **Watched condition.** What one `alert()` call becomes in the chart contract: its id, title, message and the conditions that lead to it. In /trading, the chart that shows the study checks it while the page is open, with nothing more for you to set up, judging each bar when it closes, and raises a notification when it holds. See [Alerts in /trading](/script/alerts/alerts-in-trading).
 
@@ -41197,7 +41888,7 @@ No, but always do. Without it the file is compiled with the newest language vers
 
 ### Will my script keep working after an update?
 
-A script that declares `version 1` keeps compiling under the version 1 rules in every later release, because the compiler keeps every past version of the language. A release can still correct how a library function computes. When one does, the [Release notes](/script/resources/release-notes) list it under the changes a script can observe: 0.5.0, for example, changed what `text()` and `round()` give in a few extreme cases that no ordinary price reaches.
+A script that declares `version 1` keeps compiling under the version 1 rules in every later release, because the compiler keeps every past version of the language. A release can still correct how a library function computes. When one does, the [Release notes](/script/resources/release-notes) list it under the changes a script can observe: 0.5.0, for example, changed what `text()` and `round()` give in a few extreme cases that no ordinary price reaches, and 0.7.0 moved the final bits of some results of `pow()`, `exp()`, `log()` and the trigonometric functions when it made both engines agree on them to the last bit.
 
 ### What is the difference between a study and a strategy?
 
@@ -41445,7 +42136,7 @@ Because `fillOn` defaults to `"nextOpen"`. A decision made from a bar's close ca
 
 ### Can I hold a long and a short position at the same time?
 
-Not in version 0.5.0. A strategy holds one net position in the chart's instrument, positive when long and negative when short, read as `pos.size`. Positions made of several legs, such as a straddle or a hedge, are planned through the `leg` and `book` functions. See [Legs and books](/script/strategies/multi-leg-and-books).
+Not in version 0.8.0. A strategy holds one net position in the chart's instrument, positive when long and negative when short, read as `pos.size`. Positions made of several legs, such as a straddle or a hedge, are planned through the `leg` and `book` functions. See [Legs and books](/script/strategies/multi-leg-and-books).
 
 ### How do I size a position?
 
@@ -41482,7 +42173,7 @@ plot(slow, "Slow", orange)
 plot(pos.isLong ? stopLevel : none, "Stop", red, style = "step")
 ```
 
-The stop is the lowest low of the last 10 bars, fixed at the entry. The two crossings are worked out at the top level, before the `if` lines, because a crossing call inside the right side of `and` or `or` would skip bars and the compiler would warn with OS8001. The exit is checked on each bar's close and fills at the next open, so a gap through the stop can lose more than the amount you set. A stop set with `exit()` is not used here because a backtest does not fill one in version 0.5.0.
+The stop is the lowest low of the last 10 bars, fixed at the entry. The two crossings are worked out at the top level, before the `if` lines, because a crossing call inside the right side of `and` or `or` would skip bars and the compiler would warn with OS8001. The exit is checked on each bar's close and fills at the next open, so a gap through the stop can lose more than the amount you set. A stop set with `exit()` is not used here because a backtest does not fill one in version 0.8.0.
 
 The sizing helpers `order.qtyForRisk()`, `order.qtyForCash()`, `order.qtyForEquityPercent()` and `order.roundToLot()` are planned, and a backtest refuses a quantity counted in `"cash"` or `"equityPercent"` in this release. See [Position and sizing](/script/strategies/position-and-sizing).
 
@@ -41504,7 +42195,7 @@ Backtest first, then run the strategy in sandbox trading (analyzer mode in OpenA
 
 ### What does a code like OS2002 mean?
 
-The first digit is the kind of problem: OS1xxx syntax, OS2xxx names and types, OS3xxx arguments, OS4xxx runtime, OS5xxx limits, OS6xxx data, OS7xxx orders, OS8xxx warnings. Every diagnostic carries a message and a fix. See [Reading an error](/script/errors/overview).
+The first digit is the kind of problem: OS1xxx syntax, OS2xxx names and types, OS3xxx arguments, OS4xxx runtime, OS5xxx limits, OS6xxx data, OS7xxx orders, OS8xxx warnings, and OS9xxx import, the findings of the library's importer when it translates a script written in another chart scripting language ([Importing a script](/script/writing/importing-a-script)). Every diagnostic carries a message and a fix. See [Reading an error](/script/errors/overview).
 
 
 ### Do I have to fix the warnings?
@@ -41531,11 +42222,11 @@ The Errors section, one page per range, starting at [Reading an error](/script/e
 
 ### Are the examples on these pages tested?
 
-Yes. Every OpenScript example on these pages is checked with the real compiler, the same version the /trading editor uses, and every signature, default and warmup in the reference is read from that compiler rather than typed in.
+Yes. Every OpenScript example on these pages is checked with the real compiler, from `openalgo-script` 0.8.0, and every signature, default and warmup in the reference is read from that compiler rather than typed in. The /trading editor in current OpenAlgo releases runs version 0.5.0 of the same compiler, which has the same library names and signatures.
 
 ### Can I use OpenScript outside OpenAlgo?
 
-Yes. The JavaScript library (`openalgo-script` on npm) compiles and runs scripts, draws them on a chart and backtests strategies. The Python engine (`openscript` on PyPI) runs compiled programs on a server. Both are Apache 2.0, and neither needs another package to run. See [Two libraries](/script/integrate/overview).
+Yes. The JavaScript library (`openalgo-script` on npm) compiles and runs scripts, draws them on a chart, backtests strategies and imports a script written in another chart scripting language. The Python engine (`openscript` on PyPI) runs compiled programs on a server, with the same library entry for entry, arrays and `print()` among them. Both are Apache 2.0, and neither needs another package to run. See [Two libraries](/script/integrate/overview).
 
 ### Can I write my own engine?
 
@@ -41569,7 +42260,7 @@ Every time this documentation is built, two plain text files are generated from 
 
 Both files are written for machines as much as for people, so they drop what an assistant cannot use. Screenshots are left out, callouts become plain text under a short label, and a link to a reference entry becomes the entry's name in code format. A reference entry that is planned rather than available carries "(planned, not available yet)" in its heading, which is what lets an assistant avoid it.
 
-The complete reference opens with the version it describes, for example `# OpenScript 0.5.0 complete reference`, and every page inside it carries a `Source:` line with that page's address on this site. The map follows the llms.txt convention: a title, a one-line summary, then sections of links with a sentence each.
+The complete reference opens with the version it describes, for example `# OpenScript 0.8.0 complete reference`, and every page inside it carries a `Source:` line with that page's address on this site. The map follows the llms.txt convention: a title, a one-line summary, then sections of links with a sentence each.
 
 ## A worked example
 
@@ -41746,28 +42437,32 @@ Related: [The editor](/script/getting-started/the-editor), [Reading an error](/s
 
 Source: https://openalgo.in/script/resources/release-notes
 
-This page summarises every release of OpenScript, also called OpenAlgo Script, newest first, and then the roadmap. Read it when you want to know whether something works in the version you have, or whether an upgrade changes anything your scripts can see. The current version is **0.5.0**, and both libraries carry it: `openalgo-script` on npm (JavaScript and TypeScript) and `openscript` on PyPI (Python) are released together, at the same version, under Apache 2.0.
+This page summarises every release of OpenScript, also called OpenAlgo Script, newest first, and then the roadmap. Read it when you want to know whether something works in the version you have, or whether an upgrade changes anything your scripts can see. The current version is **0.8.0**, and both libraries carry it: `openalgo-script` on npm (JavaScript and TypeScript) and `openscript` on PyPI (Python) are released together, at the same version, under Apache 2.0.
 
-The version is 0.5.0 rather than 1.0 on purpose. The studies surface is finished and is the part to build on. Strategies run and backtest on one instrument, with limits stated below, and multi-leg strategies are designed but not built.
+The version is 0.8.0 rather than 1.0 on purpose. The studies surface is finished and is the part to build on. Strategies run and backtest on one instrument, with limits stated below, and multi-leg strategies are designed but not built.
 
-## What works in 0.5.0
+> **The /trading page**
+The /trading page of OpenAlgo carries its own copy of the library, and current OpenAlgo releases still ship version 0.5.0 of `openalgo-script` there, with version 2.5.1 of the chart library. The changes from 0.6.0 on reach /trading when OpenAlgo moves to a newer library. Where this page says what /trading does, it means the copy it ships today.
+
+## What works in 0.8.0
 
 | Area | Status | Notes |
 |---|---|---|
-| Studies: plots, levels, fills, colours, markers, bar colouring, backgrounds | Works | The finished part of the language |
-| Tables and drawing objects (lines, labels, boxes, polylines) | Works | A study that declares two tables draws only the first |
-| Inputs and the settings dialog | Works | A plot's `style` chosen through an `input()` is drawn in its default style |
+| Studies: plots, levels, fills, colours, markers, bar colouring, backgrounds | Works | The finished part of the language. A band colour computed per bar needs a chart that can draw it: see the next row |
+| Tables, drawing objects (lines, labels, boxes, polylines) and per-bar band colours | Works | The chart adapter draws every declared table, and a band coloured bar by bar, on version 2.5.4 or newer of the chart library when the host says which version it has; otherwise such a study is refused with [OS6024](/script/errors/data#os6024) before any bar runs. /trading draws the first table only, and a per-bar band in its first plot's colour |
+| Inputs and the settings dialog | Works | An `input()` must be the whole of an option's value ([OS3025](/script/errors/arguments#os3025)), and a plot's `style` cannot be a setting ([OS3026](/script/errors/arguments#os3026)) |
 | Higher timeframe and other instrument reads | Works | `req.candle()` and `req.events()` are planned |
 | Alerts and markers from scripts | Works | `alert()` and `signal()` work; `notify()` is planned. The /trading chart judges a script's alert when its bar closes, while the page is open: see [Alerts in /trading](/script/alerts/alerts-in-trading) |
+| Importing a script from another chart language | Works, in the library | New in 0.6.0: see [Importing a script](/script/writing/importing-a-script). The /trading page does not offer it |
 | Editor functions: highlighting, completion, hover, signature help, diagnostics, formatting | Works, in the library | For anyone building an editor. The /trading editor uses the highlighting and the compiler's diagnostics on every save; it has no completion, hover or signature help in this release |
 | Strategies on one instrument | Works | `buy()`, `sell()`, `exit()`, `close()`, `cancel()`, `cancelAll()`, `order.place()`, `order.bracket()` and `order.reverse()`. A backtest does not fill the levels `exit()` and `order.bracket()` set |
 | Position facts | Partly | `pos.size`, `pos.avgPrice`, `pos.isFlat`, `pos.isLong` and `pos.isShort` work; the money figures such as `pos.equity` and `pos.netProfit` are planned |
-| Backtest and report | Works, with stated limits | See [Known limits](#known-limits-in-0-5-0) |
+| Backtest and report | Works, with stated limits | See [Known limits](#known-limits-in-0-8-0) |
 | A strategy drawn on a chart | Works | New in 0.5.0 |
 | Order sizing helpers and order status | Planned | `order.qtyForRisk()`, `order.roundToLot()`, `order.status()`, `order.pending` and the rest of that group |
 | Multi-leg positions | Planned | Every `leg.*` and `book.*` name |
 | Maps, matrices, user types and imports | Reserved | The words are reserved for a later language version |
-| Python engine | Published | Runs compiled programs on a server; holds no compiler, and has no arrays and no log yet |
+| Python engine | Published | Runs compiled programs on a server, with every library entry the JavaScript library has, arrays and `print()` included. It holds no compiler, and does not produce markers, fills, levels, bar colours or backgrounds |
 
 A planned name is refused where you write it, with error OS2020, so you find out in the editor rather than on a chart. The reference marks each one with a Planned badge.
 
@@ -41775,7 +42470,7 @@ A planned name is refused where you write it, with error OS2020, so you find out
 profitSoFar = pos.netProfit
 ```
 
-Everything in the next study works in 0.5.0. It reads the previous session's high and low onto an intraday chart, draws them as steps and shows them in a table. By default a daily read takes only days that have closed, so on a 5-minute NSE chart during today's session these are yesterday's levels.
+Everything in the next study works in 0.8.0, and in the 0.5.0 copy /trading ships. It reads the previous session's high and low onto an intraday chart, draws them as steps and shows them in a table. By default a daily read takes only days that have closed, so on a 5-minute NSE chart during today's session these are yesterday's levels.
 
 ```openscript
 version 1
@@ -41796,9 +42491,9 @@ if bar.isLast
     cell(panel, 1, 1, text(pdl, 2))
 ```
 
-### Planned names in 0.5.0
+### Planned names in 0.8.0
 
-These names are part of the language's design and are refused with OS2020 in this release.
+These names are part of the language's design and are refused with OS2020 in this release. The list is the same as in 0.5.0: no planned name has been built since.
 
 | Group | Planned names |
 |---|---|
@@ -41811,7 +42506,7 @@ These names are part of the language's design and are refused with OS2020 in thi
 | Requests | `req.candle()`, `req.events()` |
 | Other | `notify()`, `timeClose`, `date.add()`, `str.format()`, `str.match()`, `gradient()`, `hsl()`, `math.cosh()`, `math.sinh()`, `math.tanh()` |
 
-### Known limits in 0.5.0
+### Known limits in 0.8.0
 
 Stated here so you do not find them inside a report you have already believed.
 
@@ -41821,143 +42516,91 @@ Stated here so you do not find them inside a report you have already believed.
 - **Fills are modelled from four prices, not a path.** A limit fills only where the bar traded through it, and a stop that the price gapped past fills at the open.
 - **A script cannot read its own profit or equity while it runs.** The report shows them after the run.
 - **Five order refusals are not raised yet**: an order quantity that is not a multiple of the lot size (OS7005), an order that needs more capital than the strategy has (OS7011), an order outside the session (OS7012), a rejection by the destination reported against the script's line (OS7014), and a strategy with nowhere to send orders (OS7015; such a strategy is refused when it loads, with OS6006, instead). Until they are, size in whole lots, stay within the capital you declared and keep entries inside the session yourself.
-- **A second table is dropped.** A chart pane draws one table, so a study that declares two draws the first and says nothing about the second.
-- **A plot style cannot be a setting.** `plot(..., style = input(...))` compiles and draws the default style whatever the setting says.
-- **The Python engine has no arrays and no log yet.** A program that uses arrays or `print()` is refused by the Python engine, and runs in the JavaScript library.
+- **A second table and a band coloured per bar need a chart that can draw them.** On a chart older than 2.5.4, or on a host that does not say which chart it has, the study is refused with [OS6024](/script/errors/data#os6024) rather than drawn in part. The /trading page, on library 0.5.0, draws the first table and says nothing about the rest, and draws a per-bar band in its first plot's colour at twelve percent: for /trading, declare one table and switch a band off by making its ends absent.
+- **A plot style cannot be a setting.** `plot(..., style = input(...))` is refused with [OS3026](/script/errors/arguments#os3026), because the compiled program stores a style as a plain value. The 0.5.0 copy in /trading still compiles it and draws the default style whatever the setting says.
+- **The Python engine does not produce every chart output.** It computes plots, tables, drawing objects, the log, orders and alerts, and does not produce markers, fills, levels, bar colours or backgrounds.
 
-## Unreleased
+## 0.8.0
 
-Changes since 0.5.0 that are not in a published version yet. None of them changes how a script compiles or what it computes; they concern engine authors.
+**A chart that can draw them gets every table and a band coloured per bar.** Until this release the chart adapter refused, with OS6024, a study that declared a second table or worked out a band's colour on each bar, because the chart it drew on had room for one table and one colour per side of a band. Version 2.5.4 of the chart library added both. A host now tells the adapter which chart it has, by passing the chart library's own `VERSION` as the new `chartVersion` option, and on 2.5.4 or newer the adapter draws them:
 
-- The conformance suite (the shared set of test cases every engine must reproduce) gained twenty three cases for its core profile, the smallest set of features an engine can claim. They cover syntax, static checks, runtime errors and limits. Before them, an engine that implemented nothing could pass that profile, because every existing case belonged to the strategy profile and was skipped.
-- An engine with no compiler is no longer handed cases about compiler diagnostics.
-- What the suite still does not check, said plainly: no case asserts a value on a bar, so two engines can agree on every case and still disagree on what a moving average is.
+- Every table, each in the corner its own `position` names. A table keeps its identity from one recompute to the next, so the chart updates it rather than building it again on every tick. Two tables pinned to the same corner are drawn one over the other, so give each its own `position`.
+- A band colour computed per bar is shaded bar by bar, in the colour the script computed on that bar for the side the band is on. An absent colour leaves the bar unshaded, and `opacity` dims a computed colour exactly as it dims a constant one.
 
-## 0.5.0
+A host that states nothing, an older chart, a prerelease of 2.5.4 or a version it cannot read gets exactly what 0.7.2 drew: such a study is refused before any bar runs with OS6024, whose message now ends by saying which version the host stated. On no chart is either thing drawn in part or dropped in silence. See [Chart adapter](/script/integrate/charts-adapter) and [Tables](/script/visuals/tables).
 
-**A strategy can be drawn on a chart.** Until this release a chart could draw a study but not a strategy. The chart adapter can now run a strategy against the same simulated order destination the backtest uses, so its plots draw, its legend and settings dialog work, and its position is right. The entries and exits you see on the price and the trades in the backtest report of the same script are one answer, not two. A host enables it explicitly; without it, a strategy with nowhere to send orders is still refused with OS6006.
+For integrators who type check the descriptor: `ChartFill` gains an optional `colorBy`, `ChartDescriptor` an optional `tables`, and `ChartFillContext` and `ChartTableSpec` are new exports.
 
-**The Python engine is on PyPI.** `pip install openscript` installs the engine that runs a compiled program: Apache 2.0, no dependencies, Python 3.12 or newer. It holds no compiler, so a program is compiled where the JavaScript library runs and handed to it as data. The two packages are released together at the same version.
+The Python engine is unchanged and moves to 0.8.0 only because the two packages carry one version: it has always published each band's colours bar by bar and every declared table. No language change, no compiled format change, and no computed value moves.
 
-**The backtest report says more.**
+One question stays open: a band that works out one side's colour and names none for the other draws that other side in the chart's own default colour, as a band with one constant side always has. Whether that side should be left unshaded instead is not decided yet.
 
-- Run-up: the largest climb in equity, as money and as a percentage, and when it happened, beside the existing maximum drawdown. Every point of the equity curve carries its run-up too.
-- A trade analysis: closed trades split into long and short, each side with its own net profit and win rate; the largest win and largest loss after charges; and the longest runs of winning and losing trades, counted in the order the trades closed.
-- Every figure in the summary now has a written formula, so an engine written by someone else can reproduce it.
+## 0.7.2
 
-**Changes a script can observe.** Each is a correction, and each is small. A stored backtest that touched one of them reproduces to a slightly different number after the upgrade; nothing else changes.
+**Running totals survive one overflowing bar.** `pvt()`, `vwap()` and `vwapAnchor()` added each bar's term without checking it, so a price change, proportion or product that overflowed stored an infinite total, and every later reading was absent. Such a term is now absent: that bar reads `none` and the total carries on from the bar before it.
 
-- `text(x, decimals)` writes the shortest digits that read back to the same value at every size. Only whole numbers at or beyond about nine quadrillion after scaling are affected; no price moves by a digit.
-- `round(x, decimals)` scales by the exact power of ten. A value rounded to 23 decimals can move by one unit in the last place; no other count of decimals changes.
-- Comparing two strings with `<` and sorting an array of strings both order by Unicode code point. Only a comparison between a character outside the basic plane and one from U+E000 upward changes its answer.
-- `str.trim()` and `toNumber()` use a fixed list of whitespace characters. The byte order mark (U+FEFF) is no longer removed, and the next-line character (U+0085) now is.
+Two neighbouring readings change with it. `vwap()` and `vwapAnchor()` read `none`, not an exact zero, while their volume total has overflowed, until the next session or anchor starts it again. `ad()`, `adOsc()` and `cmf()` treat a bar whose high to low span overflows as absent instead of adding a zero term for it. Separately, the JavaScript library read `cmf()` as `none` on any window whose volume sums below zero, where it should divide as the Python engine did; both now divide.
 
-**Multi-leg strategies are scoped and planned.** A strategy trades one instrument today. The design for several legs, `leg.fixed()` and `leg.relative()` to declare what each leg trades, `leg.*` rules to manage each one and `book.*` rules across all of them, is written and marked planned, and the roadmap now says how it will be built. Two planned names were renamed while nothing could use them: the `arm` parameter of `leg.trail()` and `book.lockProfit()` is now `activateAt`, and the events `trailArmed` and `lockProfitArmed` are now `trailActivated` and `lockProfitActivated`.
+These readings change only near the largest number a computer can hold. Both engines were wrong in the same way, which is why their exact agreement never showed it, and independent expected results now cover every case. Upgrade both packages together. No script changes and no compiled format change; recompute stored results of these six studies only over data whose prices, volumes or their products come near that limit.
 
-**Six missing capabilities are now recorded as planned**, so they are on the plan rather than unnoticed: an account-level drawdown halt, a cap on position size, a cap on orders per session, a halt after a run of losing sessions, reading past trades by index, and a script stating whether it runs on every update or only on closed bars.
+## 0.7.1
 
-**The documentation uses sandbox trading throughout** for the mode that trades against a simulated account.
+**The Python engine's `adx()` recovers from an overflowing movement.** A directional movement that overflowed before the average was seeded stopped a later valid seed, and one that overflowed afterwards spoiled the average from then on. Such a movement is now absent before it is smoothed, so both engines give the same values. Ordinary data is unaffected. Upgrade both packages together; no script changes.
+
+## 0.7.0
+
+**The two engines now agree to the last bit on every numerical function.** An audit compares the JavaScript library with the Python engine on all 116 scalar and stateful numerical signatures, over 1,504,908 accepted calls, and allows no differing bit, no value absent in one and present in the other, and no extra output. Both publishing workflows run it, so a release on which the engines disagree does not publish.
+
+- **Portable mathematics.** `exp()`, `log()`, `pow()`, the trigonometric functions and `math.hypot()` no longer use the runtime's own approximations. Each is computed by a portable algorithm with one final rounding to the nearest value, so it gives the same bits on every machine and in both engines, and `pow()`, held out of the published test vectors in 0.5.0, now has them. The studies built on these, such as `alma()`, `hv()` and `chop()`, inherit it. The last digits of these values can differ from earlier versions.
+- **Lengths that change.** A windowed function whose length changes from bar to bar keeps the history a later, larger length needs, and a seeded average never restarts because its length changed.
+- **No value where there is no sensible answer.** `alma()` with a `sigma` of zero or below, and `hv()` over prices or a `periodsPerYear` that are not positive, read `none`.
+- **Corrections the audit found.** In the Python engine, `cci()`, `mfi()`, `tsi()`, `rsi()` and `ultimateOsc()` return absence where they used to stop on a division, carry an overflowed value or read a false zero, and resume on later bars with the JavaScript library's values. In the JavaScript library, `correlation()` no longer reads zero when a variance overflows.
+- Negative zero is stored as zero everywhere, in both engines.
+
+Upgrade both packages together when a chart and a server must agree. No script needs changing and the compiled format is the same, but stored results that used these functions can move in their last digits: regenerate any you compare against this release.
+
+## 0.6.0
+
+**Import a script from another chart language.** `importScript` reads a script written in the version-annotated chart dialect, versions 5 and 6, and writes OpenScript: each statement is translated with its meaning, translated with a warning that states the difference, or kept as a comment with an error that says why, and what comes back compiles. Its twelve codes, OS9001 to OS9012, are a ninth range of the error catalogue, with a new stage, `import`. See [Importing a script](/script/writing/importing-a-script) and [OS9xxx Import](/script/errors/import). The importer is a library function; the /trading page does not offer it.
+
+**Changes a script can observe.** Read these before upgrading a study whose numbers you have already checked.
+
+- A `"lookahead"` read in a backtest now reads a higher timeframe bar's final value from its first bar, as the mode always promised. The backtest fed bars one at a time, so such a read answered with the coarser bar so far, which is the developing reading. Confirmed and developing reads are unchanged.
+- Dates before about 1 BCE were one day early. No modern date moves.
+- Some scripts that compiled are now refused, each with a code and a fix. An `input()` that is only part of an option fixed before the first bar, such as `precision = input(2, "Decimals") + 1`, is [OS3025](/script/errors/arguments#os3025); it used to be refused only with OS6018, which reads as a fault in the compiler. A plot's `style` written from an input is [OS3026](/script/errors/arguments#os3026); it used to be drawn in its default style whatever the setting said. A bar handed over with no time is [OS6025](/script/errors/data#os6025).
+- The chart adapter refuses a second declared table and a band coloured per bar with [OS6024](/script/errors/data#os6024) before any bar runs, where it used to draw the first table and a fixed band and say nothing. Version 0.8.0 draws both on a chart that can.
+- A cell outside its table is [OS4008](/script/errors/runtime#os4008), naming the row, the column and the table's shape, where it was the array code OS4004. A name or an array element still holding an object deleted earlier now raises the warning [OS8019](/script/errors/warnings#os8019).
+- An instrument fact the host did not state, such as `chart.lotSize` or `chart.tickSize`, now reads as `none` instead of stopping the study with OS6012. Test it with `isNone()` or give it a fallback with `orElse()`. OS6012 is kept for a fact that cannot default, such as a session with no timezone.
+- The editor functions' hover text for six drawing calls, among them `draw.setFrom()` and `draw.delete()`, showed the wrong types, and is fixed.
 
 **For integrators.**
 
-- A program compiled at an earlier minor version of the compiled format now loads in a newer engine; a table the older program lacks reads as empty.
-- `loadText` loads a program that arrives as text, and refuses one that is not in the canonical encoding with OS6018.
-- How a number becomes text is now one written rule, with published test cases, and the arithmetic of every library function is published as test vectors another engine can load. `pow` is held out, because it gives different last bits on different runtimes.
-- A backtest run record now carries the script's source text and the instrument facts, so a stored run can be turned into a conformance case.
-- The conformance suite has its first cases, a runner and an adapter for each engine. The Python engine agrees with the JavaScript library on every strategy case, to the last bit, including partial fills, refusals, cancellations and expiries.
-- `exp`, `log`, `pow`, the trigonometric functions and the indicators built on them compute what they always did, but carry no cross-engine guarantee in the last bit until a portable algorithm is written.
-- Still true, and said here: no engine written outside this project has run the suite yet.
-
-## 0.4.0
-
-**Backtesting arrives, and a run is a document.** `backtest(program, bars, settings)` runs a compiled strategy over a range of bars against a simulated order destination and returns a run record: the program, the hash of its source, the bars or a hash naming them, the settings, every order update, every fill, the ledger, the diagnostics and the report. Nothing in it is specific to one engine.
-
-- **Replay and rerun.** `replay(record)` rebuilds the report from the record's own fills without running a bar, and must match. `rerun(record)` runs the record again and compares the bytes. A replay over bars that have since been revised is refused with OS6022 rather than reporting old figures over new data.
-- **Comparing two runs.** `compareRuns` puts two records side by side. Runs over different bars or contracts are reported as not comparable. A changed program over the same bars is comparable, every other difference is named (a changed setting is as often the reason for an improvement as the change you meant to test), and a separation figure says whether the difference in average trade is larger than the noise.
-- **The report**: a trade list, an equity curve, drawdown, a month-by-month table, win rate and expectancy with its standard error. A trade runs from the fill that takes the position off flat to the fill that returns it, so adding to a position adds entries to one trade and a reversal is two trades. A trade that nets exactly zero counts as neither a win nor a loss.
-- **The report window.** Every bar supplied runs; only the bars inside the window are reported. Bars before it are warmup, and a position opened there is carried in with its charges paid. A window holding none of the bars is refused with OS6020.
-- **Costs.** Slippage is counted in ticks and always works against you, on market and stop fills and never on limit fills. A host with its own charge schedule supplies it; a strategy that declares a commission gets a schedule of one line from it; stating both is refused with OS6023.
-- **Quantities.** Lots are converted through the instrument's lot size, and lots on an instrument with no lot size are refused. Cash and equity-percent quantities are refused.
-
-Four wrong numbers were fixed before release: a quantity in lots was filled as a raw count of units (a strategy sizing in lots of 65 traded one sixty-fifth of what it asked for); a negative commission was credited instead of refused; a month's return was divided by equity it had already earned; and a profit factor could go negative, which is now reported as empty instead.
-
-The money figures of the `pos` namespace stayed planned in this release, so a script still cannot branch on its own equity.
-
-## 0.3.0
-
-**The editor half: six functions, text in and data out.** These are what every editor feature of OpenScript is built from, and none of them is written by hand: each one asks the compiler.
-
-- `highlight` colours every character of a file exactly once, using the language's own tables, so a new function is coloured the day it is added.
-- `diagnose` runs the whole compiler and returns its errors and warnings with the catalogue's message and fix. It answers usefully on a half-typed file, and it is fast enough to run on every keystroke: about a third of a millisecond on a heavy file and about a millisecond on a file with a bracket left open.
-- `format` lays a file out in the one standard layout and never changes what it means; every example is formatted, both versions are compiled, and the two compiled programs are compared.
-- `complete` offers library names, your own names in scope, the named arguments of the call you are writing and the members of a namespace after a dot. Planned names are offered last, marked with the OS2020 sentence, so you learn they are planned before you use them.
-- `hover` shows what a name is: the library's one-line description, the type of your own names, the channels of a colour.
-- `signature` shows the call you are writing, which argument you are on, and each parameter's type and the default the compiler actually applies.
-
-The functions are published as the `openalgo-script/editor` entry point, with a drop-in adapter that wires them into a common browser text editor component and draws nothing itself. They are for anyone building an editor: the /trading editor uses the highlighter and the compiler's diagnostics, and does not offer completion, hover or signature help in this release.
-
-## 0.2.0
-
-**The studies surface, finished.** A script compiles in a browser tab in milliseconds and computes, bar by bar, the same numbers everywhere. One hundred and one independently written studies compile, load and run, and five of them match arithmetic taken from the specification alone, bit for bit, warmups included. The chart adapter turns a compiled study into what a chart draws. (At the time, the advice was to upgrade for studies and not to expect a backtest or an editor yet: those arrived in 0.4.0 and 0.3.0.)
-
-**The library runs.**
-
-- Sixty-three names that compiled but could not run now do, among them `dema()`, `tema()`, `vwma()`, `alma()`, `linreg()`, `ma()`, `psar()`, `adx()`, `aroon()`, `ichimoku()`, `stoch()`, `stochRsi()`, `cci()`, `williamsR()`, `keltner()`, `vwap()`, `vwapAnchor()`, the `date.*` calendar calls and `session.isIn()`.
-- Every documented default now reaches the call. Before this, `atr()`, `rsi(close)` and twenty-seven other calls written with their defaults compiled and drew nothing.
-- Fifty-nine names that cannot run yet are marked planned and refused where you write them, with OS2020, instead of failing when the study loads.
-- `toBool(x)` and `toNumber(s)` replace two spellings that clashed with reserved words and could never be called.
-
-**Higher timeframe and other instrument reads run**, in three modes. `"confirmed"`, the default, takes the last coarser bar that closed and never repaints; `"developing"` shows the coarser bar as it stands; `"lookahead"` uses its final value from its first bar, which is why it repaints. `req.timeframe("1D", high)` is therefore the previous completed day's high. A read's warmup is counted in the requested bars. A timeframe finer than the chart is OS6002, one that is not a whole multiple of it is OS6015, and one that is not a timeframe at all is OS6001. When the host refuses a read, the read is absent, `req.error()` carries the host's reason, and the rest of the study keeps drawing.
-
-**Everything a study produces reaches the chart**: markers, bar colours, backgrounds, tables, alerts, drawing objects and reads of other instruments.
-
-- Drawing objects are created, moved, restyled and deleted as bars arrive. Changes made on a bar that is still forming are undone when it runs again, so a chart does not gain a copy per update. Changing an object the script already deleted is OS4005, and the host's ceiling on objects is OS5010.
-- Alerts fire for the present and never for history, so adding a study to a chart with two years of bars fires nothing. `"once"` fires once for the life of the study, `"oncePerBar"` once per bar, and `"everyUpdate"` on every update. An alert's message carries the text worked out on the bar that fired it.
-- Markers no longer appear and disappear on a bar that is still forming.
-
-**Inputs got simpler.** An `input()` may be written in a declaration option, such as `precision = input(2, "Places")`, inside a larger expression, and inside a read's expression. An input written in place is keyed by its title, so a stored setting stays on its row when you add or reorder inputs; an input with no title is OS3021, an empty title OS3024, and a title that repeats another input's name OS3022. `var len = input(...)` now works as a running value that starts from the setting.
-
-**The compiler says more.** OS8001, the warning for a stateful call that does not run on every bar, now also covers ternary arms, the right side of `and` and `or`, `else if` conditions and later `case` arms, so a file that compiled clean before can show it now. Two alerts sharing an id are OS3017. A `draw` setter given an object that has no such property is OS3011. A colour built from constants, such as `fade(red, 50)`, is accepted wherever a fixed colour is required.
-
-**The order rules are enforced.** Eight order refusals that were documented and raised by nothing are now raised at the call that breaks them, before anything is sent: an absent order argument (OS7002), a zero or negative quantity (OS7004), a price not on a tick (OS7006), a limit or stop order with no price (OS7007), an entry past the pyramiding limit (OS7008), a cancel naming no working order (OS7009), a bracket on the wrong side of the entry (OS7010) and two opposite orders on one bar (OS7013).
-
-- A `close()` naming a tag no order in the file uses is OS7016, and a close stating more than is held is OS7017.
-- No order crosses zero: a sell larger than the long position is sent as two orders, one closing and one opening.
-- `pos.avgPrice` averages only the positions on the side the strategy holds.
-- A strategy's position is worked out from its own fills, never from the account's position in the contract, which may belong to someone else as well.
-- The `leg` argument of an order is refused with OS3023, since no file can declare a leg yet.
-
-**Bad data is refused instead of computed on.** No bars is OS6010, a bar whose time does not follow the one before is OS6011, and an instrument record that contradicts itself (a session with no timezone, for example) is OS6012.
-
-Versions 0.1.0-alpha.0 and 0.1.0-alpha.1 were earlier previews that parsed scripts and computed nothing.
-
-## 0.1.0-alpha.1
-
-The first release published by the automated pipeline rather than by hand. It fixed a test runner problem that found no tests on older JavaScript runtimes and reported success anyway, raised the supported JavaScript runtime to version 22, and made the build report both the package version and the compiled program format version.
-
-## 0.1.0-alpha.0
-
-The first publication. **It parsed scripts and computed nothing**: a lexer, a parser and diagnostics with a code, a line, a column and a fix. It told you whether a script was well formed, and could not calculate a moving average, draw or place an order. Behind it were the language specification, a 143-entry error catalogue, the compiled program format, the host interface, a conformance suite design and twelve example scripts, all of which parsed cleanly.
+- `engine.run` takes the history as columns, one array per field, typed arrays included, beside the record form. Over 900,000 one minute bars the columns held 43 MB against 104 MB for the records, and the run peaked at 346 MB of heap against 877 MB. See [JavaScript library](/script/integrate/javascript).
+- The error catalogue has 173 entries. OS3025, OS3026, OS4008, OS6024, OS6025 and OS8019 are raised, and OS6012 is raised only where a fact cannot default.
+- The Python engine holds every library entry the JavaScript library does, checked on every build: arrays, `print()` and the log, the calendar, the session calls, drawing objects, tables, and higher timeframe and other instrument reads in all three modes. `python -m openscript --describe` now works from an installed copy, which it did not in 0.5.0. The Python package is published by a workflow that first installs the built package into a fresh interpreter and runs a compiled program, and each file on the index carries a signed attestation of that run.
+- **The conformance suite now tests what it exists for.** An engine that implemented nothing used to pass its narrowest profile, `core`, because every case belonged to the `strategy` profile and was skipped. The suite now holds 106 cases, 52 of them `core`, and four channels no engine answered before, one value per bar per plot, the log, drawing objects and tables, are defined and answered by both engines, which agree exactly on all 87 cases both can run. An engine with no compiler is no longer handed compiler cases. `npm run badge` makes a conformance badge from a passing result, and a result names the exact cases it was run against.
+- Still true, and said here: both engines were written in this project, so their agreement is evidence about this project rather than about the specification, and no engine written outside it has run the suite yet.
 
 ## Roadmap
 
-The project moves in phases, and a phase is finished when its test passes, not when its code is written. No dates are promised here.
+The project moves in phases, and a phase is finished when its test passes, not when its code is written. No dates are promised here. The long-term plan, with its themes, the outcomes each one is measured by and tasks sized for a single contributor, is published as the [OpenScript roadmap](/script/roadmap); this section says where each phase stands in version 0.8.0.
 
 ### Built
 
 - **The language, the compiler and the bar engine.** Names, types, warmup, history and persistence, with no code generated from text anywhere, and budgets that stop a runaway script.
 - **The whole visual surface.** Plots, markers, colours, tables, drawing objects, alerts, and reads of higher timeframes and other instruments.
 - **Reproducible backtests.** A stored run reports again to the same figures and runs again to the same bytes, and two runs can be compared well enough to tell an improvement from noise. A check runs this on every build.
+- **An importer for scripts in another chart language.** New in 0.6.0: see [Importing a script](/script/writing/importing-a-script).
 
 ### In progress
 
 - **The editor.** The six editor functions are built and published. The /trading editor uses the highlighter and the diagnostics; completion, hover and signature help in it, and a language server that would give desktop code editors the same help, are not written.
-- **A second engine and running strategies on a server.** The Python engine is published and agrees with the JavaScript library on every strategy case in the suite. The design runs strategies on a server, never in a browser tab, because closing a tab is not a decision anyone makes about their positions. It adds process isolation per strategy, scheduling against exchange calendars, a log per script, and sandbox trading by default with live orders only as a deliberate act.
+- **A second engine and running strategies on a server.** The Python engine is published, holds every library entry the JavaScript library does, and agrees with it exactly on every conformance case both can run: 107 of the 126, the other 19 being cases about the compiler, which the Python engine does not have. The design runs strategies on a server, never in a browser tab, because closing a tab is not a decision anyone makes about their positions. It adds process isolation per strategy, scheduling against exchange calendars, a log per script, and sandbox trading by default with live orders only as a deliberate act.
+- **An open standard.** Everything this phase can build inside the project is built: a conformance suite that asserts diagnostics, one value per bar per plot, the log, drawing objects, tables, orders, trades and the report, in 126 cases; the importer; a versioned compiled format with a compatibility promise; and a conformance badge, made from a passing result. The test that finishes the phase is the one thing that cannot be built inside it: an engine in a third programming language, written from the specification alone by someone who has not read this implementation, passing the suite. Until then the project shows no badge of its own.
 - **Alerts.** An alert is evaluated by the chart that is open, so it fires while the chart is open and stops when the chart is closed. Evaluating alerts on a server, so they fire with nothing open, is a phase of its own and is not being built yet.
 
 ### Planned
 
-- **An open standard.** A conformance suite anyone can run against an engine written without reading this implementation, and the test that finishes this phase: an engine in a third programming language, written from the specification alone, passing the suite. With it: a converter for scripts written in other chart scripting languages, a versioned compiled format with a compatibility promise, and a conformance badge.
 - **Multi-leg strategies and their risk rules.** Declaring legs, fixed contracts or ones described relative to the market such as the at-the-money NIFTY call of the nearest expiry, and managing them as a book: a stop and target on the combined profit, a profit lock, moving every leg's stop to its entry, entry windows, an exit time, a daily loss limit and squaring off at expiry. A combined position has risk that belongs to the combination, not to any one leg, which is why two single-leg strategies are not a substitute. Four questions come first: where the instrument list comes from, what "at the money" means to the tick, whether a leg may be added after the first bar, and what a book-level stop does to a leg that cannot be traded.
 - **The six recorded capabilities** from 0.5.0: an account-level drawdown halt, a position size cap, a cap on orders per session, a halt after losing sessions, reading past trades by index, and choosing whether a script runs on every update or only on closed bars.
 - **Language features reserved for a later version.** `map` and `matrix` collections, `import` of a shared library file, `type` for user record types, functions as values, and an expression form of `switch`. The words are reserved now so that adding them cannot break a script written today.
@@ -41968,5 +42611,5 @@ The project moves in phases, and a phase is finished when its test passes, not w
 - **Every error is documented**, with a code, a message, a cause and a fix, and the build fails on a code that is not.
 - **Engines agree.** A disagreement between the two engines on the conformance suite blocks a release.
 
-Related: [FAQ](/script/resources/faq), [Two libraries](/script/integrate/overview), [Your own engine](/script/integrate/conformance), [Legs and books](/script/strategies/multi-leg-and-books).
+Related: [FAQ](/script/resources/faq), [Two libraries](/script/integrate/overview), [Your own engine](/script/integrate/conformance), [Legs and books](/script/strategies/multi-leg-and-books), [OpenScript roadmap](/script/roadmap).
 

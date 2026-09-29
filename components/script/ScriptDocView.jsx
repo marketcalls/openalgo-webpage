@@ -20,7 +20,7 @@ import {
   readyPages,
 } from "@/lib/scriptDocs"
 
-const OG_IMAGE = "/assets/images/og-image.png"
+const OG_IMAGE = "/assets/og/script.png"
 
 /** The metadata of one docs page, for its generated route file. */
 export function scriptDocMetadata(section, page) {

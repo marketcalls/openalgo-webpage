@@ -81,7 +81,7 @@ dayClose = req.timeframe("1D", close, mode = "lookahead")
 plot(dayClose, "Day's close", style = "step")
 ```
 
-`"lookahead"` gives a coarse bar's final value from its first chart bar. On a five minute NSE chart with a daily read, it hands 09:15 the number the day will close at. Every study built on it anticipates the day perfectly on history, and knows nothing extra when traded, because at the time there is no future to read.
+`"lookahead"` gives a coarse bar's final value from its first chart bar. On a five minute NSE chart with a daily read, it hands 09:15 the number the day will close at. Every study built on it anticipates the day perfectly on history, and knows nothing extra when traded, because at the time there is no future to read. A backtest reads it the same way, the day's final value from its first bar, so a strategy traded from it reports a result that no real run can repeat.
 
 The mode exists for one honest purpose, drawing a finished coarse candle across history as a picture, and its name makes sure nobody reaches it by accident. The compiler warns about it with OS8005. The compiled study also records the mode, so a host can mark the study as repainting; the /trading legend does not show such a mark today, so the warning and the word in the source are the disclosure.
 

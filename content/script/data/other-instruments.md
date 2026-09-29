@@ -249,6 +249,8 @@ plot(dayMid, "NIFTY previous day mid", style = "step")
 
 [[chart.tickSize]], [[chart.lotSize]], [[chart.exchange]] and the rest of the `chart` namespace describe the instrument **the chart is showing**, never the one a read names. There is no per-read equivalent, so a study that reads another instrument and needs its lot size takes it as an input and says so in the title.
 
+A fact the host has not stated reads as `none` rather than a guess, because a script that rounds to a tick or sizes in lots cannot invent one, and a guess produces orders the exchange rejects. Test it with [[isNone()]], or write the assumption in the open with [[orElse()]]: `orElse(chart.lotSize, 1)` says that the script counts one unit per lot when nobody said otherwise, and an input says it in the settings dialog.
+
 On the /trading chart, `chart.exchange` and `chart.lotSize` are the chart instrument's own, read from the platform's instrument record a moment after the study is first drawn. They are still the chart's, so a study that works in money on the legs it reads takes their lot size as an input.
 
 ## Index against its future

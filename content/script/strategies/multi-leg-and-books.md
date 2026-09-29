@@ -1,12 +1,12 @@
 ---
 title: Legs and books
-description: Options and multi-leg positions with leg.* and book.*. How straddles and strangles on index options will be declared, entered as a unit and managed with combined stops, and what you can build in version 0.5.0.
+description: Options and multi-leg positions with leg.* and book.*. How straddles and strangles on index options will be declared, entered as a unit and managed with combined stops, and what you can build in version 0.8.0.
 ---
 
 This page covers the multi-leg model of OpenScript: **legs**, each one contract a strategy trades, and the **book**, all of a strategy's legs taken together, with the rules that manage them. It is the model for option structures such as a short straddle or strangle on NIFTY or BANKNIFTY weekly options, where two or more contracts only make sense together and the risk belongs to the combination rather than to any one leg.
 
-:::warn Planned in version 0.5.0
-Every `leg.*` and `book.*` name on this page is planned. In version 0.5.0 a strategy trades one instrument, the one on its chart, and a call to any `leg.*` or `book.*` name is refused where you wrote it with OS2020. This page describes the design so you can plan for it, and the last section shows what you can build today.
+:::warn Planned in version 0.8.0
+Every `leg.*` and `book.*` name on this page is planned. In version 0.8.0 a strategy trades one instrument, the one on its chart, and a call to any `leg.*` or `book.*` name is refused where you wrote it with OS2020. This page describes the design so you can plan for it, and the last section shows what you can build today.
 :::
 
 ## Why multi-leg positions need their own model
@@ -64,7 +64,7 @@ Read it top to bottom: two legs declared once, the rules that manage the book se
 
 ## Legs
 
-A **leg** is one contract a strategy trades, named by a string you choose. A file declares its legs once, at the top level, before the first bar. A file that declares none has exactly one leg, the instrument on its chart, which is every strategy in version 0.5.0.
+A **leg** is one contract a strategy trades, named by a string you choose. A file declares its legs once, at the top level, before the first bar. A file that declares none has exactly one leg, the instrument on its chart, which is every strategy in version 0.8.0.
 
 There are two ways to declare one:
 
@@ -116,7 +116,7 @@ A strategy takes one of two shapes, and the calls you use decide which.
 | As a unit | [[book.enter()]], [[book.exit()]] | A position whose legs only make sense together: straddles, strangles, spreads |
 | Per leg | [[leg.enter()]], [[leg.exit()]], and their short spellings [[buy()]], [[sell()]], [[close()]], [[exit()]], [[order.place()]], [[order.reverse()]] | Legs that open and close on their own signals |
 
-`book.enter(tag)` sends every declared leg its declared side and quantity in one decision, and `book.exit(tag)` closes every open leg. `leg.enter(name, side, qty, limit, stop, tag)` and `leg.exit(name, qty, limit, stop, tag)` act on one leg at a time, filtered by [[book.direction()]], which limits entries to `"long"`, `"short"` or `"both"`. Every single-instrument strategy in version 0.5.0 is already the per-leg shape, written the short way.
+`book.enter(tag)` sends every declared leg its declared side and quantity in one decision, and `book.exit(tag)` closes every open leg. `leg.enter(name, side, qty, limit, stop, tag)` and `leg.exit(name, qty, limit, stop, tag)` act on one leg at a time, filtered by [[book.direction()]], which limits entries to `"long"`, `"short"` or `"both"`. Every single-instrument strategy in version 0.8.0 is already the per-leg shape, written the short way.
 
 **Why a combined stop fits only one shape.** [[book.profit]] is measured from the last moment the book was flat. In a strategy that enters as a unit, that moment is the start of the current trade, because the book goes flat between trades, so a combined stop is a stop on that trade: "square off when this straddle is six thousand down". In a per-leg strategy the book may never be flat: one leg closes as another opens and a third has been running since Tuesday. The window would start at a moment no rule chose and no reader could name, and a stop on an arbitrary window is worse than none, because it looks like a stop.
 
@@ -221,7 +221,7 @@ plot(leg.profit("ce"), "Call leg", orange)
 plot(leg.profit("pe"), "Put leg", teal)
 ```
 
-## What you can build in version 0.5.0
+## What you can build in version 0.8.0
 
 Until legs and books land, three patterns cover most of what options traders want from a script.
 
@@ -272,8 +272,8 @@ plot(targetLevel, "Target", lime, style = "step")
 plot(pos.isShort ? pos.avgPrice : none, "Premium sold", fade(silver, 40), style = "step")
 ```
 
-The entry window is tested against the time each bar starts, and its end is exclusive, so make it wider than the chart's interval: on a 15-minute chart no bar starts inside `"0920-0930"`, while `"0920-1000"` holds the 09:30 and 09:45 bars. The size counts in units computed from the lot size, for the reason [Position and sizing](/script/strategies/position-and-sizing#where-a-size-comes-from) gives. The stop and target are rules the script tests, because /trading does not act on [[exit()]] levels in 0.5.0. To deploy it from the Strategies panel, replace the clock tests with a window built from arithmetic on [[time]], as [Sessions and time](/script/data/sessions-and-time#sessions-and-the-clock-in-trading-today) shows, because the runner refuses to start a script that reads the calendar.
+The entry window is tested against the time each bar starts, and its end is exclusive, so make it wider than the chart's interval: on a 15-minute chart no bar starts inside `"0920-0930"`, while `"0920-1000"` holds the 09:30 and 09:45 bars. The size counts in units computed from the lot size, for the reason [Position and sizing](/script/strategies/position-and-sizing#where-a-size-comes-from) gives. The stop and target are rules the script tests, because a backtest in version 0.8.0 does not fill [[exit()]] levels, and neither does /trading. To deploy it from the Strategies panel, replace the clock tests with a window built from arithmetic on [[time]], as [Sessions and time](/script/data/sessions-and-time#sessions-and-the-clock-in-trading-today) shows, because the runner refuses to start a script that reads the calendar.
 
-**Manage two legs from one chart, with limits.** A strategy on one leg's chart can read the other leg with [[req.symbol()]], manage the combined premium, trade its own leg, and raise an [[alert()]] for the other leg that you route yourself. The combined stop then measures the right thing, but only the chart's leg is in the strategy's books, the other leg's fills are not, and the version 0.5.0 backtest refuses such a strategy before the first bar with OS6006, because a backtest is given the chart's own bars and cannot supply another instrument's. Treat it as a bridge until [[book.enter()]] lands, not as a two-leg strategy.
+**Manage two legs from one chart, with limits.** A strategy on one leg's chart can read the other leg with [[req.symbol()]], manage the combined premium, trade its own leg, and raise an [[alert()]] for the other leg that you route yourself. The combined stop then measures the right thing, but only the chart's leg is in the strategy's books, the other leg's fills are not, and the Backtest panel refuses such a strategy before the first bar with OS6006, because it hands the backtest only the chart's own bars. A backtest from version 0.6.0 on can be handed another instrument's bars by a host that has them; the /trading page in current OpenAlgo releases still runs library 0.5.0, which cannot take them. Treat it as a bridge until [[book.enter()]] lands, not as a two-leg strategy.
 
 **Related.** [Overview](/script/strategies/overview), [Orders](/script/strategies/orders), [Exits and brackets](/script/strategies/exits-and-brackets), [Position and sizing](/script/strategies/position-and-sizing), [Reading the books](/script/strategies/reading-the-books), [leg.* reference](/script/reference/legs), [book.* reference](/script/reference/books)

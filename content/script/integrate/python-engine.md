@@ -18,7 +18,8 @@ pip install openscript
 | Python | 3.12 or newer |
 | Dependencies | None. The standard library only, and not the parts of it that would stop two runs agreeing: no network, threads, randomness or locale inside the package |
 | Licence | Apache 2.0 |
-| Version | 0.5.0, released together with `openalgo-script` |
+| Version | 0.8.0, released together with `openalgo-script` |
+| Publishing | Since 0.6.0, uploaded by the project's release workflow through trusted publishing, with no stored token. Each file on the index carries a signed attestation of the workflow run that built it |
 | Code generation | None. No string evaluator, no statement executor, no import by a computed name and no objects loaded out of bytes, so many people's scripts can run in one process |
 
 ## Getting a program to Python
@@ -87,7 +88,7 @@ closes = [100.0, 102.0, 101.0, 105.0]
 previous = None
 for index, close in enumerate(closes):
     bar = Bar(time=float(start + index * 60000), open=close, high=close, low=close, close=close)
-    library.at_bar({"high": bar.high, "low": bar.low, "close": bar.close,
+    library.at_bar({"time": bar.time, "high": bar.high, "low": bar.low, "close": bar.close,
                     "previousClose": previous, "volume": bar.volume,
                     "isSessionFirst": index == 0}, index == 0)
     result = run.execute_bar(index, bar, CLOSED, supplied=len(closes), instrument=INSTRUMENT)
@@ -99,8 +100,8 @@ for index, close in enumerate(closes):
 # The newest bar is still moving: execute it twice at the same index.
 for close in (106.0, 104.0):
     bar = Bar(time=float(start + 4 * 60000), open=close, high=close, low=close, close=close)
-    library.at_bar({"high": close, "low": close, "close": close, "previousClose": previous,
-                    "volume": bar.volume, "isSessionFirst": False}, False)
+    library.at_bar({"time": bar.time, "high": close, "low": close, "close": close,
+                    "previousClose": previous, "volume": bar.volume, "isSessionFirst": False}, False)
     result = run.execute_bar(4, bar, MOVING, supplied=5, instrument=INSTRUMENT)
     print("moving", close, result.columns, result.applied_channels)
 ```
@@ -122,7 +123,7 @@ Column 0 is the plot and column 1 the marker. Bar 0 has no mean yet, so the plot
 from openscript.run import load, load_text
 ```
 
-`load_text(text, settings, library, limits, capabilities, read_time)` reads the canonical text and then does everything `load` does. `load(raw, ...)` takes a program object built in the same process, which never was text and has nothing to be canonical about. Both return a `LoadResult` with `.run`, `.diagnostic` and the property `.ok`; exactly one of the first two is `None`.
+`load_text(text, settings, library, limits, capabilities, read_time, instrument, provider)` reads the canonical text and then does everything `load` does. `load(raw, ...)` takes a program object built in the same process, which never was text and has nothing to be canonical about. Both return a `LoadResult` with `.run`, `.diagnostic` and the property `.ok`; exactly one of the first two is `None`.
 
 | Argument | What it is |
 |---|---|
@@ -132,10 +133,14 @@ from openscript.run import load, load_text
 | `limits` | `openscript.budget.EngineLimits`. Leave the default, `DEFAULT_LIMITS`, unless you have a reason |
 | `capabilities` | The capability tags this run serves, from `capabilities(...)` |
 | `read_time` | How a written date becomes an instant, for a `time` input. Without it the date is read as UTC |
+| `instrument` | The instrument record, which reads of another timeframe or instrument are planned against: the interval they are compared with and the zone a day is dated in |
+| `provider` | For [[req.symbol()]]: a function that takes a `RequestQuery` and answers with `Answered(bars)`, `Pending()`, `Refusal(code, reason)` or `None`, all from `openscript.request_plan`. A run given a provider serves the `req.symbol` tag; without one, a program that reads another instrument is refused at load naming it |
 
 **The library is a seam, not an import.** The machine asks the library for its manifest at load and for each call during a bar. `Serving` from `openscript.adapter.serving` joins the engine's library tables to that seam. Build one per run: `Serving()` for a study, `Serving(ledger)` for a strategy.
 
-**Capabilities are what this run serves.** A program needing a tag missing from the list is refused at load, naming it, rather than run with a hole in it. `capabilities()` gives the machine's own tags; `capabilities("orders")` adds the tag a strategy needs.
+**Capabilities are what this run serves.** A program needing a tag missing from the list is refused at load, naming it, rather than run with a hole in it. `capabilities()` gives the machine's own tags, which cover arrays, user functions, loops, alerts and [[req.timeframe()]]. Add the tags your host serves: `capabilities("orders")` for a strategy, and `capabilities("objects", "tables")` to run drawing objects and tables.
+
+**A run over settled history can see the whole of it.** `run.history(bars)`, called before bar 0 with the list of `Bar` records you are about to execute, hands the dataset to every read of another timeframe, which is what a `"lookahead"` read reads: each higher timeframe bar in full from its first chart bar. A live runner does not call it.
 
 ### When a load is refused
 
@@ -171,23 +176,23 @@ Four of those mean "this engine does not have that" rather than "the program is 
 
 ## What this engine runs, and what it refuses
 
-The Python engine is built for strategies and for studies that produce numbers. It does not carry a chart's drawing surface, and in 0.5.0 some of the library is still missing from it. Each gap is refused at load, by name, never answered with an empty value:
+The Python engine is built for strategies and for studies that produce numbers. In 0.8.0 it holds every library entry the JavaScript engine does, 251 of 251, which the project's build checks every time it runs. What it does not carry is a chart's drawing surface. A capability your run does not serve is refused at load, by name, never answered with an empty value:
 
 | Script uses | In the Python engine |
 |---|---|
-| Plots, fills, levels, markers, bar colour, background, alerts | Run. The values arrive in the bar result |
+| Plots, fills, levels, markers, bar colour, background | Computed. Each value arrives in its channel in the bar result's `.columns`; drawing them is yours |
+| Alerts | Run. A decided realtime bar returns them in `.alerts` |
 | Orders, positions and the strategy ledger | Run, with `capabilities("orders")` and `Serving(ledger)` |
-| User functions, loops, `var`, and array literals read by index | Run |
+| User functions, loops, `var`, arrays and the array functions such as [[push()]], [[sort()]] and [[avg()]] | Run |
 | Moving averages, oscillators and the other indicators, the maths, string and colour functions | Run |
-| Array functions such as [[push()]], [[size()]], [[sort()]] and [[avg()]] | Refused: OS6004 naming the function |
-| [[print()]] | Refused: OS6004 naming `print` |
-| The `date` functions, such as [[date.hour()]] and [[date.dayOfWeek()]] | Refused: OS6004 naming the function |
-| [[session.isIn()]], [[session.isLastBar]], [[chart.intervalMinutes]], [[chart.isIntraday]] | Refused: OS6004 naming the function |
-| Drawing objects such as [[draw.line()]] | Refused: OS6006 naming `objects` |
-| [[table()]] | Refused: OS6006 naming `tables` |
-| [[req.timeframe()]] and [[req.symbol()]] | Refused: OS6006 naming the tag. The engine is handed no other bars |
+| [[print()]] | Run. Each call comes back in `.applied` as a log record: see [What comes back](#what-comes-back) |
+| Drawing objects such as [[draw.line()]], and [[table()]] | Run, with `capabilities("objects", "tables")`. `run.objects.drawings()` gives the objects the script holds and `run.objects.grids` the cells the last bar wrote. Without the tags: OS6006 naming `objects` or `tables` |
+| [[req.timeframe()]] | Run, in all three modes, folded from the bars you execute. Pass `instrument` to `load_text`. An intraday timeframe such as `"15"` folds in any zone; a day, week or month is dated by the calendar, in the `date` row below |
+| [[req.symbol()]] | Run, with a `provider` passed to `load_text`. Without one: OS6006 naming `req.symbol` |
+| The `date` functions, such as [[date.hour()]], [[session.isIn()]], and a read of a day, week or month | Run, but the engine's calendar reads one timezone, `UTC`. In any other zone, `Asia/Kolkata` included, they read as absent |
+| [[session.isFirstBar]], [[session.isLastBar]], [[chart.intervalMinutes]], [[chart.isIntraday]] | Run. The two session facts are the ones you state in `at_bar`, below |
 
-Run a script that needs any of those on the JavaScript engine, which serves them all. `capabilities()` lists `arrays` even though the array functions are missing, so check a script against this table, or load it once, before you deploy it to a Python server.
+The calendar is the gap that matters on an Indian market: a script that reads the hour of a bar, tests a time window or reads the daily timeframe in `Asia/Kolkata` gets absent values from this engine. Run such a script on the JavaScript engine, which reads every zone, or load it once over a day of bars and check its columns before you deploy it to a Python server.
 
 ## The bar cycle
 
@@ -200,7 +205,7 @@ One call is one execution of one bar, all eleven steps of the bar cycle in order
 | Argument | What it means |
 |---|---|
 | `index` | Which bar, counting from 0. **The same index twice is a re-execution of that bar, not a new one** |
-| `bar` | `Bar(time, open, high, low, close, volume, oi)`. `time` is the bar's open instant in UTC milliseconds. A price or volume you do not have is left absent, never zero and never carried forward |
+| `bar` | `Bar(time, open, high, low, close, volume, oi)`. `time` is the bar's open instant in UTC milliseconds. A price or volume you do not have is left absent, never zero and never carried forward. A bar with no time is refused with [OS6025](/script/errors/data#os6025), and a time not after the bar before it with [OS6011](/script/errors/data#os6011), before any step runs |
 | `state` | `BarState(is_new, is_confirmed, is_realtime, updates)`: the four facts only the side that built the bar knows |
 | `supplied` | How many bars you have supplied. It decides [[bar.isLast]] and nothing else |
 | `instrument` | The instrument record as a dictionary, the same fields as on [Host interface](/script/integrate/host-interface#instrument-facts). The `chart` namespace and tick rounding read it |
@@ -218,10 +223,12 @@ Three of those decide more than they look like they do:
 
 | Fact | Value |
 |---|---|
+| `time` | This bar's open time, UTC milliseconds. The `date` functions and [[session.isIn()]] read it |
 | `high`, `low`, `close` | This bar's prices |
 | `previousClose` | The previous bar's close, `None` on the first bar |
 | `volume` | This bar's volume, or absent |
-| `isSessionFirst` | Whether this bar opens a trading session, by your own calendar. For NSE, the 09:15 IST bar |
+| `isSessionFirst` | Whether this bar opens a trading session, by your own calendar. For NSE, the 09:15 IST bar. [[session.isFirstBar]] and [[vwap()]] read it |
+| `isSessionLast` | Whether this bar is the last of the session's schedule. For NSE, the bar that ends at 15:30 IST. [[session.isLastBar]] reads it |
 
 The second argument is whether this is bar 0. **This is the one place a forgotten line produces a study that runs and is wrong.** A fact you do not state is absent, so a study built on it draws an empty line, [[trueRange()]] and everything built on it among them, and nothing says why.
 
@@ -232,11 +239,24 @@ The second argument is whether this is bar 0. **This is the one place a forgotte
 | `.index` | The bar this was |
 | `.columns` | One value per channel, by channel index. `None` where nothing wrote the channel |
 | `.applied_channels` | The deferred channels (markers and alert conditions) this execution committed. Empty on a bar that is not decided |
-| `.applied` | The order calls a decided bar left behind, in the order the bar made them. Each has `.name`, `.arguments` and `.position` |
+| `.applied` | The order calls and [[print()]] calls a decided bar left behind, in the order the bar made them. Each is a `PendingEffect` with `.name`, `.effect`, `.arguments` and `.position`, and `.effect` says whose it is: `"order"` for the ledger, `"log"` for a print |
 | `.alerts` | `Alert(key, title, message, bar, time)`, raised only on a decided realtime bar |
 | `.diagnostic` | What stopped the bar, or `None`. Read `.ok` |
 
 `.columns` always carries every channel, so a line redraws on every tick of a moving bar; `.applied_channels` says which of the marker and alert channels count. Draw the line, and commit the marker only when its channel is in `.applied_channels`.
+
+A script's log is built from the same records. `Logbook` from `openscript.logbook` turns the print records of each execution into log lines, each carrying the bar it was written on:
+
+```python
+from openscript.logbook import Logbook
+
+book = Logbook()
+# After each execution of bar `index`:
+book.write(result.applied, index, bar.time)
+# book.rows(): [{"barIndex": 0, "time": 1735703100000.0, "value": 100.5}, ...]
+```
+
+`write` takes only the print records and passes over the orders, so hand it `.applied` whole. `Logbook(limit=n)` keeps at most `n` lines and counts the rest in `.dropped` rather than cutting the log short in silence.
 
 **A bar that fails stops there.** Its later steps do not run, its result's `.columns` is empty, and `.diagnostic` has the code and position. The failure never escapes as an exception, so a process running many scripts gets a diagnostic about one of them and nothing else. The run is still loaded afterwards; whether a failed bar ends it is your decision.
 
@@ -268,7 +288,7 @@ The order of the moments between two bars is fixed:
 1. Deliver every frame your destination sent since the last bar: `ledger.deliver(frame)`.
 2. Fold them: `ledger.settle()`.
 3. Execute the bar.
-4. Place what the bar decided, from `result.applied`.
+4. Place what the bar decided, from the `"order"` records in `result.applied`.
 
 A driver that folded after the bar would let a script react inside the bar its own order was sent in, and one that folded during the bar would give two executions of a forming bar two different positions to read.
 
@@ -332,16 +352,16 @@ for index, bar in enumerate(bars):
     waiting = []
 
     # 3. Execute the bar.
-    library.at_bar({"high": bar.high, "low": bar.low, "close": bar.close,
+    library.at_bar({"time": bar.time, "high": bar.high, "low": bar.low, "close": bar.close,
                     "previousClose": previous, "volume": bar.volume,
                     "isSessionFirst": index == 0}, index == 0)
     result = run.execute_bar(index, bar, CLOSED, supplied=len(bars), instrument=INSTRUMENT)
     if not result.ok:
         raise SystemExit(f"bar {index}: {result.diagnostic.code}")
 
-    # 4. Place what the bar decided.
+    # 4. Place what the bar decided. Print records are the log's, not the ledger's.
     appended = len(ledger.rows())
-    for effect in result.applied:
+    for effect in (one for one in result.applied if one.effect == "order"):
         placed = ledger.place(effect.name, effect.arguments,
                               IntentBar(index=index, time=bar.time), effect.position)
         if placed.refusal is not None:
@@ -389,9 +409,9 @@ python -m openscript --actual <case-directory>
 ```
 
 ```json
-{"engineOnly":true,"languageVersions":[1],"name":"openscript","profile":"strategy","schemaVersion":"1.1","version":"0.5.0"}
+{"engineOnly":true,"languageVersions":[1],"name":"openscript","profile":"strategy","schemaVersion":"1.1","version":"0.8.0"}
 ```
 
-`--describe` states what the engine claims. The other two run one case directory and read one JSON object on standard input, `{"program": "<the canonical program text>"}`, because the engine has no compiler to turn the case's `script.os` into a program itself: the first compares against the case's expected files, the second prints what the engine computed so two engines can be compared directly.
+`--describe` states what the engine claims, and since 0.6.0 it answers from a copy installed with `pip`, reading its name and version from the record the installer wrote. The other two run one case directory and read one JSON object on standard input, `{"program": "<the canonical program text>"}`, because the engine has no compiler to turn the case's `script.os` into a program itself: the first compares against the case's expected files, the second prints what the engine computed so two engines can be compared directly.
 
 **Related.** [Two libraries](/script/integrate/overview), [JavaScript library](/script/integrate/javascript), [Compiled program](/script/integrate/compiled-program), [Host interface](/script/integrate/host-interface), [Backtesting API](/script/integrate/backtesting-api), [Your own engine](/script/integrate/conformance), [Sandbox and live](/script/strategies/sandbox-and-live)

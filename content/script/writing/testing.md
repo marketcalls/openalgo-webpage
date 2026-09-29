@@ -49,7 +49,7 @@ plot(mean, "Mean of three", aqua)
 
 Set **Check this bar index** to a bar after the first two, and the label appears on that bar with every number you need. `text()` with no decimals writes each value in full, so nothing is hidden by rounding.
 
-You can demand an exact match, because the language does. All arithmetic is 64-bit floating point with round-to-nearest-even, in the order the source writes it, and an engine may not reorder or fuse operations. [[round()]] takes halves away from zero. Arrays are always walked in index order. There is no randomness, and the only clock a script can read during a bar, [[chart.now()]], is a value the host fixes. Every engine must produce the same result to the last bit, so a disagreement between your arithmetic and the script's is a real disagreement.
+You can demand an exact match, because the language does. All arithmetic is 64-bit floating point with round-to-nearest-even, in the order the source writes it, and an engine may not reorder or fuse operations. [[round()]] takes halves away from zero. Arrays are always walked in index order. There is no randomness, and the only clock a script can read during a bar, [[chart.now()]], is a value the host fixes. Every engine must produce the same result to the last bit, so a disagreement between your arithmetic and the script's is a real disagreement. That includes [[pow()]], [[exp()]], [[log()]] and the trigonometric functions, which since version 0.7.0 use portable algorithms with one final rounding, and the JavaScript and Python engines are compared on every release over more than a million and a half library calls with no bit allowed to differ. That change moved the final bits of some results made by earlier versions, so compare a stored result only with one made by the same library version.
 
 Check three bars, not one: an early bar just after warmup ends, a bar in the middle, and a bar on a session boundary or a gap, such as the 09:15 bar after a weekend. Those are the three places the arithmetic differs for different reasons.
 
@@ -259,7 +259,7 @@ See [Repainting](/script/data/repainting) for the whole subject.
 
 | Check | Why |
 |---|---|
-| It is flat when you expect it to be | Test the script's own square-off on a real session end, 15:30 on NSE and NFO. `closeOnSessionEnd` is accepted and not acted on in version 0.5.0, so the exit has to be a rule in the script: see [Exiting on the clock](/script/strategies/exits-and-brackets#exiting-on-the-clock) |
+| It is flat when you expect it to be | Test the script's own square-off on a real session end, 15:30 on NSE and NFO. `closeOnSessionEnd` is accepted and not acted on in version 0.8.0, so the exit has to be a rule in the script: see [Exiting on the clock](/script/strategies/exits-and-brackets#exiting-on-the-clock) |
 | It behaves on a day with a gap, a halt or a missing bar | Absence reaches a plot as a gap; make sure it reaches your decisions as "do nothing" |
 | It has run in sandbox trading (analyzer mode in OpenAlgo), on real market data, long enough to see every branch | The Strategies panel starts a run in sandbox while OpenAlgo is in analyzer mode. Run there first, then live. See [Sandbox and live](/script/strategies/sandbox-and-live) |
 | You know what it does when a data read fails | [[req.isReady()]] and [[req.error()]] let a script say "not yet" instead of guessing |

@@ -122,7 +122,7 @@ Three details in that script are warmup decisions:
 - `span > 0` guards the division. Dividing by zero gives the absent value rather than an error, so the guard is not strictly needed, but it tells the reader that a flat window is a known case.
 - Nothing tries to fill in the first 71 bars. The pane is empty there, and that is the report.
 
-A length can also be a series that changes from bar to bar. What a call does after its length changes is not the same for every call: some carry on at once with the new length, and others go absent again until they have enough bars for it. Use a fixed length, usually an [[input()]], whenever you need to know the first bar exactly.
+A length can also be a series that changes from bar to bar. The warmup is then measured against the largest length the call has been given so far, counted from the first bar of the data. A call carries on at once with a shorter length, or with a longer one the bars it has seen already cover, and is absent after a longer length only until those bars do: `sma(close, len)` whose `len` rises from 10 to 50 on bar 20 is absent from bar 20 and has a value again from bar 49, the first bar a fixed length of 50 gives. The /trading page in current OpenAlgo releases still runs library 0.5.0, in which a windowed call such as [[sma()]] or [[highest()]] starts its warmup again after every change of length. Use a fixed length, usually an [[input()]], whenever you need to know the first bar exactly.
 
 ## What an absent value does downstream
 

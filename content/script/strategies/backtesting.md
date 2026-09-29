@@ -1,9 +1,9 @@
 ---
 title: Backtesting
-description: Running a strategy over history from the Backtest panel in /trading, choosing the range and the inputs, knowing how much history the first trade needs, and what the 0.5.0 backtest does and does not model.
+description: Running a strategy over history from the Backtest panel in /trading, choosing the range and the inputs, knowing how much history the first trade needs, and what the backtest in version 0.8.0 does and does not model.
 ---
 
-A backtest runs a strategy over the bars of the chart you are looking at, one bar at a time, oldest first, exactly as the chart runs a study, and reports what the strategy would have done. This page covers running one from the **Backtest** panel in the /trading page of OpenAlgo: what to pick, how far back to reach, how much history the first trade needs before it means anything, and which parts of a strategy the 0.5.0 backtest does not model yet.
+A backtest runs a strategy over the bars of the chart you are looking at, one bar at a time, oldest first, exactly as the chart runs a study, and reports what the strategy would have done. This page covers running one from the **Backtest** panel in the /trading page of OpenAlgo: what to pick, how far back to reach, how much history the first trade needs before it means anything, and which parts of a strategy the backtest in version 0.8.0 does not model yet.
 
 There is no separate backtest mode in the language and no backtest-only function. The file you backtest is the file you later [deploy](/script/strategies/sandbox-and-live), and the only thing that differs between the two is where the orders go. In a backtest they go to a fill model over history, and nothing is sent anywhere.
 
@@ -135,7 +135,7 @@ Under the settings, a line headed **Order size** says where the size comes from:
 | Writes a number other than 1, such as `qty = 5` | The script sets the size and it cannot be changed here |
 | Says nothing about size, or writes `qty = 1` | It trades 1 unit, which is also the default, and the line `qty = input(1, "Quantity", min = 1)` would hand the choice to you |
 
-State quantities in units. A strategy sized with `qtyType = "cash"` or `"equityPercent"` is refused by the 0.5.0 backtest before its first bar, and the OpenAlgo strategy runner sends only quantities stated in units. On an NFO future or option, a quantity in units is the number of units, so one lot of a contract whose lot size is 75 is `qty = 75`. [Position and sizing](/script/strategies/position-and-sizing) covers sizing from [[chart.lotSize]].
+State quantities in units. A strategy sized with `qtyType = "cash"` or `"equityPercent"` is refused by the backtest before its first bar, with OS6021, and the OpenAlgo strategy runner sends only quantities stated in units. On an NFO future or option, a quantity in units is the number of units, so one lot of a contract whose lot size is 75 is `qty = 75`. [Position and sizing](/script/strategies/position-and-sizing) covers sizing from [[chart.lotSize]].
 
 ### The instrument's own facts
 
@@ -151,7 +151,7 @@ The run is also told the chart's interval (a `D`, `W` or `M` chart as `"1D"`, `"
 | The chart | Draws the strategy's plots when it is applied or added from the indicators list, run against the same simulated fills the backtest uses, over the bars the chart has loaded | Nowhere: the chart draws and does not trade |
 | Strategies panel | Runs a deployment as a process on the server, bar by bar as bars close | The platform's own order path: the sandbox in analyzer mode, your broker in live mode |
 
-All three run the same compiled program, so the values a script computes from the same bars agree between them. What differs is where the orders go and, in release 0.5.0, which parts of a script each place supports. [Sandbox and live](/script/strategies/sandbox-and-live) covers the third row and lists what the server runner needs.
+All three run the same compiled program, so the values a script computes from the same bars agree between them. What differs is where the orders go and which parts of a script each place supports. [Sandbox and live](/script/strategies/sandbox-and-live) covers the third row and lists what the server runner needs.
 
 ## Warmup: how much history the first trade needs
 
@@ -239,11 +239,11 @@ plot(breakout, "Breakout level", orange, style = "step")
 background(warm ? none : fade(silver, 92))
 ```
 
-## What the 0.5.0 backtest does not model yet
+## What the backtest does not model yet
 
-Some parts of a strategy compile and are not acted on by the backtest in this release. Most of them fail quietly, with a report that looks normal, so know them before you read one. Two are refused before the run starts, with the reason shown in the panel:
+Some parts of a strategy compile and are not acted on by the backtest in version 0.8.0, or by the Backtest panel. Most of them fail quietly, with a report that looks normal, so know them before you read one. Two are refused before the run starts, with the reason shown in the panel:
 
-| In the script | In a 0.5.0 backtest | What to do |
+| In the script | In the Backtest panel | What to do |
 |---|---|---|
 | A stop or target set with [[exit()]] or [[order.bracket()]] | Not filled | Write the stop as a rule tested on each close. [Costs and fills](/script/strategies/costs-and-fills) shows one |
 | `closeOnSessionEnd = true` | Not acted on: a position is carried past the close | Close it in the script as well |
@@ -251,6 +251,9 @@ Some parts of a strategy compile and are not acted on by the backtest in this re
 | Another instrument, read with [[req.symbol()]] | The run is refused before it starts | Backtest on the instrument itself; a [[req.timeframe()]] read of the chart's own instrument works |
 | `qtyType = "lots"` | Entries are converted from lots to units, but an exit that sizes itself, such as `close()`, is not: it sends the position's unit count as a number of lots, sells many times what is held and opens a large position the other way | Use `qtyType = "units"` |
 | `qtyType = "cash"` or `"equityPercent"` | The run is refused before it starts | Use `qtyType = "units"` |
+| A `"lookahead"` read with [[req.timeframe()]] | Reads the higher timeframe bar as it stood on each bar, not its final value | Use the default `"confirmed"` mode, which never repaints. [Repainting](/script/data/repainting) explains the three modes |
+
+The Backtest panel runs the copy of the library the /trading page ships, which in current OpenAlgo releases is version 0.5.0. From version 0.6.0 a `"lookahead"` read in a backtest gives the higher timeframe bar's final value from that bar's first bar, as the mode says, and a backtest can be handed another instrument's bars by a host that has them. The panel does neither yet.
 
 One more behaviour is worth knowing. An order the strategy is not allowed to place, such as a second entry while one is open and `pyramiding` is `1`, is an error that stops the script at that bar (OS7008). Nothing after that bar is placed or filled: the trade list ends there, and the equity curve carries whatever position was open, marked to every later close, to the end of the range. Above the figures the Backtest panel says which bar the run stopped on and when, what went wrong with its fix, and the code with its line and column, so a report that ends early is not read as the whole range. Guarding every entry with [[pos.isFlat]], or with the side you mean to add to, keeps a strategy from reaching one. [Orders](/script/strategies/orders) lists the refusals.
 
@@ -282,7 +285,7 @@ A run tells you what a fixed set of rules did over a fixed set of bars. It canno
 | Trading from the first bar of the range | The first trades fire on half-warm values | Load warmup bars before the traded window |
 | `fillOn = "close"` | Every entry at the price that triggered it | Leave the default |
 | Zero costs | A dense intraday script prints money | Set slippage and commission before reading anything |
-| A stop set with `exit()` | Losses run far past the stop level the script set | Write the stop as a rule in 0.5.0 |
+| A stop set with `exit()` | Losses run far past the stop level the script set | Write the stop as a rule: version 0.8.0 does not fill `exit()` levels |
 | One regime | A long-only strategy over a rising market | Extend or move the range |
 | Tuned on the whole range | Every parameter at a local peak | Hold a section back before tuning |
 | Too few trades | A 22 trade run with a 68 percent win rate | Longer range, finer interval, or drop the idea |

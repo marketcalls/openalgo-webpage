@@ -199,13 +199,14 @@ Every script you wrote carries a braces button, `{}`, on its legend row, beside 
 
 ## What the editor does not do yet
 
-The `openalgo-script` library ships six editor functions: highlighting, completion, diagnostics, hover, signature help and formatting. The /trading panel uses the highlighting, and shows the compiler's diagnostics when you open or save a script rather than as you type.
+The `openalgo-script` library ships six editor functions: highlighting, completion, diagnostics, hover, signature help and formatting. The /trading panel uses the highlighting, and shows the compiler's diagnostics when you open or save a script rather than as you type. The /trading page in current OpenAlgo releases runs version 0.5.0 of the library, and the six functions are the same in version 0.8.0, which these pages describe.
 
 So, in this release, the panel does not:
 
 - offer completion as you type, or show a function's signature while you fill in its arguments;
 - show a card when you hover over a name;
-- format the file for you.
+- format the file for you;
+- translate a script written in another chart scripting language. The library's importer does that, and reports what it could not carry across with codes in a ninth range, OS9. See [Importing a script](/script/writing/importing-a-script).
 
 The reference covers what those features would show you. Every entry in the [Reference](/script/reference/technical-analysis) section lists a function's signature, its arguments with their defaults and accepted values, and the first bar it has a value on, all read from the compiler. If you build OpenScript into your own portal, all six functions are available to you: see [Editor integration](/script/integrate/editor-integration).
 

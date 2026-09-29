@@ -208,7 +208,7 @@ The background marks the newest bar while it is still forming. [Price and volume
 
 ### Arithmetic
 
-`+`, `-`, `*`, `/` and `%` work on numbers. `/` is always real division, so `7 / 2` is `3.5`. `%` is the remainder with the sign of the left operand, so `-7 % 3` is `-1`. Division by zero gives `none`, not an error. There is no power operator: write [[pow()]], as `pow(x, 2)`.
+`+`, `-`, `*`, `/` and `%` work on numbers. `/` is always real division, so `7 / 2` is `3.5`. `%` is the remainder with the sign of the left operand, so `-7 % 3` is `-1`. Division by zero gives `none`, not an error. There is no power operator: write [[pow()]], as `pow(x, 2)`. Like [[exp()]], [[log()]] and the trigonometric functions, it is computed with a portable algorithm and one final rounding, so every engine gives the same result to the last bit.
 
 `+` also joins two strings, and does nothing else. There is no implicit conversion anywhere, so `"Close " + 5` is `OS2003`. Convert with [[text()]]: `"Close " + text(close, 2)`.
 

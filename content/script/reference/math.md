@@ -68,7 +68,7 @@ The line between the rows that give `none` and the row that stops is the line be
 | `max(close, none)` | `none` | Absence passes through |
 
 :::note
-[[exp()]], [[log()]], [[log10()]], [[math.log2()]], [[pow()]], [[math.hypot()]] and the trigonometric functions can differ in the last binary digit from one computer to another. OpenScript does not yet fix one exact method for them, so these results carry no bit-for-bit guarantee across platforms. The difference is far below anything a chart shows. [[sqrt()]], the rounding functions and every other function on this page give identical results everywhere.
+[[exp()]], [[log()]], [[log10()]], [[math.log2()]], [[pow()]], [[math.hypot()]] and the trigonometric functions are worked out with one portable method in both libraries, rather than with the computer's own maths library: each result is the true value rounded once to the nearest representable number, with an exact tie going to the even one. So they give identical results on every computer and in both the JavaScript and the Python engine, as [[sqrt()]], the rounding functions and every other function on this page do. A result stored from a release before 0.7.0 may differ from today's in its last binary digit.
 :::
 
 ## Sign and size

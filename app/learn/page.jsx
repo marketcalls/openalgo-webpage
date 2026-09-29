@@ -14,7 +14,7 @@ import { CHAPTERS as TECH } from "@/lib/technicalsCurriculum";
 
 import LearnHubClient from "./LearnHubClient";
 
-const OG_IMAGE = "https://openalgo.in/assets/images/og-image.png";
+const OG_IMAGE = "https://openalgo.in/assets/og/learn.png";
 const DESC =
   "Open Varsity is OpenAlgo's free learning academy. Thirteen free, hands-on courses that take you from understanding your very first share to a real quantitative edge - Stock Market Basics (a no-jargon beginner intro to the Indian market), Technical Analysis (reading real NSE charts), Futures Trading, Options Basics and Options Strategies (derivatives from zero, with real payoff charts), Taxation for Traders and Investors (plain-English tax on shares, F&O, US stocks and crypto), Python for Traders (beginner), Algo Trading with Python (intermediate), Quantitative Trading and Statistical Arbitrage (expert), AmiBroker AFL (chart-based system building, no Python needed), and Risk Management (the one skill that keeps you in the game) and Trading Psychology & Risk Playbooks (mastering your mind, hedging, and ready-to-use risk plans) - all in plain English with real market examples.";
 

@@ -36,7 +36,7 @@ Every operation is IEEE-754 binary64 with round-to-nearest-even, in the order th
 
 ## Check your library against the vectors first
 
-Before a single case, you can check each library function on its own. The repository publishes a **vector file** for each arithmetic function, in its `spec/vectors/library` folder: a file of inputs and the exact outputs the reference engine produced for them, named by the function and its argument count, such as `sma-2.json`. An `index.json` beside them lists every file, and every function that has none and why: colours, strings, array operations, drawing calls, host and ledger reads and the calendar functions are checked other ways, and [[pow()]] is held out because its last bit comes from the platform's maths library.
+Before a single case, you can check each library function on its own. The repository publishes a **vector file** for each arithmetic function, in its `spec/vectors/library` folder: a file of inputs and the exact outputs the reference engine produced for them, named by the function and its argument count, such as `sma-2.json`. An `index.json` beside them lists every file, and every function that has none and why: colours, strings, array operations, drawing calls, host and ledger reads and the calendar functions are checked other ways. [[pow()]], [[exp()]], [[log()]] and the trigonometric functions have vector files like every other arithmetic function: since 0.7.0 their last bit comes from a portable algorithm the specification writes down, not from the platform's maths library.
 
 Every number in a vector file is a binary64 bit pattern: sixteen lower case hexadecimal digits, big-endian. A case is a run of `bars` bars with one column per argument and one per output; a cell is `null` for absent, and each output column's `warmup` is the index of its first bar with a value. The `holes`, `short` and `absent-args` cases check what a function does with a gap, too little history and an argument that has no value yet.
 
@@ -114,7 +114,7 @@ cases/
 | `instrument.json` | No | The instrument record. Defaults below |
 | `settings.json` | No | Values for the script's inputs. Absent means every default |
 | `backtest.json` | For a strategy case | The money digits, a supplied charge schedule and the report window |
-| `bars.<name>.csv` | No | A second bar series, for a read of another timeframe or instrument |
+| `bars.<SYMBOL>.csv` | No | Another instrument's bars, named after the instrument a read resolves to. A read of the chart's own instrument at another timeframe needs no file: it is folded from `bars.csv` |
 | `ticks.csv` | No | Updates inside the newest bar, for a case about the forming bar |
 | `frames.csv` | No | Order frames delivered between bars, for a case about the ledger |
 | `notes.md` | No | Why the case exists and what it defends against |
@@ -186,7 +186,7 @@ Those four rows are a working frame, a fill, the same fill repeated, and a quant
 
 ### The expected files
 
-`expected.csv` holds per-bar values, one row per input bar. No shipped case asserts per-bar values yet, so this excerpt illustrates the format, with rows 2 to 18 left out:
+`expected.csv` holds per-bar values, one row per input bar, and seventy of the shipped cases have one. This excerpt illustrates the format, with rows 2 to 18 left out:
 
 ```text title="expected.csv"
 bar,ema20,signal
@@ -227,7 +227,7 @@ bar,ema20,signal
 
 Profiles are cumulative. An engine with no compiler reports itself `engineOnly` beside its profile and is not handed the compiler categories. A case outside your claimed profile is skipped, and a skipped case is never a pass.
 
-**Some calls carry no cross-engine guarantee yet.** The transcendental functions, `exp`, `log`, `log10`, `log2`, `pow`, `hypot` and the trigonometric family, and the indicators built on them, [[alma()]], [[hv()]] and [[chop()]], have no portable reference algorithm written down. No case may assert a value that reaches one, and an engine is told plainly which calls those are.
+**A few readings still carry no cross-engine guarantee.** The specification records each place it does not yet fix an answer: the inner length of [[hma()]], the scaling of [[eom()]] and the exact channel values of the named colours. No case may assert a value that reaches one, and an engine is told plainly which calls those are. The transcendental functions are no longer on that list. Since 0.7.0, `exp`, `log`, `log10`, `log2`, `pow`, `hypot` and the trigonometric family have portable algorithms with one final rounding, so they, and the indicators built on them such as [[alma()]], [[hv()]] and [[chop()]], are compared exactly like any other call.
 
 ## Running the suite
 
@@ -261,7 +261,7 @@ Your engine takes part through an **adapter**: a program the runner starts once 
 The runner starts every adapter with Node.js, so an engine in another language ships a small JavaScript file that starts the real engine and relays its output. The Python engine does exactly that, and compiles `script.os` with the reference compiler on the way, handing the engine the canonical program text on standard input:
 
 ```json
-{"engineOnly":true,"languageVersions":[1],"name":"openscript","profile":"strategy","schemaVersion":"1.1","version":"0.5.0"}
+{"engineOnly":true,"languageVersions":[1],"name":"openscript","profile":"strategy","schemaVersion":"1.1","version":"0.8.0"}
 ```
 
 ### Comparing numbers
@@ -295,11 +295,11 @@ Strings compare as exact sequences of code points, colours channel by channel as
 | `unsupported` | The engine does not implement the feature, which it names |
 | `skipped` | The case is outside the claimed profile. Never a pass |
 
-A run with any `fail`, `nonFinite`, `error`, or `unsupported` inside the claimed profile does not pass. The result document records the suite revision, your engine's identity, the platform the runner ran on, one row per case and a summary. The rows below show the three shapes a row takes; the second and third are illustrations, since no shipped case asserts an indicator value or a drawing yet:
+A run with any `fail`, `nonFinite`, `error`, or `unsupported` inside the claimed profile does not pass. The result document records the suite revision, your engine's identity, the platform the runner ran on, one row per case and a summary. The rows below show the three shapes a row takes; the second and third are illustrations, not shipped cases:
 
 ```json
 {
-  "suiteRevision": "0.5.0",
+  "suiteRevision": "0.8.0+8ebc9e705bb4",
   "engine": { "name": "my-engine", "version": "1.0.0", "profile": "strategy" },
   "languageVersions": [1],
   "schemaVersion": "1.1",
@@ -318,6 +318,8 @@ A run with any `fail`, `nonFinite`, `error`, or `unsupported` inside the claimed
 ```
 
 The failing row is the shape to expect: two values one unit apart in the last bit, which a tolerance would have hidden, and which is exactly the disagreement the suite exists to find. `bound` names what the failure broke: `exact` for a case with no tolerance, `abs` or `rel` for one that declares a bound, and `absence` when one side was absent.
+
+`suiteRevision` names the exact cases a result was run against: the package version the cases shipped with, a plus sign, and the first twelve hexadecimal digits of a SHA-256 digest over every file under the suite root. A suite that differs by one byte has a revision of its own, and anyone holding the cases can recompute it. `0.8.0+8ebc9e705bb4` is the revision of the cases shipped with 0.8.0.
 
 ## Two engines disagreeing is a release blocker
 
@@ -365,14 +367,22 @@ A record can become a case only when it carries the script's own text, checked a
 
 **It does not mean** correctness on anything the suite does not cover; correctness in any financial sense, since engines that follow a specification together are wrong together; robustness against hostile input; performance; security, which depends on your isolation rather than your arithmetic; fitness for trading real money; an endorsement, since the project certifies nobody; or anything about another revision or another profile.
 
-A conformance badge carries four things and is not valid without all four: the engine and its version, the suite revision, the profile, and a link to the published result document.
+A conformance badge carries four things and is not valid without all four: the engine and its version, the suite revision, the profile, and a link to the published result document. The repository makes one from a passing result:
+
+```bash
+node scripts/run-suite.mjs --adapter path/to/your-adapter.mjs --out result.json
+npm run badge -- result.json --link <where result.json is published> --out badge.svg
+```
+
+The second command writes `badge.svg` and prints the line that embeds it. It refuses, and writes nothing, when the document is not a passing run of the profile it claims, when it compares two engines rather than running one, when it lacks any of the four things, or when its revision is not the one it recomputes from the cases. The project shows no badge of its own, and will not until an engine written by someone else passes, because until then a badge would be two engines from one repository agreeing with each other.
 
 ## Where the suite stands
 
 Stated plainly, because a green run reads as wide as the reader imagines it:
 
-- **What it reaches today:** the compiler's diagnostics from tokenising, parsing and checking; the runtime errors; behaviour at a declared limit; and strategies, through their ledger, trades and performance summary, including partial fills, rejections, cancellations, expiries and a fill after a terminal status.
-- **What it does not reach yet:** no case asserts a per-bar indicator value, so the `semantics` and `numerics` categories are specified but not yet exercised. Two engines can agree on every case and still disagree on what a moving average is, which is why the library vectors above matter. No case yet supplies a host's own charge schedule, a repeated frame or two frames in the wrong order, more than one entry in a direction, or more than one instrument.
-- **Who has run it:** the JavaScript and Python engines agree to the last bit on every case they both run, and the build stops on any disagreement. The Python engine has no compiler, so the compiler cases are skipped for it, and the cases the two share are the strategy cases plus those about loops, limits and stored settings. It also lacks the array functions and the log, and cases that would reach those are held back until it has them, so its agreement does not cover them. Both engines were written in the same repository, so their agreement is evidence about that repository rather than about the specification. **No engine written by anyone else has passed the suite yet.** If you are building one, the project would rather work with you than have you find the gaps alone.
+- **How big it is:** 126 cases in 0.8.0, 72 in the `core` profile, 46 in `chart` and 8 in `strategy`.
+- **What it reaches today:** the compiler's diagnostics from tokenising, parsing and checking; the runtime errors; behaviour at a declared limit; per-bar values, in seventy cases across the `semantics`, `numerics`, `time`, `external` and `surface` categories, each with expected values computed independently of both engines; drawing objects and table cells; the log; and strategies, through their ledger, trades and performance summary, including partial fills, rejections, cancellations, expiries and a fill after a terminal status. The channels asserted are `diagnostics`, `values`, `log`, `drawings`, `table`, `orders`, `trades` and `performance`.
+- **What it does not reach yet:** no case asserts `markers`, `fills`, `levels`, `barColors`, `background` or `alerts`, and neither engine's adapter answers those channels. No case replays a forming bar from `ticks.csv`. No strategy case yet supplies a host's own charge schedule, a repeated frame or two frames in the wrong order, more than one entry in a direction, or more than one instrument.
+- **Who has run it:** the JavaScript and Python engines, against each other, exactly. `npm run suite:agree` in the repository reports 107 pass and 19 skipped of the 126, the skips being the compiler-diagnostic cases the Python engine has no compiler for, and the build stops on any disagreement. Both engines were written in the same repository, so their agreement is evidence about that repository rather than about the specification. **No engine written by anyone else has run the suite yet.** If you are building one, the project would rather work with you than have you find the gaps alone.
 
 **Related.** [Compiled program](/script/integrate/compiled-program), [Host interface](/script/integrate/host-interface), [Python engine](/script/integrate/python-engine), [Backtesting API](/script/integrate/backtesting-api), [Two libraries](/script/integrate/overview), [Testing](/script/writing/testing)

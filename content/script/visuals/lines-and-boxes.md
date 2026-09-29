@@ -397,6 +397,13 @@ it happened. A setter given `none`, on the other hand, does nothing. So the fix
 is one line: **set the handle to `none` beside every delete**, and test
 [[isNone()]] before every change.
 
+The compiler helps before the first bar runs: a name or an array element still
+holding an object deleted earlier gets warning
+[OS8019](/script/errors/warnings#os8019), such as a `draw.delete(zone)` with no
+`zone = none` after it, or a `draw.delete(element(zones, 0))` that leaves the
+element in the list. The /trading page in current OpenAlgo releases still runs
+library 0.5.0, which does not give that warning.
+
 ```openscript
 var zone       = none
 var zoneTop    = none
@@ -598,6 +605,7 @@ if bar.isLast
 | The study gets slower the longer the chart is open, or stops with OS5010 | Create and forget | Cap the list, or keep one object and move it |
 | A line marks a bar exactly `rightBars` too late | Anchored at `time` on the bar that reported the pivot | Anchor at `time[rightBars]` |
 | OS4005 long after a delete | The handle was not cleared when the object was deleted | Set the handle to `none` beside the `draw.delete` |
+| Warning OS8019 on a `draw.delete` | A name or an array element still holds the deleted object | Set the name to `none`, or delete with `draw.delete(shift(list))` or remove the element |
 | OS3011 on a setter | The setter does not take that kind of object | Check the setter table: only lines have a style, only labels and boxes have text |
 | OS2015 on an empty array | Nothing tells the compiler what the array holds | Push to it, or write `var zones: array<box> = []` |
 | A box's right edge lands differently on each timeframe | A guessed bar length | Move the right edge to `time`, or use a line with `extendRight` |

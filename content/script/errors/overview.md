@@ -1,9 +1,9 @@
 ---
 title: Reading an error
-description: How an OpenScript diagnostic is laid out in the /trading editor (its code, severity, message, cause and fix), when each kind is found, and the eight code ranges that say what kind of problem it is.
+description: How an OpenScript diagnostic is laid out in the /trading editor (its code, severity, message, cause and fix), when each kind is found, and the nine code ranges that say what kind of problem it is.
 ---
 
-Every time you open or save a script in /trading, the compiler checks it and reports what it found as **diagnostics**: numbered errors and warnings, each tied to a line of your script. This page shows how to read one, where each part comes from, and what the code alone tells you before you read another word. It applies to every script written in OpenScript (also called OpenAlgo Script), study or strategy, and it ends with the eight code ranges and the page that documents each one.
+Every time you open or save a script in /trading, the compiler checks it and reports what it found as **diagnostics**: numbered errors and warnings, each tied to a line of your script. This page shows how to read one, where each part comes from, and what the code alone tells you before you read another word. It applies to every script written in OpenScript (also called OpenAlgo Script), study or strategy, and it ends with the nine code ranges and the page that documents each one.
 
 ## A diagnostic in the console
 
@@ -87,7 +87,7 @@ Three details make the parts easier to use.
 
 | | Error | Warning |
 |---|---|---|
-| Codes | OS1xxx to OS7xxx | OS8xxx |
+| Codes | OS1xxx to OS7xxx, and the errors of OS9xxx | OS8xxx, and the warnings of OS9xxx |
 | Colour in the console | Red | Amber |
 | Status bar | "1 error, so it will not run yet" | "Ready, with 1 warning" |
 | Stops the script | Yes. A script with a compile error cannot be applied to the chart or backtested. An error raised while a bar runs stops the script on that bar | Never |
@@ -96,6 +96,8 @@ Three details make the parts easier to use.
 A script with errors is still saved when you press Ctrl+S, so nothing you typed is lost. It has no compiled program until it compiles, though, so it cannot be applied to a chart, backtested or deployed until the errors are fixed and it is saved again. See [The editor](/script/getting-started/the-editor#checking-and-the-console) for the console, the status bar and saving.
 
 Warnings are documented on [OS8xxx Warnings](/script/errors/warnings). Two worth meeting early are [OS8001](/script/errors/warnings#os8001), a stateful call (one that keeps its own state from bar to bar, such as [[ema()]]) inside an `if`, and [OS8010](/script/errors/warnings#os8010), a name assigned and never read.
+
+The OS9xxx range holds both kinds. It belongs to the importer, which turns a script written in another chart language into OpenScript, and its findings never appear in the /trading console. See [OS9xxx Import](/script/errors/import).
 
 ## The stage: when a problem is found
 
@@ -108,6 +110,7 @@ Every code belongs to one stage, shown as a badge beside it on the range pages. 
 | `check` | Names, types, scope and how each call is written, before any bar runs | OS2xxx, OS3xxx, OS8xxx, and a few OS6xxx and OS7xxx | The console, when you open or save the script |
 | `runtime` | Running one bar | OS4xxx, and parts of OS5xxx, OS6xxx and OS7xxx | When the script runs, on the chart or in a backtest |
 | `host` | The host answering the engine: data, budgets and order destinations | Most of OS6xxx, and parts of OS5xxx and OS7xxx | Mostly when the script is loaded or runs. [OS6018](/script/errors/data#os6018) can also appear in the console |
+| `import` | Reading a script written in another chart language and writing it as OpenScript | OS9xxx | In the findings the library's importer returns, never in the /trading console |
 
 The first three stages finish before the first bar. An error there means nothing ran and nothing was drawn, and it costs you one edit. The language moves as many mistakes as it can into those stages: a study that calls [[buy()]] is refused at `check` with [OS7001](/script/errors/orders#os7001), so it can never place an order on any bar, and a table written with 2.5 rows is refused at `check` with [OS3004](/script/errors/arguments#os3004).
 
@@ -120,7 +123,7 @@ A runtime error is not in the console, which reports what the compiler found whe
 
 [Debugging](/script/writing/debugging) shows how to make values visible and find the first bar where a script goes wrong.
 
-## The eight ranges
+## The nine ranges
 
 The first digit after `OS` says which kind of problem the diagnostic describes. It does not say how serious it is: that is the severity.
 
@@ -128,23 +131,25 @@ The first digit after `OS` says which kind of problem the diagnostic describes. 
 |---|---|---|---|---|
 | [OS1xxx](/script/errors/syntax) | Syntax | The text is not a program: characters, layout and grammar | Error | 29 |
 | [OS2xxx](/script/errors/names-and-types) | Names and types | The program parses, and a name or a type does not work out | Error | 20 |
-| [OS3xxx](/script/errors/arguments) | Arguments | A call or an option is wrong where it is written | Error | 24 |
+| [OS3xxx](/script/errors/arguments) | Arguments | A call or an option is wrong where it is written | Error | 26 |
 | [OS4xxx](/script/errors/runtime) | Runtime | A bar produced a value the engine cannot act on | Error | 13 |
 | [OS5xxx](/script/errors/limits) | Limits | A budget ran out: loops, memory, size or time | Error | 10 |
-| [OS6xxx](/script/errors/data) | Data | Bars, instruments, timeframes and the answers to data requests | Error | 23 |
+| [OS6xxx](/script/errors/data) | Data | Bars, instruments, timeframes and the answers to data requests | Error | 25 |
 | [OS7xxx](/script/errors/orders) | Orders | An order could not be placed as written | Error | 19 |
 | [OS8xxx](/script/errors/warnings) | Warnings | The script compiles and runs, and something in it is probably not meant | Warning | 19 |
+| [OS9xxx](/script/errors/import) | Import | A script written in another chart language could not be translated as written, or was translated with a stated difference | Error or warning | 12 |
 
-Version 0.5.0 catalogues 157 codes. What each range means for your next move:
+Version 0.8.0 catalogues 173 codes. What each range means for your next move:
 
 - **[OS1xxx Syntax errors](/script/errors/syntax).** Something in the text is not part of the language: a tab in the indentation, a semicolon, `&&` for `and`, a bracket that is never closed. Nothing has run. The fix is on the line reported, or on the line where the bracket or block it names was opened.
 - **[OS2xxx Names and types](/script/errors/names-and-types).** The text is a program and its meaning does not work out: a name read before it is assigned or misspelt, a name declared twice, a number added to a string, `[]` on a value that keeps no history. Nothing has run.
-- **[OS3xxx Arguments](/script/errors/arguments).** A call is wrong where it stands: too many arguments, an unknown argument name, a `plot` inside an `if`, a per-bar value in a setting that is fixed before the first bar. Nothing has run.
+- **[OS3xxx Arguments](/script/errors/arguments).** A call is wrong where it stands: too many arguments, an unknown argument name, a `plot` inside an `if`, a per-bar value or arithmetic on an input in a setting that is fixed before the first bar. Nothing has run.
 - **[OS4xxx Runtime errors](/script/errors/runtime).** A bar ran and produced something the engine cannot act on: an array index past the end, a history index that is not a whole number, a change to a drawing that was already deleted. This is the first range that depends on the data.
 - **[OS5xxx Limits](/script/errors/limits).** A budget ran out: loop iterations on one bar, the size of an array, the size of the compiled program, the time one bar may take. [Limits](/script/writing/limits) lists every budget.
 - **[OS6xxx Data](/script/errors/data).** The data is not what the script asked for: an unknown timeframe, a request finer than the chart, an instrument or exchange OpenAlgo does not know, bars out of order.
 - **[OS7xxx Orders](/script/errors/orders).** An order could not be placed as written: an absent price, a quantity of zero, a price that is not on the instrument's tick, a bracket on the wrong side of the entry.
 - **[OS8xxx Warnings](/script/errors/warnings).** The script runs. Read them anyway.
+- **[OS9xxx Import](/script/errors/import).** You imported a script written in another chart language with the library's importer, and this is its report on the translation. An error marks a statement kept as a comment, which you translate by hand; a warning marks a statement translated with a difference in meaning that the message states, which you check against the original. You never meet these when you save a script in /trading, which does not offer the importer. [Importing a script](/script/writing/importing-a-script) walks through the whole process.
 
 Numbers inside a range are given out in the order codes were added, not grouped by topic, and a code is never renumbered or reused. Searching for `OS2001` finds the same explanation in this release and in every later one. The range pages group related codes under headings so you can read them by topic.
 
@@ -164,9 +169,9 @@ Pasted under a declaration, it gives five errors and a warning. The bracket is n
 
 **Fix errors first, then read the warnings.** A warning never stops the script, but each one describes code that is almost always a mistake.
 
-**OS6018 beside another error.** In version 0.5.0 a few check errors, such as [OS3003](/script/errors/arguments#os3003) and [OS2005](/script/errors/names-and-types#os2005), bring [OS6018](/script/errors/data#os6018) ("The compiled program is malformed") onto the same line. Its message is long and technical; you can ignore it. Fix the other error and OS6018 goes with it.
+**OS6018 beside another error.** In version 0.8.0 a few check errors, such as [OS3003](/script/errors/arguments#os3003), [OS3025](/script/errors/arguments#os3025) and [OS2005](/script/errors/names-and-types#os2005), bring [OS6018](/script/errors/data#os6018) ("The compiled program is malformed") onto the same line. Its message is long and technical; you can ignore it. Fix the other error and OS6018 goes with it.
 
-**OS6018 on its own.** Its message then says the fault is in the compiler and asks you to report it together with the script. One case is known in version 0.5.0: a setting fixed before the first bar that does arithmetic on an input, such as `precision = input(2, "Decimals") + 1` or `width = w + 1` where `w` is an input. Pass the input on its own and put the arithmetic in its default: `precision = input(3, "Decimals")`.
+**OS6018 on its own.** Its message then says the fault is in the compiler and asks you to report it together with the script. The /trading page in current OpenAlgo releases still runs library 0.5.0, which reports a setting that does arithmetic on an input, such as `precision = input(2, "Decimals") + 1` or `width = w + 1` where `w` is an input, with OS6018 alone. Version 0.8.0 reports it as [OS3025](/script/errors/arguments#os3025), with OS6018 beside it. Either way, pass the input on its own and put the arithmetic in its default: `precision = input(3, "Decimals")`.
 
 **Look up the code.** Every code is on its range page with its message, a plain explanation of what usually causes it, the fix, and a before and after example. The before block is the shortest code that raises the code. It may use names such as `fast`, `trending` or a function `band` that a real script would define above it, so pasted on its own it also reports [OS2001](/script/errors/names-and-types#os2001) for those names. The after block is the same code, fixed. For problems described by what you see rather than by a code, use [Troubleshooting](/script/writing/troubleshooting).
 

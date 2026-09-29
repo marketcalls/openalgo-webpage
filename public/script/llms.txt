@@ -83,6 +83,7 @@
 - [Testing scripts](https://openalgo.in/script/writing/testing): Checking a script against known values and cases.
 - [Troubleshooting](https://openalgo.in/script/writing/troubleshooting): The problems people hit most often and how to fix each one.
 - [Sharing scripts](https://openalgo.in/script/writing/sharing-scripts): Packaging a script so someone else can use it: header, inputs, README, licence and versions.
+- [Importing a script](https://openalgo.in/script/writing/importing-a-script): Translating a script written in another chart language with importScript: what comes across exactly, what comes across with a stated difference, and what you translate by hand.
 
 ### Reference
 
@@ -116,7 +117,7 @@
 
 ### Errors
 
-- [Reading an error](https://openalgo.in/script/errors/overview): How a diagnostic is laid out: code, severity, message, cause and fix, and the eight code ranges.
+- [Reading an error](https://openalgo.in/script/errors/overview): How a diagnostic is laid out: code, severity, message, cause and fix, and the nine code ranges.
 - [OS1xxx Syntax errors](https://openalgo.in/script/errors/syntax): Every OS1 code: message, cause, fix and a before and after example.
 - [OS2xxx Names and types](https://openalgo.in/script/errors/names-and-types): Every OS2 code: message, cause, fix and a before and after example.
 - [OS3xxx Arguments](https://openalgo.in/script/errors/arguments): Every OS3 code: message, cause, fix and a before and after example.
@@ -125,6 +126,7 @@
 - [OS6xxx Data](https://openalgo.in/script/errors/data): Every OS6 code: message, cause, fix and a before and after example.
 - [OS7xxx Orders](https://openalgo.in/script/errors/orders): Every OS7 code: message, cause, fix and a before and after example.
 - [OS8xxx Warnings](https://openalgo.in/script/errors/warnings): Every OS8 code: message, cause, fix and a before and after example.
+- [OS9xxx Import](https://openalgo.in/script/errors/import): Every OS9 code: what the importer reports about a script translated from another chart language, and what to do about each.
 
 ### Integrate
 

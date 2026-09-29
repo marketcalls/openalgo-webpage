@@ -184,6 +184,7 @@ plot(levels[0], "Lowest")
 | [OS2015](/script/errors/names-and-types#os2015) | An empty literal with no type | Annotate it |
 | [OS2019](/script/errors/names-and-types#os2019) | An array of arrays, or of plots | Flatten it |
 | [OS3012](/script/errors/arguments#os3012) | `sort` without an order | Say `"asc"` or `"desc"` |
+| [OS8019](/script/errors/warnings#os8019) | A warning: an element still holds a drawing deleted earlier | Take the element out as you delete, as `draw.delete(shift(arr))` does |
 
 The error list also includes [OS4006](/script/errors/runtime#os4006), for taking an element from an empty array, and [OS4007](/script/errors/runtime#os4007), for a slice whose bounds are not `0 <= from <= to <= size`. The compiler and engine raise neither in this release. Instead, `pop` and `shift` on an empty array raise OS4004, summarising an empty array gives the values in the table above, and [[slice()]] takes whatever part of the range falls inside the array, returning a shorter or empty array. Test `size(arr) > 0` before taking an element, and keep slice bounds inside the array, so the script behaves the same when those codes arrive.
 
@@ -290,7 +291,7 @@ if crossUp(line, sig)
 The returned array is never absent and never changes length. Each element has its own first bar and is absent until then, so `m[2]` is a valid read on bar 0 that simply holds nothing yet. The crossing is read from the named series, which have history because they are top-level names: `m[1]` is element 1, not one bar ago.
 
 :::warn History of a whole array
-`history(m, 1)` compiles, but in release 0.5.0 it gives the absent value on every bar rather than last bar's array. To look back at an output, name it at the top level, as `line` and `sig` are above, and read `line[1]`.
+`history(m, 1)` compiles, but in release 0.8.0 it gives the absent value on every bar rather than last bar's array. To look back at an output, name it at the top level, as `line` and `sig` are above, and read `line[1]`.
 :::
 
 ## Parallel arrays

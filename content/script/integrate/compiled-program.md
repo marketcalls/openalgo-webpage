@@ -30,7 +30,7 @@ The compiler turns that into this program, shown laid out for reading:
 {
   "openscript": { "format": "1.1", "language": 1 },
   "requires": ["core.1"],
-  "compiler": { "name": "openscript", "version": "0.5.0" },
+  "compiler": { "name": "openscript", "version": "0.8.0" },
   "source": {
     "hash": "sha256:b17e0f0cb4173846316ce2c59f7ee22ce1f7b031eaca75e27596dd4456b2a493",
     "lines": 13,
@@ -167,7 +167,7 @@ A program is one object with these fields. An empty table is written as an empty
 
 ### Two versions, two jobs
 
-`openscript.format` versions the **format**: field names, the instruction set, the encoding. It is `"1.1"` in 0.5.0. `openscript.language` versions **meaning**: which front end parsed the source, and which behaviour of each library function an engine must apply. An engine selects library behaviour by the program's `language`, never by the newest it has, so a saved script never changes its numbers. The two move independently, because a new field and a corrected calculation have nothing to do with each other.
+`openscript.format` versions the **format**: field names, the instruction set, the encoding. It is `"1.1"` in 0.8.0, and releases 0.6.0 to 0.8.0 left it unchanged, so a program stored under 0.5.0 loads as it did. `openscript.language` versions **meaning**: which front end parsed the source, and which behaviour of each library function an engine must apply. An engine selects library behaviour by the program's `language`, never by the newest it has, so a saved script never changes its numbers. The two move independently, because a new field and a corrected calculation have nothing to do with each other.
 
 ### Capability tags
 
@@ -317,7 +317,7 @@ Two engines running the same program over the same bars must produce the same ou
 
 - reorder, reassociate or fuse floating point operations, use extended precision, flush subnormal numbers to zero, or change the rounding mode;
 - compute a library function in any order other than the one the specification fixes for it, because a moving average is a sum and a sum has an order;
-- use the platform's own maths library for `exp`, `log`, `pow` and the trigonometric functions once the portable reference algorithm exists. **None is written yet**, so those calls and the indicators built on them, [[alma()]], [[hv()]] and [[chop()]] among them, carry no cross-engine guarantee in the last bit in 0.5.0;
+- use the platform's own maths library for `exp`, `log`, `pow`, `hypot` or the trigonometric functions. The specification writes down a portable algorithm for each, rounded once to the nearest value, and since 0.7.0 both engines use them, so those calls and the indicators built on them, [[alma()]], [[hv()]] and [[chop()]] among them, agree to the last bit like every other call;
 - read randomness, the wall clock (except the host-supplied [[chart.now()]]), the locale or the environment's timezone;
 - let a script observe hash table order or concurrency.
 
@@ -375,7 +375,7 @@ An engine loading a program refuses at the first failure, in this order, and eve
 | The program exceeds the engine's instruction, state region or call depth ceilings | OS5009, OS5004, OS5005 |
 | The program fails verification | OS6018 |
 
-A newer minor version loads in an older engine, and an older one loads in a newer engine with any table it lacks read as empty. **A program that ran yesterday runs today and produces the same numbers**, whatever engine, version or machine runs it.
+A newer minor version loads in an older engine, and an older one loads in a newer engine with any table it lacks read as empty. **A program that ran yesterday runs today and produces the same numbers**, whatever engine, version or machine runs it. That is the rule an engine is held to, and a release that finds an engine short of it brings the engine back to the specification: 0.7.0 to 0.7.2 did so for several library functions, so a result stored under an earlier release can differ from a rerun in its last bits, at a warmup boundary, or where an input was invalid or overflowed.
 
 ## Errors an engine raises
 
@@ -385,6 +385,7 @@ A newer minor version loads in an older engine, and an older one loads in a newe
 | [OS4001](/script/errors/runtime#os4001) | A history offset is negative or not a whole number |
 | [OS4002](/script/errors/runtime#os4002) | A history offset reaches past the retained depth |
 | [OS4004](/script/errors/runtime#os4004) | An array index is outside the array |
+| [OS4008](/script/errors/runtime#os4008) | A table cell is written outside the table's declared rows and columns |
 | [OS4013](/script/errors/runtime#os4013) | A `for` loop's start, limit or step is absent |
 | [OS5001](/script/errors/limits#os5001) | The per-bar loop budget is spent |
 | OS5003, OS5004, OS5005, OS5009 | The program asks for more than the host or engine allows |
@@ -397,5 +398,7 @@ A load refusal names the instruction index or the field, because the failure is 
 ## Becoming a chart
 
 An engine computes columns; drawing them is a separate job. The program's tables map one to one onto a chart: `meta` onto the study's name, pane and scale, `inputs` onto the settings dialog, `outputs` onto series, bands, levels, markers, grids and alerts, the heap's drawing objects onto free drawings handed over whole after every bar, and `requests` onto the host's fetches. The [chart adapter](/script/integrate/charts-adapter) is that mapping for openalgo-charts. One rule is part of the format rather than any chart: only one study may colour the instrument's candles, the latest in the host's own study order that paints them.
+
+A host's surface may be narrower than what a program can carry: a pane with room for one grid, or a band drawn in one colour for the whole run. That difference is allowed, and hiding it is not. A host that cannot draw something a program declares refuses the program before any bar runs with [OS6024](/script/errors/data#os6024), naming the declaration and its own reason, rather than drawing part of the study and saying nothing. It is the host's refusal and never the compiler's: the program is correct, and another host may draw all of it.
 
 **Related.** [Two libraries](/script/integrate/overview), [JavaScript library](/script/integrate/javascript), [Python engine](/script/integrate/python-engine), [Host interface](/script/integrate/host-interface), [Your own engine](/script/integrate/conformance), [Execution model](/script/language/execution-model), [Absent values](/script/language/absent-values)

@@ -9,7 +9,7 @@ Every `pos` fact is built from **this strategy's own fills**, the executions rep
 
 ## A complete example
 
-A strategy that is always in the market after the first crossover of two averages: long while the fast average is above the slow one, short while it is below. The first cross opens a position and every later cross reverses it. It shades the background by direction, draws the average price while a position is open, and writes the position into a small table in the top right corner on the newest bar. It uses only the five `pos` facts that run in version 0.5.0.
+A strategy that is always in the market after the first crossover of two averages: long while the fast average is above the slow one, short while it is below. The first cross opens a position and every later cross reverses it. It shades the background by direction, draws the average price while a position is open, and writes the position into a small table in the top right corner on the newest bar. It uses only the five `pos` facts that run in version 0.8.0.
 
 ```openscript title="Long, short or flat"
 version 1

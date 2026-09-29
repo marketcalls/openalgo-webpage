@@ -263,6 +263,7 @@ const dict = {
   'road.f18d': 'ଡେଭଲପରମାନେ ନିଜ ପସନ୍ଦର ପ୍ରୋଗ୍ରାମିଂ ଭାଷାରେ ଟ୍ରେଡିଂ ଆପ୍ଲିକେସନ୍ ତିଆରି କରିପାରିବାକୁ Java, C#, ଏବଂ Rust ପାଇଁ ଅଫିସିଆଲ୍ SDK ଲାଇବ୍ରେରୀ ଆଣୁଛୁ।',
   'road.cta': 'ଯୋଗଦାନ କରିବାକୁ କିମ୍ବା ନୂଆ ଫିଚର୍ ପ୍ରସ୍ତାବ ଦେବାକୁ ଚାହୁଁଛନ୍ତି?',
   'road.ctaDiscord': 'Discord ରେ ଯୋଗ ଦିଅନ୍ତୁ',
+  'road.products': "ଉତ୍ପାଦ ରୋଡମ୍ୟାପ୍",
   'road.ctaGithub': 'GitHub',
 
   // Discord redirect page

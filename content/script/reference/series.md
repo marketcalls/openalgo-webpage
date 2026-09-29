@@ -359,7 +359,7 @@ if crossed and lastLow > priorLow
 **Remarks.** `occurrence = 0` is the most recent true bar, `1` the one before it, and so on. The result is absent until `cond` has been true `occurrence + 1` times. An absent `cond` counts as not true. `occurrence` must be a whole number, 0 or more; a fraction or a negative number gives `none` on every bar rather than stopping the script.
 
 :::warn Numbers only in this release
-The signature accepts any type for `src`, but in release 0.5.0 `valueWhen` returns a value only when `src` is a number. With a `bool` or a `string` it compiles and gives `none` on every bar. Remember a number instead, such as `1` for up and `0` for down, and compare it.
+The signature accepts any type for `src`, but in release 0.8.0 `valueWhen` returns a value only when `src` is a number. With a `bool` or a `string` it compiles and gives `none` on every bar. Remember a number instead, such as `1` for up and `0` for down, and compare it.
 :::
 
 **See also.** [[barsSince()]], [[pivotLow()]], [Persistence](/script/language/persistence)
@@ -396,7 +396,7 @@ plot(history(close - open, 1), "Previous body", orange)
 **Remarks.** The first value is on bar `n`. Unlike the offset inside `[]`, `n` is a length: a whole number of 1 or more, so `history(close, 0)` stops the script with [OS4003](/script/errors/runtime#os4003) where `close[0]` simply reads this bar. [Bars and history](/script/language/bars-and-history) covers when to prefer a named value.
 
 :::warn Numbers only in this release
-In release 0.5.0 `history` returns a value only when `src` is a number. On a `bool`, a `string` or an array it compiles and gives `none` on every bar. For a `bool` or a `string`, name the value at the top level and use the operator instead: `flag[1]` works where `history(flag, 1)` does not.
+In release 0.8.0 `history` returns a value only when `src` is a number. On a `bool`, a `string` or an array it compiles and gives `none` on every bar. For a `bool` or a `string`, name the value at the top level and use the operator instead: `flag[1]` works where `history(flag, 1)` does not.
 :::
 
 **See also.** [[change()]], [[valueWhen()]]

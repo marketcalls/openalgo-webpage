@@ -1,0 +1,1350 @@
+{
+  "product": "OpenScript",
+  "tagline": "One language, the same numbers on every engine, built in small steps anyone can check.",
+  "vision": "OpenScript is an open trading language: write a study or a strategy once, then plot it, backtest it and run it in sandbox mode or live, with every engine computing the same numbers bar for bar. After charts 2.6.0 we first make the project easy to join and ready for the first host's upgrade. Then we settle, in writing, the decisions the order path and the backtest wait on, finish both, and ship a 1.0 whose surfaces stay stable. After that we complete the conformance suite. Alongside the TypeScript engine on npm and the Python engine on PyPI, two more engines follow, Go and then Java, each written from the specification and the suite rather than from our code, which is how we will know the format travels. Alongside this runs an eval programme that measures whether a person working with an agent can write and fix OpenScript, and improves the text those agents read. Every step is a small task with a check anyone can rerun, so a person working with an agent can finish it and a maintainer can verify it.",
+  "principles": [
+    {
+      "title": "Spec first, the suite decides",
+      "text": "A behaviour exists when the specification says it and a conformance case proves it. When the code and the spec disagree, the spec is settled first. A feature-matrix row counts as implemented only when a case or test carrying its exact identifier exists, and that test is shown to fail when the behaviour breaks."
+    },
+    {
+      "title": "Every engine, one release",
+      "text": "The TypeScript engine on npm and the Python engine on PyPI change in the same pull request and ship under one version. The Go engine and then the Java engine join the same rule once each passes its profile at a named revision. If any two engines disagree on any conformance case, the release is blocked."
+    },
+    {
+      "title": "The compiled program is data",
+      "text": "No eval, no code built from text and no runtime dependency. Those three rules let a host embed OpenScript under a strict content security policy and trust a program it loads. Every build checks them, together with the house rules that keep the code reviewable, such as no code file over 500 lines."
+    },
+    {
+      "title": "Decide first, then finish what is incomplete",
+      "text": "We close the gaps the docs already admit (the backtest, the refusals that are documented but not raised, and the suite channels no adapter answers) before adding new surface. Where a gap needs a decision, the decision is written and approved before any code. Anything not yet built is refused with a documented code and is never quietly approximated."
+    },
+    {
+      "title": "People decide, agents do the typing",
+      "text": "Every task is sized for one person working with an agent for one to five days, and it ends in commands anyone can rerun. A person checks each spec sentence and how each expected value was derived. An agent never produces an expected number by running either engine."
+    },
+    {
+      "title": "Measure agents with evals, not impressions",
+      "text": "We measure whether a person working with an agent can write and fix OpenScript. Each eval has a private test set, a programmatic grader, a measured noise floor and a published smallest detectable effect. A change to error text, docs or a skill is kept only when the held-out score improves by more than the noise."
+    }
+  ],
+  "horizons": [
+    {
+      "name": "Next",
+      "window": "Months one to four after charts 2.6.0",
+      "goal": "Make the project easy to join and ready for the first host's upgrade (the upgrade page and charts 2.6.0). Raise the missing-destination refusal, prove the moving bar, and start proving the language core row by row. Lay the eval foundations and publish a first baseline. The larger order and backtest work waits for Soon, where its decisions come first.",
+      "themes": [
+        {
+          "id": "next-join",
+          "title": "Ready for contributors",
+          "outcome": "A newcomer can set up both engines, claim a task and file a report that a maintainer can turn into a case. The status pages show today's figures, every record in issues/ has its own number, and no test file is over the line cap.",
+          "measure": "the repository has issue forms, a pull request template and a Setup section; every figure changed on the status pages is shown next to the command output that produces it; no two files in issues/ share a number; and spec/modularity-exceptions.json lists no long file.",
+          "tasks": [
+            {
+              "id": "OS-N1",
+              "title": "Add issue forms, a pull request template and a setup guide for people working with agents",
+              "why": "The repository has no issue or pull request templates: .github holds only the three workflows. CONTRIBUTING.md has no setup section, although package.json needs Node 22 or newer and the Python engine needs Python 3.12 or newer. Nothing tells a contributor, or their agent, what a reviewer will ask for.",
+              "deliverable": "In .github/ISSUE_TEMPLATE/: a bug form asking for the script, bars as CSV with a placeholder symbol, the package and version, and the expected and actual output on a named bar; a roadmap task form asking for the task id from the OpenScript roadmap page, a plan of three to five lines and whether an agent is used; and a config that turns off blank issues. Also .github/pull_request_template.md, new Setup and Working with an agent sections in CONTRIBUTING.md, and a short AGENTS.md that points to CLAUDE.md and CONTRIBUTING.md without restating them. The label list goes in the pull request description for the maintainer to create. Out of scope: workflows, branch protection and any change to a rule.",
+              "acceptance": [
+                "On a fork, New issue offers the bug form and the roadmap task form, and both render without a form error",
+                "On a clean clone, following only the new Setup section, npm install and npm test pass (paste the summary line)",
+                "The pull request template asks for the task id, the problem, the change, what is unchanged, the commands run with their summary lines, whether the spec changed first (or that this is not a language change), whether both engines changed (or that no computed value moves), how expected values were derived, and whether an agent was used",
+                "node scripts/check-names.mjs passes"
+              ],
+              "eval": "Keeps check-names green. The template later becomes a surface for the past-defect repair eval.",
+              "size": "M",
+              "skills": [
+                "Technical writing",
+                "GitHub issue forms"
+              ],
+              "goodFirst": true,
+              "dependsOn": [],
+              "agentBrief": "Task OS-N1 in marketcalls/openscript: add issue forms, a pull request template and a setup guide.\nRead CLAUDE.md, CONTRIBUTING.md, RELEASING.md, package.json (engines) and engine/pyproject.toml first. Then read spec/conformance.md section 2, so the bug form asks for what a case needs.\nBuild:\n1. .github/ISSUE_TEMPLATE/bug.yml: the script; bars as CSV (time,open,high,low,close,volume) with a placeholder symbol; the npm or PyPI package and its version; the bar and output that is wrong, what was expected and what came back. Tell the reporter to remove account data.\n2. .github/ISSUE_TEMPLATE/roadmap-task.yml: the task id from the OpenScript roadmap page, a plan of three to five lines, agent assisted yes or no, and the expected finish.\n3. .github/ISSUE_TEMPLATE/config.yml turning off blank issues.\n4. .github/pull_request_template.md with the fields this task lists.\n5. CONTRIBUTING.md: a Setup section (Node 22 or newer, Python 3.12 or newer, npm install, npm test, git config core.hooksPath .githooks) and a Working with an agent section that links to the rules instead of copying them.\n6. AGENTS.md: a few lines pointing to CLAUDE.md and CONTRIBUTING.md.\nRules: plain text; no emoji; no em or en dashes; name no other product or company; call a run that sends no real order sandbox mode, and use no other name for it. Do not change any rule, workflow or code.\nDone when node scripts/check-names.mjs and npm test pass on a clean clone set up by following your Setup section. Paste both summary lines. Put the label list in the pull request description: roadmap, size: S, size: M, size: L, needs decision, eval, and area: spec, compiler, engine, python engine, conformance, editor, docs."
+            },
+            {
+              "id": "OS-N2",
+              "title": "Bring the status pages back in line with the numbers, and give the second record 0018 its own number",
+              "why": "Several pages still show figures from earlier releases. docs/integrating/README.md says no case asserts per-bar values, although the values channel has existed since 0.6.0. ROADMAP.md Phase 7 gives 106 cases with 87 agreeing, where 0.8.0 has 126 and 107. docs/integrating/architecture.md calls the live runner planned (in two places), although it already runs in the first host. And two records in issues/ share the number 0018, which spec/decisions.md, source comments and tests cite as plain text.",
+              "deliverable": "Edits to docs/integrating/README.md (the status note), ROADMAP.md (the Phase 7 counts, each stamped with the version it was read at) and docs/integrating/architecture.md (the live runner). The later of the two 0018 records, the plot style one closed on 2026-09-24, is renamed to 0022, with a note in it naming its old number. Every plain-text mention that means that record is updated, in spec/decisions.md and in comments under src/ and tests/, with no change to what any code does. CHANGELOG.md is left as it is, because a released entry is not rewritten. Out of scope: rewriting pages, or changing any statement that is still true.",
+              "acceptance": [
+                "The pull request shows each changed figure next to the command that produced it: node scripts/check-matrix.mjs, npm run suite:agree, and a count of case.json files under cases/",
+                "The pull request pastes grep -rn 0018 output (excluding .git, dist and CHANGELOG.md) from before and after, and every remaining mention refers to the order record",
+                "npm run check:site, node scripts/check-names.mjs and npm test pass"
+              ],
+              "eval": "Keeps check-site green. Stale figures are what an authoring agent learns wrongly, so this also cleans a surface the evals read.",
+              "size": "S",
+              "skills": [
+                "Technical writing",
+                "Shell"
+              ],
+              "goodFirst": true,
+              "dependsOn": [],
+              "agentBrief": "Task OS-N2 in marketcalls/openscript: bring the status pages back in line with the numbers, and renumber the second 0018 record.\nRead CLAUDE.md and CONTRIBUTING.md. Then read docs/integrating/README.md (the status note), ROADMAP.md (Phase 6 and Phase 7), docs/integrating/architecture.md (Where it stands, and the two sentences that call the live runner planned), and both files named 0018 in issues/.\nSteps:\n1. Run node scripts/check-matrix.mjs, npm run suite:agree and a count of cases/*/*/case.json. Replace each stale figure with the measured one and name the version it was read at. The values channel has existed since 0.6.0. The live runner is built in the first host, not in this repository: say so without naming anything else.\n2. Rename the plot style record (closed 2026-09-24) to 0022 and add a line saying it was filed as 0018.\n3. Run grep -rn 0018 over the repository (skip .git, dist and CHANGELOG.md). Read each hit and decide which record it means. Update only the ones that mean the plot style record. Comments only: no code behaviour changes.\nRules: change only sentences that are false today; leave CHANGELOG.md alone; no emoji; no em or en dashes; name no other product.\nDone when npm run check:site, node scripts/check-names.mjs and npm test pass. In the pull request, paste each command's output next to the figure it supports, and the grep output before and after."
+            },
+            {
+              "id": "OS-N3",
+              "title": "Split the three test files that are over the 500 line cap",
+              "why": "spec/modularity-exceptions.json records three over-length files as exceptions: tests/engine/library.test.ts (730 lines), tests/engine/objects.test.ts (529) and tests/emit/format.test.ts (502). Each entry already names the seam to split along, and the file says the list only shrinks.",
+              "deliverable": "Each file split along the seam its entry names: the surveys move out of library.test.ts, the ceiling cases move out of objects.test.ts, and format.test.ts is split along compiled-program.md section 3.5. Each row is removed from longFiles. No test is added, removed or weakened.",
+              "acceptance": [
+                "node scripts/check-modularity.mjs passes with longFiles empty",
+                "The number of test( calls under tests/ is the same before and after (paste both counts)",
+                "npm test passes"
+              ],
+              "eval": "Keeps every gate green, and the test count must not move.",
+              "size": "M",
+              "skills": [
+                "TypeScript",
+                "node:test"
+              ],
+              "goodFirst": true,
+              "dependsOn": [],
+              "agentBrief": "Task OS-N3 in marketcalls/openscript: split the three test files that are over the 500 line cap.\nRead CLAUDE.md and spec/modularity-exceptions.json first. Each longFiles entry names the seam to split along: tests/engine/library.test.ts (move the surveys out), tests/engine/objects.test.ts (move the ceiling cases out), tests/emit/format.test.ts (split along compiled-program.md section 3.5).\nBefore you start, count the test( calls under tests/ and record the number.\nMove tests; do not rewrite, rename, weaken or delete any. Shared setup goes into an existing support file if one fits. Do not create a helper that has only one caller.\nRemove each row from longFiles once its file is under 500 lines.\nRules: no code file over 500 lines; no emoji; no em or en dashes; do not touch src/ or engine/.\nDone when node scripts/check-modularity.mjs and npm test pass and the test( count is unchanged. Paste the before and after counts and both summary lines."
+            }
+          ]
+        },
+        {
+          "id": "next-host",
+          "title": "Ready for the first host's upgrade",
+          "outcome": "The first host can move from OpenScript 0.5.0 and charts 2.5.1 to the current package and charts 2.6.0 knowing what reads differently, and the chart adapter has been checked against a real 2.6.0 build, not only against its own declared contract.",
+          "measure": "the upgrade page covers every changelog entry after 0.5.0 that changes a value, a code, a refusal, the compiled format, the run record or the host surface, and CLAUDE.md's release list names it; a type probe against the 2.6.0 declarations passes; every drawing example renders on 2.6.0 in a smoke page; and the peer range states what was tested.",
+          "tasks": [
+            {
+              "id": "OS-N4",
+              "title": "Write the upgrade page from 0.5.0, and make each release keep it current",
+              "why": "The first host pins 0.5.0 on its server and in the browser, and will upgrade after its own server migration. CHANGELOG.md records, release by release, what can read differently after an upgrade, but today a host has to read five releases to find those changes, and nothing makes the next release add to the list.",
+              "deliverable": "docs/integrating/upgrading.md, starting at 0.5.0. It covers every change between 0.5.0 and the current version that alters a computed value, a diagnostic, a refusal, the compiled format, the run record or the host surface. Each change gets a short entry: what changed, the version it arrived in, who notices it (the host or the script author) and what to check, with a link to its CHANGELOG entry. A line added to the Every release list in CLAUDE.md, so each release adds its own entries and the page has an owner. Out of scope: any code change, and copying CHANGELOG text in full.",
+              "acceptance": [
+                "Every CHANGELOG entry after 0.5.0 that changes a value, a code or a refusal appears once, with its version",
+                "The pull request lists every CHANGELOG entry after 0.5.0 and gives a reason for each one left off the page",
+                "CLAUDE.md's Every release list names the upgrade page, and the maintainer approves that line on the pull request",
+                "npm run check:site, node scripts/check-names.mjs and npm test pass"
+              ],
+              "eval": "Keeps check-site green.",
+              "size": "M",
+              "skills": [
+                "Technical writing",
+                "OpenScript"
+              ],
+              "goodFirst": true,
+              "dependsOn": [],
+              "agentBrief": "Task OS-N4 in marketcalls/openscript: write the upgrade page from 0.5.0, and add it to the release steps.\nRead CLAUDE.md (the Every release list), RELEASING.md (how the package version and the format version differ) and every CHANGELOG.md entry after 0.5.0.\nBuild docs/integrating/upgrading.md. Write one short entry for each change that alters a computed value, a diagnostic, a refusal, the compiled format, the run record or the host surface. Each entry says what changed, the version it arrived in, who notices (the host or the script author) and what to check. Link to the CHANGELOG entry instead of copying it, and group the entries by version, then by who notices.\nAdd one line to the Every release list in CLAUDE.md: add the release's user-visible changes to docs/integrating/upgrading.md. Mark that line for my approval in the pull request.\nRules: state each fact once and link for detail; no emoji; no em or en dashes; name no other product or company; call a run that sends no real order sandbox mode, and use no other name for it. Change no code.\nDone when npm run check:site, node scripts/check-names.mjs and npm test pass. In the pull request, list every CHANGELOG entry after 0.5.0 and say whether it is on the page, with a reason for each one left off."
+            },
+            {
+              "id": "OS-N5",
+              "title": "Check the chart adapter against a real charts 2.6.0 build",
+              "why": "openalgo-charts is an optional peer at 2.4.0 or newer and is not installed in this repository, so the chart adapter is checked only against its own declared contract (src/adapters/charts/contract.ts) and never against a real chart build. The first host will move to charts 2.6.0 and the current OpenScript together, and 2.6.0 adds typed events, strict types and transforms as chart types.",
+              "deliverable": "A probe run outside the committed tree: openalgo-charts 2.6.0 and the packed OpenScript build installed in a scratch directory, a type check of the descriptors the adapter builds against the 2.6.0 public declarations, and a smoke page that draws every example in examples/ that draws, on the 2.6.0 script-tag build. Where 2.6.0 renamed or narrowed something the adapter writes, the adapter is fixed in the same pull request. The peer range in package.json is updated to what was tested, and the capability table in src/adapters/charts/capabilities.ts only if the adapter now relies on a 2.6.0 feature. Out of scope: adopting new 2.6.0 features, and adding openalgo-charts as a dependency.",
+              "acceptance": [
+                "The pull request pastes the type probe's output against the 2.6.0 declarations with no error, and says how to rerun it",
+                "Every drawing example is shown rendering on charts 2.6.0 (one screenshot each, attached to the pull request) with no console error",
+                "npm run check:chart and npm test pass, and package.json gains no dependency or dev dependency"
+              ],
+              "eval": "Keeps check-chart-surface green. No new eval.",
+              "size": "M",
+              "skills": [
+                "TypeScript declarations",
+                "Browser testing",
+                "Chart adapter"
+              ],
+              "goodFirst": false,
+              "dependsOn": [],
+              "agentBrief": "Task OS-N5 in marketcalls/openscript: check the chart adapter against a real charts 2.6.0 build.\nStart only once openalgo-charts 2.6.0 is on npm. Read CLAUDE.md, src/adapters/charts/contract.ts, capabilities.ts, descriptor.ts and index.ts, scripts/check-chart-surface.mjs, spec/chart-narrowings.json, and the 2.6.0 entry of the charts changelog.\nSteps:\n1. In a scratch directory outside the repository, install openalgo-charts@2.6.0 and the tarball from npm pack of this branch.\n2. Write a probe .ts file that builds a descriptor with the adapter for a few examples and hands it to the chart's typed API. Run tsc --noEmit on it and keep the output.\n3. Write a smoke page that loads the 2.6.0 script-tag build and draws each example in examples/ that draws. Record one screenshot per example and the browser console.\n4. If anything breaks, fix it in src/adapters/charts. Update the peer range to what you tested. Touch capabilities.ts only if the adapter now depends on something 2.6.0 added.\nRules: add no dependency; commit neither the probe nor the scratch directory; no code file over 500 lines; name no other product; no emoji; no em or en dashes; do not tag or publish (the maintainer releases both packages under one version).\nDone when npm run check:chart and npm test pass. Paste the tsc output, attach the screenshots, and write the rerun steps into the pull request."
+            }
+          ]
+        },
+        {
+          "id": "next-live",
+          "title": "The live path and the language core",
+          "outcome": "A strategy with nowhere to send orders stops with OS7015. The suite replays the moving bar that live running re-executes on every tick, from a written rule for how a tick becomes the bar. The language core starts being proven, row by row, with tests that fail when the behaviour breaks.",
+          "measure": "OS7015 carries no deferred field (17 codes deferred, from 18); the spec says how a ticks.csv row becomes the newest bar; the bar/rollback, bar/rollback-array, bar/updates and persist/live-var cases pass on both adapters; running-the-suite.md no longer lists ticks.csv as unreached; and node scripts/check-matrix.mjs reports at least 150 implemented rows (127 at 0.8.0), from the four intrabar rows and two claims of OS-N8.",
+          "tasks": [
+            {
+              "id": "OS-N6",
+              "title": "Raise OS7015 when a strategy has no order destination",
+              "why": "spec/errors.json marks OS7015 as deferred, and spec/host-interface.md section 7 says Not raised yet: a strategy with nowhere to send orders places intents that reach nobody, and nothing tells the user. The spec already says when it is raised: the moment a script places an order with no destination wired (section 7, and 7.4, which the deferral names). Before a strategy runs through a host in sandbox mode or live, that silent failure has to become a stop with a code.",
+              "deliverable": "Both engines raise OS7015 where host-interface.md section 7 says. The OS7015 entry is edited by hand in spec/errors.json and in its section of spec/errors.md, which state the same facts and are compared with each other: the deferred field goes. Every Not raised yet note that names OS7015 is removed or trimmed (in spec/stdlib.md, spec/host-interface.md in two places, and docs/first-strategy.md). Each engine gets a test on the code and span, and a case goes under cases/order/ if the case format can express a missing destination (if it cannot, the pull request says why). Out of scope: any other code, including OS7014 in the note it shares.",
+              "acceptance": [
+                "node scripts/check-raises.mjs, node scripts/check-catalogue-tests.mjs and npm run check:errors pass, and OS7015 has no deferred field",
+                "npm run check:examples:compile passes: the catalogue's before block raises OS7015 and its after block compiles",
+                "grep -rn 'Not raised yet' spec docs shows no note that names OS7015",
+                "npm test passes (it includes npm run suite:agree)"
+              ],
+              "eval": "Keeps the catalogue checks green and extends cases/order.",
+              "size": "M",
+              "skills": [
+                "TypeScript",
+                "Python",
+                "Strategy semantics"
+              ],
+              "goodFirst": false,
+              "dependsOn": [],
+              "agentBrief": "Task OS-N6 in marketcalls/openscript: raise OS7015 when a strategy has no order destination.\nRead CLAUDE.md, CONTRIBUTING.md and spec/README.md. Then read spec/host-interface.md section 7 (its opening, 7.1, 7.4 and 7.6), the OS7015 entry in spec/errors.json and its section in spec/errors.md, spec/conformance.md sections 2 to 4, scripts/lib/raise-documents.mjs, and engine/openscript/run.py.\nGoal: both engines stop with OS7015 the moment a strategy places an order and the host wired no destination.\n1. If the spec does not say exactly on which bar and with which span OS7015 is raised, write that sentence first and show me the diff before any code.\n2. Implement it in src/ and engine/openscript/ in the same pull request.\n3. Edit the OS7015 entry by hand in both spec/errors.json and spec/errors.md: they state the same facts and are compared. npm run generate:errors writes only the generated TypeScript and does not touch spec/errors.md.\n4. Run grep -rn 'Not raised yet' spec docs and remove or trim every note that names OS7015. Leave OS7014's half of the shared note in place.\n5. Add a test in each engine that asserts the code and the span, not the message.\n6. Add a case under cases/order/ if the case format can express a missing destination. Derive its expected output by reading the spec, and say how you did it.\nRules: no eval or code built from text; no dependency (Python standard library only); no code file over 500 lines; do not edit an existing case's expected values, a tolerance or an exceptions file under spec/; name no product; no emoji; no em or en dashes; do not tag or publish.\nDone when npm test, node scripts/check-raises.mjs, npm run check:errors and npm run check:examples:compile pass. Paste their summary lines and the grep output."
+            },
+            {
+              "id": "OS-N7",
+              "title": "Write down how a tick becomes the moving bar, then replay ticks.csv in both adapters",
+              "why": "The intrabar category in spec/conformance.md section 7 has no case, and both adapters leave ticks.csv unread. docs/integrating/running-the-suite.md says how a tick row becomes the newest bar's four prices is written down nowhere, so a replay today would be the adapter's invention. A live runner re-executes the moving bar on every tick, so this is where a chart, a backtest and a live run are most likely to differ.",
+              "deliverable": "First, a spec sentence in conformance.md 'Intrabar updates' (and language.md section 7 if needed) saying how a ticks.csv row becomes the newest bar's open, high, low, close and volume, approved by the maintainer before any adapter code. Then both adapters (scripts/adapter.mjs and engine/adapter.mjs) replay ticks.csv, and four cases are written at the identifiers the matrix already reserves: bar/rollback, bar/rollback-array, bar/updates and persist/live-var. The live var script is warned with OS8011 at compile time, and since no adapter reports compile warnings yet, that case asserts values only. The four rows flip and running-the-suite.md is updated. Out of scope: deferred orders on ticks, and a higher timeframe read on the moving bar, which has no reserved identifier yet.",
+              "acceptance": [
+                "The approved spec sentence is merged before, or in the same pull request as, the adapter code, and the pull request shows the approval",
+                "npm run suite and npm run suite:engine report the four cases as pass, not unsupported, and npm run suite:agree passes",
+                "The pull request shows at least one case failing when the rollback is removed from either engine (not committed)",
+                "node scripts/check-matrix.mjs reports four more implemented rows, and npm test passes"
+              ],
+              "eval": "Extends the conformance suite into the intrabar category.",
+              "size": "L",
+              "skills": [
+                "Maintainer task",
+                "TypeScript",
+                "Python",
+                "Engine internals"
+              ],
+              "goodFirst": false,
+              "dependsOn": [],
+              "agentBrief": "Task OS-N7 in marketcalls/openscript: write down how a tick becomes the moving bar, then replay ticks.csv in both adapters.\nRead CLAUDE.md, spec/conformance.md section 3 (Intrabar updates) and section 7, spec/language.md 7.2 and 7.5 (rollback) and 8.2 (live var), docs/integrating/running-the-suite.md (what each adapter does not reach), scripts/adapter.mjs, engine/adapter.mjs, and the feature-matrix rows whose identifiers are bar/rollback, bar/rollback-array, bar/updates and persist/live-var.\n1. Draft the sentence that says how a ticks.csv row becomes the newest bar's open, high, low, close and volume. Show me the diff. Write no adapter code until I approve it on the issue.\n2. Implement the replay in both adapters using each engine's existing update and rollback path. If the spec needs new engine surface, ask me first.\n3. Add four cases at exactly the reserved identifiers: cases/bar/rollback, cases/bar/rollback-array, cases/bar/updates and cases/persist/live-var. The live var case asserts values only, because no adapter reports the OS8011 compile warning yet. Derive every expected output from the spec, not from an engine.\n4. In the pull request, show that removing the rollback in either engine fails a case. Do not commit that probe.\n5. Flip the four rows and update running-the-suite.md.\nRules: no eval; Python standard library only; no code file over 500 lines; do not edit existing cases; no emoji; no em or en dashes; do not tag or publish.\nDone when npm run suite, npm run suite:engine, node scripts/check-matrix.mjs and npm test pass with the four cases answered. Paste the summaries."
+            },
+            {
+              "id": "OS-N8",
+              "title": "Prove ten rows of the language core, with a test that fails when the behaviour breaks",
+              "why": "Only 127 of the 771 feature-matrix rows are implemented. Sections 1 (lexical, 41 rows), 2 (version, 6 rows), 3 (types, 20 rows) and 6 (the execution model, 26 rows) have none, although the compiler already does much of what they describe. check-matrix only checks that an identifier exists, so a proof counts only when it is shown to fail once the behaviour is broken. The task can be claimed again for the next ten rows: Next needs two claims and Soon four more.",
+              "deliverable": "Up to ten rows from one section of spec/feature-matrix.md moved to implemented. A row whose identifier starts with unit: (24 of section 1's 41 rows) is proven by a new test under tests/ that carries the identifier in its name. Any other row is proven by the case directory its identifier names under cases/, with a script, case.json and expected output derived by reading the spec. If a row's behaviour turns out to differ from the spec, it is left unchanged and reported in an issue.",
+              "acceptance": [
+                "node scripts/check-matrix.mjs reports ten more implemented rows (paste the summary line from before and after)",
+                "For every new test or case, the pull request shows it failing when the behaviour it proves is broken (the probe is not committed), and the reviewer repeats one of them",
+                "Each case's notes, or each test's comment, name the spec sentence the expected output was read from",
+                "npm run suite:agree and npm test pass (the Python adapter skips compiler cases by design)"
+              ],
+              "eval": "Extends the conformance suite and the unit tests, and keeps check-matrix green.",
+              "size": "M",
+              "skills": [
+                "OpenScript",
+                "Reading a specification",
+                "node:test"
+              ],
+              "goodFirst": true,
+              "dependsOn": [],
+              "agentBrief": "Task OS-N8 in marketcalls/openscript: prove ten rows of the language core.\nRead CLAUDE.md, CONTRIBUTING.md, spec/README.md, spec/feature-matrix.md 'Test identifiers' (the difference between a unit: identifier and a case identifier), and spec/conformance.md sections 2, 4 and 7. Then read the section of spec/feature-matrix.md you picked (sections 1, 2 (version), 3 and 6 have no implemented row) and the spec sections its rows cite.\nFor each of up to ten specified rows:\n1. Read the cited spec sentence and write the smallest script that exercises it.\n2. If the identifier starts with unit:, write a test under tests/ whose name carries that exact identifier. Otherwise create the case directory the identifier names under cases/.\n3. Write the expected output from the spec sentence, not from running an engine. A lexical row usually expects a code and a span.\n4. Break the behaviour on purpose (for example, disable the check in the compiler) and show the test or case failing. Do not commit that change.\n5. Flip the row to implemented.\n6. If an engine disagrees with the spec, do not change the expected output. Leave the row as it is and open an issue with the script.\nRules: never compute an expected value with either engine; do not edit any existing case; no code file over 500 lines; name no product; no emoji; no em or en dashes.\nDone when node scripts/check-matrix.mjs, npm run suite:agree and npm test pass. Paste the matrix summary line from before and after, and the failing output of each probe."
+            }
+          ]
+        },
+        {
+          "id": "next-evals",
+          "title": "Eval foundations: error messages that lead to the fix",
+          "outcome": "The first eval, built the way the method we follow describes. It asks whether a model given only a refused script and its diagnostic can produce the program that was meant, using people's real mistakes, a programmatic grader, a private test set and a published baseline that says honestly how small an effect it can see.",
+          "measure": "50 approved cases across 10 compile-time codes, split 30 train and 20 private test; the grader passes every intended program, fails every broken script and every fix that simply deletes the feature, and gives the same verdict twice; and a baseline is published with a 95 percent interval, a noise floor from two baseline runs, the smallest detectable effect, the cost per task, failures by code and both build digests.",
+          "tasks": [
+            {
+              "id": "OS-N9",
+              "title": "Decide where evals live, which builds they use, who writes test cases, and the spend cap",
+              "why": "An open repository cannot hide a test set. The docs at openalgo.in/script describe 0.5.0 while the package is at 0.8.0, and a hillclimb changes text that a model reads only after a build. So before any case is written, the maintainer fixes where train and test cases live, which build grades and which build supplies a campaign's candidate text, which docs a model is shown, who may write test cases, which vendors may see them, and the spend cap. This decision is shared with the charts roadmap and is made once for both.",
+              "deliverable": "A short published decision covering: a public repository for the harness and train cases; a private repository for test cases and reference programs; the pinned grading build, and the rule that a campaign's candidate build is npm pack of its branch, with both digests recorded in every report; the docs version a model is shown; who may write test cases (the maintainer, or people named in the decision), while outside contributors write train cases only; that any vendor receiving test cases has terms that exclude training on API data, and a second vendor runs on train only; rotation only on suspected leakage; the model and effort per campaign; and the spend cap. It also includes a dependency-free digest check that fails if any private case appears in public.",
+              "acceptance": [
+                "The decision is published and linked from this page",
+                "The digest check reports that the public repository holds no test case",
+                "The API workspace has a spend limit set"
+              ],
+              "eval": "Sets up every eval on this page.",
+              "size": "S",
+              "skills": [
+                "Maintainer task"
+              ],
+              "goodFirst": false,
+              "dependsOn": [],
+              "agentBrief": "Task OS-N9 (maintainer) for marketcalls/openscript: record where evals live and how they are run.\nRead the eval section of this roadmap, spec/conformance.md section 4, RELEASING.md and docs/integrating/the-editor-half.md (what diagnose returns).\nDraft these for me, and create nothing: (1) a README for a public eval repository that holds the harness and the train cases; (2) the layout of a private repository for test cases and reference programs; (3) a dependency-free digest check that fails if any private case appears in the public repository; (4) a one-page decision covering the pinned grading build, the candidate build rule (npm pack of the branch, both digests recorded), the docs version a model is shown, who may write test cases, the vendor terms for anyone who receives test cases, the train-only rule for a second vendor, rotation only on suspected leakage, the model and effort per campaign, and the spend limit, with blanks where I decide.\nRules: no secrets or keys in any file; name no product or vendor; no emoji; no em or en dashes. Do not create repositories, set limits or push."
+            },
+            {
+              "id": "OS-N10",
+              "title": "Write the first 50 mistakes a person makes, each with the program that was meant",
+              "why": "The fix-from-diagnostic eval needs cases that people find hard, not cases a model happens to fail today. The catalogue's own before and after examples are published at openalgo.in/script/errors, so they can only serve as train cases. diagnose returns only compile-time codes (the lex, parse and check stages), so runtime and host codes never appear in it and cannot be targets. Test cases have to be new mistakes, written by people who have learned the language, and kept private.",
+              "deliverable": "50 cases over 10 compile-time catalogue codes, split 30 train and 20 test within each code. Example mistakes: a name borrowed from another chart language, = in a condition, a stateful call inside a branch, history on a block-local name, a call to a planned entry, and a plot with no title. Each case is a directory holding the broken script, the intended program written by a person, bars as CSV (a random walk with a placeholder symbol) and meta.json (the code, why a person finds it hard, and the source: written, bug report or changelog). In openscript, a --root option for scripts/check-names.mjs, which today reads only git ls-files of its own repository, so its word list can run over the eval repository. Out of scope: running any model.",
+              "acceptance": [
+                "Every broken script gets its stated code from diagnose at the pinned build, and every intended program compiles with no error and runs with no runtime diagnostic",
+                "No case repeats a before or after block from spec/errors.json, checked by a script that compares normalised text",
+                "node scripts/check-names.mjs --root pointed at the eval repository passes over every case, and npm test passes in openscript with the new option",
+                "The 20 test cases are written or rewritten by the maintainer (or a person the eval decision names), live only in the private repository, and the maintainer approves the set before any model runs on it"
+              ],
+              "eval": "Creates version 0 of the fix-from-diagnostic suite.",
+              "size": "M",
+              "skills": [
+                "Maintainer task",
+                "OpenScript",
+                "Writing test cases"
+              ],
+              "goodFirst": false,
+              "dependsOn": [
+                "OS-N9"
+              ],
+              "agentBrief": "Task OS-N10 for the OpenScript fix-from-diagnostic eval: write the first 50 mistakes, each with the program that was meant.\nRead spec/errors.json (codes, stages, causes and fixes), docs/integrating/the-editor-half.md (diagnose), docs/first-study.md, docs/first-strategy.md, the AI assistants page on openalgo.in/script (the mistakes assistants make), and the eval decision from OS-N9.\nFirst, in openscript: add a --root option to scripts/check-names.mjs so it can scan a directory that is not this repository. Keep the default unchanged, add a test, and open it as its own small pull request.\nThen work with me one case at a time, only on codes whose stage is lex, parse or check. First, a request a trader would make. Second, the program that does it (I write it or approve it). Third, a realistic broken version containing one mistake a person learning the language would make. Bars are a random walk with a placeholder symbol, never a sine wave.\nFor each case, check with the pinned build that diagnose returns the stated code for the broken script and that the intended program compiles and runs clean. Write meta.json with the code, why a person finds it hard, and the source.\nRules: do not copy any before or after block from spec/errors.json; do not pick a mistake because a model fails it; do not run any model on the cases; test cases go only to the private repository and I write or rewrite each of them; name no product, broker or real instrument; no emoji; no em or en dashes.\nDone when all 50 cases pass the compile checks, the overlap check against the catalogue and check-names --root. Paste their summaries."
+            },
+            {
+              "id": "OS-N11",
+              "title": "Grade fixes by what the program computes, and publish the first baseline",
+              "why": "A fix is right when the fixed script computes what the intended program computes. The compiler and the engine can check that exactly, so no model is needed as a judge. A baseline run twice gives the score, the noise floor and the failure buckets that every later change is measured against. With 20 test cases it can only see large effects, and the report has to say so before anyone reads meaning into it.",
+              "deliverable": "Three pieces in the eval repository. A grader that compiles the fixed script with the pinned grading build, rejects any warning the intended program does not raise, and compares per-bar outputs with the intended program's on the case bars. A runner that gives a model only the script and what diagnose returns (code, message, fix, span) from a named build: the pinned build for a baseline, or a candidate build packed from a branch for a campaign. It runs three times per case and records both build digests. A report giving the test score with its 95 percent bootstrap interval, the gap between two baseline runs (the noise floor), the smallest effect the test set can detect, cost and latency per task, infrastructure errors counted separately, and failures grouped by code. Out of scope: changing any error text.",
+              "acceptance": [
+                "The grader passes all 50 intended programs against themselves and fails all 50 broken scripts",
+                "It fails ten fixes that simply delete the feature (the plot or the condition removed so the script compiles)",
+                "Grading the same outputs twice gives identical verdicts",
+                "A runner started with a candidate build shows that build's diagnose text, and the report names both digests",
+                "The baseline report is published with the model, effort, date, interval, noise floor, smallest detectable effect (about 25 points on 20 test cases) and measured cost, and a person has read 20 scored transcripts",
+                "If the best configuration scores above about 95 percent on test, the report says so and proposes harder cases, or a campaign on cost and latency, instead of a campaign on score"
+              ],
+              "eval": "Builds the grader, the runner and the baseline of the fix-from-diagnostic suite.",
+              "size": "L",
+              "skills": [
+                "TypeScript",
+                "Statistics",
+                "Model APIs"
+              ],
+              "goodFirst": false,
+              "dependsOn": [
+                "OS-N10"
+              ],
+              "agentBrief": "Task OS-N11 for the OpenScript fix-from-diagnostic eval: build the grader, the runner and the first baseline.\nRead the eval decision from OS-N9, docs/integrating/the-editor-half.md (diagnose), docs/integrating/architecture.md, and the case format from OS-N10.\nBuild, in the eval repository only:\n1. grade: compile the candidate with the pinned grading build. Fail on any error, or on a warning the intended program does not raise. Run both on the case bars and compare every named output bar by bar, exactly unless the case declares a tolerance.\n2. run: take a build path (the pinned build, or a tarball from npm pack of a branch) and send the model only the broken script and that build's diagnose output (code, message, fix, span), with no docs and no tools. Three runs per case. Record tokens, time, verdict and the digest of both builds. A package or network failure is an infrastructure error: retry it once and report it separately.\n3. report: the test pass rate with a 95 percent bootstrap interval over cases, the difference between two full baseline runs (the noise floor), the smallest effect the test set can detect, cost and latency per task, and failures grouped by the original code.\nProve the grader first: every intended program passes, every broken script fails, ten fixes that simply delete the feature fail, and a second grading gives identical verdicts.\nRules: never put reference programs or test cases anywhere the model under test can read them; keep API keys out of files and logs; name no product or vendor in case text; no emoji; no em or en dashes. Only the maintainer runs the test split.\nDone when the grader checks pass and the baseline report is written. Paste the report summary."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Soon",
+      "window": "Months four to twelve after charts 2.6.0",
+      "goal": "Settle the order and accounting decisions first, then raise every order refusal and make the backtest honest. Harden the surfaces a 1.0 will promise. Grow the fix-from-diagnostic eval until a campaign can see a real effect, then run the first campaign on error text. Once the first host upgrades, run it through a full session in sandbox mode. 1.0 ships when its written checklist passes, not on a date.",
+      "themes": [
+        {
+          "id": "soon-orders",
+          "title": "Decisions first, then every order refusal raised",
+          "outcome": "The decisions the order path and the backtest wait on are written down and approved. Both engines then stop or report, with a documented code, every order no exchange accepts and every refusal a destination sends back.",
+          "measure": "four new decisions in spec/decisions.md; OS7005, OS7012, OS7014, OS7018 and OS7019 carry no deferred field (with OS7015 from Next and OS7011 in the backtest theme, no OS7xxx code is deferred and 11 of the 18 deferred codes remain); order.roundToLot and session.isOpen are implemented in both engines; order/ended-unfilled is corrected with a reviewed explanation; and check-raises, check-catalogue-tests and check:errors pass.",
+          "tasks": [
+            {
+              "id": "OS-S1",
+              "title": "Settle the four decisions the order path and the backtest wait on",
+              "why": "Five order and backtest tasks cannot start from the spec as it stands. OS7005's deferral ties the lot check to the OS7017 narrowing and to splitting an order that opposes the position, all settled together when order validation lands (stdlib.md 17.2). OS7018 and OS7019 wait for a channel for a diagnostic that does not stop the run, which does not exist, and host-interface.md 7.6 says a frame for an unknown intent is ignored. Decision 38 leaves open what a bracket does before its level stands. And src/core/accounting/equity.ts lands a trade's charges on the bar it opened, because the trade list carries no fill timing, so folding equity from fills needs a rule for when a charge lands.",
+              "deliverable": "Four decisions in spec/decisions.md, each with the options considered, the reason, the spec sentences it changes and the case identifiers it reserves: (1) order validation with the lot size: OS7005, the OS7017 narrowing in lots, cash and equity percent, the opposing-order split, and where order.roundToLot fits; (2) a diagnostic that does not stop the run: where it lives on a bar, in the run record and in expected.json, and whether a frame for an unknown intent stays ignored (7.6) or raises OS7018; (3) decision 38's open question and the single-leg subset of stdlib.md 17.9 to build now, citing 17.10 for what it already settles (the order of tests, the stop taken when one bar holds both levels, and where a gap fills); (4) when a charge lands on the equity curve, and when running equity updates relative to fills and costs. Also: the correction of order/ended-unfilled (its rejected frame expects empty diagnostics) written as conformance.md section 10 asks, hand derivations for the bracket cases, and the implementation tasks re-cut to five days or less wherever a decision makes one larger.",
+              "acceptance": [
+                "Four decisions exist, each naming the options considered, the reason and the spec sentences it changes",
+                "node scripts/check-matrix.mjs passes with every reserved identifier, and npm test passes",
+                "A second person can follow the hand derivations for four bracket scenarios bar by bar: the stop is hit, the target is hit, both levels inside one bar under 17.10, and a gap through the stop",
+                "The re-cut implementation tasks are published on this page with acceptance commands"
+              ],
+              "eval": "Prepares the cases OS-S2 to OS-S7 build.",
+              "size": "L",
+              "skills": [
+                "Maintainer task",
+                "Specification",
+                "Order execution",
+                "Portfolio accounting"
+              ],
+              "goodFirst": false,
+              "dependsOn": [],
+              "agentBrief": "Task OS-S1 (maintainer) in marketcalls/openscript: settle the four decisions the order path and the backtest wait on.\nRead spec/README.md; spec/decisions.md decision 38 (its Still open paragraph); the deferred text of OS7005, OS7011, OS7014, OS7018 and OS7019 and the entry for OS7017 in spec/errors.json; spec/stdlib.md 17.1 to 17.4 and 17.7 to 17.10; spec/host-interface.md 7.4 and 7.6; spec/conformance.md sections 4 and 10; src/core/accounting/equity.ts (its note on where charges land); src/core/backtest/record.ts (run record versions); cases/order/ended-unfilled; and docs/integrating/architecture.md (Where it stands).\nDraft for my review, with no code, one decision each: (1) order validation with the lot size; (2) a diagnostic that does not stop the run, and the unknown-intent frame; (3) what a bracket does before its level stands, and the single-leg subset of 17.9 to build now; (4) when a charge lands on the equity curve, and when running equity updates. For each: the options, what each costs both engines and a host, the spec sentences it changes, the matrix rows and case identifiers it reserves, and a recommendation. Do not choose for me.\nAlso draft: the correction of order/ended-unfilled that decision 2 implies, with the reasoning conformance.md section 10 asks for; bar-by-bar hand derivations for the four bracket scenarios; and the implementation tasks re-cut to five days or less.\nRules: cite 17.10 rather than deciding again what it settles; spec wording only; state each fact once; no emoji; no em or en dashes; name no other product.\nDone when node scripts/check-matrix.mjs and npm test pass on the reserved identifiers. List every question you could not settle."
+            },
+            {
+              "id": "OS-S2",
+              "title": "Refuse a quantity off the lot size: OS7005 and order.roundToLot",
+              "why": "Nothing compares an order's quantity with the lot size its instrument trades in, so a backtest can fill an order no exchange would take, and lot sizes apply to every derivatives contract the first host trades. OS7005's fix tells a reader to use order.roundToLot(), which is planned, and scripts/lib/fix-sentence.mjs fails a fix that names a planned call once the deferral goes, so roundToLot has to ship in the same change.",
+              "deliverable": "As OS-S1's order validation decision fixes it: the ledger is given the lot size its leg trades in; both engines raise OS7005; order.roundToLot (stdlib.md 17.3) is implemented in both engines, with a library vector if scripts/check-library-vectors.mjs asks for one, and the order/round-to-lot row moves. The OS7005 entry is edited by hand in spec/errors.json and spec/errors.md, and every Not raised yet note naming OS7005 is removed or trimmed. Boundary cases under cases/order/: an exact multiple passes and one unit off refuses. Out of scope: whatever part of the OS7017 narrowing and the opposing-order split the decision placed in a later task.",
+              "acceptance": [
+                "node scripts/check-raises.mjs, node scripts/check-catalogue-tests.mjs and npm run check:errors pass with OS7005 not deferred",
+                "npm run check:examples:compile passes, fix-sentence rule included, because order.roundToLot is no longer planned",
+                "The boundary cases pass on both engines under npm run suite:agree, and node scripts/check-matrix.mjs passes",
+                "npm test passes"
+              ],
+              "eval": "Extends cases/order with boundary cases and keeps the catalogue checks green.",
+              "size": "L",
+              "skills": [
+                "TypeScript",
+                "Python",
+                "Lots and contract sizes"
+              ],
+              "goodFirst": false,
+              "dependsOn": [
+                "OS-S1"
+              ],
+              "agentBrief": "Task OS-S2 in marketcalls/openscript: refuse a quantity off the lot size (OS7005) and implement order.roundToLot.\nRead CLAUDE.md, CONTRIBUTING.md, spec/README.md, the order validation decision from OS-S1, the OS7005 entry in spec/errors.json and spec/errors.md, spec/stdlib.md 17.1 to 17.3, spec/host-interface.md 4.1 (instrument facts), scripts/lib/fix-sentence.mjs and spec/conformance.md sections 2 to 4.\nGoal: the ledger knows the lot size its leg trades in, both engines refuse a quantity that is not a multiple of it with OS7005, and order.roundToLot works as stdlib.md 17.3 says.\n1. Implement it in src/ and engine/openscript/ in one pull request, exactly as the decision fixes it. If the decision leaves a question open, stop and ask on the issue.\n2. Implement order.roundToLot in both engines and add a library vector if check-library-vectors asks for one.\n3. Edit the OS7005 entry by hand in spec/errors.json and spec/errors.md (npm run generate:errors does not touch errors.md). Remove or trim every Not raised yet note naming OS7005 (grep -rn 'Not raised yet' spec docs).\n4. Write tests in each engine on the code and span, and boundary cases under cases/order/: an exact multiple passes and one unit off refuses. Derive each expected output from the spec and say how.\nRules: no eval; Python standard library only; no code file over 500 lines; do not edit an existing case's expected values, a tolerance or an exceptions file under spec/; placeholder symbols only; name no product, broker or real instrument; no emoji; no em or en dashes; do not tag or publish.\nDone when npm test, node scripts/check-raises.mjs, npm run check:errors, node scripts/check-matrix.mjs and npm run check:examples:compile pass. Paste the summary lines."
+            },
+            {
+              "id": "OS-S3",
+              "title": "Refuse an order outside the session: OS7012 and session.isOpen",
+              "why": "Nothing compares the bar's time with the instrument's session before an order is sent, so an order outside the session leaves the engine as though the venue were open (OS7012 is deferred, citing language.md 15.2). Its fix tells a reader to guard entries with session.isOpen, which is planned, so the fix-sentence rule fails once the deferral goes. session.isOpen is the same predicate the refusal computes, so both ship together.",
+              "deliverable": "Both engines raise OS7012 where language.md 13.3 and 15.2 say, and implement session.isOpen (stdlib.md 12.4, host-interface.md 4.3). If the spec does not fix the bar, the span and whether the run stops, that sentence comes first. The OS7012 entry is edited by hand in spec/errors.json and spec/errors.md, and the Not raised yet notes naming it are removed. The order/session-flatten row moves from deferred to specified (closeOnSessionEnd flattening is still not built), and the session/flags row is updated for isOpen. Boundary cases: the last bar inside the session passes and the first bar outside refuses.",
+              "acceptance": [
+                "node scripts/check-raises.mjs, node scripts/check-catalogue-tests.mjs, npm run check:errors and npm run check:examples:compile pass with OS7012 not deferred",
+                "order/session-flatten reads specified, and node scripts/check-matrix.mjs passes",
+                "The two boundary cases and a session.isOpen case pass on both engines under npm run suite:agree",
+                "npm test passes"
+              ],
+              "eval": "Extends cases/order and cases/session and keeps the catalogue checks green.",
+              "size": "L",
+              "skills": [
+                "TypeScript",
+                "Python",
+                "Trading sessions"
+              ],
+              "goodFirst": false,
+              "dependsOn": [],
+              "agentBrief": "Task OS-S3 in marketcalls/openscript: refuse an order outside the session (OS7012) and implement session.isOpen.\nRead CLAUDE.md, CONTRIBUTING.md, spec/README.md, the OS7012 entry in spec/errors.json and spec/errors.md, spec/language.md 13.3 and 15.2, spec/stdlib.md 12.4, spec/host-interface.md 4.3 (the session), docs/data/sessions-and-time.md, scripts/lib/fix-sentence.mjs, and the feature-matrix rows order/session-flatten and session/flags.\nGoal: both engines refuse, with OS7012, an order placed while the instrument is outside its session, and session.isOpen reads the same predicate.\n1. If the spec does not fix the bar, the span and whether the run stops, write that first and show me the diff.\n2. Implement the refusal and session.isOpen in src/ and engine/openscript/ in the same pull request.\n3. Edit the OS7012 entry by hand in spec/errors.json and spec/errors.md, and remove the Not raised yet notes that name it. Move order/session-flatten from deferred to specified (closeOnSessionEnd flattening stays unbuilt) and update session/flags for isOpen.\n4. Write tests in each engine on the code and span, and boundary cases: the last bar inside the session passes and the first bar outside refuses. Derive each expected output from the spec and say how.\nRules: no eval; Python standard library only; no code file over 500 lines; do not edit existing cases; placeholder symbols only; no emoji; no em or en dashes; do not tag or publish.\nDone when npm test, node scripts/check-raises.mjs, npm run check:errors, node scripts/check-matrix.mjs and npm run check:examples:compile pass. Paste the summaries."
+            },
+            {
+              "id": "OS-S4",
+              "title": "Report refusals that come back in frames: OS7014, OS7018 and OS7019",
+              "why": "Three moments produce no diagnostic today: the destination rejects an order, a frame names an order this strategy never placed, and a fill arrives with no price. OS7018 and OS7019 wait for a channel for a diagnostic that does not stop the run, which does not exist yet. host-interface.md 7.6 says a frame for an unknown intent is ignored, and cases/order/ended-unfilled holds a rejected frame and expects empty diagnostics, so raising OS7014 changes that case. OS-S1 settles all three before this task starts. In a live run, these are the moments someone most needs to see.",
+              "deliverable": "The non-stopping diagnostic channel, as OS-S1 decided it, in both engines, the run record and expected.json. The three codes raised from the frame fold as the decision says. Their entries edited by hand in spec/errors.json and spec/errors.md, and their Not raised yet notes removed. The reviewed correction of order/ended-unfilled, with notes.md explaining why the old expectation was not what the specification says. Three strategy cases whose frames.csv holds a rejection, an unknown intent and a fill with no price. Out of scope: changing what a frame does to the ledger.",
+              "acceptance": [
+                "node scripts/check-raises.mjs, node scripts/check-catalogue-tests.mjs and npm run check:errors pass with none of the three deferred",
+                "The corrected order/ended-unfilled and the three new cases pass on both engines under npm run suite:agree, and the correction was approved on the issue before it was committed",
+                "npm test passes"
+              ],
+              "eval": "Extends the strategy cases of the conformance suite.",
+              "size": "L",
+              "skills": [
+                "TypeScript",
+                "Python",
+                "Order lifecycles"
+              ],
+              "goodFirst": false,
+              "dependsOn": [
+                "OS-S1"
+              ],
+              "agentBrief": "Task OS-S4 in marketcalls/openscript: report refusals that come back in frames (OS7014, OS7018 and OS7019).\nRead CLAUDE.md, CONTRIBUTING.md, spec/README.md, the non-stopping diagnostic decision from OS-S1, spec/host-interface.md 7.2 to 7.6, spec/stdlib.md 17.8, the three entries in spec/errors.json and spec/errors.md, spec/conformance.md sections 3 (frames.csv), 4 and 10, and cases/order/ended-unfilled.\nGoal: when a frame carries a rejection, names an intent this strategy never placed, or reports a fill with no price, both engines report the catalogue's code on the channel the decision defined, and the run continues where the decision says it does.\n1. Implement the channel in src/ and engine/openscript/ and in the run record, exactly as decided. Do not change what the fold does to the ledger.\n2. Raise the three codes. Edit their entries by hand in spec/errors.json and spec/errors.md, and remove the Not raised yet notes that name them.\n3. Write the correction of order/ended-unfilled that the decision approved, with notes.md explaining why the old expectation was not what the spec says. Post it on the issue and wait for my approval before committing it.\n4. Write tests on the code and span in each engine, plus three strategy cases whose frames.csv carries each shape, with expected output derived from the spec.\nRules: no eval; Python standard library only; no code file over 500 lines; no other existing case is edited; no emoji; no em or en dashes; do not tag or publish.\nDone when npm test, node scripts/check-raises.mjs, npm run check:errors and node scripts/check-catalogue-tests.mjs pass. Paste the summaries."
+            }
+          ]
+        },
+        {
+          "id": "soon-backtest",
+          "title": "An honest backtest",
+          "outcome": "The four backtest gaps that docs/integrating/architecture.md admits are closed: a bracket's stop and target fill at the level, the equity curve follows the fills, sizes in cash or percent of equity fill against a running equity, and a script can read that equity as pos.equity, with OS7011 raised when capital runs out.",
+          "measure": "the four gaps are removed from the Where it stands list; each change has cases in both engines; a scale-in case covers more than one entry in a direction; OS7011 is not deferred; pos.equity, pos.netProfit and pos.tradeCount are implemented; and npm run check:reproducible passes over every shipped strategy example.",
+          "tasks": [
+            {
+              "id": "OS-S5",
+              "title": "Fill a bracket's stop and target at the level in both engines",
+              "why": "A bracket's stop cannot fill today, because the engine appends no order row for a bracket. OS-S1 decides what a bracket does before its level stands and which single-leg subset of stdlib.md 17.9 to build. stdlib.md 17.10 already fixes the order of tests, that the stop is taken when one bar holds both levels, and where a gap fills.",
+              "deliverable": "The single-leg stop and target implemented in src/ and engine/openscript/ in one pull request, as OS-S1 decided and 17.10 specifies. The four OS-S1 derivations become strategy cases under their reserved identifiers, the matrix rows flip, and the bracket sentence is removed from docs/integrating/architecture.md. Out of scope: trailing stops and multi-leg levels.",
+              "acceptance": [
+                "The four new strategy cases pass in both engines and fail on the old code",
+                "npm run suite:agree, npm run check:reproducible and node scripts/check-matrix.mjs pass",
+                "No existing case's expected output changes; if one would, the work stops and the question goes on the issue",
+                "npm test passes"
+              ],
+              "eval": "Extends the strategy cases of the conformance suite.",
+              "size": "L",
+              "skills": [
+                "TypeScript",
+                "Python",
+                "Backtesting"
+              ],
+              "goodFirst": false,
+              "dependsOn": [
+                "OS-S1"
+              ],
+              "agentBrief": "Task OS-S5 in marketcalls/openscript: fill a bracket's stop and target at the level in both engines.\nRead CLAUDE.md, CONTRIBUTING.md, spec/README.md, the bracket decision and derivations from OS-S1, spec/stdlib.md 17.9 and 17.10, spec/conformance.md sections 2 to 4, and the code in src/core/backtest/ and engine/openscript/strategy/ that appends orders to the ledger.\nGoal: a bracket's stop and target append order rows and fill at the level as the spec now says, identically in both engines.\n1. Implement it in src/ and engine/openscript/ in one pull request.\n2. Turn the four derivations from OS-S1 into strategy cases (bars.csv, backtest.json and expected output) under the reserved identifiers.\n3. Remove the bracket sentence from docs/integrating/architecture.md and flip the matrix rows.\nRules: the derivations are the expected values, and no expected value comes from running an engine; no eval; Python standard library only; no code file over 500 lines; if an existing case's output changes, stop and ask me; no emoji; no em or en dashes; do not tag or publish.\nDone when npm test, npm run suite:agree, npm run check:reproducible and node scripts/check-matrix.mjs pass. Paste the summaries."
+            },
+            {
+              "id": "OS-S6",
+              "title": "Fold the equity curve from fills, and correct the strategy cases it moves",
+              "why": "The equity curve values a trade at the size it finally reached, so a strategy that scales in reports a drawdown deeper than the account ever had. The curve lives in src/core/accounting/equity.ts and engine/openscript/accounting/equity.py, and it lands a trade's charges on the bar the trade opened, because the trade list carries no fill timing. Folding from fills therefore needs OS-S1's charge timing rule, and it will probably move maxDrawdown, maxDrawdownAt, longestDrawdownBars and maxRunUp in all eight strategy cases, each of which declares commission.",
+              "deliverable": "In both engines, the equity curve is folded from the fill ledger, with charges landing as OS-S1 decided. If the run record's shape changes, its version moves as src/core/backtest/record.ts describes. The eight strategy cases (order/buy, order/sell, order/ended-unfilled, order/fold-after-terminal, order/partial-fill, perf/money-digits, perf/report-window and input/host-values) get a reviewed correction of every figure that moves, derived from their fills without either engine and explained in notes.md. A new case scales in over three entries in one direction with a hand-derived curve, which also covers running-the-suite.md's missing shape of more than one entry in a direction. architecture.md and running-the-suite.md are updated.",
+              "acceptance": [
+                "The scale-in case passes in both engines and fails on the old code",
+                "Every corrected figure has a derivation in its case's notes.md, and the maintainer approved the list of corrections on the issue before they were committed",
+                "npm run check:reproducible, npm run suite:agree and npm test pass"
+              ],
+              "eval": "Extends the strategy cases of the conformance suite.",
+              "size": "L",
+              "skills": [
+                "TypeScript",
+                "Python",
+                "Portfolio accounting"
+              ],
+              "goodFirst": false,
+              "dependsOn": [
+                "OS-S1"
+              ],
+              "agentBrief": "Task OS-S6 in marketcalls/openscript: fold the equity curve from fills, and correct the strategy cases it moves.\nRead CLAUDE.md, CONTRIBUTING.md, spec/README.md, the charge timing decision from OS-S1, spec/stdlib.md 17.4 and 17.7, spec/conformance.md section 10, src/core/accounting/equity.ts, engine/openscript/accounting/equity.py, src/core/backtest/record.ts (run record versions) and the eight strategy cases: order/buy, order/sell, order/ended-unfilled, order/fold-after-terminal, order/partial-fill, perf/money-digits, perf/report-window and input/host-values.\nGoal: in both engines, the equity curve is built from each fill as it happens, with charges landing as decided, not from a trade's final size.\n1. Implement it in src/ and engine/openscript/ together. Move the run record version only if its shape changes.\n2. For each of the eight cases, list every figure that moves. Derive each new figure from the case's fills with a small calculation that does not use either engine, and put the derivation in notes.md. Post the list on the issue and wait for my approval before committing any correction.\n3. Add a case that scales in over three entries in one direction. Derive its curve by hand, bar by bar.\n4. Update the gap sentence in docs/integrating/architecture.md and the shape list in running-the-suite.md.\nRules: never produce an expected value by running an engine; no eval; Python standard library only; no code file over 500 lines; no emoji; no em or en dashes; do not tag or publish.\nDone when npm test, npm run suite:agree and npm run check:reproducible pass. Paste the summaries and the approved list of corrections."
+            },
+            {
+              "id": "OS-S7",
+              "title": "Keep a running equity: size by cash or percent of equity, raise OS7011, and read pos.equity",
+              "why": "A quantity given in cash or as a percent of equity is refused today, because the backtest keeps no running equity to size against. OS7011 is deferred for the same reason, and its fix names pos.equity, which is planned, so the fix-sentence rule fails unless pos.equity ships with it. Once running equity exists, pos.equity and its two siblings in the same matrix row are reads of values the engine already keeps, and that closes the last gap in architecture.md: a script cannot read its own equity mid-run.",
+              "deliverable": "Running equity as OS-S1 decided it (the starting capital, and when equity updates relative to fills and costs), in both engines. Cash and percent-of-equity sizing, including rounding down to a lot. OS7011 raised with a case at the boundary, and its entry edited by hand in spec/errors.json and spec/errors.md. pos.equity, pos.netProfit and pos.tradeCount (the three running totals of the pos/equity row, stdlib.md 17.4) implemented in both engines with a case, and the row moved. The sizing and equity sentences removed from architecture.md. Out of scope: the other planned pos reads, which are library growth after 1.0.",
+              "acceptance": [
+                "Cash and percent-of-equity cases fill in both engines, with quantities derived by hand",
+                "OS7011 is not deferred, and node scripts/check-raises.mjs, npm run check:errors and npm run check:examples:compile pass (pos.equity is no longer planned)",
+                "The pos/equity case passes on both engines, and node scripts/check-matrix.mjs passes",
+                "npm test, npm run suite:agree and npm run check:reproducible pass"
+              ],
+              "eval": "Extends the strategy cases of the conformance suite and the catalogue checks.",
+              "size": "L",
+              "skills": [
+                "TypeScript",
+                "Python",
+                "Position sizing"
+              ],
+              "goodFirst": false,
+              "dependsOn": [
+                "OS-S1",
+                "OS-S6"
+              ],
+              "agentBrief": "Task OS-S7 in marketcalls/openscript: keep a running equity, size by cash or percent of equity, raise OS7011, and implement pos.equity, pos.netProfit and pos.tradeCount.\nRead CLAUDE.md, CONTRIBUTING.md, spec/README.md, the running equity decision from OS-S1, spec/stdlib.md 17.1, 17.2 and 17.4, the OS7011 entry in spec/errors.json and spec/errors.md, scripts/lib/fix-sentence.mjs, the equity change from OS-S6, and spec/conformance.md sections 2 to 4.\nGoal: the backtest keeps a running equity, sizes orders given in cash or as a percent of equity against it, raises OS7011 when an order needs more capital than the strategy has, and lets a script read the three running totals.\n1. Implement running equity and sizing in src/ and engine/openscript/ together, as decided. If the plan shows more than five days of work, say so on the issue before starting, and split the pos reads into a second claim.\n2. Implement pos.equity, pos.netProfit and pos.tradeCount in both engines and move the pos/equity row.\n3. Add cases for cash sizing, percent-of-equity sizing, the OS7011 boundary and the three reads, with hand-derived values.\n4. Edit the OS7011 entry by hand in spec/errors.json and spec/errors.md, remove its Not raised yet notes, and remove the sizing and equity sentences from docs/integrating/architecture.md.\nRules: no eval; Python standard library only; no code file over 500 lines; do not edit existing cases; placeholder symbols only; no emoji; no em or en dashes; do not tag or publish.\nDone when npm test, npm run suite:agree, npm run check:reproducible, node scripts/check-raises.mjs, npm run check:errors and npm run check:examples:compile pass. Paste the summaries."
+            }
+          ]
+        },
+        {
+          "id": "soon-live",
+          "title": "Phase 6 closed in the first host",
+          "outcome": "Once the first host ships the current package, its users' reports are triaged every month with fixed searches, and it runs strategies in sandbox mode through a full session in which the runner, the chart and the backtest agree on the same bars. Phase 6 is then recorded either as met or with its named gaps.",
+          "measure": "the triage searches and their monthly results are recorded; ROADMAP.md Phase 6 holds a report on five strategies over one full session in sandbox mode, with the runner's orders and trades compared against the backtest and the chart over the recorded bars, and every difference explained or filed. This work starts only after the first host upgrades, which carries no date.",
+          "tasks": [
+            {
+              "id": "OS-S8",
+              "title": "After the first host upgrades: triage its reports, and run five strategies through a full session in sandbox mode",
+              "why": "The five-strategy session gate that OS-S9 writes into ROADMAP.md Phase 6 has never been run. The live runner is built in the first host, which pins 0.5.0 until its own server migration, so this can start only when that host ships the current package. From then on its users' reports are the best source of cases, and today a search of either tracker finds none, so the triage has to be a standing duty with fixed searches rather than a one-off.",
+              "deliverable": "Two things. First, a documented triage command that runs fixed searches against the first host's tracker: openscript, 'script editor', 'compile error', and each catalogue code from spec/errors.json as its own search term. Its first run goes into a tracking issue with one row per report: a reproduction (account data removed, placeholder symbol), the result on the current version, and the outcome. The maintainer reruns it monthly. Second, a report in ROADMAP.md Phase 6 on five strategies (between them a stop, a bracket, lot sizing, a session close and a reversal), each run for one full session in sandbox mode, with the runner's orders and trades beside the backtest over the recorded bars and the chart over the same bars. Every difference is explained or filed as an issue with a script and bars.",
+              "acceptance": [
+                "The triage searches and their results are recorded in the tracking issue, and each defect still present has an openscript issue made with the bug form",
+                "The Phase 6 report shows all five strategies with runner, backtest and chart results side by side",
+                "Every difference has an explanation or an openscript issue that reproduces it",
+                "Neither the report nor the tracking issue holds account data, order ids, a broker name or a real symbol"
+              ],
+              "eval": "Feeds eval intake (reproduced reports become candidate cases once the maintainer admits them) and extends the conformance suite with any case a difference produces.",
+              "size": "L",
+              "skills": [
+                "Maintainer task",
+                "Python",
+                "Live trading operations",
+                "Bug triage"
+              ],
+              "goodFirst": false,
+              "dependsOn": [
+                "OS-N4",
+                "OS-N6",
+                "OS-S2",
+                "OS-S3",
+                "OS-S5",
+                "OS-S9"
+              ],
+              "agentBrief": "Task OS-S8 (maintainer), across marketcalls/openscript and the first host: triage the host's reports, then run five strategies through a full session in sandbox mode.\nStart only after the first host ships the current package. Read ROADMAP.md Phase 6 (the session gate OS-S9 wrote), docs/integrating/upgrading.md, docs/integrating/running-a-strategy.md, docs/running/sandbox-and-live.md, and the host's runner.\nPart 1, triage: write a small documented command that runs gh issue list --repo marketcalls/openalgo --state all --search for each of: openscript, 'script editor', 'compile error', and every code in spec/errors.json as its own term. For each hit, write the smallest script and bars that show it, run them on the current package, and record issue, result and outcome in one tracking issue. Open an openscript issue with the bug form for each defect still present.\nPart 2, session: pick five strategies that between them cover a stop, a bracket, lot sizing, a session close and a reversal, using the shipped examples where they fit. Run each in sandbox mode for one full session, recording the bars the runner saw and its orders and fills. Backtest the same programs over the recorded bars and draw them on the chart over the same bars. Write the report into ROADMAP.md Phase 6: for each strategy, orders and trades from the runner, the backtest and the chart side by side, with every difference explained or filed.\nRules: sandbox mode only; no account data, order ids or real symbols anywhere; name no broker; no emoji; no em or en dashes.\nDone when the tracking issue holds the first triage run and the report is in ROADMAP.md Phase 6 with each difference explained or filed."
+            }
+          ]
+        },
+        {
+          "id": "soon-stable",
+          "title": "Surfaces a 1.0 can promise",
+          "outcome": "1.0 is defined by a written checklist with a command for each item. A script holds the public surface of both packages. No input can crash the compiler or either engine's loader, or make the two engines disagree, and the engine that runs live has a performance budget.",
+          "measure": "ROADMAP.md holds the 1.0 checklist and the Phase 6 session gate; the API check fails on a removed export, a changed declaration or a changed signature in a listed Python module, and passes on main; both fuzzers run with a fixed seed in npm test and a longer range in CI, with no crash and no engine disagreement; and the Python bench has budgets and runs in npm test.",
+          "tasks": [
+            {
+              "id": "OS-S9",
+              "title": "Write down what 1.0 means, and the Phase 6 session gate",
+              "why": "docs/integrating/architecture.md ties 1.0 to a list that includes an engine written by somebody else, and nobody can date that. A package 1.0 should mean stable surfaces and honest numbers; the outside engine is the separate standard milestone. The five-strategy session gate for Phase 6 exists only in private working notes, so contributors cannot read it. And the site docs at openalgo.in/script are generated from the 0.5.0 package, so a criterion about them means nothing until someone decides which version they track.",
+              "deliverable": "A section in ROADMAP.md with checkable 1.0 criteria, each naming the command or file that shows it is met, and the matching sentence in architecture.md updated. Proposed criteria: no OS7xxx code is deferred; the four backtest gaps in architecture.md are closed (OS-S5 to OS-S7); the API check (OS-S10), the fuzzers (OS-S11) and the Python benchmark (OS-S12) run in npm test; at least 190 matrix rows are implemented, with a proven row in every section from 1 to 9, including section 2 (version); and the site docs track a decided version, with the evals pinned to the docs a model is shown. The remaining suite channels and categories, the suite archive and the language server are placed after 1.0. Also, in ROADMAP.md Phase 6, the session gate: five strategies, one full session each in sandbox mode, compared with the backtest and the chart.",
+              "acceptance": [
+                "The section exists, and every criterion names the command or file that proves it",
+                "ROADMAP.md Phase 6 states the five-strategy session gate",
+                "The decision on which package version the site docs track is recorded",
+                "npm run check:site and npm test pass"
+              ],
+              "eval": "Keeps check-site green.",
+              "size": "S",
+              "skills": [
+                "Maintainer task",
+                "Release planning"
+              ],
+              "goodFirst": false,
+              "dependsOn": [],
+              "agentBrief": "Task OS-S9 (maintainer) in marketcalls/openscript: write down what 1.0 means, and the Phase 6 session gate.\nRead ROADMAP.md (Phase 6, The adoption bar, and Promises that hold from version 1), docs/integrating/architecture.md (Where it stands), docs/integrating/the-documentation-site.md, RELEASING.md and spec/conformance.md section 12 (the badge).\nDraft for my review: (1) a ROADMAP.md section listing the 1.0 criteria this task proposes, each followed by the command or file that proves it; (2) a replacement for the architecture.md sentence that ties 1.0 to an outside engine, presenting the outside engine as the separate standard milestone with the badge reserved for it; (3) the session gate paragraph for ROADMAP.md Phase 6; (4) the options for which package version the site docs track (the latest published package, or the version the first host ships), with what each costs.\nRules: no dates; state each fact once and link to it; no emoji; no em or en dashes; name no other product.\nDone when npm run check:site and npm test pass. List any criterion you could not tie to a command."
+            },
+            {
+              "id": "OS-S10",
+              "title": "Record the public surface of both packages, and fail on any unapproved change",
+              "why": "check-format-additive.mjs keeps the compiled format additive, but nothing protects the packages' own surfaces. An export removed from the npm export map or a changed declaration could ship without any check failing. On the Python side, engine/openscript/__init__.py exports nothing and every caller names a module: the first host imports openscript.adapter.serving, adapter.sessions, adapter.spellings, civil, contracts, dates, hours, inputs, run, strategy, strategy.intents, verify and zones, so snapshotting run.py alone would protect almost none of what a host uses.",
+              "deliverable": "First, a list of the Python modules that are public, published in docs/integrating/the-python-engine.md and approved by the maintainer: at least the modules the first host imports today. Then scripts/check-api.mjs, dependency free and under 500 lines, which writes a committed snapshot: every export under the package.json exports map with its declaration text from dist/, and each listed Python module's public names and signatures, read through Python's inspect module the way check-python.mjs runs Python. It fails on a removal or on any changed declaration or signature until the snapshot is updated in a pull request the maintainer approves, prints additions, and is wired into npm test.",
+              "acceptance": [
+                "Removing one export in a scratch branch makes node scripts/check-api.mjs exit 1 and name it, and changing one declaration's text does the same",
+                "Renaming a keyword argument in a listed Python module makes it exit 1",
+                "Adding an export prints it, and the check exits 0 once the snapshot is updated",
+                "npm test passes on main, and the Python module list is published"
+              ],
+              "eval": "Adds a release gate.",
+              "size": "M",
+              "skills": [
+                "TypeScript declarations",
+                "Python introspection",
+                "Node scripting"
+              ],
+              "goodFirst": false,
+              "dependsOn": [],
+              "agentBrief": "Task OS-S10 in marketcalls/openscript: record the public surface of both packages, and fail on any unapproved change.\nRead CLAUDE.md, RELEASING.md, package.json (exports), scripts/check-format-additive.mjs and scripts/check-python.mjs (how Node runs Python here), engine/openscript/__init__.py and docs/integrating/the-python-engine.md.\n1. Draft the list of public Python modules for docs/integrating/the-python-engine.md. It must include openscript.adapter.serving, adapter.sessions, adapter.spellings, civil, contracts, dates, hours, inputs, run, strategy, strategy.intents, verify and zones. Show it to me on the issue and wait for approval.\n2. Build scripts/check-api.mjs. Read every entry of the exports map from the built dist/ declaration files and record each exported name with its declaration text. Read each listed module's public names and signatures through Python's inspect module, the way check-python.mjs runs Python. Compare with a committed snapshot: exit 1 naming any removal or any changed declaration or signature, and print additions.\n3. Add an npm script and run it from npm test.\nRules: no dependency; under 500 lines; no eval or code built from text; do not change any public surface in this task; no emoji; no em or en dashes.\nDone when npm test passes and the pull request shows the check failing on a removed export, a changed declaration and a renamed keyword argument (no probe committed)."
+            },
+            {
+              "id": "OS-S11",
+              "title": "Fuzz the compiler and the compiled-program loader in both engines",
+              "why": "The Phase 1 bar says no input may hang or crash the compiler, and today that rests on a hand-written malformed corpus in tests/editor/support.ts. The only property fuzzer covers the ledger (tests/engine/fuzz.test.ts). A host that loads a stored program also needs every malformed program refused with an OS6xxx code, never an exception, and the project's core rule needs both engines to reach the same verdict on it.",
+              "deliverable": "Two fuzzers, dependency free, with each file under 500 lines. A grammar-aware source fuzzer, seeded from examples/ and the malformed corpus, asserts that the compiler never throws, finishes inside a time budget, and emits only catalogue codes. A program fuzzer mutates the spec/corpus/ programs and feeds each to both engines' loaders, asserting that each is refused with an OS6xxx code or loads and runs, and that both engines give the same verdict and the same code. Python calls are batched in one process so the fixed seed runs in npm test in a few seconds; a longer seed range runs in CI. Every crash or disagreement found becomes a named regression test.",
+              "acceptance": [
+                "npm test runs both fuzzers with a fixed seed in a few seconds and passes",
+                "For every mutated program, both engines give the same verdict and the same code",
+                "A planted throw in the parser, or a past crash from the git history, is found by the fixed seed (shown in the pull request, not committed)",
+                "Every crash or disagreement found during the task has a regression test, with a fix in both engines where it applies"
+              ],
+              "eval": "Adds a robustness gate and a cross-engine check.",
+              "size": "L",
+              "skills": [
+                "TypeScript",
+                "Python",
+                "Property testing"
+              ],
+              "goodFirst": false,
+              "dependsOn": [],
+              "agentBrief": "Task OS-S11 in marketcalls/openscript: fuzz the compiler and the compiled-program loader in both engines.\nRead CLAUDE.md, ROADMAP.md Phase 1 (production bar), tests/editor/support.ts (MALFORMED), tests/engine/fuzz.test.ts, spec/compiled-program.md (load-time checks), the OS6xxx entries in spec/errors.json, scripts/check-python.mjs and engine/adapter.mjs (how Node drives the Python engine).\nBuild:\n1. A source fuzzer: a seeded generator that mutates examples/ and the malformed corpus by grammar-aware edits (drop, duplicate or swap tokens, deepen nesting, insert a line). Assert the compiler never throws, finishes within a time budget, and emits only codes in spec/errors.json.\n2. A program fuzzer: mutate the spec/corpus/ programs (drop fields, change types, reorder, truncate) and load each in both engines. Assert each is refused with an OS6xxx code or loads and runs, and that both engines give the same verdict and code. Send the whole batch to one Python process rather than one process per program.\n3. A fixed seed in npm test that takes a few seconds, and a longer range behind an environment variable for CI.\nFor every crash or disagreement, add a named regression test and fix it, in both engines where it applies.\nRules: no dependency; no code file over 500 lines; no eval or code built from text; do not weaken an existing test; no emoji; no em or en dashes.\nDone when npm test passes and the pull request shows a planted throw being found. Paste the summaries and the fixed-seed run time."
+            },
+            {
+              "id": "OS-S12",
+              "title": "Give the Python engine a benchmark with budgets",
+              "why": "In the first host, a live run uses the Python engine, and it has no budgeted benchmark (only an ad hoc --bench in engine/tests/test_transcendental.py). The TypeScript engine has eight budgeted workloads in tests/bench/workloads.ts, which compile their programs from source at bench time; the Python engine has no compiler, so it needs its programs handed to it.",
+              "deliverable": "A Python bench mirroring the history, update, light and heavy workloads in tests/bench/workloads.ts, using only the standard library. A Node step compiles the same programs and writes them to a temporary directory for the Python bench, so no compiled JSON copy is committed. Budgets are recorded the way tests/bench/budgets.ts records them: the median of several runs, with headroom, and a rerun in a fresh process before a failure counts. The bench is wired into npm test, with a note on how the budgets were measured.",
+              "acceptance": [
+                "The Python bench runs in npm test and passes on the reference machine",
+                "No compiled program is committed: git status after npm test shows no new file",
+                "A deliberate slowdown in the bar loop fails it (shown in the pull request, not committed)",
+                "The budgets and how they were measured are written next to them"
+              ],
+              "eval": "Extends the benchmark gate to the Python engine.",
+              "size": "M",
+              "skills": [
+                "Python",
+                "Performance measurement",
+                "Node"
+              ],
+              "goodFirst": false,
+              "dependsOn": [],
+              "agentBrief": "Task OS-S12 in marketcalls/openscript: give the Python engine a benchmark with budgets.\nRead CLAUDE.md, tests/bench/workloads.ts, tests/bench/budgets.ts, tests/bench/timing.ts, scripts/bench.mjs, engine/tools/run_tests.py and engine/openscript/run.py.\nBuild:\n1. A Node step that compiles the programs the TypeScript workloads use and writes them, with their bars, to a temporary directory. Commit no compiled JSON.\n2. A bench under engine/ that runs the history, update, light and heavy workloads on those programs, with budgets taken the same way as tests/bench/budgets.ts: the median of several runs, a headroom factor, and a rerun in a fresh process before failing.\n3. Call both from npm test.\nRules: Python standard library only; no code file over 500 lines; do not raise any existing TypeScript budget; no emoji; no em or en dashes.\nDone when npm test passes, git status shows no new file after it, and the pull request shows a planted slowdown failing the bench. Paste the measured medians and the budgets."
+            }
+          ]
+        },
+        {
+          "id": "soon-evals",
+          "title": "Grow the fix-from-diagnostic eval, then hillclimb the error text",
+          "outcome": "The fix-from-diagnostic eval grows until a campaign can see a real effect. The first campaign then runs on the cheapest and most attributable surface we have, the fix text of compile-time error codes, with tooling that guards it against overfitting and leakage.",
+          "measure": "at least 150 cases, with at least 20 private test cases in each of 3 to 5 targeted code families; the overlap guard refuses a seeded patch and passes a clean one; the smallest detectable effect and the spend cap are published before the campaign starts; and the campaign log shows each round's train and test scores against the baseline and the noise floor, with both build digests and every kept patch merged by the maintainer.",
+          "tasks": [
+            {
+              "id": "OS-S13",
+              "title": "Build the overlap guard that keeps test content out of patches",
+              "why": "The method's safeguards come in order: split train from test first (OS-N9 does that), never paste failing transcript content into the thing being improved second, and keep reference answers out of reach third. Nobody can check the second by eye across hundreds of cases, so a tool refuses any surface patch that shares a long run of text or a distinctive identifier with an eval case.",
+              "deliverable": "A dependency-free script in the eval repository. It takes a diff and the case directories, and fails when the added lines share any of these with a test request or reference program: a run of eight or more words, a script identifier, a plot title, or a number with four or more significant digits. Each rule has a unit test.",
+              "acceptance": [
+                "A diff seeded with a phrase from a test case fails and names the case",
+                "A clean diff passes",
+                "It runs in under ten seconds on 250 cases",
+                "The campaign tooling runs it before any patch is scored"
+              ],
+              "eval": "Guards every hillclimbing campaign on this page.",
+              "size": "S",
+              "skills": [
+                "Node",
+                "Text processing"
+              ],
+              "goodFirst": true,
+              "dependsOn": [
+                "OS-N10"
+              ],
+              "agentBrief": "Task OS-S13 for the OpenScript evals: build the overlap guard.\nRead the eval decision from OS-N9 and the case format from OS-N10.\nBuild a dependency-free Node script, check-overlap. Its input is a unified diff and a directory of cases. It fails when any added line shares any of these with a test request or reference program: a run of eight or more words (normalised for case and spacing), a script identifier, a plot title, or a number with four or more significant digits. It prints the case id and the length of the match.\nWrite unit tests for each rule, including a clean diff that must pass. Use made-up cases in the tests; you never see the real test set.\nRules: no dependency; the guard never prints test content, only the case id and the length of the match; no emoji; no em or en dashes.\nDone when the tests pass and a run over 250 generated cases takes under ten seconds. Paste the timing."
+            },
+            {
+              "id": "OS-S14",
+              "title": "Write 25 train cases for the fix-from-diagnostic eval",
+              "why": "A campaign needs more train cases than the maintainer can write, and train cases are public, so anyone who has written a few studies can add them. Each one is a mistake a person learning the language would make, paired with the program that was meant. The task can be claimed again for the next 25.",
+              "deliverable": "25 train cases in the public eval repository, in the OS-N10 format, over compile-time codes only (the lex, parse and check stages), each with the broken script, the intended program, random-walk bars with a placeholder symbol, and meta.json saying the code, why a person finds it hard, and the source.",
+              "acceptance": [
+                "Every broken script gets its stated code from diagnose at the pinned build, and every intended program compiles clean and runs with no runtime diagnostic",
+                "The overlap script against spec/errors.json passes, and node scripts/check-names.mjs --root pointed at the eval repository passes",
+                "The maintainer approves the cases before they are merged"
+              ],
+              "eval": "Grows the train split of the fix-from-diagnostic suite.",
+              "size": "M",
+              "skills": [
+                "OpenScript",
+                "Writing test cases"
+              ],
+              "goodFirst": true,
+              "dependsOn": [
+                "OS-N10"
+              ],
+              "agentBrief": "Task OS-S14 for the OpenScript fix-from-diagnostic eval: write 25 train cases.\nRead the public eval repository's README and case format, spec/errors.json (codes, stages, causes and fixes), docs/first-study.md, docs/first-strategy.md and the AI assistants page on openalgo.in/script.\nFor each case: write a request a trader would make and the program that does it; then a broken version with one mistake a person learning the language would make, raising a code whose stage is lex, parse or check. Bars are a random walk with a placeholder symbol, never a sine wave.\nCheck each case with the pinned build: diagnose returns the stated code for the broken script, and the intended program compiles and runs clean. Write meta.json with the code, why a person finds it hard, and the source.\nRules: do not copy any before or after block from spec/errors.json; do not pick a mistake because a model fails it; do not run any model on the cases; name no product, broker or real instrument; no emoji; no em or en dashes.\nDone when the compile checks, the overlap check and node scripts/check-names.mjs --root pass. Paste their summaries."
+            },
+            {
+              "id": "OS-S15",
+              "title": "Grow the private test set to 20 cases in each targeted code family",
+              "why": "At 20 test cases in total, about two per code, no change to one code's text can be told apart from noise. A campaign needs about 20 test cases in each family of codes it targets before an effect of about 20 points can be seen, and only the maintainer or people the eval decision names may write them.",
+              "deliverable": "3 to 5 families of compile-time codes, chosen by how often people hit them (reports, the triage from OS-S8 once it runs, and the mistakes on the AI assistants page), never by where a model fails. Each family gets at least 20 private test cases, written or rewritten by the maintainer or a named person and approved before any model runs on them. The baseline is rerun on the grown set.",
+              "acceptance": [
+                "The family choice and its reasons are recorded before the rerun",
+                "Each targeted family holds at least 20 approved private test cases, and the digest check shows none of them in public",
+                "The rerun baseline gives the interval, the noise floor and the smallest detectable effect for each family"
+              ],
+              "eval": "Grows the test split of the fix-from-diagnostic suite to a size a campaign can use.",
+              "size": "L",
+              "skills": [
+                "Maintainer task",
+                "OpenScript",
+                "Writing test cases"
+              ],
+              "goodFirst": false,
+              "dependsOn": [
+                "OS-N11"
+              ],
+              "agentBrief": "Task OS-S15 (maintainer) for the OpenScript fix-from-diagnostic eval: grow the private test set to 20 cases in each targeted family.\nRead the eval decision from OS-N9, the case format from OS-N10, the baseline report from OS-N11, the triage issue from OS-S8 if it exists, and spec/errors.json.\n1. Propose 3 to 5 families of compile-time codes, ranked by how often people hit them. Give the evidence for each. Do not use the baseline's failure rates to choose.\n2. With me, draft cases for each family in the OS-N10 format until each holds at least 20 test cases. I write or rewrite every test case, and I approve the set.\n3. Rerun the baseline on the grown set and report the interval, the noise floor and the smallest detectable effect for each family.\nRules: test cases go only to the private repository; never copy a train case or a catalogue block; do not run any model before I approve the set; no emoji; no em or en dashes.\nDone when each family holds 20 approved test cases, the digest check passes and the rerun report is written."
+            },
+            {
+              "id": "OS-S16",
+              "title": "Hillclimb the fix text of one code family per round",
+              "why": "The message, cause and fix text in spec/errors.json and spec/errors.md are read by every person and every agent that hits a refusal. They change nothing a program computes, and the fix-from-diagnostic eval measures them directly. That makes them the cheapest and most attributable surface we have.",
+              "deliverable": "A campaign on the families from OS-S15, started only after the smallest detectable effect and a spend cap are published. In each round an agent reads train failures only and proposes one change to the message, cause or fix of the codes in one family, addressing one root cause, edited in spec/errors.json and spec/errors.md together. A candidate build is packed from the branch; the tooling scores train and the family's test cases against the pinned baseline and the noise floor, and checks the pooled test set for regressions. Kept changes land as one pull request per family, approved by the maintainer. A campaign log records every round as kept or reverted, with the reason and both build digests.",
+              "acceptance": [
+                "Every kept change improved train, its paired test difference on the family is above zero by more than the noise floor, and no failure bucket on the pooled test set regressed",
+                "Each pull request passes npm run check:examples:compile, npm run check:errors, node scripts/check-raises.mjs and the fix-sentence rules in scripts/lib/fix-sentence.mjs; the website's npm run check:script runs at the release that ships the text, because the site reads the published package",
+                "The overlap guard passed every kept patch",
+                "The campaign stops after two or three rounds in which nothing is kept, and the log names the failure causes that remain"
+              ],
+              "eval": "Hillclimbs the fix-from-diagnostic suite on the error catalogue's text.",
+              "size": "M",
+              "skills": [
+                "OpenScript",
+                "Technical writing",
+                "Reading eval results"
+              ],
+              "goodFirst": false,
+              "dependsOn": [
+                "OS-S13",
+                "OS-S15"
+              ],
+              "agentBrief": "Task OS-S16 for marketcalls/openscript: hillclimb the fix text of one code family per round.\nRead CLAUDE.md (Diagnostics), scripts/lib/fix-sentence.mjs, scripts/lib/raise-documents.mjs, the entries in spec/errors.json and spec/errors.md for the family you are given, and the rerun baseline from OS-S15. You get train transcripts and verdicts only; you never see test cases.\nEach round:\n1. Group the train failures for the family by root cause.\n2. Propose one change to the message, cause or fix of that family's codes that addresses one cause. Edit spec/errors.json and spec/errors.md together, by hand. The text must stay true of the actual program for every case the code covers.\n3. Run the overlap guard, pack a candidate build with npm pack, and hand both to the campaign tooling, which scores train, the family's test cases and the pooled test set, and decides keep or revert.\nStop after two or three rounds in which nothing is kept, and write the remaining causes into the log.\nRules: one family per round and one cause per patch; never quote a transcript, case or reference program; do not change codes, spans or behaviour; no emoji; no em or en dashes; name no other language or product. The maintainer approves every wording change and runs the website check at release.\nDone when each kept change passes npm test, npm run check:examples:compile, npm run check:errors and the overlap guard, and the log is written."
+            }
+          ]
+        },
+        {
+          "id": "soon-go-engine",
+          "title": "A third engine in Go, from the specification alone",
+          "outcome": "The suite runs without this repository, the rules a new engine is built under are written down, and a Go engine written from the specification by somebody who has not read our code reports an engine-only result at a named suite revision. Every question its builder asked is answered in spec/, not in code.",
+          "measure": "a suite archive that matches npm run suite in an empty directory; a decision and docs/integrating/new-engines.md on the clean room and the lockstep rule; and a Go engine-only result document with zero failures and zero unsupported cases at a named revision, with no disagreement against either of our engines. The Go work is done by a contributor and carries done-when checks, not dates.",
+          "tasks": [
+            {
+              "id": "OS-S17",
+              "title": "Package the suite so it runs without this repository",
+              "why": "The Phase 6 production bar asks that the suite be runnable by somebody who has never seen this repository, against an engine we did not write. Today it needs a clone: scripts/lib/conformance-page.mjs reads spec/conformance.md at run time, scripts/adapter.mjs loads the built dist/core, and engine/adapter.mjs needs Python 3.12 and the engine. spec/conformance.md section 11 already defines a suite revision as the package version plus a digest. The Go engine is its first user: a builder who must not read this implementation needs the suite without the repository.",
+              "deliverable": "A script that writes a release asset: cases/, scripts/run-suite.mjs and exactly the files it imports, spec/conformance.md, copies of the two adapters that load the engines from the installed npm and PyPI packages rather than from dist/ and engine/, an adapter template with a README, and the revision digest. docs/integrating/your-own-engine.md is updated to start from the archive. Dependency free, and not added to a release workflow until the maintainer approves.",
+              "acceptance": [
+                "In an empty directory with Node 22, Python 3.12 and the npm and PyPI packages of the same version installed, the archive runs against both adapters and gives the same result as npm run suite and npm run suite:engine in the repository",
+                "The digest the archive prints equals the suite revision that conformance.md section 11 defines for that version",
+                "npm test passes"
+              ],
+              "eval": "Makes the conformance suite runnable by outside engines, starting with the Go engine.",
+              "size": "M",
+              "skills": [
+                "Node",
+                "Packaging",
+                "Technical writing"
+              ],
+              "goodFirst": false,
+              "dependsOn": [],
+              "agentBrief": "Task OS-S17 in marketcalls/openscript: package the suite so it runs without this repository.\nRead CLAUDE.md, spec/conformance.md sections 9 and 11, scripts/run-suite.mjs and the scripts/lib files it imports (including conformance-page.mjs, which reads spec/conformance.md), scripts/adapter.mjs, engine/adapter.mjs, docs/integrating/your-own-engine.md and RELEASING.md.\nBuild a script that writes an archive containing cases/, the runner and exactly the files it imports, spec/conformance.md, adapter copies that import the engines from the installed openalgo-script npm package and the openscript PyPI package, an adapter template with a README, and the revision digest. Do not add it to a release workflow; show me the archive.\nProve it: create an empty directory, install Node 22, Python 3.12 and both packages at the same version, unpack the archive, run it against both adapters, and compare the result with npm run suite and npm run suite:engine.\nUpdate your-own-engine.md to start from the archive.\nRules: no dependency; no code file over 500 lines; no eval; do not tag, publish or dispatch a workflow; no emoji; no em or en dashes.\nDone when both runs match, the digest matches section 11, and npm test passes. Paste the results."
+            },
+            {
+              "id": "OS-S18",
+              "title": "Write the rules a new engine is built under, and how a clean room works with an agent",
+              "why": "Go and then Java are the next two engines. The Phase 7 gate in ROADMAP.md asks for a core profile engine written in a third language, from the specification alone, by somebody who has not read this implementation, and the spec-only rehearsal eval already notes that a model may have read the public code. Before anybody writes a line of Go, the project has to say where a new engine lives, what its builder may read, what counts as written from the specification when an agent does the typing, and when a new engine starts blocking releases.",
+              "deliverable": "A decision in spec/decisions.md and a new page, docs/integrating/new-engines.md, that fix: where each engine lives (proposed: its own repository, so its builder never holds a checkout of this implementation); the rules every engine keeps (compiled program as data, standard library only, no reflection or dynamic loading used to run a program, no file over 500 lines); the clean-room protocol (what the builder and their agent may read, how questions become spec changes in public, and the session log that is published with the result); whether an engine built with an agent can meet the Phase 7 gate, with the options considered and the reason; the profile ladder (engine-only first, core when a front end exists); and the lockstep rule (a new engine runs in CI without blocking until it passes its claimed profile at a named revision, then any disagreement blocks the release and it ships the same version on its own registry). ROADMAP.md Phase 7 links the page.",
+              "acceptance": [
+                "spec/decisions.md holds the decision with the options considered for agent-built engines and the reason for the one chosen",
+                "docs/integrating/new-engines.md exists, is linked from ROADMAP.md Phase 7 and docs/integrating/your-own-engine.md, and names the lockstep rule and the clean-room protocol",
+                "npm test passes"
+              ],
+              "eval": "Sets the conditions under which a Go or Java result can count toward the Phase 7 gate and the conformance badge.",
+              "size": "M",
+              "skills": [
+                "Maintainer task",
+                "Specification",
+                "Technical writing"
+              ],
+              "goodFirst": false,
+              "dependsOn": [],
+              "agentBrief": "Task OS-S18 (maintainer) in marketcalls/openscript: write the rules a new engine is built under, and how a clean room works with an agent.\nRead ROADMAP.md Phase 7 in full (the gate and the third engine item), spec/conformance.md sections 8 to 11, spec/decisions.md (the format of a decision), docs/integrating/your-own-engine.md, docs/integrating/the-python-engine.md and RELEASING.md.\nDraft, for my approval before any file changes:\n1. Where a new engine lives, and why.\n2. The rules every engine keeps, stated so a reviewer can check each one in Go and in Java.\n3. The clean-room protocol: what the builder and their agent may read, how a question becomes a spec change in public, and what session log is published with a result.\n4. Two or three options for whether an agent-built engine can meet the Phase 7 gate, each with what it would prove and what it would not. Recommend one.\n5. The profile ladder and the lockstep rule.\nAfter approval, write the decision into spec/decisions.md and the page docs/integrating/new-engines.md, and link it from ROADMAP.md Phase 7 and your-own-engine.md.\nRules: change no engine code; no emoji; no em or en dashes; name no other product.\nDone when the acceptance checks pass and npm test passes. Paste the summary line."
+            },
+            {
+              "id": "OS-S19",
+              "title": "Go engine: read, verify and refuse a compiled program",
+              "why": "An engine starts at its boundary. compiled-program.md sections 2 and 9 fix the shape and the canonical text of a compiled program, and section 10 fixes what an engine refuses. A Go engine that reads, verifies and refuses exactly what the specification says has a sound base for everything that runs after it, and every question it raises about the text is a spec defect found before a third engine depends on it.",
+              "deliverable": "In the repository OS-S18 names: a Go module that reads a compiled program as canonical text, rejects text that is not canonical, verifies the shape, code, tables and requests sections as compiled-program.md requires, and refuses with the documented codes. An adapter that answers --describe as engine-only, plus the small JavaScript relay conformance.md section 9 allows, so the suite archive's runner can start it. go.mod has no require directive. A README that says what the engine does not do yet.",
+              "acceptance": [
+                "go vet ./... and go test ./... pass, and go.mod lists no requirements",
+                "The suite archive's runner, pointed at the Go adapter, reports every program category case as pass, with the result document attached to the pull request",
+                "The session log the OS-S18 protocol asks for is published with the pull request, and every question raised is linked to its spec issue"
+              ],
+              "eval": "Feeds the conformance suite: every spec defect this task finds is fixed through conformance.md section 10.",
+              "size": "L",
+              "skills": [
+                "Go",
+                "Reading a specification",
+                "Parsers"
+              ],
+              "goodFirst": false,
+              "dependsOn": [
+                "OS-S17",
+                "OS-S18"
+              ],
+              "agentBrief": "Task OS-S19: a Go engine for OpenScript, first step: read, verify and refuse a compiled program.\nThe clean room: work in a directory that holds only the suite archive (OS-S17), spec/ and the published docs. Do not open src/ or engine/ in marketcalls/openscript, and do not let your agent fetch them. Ask every question you have on the engine's issue; the answer is a change to spec/, never a pointer to code. Keep the session log the OS-S18 protocol asks for.\nRead docs/integrating/new-engines.md (OS-S18), spec/compiled-program.md sections 1, 2, 9, 10 and 13, and spec/conformance.md sections 1, 8 and 9.\nPlan first and post it on the issue: the packages you will create, the order you will build them in, and the first failing case you will make pass.\nBuild: canonical text in, a verified program or a documented refusal out. The adapter answers --describe (engine-only), <case-directory> and --actual <case-directory> exactly as section 9 says. Write the failing test first for every refusal.\nRules for every engine: the compiled program is data, so no eval, no code built from text, no dynamic loading and no reflection used to dispatch instructions; the standard library only; no code file over 500 lines; no emoji; no em or en dashes; name no other product.\nDone when go vet and go test pass, go.mod has no requirements, and the runner reports every program category case as pass. Paste the result document summary and the list of spec questions you raised."
+            },
+            {
+              "id": "OS-S20",
+              "title": "Go engine: run the machine, and pass the semantics, runtime and limits cases",
+              "why": "compiled-program.md sections 3 to 8 define the machine: values, the instruction set, per-bar execution, state and rollback, warmup and the absent value, and determinism. These are what make an engine compute the same numbers bar for bar, and the categories that test them need few library calls, so they show whether the machine is right before the library is added.",
+              "deliverable": "The instruction loop, values and series, per-bar execution with the forming bar, checkpoints, rollback and replay, warmup and the absent value, and the limits section 3 sets, in the Go engine. The adapter answers the values and log channels. Library calls the machine cannot run yet are answered unsupported with the call named, never approximated.",
+              "acceptance": [
+                "go vet ./... and go test ./... pass",
+                "Pointed at the Go adapter, the suite archive's runner reports every semantics, runtime and limits case that needs no unimplemented library call as pass, and lists the rest as unsupported by name",
+                "The runner in --against mode shows no disagreement with either of our engines on the cases the Go engine runs"
+              ],
+              "eval": "Feeds the conformance suite; disagreements found are settled through conformance.md section 10.",
+              "size": "L",
+              "skills": [
+                "Go",
+                "Interpreters",
+                "Reading a specification"
+              ],
+              "goodFirst": false,
+              "dependsOn": [
+                "OS-S19"
+              ],
+              "agentBrief": "Task OS-S20: a Go engine for OpenScript, second step: run the machine.\nThe clean room: work in a directory that holds only the suite archive (OS-S17), spec/ and the published docs. Do not open src/ or engine/ in marketcalls/openscript, and do not let your agent fetch them. Ask every question you have on the engine's issue; the answer is a change to spec/, never a pointer to code. Keep the session log the OS-S18 protocol asks for.\nRead spec/compiled-program.md sections 3 to 8 and 12, and spec/conformance.md sections 4, 8 and 10.\nPlan first and post it on the issue. Then build the machine one section at a time, making one failing case pass before the next. Answer any library call you have not implemented as unsupported with the call named.\nRules for every engine: the compiled program is data, so no eval, no code built from text, no dynamic loading and no reflection used to dispatch instructions; the standard library only; no code file over 500 lines; no emoji; no em or en dashes; name no other product.\nDone when go vet and go test pass, every semantics, runtime and limits case that needs no missing call passes, and the --against run shows no disagreement. Paste both summaries."
+            },
+            {
+              "id": "OS-S21",
+              "title": "Go engine: add the library the core cases call, and report an engine-only result at a named revision",
+              "why": "The core cases call a slice of the library, and stdlib.md section 20 fixes its arithmetic bit for bit, including the portable kernels of sections 20.10.1 to 20.10.4 that replace the host's own math. An engine-only result with no failure and no unsupported case at a named revision is the first result a third engine can publish, and the step before a front end takes it to the core profile.",
+              "deliverable": "Every library entry the core cases call, implemented from stdlib.md with the portable kernels, and checked against the library vectors for those entries bit for bit. A result document for the engine-only profile at a named suite revision, published with the release that contains it.",
+              "acceptance": [
+                "go vet ./... and go test ./... pass",
+                "The library vectors for every implemented entry match bit for bit",
+                "Pointed at the Go adapter, the suite archive's runner reports the engine-only profile with zero failures and zero unsupported cases, and names the suite revision",
+                "The runner in --against mode shows no disagreement with either of our engines"
+              ],
+              "eval": "Meets the engine-only rung of the profile ladder. The Phase 7 gate needs the core profile, which OS-L9 reaches.",
+              "size": "L",
+              "skills": [
+                "Go",
+                "Numerical code",
+                "Reading a specification"
+              ],
+              "goodFirst": false,
+              "dependsOn": [
+                "OS-S20"
+              ],
+              "agentBrief": "Task OS-S21: a Go engine for OpenScript, third step: the library the core cases call.\nThe clean room: work in a directory that holds only the suite archive (OS-S17), spec/ and the published docs. Do not open src/ or engine/ in marketcalls/openscript, and do not let your agent fetch them. Ask every question you have on the engine's issue; the answer is a change to spec/, never a pointer to code. Keep the session log the OS-S18 protocol asks for.\nRead spec/stdlib.md section 20 in full (20.10 fixes the portable kernels; 20.11 lists what no case may assert), the stdlib.md sections for each entry you implement, docs/integrating/library-vectors.md and spec/conformance.md section 11.\nList the entries the core cases call and post the list on the issue. Implement them one at a time, each against its library vectors, and never through the host's own math where section 20 fixes a portable algorithm.\nRules for every engine: the compiled program is data, so no eval, no code built from text, no dynamic loading and no reflection used to dispatch instructions; the standard library only; no code file over 500 lines; no emoji; no em or en dashes; name no other product.\nDone when every implemented entry matches its vectors bit for bit, the engine-only profile reports zero failures and zero unsupported at a named revision, and the --against run shows no disagreement. Paste the result document."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Later",
+      "window": "Months twelve to eighteen after charts 2.6.0",
+      "goal": "After 1.0: complete the suite so two engines cannot differ unnoticed, and package it for engines written elsewhere. Write the Phase 8 decisions down while the multi-leg build waits for the Phase 7 gate, put the same errors into desktop editors, and run the authoring eval's first campaign. Work that depends on other people carries done-when checks, not dates.",
+      "themes": [
+        {
+          "id": "later-suite",
+          "title": "Every channel answered, every category filled",
+          "outcome": "Both adapters answer all fourteen channels, every category in conformance.md section 7 holds a case, and the shapes running-the-suite.md lists as missing are covered, except more than one instrument, which belongs to Phase 8.",
+          "measure": "conformance.md section 4 defines an element shape for each of the six surface channels; running-the-suite.md lists no unanswered channel and, among its missing shapes, only more than one instrument; every category row in section 7 has a case; and npm run suite:agree passes.",
+          "tasks": [
+            {
+              "id": "OS-L1",
+              "title": "Define the six surface channel shapes, then answer markers, bar colours and background",
+              "why": "Both adapters answer a case asserting markers, barColors or background with unsupported. conformance.md section 4 defines element shapes only for diagnostics, orders, log, drawings, table and performance, so none of the six surface channels has a shape a case could be written against. Feature-matrix sections 23 (the plot family) and 24 (fills, levels, bar colour and background) have no proven row.",
+              "deliverable": "First, a spec step the maintainer approves: conformance.md section 4 gains an element shape for each of markers, fills, levels, barColors, background and alerts, including whether each goes per bar in expected.csv or as a list in expected.json. Then markers, barColors and background are answered in scripts/adapter.mjs and engine/adapter.mjs, with two or three cases per channel (one with an absent bar) under the identifiers the matrix reserves. The matrix rows the cases prove flip, and running-the-suite.md is updated.",
+              "acceptance": [
+                "The six shapes are in conformance.md section 4, approved on the issue before any adapter code",
+                "npm run suite and npm run suite:engine report the new cases as pass, not unsupported",
+                "A deliberately wrong expected file fails, proving an empty channel cannot pass a non-empty expectation (the probe is removed)",
+                "npm run suite:agree, node scripts/check-matrix.mjs and npm test pass"
+              ],
+              "eval": "Extends the conformance suite's surface category.",
+              "size": "L",
+              "skills": [
+                "Specification",
+                "TypeScript",
+                "Python",
+                "Chart output"
+              ],
+              "goodFirst": false,
+              "dependsOn": [],
+              "agentBrief": "Task OS-L1 in marketcalls/openscript: define the six surface channel shapes, then answer markers, bar colours and background in both adapters.\nRead CLAUDE.md, spec/conformance.md section 4 (expected.csv and expected.json) and section 7, docs/integrating/running-the-suite.md, scripts/adapter.mjs, engine/adapter.mjs, src/adapters/charts/ (what each output looks like when drawn), and sections 23, 24 and 28 of spec/feature-matrix.md.\n1. Draft the element shape of markers, fills, levels, barColors, background and alerts for section 4, including whether each is per bar in expected.csv or a list in expected.json. Show me the diff and wait for approval on the issue.\n2. Project markers, barColors and background from the run's output in both adapters, in the approved shapes.\n3. Add two or three cases per channel, including one with an absent bar, under the identifiers the matrix rows reserve. Read expected output from the spec.\n4. Prove that an empty channel cannot pass a non-empty expectation: show it failing in the pull request, then remove the probe.\n5. Update running-the-suite.md and flip the rows the cases prove.\nIf the plan shows more than five days, say so before step 2, and the three channels become two claims.\nRules: no eval; Python standard library only; no code file over 500 lines; do not edit existing cases; no emoji; no em or en dashes; do not tag or publish.\nDone when npm run suite, npm run suite:engine, npm run suite:agree, node scripts/check-matrix.mjs and npm test pass. Paste the summaries."
+            },
+            {
+              "id": "OS-L2",
+              "title": "Answer the fills, levels and alerts channels in both adapters",
+              "why": "These are the last three channels no adapter answers. Section 28 (alerts) and most of section 24 have no proven row, and an alert that fires on one engine and not the other is exactly the kind of difference a trader notices.",
+              "deliverable": "The fills, levels and alerts channels answered in both adapters in the shapes OS-L1 defined, reusing its helpers, with two or three cases each: a fill across an absent bar, a level with a moving value, and an alert that fires once per confirmed bar. The matrix rows flip, and running-the-suite.md lists no unanswered channel.",
+              "acceptance": [
+                "All fourteen channels are answered by both adapters, and running-the-suite.md's list of unanswered channels is removed",
+                "npm run suite:agree, node scripts/check-matrix.mjs and npm test pass"
+              ],
+              "eval": "Extends the conformance suite's surface category.",
+              "size": "L",
+              "skills": [
+                "TypeScript",
+                "Python",
+                "Chart output"
+              ],
+              "goodFirst": false,
+              "dependsOn": [
+                "OS-L1"
+              ],
+              "agentBrief": "Task OS-L2 in marketcalls/openscript: answer the fills, levels and alerts channels in both adapters.\nRead CLAUDE.md, spec/conformance.md sections 4 and 7 (with the shapes OS-L1 added), docs/integrating/running-the-suite.md, the channel code OS-L1 added to scripts/adapter.mjs and engine/adapter.mjs, and sections 24 and 28 of spec/feature-matrix.md.\nGoal: both adapters answer fills, levels and alerts the way OS-L1 answers the other surface channels, reusing its helpers.\n1. Project the three channels in both adapters.\n2. Add cases: a fill across an absent bar, a level with a moving value, and an alert that fires once per confirmed bar. Derive expected output from the spec under the reserved identifiers.\n3. Remove the list of unanswered channels from running-the-suite.md and flip the rows.\nRules: reuse before adding; no eval; Python standard library only; no code file over 500 lines; do not edit existing cases; no emoji; no em or en dashes; do not tag or publish.\nDone when npm run suite, npm run suite:engine, npm run suite:agree, node scripts/check-matrix.mjs and npm test pass. Paste the summaries."
+            },
+            {
+              "id": "OS-L3",
+              "title": "Fill the empty categories, and the missing frame and charge schedule shapes",
+              "why": "Three categories in conformance.md section 7 hold no case: warning, program and rejection. running-the-suite.md also lists shapes no case has: a repeated frame, two frames out of order, and a charge schedule the host supplied (which needs a strategy that declares no commission). On those, two engines could differ today without the build saying so. More than one entry in a direction is covered by OS-S6, and more than one instrument waits for Phase 8.",
+              "deliverable": "The TypeScript adapter reports compile warnings, so a warning case can pass. One case each for: a warning (an OS8xxx code with compilation succeeding), a program round trip through the schema with identical output, a rejection (compilation fails with a given code), a repeated frame, two frames out of order, and a strategy that declares no commission run with a host-supplied schedule. Where the spec does not say what an engine does with a shape, that sentence comes first. running-the-suite.md is updated.",
+              "acceptance": [
+                "Every row of the category table in conformance.md section 7 has at least one case",
+                "The frame and charge schedule cases pass on both engines under npm run suite:agree",
+                "running-the-suite.md lists only more than one instrument among its missing shapes",
+                "npm test passes"
+              ],
+              "eval": "Extends the conformance suite to every category.",
+              "size": "L",
+              "skills": [
+                "TypeScript",
+                "Python",
+                "Specification"
+              ],
+              "goodFirst": false,
+              "dependsOn": [],
+              "agentBrief": "Task OS-L3 in marketcalls/openscript: fill the empty categories and the missing frame and charge schedule shapes.\nRead CLAUDE.md, spec/conformance.md sections 3 (frames.csv and backtest.json), 4, 7 and 8, docs/integrating/running-the-suite.md (What no case has yet), spec/host-interface.md 7.4, and spec/compiled-program.md section 9.\nGoal: every category in section 7 holds a case, and a repeated frame, frames out of order and a host-supplied charge schedule are tested on both engines.\n1. For any shape whose outcome the spec does not state, write the sentence first and show me.\n2. Make the TypeScript adapter report compile warnings, so a warning case can pass.\n3. Add one case each for warning, program (round trip, identical output), rejection, a repeated frame, two frames out of order, and a strategy that declares no commission run with a host-supplied schedule. Derive expected output from the spec.\n4. Update running-the-suite.md.\nRules: compiler cases are skipped by the Python adapter by design; no eval; Python standard library only; no code file over 500 lines; do not edit existing cases; no emoji; no em or en dashes; do not tag or publish.\nDone when npm run suite:agree, node scripts/check-matrix.mjs and npm test pass. Paste the summaries."
+            }
+          ]
+        },
+        {
+          "id": "later-standard",
+          "title": "Phase 8 decided, and built after its gate",
+          "outcome": "The Phase 8 decisions are written down, and ROADMAP.md says that decisions may come before the Phase 7 gate while the multi-leg build waits for it.",
+          "measure": "ROADMAP.md records the decisions-before-build rule; four Phase 8 decisions are in spec/decisions.md; and the build task drafts are ready for when the gate is met. The badge stays reserved for an engine written by somebody who has not read this implementation (the Phase 7 gate), which carries no date.",
+          "tasks": [
+            {
+              "id": "OS-L4",
+              "title": "Write the Phase 8 decisions down while the build waits for the Phase 7 gate",
+              "why": "ROADMAP.md Phase 8 lists what has to be decided before any of it is written: the instrument master, at the money to the tick, legs added after bar 0, and a halted leg under book.stop. Its section 'Why it is after Phase 7 and not before' says rules built before the format has travelled to an outside engine are designed against one implementation. Writing the decisions early costs nothing a third engine would have to reproduce; building them would, so the build waits for the gate.",
+              "deliverable": "A decision recorded in spec/decisions.md and ROADMAP.md: Phase 8 decisions may be written before the Phase 7 gate, and the build waits for it. Then four decisions, each with the options considered, the reason and the case identifiers it implies. For contract resolution they keep the split host-interface.md 9.3 already makes: the host resolves a description and the engine never learns which; the engine hands the description over before bar 0, keeps the resolved identity in the run record, and refuses with OS6007 (feature-matrix section 29, order/leg-declaration and unit:order/leg-unresolvable). The Phase 8 build order is turned into task drafts of five days or less, published here when the gate is met.",
+              "acceptance": [
+                "ROADMAP.md states that Phase 8 decisions may come before the Phase 7 gate and the build may not",
+                "Four decisions exist, each naming the options considered and the reason",
+                "node scripts/check-matrix.mjs passes with any identifiers reserved, and npm test passes",
+                "The build task drafts exist, each with acceptance commands"
+              ],
+              "eval": "None.",
+              "size": "M",
+              "skills": [
+                "Maintainer task",
+                "Specification",
+                "Options and multi-leg trading"
+              ],
+              "goodFirst": false,
+              "dependsOn": [],
+              "agentBrief": "Task OS-L4 (maintainer) in marketcalls/openscript: write the Phase 8 decisions down while the build waits for the Phase 7 gate.\nRead ROADMAP.md Phase 7 and Phase 8 in full (What this phase delivers, What has to be decided, Gate, Why it is after Phase 7 and not before), spec/stdlib.md 17.6 and 17.9 to 17.12, spec/host-interface.md section 9 (9.3 and 9.4 in particular), section 29 (the leg.fixed and leg.relative rows and the unresolvable description row) and section 35 of spec/feature-matrix.md.\n1. Draft the ordering decision for spec/decisions.md and ROADMAP.md: decisions may be written before the Phase 7 gate, and the build waits for it.\n2. For each of the four questions, draft a decision: the options, what each would cost both engines and a host, the cases it implies, and a recommendation. Do not choose for me. Keep the host and engine split of host-interface.md 9.3: the host resolves; the engine hands the description over before bar 0, records the resolved identity and refuses with OS6007.\n3. Turn the ROADMAP.md build order into task drafts of five days or less, each with acceptance commands, marked as waiting for the gate.\nRules: spec wording only; no code; no dates; no emoji; no em or en dashes; name no broker or exchange.\nDone when the drafts are ready for my review and node scripts/check-matrix.mjs passes on any reserved identifiers."
+            }
+          ]
+        },
+        {
+          "id": "later-editors-evals",
+          "title": "Desktop editors and the authoring campaign",
+          "outcome": "A desktop editor can show the same errors as the browser editor, through a pure message handler. The authoring eval exists at a size a campaign can use, and it has run its first campaign on a generated agent skill.",
+          "measure": "the handler's diagnostics equal diagnose for every example and the whole malformed corpus; the authoring eval has at least 40 private test requests and a published baseline with its smallest detectable effect; every name in the skill exists in the library manifest; and the authoring campaign log shows kept and reverted rounds with test scores and intervals.",
+          "tasks": [
+            {
+              "id": "OS-L5",
+              "title": "Build the language server message handler on the six editor functions",
+              "why": "ROADMAP.md Phase 4 is not met: the language server that would put the same errors into a desktop editor has not been written. check-layering.mjs refuses runtime-namespace imports under src/, and its LAYERS table has no row for a new directory under src/adapters, so the handler is pure (a message in, messages out) and lives in the editor layer. The stdio wrapper then goes in a separate package whose place the maintainer decides.",
+              "deliverable": "A pure handler in a new module under src/editor, reached through the editor layer's index, so scripts/check-layering.mjs needs no new layer. It is built only on highlight, complete, diagnose, hover, signature and format, and it answers the initialise, open, change, diagnostics, completion, hover, signature help and formatting messages, with golden tests. Out of scope: the stdio wrapper and the desktop extension, which follow once the package location is decided.",
+              "acceptance": [
+                "A golden test shows the handler's diagnostics equal diagnose's for every script in examples/ and every entry of the malformed corpus",
+                "node scripts/check-layering.mjs passes with its LAYERS table unchanged",
+                "npm test passes and no dependency is added"
+              ],
+              "eval": "Keeps the editor tests green and adds a golden comparison.",
+              "size": "L",
+              "skills": [
+                "TypeScript",
+                "Editor protocols"
+              ],
+              "goodFirst": false,
+              "dependsOn": [],
+              "agentBrief": "Task OS-L5 in marketcalls/openscript: build the language server message handler on the six editor functions.\nRead CLAUDE.md, ROADMAP.md Phase 4, docs/integrating/the-editor-half.md, src/editor/ and its index, scripts/check-layering.mjs (the LAYERS table) and tests/editor/support.ts.\nGoal: a pure function in a new module under src/editor that takes one language server message plus the handler's state, and returns the reply and any notifications. It is built only on highlight, complete, diagnose, hover, signature and format.\n1. Cover initialise, open, change, diagnostics, completion, hover, signature help and formatting.\n2. Add a golden test: for every script in examples/ and every MALFORMED entry, the published diagnostics equal diagnose's output.\n3. Export it through the editor index only after I approve it on the issue.\nRules: no runtime-namespace import and no change to the LAYERS table; no dependency; no code file over 500 lines; no eval; name no editor product; no emoji; no em or en dashes; do not build the stdio wrapper.\nDone when npm test and node scripts/check-layering.mjs pass. Paste the summaries."
+            },
+            {
+              "id": "OS-L6",
+              "title": "Build the authoring eval: 40 private requests, reference scripts and a grader",
+              "why": "Most people will write their first OpenScript by asking an assistant, and the website's AI assistants page already warns that assistants borrow names and habits from other languages. The compiler and the engine grade a script exactly by what it computes, so this eval needs no model judge to decide correctness. A campaign needs at least 40 test requests to see an effect of about 15 points, so the eval starts at that size.",
+              "deliverable": "At least 40 private test requests, each with every parameter fixed and every output named, spread across absence and warmup, var persistence, stateful calls outside branches, higher timeframe reads without repainting, session boundaries, and a strategy with a stop and lot sizing, each with a reference script written or approved by the maintainer. A train set from the 12 published examples and up to 20 contributed public requests. Three bar sets (trend, chop, and gaps across sessions) as random walks. The grader from OS-N11 extended to compare named plots bar by bar and, for a strategy, the trade list from the run record. The model under test gets one tool, compile, which returns diagnose output, and is shown the docs version OS-N9 pinned.",
+              "acceptance": [
+                "The grader passes every reference against itself and fails 40 seeded wrong scripts, one per test request",
+                "Grading the same outputs twice gives identical verdicts",
+                "The maintainer approves the requests and references before any model runs",
+                "The baseline report gives the interval, the noise floor, the smallest detectable effect, the measured cost per task and failures grouped by code, and a person has read 15 scored transcripts"
+              ],
+              "eval": "Creates version 0 of the write-a-script suite.",
+              "size": "L",
+              "skills": [
+                "Maintainer task",
+                "OpenScript",
+                "Trading",
+                "Writing test cases"
+              ],
+              "goodFirst": false,
+              "dependsOn": [
+                "OS-N11"
+              ],
+              "agentBrief": "Task OS-L6 (maintainer) for the OpenScript evals: build the authoring eval.\nRead the eval decision from OS-N9, the grader and runner from OS-N11, docs/first-study.md, docs/first-strategy.md, docs/integrating/running-a-strategy.md, and spec/conformance.md section 3 (bars).\nWith me, write at least 40 test requests a trader would make. Fix every parameter (lengths, sources, entry and exit rules) and name every output, for example a plot titled Signal. An ambiguous request is a defect in the case. For each request I write or approve the reference script. Test requests go only to the private repository.\nMake three bar sets as random walks with placeholder symbols: trend, chop, and gaps across sessions.\nExtend the grader to compare named plots bar by bar with exact warmup indices, and, for a strategy, the trade list from the run record (entry and exit bars, side, quantity). Give the model under test one tool: compile, which returns diagnose output, and the pinned docs.\nProve the grader: the references pass, 40 seeded wrong scripts fail, and a second grading gives identical verdicts. Then run the baseline twice.\nRules: do not pick requests because a model fails them; the 12 published examples are train only; keep references out of the model's reach; name no product, broker or real instrument; no emoji; no em or en dashes.\nDone when the grader checks pass and the baseline report is written. Paste its summary."
+            },
+            {
+              "id": "OS-L7",
+              "title": "Generate an OpenScript agent skill and hillclimb it on the authoring eval",
+              "why": "There is no OpenScript skill for agents, and the complete reference is 2.29 MB, too large for most contexts. A compact skill generated from the library manifest and the error catalogue states no fact twice, and the authoring eval can measure whether it helps and what it costs in context.",
+              "deliverable": "A generator that writes the skill from the manifest and the catalogue, with a coverage check: every name in the skill exists in the manifest, and a planned name is marked as refused. Then a campaign on the skill's hand-written guidance section, one root cause per round, measured on test score and on context tokens against the full reference, started only when OS-L6's baseline has published its smallest detectable effect and a spend cap is set.",
+              "acceptance": [
+                "The coverage check fails on an invented name and passes on the generated skill",
+                "The campaign log shows train and test scores with intervals for every round, and every kept change passed the overlap guard",
+                "The final report compares the skill with the full reference on test score and tokens per task"
+              ],
+              "eval": "Hillclimbs the write-a-script suite on the agent skill.",
+              "size": "M",
+              "skills": [
+                "OpenScript",
+                "Technical writing",
+                "Node"
+              ],
+              "goodFirst": false,
+              "dependsOn": [
+                "OS-L6",
+                "OS-S13"
+              ],
+              "agentBrief": "Task OS-L7 for OpenScript: generate an agent skill and hillclimb it on the authoring eval.\nRead the library manifest and spec/errors.json, the AI assistants page on openalgo.in/script, the write-a-script baseline from OS-L6, and the campaign rules on the roadmap page.\n1. Write a generator that produces the skill: the language rules, every library entry with its signature and one line, the planned names marked as refused, and the ten most common error codes with their fixes. Every fact comes from the manifest or the catalogue.\n2. Write a coverage check that fails on any name not in the manifest.\n3. Run the campaign on the hand-written guidance section only: one root cause per round, from train failures only, with each patch passing the overlap guard before it is scored. Start only when the spend cap is set.\n4. Report the test score and the tokens per task for the skill against the full reference.\nRules: never quote a test request, reference script or transcript; generated sections are never edited by hand; name no other language or product; no emoji; no em or en dashes.\nDone when the coverage check passes, the log is written and the comparison report is published."
+            }
+          ]
+        },
+        {
+          "id": "later-engines",
+          "title": "Go joins the release and reaches core, and Java follows",
+          "outcome": "Every release runs three engines and fails on any disagreement. The Go engine compiles as well as runs, and its core result is the one the Phase 7 gate asks for if it met the clean-room conditions. A Java engine, written the same way, reaches the engine-only profile and joins the release.",
+          "measure": "a CI lane that fails on a one-case disagreement between any two engines; a Go core result document at a named revision; the maintainer's recorded verdict on whether it meets the Phase 7 gate; and a Java engine-only result document with zero failures and zero unsupported cases. Engine tasks are contributor work with done-when checks, not dates.",
+          "tasks": [
+            {
+              "id": "OS-L8",
+              "title": "Bring the Go engine into the release lockstep",
+              "why": "Once the Go engine passes its profile at a named revision, the principle every engine keeps applies to it: one version, and any disagreement blocks the release. Until the release process runs three engines, a Go result is a claim about one revision rather than a promise about every release.",
+              "deliverable": "A CI lane that runs the suite against the Go engine on every pull request, non-blocking until the engine has passed its claimed profile and blocking after that, as OS-S18 decided. The runner's agreement check extended to all three engines. RELEASING.md updated so a release tags the Go module with the same version, and the release notes name the three engines and their profiles.",
+              "acceptance": [
+                "A pull request that makes the Go engine disagree with the other two on one case fails CI",
+                "RELEASING.md lists the Go module tag as a release step, and a dry run of the release steps shows all three engines at one version",
+                "npm test passes"
+              ],
+              "eval": "Extends the conformance gate to a third engine.",
+              "size": "M",
+              "skills": [
+                "Maintainer task",
+                "CI",
+                "Releases"
+              ],
+              "goodFirst": false,
+              "dependsOn": [
+                "OS-S21"
+              ],
+              "agentBrief": "Task OS-L8 (maintainer) in marketcalls/openscript: bring the Go engine into the release lockstep.\nRead docs/integrating/new-engines.md (OS-S18), RELEASING.md, .github/workflows, scripts/run-suite.mjs and the agreement check in package.json (suite:agree).\nPlan the CI lane and the release steps and show me before changing any workflow.\nBuild the lane (non-blocking until the Go engine's profile passed, blocking after), extend the agreement check to three engines, and update RELEASING.md. Do not tag, publish or dispatch a workflow.\nRules: no emoji; no em or en dashes; name no other product.\nDone when a deliberate one-case disagreement fails CI on a draft pull request, the release dry run shows one version for all three engines, and npm test passes."
+            },
+            {
+              "id": "OS-L9",
+              "title": "Go front end: compile scripts, and claim the core profile",
+              "why": "The Phase 7 gate asks for a core profile engine, and core includes the lexical, syntax, static and warning cases, which only a compiler can answer. A Go front end written from language.md and errors.md turns the engine-only engine into the third implementation of the whole language. If it is built under the OS-S18 clean-room protocol, its core result at a named revision is the result the gate asks for.",
+              "deliverable": "A Go compiler front end that reads source as language.md specifies, reports diagnostics with the codes and spans errors.md gives, and emits the canonical compiled program the Go engine runs. The adapter answers --describe as core. A result document for the core profile at a named suite revision, published with the session log.",
+              "acceptance": [
+                "go vet ./... and go test ./... pass, and go.mod lists no requirements",
+                "Pointed at the Go adapter, the suite archive's runner reports the core profile with zero failures and zero unsupported cases at a named revision",
+                "For every core case, the canonical program the Go front end emits is byte for byte the one our compiler emits, or the difference is settled through conformance.md section 10",
+                "The maintainer records whether the result meets the Phase 7 gate under the OS-S18 decision, and if it does, npm run badge makes the badge for that revision"
+              ],
+              "eval": "The Phase 7 gate, when the OS-S18 conditions are met.",
+              "size": "L",
+              "skills": [
+                "Go",
+                "Compilers",
+                "Reading a specification"
+              ],
+              "goodFirst": false,
+              "dependsOn": [
+                "OS-S21"
+              ],
+              "agentBrief": "Task OS-L9: a Go front end for OpenScript, so the Go engine claims the core profile.\nThe clean room: work in a directory that holds only the suite archive (OS-S17), spec/ and the published docs. Do not open src/ or engine/ in marketcalls/openscript, and do not let your agent fetch them. Ask every question you have on the engine's issue; the answer is a change to spec/, never a pointer to code. Keep the session log the OS-S18 protocol asks for.\nRead spec/language.md in full, spec/errors.md for every code the lexical, syntax, static and warning categories raise, spec/compiled-program.md sections 2 and 9, and spec/conformance.md sections 8 and 11.\nPlan first and post it on the issue: lexer, parser, checker and emitter, and the first failing case for each.\nBuild one stage at a time. Test every diagnostic on its code and span, never on its message text.\nRules for every engine: the compiled program is data, so no eval, no code built from text, no dynamic loading and no reflection used to dispatch instructions; the standard library only; no code file over 500 lines; no emoji; no em or en dashes; name no other product.\nDone when go vet and go test pass, the core profile reports zero failures and zero unsupported at a named revision, and every emitted program matches ours byte for byte or has a settled section 10 issue. Paste the result document."
+            },
+            {
+              "id": "OS-L10",
+              "title": "Java engine: read, verify and run the machine",
+              "why": "Java is the next engine after Go, for the hosts that run on the JVM. By then the Go engine will have tested the specification once from outside, the suite archive and the clean-room protocol will exist, and the questions the Go builder asked will be answered in spec/. A Java engine built the same way shows whether that work made the specification easier to implement.",
+              "deliverable": "In the repository OS-S18 names for it: a Java module on the long-term-support JDK the maintainer names, using the standard library only, that reads canonical program text, verifies and refuses as compiled-program.md requires, and runs the machine of sections 3 to 8. An adapter that answers --describe as engine-only, and the JavaScript relay section 9 allows.",
+              "acceptance": [
+                "The build and unit tests pass with no dependency outside the JDK",
+                "Pointed at the Java adapter, the suite archive's runner reports every program, semantics, runtime and limits case that needs no unimplemented library call as pass, and lists the rest as unsupported by name",
+                "The runner in --against mode shows no disagreement with the other engines on the cases the Java engine runs"
+              ],
+              "eval": "Feeds the conformance suite; disagreements are settled through conformance.md section 10.",
+              "size": "L",
+              "skills": [
+                "Java",
+                "Interpreters",
+                "Reading a specification"
+              ],
+              "goodFirst": false,
+              "dependsOn": [
+                "OS-S18",
+                "OS-S21"
+              ],
+              "agentBrief": "Task OS-L10: a Java engine for OpenScript, first step: read, verify and run the machine.\nThe clean room: work in a directory that holds only the suite archive (OS-S17), spec/ and the published docs. Do not open the source of any other OpenScript engine, and do not let your agent fetch it. Ask every question on the engine's issue; the answer is a change to spec/, never a pointer to code.\nRead docs/integrating/new-engines.md, spec/compiled-program.md in full and spec/conformance.md sections 1, 4 and 8 to 10.\nPlan first and post it on the issue. Build the boundary first (canonical text, verification, refusals), then the machine one section at a time, making one failing case pass before the next. Use no script engine, no reflection to dispatch instructions and no dynamic class loading.\nRules for every engine: the compiled program is data, so no eval, no code built from text, no dynamic loading and no reflection used to dispatch instructions; the standard library only; no code file over 500 lines; no emoji; no em or en dashes; name no other product.\nDone when the build and tests pass, every program, semantics, runtime and limits case that needs no missing call passes, and the --against run shows no disagreement. Paste both summaries."
+            },
+            {
+              "id": "OS-L11",
+              "title": "Java engine: add the library, report an engine-only result, and join the lockstep",
+              "why": "As with Go, the library the core cases call and its bit-exact arithmetic are what turn a machine into an engine whose numbers can be trusted, and a result that holds for one revision becomes a promise only when the release process runs it on every release.",
+              "deliverable": "Every library entry the core cases call, implemented from stdlib.md with the portable kernels of section 20.10 and checked against the library vectors bit for bit. A result document for the engine-only profile at a named suite revision. A CI lane for the Java engine under the OS-S18 lockstep rule, and RELEASING.md updated so a release publishes the Java engine at the same version.",
+              "acceptance": [
+                "The library vectors for every implemented entry match bit for bit",
+                "Pointed at the Java adapter, the runner reports the engine-only profile with zero failures and zero unsupported cases at a named revision",
+                "A pull request that makes the Java engine disagree with the others on one case fails CI once the lane is blocking",
+                "npm test passes"
+              ],
+              "eval": "Extends the conformance gate to a fourth engine.",
+              "size": "L",
+              "skills": [
+                "Java",
+                "Numerical code",
+                "CI"
+              ],
+              "goodFirst": false,
+              "dependsOn": [
+                "OS-L10",
+                "OS-L8"
+              ],
+              "agentBrief": "Task OS-L11: a Java engine for OpenScript, second step: the library, the engine-only result and the lockstep lane.\nThe clean room rules of OS-L10 still apply to the engine code.\nRead spec/stdlib.md section 20 in full, the stdlib.md section for each entry you implement, docs/integrating/library-vectors.md, spec/conformance.md section 11 and RELEASING.md.\nList the entries the core cases call and post the list on the issue. Implement them one at a time against their vectors, never through the host's own math where section 20 fixes a portable algorithm. Then draft the CI lane and the RELEASING.md steps for the maintainer; do not tag, publish or dispatch a workflow.\nRules for every engine: the compiled program is data, so no eval, no code built from text, no dynamic loading and no reflection used to dispatch instructions; the standard library only; no code file over 500 lines; no emoji; no em or en dashes; name no other product.\nDone when every implemented entry matches its vectors, the engine-only profile reports zero failures and zero unsupported at a named revision, and the lane fails on a deliberate disagreement. Paste the result document."
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "evals": {
+    "intro": "We keep two kinds of measurement apart. Gates are public and deterministic, and they must stay at 100 percent: the conformance suite, the library vectors, the numerical audit, the gate studies, the benchmarks and the catalogue checks. They are never hillclimbed, only extended with new cases. Evals measure whether a person working with an agent can use and fix OpenScript. They follow the method in the linked article on automating eval design and hillclimbing: tasks sampled from real use, headroom kept (the best configuration should stay under about 95 percent), low variance across runs, a train and test split, and one surface improved at a time. The compiler and the engine are exact graders, and the error catalogue's codes sort failures by cause at no extra cost, so most OpenScript evals need no model acting as judge.",
+    "suites": [
+      {
+        "name": "Conformance suite",
+        "measures": "Whether an engine computes what the specification says, and whether every engine agrees",
+        "cases": "126 at 0.8.0: 72 core, 46 chart, 8 strategy",
+        "grader": "Programmatic: scripts/run-suite.mjs, exact by default; npm run suite:agree compares the two engines",
+        "split": "None. A public gate, not an eval",
+        "target": "Stays at 100 percent; grows to all 14 channels and every category in section 7 by the end of Later (OS-L1 to OS-L3)",
+        "surface": "None. Cases are added through conformance.md section 4 review and corrected only through section 10, never edited to make an engine pass",
+        "status": "Existing gate"
+      },
+      {
+        "name": "Library vectors and numerical audit",
+        "measures": "Bit-for-bit agreement of every library entry between the two engines, checked against independent references",
+        "cases": "117 vector files; 1,504,962 audited calls over 116 signatures",
+        "grader": "Programmatic: check-library-vectors.mjs and npm run audit:numerics",
+        "split": "None. A public gate",
+        "target": "Zero differing bits",
+        "surface": "None",
+        "status": "Existing gate"
+      },
+      {
+        "name": "Error catalogue checks",
+        "measures": "Every code is raised where the spec says, tested on its code and span, stated the same way in errors.json and errors.md, and its fix compiles",
+        "cases": "173 codes at 0.8.0, of which 18 are not raised yet; 11 after Soon",
+        "grader": "Programmatic: check-raises.mjs, check-catalogue-tests.mjs, check-error-codes.mjs and check-examples-compile.mjs with the fix-sentence rules",
+        "split": "None. A public gate",
+        "target": "No OS7xxx code deferred by 1.0",
+        "surface": "None for the checks. The text they hold is the surface of the fix-from-diagnostic eval",
+        "status": "Existing gate"
+      },
+      {
+        "name": "Benchmarks",
+        "measures": "Time per workload against a recorded budget",
+        "cases": "8 budgeted TypeScript workloads; none yet for the Python engine",
+        "grader": "Programmatic: scripts/bench.mjs with tests/bench/budgets.ts; a Python counterpart in OS-S12",
+        "split": "None. A gate",
+        "target": "Every workload within budget in both engines",
+        "surface": "Engine code, changed by a person, one hot path at a time",
+        "status": "Existing for TypeScript; Python in OS-S12"
+      },
+      {
+        "name": "Fix from a diagnostic",
+        "measures": "Given only a refused script and what diagnose returns (code, message, fix and span), whether a model produces the program that was meant",
+        "cases": "50 to start (OS-N10): 30 train and 20 test over 10 compile-time codes. At least 150 after OS-S14 and OS-S15, with at least 20 private test cases in each targeted family. Only codes diagnose returns (the lex, parse and check stages); written by people, never taken from the published catalogue",
+        "grader": "Programmatic: the fix compiles with no error at the pinned grading build, raises no warning the intended program does not, and matches the intended program's per-bar outputs. A fix that deletes the feature fails",
+        "split": "About 60 percent train and 40 percent test within each code. Test cases are private and written only by the maintainer or people the eval decision names; outside contributors write train cases",
+        "target": "A baseline with a 95 percent interval and its smallest detectable effect (about 25 points on 20 test cases, about 20 points per family once each holds 20). If the best configuration is already above about 95 percent, we add harder cases or hillclimb cost and latency instead of the score",
+        "surface": "The message, cause and fix text in spec/errors.json and spec/errors.md, one code family per round, read by the model from a candidate build packed from the branch; wording approved by the maintainer",
+        "status": "New: OS-N9 to OS-N11; growth in OS-S14 and OS-S15; campaign in OS-S16"
+      },
+      {
+        "name": "Write a script from a request",
+        "measures": "Given a trader's request with every parameter fixed, whether a model with a compile tool writes a study or strategy that computes the same outputs as a reference written by a person",
+        "cases": "At least 40 private test requests (OS-L6), from real requests and spec edge cases: absence, warmup, the forming bar, higher timeframe reads, sessions, stops and lot sizing; train from the 12 published examples and contributed requests",
+        "grader": "Programmatic: compile at the pinned build, run on three bar sets, and compare named plots bar by bar and the trade list from the run record. A pass or fail rubric judge is used only for 'nothing unrequested', and a person reads its verdicts",
+        "split": "Test set of at least 40 private requests with private reference scripts, stratified by area; the published examples are train only",
+        "target": "Baseline with an interval, its smallest detectable effect (about 15 points on 40 requests), cost per task and failures grouped by code; expected to be well under 95 percent",
+        "surface": "A generated OpenScript agent skill (OS-L7), then the llms.txt generator, then single docs pages",
+        "status": "New: OS-L6; campaign in OS-L7"
+      },
+      {
+        "name": "Spec-only engine rehearsal",
+        "measures": "How far an agent gets writing an engine-only profile engine from compiled-program.md alone, and where the specification is ambiguous",
+        "cases": "New private engine-profile cases, written the way conformance cases are (expected output derived from the spec), published as ordinary cases once the rehearsal is scored. The public cases are not held out, so they are never the score",
+        "grader": "Pass rate from scripts/run-suite.mjs; a person classifies each failure as a spec defect or an agent error",
+        "split": "The agent sees compiled-program.md, the rest of spec/ and the public cases only; the new cases stay private until scoring",
+        "target": "Every spec defect found is fixed through conformance.md section 10, and the pass rate is reported for each spec revision. It does not meet the Phase 7 gate, because a model may have read the public code",
+        "surface": "The specification text, changed only through the normal spec process",
+        "status": "Planned after the suite archive (OS-S17) and best run before the Go engine starts (OS-S19), so its builder meets fewer spec defects; under a spend cap the maintainer sets before each run; no task yet"
+      },
+      {
+        "name": "Past-defect repair",
+        "measures": "Whether CLAUDE.md, CONTRIBUTING.md and the task briefs lead an agent to a correct fix",
+        "cases": "The 22 records in issues/ (0001 to 0022 after OS-N2) plus later fix commits, each checked to fail on the parent commit and pass on the fix",
+        "grader": "The fix commit's own tests (held out) plus npm test",
+        "split": "By time: older fixes train, newer fixes test",
+        "target": "Diagnostic only while it has fewer than 40 cases; used to catch regressions from edits to the contributor docs",
+        "surface": "CLAUDE.md, CONTRIBUTING.md and the roadmap briefs",
+        "status": "Planned after 1.0; no task yet"
+      }
+    ],
+    "loop": [
+      "A person picks one objective and one surface for the campaign, for example the fix text of one code family, approves both, and sets the spend cap.",
+      "Run the baseline twice on train and test with the same model, effort and pinned build. The gap between those two runs is the noise floor. Publish the smallest effect the test set can detect; if it is larger than the change you hope for, grow the test set first.",
+      "An agent reads only the failing train transcripts, groups them by catalogue code, and proposes one patch that fixes one root cause.",
+      "The overlap guard checks the patch. A candidate build is packed from the branch, and train and test are scored against the pinned grading build with three runs per case. Both build digests go in the log.",
+      "Keep the patch only if train improves and the paired test difference on the targeted set is above zero by more than the noise floor. Revert it if test stays flat (overfitting) or any failure bucket on the pooled test set gets worse.",
+      "Each round, a person reads 10 to 20 scored transcripts to confirm the grader still agrees with human judgement. Infrastructure errors are counted separately from failures.",
+      "Stop when two or three rounds keep nothing, and write down the failure causes that remain. If the best configuration is above about 95 percent, stop climbing the score: add harder cases, or climb cost and latency instead.",
+      "A maintainer reviews each kept patch like any other pull request and decides whether to merge it. The gates in npm test must stay green."
+    ],
+    "guards": [
+      "First, the split. Test cases and reference scripts live in a private repository that only the maintainer runs. The public repository, the proposing agent and CI logs see only the aggregate test score.",
+      "Second, nothing from a failure is pasted into the surface. The overlap guard (OS-S13) refuses any patch that shares an identifier, a number of four or more significant digits, or a run of eight words with a test request or reference script.",
+      "Third, answers stay out of reach. Graders, reference programs and expected values are never mounted where the proposing agent runs, and it cannot write to them.",
+      "A case is chosen because people find it hard or because it failed in real use, and it is admitted before any model runs on it, never because today's model fails it.",
+      "Test cases are written only by the maintainer or people the eval decision names. Any vendor that receives test cases must have terms that exclude training on API data. A second vendor's model runs on the train set only, once per campaign, so the surface is not tuned to one model's pattern of failures.",
+      "Test cases rotate only on suspected leakage: a case found in public text, or a jump in score that no patch explains. Retired cases move to the public train set.",
+      "The gates are never hillclimbed: the conformance suite, the vectors, the numerical audit and the catalogue checks stay at 100 percent and only grow.",
+      "Small sets detect only large effects: 20 test cases see about 20 to 25 points, and 40 see about 15. Every published result states its smallest detectable effect, and a campaign does not start below the size it needs."
+    ]
+  },
+  "contribute": {
+    "steps": [
+      "Pick a task on this page. For a first contribution, take one marked Good first task.",
+      "Find its GitHub issue (the title starts with the task id), or open one with the roadmap task form. Give a plan of three to five lines and say whether you work with an agent. Comment to claim it. A maintainer assigns it when they can; there is no promised response time, and the issue always shows who holds a task.",
+      "Hold one claimed task at a time until two of yours have merged. At most five tasks are claimed at once in this repository, so reviews can keep up.",
+      "For an M or L task, post your agent's plan (the files it will touch, and the failing test or case it will write first) and wait for a maintainer to say go. Tasks marked Maintainer task are drafted by an agent for the maintainer and are not open for claims.",
+      "Set up with Node 22 or newer and Python 3.12 or newer, then run npm install. npm test must pass before you change anything.",
+      "Paste the task's agent brief into your agent. Have it write the failing test or case first, and read every line it changes.",
+      "Open a draft pull request early. Mark it ready when the task's done-when commands pass. Paste their summary lines and a two-line changelog note in the description (the maintainer writes CHANGELOG.md at release).",
+      "Expect up to two review rounds. A maintainer squash-merges, and you are credited by handle in the release notes.",
+      "Eval test cases are private. Outside contributors write train cases (OS-S14) and never see test cases, reference scripts or test transcripts.",
+      "A claim with no update for 7 days (14 for an L) gets one reminder, then is released. A pull request with no claimed issue, or one failing CI with no follow-up for 7 days, is closed without review."
+    ],
+    "agentRules": [
+      "Spec first. A change to the language, the compiled program, error codes or the host interface first changes the specification and its feature-matrix row, and waits for a maintainer's approval on the issue.",
+      "Change both engines (src/ and engine/openscript/) in the same pull request whenever a computed value moves.",
+      "Edit spec/errors.json and spec/errors.md together, by hand: they state the same facts and are compared. npm run generate:errors writes only the generated TypeScript.",
+      "Never edit an existing case's expected values, a tolerance or an exceptions file under spec/ to make an engine pass, and never raise a recorded line cap or budget. A case is corrected only with a reviewed explanation under conformance.md section 10, approved on the issue first.",
+      "Never compute an expected value with either engine. Derive it independently and write down how in the case notes.",
+      "No eval, no Function, and no code built from text, in either language. No runtime dependency: Python uses the standard library only, and a new dev dependency needs approval.",
+      "No code file over 500 lines, whether source, tooling or test. Documents are not counted.",
+      "Every new error gets a catalogue entry (code, cause, fix and example) and a test on its code and span, not on its message text. A fix must not name a planned call unless the code is deferred.",
+      "Name no other product, platform, company or real instrument; use placeholder symbols. Copy no text or code from another project. No emoji, and no em or en dashes.",
+      "Call a run that sends no real order sandbox mode (analyzer mode in OpenAlgo), and use no other name for it.",
+      "Do not tag, publish to npm or PyPI, dispatch a workflow or merge. Releases belong to the maintainer.",
+      "Never read held-out eval cases, reference scripts or test transcripts, and never paste them into a doc, skill, error text or code. Never claim a check passed without running it.",
+      "Commit when a validation passes and keep every commit green. Do not reformat or rename code outside the task.",
+      "If the brief does not settle a decision, stop and ask on the issue."
+    ],
+    "reviewChecklist": [
+      "The change stays inside the claimed task, and the pull request says what is unchanged.",
+      "For a language change, the spec sentence changed first, and it is true of what the engines now do.",
+      "Every new expected value has an independent derivation a person can follow, and no existing expected value moved without a correction approved on the issue.",
+      "Both engines changed together, or the pull request shows that no computed value moves; npm run suite:agree passes.",
+      "Each new test or case fails when the behaviour it proves is broken. For S tasks the reviewer reads the probe the pull request shows; for M and L tasks the reviewer breaks the behaviour and runs it.",
+      "Tests assert codes and spans, not message text, and spec/errors.json and spec/errors.md changed together.",
+      "There is no duplicate helper, no abstraction with one caller and no option nobody asked for, and dead code has been removed.",
+      "Error text tells the reader what to do and is true of the actual program.",
+      "No product, company or real instrument is named, there is no emoji and no dash, and the wording says sandbox mode.",
+      "CI green is necessary but never sufficient: for M and L tasks the reviewer reruns the done-when commands on a clean checkout."
+    ],
+    "labels": [
+      "roadmap",
+      "good first issue",
+      "help wanted",
+      "maintainer task",
+      "size: S",
+      "size: M",
+      "size: L",
+      "needs decision",
+      "eval",
+      "area: spec",
+      "area: compiler",
+      "area: engine",
+      "area: python engine",
+      "area: conformance",
+      "area: editor",
+      "area: docs"
+    ]
+  },
+  "notDoing": [
+    {
+      "item": "Building multi-leg strategies before the Phase 7 gate",
+      "why": "Legs, books and portfolio stops (Phase 8) are behaviour a third engine has to reproduce exactly, and ROADMAP.md puts them after an outside engine has proved the format travels. The decisions are written early (OS-L4); the build waits for the gate, which carries no date."
+    },
+    {
+      "item": "Growing the library before 1.0",
+      "why": "About 100 entries are marked planned in stdlib.md, and each one costs a spec section, two engines, vectors and cases. We implement only the planned names an order refusal's fix depends on (order.roundToLot, session.isOpen and the pos running totals). The rest come after 1.0, on request, one at a time; until then a planned name stays refused with OS2020 rather than approximated."
+    },
+    {
+      "item": "A runtime dependency, or anything that runs text as code",
+      "why": "Zero runtime dependencies and no eval are what let a host embed OpenScript under a strict content security policy and trust what it loads. A feature that needs either one is redesigned or declined."
+    },
+    {
+      "item": "Telemetry to collect scripts",
+      "why": "OpenAlgo is self-hosted and strategies are personal. Eval cases come from reports people choose to send, after a privacy review, and from cases people write. Nothing phones home."
+    },
+    {
+      "item": "Letting evals change the language or the gates",
+      "why": "Agents may improve text an agent reads: error text, the skill, llms.txt and docs. The language, its semantics and the engines change only through the spec process, because a score is not a reason to change what a program means."
+    },
+    {
+      "item": "Server-side alert evaluation, and a hosted service run by this project",
+      "why": "The first host already runs strategies unattended on its own server, one process per program, and that stays its job. What we do not build is alert evaluation on a server, or a runner this project hosts for others: both need an evaluator, retries, storage and quotas, which is a phase of its own. The decision is revisited after the first host's full session in sandbox mode (OS-S8)."
+    },
+    {
+      "item": "Dates for work other people control",
+      "why": "The first host's upgrade, an outside engine passing the suite, and the Phase 8 build all depend on other people or on a gate. They carry done-when checks, not dates."
+    },
+    {
+      "item": "A conformance badge before an outside engine earns it",
+      "why": "The badge is reserved for an engine written by somebody who has not read this implementation and that passes at a named revision. Our own two engines do not count, and neither does an agent rehearsal."
+    },
+    {
+      "item": "A Go or Java engine translated from ours",
+      "why": "An engine ported from the TypeScript or Python source proves only that translation works, copies our mistakes, and cannot meet the Phase 7 gate. Both are written from spec/ and the suite archive, and every question their builders ask is answered in the specification."
+    }
+  ],
+  "realism": "These targets are sized for the maintainer working alone with agents, at about two days a week on OpenScript alongside the charts library and OpenAlgo. OpenScript has had no outside contributor or issue yet, so no horizon depends on one; contributors shorten the plan, and the good first tasks are where they start. Next holds about 30 days of work (about four months), Soon about 80 (about nine months, so its last weeks overlap Later), and Later about 35, which leaves room in its six months for work that waits on other people. Review takes about 1 hour for an S task, 2 for an M and 4 for an L, and is counted in those days. If Soon runs long, 1.0 moves with it, because 1.0 has no date; the eval campaign is the first thing to slip, the order and backtest work the last. Six weeks after publication the plan is resized from real numbers: claims, merges, days from claim to merge, and review rounds. Eval runs cost money. A campaign costs about the number of rounds, times the train and test cases, times three runs, times the cost per attempt, plus the proposing agent's tokens. A full run of the fix-from-diagnostic eval is estimated at under 30 US dollars, so a campaign of 3 to 5 families at 3 to 5 rounds (9 to 25 full runs) comes to roughly 300 to 750 dollars. The authoring eval at 60 or more requests is estimated at 50 to 150 dollars a full run, so its campaign could pass 1,000 dollars. The first run of each measures the real cost, the maintainer sets a spend cap before every campaign, and only the maintainer runs the private test set. The Go and Java engines are contributor work by design: the Phase 7 gate needs somebody who has not read this implementation, so the maintainer cannot write them. The maintainer's share is the suite archive, the engine rules, answering spec questions in spec/ and the release lanes, about ten days across Soon and Later, counted above. Judging from the Python engine, each engine is one to three months of steady part-time work for one person with an agent, so the Go tasks carry done-when checks and no dates, and Java starts only after Go has reached the engine-only profile."
+}

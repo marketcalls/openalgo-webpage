@@ -273,7 +273,7 @@ The supply and demand study in [Example scripts](/script/getting-started/example
 
 {{screen: zones-boxes}}
 
-Take out the two lines that set `zone` and `zoneBottom` back to `none` and the study still compiles, draws correctly for a while, and then stops with OS4005 on the first bar a zone is broken, because [[draw.setTo()]] is handed a box that no longer exists.
+Take out the two lines that set `zone` and `zoneBottom` back to `none` and the study still compiles, with warning [OS8019](/script/errors/warnings#os8019) on the delete: `zone` still holds the box deleted there. Run it anyway and it draws correctly for a while, then stops with OS4005 on the first bar a zone is broken, because [[draw.setTo()]] is handed a box that no longer exists.
 
 That is an error rather than a call that quietly does nothing because a script changing a deleted object has lost track of its own state, and it will keep losing track. The silent version of this bug is a study that appears to work while half its drawing calls land nowhere.
 
@@ -362,7 +362,7 @@ The dashboard in [Example scripts](/script/getting-started/example-scripts#8-das
 
 {{screen: table-dashboard}}
 
-[[table()]] is top level only, for the same reason [[plot()]] is. [[cell()]] and `clear(panel)` may appear anywhere, and `clear` empties every cell so a table can be rebuilt from scratch. There is no `draw.delete` for a table: it is a fixed part of the study, like a plot, and lives as long as the study does. A cell outside the declared rows and columns stops the script; in this release it raises [OS4004](/script/errors/runtime#os4004), naming the index, while the more specific [OS4008](/script/errors/runtime#os4008) in the error list is not raised yet. [Tables](/script/visuals/tables) covers layout and styling.
+[[table()]] is top level only, for the same reason [[plot()]] is. [[cell()]] and `clear(panel)` may appear anywhere, and `clear` empties every cell so a table can be rebuilt from scratch. There is no `draw.delete` for a table: it is a fixed part of the study, like a plot, and lives as long as the study does. A cell outside the declared rows and columns stops the script with [OS4008](/script/errors/runtime#os4008), which names the row, the column and the table's shape. The /trading page in current OpenAlgo releases still runs library 0.5.0, which reports the same mistake as the array code [OS4004](/script/errors/runtime#os4004). [Tables](/script/visuals/tables) covers layout and styling.
 
 ## Errors you will meet
 
@@ -371,7 +371,9 @@ The dashboard in [Example scripts](/script/getting-started/example-scripts#8-das
 | [OS4005](/script/errors/runtime#os4005) | A change call was given an object that was deleted | Set the handle to `none` when you delete, and guard with `isNone` |
 | [OS3011](/script/errors/arguments#os3011) | A change call was given the wrong kind of object | Check the "applies to" column above |
 | [OS3006](/script/errors/arguments#os3006) | `plot`, `fill`, `level` or `table` inside a block | Move it to the top level; hide a plot by plotting `none` |
-| [OS4004](/script/errors/runtime#os4004) | A cell outside the table, or an index outside an array of handles | Declare enough rows and columns, or check the index |
+| [OS8019](/script/errors/warnings#os8019) | A warning: a name or an array element still holds an object deleted earlier | Set the name to `none`, or take the handle out of its array in the same block, as `draw.delete(shift(zones))` does |
+| [OS4008](/script/errors/runtime#os4008) | A cell outside the table | Declare enough rows and columns |
+| [OS4004](/script/errors/runtime#os4004) | An index outside an array of handles | Check the index against `size` |
 | [OS5010](/script/errors/limits#os5010) | More objects than a script may hold | Cap the set and delete as you drop handles |
 | [OS2001](/script/errors/names-and-types#os2001) | Method syntax such as `zone.setText(...)` | Write `draw.setText(zone, ...)` |
 

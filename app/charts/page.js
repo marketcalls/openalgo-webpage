@@ -31,19 +31,19 @@ import {
  */
 
 /**
- * Every figure on this page is measured from the published 2.3.0 build, not
+ * Every figure on this page is measured from the published 2.5.9 build, not
  * recalled: `npm run size` for the brotli sizes and the tier registries at
  * runtime for the counts. A marketing page that overstates a bundle size is the
  * one claim a developer will check first.
  */
-const VERSION = "2.3.0"
+const VERSION = "2.5.9"
 const REPO = "https://github.com/marketcalls/openalgo-charts"
 const DOCS = "https://marketcalls.github.io/openalgo-charts"
 const NPM = "https://www.npmjs.com/package/openalgo-charts"
 
 const STATS = [
-  { value: "102", labelKey: "charts.stat.indicators" },
-  { value: "85", labelKey: "charts.stat.drawings" },
+  { value: "105", labelKey: "charts.stat.indicators" },
+  { value: "87", labelKey: "charts.stat.drawings" },
   { value: "13", labelKey: "charts.stat.types" },
   { value: "0", labelKey: "charts.stat.deps" },
 ]
@@ -65,14 +65,15 @@ const FEATURES = [
  * what you draw. Sizes are brotli, the figure a browser actually pulls.
  */
 const TIERS = [
-  { name: "openalgo-charts", size: "76.52 KB", descKey: "charts.tier.base" },
-  { name: "/indicators", size: "28.19 KB", descKey: "charts.tier.indicators" },
-  { name: "/draw", size: "34.53 KB", descKey: "charts.tier.draw" },
-  { name: "/widget", size: "42.41 KB", descKey: "charts.tier.widget" },
-  { name: "/profile", size: "14.96 KB", descKey: "charts.tier.profile" },
-  { name: "/transform", size: "4.44 KB", descKey: "charts.tier.transform" },
-  { name: "/trade", size: "7.61 KB", descKey: "charts.tier.trade" },
-  { name: "/webgl", size: "6.38 KB", descKey: "charts.tier.webgl" },
+  { name: "openalgo-charts", size: "131.68 kB", descKey: "charts.tier.base" },
+  { name: "/indicators", size: "40.38 kB", descKey: "charts.tier.indicators" },
+  { name: "/draw", size: "55.61 kB", descKey: "charts.tier.draw" },
+  { name: "/widget", size: "99.64 kB", descKey: "charts.tier.widget" },
+  { name: "/profile", size: "14.96 kB", descKey: "charts.tier.profile" },
+  { name: "/transform", size: "4.56 kB", descKey: "charts.tier.transform" },
+  { name: "/trade", size: "16.69 kB", descKey: "charts.tier.trade" },
+  { name: "/webgl", size: "6.93 kB", descKey: "charts.tier.webgl" },
+  { name: "/workspace", size: "11.33 kB", descKey: "charts.tier.workspace" },
 ]
 
 

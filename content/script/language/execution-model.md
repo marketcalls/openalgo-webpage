@@ -307,7 +307,7 @@ If two runs of your script disagree, the data disagreed.
 
 ## What reaches the chart
 
-At the end of each bar the engine has one value for every plotted column, plus whatever markers, colours, table cells and drawings the bar asked for. The chart receives the study as one description: plotted columns, fills, levels, markers, the table, drawings, the pane background, bar colours, a fixed pane range and the settings.
+At the end of each bar the engine has one value for every plotted column, plus whatever markers, colours, table cells and drawings the bar asked for. The chart receives the study as one description: plotted columns, fills, levels, markers, the tables, drawings, the pane background, bar colours, a fixed pane range and the settings.
 
 Here is one such description drawn: a [HalfTrend](/script/getting-started/example-scripts#halftrend) study on a BHEL 15 minute chart, which hands the chart four plotted columns (the trend level twice, once per direction, and a faint channel edge for each), two fills and a marker on each flip:
 

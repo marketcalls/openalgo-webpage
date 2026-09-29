@@ -61,7 +61,7 @@ A read computes a value; it does not act or draw. An order call inside the expre
 | `"developing"` | The coarse bar so far | On the newest bars, while the coarse bar forms | Once the first coarse bar has begun |
 | `"lookahead"` | The coarse bar's final value | On history, always | Wherever the coarse bar exists |
 
-On a five minute chart reading `req.timeframe("1D", high)`, a bar at 11:00 today holds yesterday's high in `"confirmed"`, today's high so far in `"developing"`, and today's final high in `"lookahead"`, which no one could have known at 09:15. Only the first is a number a rule could have acted on at 11:00, so for a timeframe coarser than the chart's it is the only mode a signal, an alert or an order should be built on. A backtest of a rule that reads `"lookahead"` looks excellent and means nothing.
+On a five minute chart reading `req.timeframe("1D", high)`, a bar at 11:00 today holds yesterday's high in `"confirmed"`, today's high so far in `"developing"`, and today's final high in `"lookahead"`, which no one could have known at 09:15. Only the first is a number a rule could have acted on at 11:00, so for a timeframe coarser than the chart's it is the only mode a signal, an alert or an order should be built on. A backtest reads `"lookahead"` the same way, the coarse bar's final value from its first chart bar on, so a backtest of a rule that reads it looks excellent and means nothing. The /trading page in current OpenAlgo releases still runs library 0.5.0, whose Backtest panel gives a `"lookahead"` read the coarse bar so far instead, the same value as `"developing"`.
 
 ### Reading at the chart's own interval
 
@@ -255,11 +255,11 @@ if bar.isLast
 
 {{entry: req.candle()}}
 
-Will return a whole coarser bar at once, its open, high, low and close as one array, so a higher timeframe candle can be drawn with one read instead of four. It is planned and not part of version 0.5.0; until then, make one [[req.timeframe()]] read per price and pass them to [[plotCandles()]].
+Will return a whole coarser bar at once, its open, high, low and close as one array, so a higher timeframe candle can be drawn with one read instead of four. It is planned and not part of version 0.8.0; until then, make one [[req.timeframe()]] read per price and pass them to [[plotCandles()]].
 
 {{entry: req.events()}}
 
-Will read scheduled corporate events for the chart's instrument, such as dividends and splits, as a series. It is planned and not part of version 0.5.0.
+Will read scheduled corporate events for the chart's instrument, such as dividends and splits, as a series. It is planned and not part of version 0.8.0.
 
 ## Related
 

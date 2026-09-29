@@ -139,11 +139,11 @@ The [Compiled program](/script/integrate/compiled-program) page describes the fo
 
 ## Two libraries for your own portal
 
-OpenScript is an open project, not a feature locked inside one product. The language ships as two libraries that anyone can build into their own financial portal, trading terminal or research tool, commercial or not. Both are licensed under Apache 2.0, both have zero runtime dependencies, and both are at version 0.5.0.
+OpenScript is an open project, not a feature locked inside one product. The language ships as two libraries that anyone can build into their own financial portal, trading terminal or research tool, commercial or not. Both are licensed under Apache 2.0, both have zero runtime dependencies, and both are at version 0.8.0.
 
 | Library | Install | Language | What it gives you |
 |---|---|---|---|
-| `openalgo-script` | npm | JavaScript and TypeScript | The compiler and the engine; six headless editor functions, meaning functions with no screen of their own that an editor calls (highlight, complete, diagnose, hover, signature and format); an adapter that draws a compiled study on openalgo-charts; the backtest |
+| `openalgo-script` | npm | JavaScript and TypeScript | The compiler and the engine; six headless editor functions, meaning functions with no screen of their own that an editor calls (highlight, complete, diagnose, hover, signature and format); an adapter that draws a compiled study on openalgo-charts; the backtest; an importer that translates a script written in another chart scripting language into OpenScript |
 | `openscript` | PyPI | Python 3.12 or newer | An engine that runs compiled programs on a server, with no compiler in it |
 
 ```bash
@@ -153,13 +153,13 @@ pip install openscript
 
 The /trading page itself is built this way: the Scripts panel, the chart and the Backtest panel use `openalgo-script` in the browser, and the Strategies panel runs deployed strategies with `openscript` on the server. A platform with its own chart or its own editor replaces the adapter for that piece and keeps the rest. The [Two libraries](/script/integrate/overview) page explains the pieces and how to adopt them one at a time.
 
-## What version 0.5.0 does, and what is planned
+## What version 0.8.0 does, and what is planned
 
-The language is young, and these pages say plainly what works today.
+The language is young, and these pages say plainly what works today. They describe version 0.8.0 of the two libraries. The /trading page in current OpenAlgo releases runs version 0.5.0, which has the same library names and signatures; where the two versions behave differently in a way you can see on that page, the page that covers it says so.
 
-- **Works now.** Studies with plots, fills, levels, markers, bar colours, backgrounds, drawing objects, tables and alerts. Reading another timeframe or another instrument on the chart. Strategies with market, limit and stop orders, backtested in the browser with commission and slippage, simulated on the chart, and deployed from the Strategies panel.
+- **Works now.** Studies with plots, fills, levels, markers, bar colours, backgrounds, drawing objects, tables and alerts. Reading another timeframe or another instrument on the chart. Strategies with market, limit and stop orders, backtested in the browser with commission and slippage, simulated on the chart, and deployed from the Strategies panel. In the library, an importer that translates a script written in another chart scripting language, statement by statement, and says what it could not carry across; the /trading page does not offer it. See [Importing a script](/script/writing/importing-a-script).
 - **Planned.** Some names in the library are declared but not implemented yet, for example the risk-based sizing helpers such as [[order.qtyForRisk()]] and the account figures such as [[pos.equity]]. The compiler refuses a planned name where you wrote it, with [OS2020](/script/errors/names-and-types#os2020) and a message that says it is planned, rather than letting the script fail later. The reference marks every planned entry.
-- **Not modelled yet.** A stop and target attached with [[exit()]] are not filled by the 0.5.0 backtest, and a strategy that calls `exit()` is refused by the Strategies panel. Manage exits in the script with [[close()]] for now, as [Your first strategy](/script/getting-started/first-strategy) shows.
+- **Not modelled yet.** A stop and target attached with [[exit()]] are not filled by the backtest in version 0.8.0, and a strategy that calls `exit()` is refused by the Strategies panel. Manage exits in the script with [[close()]] for now, as [Your first strategy](/script/getting-started/first-strategy) shows.
 
 ### What each part of the /trading page supports
 

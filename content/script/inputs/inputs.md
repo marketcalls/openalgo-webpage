@@ -187,11 +187,19 @@ if useBand
 
 Declare the input at the top level and read its name inside the block instead.
 
-**The default must be fixed before the first bar**: a literal, arithmetic over literals, or another input. A default computed from bar data is OS3003:
+**The default must be fixed before the first bar**: a literal, or arithmetic over literals. A default computed from bar data is OS3003:
 
 ```openscript expect=OS3003
 lookback = input(round(close / 100), "Lookback")
 plot(sma(close, lookback), "Average")
+```
+
+A default may not read another input either, and neither may `min`, `max` or `step`. They are what the settings dialog shows before anybody has chosen anything, so none of them may depend on another setting, and reading one there is OS3025:
+
+```openscript expect=OS3025
+fastLen = input(9, "Fast length", min = 1)
+slowLen = input(21, "Slow length", min = fastLen + 1)
+plot(ema(close, fastLen) - ema(close, slowLen), "Spread")
 ```
 
 An `input()` may also be the value of a declaration option, which is how a reader changes something the declaration decides, and it may be written inside the expression of a [higher timeframe read](/script/data/higher-timeframes#what-the-expression-means-inside-a-read):
@@ -207,6 +215,17 @@ plot(dailyRsi, "Daily RSI", purple, style = "step")
 ```
 
 The input inside the read follows the dialog like any other. The one in the declaration is a different case in /trading: the chart reads declaration options when it loads the study, at their defaults, so changing the Decimals row does not change the drawing there. [Settings and style](/script/inputs/settings-and-style#what-the-declaration-decides) lists what follows the dialog.
+
+**An input in a field fixed before the first bar must be the whole of its value.** The compiled program holds such a field as a value or as a reference to one input, and an expression over a setting is neither. So arithmetic, a ternary or a colour call over an input there is OS3025, and the compiler reports OS6018 beside it, which says the same thing from the compiled program's side:
+
+```openscript expect=OS3025
+version 1
+
+study("Decimals plus one", precision = input(2, "Decimals", min = 0, max = 8) + 1)
+plot(close, "Close")
+```
+
+Declare the setting as the value itself instead, here `precision = input(3, "Decimals", min = 0, max = 9)`. The same rule holds for the fixed options of a call, such as a plot's `width`, a level's colour or a marker's `color`, `at` and `shape`. A plot's `style` cannot be a setting at all: written from an input it is OS3026. The /trading page in current OpenAlgo releases still runs library 0.5.0, which accepts a default or a bound read from another input and an input as a plot's style, and reports an expression over an input in a fixed field only as OS6018.
 
 ## Names, titles and saved values
 
@@ -296,7 +315,7 @@ A value passes three checks, and which one catches a mistake matters, because on
 
 | When | What is checked | On failure |
 |---|---|---|
-| Compile | The declaration itself: placement, a fixed default, a default inside `options`, a title, a unique key | OS3007, OS3003, OS3018, OS3017, OS3021, OS3022, OS3024. The script does not compile |
+| Compile | The declaration itself: placement, a fixed default and bounds that read no other input, a default inside `options`, a title, a unique key. And where the input is used: as the whole of a fixed option, and never as a plot's style | OS3007, OS3003, OS3025, OS3018, OS3017, OS3021, OS3022, OS3024, OS3026. The script does not compile |
 | Load | The reader's saved value against the input's type, `min`, `max` and `options` | OS6019, naming the setting and the rule. The study does not run |
 | Each bar | A legal setting that becomes an illegal argument, such as a length computed down to zero | OS4003. The study stops on that bar |
 
@@ -345,6 +364,9 @@ The opposite matters as much. Some things must not be inputs even though the dia
 |---|---|---|
 | `input()` inside an `if` or a function | OS3007 | Move it to the top level and read the name inside the block |
 | A default computed from bar data | OS3003 | Use a literal, or an input for the thing the default depended on |
+| A default, `min`, `max` or `step` that reads another input | OS3025 | Write it as a literal |
+| An input inside a larger expression in a fixed option, such as `width = w + 1` | OS3025 | Pass the input as the whole value, or write the value out |
+| An input as a plot's `style` | OS3026 | Write the style as a string literal, such as `style = "step"` |
 | Two rows with one title | OS3017 | Rename one; the title is part of the key |
 | A row with no name and no title | OS3021 | Give it a title written as a string literal |
 | A row with no name and an empty title | OS3024 | Give the title something to say |

@@ -92,6 +92,26 @@ export default function RoadmapPage() {
           })}
         </div>
 
+        {/* Product roadmaps: each library has its own plan, with contributor tasks */}
+        <div className="space-y-4">
+          <h2 className="text-center text-headline-sm text-on-surface">{t('road.products')}</h2>
+          <div className="grid gap-4 md:grid-cols-2 max-w-3xl mx-auto">
+            {[
+              { href: "/charts/roadmap", name: "OpenAlgo Charts" },
+              { href: "/script/roadmap", name: "OpenScript" },
+            ].map((p) => (
+              <a
+                key={p.href}
+                href={p.href}
+                className="obsidian-card rounded-xl p-6 hover-lift ghost-border text-center"
+              >
+                <span className="block text-base font-semibold text-on-surface">{p.name}</span>
+                <span className="block text-sm text-on-surface-variant">{t('nav.roadmap')}</span>
+              </a>
+            ))}
+          </div>
+        </div>
+
         {/* CTA */}
         <div className="text-center space-y-5">
           <p className="text-on-surface-variant">

@@ -300,6 +300,25 @@ ${rest ? renderSegmentMarkdown(rest, ctx) : ""}
 const SPEC_REF = /\s*\((?:see\s+)?(?:[a-z-]+\.md|section)[^()]*\)|\s*,?\s*(?:as\s+)?(?:[a-z-]+\.md\s+(?:section\s+)?[\d.]+(?:\s*(?:and|,)\s*[\d.]+)*)/gi;
 export const cleanCatalogueText = (s) => (s || "").replace(SPEC_REF, "").replace(/\s+([.,;:])/g, "$1");
 
+/**
+ * A catalogue entry's before and after example. Most are OpenScript. Two kinds
+ * are not, and are shown as what they are rather than painted as a script: a
+ * "transcript" is the host's input (a bar list, an instrument record), and an
+ * "import" example is a script in the source dialect the importer reads, with
+ * the OpenScript it becomes beside it.
+ */
+function exampleHtml(e) {
+  const ex = e.example;
+  if (!ex || typeof ex !== "object" || !ex.before) return "";
+  const [beforeLabel, beforeInfo, afterLabel, afterInfo] =
+    ex.kind === "transcript"
+      ? ["Before", `text title="Host input"`, "After", `text title="Host input"`]
+      : ex.kind === "import"
+        ? ["Script to import", `text title="Source dialect"`, "Translation", `openscript title="OpenScript"`]
+        : ["Before", `openscript expect=${e.code}`, "After", "openscript"];
+  return `<div class="osd-before-after"><div><p class="osd-ba-label">${beforeLabel}</p>${codeBlockHtml(ex.before, beforeInfo, null)}</div><div><p class="osd-ba-label">${afterLabel}</p>${codeBlockHtml(ex.after ?? "", afterInfo, null)}</div></div>`;
+}
+
 function renderError(code, bodyMd, ctx) {
   const e = ERROR_BY_CODE.get(code);
   if (!e) {
@@ -316,9 +335,7 @@ function renderError(code, bodyMd, ctx) {
   const withVars = (s) => inline(cleanCatalogueText(s), ctx).replace(/\{(\w+)\}/g, (_, n) => `<var>${n}</var>`);
   const cause = bodyMd.trim() ? renderSegmentMarkdown(bodyMd, ctx) : `<p>${withVars(e.cause)}</p>`;
   if (!bodyMd.trim() && /\.md\b|section \d/i.test(e.cause)) ctx.problems.push(`${code}: catalogue cause cites the specification; write a learner explanation below the directive`);
-  const ex = e.example && typeof e.example === "object" && e.example.before
-    ? `<div class="osd-before-after"><div><p class="osd-ba-label">Before</p>${codeBlockHtml(e.example.before, `openscript expect=${code}`, null)}</div><div><p class="osd-ba-label">After</p>${codeBlockHtml(e.example.after ?? "", "openscript", null)}</div></div>`
-    : "";
+  const ex = exampleHtml(e);
   return `<section class="osd-error" id="${id}">
 <header class="osd-entry-head"><h3><a class="osd-anchor" href="#${id}"><code>${code}</code> ${esc(e.title)}</a></h3><div class="osd-badges"><span class="osd-badge osd-sev-${esc(e.severity)}">${e.severity === "warning" ? "Warning" : "Error"}</span><span class="osd-badge">${esc(e.stage)}</span></div></header>
 <p class="osd-error-message">${msg}</p>

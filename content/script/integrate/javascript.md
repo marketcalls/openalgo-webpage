@@ -214,6 +214,30 @@ console.log(loaded.ok); // true
 `sourceHash` hashes exactly the text you give it. The program's own `source.hash` is taken over the normalised text, with a byte order mark dropped and CRLF line endings turned into LF, so hash `file.text` from the compile rather than the raw file. On a file saved with CRLF line endings the two differ.
 :::
 
+### Importing a script
+
+`importScript(text, { name })`, from the main entry point, turns a script written in another chart language, the version-annotated chart dialect at versions 5 and 6, into OpenScript. It returns `{ source, findings }`:
+
+```js title="import.mjs"
+import { readFileSync } from "node:fs";
+import { importScript, renderDiagnostics, sourceFile } from "openalgo-script";
+import { compile } from "./compile.mjs";
+
+const text = readFileSync("imported.txt", "utf8");
+const { source, findings } = importScript(text, { name: "imported.txt" });
+
+// Findings point into the imported text, so render them against it.
+console.log(renderDiagnostics(sourceFile("imported.txt", text), findings));
+
+// The source is OpenScript that compiles, or "" when nothing could be translated.
+if (source !== "") {
+  const compiled = compile("imported.os", source);
+  console.log(compiled.ok); // true
+}
+```
+
+`source` is the OpenScript text, compiled by the importer before it is returned. `findings` are ordinary diagnostics in the [OS9xxx range](/script/errors/import), whose spans point into the text you imported: each statement is translated with its meaning, translated with a warning stating the difference, or kept as a comment line with an error. The function is pure, text in and text and findings out, and there is no command line. [Importing a script](/script/writing/importing-a-script) covers what it reads and what it refuses.
+
 ## Loading
 
 `load(program, options)` verifies a program in full before a single bar runs, then resolves its inputs. It never throws. It answers either `{ ok: true, engine, inputs }` or `{ ok: false, diagnostic }`, so a program that cannot run says so before your chart has drawn anything.
@@ -260,7 +284,7 @@ What each field turns on is decided at load, not discovered on bar four thousand
 
 | Field left out | What happens |
 |---|---|
-| `instrument` | Every [[chart.tickSize]], [[chart.lotSize]] and other instrument fact reads as absent. With no `session`, the per-bar session facts are absent too, and [[vwap()]] never starts. A `session` stated without a `timezone` is refused at load with [OS6012](/script/errors/data#os6012), because a wall clock window with no zone is not a window |
+| `instrument` | Every [[chart.tickSize]], [[chart.lotSize]] and other instrument fact reads as absent, and nothing stops the bar: a script tests it with [[isNone()]] or supplies a fallback with [[orElse()]]. With no `session`, the per-bar session facts are absent too, and [[vwap()]] never starts. A `session` stated without a `timezone` is refused at load with [OS6012](/script/errors/data#os6012), because a wall clock window with no zone is not a window |
 | `route` | The engine has no `orders` capability. A strategy is refused at load with [OS6006](/script/errors/data#os6006) naming it; every study still runs |
 | `requestBars` | The engine has no `req.symbol` capability, so a script that calls [[req.symbol()]] is refused at load. [[req.timeframe()]] needs no provider: the engine folds the chart's own bars |
 
@@ -298,11 +322,52 @@ The engine takes one plain object per bar, oldest first:
 
 The engine derives `hl2`, `hlc3`, `ohlc4` and `hlcc4` itself, with a fixed order of operations, so do not supply them.
 
-Two things are refused rather than run on. A run over no bars is [OS6010](/script/errors/data#os6010). A bar whose `time` is not strictly after the one before it is [OS6011](/script/errors/data#os6011), naming that bar. The engine never sorts, deduplicates or repairs what it is given, so either one is a fix on your side.
+Three things are refused rather than run on. A run over no bars is [OS6010](/script/errors/data#os6010). A bar handed over with no `time` at all is [OS6025](/script/errors/data#os6025), naming that bar. A bar whose `time` is not strictly after the one before it is [OS6011](/script/errors/data#os6011), naming that bar. The engine never sorts, deduplicates, dates or repairs what it is given, so each one is a fix on your side.
+
+### Bars as columns
+
+`engine.run` also takes the history as columns, one array per field, which is the form to use over a long range:
+
+```js title="columns.mjs"
+import { readFileSync } from "node:fs";
+import { load } from "openalgo-script";
+import { compile } from "./compile.mjs";
+
+const { program, file } = compile("ema-cross.os", readFileSync("ema-cross.os", "utf8"));
+const { engine } = load(program, { source: file, settings: { fast: 9, slow: 21 } });
+
+// The same two sessions as run.mjs, held as one typed array per field.
+const n = 150;
+const time = new Float64Array(n), open = new Float64Array(n), high = new Float64Array(n);
+const low = new Float64Array(n), close = new Float64Array(n), volume = new Float64Array(n).fill(12_000);
+for (let i = 0; i < n; i++) {
+  time[i] = Date.UTC(2025, 0, 6 + Math.floor(i / 75), 3, 45) + (i % 75) * 300_000;
+  close[i] = 820 + 6 * Math.sin(i / 8);
+  open[i] = close[i] - 0.4;
+  high[i] = close[i] + 0.9;
+  low[i] = close[i] - 1.1;
+}
+
+const run = engine.run({ time, open, high, low, close, volume });
+if (run.diagnostic) throw new Error(run.diagnostic.message);
+const fast = program.outputs.plots.find((p) => p.title === "Fast EMA");
+console.log("Fast EMA on the last bar:", engine.column(fast.channel).at(-1));
+```
+
+It prints `Fast EMA on the last bar: 816.7267522123716`, the same number `run.mjs` printed from records. The rules:
+
+| Rule | Means |
+|---|---|
+| Fields | `time`, `open`, `high`, `low` and `close`, with `volume` and `oi` optional, each any array-like of numbers: a plain array or a typed array such as `Float64Array` |
+| Absence | `null`, or `NaN`, because a typed array cannot hold `null`. A `NaN` in `time` is a bar with no time, OS6025 |
+| Length | The number of bars is the length of `time`. A shorter column reads as absent past its end |
+| Where | `engine.run`, and the answer to a request for another instrument's bars. `append` and `update` still take one record, because a live bar arrives one at a time |
 
 ## Running over history
 
-`engine.run(bars, states?)` runs the whole dataset in one call and returns `{ bars, diagnostic }`, one result per bar. It stops at the first bar that fails. The optional `states` array gives each bar's state (below); without it every bar is history.
+`engine.run(bars, states?)` runs the whole dataset in one call, as an array of records or as columns, and returns `{ bars, diagnostic }`, one result per bar. It stops at the first bar that fails. The optional `states` array gives each bar's state (below); without it every bar is history.
+
+`run` hands the whole dataset to every read of another timeframe before bar 0, so a `"lookahead"` read sees each higher timeframe bar in full from its first chart bar. A driver that appends settled history one bar at a time gets the same answer by calling `engine.history(bars)` first; without it, a lookahead read over appended bars reads each bucket only as far as it has arrived.
 
 An engine keeps every bar it has been given. A second `run` on the same engine continues after the last bar rather than starting again, so handing it the same history twice is refused with [OS6011](/script/errors/data#os6011) at its first bar. To start over, for a new instrument, a new interval or a corrected history, call `load` again and use the new engine. `engine.barCount` says how many bars an engine holds.
 
@@ -410,6 +475,6 @@ A script's own `limits` line sets its loop budget and retained history; [Limits]
 
 Run the engine in its own worker process, not on the thread that handles requests: an engine pass over a long history is pure computation with no pause in it. Treat a long run as a job, return an identifier at once and report progress on a channel you already keep open, because a proxy's read timeout will end a request long before a multi-year backtest does. Start that process with `--disallow-code-generation-from-strings`, as [Two libraries](/script/integrate/overview#what-the-design-guarantees) explains.
 
-The engine takes one object per bar rather than columnar arrays. That costs roughly three times the memory of typed arrays over a decade of one minute bars, which matters for a very long backtest inside a browser tab and not on a server. Build the bar objects straight from your data response rather than parsing into one shape and copying into another, so you hold one copy.
+Over a long range, hand the history over as [columns](#bars-as-columns). Measured over 900,000 one minute bars, about ten years of one market, the records held 104 MB against 43 MB for six columns, and a run of a one line study peaked at 877 MB of heap against 346 MB and took 9.7 seconds against 5.0. Inside a browser tab that is the difference between a backtest that runs and one that does not; on a server it decides little. Whichever form you use, build it straight from your data response rather than parsing into one shape and copying into another, so you hold one copy.
 
 **Related.** [Two libraries](/script/integrate/overview), [Chart adapter](/script/integrate/charts-adapter), [Editor integration](/script/integrate/editor-integration), [Backtesting API](/script/integrate/backtesting-api), [Host interface](/script/integrate/host-interface), [Compiled program](/script/integrate/compiled-program), [Execution model](/script/language/execution-model)
