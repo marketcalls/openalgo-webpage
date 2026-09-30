@@ -36,7 +36,7 @@ import {
  * runtime for the counts. A marketing page that overstates a bundle size is the
  * one claim a developer will check first.
  */
-const VERSION = "2.5.9"
+const VERSION = "2.5.10"
 const REPO = "https://github.com/marketcalls/openalgo-charts"
 const DOCS = "https://marketcalls.github.io/openalgo-charts"
 const NPM = "https://www.npmjs.com/package/openalgo-charts"
@@ -65,15 +65,15 @@ const FEATURES = [
  * what you draw. Sizes are brotli, the figure a browser actually pulls.
  */
 const TIERS = [
-  { name: "openalgo-charts", size: "131.68 kB", descKey: "charts.tier.base" },
-  { name: "/indicators", size: "40.38 kB", descKey: "charts.tier.indicators" },
-  { name: "/draw", size: "55.61 kB", descKey: "charts.tier.draw" },
-  { name: "/widget", size: "99.64 kB", descKey: "charts.tier.widget" },
-  { name: "/profile", size: "14.96 kB", descKey: "charts.tier.profile" },
-  { name: "/transform", size: "4.56 kB", descKey: "charts.tier.transform" },
+  { name: "openalgo-charts", size: "134.69 kB", descKey: "charts.tier.base" },
+  { name: "/indicators", size: "40.43 kB", descKey: "charts.tier.indicators" },
+  { name: "/draw", size: "57.98 kB", descKey: "charts.tier.draw" },
+  { name: "/widget", size: "121.36 kB", descKey: "charts.tier.widget" },
+  { name: "/profile", size: "14.97 kB", descKey: "charts.tier.profile" },
+  { name: "/transform", size: "4.55 kB", descKey: "charts.tier.transform" },
   { name: "/trade", size: "16.69 kB", descKey: "charts.tier.trade" },
   { name: "/webgl", size: "6.93 kB", descKey: "charts.tier.webgl" },
-  { name: "/workspace", size: "11.33 kB", descKey: "charts.tier.workspace" },
+  { name: "/workspace", size: "11.53 kB", descKey: "charts.tier.workspace" },
 ]
 
 
