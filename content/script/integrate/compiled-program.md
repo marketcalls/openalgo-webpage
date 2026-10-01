@@ -30,7 +30,7 @@ The compiler turns that into this program, shown laid out for reading:
 {
   "openscript": { "format": "1.1", "language": 1 },
   "requires": ["core.1"],
-  "compiler": { "name": "openscript", "version": "0.8.0" },
+  "compiler": { "name": "openscript", "version": "0.8.1" },
   "source": {
     "hash": "sha256:b17e0f0cb4173846316ce2c59f7ee22ce1f7b031eaca75e27596dd4456b2a493",
     "lines": 13,
@@ -167,7 +167,7 @@ A program is one object with these fields. An empty table is written as an empty
 
 ### Two versions, two jobs
 
-`openscript.format` versions the **format**: field names, the instruction set, the encoding. It is `"1.1"` in 0.8.0, and releases 0.6.0 to 0.8.0 left it unchanged, so a program stored under 0.5.0 loads as it did. `openscript.language` versions **meaning**: which front end parsed the source, and which behaviour of each library function an engine must apply. An engine selects library behaviour by the program's `language`, never by the newest it has, so a saved script never changes its numbers. The two move independently, because a new field and a corrected calculation have nothing to do with each other.
+`openscript.format` versions the **format**: field names, the instruction set, the encoding. It is `"1.1"` in 0.8.1, and releases 0.6.0 to 0.8.1 left it unchanged, so a program stored under 0.5.0 loads as it did. `openscript.language` versions **meaning**: which front end parsed the source, and which behaviour of each library function an engine must apply. An engine selects library behaviour by the program's `language`, never by the newest it has, so a saved script never changes its numbers. The two move independently, because a new field and a corrected calculation have nothing to do with each other.
 
 ### Capability tags
 

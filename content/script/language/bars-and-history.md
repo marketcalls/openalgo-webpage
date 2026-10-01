@@ -252,7 +252,7 @@ if climbing and crossed
 ```
 
 :::warn History of a whole array
-The compiler accepts `history(arr, 1)` on an array, but in release 0.8.0 it gives the absent value on every bar rather than last bar's array, and indexing that result, as in `history(m, 1)[0]`, stops the script with OS4004 on the first bar. Name the element you need at the top level, as above, and read that name's history.
+The compiler accepts `history(arr, 1)` on an array, but in release 0.8.1 it gives the absent value on every bar rather than last bar's array, and indexing that result, as in `history(m, 1)[0]`, stops the script with OS4004 on the first bar. Name the element you need at the top level, as above, and read that name's history.
 :::
 
 [Collections](/script/language/collections) covers arrays in full.

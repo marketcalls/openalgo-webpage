@@ -215,7 +215,7 @@ plot(fast, "Fast", color = color.aqua)
 plotshape(go, title = "Go", style = shape.triangleup, location = location.belowbar)
 ```
 
-What comes back from version 0.8.0:
+What comes back from version 0.8.1:
 
 ```openscript title="OpenScript"
 version 1

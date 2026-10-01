@@ -16,16 +16,18 @@ Two facts about a bar sit under everything on this page:
 
 ### Clock intervals and calendar intervals
 
-Minutes and hours are measured by the clock. Days, weeks and months are measured by the calendar and by the instrument's session.
+Minutes and hours are measured by the clock. Days, weeks and months are measured by the calendar, in the instrument's timezone.
 
-A daily bar is not 1440 minutes of trading. It is one session, which is 375 minutes on NSE and BSE, a much longer day running into the late evening on MCX, or a shorter day when the exchange closes early. A monthly bar is 28 to 31 days depending on the month.
+A daily bar is not 1440 minutes of trading. On an instrument whose session stays inside one date it is that session, which is 375 minutes on NSE and BSE, a much longer day running into the late evening on MCX, or a shorter day when the exchange closes early. A monthly bar is 28 to 31 days depending on the month.
+
+When a script folds the chart's bars into days itself, with a `"1D"` [higher timeframe read](/script/data/higher-timeframes), a day is a civil date in the instrument's timezone. That is the session for a session that stays inside one date, as every NSE, BSE and MCX session does. An evening session that runs past midnight is split at midnight, and its bars after midnight are folded into the next date's day.
 
 [[chart.intervalMinutes]] is the interval's **nominal** length in minutes, worked out from how the interval is written. It is 5 on a `"5m"` chart, 1440 on a `"1D"` chart and 10080 on a `"1W"` chart. A month has no fixed length, so on a `"1M"` chart it is absent. [[chart.isIntraday]] is `true` only for an interval shorter than one day.
 
 | Interval | Measured by | `chart.intervalMinutes` | `chart.isIntraday` |
 |---|---|---|---|
 | `"1m"` to `"4h"`, and any count of minutes | The clock | The interval in minutes | `true` |
-| `"1D"` | The session | `1440` | `false` |
+| `"1D"` | The civil date | `1440` | `false` |
 | `"1W"` | The calendar | `10080` | `false` |
 | `"1M"` | The calendar | absent | absent |
 | An interval the language cannot read, such as `"D"` | Unknown | absent | absent |

@@ -259,7 +259,7 @@ See [Repainting](/script/data/repainting) for the whole subject.
 
 | Check | Why |
 |---|---|
-| It is flat when you expect it to be | Test the script's own square-off on a real session end, 15:30 on NSE and NFO. `closeOnSessionEnd` is accepted and not acted on in version 0.8.0, so the exit has to be a rule in the script: see [Exiting on the clock](/script/strategies/exits-and-brackets#exiting-on-the-clock) |
+| It is flat when you expect it to be | Test the script's own square-off on a real session end, 15:30 on NSE and NFO. `closeOnSessionEnd` is accepted and not acted on in version 0.8.1, so the exit has to be a rule in the script: see [Exiting on the clock](/script/strategies/exits-and-brackets#exiting-on-the-clock) |
 | It behaves on a day with a gap, a halt or a missing bar | Absence reaches a plot as a gap; make sure it reaches your decisions as "do nothing" |
 | It has run in sandbox trading (analyzer mode in OpenAlgo), on real market data, long enough to see every branch | The Strategies panel starts a run in sandbox while OpenAlgo is in analyzer mode. Run there first, then live. See [Sandbox and live](/script/strategies/sandbox-and-live) |
 | You know what it does when a data read fails | [[req.isReady()]] and [[req.error()]] let a script say "not yet" instead of guessing |

@@ -18,7 +18,7 @@ pip install openscript
 | Python | 3.12 or newer |
 | Dependencies | None. The standard library only, and not the parts of it that would stop two runs agreeing: no network, threads, randomness or locale inside the package |
 | Licence | Apache 2.0 |
-| Version | 0.8.0, released together with `openalgo-script` |
+| Version | 0.8.1, released together with `openalgo-script` |
 | Publishing | Since 0.6.0, uploaded by the project's release workflow through trusted publishing, with no stored token. Each file on the index carries a signed attestation of the workflow run that built it |
 | Code generation | None. No string evaluator, no statement executor, no import by a computed name and no objects loaded out of bytes, so many people's scripts can run in one process |
 
@@ -176,7 +176,7 @@ Four of those mean "this engine does not have that" rather than "the program is 
 
 ## What this engine runs, and what it refuses
 
-The Python engine is built for strategies and for studies that produce numbers. In 0.8.0 it holds every library entry the JavaScript engine does, 251 of 251, which the project's build checks every time it runs. What it does not carry is a chart's drawing surface. A capability your run does not serve is refused at load, by name, never answered with an empty value:
+The Python engine is built for strategies and for studies that produce numbers. In 0.8.1 it holds every library entry the JavaScript engine does, 251 of 251, which the project's build checks every time it runs. What it does not carry is a chart's drawing surface. A capability your run does not serve is refused at load, by name, never answered with an empty value:
 
 | Script uses | In the Python engine |
 |---|---|
@@ -409,7 +409,7 @@ python -m openscript --actual <case-directory>
 ```
 
 ```json
-{"engineOnly":true,"languageVersions":[1],"name":"openscript","profile":"strategy","schemaVersion":"1.1","version":"0.8.0"}
+{"engineOnly":true,"languageVersions":[1],"name":"openscript","profile":"strategy","schemaVersion":"1.1","version":"0.8.1"}
 ```
 
 `--describe` states what the engine claims, and since 0.6.0 it answers from a copy installed with `pip`, reading its name and version from the record the installer wrote. The other two run one case directory and read one JSON object on standard input, `{"program": "<the canonical program text>"}`, because the engine has no compiler to turn the case's `script.os` into a program itself: the first compares against the case's expected files, the second prints what the engine computed so two engines can be compared directly.

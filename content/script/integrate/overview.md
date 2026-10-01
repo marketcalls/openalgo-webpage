@@ -17,7 +17,7 @@ OpenScript is not a feature locked inside OpenAlgo. OpenAlgo itself is built on 
 | Holds | The compiler, the engine, the backtest, the importer, six headless editor functions (functions that return data and draw nothing), a chart adapter and a drop-in editor adapter | An engine that runs compiled programs. No compiler |
 | Runtime dependencies | None | None (the Python standard library only) |
 | Licence | Apache 2.0 | Apache 2.0 |
-| Version | 0.8.0 | 0.8.0 |
+| Version | 0.8.1 | 0.8.1 |
 
 ```bash
 npm install openalgo-script
@@ -189,14 +189,14 @@ node --disallow-code-generation-from-strings server.mjs
 
 The switch refuses those two names in that one process and nothing wider. A child process gets its own options, so set it on every process you start, and keep anything that evaluates user text away from the engine's process. In a browser, a content security policy without `unsafe-eval` does the same job. If you run the engine in a web worker, serve the worker as a file from your own origin rather than building it from a blob, because a policy that allows scripts from your origin refuses a worker built from a blob URL.
 
-## Where 0.8.0 stands
+## Where 0.8.1 stands
 
 Stated plainly, so nothing on this list surprises you later:
 
 - **Studies are the finished surface.** Plots, fills, levels, markers, bar colours, backgrounds, drawing objects, tables, alerts and reads of other timeframes and instruments all run, on a chart and headless. On openalgo-charts, a study with more than one table or a band coloured per bar needs chart version 2.5.4 or newer, stated to the [chart adapter](/script/integrate/charts-adapter#the-chart-version); without it such a study is refused before any bar runs rather than drawn in part.
 - **The backtest does not model everything, and says which.** A stop or target attached with [[exit()]] or [[order.bracket()]] does not fill yet. A quantity stated in cash or as a percentage of equity is refused before the first bar rather than filled. A strategy that scales in is charted at the size it ended up entering, which can overstate its drawdown. A script cannot read its own equity during a run.
 - **The Python engine holds the whole library and draws nothing.** It has every library entry the JavaScript engine does, arrays, [[print()]], the calendar, drawing objects, tables and reads of other data included. It has no chart surface for markers, fills, levels, bar colours or backgrounds, and its calendar reads one timezone, UTC; [Python engine](/script/integrate/python-engine#what-this-engine-runs-and-what-it-refuses) has the details.
-- **The portability claim is still being tested.** The JavaScript and Python engines agree to the last bit on all 107 conformance cases they both run, per-bar indicator values among them, but both were written in the same repository. No engine written by anyone else has run the conformance suite yet.
+- **The portability claim is still being tested.** The JavaScript and Python engines agree to the last bit on all 108 conformance cases they both run, per-bar indicator values among them, but both were written in the same repository. No engine written by anyone else has run the conformance suite yet.
 - **Some library names are planned.** The compiler refuses a planned name with [OS2020](/script/errors/names-and-types#os2020) where it is written.
 
 [Release notes](/script/resources/release-notes) carries the full list, release by release.

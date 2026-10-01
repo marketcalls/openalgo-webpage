@@ -15,7 +15,7 @@ This page covers the OS6xxx codes of OpenScript (also called OpenAlgo Script): t
 | When the host answers a request | [OS6007](#os6007), [OS6008](#os6008), [OS6009](#os6009), [OS6014](#os6014) | Nothing stops. The read is absent, and [[req.error()]] returns the message |
 | Before a backtest's first bar | [OS6020](#os6020), [OS6021](#os6021), [OS6023](#os6023), and [OS6022](#os6022) on a replay | The run is refused and nothing is computed. Of these, only OS6021 can appear in the Backtest panel, which shows the code and the message |
 | When the chart adapter builds the study, before bar 0 | [OS6024](#os6024) | The study is refused whole and nothing is drawn. It comes from the library's chart adapter, when the chart cannot draw everything the study declares |
-| Not raised in version 0.8.0 | [OS6013](#os6013) | The shape it describes is refused earlier, when the script compiles |
+| Not raised in version 0.8.1 | [OS6013](#os6013) | The shape it describes is refused earlier, when the script compiles |
 
 The **host** named throughout this page is the application the engine runs inside. It supplies the bars and the facts about the instrument, and answers requests for other data. In OpenAlgo it is the /trading page for charts and backtests, and the strategy runner on the OpenAlgo server for a deployed strategy.
 
@@ -78,7 +78,7 @@ Folding bars upward works: twelve 5 minute bars make an hour. Folding downward c
 
 {{error: OS6015}}
 
-An intraday request is built by counting chart bars into groups, so its interval must be a whole multiple of the chart's. On a 5 minute chart, `"15"` and `"60"` fold cleanly; on a 30 minute chart, `"45"` does not, because 45 minutes is one and a half chart bars. Day, week and month requests are built from the calendar and the session instead, so they are exempt. The study is refused when it loads, and the fix names an interval that works.
+An intraday request is built by counting chart bars into groups, so its interval must be a whole multiple of the chart's. On a 5 minute chart, `"15"` and `"60"` fold cleanly; on a 30 minute chart, `"45"` does not, because 45 minutes is one and a half chart bars. Day, week and month requests are built from the calendar instead, keyed by the civil date in the instrument's timezone, so they are exempt. The study is refused when it loads, and the fix names an interval that works.
 
 {{error: OS6014}}
 
@@ -88,7 +88,7 @@ A timeframe can be well formed and still be one the data source does not store f
 
 The symbol and the timeframe of a request are settled once, before the first bar, so that the host can fetch each series once and keep it in step with the chart. A request whose identity changed from bar to bar would need a new fetch on a bar that had already been drawn.
 
-**Not raised yet.** In version 0.8.0 nothing raises OS6013, because nothing can reach it: a timeframe or a symbol computed from bar data, like the one in the example below, is refused when the script compiles, with [OS3003](/script/errors/arguments#os3003). Take the timeframe from a literal or from an [[input()]] with `kind = "interval"`, as the fix does.
+**Not raised yet.** In version 0.8.1 nothing raises OS6013, because nothing can reach it: a timeframe or a symbol computed from bar data, like the one in the example below, is refused when the script compiles, with [OS3003](/script/errors/arguments#os3003). Take the timeframe from a literal or from an [[input()]] with `kind = "interval"`, as the fix does.
 
 ## Request expressions
 
@@ -96,7 +96,7 @@ The symbol and the timeframe of a request are settled once, before the first bar
 
 The expression passed to [[req.timeframe()]] or [[req.symbol()]] is computed on the requested bars, in their own time: daily bars for a `"1D"` read, the other instrument's bars for a symbol read. A value computed on the chart's own bars, such as a 20 bar average of 5 minute closes, has no meaning on a daily bar, so the compiler refuses it.
 
-In version 0.8.0 the only names from the rest of the file the expression can read are inputs, the names an [[input()]] assigns. Every other name is refused, even one that holds a plain number:
+In version 0.8.1 the only names from the rest of the file the expression can read are inputs, the names an [[input()]] assigns. Every other name is refused, even one that holds a plain number:
 
 ```openscript expect=OS6003
 k = 20
@@ -196,7 +196,7 @@ Recompile the script from its source with the compiler that matches the engine: 
 
 {{error: OS6017}}
 
-The first line of a script, `version 1`, names its language version, and the program compiled from it carries that number. An engine runs every language version it implements exactly as before, and refuses one it does not have rather than running it approximately, because a saved script has to keep producing the same numbers. Version 0.8.0 implements language version 1.
+The first line of a script, `version 1`, names its language version, and the program compiled from it carries that number. An engine runs every language version it implements exactly as before, and refuses one it does not have rather than running it approximately, because a saved script has to keep producing the same numbers. Version 0.8.1 implements language version 1.
 
 A program compiled from a newer language version needs a newer engine, or a recompile against a version this engine has.
 
@@ -204,7 +204,7 @@ A program compiled from a newer language version needs a newer engine, or a reco
 
 Before an engine runs a program, it checks that the program is well formed: every instruction points at something that exists, and every field has the shape the format requires. A program that fails is refused whole, before any bar, and the message says where it failed. A program straight from the compiler passes, so a failure means the stored program was damaged or edited after it was compiled. Recompile it from the source.
 
-In version 0.8.0 the compiler itself can also report OS6018 on a line, beside another error such as [OS2005](/script/errors/names-and-types#os2005) for a function that calls itself, [OS3003](/script/errors/arguments#os3003) or [OS3025](/script/errors/arguments#os3025). Fix the other error and it goes with it. If OS6018 is the only diagnostic on an unchanged script, the fault is in the compiler, and its message asks you to report it with the script. See [Reading an error](/script/errors/overview).
+In version 0.8.1 the compiler itself can also report OS6018 on a line, beside another error such as [OS2005](/script/errors/names-and-types#os2005) for a function that calls itself, [OS3003](/script/errors/arguments#os3003) or [OS3025](/script/errors/arguments#os3025). Fix the other error and it goes with it. If OS6018 is the only diagnostic on an unchanged script, the fault is in the compiler, and its message asks you to report it with the script. See [Reading an error](/script/errors/overview).
 
 {{error: OS6019}}
 
@@ -226,7 +226,7 @@ Widen the window, or choose one that overlaps the loaded bars. Both ends are inc
 
 {{error: OS6021}}
 
-A setting can be well formed and still impossible to carry out on this run. In version 0.8.0 the common cause is sizing: a backtest fills in units and keeps no running equity, so `qtyType = "cash"` and `qtyType = "equityPercent"` are refused, and so is `qtyType = "lots"` on an instrument whose lot size is not known. Slippage stated in ticks when there is no tick size to measure a tick in is refused the same way, and so is a charge levied on another charge that is declared after it. The message names the setting and the reason.
+A setting can be well formed and still impossible to carry out on this run. In version 0.8.1 the common cause is sizing: a backtest fills in units and keeps no running equity, so `qtyType = "cash"` and `qtyType = "equityPercent"` are refused, and so is `qtyType = "lots"` on an instrument whose lot size is not known. Slippage stated in ticks when there is no tick size to measure a tick in is refused the same way, and so is a charge levied on another charge that is declared after it. The message names the setting and the reason.
 
 Count in units, or in lots on an instrument that states its lot size. In the Backtest panel only the refusal of `"cash"` and `"equityPercent"` can happen: the panel reads the tick and lot size from OpenAlgo's record of the instrument, and when it has none it runs with a tick of 0.05 and a lot of 1 and says so under the report, so check that line before trusting a result counted in lots. See [Position and sizing](/script/strategies/position-and-sizing) and [Costs and fills](/script/strategies/costs-and-fills).
 

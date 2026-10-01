@@ -317,7 +317,7 @@ What the number in `qty`, and in an order's own `qty`, means.
 The backtest refuses cash and equity sizing because it keeps no running equity to size against, and it says so rather than filling the number as written.
 
 :::warn
-In release 0.8.0, a bare `close()` in a strategy declared with `qtyType = "lots"` sends the position's size in units as though it were a count of lots. On a contract whose lot is more than one unit, a backtest then sells far more than it holds and opens a large opposite position. Until this is fixed, close a lots strategy with the number of lots you hold, `close(qty = n)`, and guard it with `not pos.isFlat`: a close that states a quantity while the strategy is flat stops the run with `OS7017`. A strategy sized in units has no such problem.
+In release 0.8.1, a bare `close()` in a strategy declared with `qtyType = "lots"` sends the position's size in units as though it were a count of lots. On a contract whose lot is more than one unit, a backtest then sells far more than it holds and opens a large opposite position. Until this is fixed, close a lots strategy with the number of lots you hold, `close(qty = n)`, and guard it with `not pos.isFlat`: a close that states a quantity while the strategy is flat stops the run with `OS7017`. A strategy sized in units has no such problem.
 :::
 
 ```openscript
@@ -430,7 +430,7 @@ if close < lowest(low, 10)[1]
 
 ### closeOnSessionEnd
 
-Asks for any open position to be flattened at the session's close, for an intraday strategy that must not carry a position overnight. It is recorded in the compiled strategy, but in release 0.8.0 the backtest does not act on it, so close explicitly before the session ends.
+Asks for any open position to be flattened at the session's close, for an intraday strategy that must not carry a position overnight. It is recorded in the compiled strategy, but in release 0.8.1 the backtest does not act on it, so close explicitly before the session ends.
 
 Two things decide how you do that:
 

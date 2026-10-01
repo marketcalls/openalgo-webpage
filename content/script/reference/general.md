@@ -162,7 +162,7 @@ if bar.isLast
 
 **Remarks.** The difference shows wherever `none` would otherwise travel: `not (close > ema50)` is `none` during warmup, while `not toBool(close > ema50)` is `true`. Choose deliberately, because a warmup bar that reads as `false` is a claim about the market that nobody measured.
 
-It is not a way to read a number as a condition; there is no truthiness (no rule that treats `0` as false) in the language. In release 0.8.0 the compiler accepts a number or a string here, and the result is `false` whatever the value, so `toBool(1)` is `false`. Write the comparison you mean, such as `n != 0`. The call is spelled `toBool` because `bool` is a type name and cannot be called: `bool(x)` is `OS1019`.
+It is not a way to read a number as a condition; there is no truthiness (no rule that treats `0` as false) in the language. In release 0.8.1 the compiler accepts a number or a string here, and the result is `false` whatever the value, so `toBool(1)` is `false`. Write the comparison you mean, such as `n != 0`. The call is spelled `toBool` because `bool` is a type name and cannot be called: `bool(x)` is `OS1019`.
 
 **See also.** [[isNone()]], [[text()]]
 

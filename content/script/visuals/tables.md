@@ -151,7 +151,7 @@ the study does.
 A study may declare as many grids as it likes, and the compiled study carries
 every one of them. How many a chart draws depends on the chart:
 
-- The [chart adapter](/script/integrate/charts-adapter) in library 0.8.0 draws
+- The [chart adapter](/script/integrate/charts-adapter) in library 0.8.1 draws
   every grid on openalgo-charts 2.5.4 or newer, when the host (the application
   drawing the chart) passes the chart's version as `chartVersion`. Each grid sits
   in the corner its own `position` names, so give each grid a corner of its own:

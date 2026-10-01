@@ -3,7 +3,7 @@ title: Chart adapter
 description: Turn a compiled OpenScript study into an indicator for openalgo-charts with descriptorFor, register it, and let the chart drive the engine for plots, fills, levels, markers, tables, drawings, alerts and reads of other instruments.
 ---
 
-The chart adapter draws a compiled study on openalgo-charts, the OpenAlgo charting engine. One call, `descriptorFor`, turns a compiled program into the chart's indicator descriptor: the legend row, the settings dialog, the plots and everything else the script declares. The chart then calls back into the adapter whenever it needs values, and the adapter runs the engine. This page covers wiring it up, the options you pass, which chart version draws what, how a live bar and a settings change reach the study, and what the chart does not draw in 0.8.0.
+The chart adapter draws a compiled study on openalgo-charts, the OpenAlgo charting engine. One call, `descriptorFor`, turns a compiled program into the chart's indicator descriptor: the legend row, the settings dialog, the plots and everything else the script declares. The chart then calls back into the adapter whenever it needs values, and the adapter runs the engine. This page covers wiring it up, the options you pass, which chart version draws what, how a live bar and a settings change reach the study, and what the chart does not draw in 0.8.1.
 
 The adapter computes nothing itself. Every value on the chart is the engine's, so the chart and a backtest of the same script cannot disagree.
 
@@ -234,7 +234,7 @@ const owner = candleOwner([
 
 Backgrounds need no such rule. Every colour carries its own alpha, and two translucent backgrounds compose.
 
-## What the chart does not draw in 0.8.0
+## What the chart does not draw in 0.8.1
 
 The compiled program carries all of a script's outputs; a few have no field on the chart's descriptor to land in, and are left out rather than approximated:
 

@@ -92,7 +92,7 @@ See [Absent values](/script/language/absent-values).
 
 **Cause.** A cell written with an absent value is blank, just as a plot of an absent value is a gap. Also, the chart shows only the cells the newest bar wrote: a [[cell()]] call that did not run on the newest bar leaves its cell empty.
 
-**Fix.** Convert deliberately, so a reader can tell warmup from a value: `isNone(v) ? "warming up" : text(v, 2)`, or `text(v)`, which writes an absent value as the word `none`. Declare the [[table()]] at the top level and write its cells on the newest bar, with `if bar.isLast`. A study may declare several tables: the chart adapter in version 0.8.0 draws each in the corner its `position` names when the host states that it draws on openalgo-charts 2.5.4 or newer, and otherwise refuses the study with OS6024 rather than leaving one out. The /trading page in current OpenAlgo releases still runs library 0.5.0, which draws only the first table a study declares, so keep one table per study there. See [Tables](/script/visuals/tables).
+**Fix.** Convert deliberately, so a reader can tell warmup from a value: `isNone(v) ? "warming up" : text(v, 2)`, or `text(v)`, which writes an absent value as the word `none`. Declare the [[table()]] at the top level and write its cells on the newest bar, with `if bar.isLast`. A study may declare several tables: the chart adapter in version 0.8.1 draws each in the corner its `position` names when the host states that it draws on openalgo-charts 2.5.4 or newer, and otherwise refuses the study with OS6024 rather than leaving one out. The /trading page in current OpenAlgo releases still runs library 0.5.0, which draws only the first table a study declares, so keep one table per study there. See [Tables](/script/visuals/tables).
 
 ### The compiler refuses my plot inside an if
 
@@ -247,7 +247,7 @@ See [Variables and scope](/script/language/variables-and-scope).
 **Fix.** Store [[time]] and compare timestamps, because a bar's time never moves. Anchor a running value to something that does not move either, such as the start of a session or a date, rather than to the first bar on the chart.
 
 :::note
-The error reference lists a warning for a stored bar index, [OS8014](/script/errors/warnings#os8014), but the compiler in version 0.8.0 does not raise it yet: it does not follow a bar index into a `var`.
+The error reference lists a warning for a stored bar index, [OS8014](/script/errors/warnings#os8014), but the compiler in version 0.8.1 does not raise it yet: it does not follow a bar index into a `var`.
 :::
 
 ### Warmup quietly changed an answer
@@ -257,7 +257,7 @@ The error reference lists a warning for a stored bar index, [OS8014](/script/err
 **Fix.** Decide what warmup means and write it down: test `isNone(cond)` explicitly, or give the name a starting value above the `if` that you are happy to see on warmup bars.
 
 :::note
-The error reference lists a warning for this shape, [OS8004](/script/errors/warnings#os8004), but the compiler in version 0.8.0 does not raise it yet: it does not yet follow which names a branch on a possibly absent condition assigns.
+The error reference lists a warning for this shape, [OS8004](/script/errors/warnings#os8004), but the compiler in version 0.8.1 does not raise it yet: it does not yet follow which names a branch on a possibly absent condition assigns.
 :::
 
 ## Signals and alerts
@@ -390,10 +390,10 @@ See [Other instruments](/script/data/other-instruments).
 3. **The condition has not been true since it started.** Orders wait for a confirmed bar, and a strategy acts only on bars that arrive after it starts.
 4. **The instrument was outside its trading session.** Nothing in the script checks this for you.
 
-**Fix.** Check the deployment's row and the mode in the Strategies panel header. To check the logic itself, open the script in the Scripts panel and press **Apply to chart**: for a strategy, that runs a backtest over the chart's history and marks every fill on the price. Guard entries to the session with [[session.isIn()]] and a named zone, such as `session.isIn("0915-1530", "Asia/Kolkata")`. The same guard holds on the chart, in the Backtest panel and in a deployed strategy, which reads the calendar in the instrument's zone. `closeOnSessionEnd = true` is accepted and not acted on in version 0.8.0, so a strategy that must be flat at the close needs its own exit. See [Sandbox and live](/script/strategies/sandbox-and-live) and [Sessions and time](/script/data/sessions-and-time).
+**Fix.** Check the deployment's row and the mode in the Strategies panel header. To check the logic itself, open the script in the Scripts panel and press **Apply to chart**: for a strategy, that runs a backtest over the chart's history and marks every fill on the price. Guard entries to the session with [[session.isIn()]] and a named zone, such as `session.isIn("0915-1530", "Asia/Kolkata")`. The same guard holds on the chart, in the Backtest panel and in a deployed strategy, which reads the calendar in the instrument's zone. `closeOnSessionEnd = true` is accepted and not acted on in version 0.8.1, so a strategy that must be flat at the close needs its own exit. See [Sandbox and live](/script/strategies/sandbox-and-live) and [Sessions and time](/script/data/sessions-and-time).
 
 :::note
-[OS7012](/script/errors/orders#os7012) (outside the session) is in the error reference, but nothing raises it in version 0.8.0: nothing compares the bar's time with the instrument's session before an order is sent. Guard the session yourself.
+[OS7012](/script/errors/orders#os7012) (outside the session) is in the error reference, but nothing raises it in version 0.8.1: nothing compares the bar's time with the instrument's session before an order is sent. Guard the session yourself.
 :::
 
 ### My strategy stopped on an order error
@@ -430,7 +430,7 @@ inSession = session.isIn("0915-1530", "Asia/Kolkata")
 distance = close - stop
 qty = distance > 0 ? floor(riskAmount / distance) : none
 
-// The script tests its own stop: the backtest in version 0.8.0 does not
+// The script tests its own stop: the backtest in version 0.8.1 does not
 // fill a stop set with exit().
 var stopLevel = none
 
@@ -480,7 +480,7 @@ if crossDown(fast, slow)
 For [OS7017](/script/errors/orders#os7017), leave the quantity off `close()` and it closes whatever is left, or guard a partial exit on [[pos.size]] so it cannot fire twice on one position. The engine will not send a smaller number for you: that would be a quantity you did not write.
 
 :::note
-[OS7005](/script/errors/orders#os7005) (a quantity that is not a whole number of lots) and [OS7011](/script/errors/orders#os7011) (an order larger than the capital) are in the error reference, and nothing raises them in version 0.8.0. Round NFO and MCX quantities to the lot size yourself, using [[chart.lotSize]].
+[OS7005](/script/errors/orders#os7005) (a quantity that is not a whole number of lots) and [OS7011](/script/errors/orders#os7011) (an order larger than the capital) are in the error reference, and nothing raises them in version 0.8.1. Round NFO and MCX quantities to the lot size yourself, using [[chart.lotSize]].
 :::
 
 ### My strategy stopped after its first entry

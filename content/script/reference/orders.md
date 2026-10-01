@@ -3,7 +3,7 @@ title: order.*
 description: The order namespace. place, reverse and bracket run today; reading an order back, changing one in place, one-cancels-other and the sizing helpers are planned.
 ---
 
-The `order` namespace holds the order calls a strategy reaches for less often than the six on [Strategy orders](/script/reference/strategy): a general form for a script that computes its side, a reversal in one call, a stop and target given as distances, the calls that will read an order back, and the helpers that will turn an amount of money into a quantity. Three of them run in version 0.8.0 and the rest are planned.
+The `order` namespace holds the order calls a strategy reaches for less often than the six on [Strategy orders](/script/reference/strategy): a general form for a script that computes its side, a reversal in one call, a stop and target given as distances, the calls that will read an order back, and the helpers that will turn an amount of money into a quantity. Three of them run in version 0.8.1 and the rest are planned.
 
 Everything here works only in a `strategy()` file; in a study it is refused with OS7001. A planned name is refused where you write it with OS2020, so you find out at the line that uses it.
 
@@ -43,7 +43,7 @@ plot(slow, "Slow", orange)
 plot(pos.isFlat ? none : pos.avgPrice, "Average price", fade(silver, 40), style = "step")
 ```
 
-A reader of `order.place(side, ...)` has to work out what `side` holds, so use it where the direction really is computed, and [[buy()]] or [[sell()]] where it is written in the source. In version 0.8.0 a bracket is not filled, so on the chart and in the Backtest panel this strategy exits only when the side turns; and the Strategies panel refuses to start a strategy that calls [[order.bracket()]].
+A reader of `order.place(side, ...)` has to work out what `side` holds, so use it where the direction really is computed, and [[buy()]] or [[sell()]] where it is written in the source. In version 0.8.1 a bracket is not filled, so on the chart and in the Backtest panel this strategy exits only when the side turns; and the Strategies panel refuses to start a strategy that calls [[order.bracket()]].
 
 ## What runs and what is planned
 
@@ -152,7 +152,7 @@ plot(dir == 1  ? band : none, "Stop, short", red,  width = 2)
 
 **Remarks.** A reversal is always two orders, because no order crosses zero: one closes the outgoing position and one opens the replacement, each with its own position reference, so a late fill can say which position it settles. Long 2, `order.reverse(qty = 5)` sends a sell of 2 and a sell of 5 and leaves the strategy short 5. On a flat position it sends nothing.
 
-`order.reverse` sizes both halves itself in units. Under `qtyType = "lots"` the backtest in version 0.8.0 converts those sizes from lots a second time, the same defect as [[close()]]; count in units, as [Where a size comes from](/script/strategies/position-and-sizing#where-a-size-comes-from) explains.
+`order.reverse` sizes both halves itself in units. Under `qtyType = "lots"` the backtest in version 0.8.1 converts those sizes from lots a second time, the same defect as [[close()]]; count in units, as [Where a size comes from](/script/strategies/position-and-sizing#where-a-size-comes-from) explains.
 
 **See also.** [[close()]], [[sell()]], [[pos.size]]
 
@@ -178,7 +178,7 @@ else if pos.isLong and not trendUp
 
 **Remarks.** A position carries one stop and one target, so calling `order.bracket` or [[exit()]] again replaces the pair rather than adding a second one. A distance whose value is absent is refused with OS7002, and that takes the whole bar's orders with it, including the entry above it. The tag is a label that tells the destination which entry the levels protect; a tag that matches no order is not refused.
 
-In version 0.8.0 a bracket is not filled, so on the chart and in the Backtest panel every trade in this example closes when the trend turns. The Strategies panel refuses to start a strategy that calls `order.bracket`. Until both change, write the stop and target as rules the script tests, as [Exits and brackets](/script/strategies/exits-and-brackets) shows.
+In version 0.8.1 a bracket is not filled, so on the chart and in the Backtest panel every trade in this example closes when the trend turns. The Strategies panel refuses to start a strategy that calls `order.bracket`. Until both change, write the stop and target as rules the script tests, as [Exits and brackets](/script/strategies/exits-and-brackets) shows.
 
 **See also.** [[exit()]], [[leg.stop()]], [[leg.trail()]]
 

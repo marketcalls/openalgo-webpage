@@ -1,17 +1,17 @@
 ---
 title: Release notes
-description: What each release of OpenScript and its two libraries changed, what works in version 0.8.0 today, what does not yet, and what is planned.
+description: What each release of OpenScript and its two libraries changed, what works in version 0.8.1 today, what does not yet, and what is planned.
 ---
 
-This page summarises every release of OpenScript, also called OpenAlgo Script, newest first, and then the roadmap. Read it when you want to know whether something works in the version you have, or whether an upgrade changes anything your scripts can see. The current version is **0.8.0**, and both libraries carry it: `openalgo-script` on npm (JavaScript and TypeScript) and `openscript` on PyPI (Python) are released together, at the same version, under Apache 2.0.
+This page summarises every release of OpenScript, also called OpenAlgo Script, newest first, and then the roadmap. Read it when you want to know whether something works in the version you have, or whether an upgrade changes anything your scripts can see. The current version is **0.8.1**, and both libraries carry it: `openalgo-script` on npm (JavaScript and TypeScript) and `openscript` on PyPI (Python) are released together, at the same version, under Apache 2.0.
 
-The version is 0.8.0 rather than 1.0 on purpose. The studies surface is finished and is the part to build on. Strategies run and backtest on one instrument, with limits stated below, and multi-leg strategies are designed but not built.
+The version is 0.8.1 rather than 1.0 on purpose. The studies surface is finished and is the part to build on. Strategies run and backtest on one instrument, with limits stated below, and multi-leg strategies are designed but not built.
 
 :::note The /trading page
 The /trading page of OpenAlgo carries its own copy of the library, and current OpenAlgo releases still ship version 0.5.0 of `openalgo-script` there, with version 2.5.1 of the chart library. The changes from 0.6.0 on reach /trading when OpenAlgo moves to a newer library. Where this page says what /trading does, it means the copy it ships today.
 :::
 
-## What works in 0.8.0
+## What works in 0.8.1
 
 | Area | Status | Notes |
 |---|---|---|
@@ -24,7 +24,7 @@ The /trading page of OpenAlgo carries its own copy of the library, and current O
 | Editor functions: highlighting, completion, hover, signature help, diagnostics, formatting | Works, in the library | For anyone building an editor. The /trading editor uses the highlighting and the compiler's diagnostics on every save; it has no completion, hover or signature help in this release |
 | Strategies on one instrument | Works | [[buy()]], [[sell()]], [[exit()]], [[close()]], [[cancel()]], [[cancelAll()]], [[order.place()]], [[order.bracket()]] and [[order.reverse()]]. A backtest does not fill the levels [[exit()]] and [[order.bracket()]] set |
 | Position facts | Partly | [[pos.size]], [[pos.avgPrice]], [[pos.isFlat]], [[pos.isLong]] and [[pos.isShort]] work; the money figures such as [[pos.equity]] and [[pos.netProfit]] are planned |
-| Backtest and report | Works, with stated limits | See [Known limits](#known-limits-in-0-8-0) |
+| Backtest and report | Works, with stated limits | See [Known limits](#known-limits-in-0-8-1) |
 | A strategy drawn on a chart | Works | New in 0.5.0 |
 | Order sizing helpers and order status | Planned | [[order.qtyForRisk()]], [[order.roundToLot()]], [[order.status()]], [[order.pending]] and the rest of that group |
 | Multi-leg positions | Planned | Every `leg.*` and `book.*` name |
@@ -37,7 +37,7 @@ A planned name is refused where you write it, with error OS2020, so you find out
 profitSoFar = pos.netProfit
 ```
 
-Everything in the next study works in 0.8.0, and in the 0.5.0 copy /trading ships. It reads the previous session's high and low onto an intraday chart, draws them as steps and shows them in a table. By default a daily read takes only days that have closed, so on a 5-minute NSE chart during today's session these are yesterday's levels.
+Everything in the next study works in 0.8.1, and in the 0.5.0 copy /trading ships. It reads the previous session's high and low onto an intraday chart, draws them as steps and shows them in a table. By default a daily read takes only days that have closed, so on a 5-minute NSE chart during today's session these are yesterday's levels.
 
 ```openscript title="Previous day levels"
 version 1
@@ -58,7 +58,7 @@ if bar.isLast
     cell(panel, 1, 1, text(pdl, 2))
 ```
 
-### Planned names in 0.8.0
+### Planned names in 0.8.1
 
 These names are part of the language's design and are refused with OS2020 in this release. The list is the same as in 0.5.0: no planned name has been built since.
 
@@ -73,7 +73,7 @@ These names are part of the language's design and are refused with OS2020 in thi
 | Requests | [[req.candle()]], [[req.events()]] |
 | Other | [[notify()]], [[timeClose]], [[date.add()]], [[str.format()]], [[str.match()]], [[gradient()]], [[hsl()]], [[math.cosh()]], [[math.sinh()]], [[math.tanh()]] |
 
-### Known limits in 0.8.0
+### Known limits in 0.8.1
 
 Stated here so you do not find them inside a report you have already believed.
 
@@ -86,6 +86,18 @@ Stated here so you do not find them inside a report you have already believed.
 - **A second table and a band coloured per bar need a chart that can draw them.** On a chart older than 2.5.4, or on a host that does not say which chart it has, the study is refused with [OS6024](/script/errors/data#os6024) rather than drawn in part. The /trading page, on library 0.5.0, draws the first table and says nothing about the rest, and draws a per-bar band in its first plot's colour at twelve percent: for /trading, declare one table and switch a band off by making its ends absent.
 - **A plot style cannot be a setting.** `plot(..., style = input(...))` is refused with [OS3026](/script/errors/arguments#os3026), because the compiled program stores a style as a plain value. The 0.5.0 copy in /trading still compiles it and draws the default style whatever the setting says.
 - **The Python engine does not produce every chart output.** It computes plots, tables, drawing objects, the log, orders and alerts, and does not produce markers, fills, levels, bar colours or backgrounds.
+
+## 0.8.1
+
+Two fixes and a correction to the documentation. No compiled format change: the format stays 1.1, and every shipped example compiles to the same bytes as with 0.8.0.
+
+**An alert's message is read at the bar the chart judged.** From its version 2.6.0 the chart library can run a study on a transformed chart, such as Renko, range bars, line break, point and figure or Kagi, over the bars the host feeds rather than over the elements it draws, and it reads the study's columns onto those elements, each at the bar the element was completed on. The condition of an [[alert()]] was read at the right bar and its message was not, so on a transform that is not one element per bar a notification could carry another bar's text or fall back to the alert's title. The chart adapter now returns one more column, `openscript:bar`, holding each row's bar index in the run, and reads the message at the bar it names. The column is written only for a study that declares an alert. On every other chart, including every chart library before 2.6.0, nothing a study draws or announces changes; a host that lists the keys of the values table sees the new key beside the `openscript:alert:` ones. See [Chart adapter](/script/integrate/charts-adapter).
+
+**A request mode written in its place is read.** The mode is the third argument of [[req.timeframe()]] and the fifth of [[req.symbol()]], and it was recognised only when written as `mode = ...`. A mode written positionally was accepted and ignored: `req.timeframe("1D", close, "lookahead")` ran as `"confirmed"`, carried no [OS8005](/script/errors/warnings#os8005) and was not marked as repainting, and a positional `"developing"` ran confirmed too. Such a script now runs in the mode it wrote, so its values change, and a positional `"lookahead"` carries OS8005. A positional mode that is not one of the three words written out, one taken from an input for instance, is refused with [OS3003](/script/errors/arguments#os3003), as a labelled one already was. The compiler settles the mode, so a program compiled by 0.8.0 and stored keeps the mode it was compiled with in either engine: recompile a stored program whose source writes its mode positionally. A new conformance case, `req/positional-mode`, pins it, and both engines agree on all 108 cases they run.
+
+**A daily read folds by the date.** The documentation said a `"1D"` higher timeframe read folds by the session. It folds by the civil date in the instrument's timezone, as the compiled program's specification says and both engines have always done. For a session that stays inside one date, as every NSE, BSE and MCX session does, the two are the same. An evening session that runs past midnight is split at midnight, and its bars after midnight join the next date's bucket. The cause of [OS6015](/script/errors/data#os6015) and the pages on [timeframes](/script/data/timeframes) now say so. No behaviour changes.
+
+The Python engine's code is unchanged. The chart adapter ships only in the npm package and the mode fix is in the compiler; the Python package moves to 0.8.1 because the two packages carry one version and ship as one release. Upgrade both together.
 
 ## 0.8.0
 
@@ -150,7 +162,7 @@ Upgrade both packages together when a chart and a server must agree. No script n
 
 ## Roadmap
 
-The project moves in phases, and a phase is finished when its test passes, not when its code is written. No dates are promised here. The long-term plan, with its themes, the outcomes each one is measured by and tasks sized for a single contributor, is published as the [OpenScript roadmap](/script/roadmap); this section says where each phase stands in version 0.8.0.
+The project moves in phases, and a phase is finished when its test passes, not when its code is written. No dates are promised here. The long-term plan, with its themes, the outcomes each one is measured by and tasks sized for a single contributor, is published as the [OpenScript roadmap](/script/roadmap); this section says where each phase stands in version 0.8.1.
 
 ### Built
 
@@ -162,8 +174,8 @@ The project moves in phases, and a phase is finished when its test passes, not w
 ### In progress
 
 - **The editor.** The six editor functions are built and published. The /trading editor uses the highlighter and the diagnostics; completion, hover and signature help in it, and a language server that would give desktop code editors the same help, are not written.
-- **A second engine and running strategies on a server.** The Python engine is published, holds every library entry the JavaScript library does, and agrees with it exactly on every conformance case both can run: 107 of the 126, the other 19 being cases about the compiler, which the Python engine does not have. The design runs strategies on a server, never in a browser tab, because closing a tab is not a decision anyone makes about their positions. It adds process isolation per strategy, scheduling against exchange calendars, a log per script, and sandbox trading by default with live orders only as a deliberate act.
-- **An open standard.** Everything this phase can build inside the project is built: a conformance suite that asserts diagnostics, one value per bar per plot, the log, drawing objects, tables, orders, trades and the report, in 126 cases; the importer; a versioned compiled format with a compatibility promise; and a conformance badge, made from a passing result. The test that finishes the phase is the one thing that cannot be built inside it: an engine in a third programming language, written from the specification alone by someone who has not read this implementation, passing the suite. Until then the project shows no badge of its own.
+- **A second engine and running strategies on a server.** The Python engine is published, holds every library entry the JavaScript library does, and agrees with it exactly on every conformance case both can run: 108 of the 127, the other 19 being cases about the compiler, which the Python engine does not have. The design runs strategies on a server, never in a browser tab, because closing a tab is not a decision anyone makes about their positions. It adds process isolation per strategy, scheduling against exchange calendars, a log per script, and sandbox trading by default with live orders only as a deliberate act.
+- **An open standard.** Everything this phase can build inside the project is built: a conformance suite that asserts diagnostics, one value per bar per plot, the log, drawing objects, tables, orders, trades and the report, in 127 cases; the importer; a versioned compiled format with a compatibility promise; and a conformance badge, made from a passing result. The test that finishes the phase is the one thing that cannot be built inside it: an engine in a third programming language, written from the specification alone by someone who has not read this implementation, passing the suite. Until then the project shows no badge of its own.
 - **Alerts.** An alert is evaluated by the chart that is open, so it fires while the chart is open and stops when the chart is closed. Evaluating alerts on a server, so they fire with nothing open, is a phase of its own and is not being built yet.
 
 ### Planned

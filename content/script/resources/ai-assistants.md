@@ -16,7 +16,7 @@ Every time this documentation is built, two plain text files are generated from 
 
 Both files are written for machines as much as for people, so they drop what an assistant cannot use. Screenshots are left out, callouts become plain text under a short label, and a link to a reference entry becomes the entry's name in code format. A reference entry that is planned rather than available carries "(planned, not available yet)" in its heading, which is what lets an assistant avoid it.
 
-The complete reference opens with the version it describes, for example `# OpenScript 0.8.0 complete reference`, and every page inside it carries a `Source:` line with that page's address on this site. The map follows the llms.txt convention: a title, a one-line summary, then sections of links with a sentence each.
+The complete reference opens with the version it describes, for example `# OpenScript 0.8.1 complete reference`, and every page inside it carries a `Source:` line with that page's address on this site. The map follows the llms.txt convention: a title, a one-line summary, then sections of links with a sentence each.
 
 ## A worked example
 

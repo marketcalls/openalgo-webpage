@@ -51,7 +51,7 @@ Add `version 1` as the first line. Every complete example in this documentation 
 
 When a function or an option turns out to be a mistake, it is never removed and never changes meaning, because a saved script must keep producing the same numbers. It is marked deprecated instead, and this warning names its replacement, which computes the same values.
 
-**Not raised yet.** In version 0.8.0 no name in the library is deprecated, so this warning never appears. The example below uses placeholder names to show its shape.
+**Not raised yet.** In version 0.8.1 no name in the library is deprecated, so this warning never appears. The example below uses placeholder names to show its shape.
 
 ## Where a call runs
 
@@ -65,7 +65,7 @@ Compute the call unconditionally at the top level, give it a name, and use the n
 
 A condition that is absent takes the false branch. During warmup, while an indicator in the condition has no value yet, a block under `if rsi(close, 14) > 70` does not run, so a name it assigns keeps whatever it held before. Those bars sit off the left edge of the chart, which is why the shape can change an answer without anyone noticing.
 
-**Not raised yet.** In version 0.8.0 the checker does not follow names assigned under a possibly absent condition, so this shape compiles without a warning. The before block below is refused for a different reason in this release: `zone` is first assigned inside the `if`, so it does not exist after the block ([OS2001](/script/errors/names-and-types#os2001)). The shape the warning describes needs a name that already exists above the `if`, such as a `var`. Decide what warmup means yourself: give the name its starting value above the `if`, as the fix does, or test the condition with [[isNone()]]. See [Warmup](/script/language/warmup).
+**Not raised yet.** In version 0.8.1 the checker does not follow names assigned under a possibly absent condition, so this shape compiles without a warning. The before block below is refused for a different reason in this release: `zone` is first assigned inside the `if`, so it does not exist after the block ([OS2001](/script/errors/names-and-types#os2001)). The shape the warning describes needs a name that already exists above the `if`, such as a `var`. Decide what warmup means yourself: give the name its starting value above the `if`, as the fix does, or test the condition with [[isNone()]]. See [Warmup](/script/language/warmup).
 
 {{error: OS8011}}
 
@@ -77,7 +77,7 @@ Use `var` unless counting intrabar updates is the point of the script. See [Pers
 
 [[bar.index]] is a position in the bars the engine was given, not a fixed address. When more history loads, every bar is renumbered, so a `var` that stored a bar index and compares it later is comparing against a number that has moved.
 
-**Not raised yet.** In version 0.8.0 the checker does not follow a bar index into a persistent value, so this compiles without a warning. Store [[time]] instead, as the fix does: a bar's time never changes. See [Bars and history](/script/language/bars-and-history).
+**Not raised yet.** In version 0.8.1 the checker does not follow a bar index into a persistent value, so this compiles without a warning. Store [[time]] instead, as the fix does: a bar's time never changes. See [Bars and history](/script/language/bars-and-history).
 
 ## Repainting
 
@@ -101,7 +101,7 @@ Remove the mode to use the default, which never repaints, unless the study is de
 
 A session anchored average such as [[vwap()]] starts again at the first bar of each session and accumulates through the day. On a daily or longer chart every bar is a whole session, so the average covers one bar and equals that bar's own price: the plot adds nothing, while its legend suggests it does.
 
-**Not raised yet.** In version 0.8.0 the checker does not compare the call with the chart's interval, so this compiles without a warning. Use a session average on an intraday chart, such as 5 or 15 minute bars across the 09:15 to 15:30 session. On the /trading chart, `vwap()` has no value in this release, because the chart does not state the session hours it restarts on; anchor the average by date with [[vwapAnchor()]], as in `vwapAnchor(hlc3, isNone(time[1]) or not date.isSameDay(time, time[1], "Asia/Kolkata"))`.
+**Not raised yet.** In version 0.8.1 the checker does not compare the call with the chart's interval, so this compiles without a warning. Use a session average on an intraday chart, such as 5 or 15 minute bars across the 09:15 to 15:30 session. On the /trading chart, `vwap()` has no value in this release, because the chart does not state the session hours it restarts on; anchor the average by date with [[vwapAnchor()]], as in `vwapAnchor(hlc3, isNone(time[1]) or not date.isSameDay(time, time[1], "Asia/Kolkata"))`.
 
 {{error: OS8007}}
 
@@ -151,7 +151,7 @@ Delete the unreachable lines, or move them above the `return`. See [User functio
 
 An `if` or `else if` whose condition is the literal `true` or `false` has the same answer on every bar, so one of its branches can never run. It is usually a test pinned while debugging and left behind.
 
-In version 0.8.0 the warning covers only a bare `true` or `false`. A condition that is just as constant but written as an expression, such as `if 1 > 2` or `if not true`, compiles without it, so look for those yourself.
+In version 0.8.1 the warning covers only a bare `true` or `false`. A condition that is just as constant but written as an expression, such as `if 1 > 2` or `if not true`, compiles without it, so look for those yourself.
 
 Restore the condition you meant, or delete the branch that never runs. See [Debugging](/script/writing/debugging).
 

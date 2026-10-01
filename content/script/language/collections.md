@@ -291,7 +291,7 @@ if crossUp(line, sig)
 The returned array is never absent and never changes length. Each element has its own first bar and is absent until then, so `m[2]` is a valid read on bar 0 that simply holds nothing yet. The crossing is read from the named series, which have history because they are top-level names: `m[1]` is element 1, not one bar ago.
 
 :::warn History of a whole array
-`history(m, 1)` compiles, but in release 0.8.0 it gives the absent value on every bar rather than last bar's array. To look back at an output, name it at the top level, as `line` and `sig` are above, and read `line[1]`.
+`history(m, 1)` compiles, but in release 0.8.1 it gives the absent value on every bar rather than last bar's array. To look back at an output, name it at the top level, as `line` and `sig` are above, and read `line[1]`.
 :::
 
 ## Parallel arrays

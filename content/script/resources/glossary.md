@@ -86,9 +86,9 @@ Reading it with the glossary's words:
 
 **Block.** The lines indented under a header line such as `if`, `for` or `case`. Indentation is spaces only, every line of one block has exactly the same indentation, and there are no braces. See [Script structure](/script/language/script-structure).
 
-**Book.** A planned feature: a group of legs managed as one position, with a combined stop, target, daily loss limit and square-off rules, through the `book.*` functions such as [[book.stop()]]. It is not available in version 0.8.0. See [Legs and books](/script/strategies/multi-leg-and-books).
+**Book.** A planned feature: a group of legs managed as one position, with a combined stop, target, daily loss limit and square-off rules, through the `book.*` functions such as [[book.stop()]]. It is not available in version 0.8.1. See [Legs and books](/script/strategies/multi-leg-and-books).
 
-**Bracket.** A target, a stop or both attached to an open position, set with [[exit()]] or [[order.bracket()]]. In version 0.8.0 a backtest does not fill either level, so test an exit rule in a backtest with an explicit [[close()]]. See [Exits and brackets](/script/strategies/exits-and-brackets).
+**Bracket.** A target, a stop or both attached to an open position, set with [[exit()]] or [[order.bracket()]]. In version 0.8.1 a backtest does not fill either level, so test an exit rule in a backtest with an explicit [[close()]]. See [Exits and brackets](/script/strategies/exits-and-brackets).
 
 **Broadcast.** The automatic treatment of a plain value as that same value on every bar, which is how `ema(close, 9)` accepts the literal `9` where a series would also be allowed. It is the only automatic widening in the language and it never changes a value.
 
@@ -146,7 +146,7 @@ Reading it with the glossary's words:
 
 **Engine.** A program that runs a compiled program bar by bar. The JavaScript library and the Python engine are two engines, and they must agree to the last decimal. The Python engine has the JavaScript engine's library entry for entry, arrays and [[print()]] among them, and no compiler. Of what a study draws, it keeps drawing objects and tables, and not markers, fills, levels, bar colours or backgrounds. See [Two libraries](/script/integrate/overview).
 
-**Equity.** Starting capital plus realised and unrealised profit. Reading it from inside a script, as [[pos.equity]], is planned and not available in version 0.8.0.
+**Equity.** Starting capital plus realised and unrealised profit. Reading it from inside a script, as [[pos.equity]], is planned and not available in version 0.8.1.
 
 **Equity curve.** The account's equity plotted bar by bar over a backtest. Drawdown and run-up are both measured on it. See [Reading a report](/script/strategies/reading-a-report).
 
@@ -156,7 +156,7 @@ Reading it with the glossary's words:
 
 **Expectancy.** The average net result of one closed trade in a backtest: net profit divided by the number of closed trades. A positive expectancy means the strategy made money per trade on average, after charges.
 
-**Expiry.** The day a futures or options contract ends. Reading the chart instrument's expiry, as [[chart.expiry]], is planned and not available in version 0.8.0.
+**Expiry.** The day a futures or options contract ends. Reading the chart instrument's expiry, as [[chart.expiry]], is planned and not available in version 0.8.1.
 
 ## F
 
@@ -218,7 +218,7 @@ plot(move, "Change from the previous close")
 
 ## L
 
-**Leg.** A planned feature: one instrument a multi-leg strategy trades, declared with [[leg.fixed()]] or [[leg.relative()]], for positions such as a straddle on NFO index options. In version 0.8.0 a strategy trades one instrument, the chart's. See [Legs and books](/script/strategies/multi-leg-and-books).
+**Leg.** A planned feature: one instrument a multi-leg strategy trades, declared with [[leg.fixed()]] or [[leg.relative()]], for positions such as a straddle on NFO index options. In version 0.8.1 a strategy trades one instrument, the chart's. See [Legs and books](/script/strategies/multi-leg-and-books).
 
 **Level.** A fixed horizontal reference line in the study's pane, created with [[level()]] at the top level, such as 70 and 30 on an RSI. See [Levels](/script/visuals/levels).
 
@@ -368,7 +368,7 @@ background(noPrev ? fade(gray, 90) : none)
 
 **Strategy.** A file declared with `strategy()`: a study that can also place orders, so the numbers you plot and the numbers you trade are the same numbers. See [Strategies overview](/script/strategies/overview).
 
-**Strike.** The price at which an option can be exercised. Reading the chart instrument's strike, as [[chart.strike]], is planned and not available in version 0.8.0.
+**Strike.** The price at which an option can be exercised. Reading the chart instrument's strike, as [[chart.strike]], is planned and not available in version 0.8.1.
 
 **Study.** A file declared with `study()`: a calculation and what it draws on the chart, with no ability to place an order. Also called an indicator.
 
@@ -394,7 +394,7 @@ background(noPrev ? fade(gray, 90) : none)
 
 **Trade.** One position from the fill that opens it to the fill that brings it back to flat. Adding to a position adds entries to the same trade, and a reversal is two trades.
 
-**Trailing stop.** A stop that follows the price as a trade moves in your favour and never moves back. The trailing rules of the `leg` namespace are planned; in version 0.8.0 you keep the trailing level yourself in a `var` and close the position when the price crosses it.
+**Trailing stop.** A stop that follows the price as a trade moves in your favour and never moves back. The trailing rules of the `leg` namespace are planned; in version 0.8.1 you keep the trailing level yourself in a `var` and close the position when the price crosses it.
 
 **Truthiness.** Treating a number or a string as true or false. It does not exist in OpenScript: `if 1` is error OS2011, and a condition must be a `bool` or absent.
 

@@ -3,7 +3,7 @@ title: Strategy orders
 description: The six order calls of a strategy file. buy and sell enter, close flattens, exit sets a stop and a target, cancel and cancelAll withdraw orders that have not filled.
 ---
 
-This page documents the six calls a strategy uses to trade: [[buy()]] and [[sell()]] to enter, [[close()]] to flatten, [[exit()]] to attach a stop and a target, and [[cancel()]] and [[cancelAll()]] to withdraw orders that have not filled. Most OpenScript strategies (OpenScript is also called OpenAlgo Script) need nothing else. All six compile and run in version 0.8.0; the one with a caveat is [[exit()]], whose levels are not filled yet, as its entry explains.
+This page documents the six calls a strategy uses to trade: [[buy()]] and [[sell()]] to enter, [[close()]] to flatten, [[exit()]] to attach a stop and a target, and [[cancel()]] and [[cancelAll()]] to withdraw orders that have not filled. Most OpenScript strategies (OpenScript is also called OpenAlgo Script) need nothing else. All six compile and run in version 0.8.1; the one with a caveat is [[exit()]], whose levels are not filled yet, as its entry explains.
 
 Two words recur below. A **fill** is the execution of an order at a price, reported back by the order's **destination**, whatever receives it: the simulated venue of a backtest or of the chart, or OpenAlgo for a deployed strategy. A **resting** order is a limit or stop order that waits for the market to reach its price, and it is **working** until it fills or is cancelled.
 
@@ -84,7 +84,7 @@ The fills of a strategy are marked on the chart where they happened, as in this 
 | Left out is not absent | An argument you leave out takes its default: `buy()` uses the declaration's `qty` and, with no price, is a market order. An argument you write whose value comes out [absent](/script/language/absent-values) (`none`, no value on this bar) is refused with OS7002, naming the argument. |
 | A refusal stops the run | A refused order stops the script on the bar it happened, on the chart and in a backtest alike. Nothing that bar decided is sent, including orders from lines that ran before the refused one, and no later bar runs. |
 | No opposite orders on one bar | A buy and a sell decided on the same bar are refused with OS7013. A [[close()]] of a long position is a sell, so `close()` and `buy()` on one bar are refused as well (with OS7008 first, when the buy would also exceed `pyramiding`). Write your conditions as one `if` and `else if` chain. Two orders on the same side are ordinary. |
-| One leg | A file in version 0.8.0 trades exactly one instrument, the one on its chart. The `leg` argument that [[buy()]], [[sell()]], [[close()]] and [[exit()]] accept is for the planned [multi-leg strategies](/script/reference/legs), and writing it today is refused with OS3023. |
+| One leg | A file in version 0.8.1 trades exactly one instrument, the one on its chart. The `leg` argument that [[buy()]], [[sell()]], [[close()]] and [[exit()]] accept is for the planned [multi-leg strategies](/script/reference/legs), and writing it today is refused with OS3023. |
 
 **Whether a tag must name something is written in its default.** A tag is a name you give an order. A tag that defaults to `""` is a **label**: it rides along to the destination and to the trade list, and it names nothing that has to exist. [[buy()]], [[sell()]] and [[exit()]] take labels. A tag that is required, or that defaults to `none`, is a **reference**: it names orders the strategy has already placed. [[cancel()]] requires one and [[close()]] defaults to `none`, and a tag there that names no order is a mistake the language reports. [Tags: naming an order](/script/strategies/orders#tags-naming-an-order) explains the habit of giving every order a tag.
 
@@ -207,7 +207,7 @@ The same rule covers a resting order that reduces the position. While a sell sto
 
 When the declaration counts in units (the default), a quantity you write may not exceed what is left: `close(qty = 5)` against a position of 3 is refused with OS7017, naming what you asked for and what is left, because it would flatten the position and open the opposite one under a call named close. A tag that no order in the file is placed with is refused before the first bar with OS7016, which almost always means a typo.
 
-Under `qtyType = "lots"` the backtest in version 0.8.0 converts the size of a bare or tagged `close()` from lots a second time, so it sells far more than the position holds. Count in units and size from [[chart.lotSize]], as [Where a size comes from](/script/strategies/position-and-sizing#where-a-size-comes-from) explains.
+Under `qtyType = "lots"` the backtest in version 0.8.1 converts the size of a bare or tagged `close()` from lots a second time, so it sells far more than the position holds. Count in units and size from [[chart.lotSize]], as [Where a size comes from](/script/strategies/position-and-sizing#where-a-size-comes-from) explains.
 
 ```openscript expect=OS7016
 version 1
@@ -230,7 +230,7 @@ else if goFlat and pos.isLong
 
 Sets the position's protective stop and profit target. Give the levels as prices (`stop`, `limit`) or as distances from the entry price in the instrument's own price units (`loss`, `profit`). A position carries at most one stop and one target, and calling `exit` again replaces them. A stop and a target sent together like this are called a **bracket**.
 
-In version 0.8.0 the levels are not filled: the chart and the Backtest panel hand them on and never act on them, and the Strategies panel refuses to start a strategy that calls `exit`. So this example sends the levels with the entry and also tests them itself, which is what closes its trades today:
+In version 0.8.1 the levels are not filled: the chart and the Backtest panel hand them on and never act on them, and the Strategies panel refuses to start a strategy that calls `exit`. So this example sends the levels with the entry and also tests them itself, which is what closes its trades today:
 
 ```openscript
 version 1

@@ -186,7 +186,7 @@ Those four rows are a working frame, a fill, the same fill repeated, and a quant
 
 ### The expected files
 
-`expected.csv` holds per-bar values, one row per input bar, and seventy of the shipped cases have one. This excerpt illustrates the format, with rows 2 to 18 left out:
+`expected.csv` holds per-bar values, one row per input bar, and seventy-one of the shipped cases have one. This excerpt illustrates the format, with rows 2 to 18 left out:
 
 ```text title="expected.csv"
 bar,ema20,signal
@@ -261,7 +261,7 @@ Your engine takes part through an **adapter**: a program the runner starts once 
 The runner starts every adapter with Node.js, so an engine in another language ships a small JavaScript file that starts the real engine and relays its output. The Python engine does exactly that, and compiles `script.os` with the reference compiler on the way, handing the engine the canonical program text on standard input:
 
 ```json
-{"engineOnly":true,"languageVersions":[1],"name":"openscript","profile":"strategy","schemaVersion":"1.1","version":"0.8.0"}
+{"engineOnly":true,"languageVersions":[1],"name":"openscript","profile":"strategy","schemaVersion":"1.1","version":"0.8.1"}
 ```
 
 ### Comparing numbers
@@ -299,7 +299,7 @@ A run with any `fail`, `nonFinite`, `error`, or `unsupported` inside the claimed
 
 ```json
 {
-  "suiteRevision": "0.8.0+8ebc9e705bb4",
+  "suiteRevision": "0.8.1+94c3bd369c21",
   "engine": { "name": "my-engine", "version": "1.0.0", "profile": "strategy" },
   "languageVersions": [1],
   "schemaVersion": "1.1",
@@ -319,7 +319,7 @@ A run with any `fail`, `nonFinite`, `error`, or `unsupported` inside the claimed
 
 The failing row is the shape to expect: two values one unit apart in the last bit, which a tolerance would have hidden, and which is exactly the disagreement the suite exists to find. `bound` names what the failure broke: `exact` for a case with no tolerance, `abs` or `rel` for one that declares a bound, and `absence` when one side was absent.
 
-`suiteRevision` names the exact cases a result was run against: the package version the cases shipped with, a plus sign, and the first twelve hexadecimal digits of a SHA-256 digest over every file under the suite root. A suite that differs by one byte has a revision of its own, and anyone holding the cases can recompute it. `0.8.0+8ebc9e705bb4` is the revision of the cases shipped with 0.8.0.
+`suiteRevision` names the exact cases a result was run against: the package version the cases shipped with, a plus sign, and the first twelve hexadecimal digits of a SHA-256 digest over every file under the suite root. A suite that differs by one byte has a revision of its own, and anyone holding the cases can recompute it. `0.8.1+94c3bd369c21` is the revision of the cases shipped with 0.8.1.
 
 ## Two engines disagreeing is a release blocker
 
@@ -380,9 +380,9 @@ The second command writes `badge.svg` and prints the line that embeds it. It ref
 
 Stated plainly, because a green run reads as wide as the reader imagines it:
 
-- **How big it is:** 126 cases in 0.8.0, 72 in the `core` profile, 46 in `chart` and 8 in `strategy`.
-- **What it reaches today:** the compiler's diagnostics from tokenising, parsing and checking; the runtime errors; behaviour at a declared limit; per-bar values, in seventy cases across the `semantics`, `numerics`, `time`, `external` and `surface` categories, each with expected values computed independently of both engines; drawing objects and table cells; the log; and strategies, through their ledger, trades and performance summary, including partial fills, rejections, cancellations, expiries and a fill after a terminal status. The channels asserted are `diagnostics`, `values`, `log`, `drawings`, `table`, `orders`, `trades` and `performance`.
+- **How big it is:** 127 cases in 0.8.1, 72 in the `core` profile, 47 in `chart` and 8 in `strategy`.
+- **What it reaches today:** the compiler's diagnostics from tokenising, parsing and checking; the runtime errors; behaviour at a declared limit; per-bar values, in seventy-one cases across the `semantics`, `numerics`, `time`, `external` and `surface` categories, each with expected values computed independently of both engines; drawing objects and table cells; the log; and strategies, through their ledger, trades and performance summary, including partial fills, rejections, cancellations, expiries and a fill after a terminal status. The channels asserted are `diagnostics`, `values`, `log`, `drawings`, `table`, `orders`, `trades` and `performance`.
 - **What it does not reach yet:** no case asserts `markers`, `fills`, `levels`, `barColors`, `background` or `alerts`, and neither engine's adapter answers those channels. No case replays a forming bar from `ticks.csv`. No strategy case yet supplies a host's own charge schedule, a repeated frame or two frames in the wrong order, more than one entry in a direction, or more than one instrument.
-- **Who has run it:** the JavaScript and Python engines, against each other, exactly. `npm run suite:agree` in the repository reports 107 pass and 19 skipped of the 126, the skips being the compiler-diagnostic cases the Python engine has no compiler for, and the build stops on any disagreement. Both engines were written in the same repository, so their agreement is evidence about that repository rather than about the specification. **No engine written by anyone else has run the suite yet.** If you are building one, the project would rather work with you than have you find the gaps alone.
+- **Who has run it:** the JavaScript and Python engines, against each other, exactly. `npm run suite:agree` in the repository reports 108 pass and 19 skipped of the 127, the skips being the compiler-diagnostic cases the Python engine has no compiler for, and the build stops on any disagreement. Both engines were written in the same repository, so their agreement is evidence about that repository rather than about the specification. **No engine written by anyone else has run the suite yet.** If you are building one, the project would rather work with you than have you find the gaps alone.
 
 **Related.** [Compiled program](/script/integrate/compiled-program), [Host interface](/script/integrate/host-interface), [Python engine](/script/integrate/python-engine), [Backtesting API](/script/integrate/backtesting-api), [Two libraries](/script/integrate/overview), [Testing](/script/writing/testing)

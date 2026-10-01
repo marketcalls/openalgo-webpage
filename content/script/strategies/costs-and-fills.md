@@ -95,8 +95,8 @@ An order that fills inside a bar is only known to have filled once that bar is c
 
 [[exit()]] and [[order.bracket()]] attach a stop and a target to a position as price levels.
 
-:::warn Levels in version 0.8.0
-The compiler accepts `exit()` and `order.bracket()`, but the backtest in version 0.8.0 does not fill the levels they set: the position simply stays open past them. The OpenAlgo strategy runner refuses to start a script that calls either one. Until they land, write a stop or a target as a rule the script tests on each close, as the example further down does. [Exits and brackets](/script/strategies/exits-and-brackets) covers both forms.
+:::warn Levels in version 0.8.1
+The compiler accepts `exit()` and `order.bracket()`, but the backtest in version 0.8.1 does not fill the levels they set: the position simply stays open past them. The OpenAlgo strategy runner refuses to start a script that calls either one. Until they land, write a stop or a target as a rule the script tests on each close, as the example further down does. [Exits and brackets](/script/strategies/exits-and-brackets) covers both forms.
 :::
 
 When level fills arrive, they are planned to follow the same conservative rules as the resting orders above: a level fills at its own price, or at the open when the bar opens beyond it; the stop pays slippage and the target does not; and when one bar's range contains both the stop and the target, the stop is taken, because nothing in a bar says which came first.
@@ -340,7 +340,7 @@ None of these is an argument against backtesting. They are the reason a backtest
 | Wonderful equity curve, poor real results | Costs left at zero | Fill in the stack, then run again |
 | The edge halves when slippage goes from one tick to two | The edge was fill quality | Trade a slower version of the idea |
 | Entries sit exactly at the close that triggered them | `fillOn = "close"` | Leave the default unless you can name the honest case |
-| A stop level the script set never exits the backtest | Levels set with `exit()` are not filled in 0.8.0 | Write the stop as a rule tested on each close |
+| A stop level the script set never exits the backtest | Levels set with `exit()` are not filled in 0.8.1 | Write the stop as a rule tested on each close |
 | Cost per round trip looks twice what you expected | `"perTrade"` is charged on every fill, and a round trip is two | Halve the figure, or use the per fill amount |
 | Your rates changed and the backtest still charges the old ones | The cost is a bare number with no note of where it came from | Wire it to an `input()` with a comment on its source |
 

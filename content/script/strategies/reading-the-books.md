@@ -1,6 +1,6 @@
 ---
 title: Reading the books
-description: The orders, fills and trades a strategy run produces, the ledger every position figure is folded from, the Activity books of a deployed strategy, and what a script can read about its own position in version 0.8.0.
+description: The orders, fills and trades a strategy run produces, the ledger every position figure is folded from, the Activity books of a deployed strategy, and what a script can read about its own position in version 0.8.1.
 ---
 
 Every strategy keeps its own books: a record of each order it placed, what each order filled at, and the position those fills add up to. This page covers where those books show up in /trading, what the ledger underneath them holds, why the same fill can be reported twice without being counted twice, and what a script can read about its own orders and position today.
@@ -9,7 +9,7 @@ The rule behind all of it is short. **A strategy's position and profit are folde
 
 ## A script that reads its own books
 
-A strategy can put what it believes about its own position on the chart. This panel uses only calls that run in version 0.8.0:
+A strategy can put what it believes about its own position on the chart. This panel uses only calls that run in version 0.8.1:
 
 ```openscript title="Books panel"
 version 1
@@ -158,7 +158,7 @@ A trade holds one entry price and one size for the whole position, so the equity
 
 ## Reading the books from a script
 
-### What runs in version 0.8.0
+### What runs in version 0.8.1
 
 | Call | When flat | Means |
 |---|---|---|
@@ -256,7 +256,7 @@ Two situations make them differ by design:
 | OS7017 on a `close` | The quantity is larger than what is left, usually a scale-out firing twice | Guard on `pos.size`, or leave the quantity out |
 | A late fill applied to the wrong trade | Expecting fills to settle the current position | They settle their own position; a reversal is two orders |
 | The strategy's position disagrees with the account's | Something else trades that contract, or the run restarted flat | Check the **Positions** tab and the account, then decide who owns the difference |
-| A planned read refused with OS2020 | `order.*` reads and most `pos.*` facts are planned in 0.8.0 | Keep the fact in a `var` |
+| A planned read refused with OS2020 | `order.*` reads and most `pos.*` facts are planned in 0.8.1 | Keep the fact in a `var` |
 | Drawdown looks worse than the trades suggest | A position that was added to is valued at its final size from its first bar | Read the trade list for the result |
 
 **Related.** [Orders](/script/strategies/orders), [Reading a report](/script/strategies/reading-a-report), [Legs and books](/script/strategies/multi-leg-and-books), [Position and sizing](/script/strategies/position-and-sizing), [Sandbox and live](/script/strategies/sandbox-and-live), [pos.* reference](/script/reference/position), [order.* reference](/script/reference/orders)

@@ -54,7 +54,7 @@ The /trading chart follows the same rule. When a bar closes, the chart judges it
 | Where it shows | Off the chart, wherever the platform delivers it | On the chart, on the bar | A channel the platform has configured |
 | On the bars already in history | Fires for none of them | Draws on every past bar that matched | Not applicable |
 | On a bar that is still forming | Waits for the bar to close, unless the file sets `onUnconfirmed = true` | The same as `alert()` | Not applicable |
-| Status in version 0.8.0 | Available | Available | Planned, refused by the compiler with OS2020 |
+| Status in version 0.8.1 | Available | Available | Planned, refused by the compiler with OS2020 |
 
 A marker is a record of what the script saw, drawn back over the whole history so you can judge the rule by eye. An alert is a message about the bar in front of you. Most useful studies want both, and each costs one line.
 
@@ -306,7 +306,7 @@ Like `alert()`, a signal waits for the bar to close unless the file sets `onUnco
 
 ## notify(): planned
 
-`notify(message, channel)` is specified as a way for a script to send a message to a channel the platform has already configured, by name. It is **planned and not in version 0.8.0**, and the compiler refuses it with OS2020:
+`notify(message, channel)` is specified as a way for a script to send a message to a channel the platform has already configured, by name. It is **planned and not in version 0.8.1**, and the compiler refuses it with OS2020:
 
 ```openscript expect=OS2020
 if crossUp(close, sma(close, 50))

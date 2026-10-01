@@ -199,7 +199,7 @@ The call being written, and which parameter the cursor is in. It works on a call
 
 **The default shown is the default the compiler applies**, for an ordinary library call and for the output declarations, [[plot()]], [[plotCandles()]], [[fill()]], [[level()]], [[signal()]], [[alert()]], [[input()]], [[table()]], [[barColor()]] and [[background()]], whose optional arguments become fields of the compiled program. Inside `plot(close, ` it reports `color` defaulting to `none`, `width` to `1.5` and `style` to `"line"`, the values the compiler writes. A written label decides the active parameter, because a named argument may sit anywhere after the positional ones. While a call is unfinished its overload is chosen by the number of arguments alone; once the arguments are written, `diagnose` reports any call that resolves to something other than what was meant.
 
-In 0.8.0 `signature` returns nothing inside `study(` or `strategy(`: the two declaration lines have no entry for it to read. Link those to the [declarations reference](/script/reference/declarations) instead.
+In 0.8.1 `signature` returns nothing inside `study(` or `strategy(`: the two declaration lines have no entry for it to read. Link those to the [declarations reference](/script/reference/declarations) instead.
 
 ## format
 

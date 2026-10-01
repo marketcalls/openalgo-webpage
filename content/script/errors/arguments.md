@@ -78,7 +78,7 @@ The argument's type is not the one the parameter takes: text where a number goes
 
 Some arguments count things, so they must be whole numbers inside a fixed range: a table's rows and columns (1 or more), a cell's row and column (0 or more), a plot's `precision` (0 to 10) and `offset`, an [[rgb()]] channel (0 to 255), and a loop's `step`, which must not be 0 because that loop could never finish. When you write the number in the script, the checker tests it and refuses a fraction rather than rounding it, because 2.5 rows is a mistake in the script. Round a value you compute with [[floor()]] or [[round()]].
 
-Only the arguments listed above are tested before the first bar. A whole number the script computes, such as the length in `sma(close, len / 2)`, is tested when the bar runs instead, as runtime error [OS4003](/script/errors/runtime#os4003). In version 0.8.0 that includes an indicator's length written as a number: `sma(close, 14.5)` compiles, and the study stops on its first bar with OS4003.
+Only the arguments listed above are tested before the first bar. A whole number the script computes, such as the length in `sma(close, len / 2)`, is tested when the bar runs instead, as runtime error [OS4003](/script/errors/runtime#os4003). In version 0.8.1 that includes an indicator's length written as a number: `sma(close, 14.5)` compiles, and the study stops on its first bar with OS4003.
 
 {{error: OS3008}}
 
@@ -118,7 +118,7 @@ The /trading page in current OpenAlgo releases still runs library 0.5.0, which r
 
 The argument feeds something that is built before the first bar, and the value you wrote can change from bar to bar. This covers every option of `study()` and `strategy()`, a plot's title, width and style, a signal's `color`, `at` and `shape`, a table's title, size and corner, and an alert's `id`, `title` and `frequency`. Use a literal, or an `input()` so the user can change it in the settings dialog. A name assigned from an input works too, as in `dp = input(2, "Decimals")` followed by `precision = dp`, but a `var` does not, because a `var` can change on later bars. Arithmetic on an input, such as `dp + 1`, is [OS3025](#os3025) instead. The table above shows each form.
 
-The fix's sample input always uses 2 as its default; write the default that suits the option, such as `input(true, "Overlay")` for `overlay`. A plot's `color` is not on this list, so a colour chosen per bar is fine. In version 0.8.0 the compiler also reports [OS6018](/script/errors/data#os6018) on the same line, with a long technical message; it goes away when this error is fixed.
+The fix's sample input always uses 2 as its default; write the default that suits the option, such as `input(true, "Overlay")` for `overlay`. A plot's `color` is not on this list, so a colour chosen per bar is fine. In version 0.8.1 the compiler also reports [OS6018](/script/errors/data#os6018) on the same line, with a long technical message; it goes away when this error is fixed.
 
 {{error: OS3006}}
 
@@ -188,6 +188,6 @@ An input assigned to a name is stored under that name, and an input written in p
 
 {{error: OS3023}}
 
-An order call was given a `leg` argument, but the file declares no legs. A strategy with no legs trades exactly one instrument, the one on the chart, and every order acts on it, so a leg name there names nothing. Remove the `leg` argument. Declaring legs with `leg.fixed()` or `leg.relative()` for multi-leg option positions is planned and not available in version 0.8.0; see [Legs and books](/script/strategies/multi-leg-and-books).
+An order call was given a `leg` argument, but the file declares no legs. A strategy with no legs trades exactly one instrument, the one on the chart, and every order acts on it, so a leg name there names nothing. Remove the `leg` argument. Declaring legs with `leg.fixed()` or `leg.relative()` for multi-leg option positions is planned and not available in version 0.8.1; see [Legs and books](/script/strategies/multi-leg-and-books).
 
 **Related.** [Reading an error](/script/errors/overview), [Declarations](/script/reference/declarations), [Inputs](/script/inputs/inputs), [Plots](/script/visuals/plots), [Fills](/script/visuals/fills), [Limits](/script/writing/limits), [OS2xxx Names and types](/script/errors/names-and-types), [OS4xxx Runtime errors](/script/errors/runtime)

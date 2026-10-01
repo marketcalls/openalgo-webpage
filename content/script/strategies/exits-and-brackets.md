@@ -1,14 +1,14 @@
 ---
 title: Exits and brackets
-description: Stops, targets and trailing stops. Levels your script tests today, exit() and order.bracket() and what version 0.8.0 does with them, one-cancels-other, the planned leg and book levels, and exiting on the clock before the NSE close.
+description: Stops, targets and trailing stops. Levels your script tests today, exit() and order.bracket() and what version 0.8.1 does with them, one-cancels-other, the planned leg and book levels, and exiting on the clock before the NSE close.
 ---
 
 This page covers every way a strategy gets out of a position: a stop and a target, a trailing stop, one-cancels-other, exits on the clock, and the protective levels the language defines with [[exit()]], [[order.bracket()]] and the planned `leg.*` and `book.*` calls. You need it for any strategy whose exit is a price level rather than the opposite signal.
 
 A **stop** (stop-loss) closes a losing position at a price you chose in advance. A **target** closes a winning one at a price you chose in advance. A **bracket** is the two together, attached to one entry.
 
-:::warn What exit() and order.bracket() do in version 0.8.0
-The compiler accepts both calls, and neither protects a position yet: in version 0.8.0 a backtest never fills the levels they set. On the /trading chart and in the Backtest panel a bracketed trade therefore stays open until the script itself closes it. The Strategies panel refuses to start a script that calls either one. Until that changes, write every stop and target as a rule the script tests on each bar, as the runnable examples on this page do.
+:::warn What exit() and order.bracket() do in version 0.8.1
+The compiler accepts both calls, and neither protects a position yet: in version 0.8.1 a backtest never fills the levels they set. On the /trading chart and in the Backtest panel a bracketed trade therefore stays open until the script itself closes it. The Strategies panel refuses to start a script that calls either one. Until that changes, write every stop and target as a rule the script tests on each bar, as the runnable examples on this page do.
 :::
 
 ## A complete example
@@ -79,7 +79,7 @@ Every exit is one of two things, and confusing them is the most expensive mistak
 | Acts | On the bar the level is reached, at the level | On the bar the condition is true, at the next fill point |
 | Sends | A stop order or a limit order at the level | An ordinary market order |
 | Keeps protecting if the strategy stops running | Yes, once it rests at the destination | No |
-| In version 0.8.0 and in /trading | Not acted on | Runs |
+| In version 0.8.1 and in /trading | Not acted on | Runs |
 
 A level is a promise someone else keeps. A rule is a promise you keep, checked when the script runs. A strategy whose exit is "when the trend reading turns" can only use a rule, because nobody but your script knows what the trend reading is. A stop that is the difference between a bad day and a ruinous one is what a level is for, once levels are acted on; until then, write it as a rule and watch the positions a paused strategy leaves behind.
 
@@ -202,7 +202,7 @@ plot(slow, "Slow", orange)
 
 Intraday strategies on NSE and NFO have to be flat before 15:30. Three facts decide how you write that.
 
-**`closeOnSessionEnd` is not acted on yet.** The option is accepted in the declaration and means "flatten at the session close", and in version 0.8.0 nothing flattens: a backtest carries the position into the next session, and so does a deployment. Write the exit in the script.
+**`closeOnSessionEnd` is not acted on yet.** The option is accepted in the declaration and means "flatten at the session close", and in version 0.8.1 nothing flattens: a backtest carries the position into the next session, and so does a deployment. Write the exit in the script.
 
 **An exit decided on the last bar fills in the next session.** With the default `fillOn = "nextOpen"`, a `close()` decided on the session's last bar fills at the next bar's open, which is the next session's first bar. To be flat by the close, decide on a bar that leaves another bar to fill in. [[session.isIn()]] tests the time each bar starts at: a bar is inside `"0915-1500"` when it starts at or after 09:15 and before 15:00. So `not session.isIn("0915-1500", "Asia/Kolkata")` is first true on the bar that starts at 15:00, and on 15-minute bars the close it sends fills at the 15:15 open.
 
@@ -267,7 +267,7 @@ The comparisons with `heldMinutes` and `barsHeld` need no `isNone` test: an orde
 
 ## Levels the engine will hold
 
-The language defines protective levels at three scopes. In version 0.8.0 only the bracket set with [[exit()]] and [[order.bracket()]] exists, and neither a backtest nor /trading acts on it yet; the rest are planned, and calling one is refused with OS2020.
+The language defines protective levels at three scopes. In version 0.8.1 only the bracket set with [[exit()]] and [[order.bracket()]] exists, and neither a backtest nor /trading acts on it yet; the rest are planned, and calling one is refused with OS2020.
 
 | Scope | Level | Call | Status |
 |---|---|---|---|
@@ -316,7 +316,7 @@ Events reach the run's record and the log, not the chart, and no call reads one:
 
 | Symptom | Cause | Fix |
 |---|---|---|
-| A bracketed trade never exits in the backtest | `exit()` and `order.bracket()` levels are not filled in 0.8.0 | Test the levels in the script and `close()`, as the complete example does |
+| A bracketed trade never exits in the backtest | `exit()` and `order.bracket()` levels are not filled in 0.8.1 | Test the levels in the script and `close()`, as the complete example does |
 | The Strategies panel will not start the strategy | It calls `exit()` or `order.bracket()` | Replace them with rules the script tests |
 | The run stops with OS7002 at the entry | A stop or target taken from `atr` before it warmed up | Test the level with `isNone` before the entry |
 | The run stops with OS7010 | A stop moved above a long's entry | Stop below a long, target above it |

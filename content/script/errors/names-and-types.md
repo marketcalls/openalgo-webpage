@@ -71,7 +71,7 @@ Built-in values such as `volume`, `high` and `bar.index` are read bare, without 
 
 {{error: OS2020}}
 
-The name is part of the language and is not implemented in this release. It is spelt correctly, and no line above it would help. The reference marks such names as Planned. Examples in version 0.8.0 include [[kama()]], [[session.isOpen]] and the multi-leg [[leg.fixed()]].
+The name is part of the language and is not implemented in this release. It is spelt correctly, and no line above it would help. The reference marks such names as Planned. Examples in version 0.8.1 include [[kama()]], [[session.isOpen]] and the multi-leg [[leg.fixed()]].
 
 Compute the value from functions that exist today, or take the line out until a release implements it. Do not swap in a function with a similar name just because it compiles: it computes something else, and a plot that quietly changes meaning is worse than one that refuses to compile.
 
@@ -127,7 +127,7 @@ An array element is a `number`, a `string`, a `bool`, a `color`, or a `line`, `l
 
 {{error: OS2005}}
 
-A function cannot call itself, directly or through other functions, and the message names the cycle, such as `a calls b calls a`. Each place in the file that calls a function keeps its own state for `var` and for stateful calls such as [[ema()]], set up before the first bar, and a recursive call would need an unknown number of them. Rewrite the work as a `for` or `while` loop. In version 0.8.0 the compiler also reports [OS6018](/script/errors/data#os6018) on the function's line, with a long technical message; it clears when the recursion does.
+A function cannot call itself, directly or through other functions, and the message names the cycle, such as `a calls b calls a`. Each place in the file that calls a function keeps its own state for `var` and for stateful calls such as [[ema()]], set up before the first bar, and a recursive call would need an unknown number of them. Rewrite the work as a `for` or `while` loop. In version 0.8.1 the compiler also reports [OS6018](/script/errors/data#os6018) on the function's line, with a long technical message; it clears when the recursion does.
 
 {{error: OS2014}}
 

@@ -304,7 +304,7 @@ Because `fillOn` defaults to `"nextOpen"`. A decision made from a bar's close ca
 
 ### Can I hold a long and a short position at the same time?
 
-Not in version 0.8.0. A strategy holds one net position in the chart's instrument, positive when long and negative when short, read as [[pos.size]]. Positions made of several legs, such as a straddle or a hedge, are planned through the `leg` and `book` functions. See [Legs and books](/script/strategies/multi-leg-and-books).
+Not in version 0.8.1. A strategy holds one net position in the chart's instrument, positive when long and negative when short, read as [[pos.size]]. Positions made of several legs, such as a straddle or a hedge, are planned through the `leg` and `book` functions. See [Legs and books](/script/strategies/multi-leg-and-books).
 
 ### How do I size a position?
 
@@ -341,7 +341,7 @@ plot(slow, "Slow", orange)
 plot(pos.isLong ? stopLevel : none, "Stop", red, style = "step")
 ```
 
-The stop is the lowest low of the last 10 bars, fixed at the entry. The two crossings are worked out at the top level, before the `if` lines, because a crossing call inside the right side of `and` or `or` would skip bars and the compiler would warn with OS8001. The exit is checked on each bar's close and fills at the next open, so a gap through the stop can lose more than the amount you set. A stop set with [[exit()]] is not used here because a backtest does not fill one in version 0.8.0.
+The stop is the lowest low of the last 10 bars, fixed at the entry. The two crossings are worked out at the top level, before the `if` lines, because a crossing call inside the right side of `and` or `or` would skip bars and the compiler would warn with OS8001. The exit is checked on each bar's close and fills at the next open, so a gap through the stop can lose more than the amount you set. A stop set with [[exit()]] is not used here because a backtest does not fill one in version 0.8.1.
 
 The sizing helpers [[order.qtyForRisk()]], [[order.qtyForCash()]], [[order.qtyForEquityPercent()]] and [[order.roundToLot()]] are planned, and a backtest refuses a quantity counted in `"cash"` or `"equityPercent"` in this release. See [Position and sizing](/script/strategies/position-and-sizing).
 
@@ -391,7 +391,7 @@ The Errors section, one page per range, starting at [Reading an error](/script/e
 
 ### Are the examples on these pages tested?
 
-Yes. Every OpenScript example on these pages is checked with the real compiler, from `openalgo-script` 0.8.0, and every signature, default and warmup in the reference is read from that compiler rather than typed in. The /trading editor in current OpenAlgo releases runs version 0.5.0 of the same compiler, which has the same library names and signatures.
+Yes. Every OpenScript example on these pages is checked with the real compiler, from `openalgo-script` 0.8.1, and every signature, default and warmup in the reference is read from that compiler rather than typed in. The /trading editor in current OpenAlgo releases runs version 0.5.0 of the same compiler, which has the same library names and signatures.
 
 ### Can I use OpenScript outside OpenAlgo?
 

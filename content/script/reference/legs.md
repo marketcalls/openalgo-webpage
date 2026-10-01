@@ -1,17 +1,17 @@
 ---
 title: leg.*
-description: Multi-leg strategies. Declaring the contracts a strategy trades, outright or by description, reading back what was resolved, and per-leg positions, entries, exits, stops, targets and trails. Planned in version 0.8.0.
+description: Multi-leg strategies. Declaring the contracts a strategy trades, outright or by description, reading back what was resolved, and per-leg positions, entries, exits, stops, targets and trails. Planned in version 0.8.1.
 ---
 
 A **leg** is one contract a strategy trades. The `leg` namespace is how a strategy will declare more than one: the call and the put of a straddle on NIFTY weekly options, the near and far months of a futures spread on NFO or MCX, a future hedged with an option. It will let a script name a contract outright or describe it ("nearest expiry, at the money, call"), read back the contract the host picked, hold one position per leg, and put a stop, a target and a trailing stop on each.
 
-**Every entry on this page is planned.** In version 0.8.0 a strategy has exactly one leg, the instrument on its chart, and every order acts on it without naming it. Calling any `leg.*` name is refused where you write it with OS2020. This page documents what each call will do, so you can see where the language is going and design around it, and shows what to write today.
+**Every entry on this page is planned.** In version 0.8.1 a strategy has exactly one leg, the instrument on its chart, and every order acts on it without naming it. Calling any `leg.*` name is refused where you write it with OS2020. This page documents what each call will do, so you can see where the language is going and design around it, and shows what to write today.
 
 A few option terms recur below. The **underlying** is the instrument a future or option is based on, such as the NIFTY index. The **expiry** is the day the contract ends. The **strike** is the price an option is written at, and the option **at the money** is the one whose strike is nearest the underlying's current price. The [Glossary](/script/resources/glossary) has the rest.
 
 ## One leg today
 
-Every strategy you write in version 0.8.0 is a one-leg strategy. To trade an option, find the option in symbol search, open its own chart and add the strategy there.
+Every strategy you write in version 0.8.1 is a one-leg strategy. To trade an option, find the option in symbol search, open its own chart and add the strategy there.
 
 {{screen: symbol-search}}
 
@@ -52,7 +52,7 @@ plot(stopLevel, "Stop", red, style = "step")
 
 The size is counted in units from the lot size, and the stop is a rule the script tests, for the reasons on [Strategy orders](/script/reference/strategy). The chart and the Backtest panel both state the lot size OpenAlgo holds for the instrument; where a host states none, [[chart.lotSize]] is absent and this file falls back to one unit per lot.
 
-Every order call except [[cancel()]] and [[cancelAll()]] accepts a `leg` argument, and in version 0.8.0 writing it is refused with OS3023, whatever it names: a file that declares no leg has no name the argument could refer to. Take the argument out and the order acts on the chart's instrument.
+Every order call except [[cancel()]] and [[cancelAll()]] accepts a `leg` argument, and in version 0.8.1 writing it is refused with OS3023, whatever it names: a file that declares no leg has no name the argument could refer to. Take the argument out and the order acts on the chart's instrument.
 
 ```openscript expect=OS3023
 version 1
@@ -68,7 +68,7 @@ To read a second instrument today, for a signal or a combined premium, use [[req
 
 ## The shape a declared leg will take
 
-Declared, the same idea gets a name that every later call uses: here a leg on the near-month NIFTY future, entered on its own signal, with a standing stop and a trailing stop the engine holds. The block below is the planned shape, and version 0.8.0 refuses it with OS2020.
+Declared, the same idea gets a name that every later call uses: here a leg on the near-month NIFTY future, entered on its own signal, with a standing stop and a trailing stop the engine holds. The block below is the planned shape, and version 0.8.1 refuses it with OS2020.
 
 ```openscript expect=OS2020 title="Planned: a declared leg with a standing stop and a trail"
 version 1

@@ -3,7 +3,7 @@ title: Overview
 description: What a strategy file is, how it differs from a study, what happens to an order from the line that asks for it to the fill, and where a strategy runs in /trading.
 ---
 
-A strategy is an OpenScript file (OpenScript is also called OpenAlgo Script) that draws like a study and can also place orders. This page covers what changes when you declare `strategy()` instead of `study()`, the options only a strategy has, what happens to an order on every bar, where a strategy runs in /trading, and which parts of the strategy surface run in version 0.8.0. Read it before the other strategy pages: they all build on the loop described here.
+A strategy is an OpenScript file (OpenScript is also called OpenAlgo Script) that draws like a study and can also place orders. This page covers what changes when you declare `strategy()` instead of `study()`, the options only a strategy has, what happens to an order on every bar, where a strategy runs in /trading, and which parts of the strategy surface run in version 0.8.1. Read it before the other strategy pages: they all build on the loop described here.
 
 ## A first strategy
 
@@ -117,7 +117,7 @@ These three calls look alike in a file and do entirely different things:
 A bar is **confirmed** once it has closed and its prices can no longer change. A marker is a statement about the chart, and nothing can stop it being drawn. An order is a request, and it can be refused: for an absent price or size (OS7002), a size of zero or less (OS7004), a price off the tick (OS7006), a resting order with no price (OS7007), an entry beyond the pyramiding limit (OS7008), cancelling a tag that is not working (OS7009), a stop or target on the wrong side of an open position (OS7010), two opposite orders on one bar (OS7013), or a close larger than what it closes (OS7017). [Orders](/script/strategies/orders) lists every refusal with its usual cause.
 
 :::warn A refused order stops the script
-In version 0.8.0 a refused order stops the run at the bar it happened on. Nothing that bar decided is sent, and no later bar executes. In the Backtest panel the report then holds only the trades made before it, and above the figures the panel says which bar the run stopped on, what went wrong and the code, so the figures are not read as the whole range. The guards below are what keep a strategy from ever reaching one.
+In version 0.8.1 a refused order stops the run at the bar it happened on. Nothing that bar decided is sent, and no later bar executes. In the Backtest panel the report then holds only the trades made before it, and above the figures the panel says which bar the run stopped on, what went wrong and the code, so the figures are not read as the whole range. The guards below are what keep a strategy from ever reaching one.
 :::
 
 ## What happens on every bar
@@ -237,7 +237,7 @@ The runner that executes a deployment supports a subset of the language: quantit
 
 A strategy that wants its stop or target drawn plots it like any other value. The chart shows what happened; the destination decides what happens.
 
-## What runs in version 0.8.0
+## What runs in version 0.8.1
 
 The strategy surface is designed in full and partly built. The names that are not built yet are still in the language, and calling one is refused at the call with OS2020, so you find out where you wrote it.
 
@@ -268,6 +268,6 @@ Every script on this page trades one instrument, the one on its chart, and opens
 | Trades at the wrong time of day | A trading window written without a zone, such as `session.isIn("0930-1500")`, on a chart set to another timezone | Name the zone: `session.isIn("0930-1500", "Asia/Kolkata")` |
 | The backtest is much better than the account | `fillOn = "close"`, no slippage, no commission | Keep the defaults, then add real costs |
 | Orders appear on history and not on the forming bar | The condition is true inside the bar and false at its close | Nothing to fix: that is the deferral working |
-| A stop plotted on the chart never exits the backtest | Levels from `exit()` are not filled in 0.8.0 | Test the level in the script, as [Exits and brackets](/script/strategies/exits-and-brackets) shows |
+| A stop plotted on the chart never exits the backtest | Levels from `exit()` are not filled in 0.8.1 | Test the level in the script, as [Exits and brackets](/script/strategies/exits-and-brackets) shows |
 
 **Related.** [Orders](/script/strategies/orders), [Exits and brackets](/script/strategies/exits-and-brackets), [Position and sizing](/script/strategies/position-and-sizing), [Costs and fills](/script/strategies/costs-and-fills), [Backtesting](/script/strategies/backtesting), [Sandbox and live](/script/strategies/sandbox-and-live), [Your first strategy](/script/getting-started/first-strategy), [Strategy orders reference](/script/reference/strategy)

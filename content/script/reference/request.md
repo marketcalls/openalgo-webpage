@@ -255,11 +255,11 @@ if bar.isLast
 
 {{entry: req.candle()}}
 
-Will return a whole coarser bar at once, its open, high, low and close as one array, so a higher timeframe candle can be drawn with one read instead of four. It is planned and not part of version 0.8.0; until then, make one [[req.timeframe()]] read per price and pass them to [[plotCandles()]].
+Will return a whole coarser bar at once, its open, high, low and close as one array, so a higher timeframe candle can be drawn with one read instead of four. It is planned and not part of version 0.8.1; until then, make one [[req.timeframe()]] read per price and pass them to [[plotCandles()]].
 
 {{entry: req.events()}}
 
-Will read scheduled corporate events for the chart's instrument, such as dividends and splits, as a series. It is planned and not part of version 0.8.0.
+Will read scheduled corporate events for the chart's instrument, such as dividends and splits, as a series. It is planned and not part of version 0.8.1.
 
 ## Related
 

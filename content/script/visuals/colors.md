@@ -90,7 +90,7 @@ plot(sma(close, 20), "Basis", rgb(255, 136, 0), width = 2)
 plot(sma(close, 50), "Slow", rgba(0, 150, 255, 0.6))
 ```
 
-Two more are named in the language and not available yet: [[hsl()]], for hue, saturation and lightness, and [[gradient()]], for positioning a value between two colours. Calling either is [OS2020](/script/errors/names-and-types#os2020) in version 0.8.0:
+Two more are named in the language and not available yet: [[hsl()]], for hue, saturation and lightness, and [[gradient()]], for positioning a value between two colours. Calling either is [OS2020](/script/errors/names-and-types#os2020) in version 0.8.1:
 
 ```openscript expect=OS2020
 plot(close, "Close", hsl(200, 80, 50))
@@ -106,7 +106,7 @@ A channel written as a number that is out of range, or not a whole number, is re
 plot(close, "Close", rgb(300, 0, 0))
 ```
 
-A channel computed from data is a different case. It is meant to raise runtime error [OS4009](/script/errors/runtime#os4009), because a colour computed from data that lands at 300 is a bug in the computation. In version 0.8.0 nothing raises OS4009 yet: the engine rounds the channel to a whole number, clamps it to 0 to 255, and the bar carries on. Do not rely on that. Where a computed channel can run past its end, clamp it where you compute it with [[clamp()]], so a reader can see the decision:
+A channel computed from data is a different case. It is meant to raise runtime error [OS4009](/script/errors/runtime#os4009), because a colour computed from data that lands at 300 is a bug in the computation. In version 0.8.1 nothing raises OS4009 yet: the engine rounds the channel to a whole number, clamps it to 0 to 255, and the bar carries on. Do not rely on that. Where a computed channel can run past its end, clamp it where you compute it with [[clamp()]], so a reader can see the decision:
 
 ```openscript
 // How far the close sits above its 20 bar low, in average true ranges,
@@ -137,7 +137,7 @@ plot(sma(close, 50), "Alpha 0.4", withAlpha(aqua, 0.4))
 
 The Opacity control in the settings dialog's Style tab runs the way `withAlpha` does, from 0 (invisible) to 100 (solid), so a user who sets it to 40 sees roughly what `fade(c, 60)` gives. Keep the two directions straight when you tell a user what to change.
 
-Apply `fade` once, to an opaque colour such as a named one. Fading a colour that is already transparent gives different answers in version 0.8.0 depending on where the colour is worked out: in a colour fixed before the first bar the outer fade replaces the inner one, and in a colour computed on a bar the two multiply. To give an exact alpha to a colour that already carries some transparency, use `withAlpha`, which always sets the alpha outright.
+Apply `fade` once, to an opaque colour such as a named one. Fading a colour that is already transparent gives different answers in version 0.8.1 depending on where the colour is worked out: in a colour fixed before the first bar the outer fade replaces the inner one, and in a colour computed on a bar the two multiply. To give an exact alpha to a colour that already carries some transparency, use `withAlpha`, which always sets the alpha outright.
 
 The right amount of transparency depends entirely on what the colour lands on:
 

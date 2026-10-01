@@ -135,7 +135,7 @@ How it works:
 - The exit tests the bar's close against the levels and calls [[close()]], which fills at the next bar's open. On a gap, that open can be beyond the level, and the backtest reports the price you would really have got.
 
 :::warn
-The language also has [[exit()]], which attaches a stop and a target to a position in one call. In version 0.8.0 the backtest does not fill the levels `exit()` sets, and the Strategies panel refuses to start a strategy that calls `exit()` or [[order.bracket()]], because OpenAlgo's order path has no single order that pairs a stop with a target yet. Until both are in place, manage exits in the script with `close()`, as this page does.
+The language also has [[exit()]], which attaches a stop and a target to a position in one call. In version 0.8.1 the backtest does not fill the levels `exit()` sets, and the Strategies panel refuses to start a strategy that calls `exit()` or [[order.bracket()]], because OpenAlgo's order path has no single order that pairs a stop with a target yet. Until both are in place, manage exits in the script with `close()`, as this page does.
 :::
 
 ## The finished strategy

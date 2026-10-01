@@ -199,7 +199,7 @@ Every script you wrote carries a braces button, `{}`, on its legend row, beside 
 
 ## What the editor does not do yet
 
-The `openalgo-script` library ships six editor functions: highlighting, completion, diagnostics, hover, signature help and formatting. The /trading panel uses the highlighting, and shows the compiler's diagnostics when you open or save a script rather than as you type. The /trading page in current OpenAlgo releases runs version 0.5.0 of the library, and the six functions are the same in version 0.8.0, which these pages describe.
+The `openalgo-script` library ships six editor functions: highlighting, completion, diagnostics, hover, signature help and formatting. The /trading panel uses the highlighting, and shows the compiler's diagnostics when you open or save a script rather than as you type. The /trading page in current OpenAlgo releases runs version 0.5.0 of the library, and the six functions are the same in version 0.8.1, which these pages describe.
 
 So, in this release, the panel does not:
 

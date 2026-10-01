@@ -122,7 +122,7 @@ backtest(program, bars, settings, options?) -> { ok: true, record } | { ok: fals
 
 Every bar you hand over executes. The report window decides which of them the report is about.
 
-The backtest hands the whole of `bars` to every read of another timeframe before bar 0, so a `"lookahead"` read of [[req.timeframe()]] reads a higher timeframe bar's final value from its first chart bar, as the mode says. Confirmed and developing reads stop at the bar being executed. Releases before 0.6.0 read a lookahead bucket in a backtest only as far as it had run, so a lookahead backtest stored under an earlier release can trade differently when run again on 0.8.0. The /trading page in current OpenAlgo releases still runs library 0.5.0, which reads a lookahead bucket in its Backtest panel that earlier way.
+The backtest hands the whole of `bars` to every read of another timeframe before bar 0, so a `"lookahead"` read of [[req.timeframe()]] reads a higher timeframe bar's final value from its first chart bar, as the mode says. Confirmed and developing reads stop at the bar being executed. Releases before 0.6.0 read a lookahead bucket in a backtest only as far as it had run, so a lookahead backtest stored under an earlier release can trade differently when run again on 0.8.1. The /trading page in current OpenAlgo releases still runs library 0.5.0, which reads a lookahead bucket in its Backtest panel that earlier way.
 
 ### The contract
 
@@ -225,7 +225,7 @@ A failure on a bar during the run does not refuse the run: it is recorded in the
 
 | Field | Holds |
 |---|---|
-| `recordVersion` | The record format's version, 4 in 0.8.0 |
+| `recordVersion` | The record format's version, 4 in 0.8.1 |
 | `engine` | The engine's name and version |
 | `languageVersion` | The language version the program was compiled under |
 | `program`, `programHash` | The compiled program itself, and its hash |
@@ -322,7 +322,7 @@ A backtest over years of minute bars is pure computation with no pause in it. Th
 
 Put the honest limit of any backtest in your own interface as well: a backtest assumes the fills it models. It cannot know that your order would have moved the price, that the spread was wider than the bar suggests, or that the exchange was slow that morning. Modelled costs are an estimate, and modelled slippage is a guess with a number attached.
 
-## What the 0.8.0 backtest does not model
+## What the 0.8.1 backtest does not model
 
 - **A bracket's stop and target do not fill.** A strategy that attaches them with [[exit()]] or [[order.bracket()]] runs, but those levels are never filled. Manage exits in the script with [[close()]].
 - **Quantities in cash or a percentage of equity are refused**, as above. State quantities in units or lots.

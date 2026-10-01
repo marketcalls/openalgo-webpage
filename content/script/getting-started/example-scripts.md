@@ -821,7 +821,7 @@ What to notice:
 - **[[pos.size]] and [[pos.avgPrice]]** read the position from fills.
 
 :::note
-In version 0.8.0 the backtest does not fill the levels [[exit()]] sets, so in the Backtest panel every trade of this script closes on the downward cross, and the stop and target lines are drawn but never filled. The Strategies panel refuses to start a strategy that calls `exit()`. To trade this idea today, manage the stop and target in the script with `close()`, as [Your first strategy](/script/getting-started/first-strategy) does.
+In version 0.8.1 the backtest does not fill the levels [[exit()]] sets, so in the Backtest panel every trade of this script closes on the downward cross, and the stop and target lines are drawn but never filled. The Strategies panel refuses to start a strategy that calls `exit()`. To trade this idea today, manage the stop and target in the script with `close()`, as [Your first strategy](/script/getting-started/first-strategy) does.
 :::
 
 ## 11. Opening range breakout
@@ -886,7 +886,7 @@ if ready and ok and close < rangeLow
 
 // The clock exit is neither a stop nor a target: it is the admission that a
 // position that has not worked in five hours is not going to. closeOnSessionEnd
-// is declared as well; version 0.8.0 accepts it and does not act on it yet, so
+// is declared as well; version 0.8.1 accepts it and does not act on it yet, so
 // this exit is the one that flattens the position.
 if pos.size != 0 and not isNone(elapsed) and elapsed >= holdMinutes * 60000
     close()
@@ -905,7 +905,7 @@ What to notice:
 - **A time exit.** `elapsed >= holdMinutes * 60000` flattens with [[close()]] five hours after the open, before the NSE close at 15:30 IST.
 
 :::note
-The /trading chart and the Backtest panel take each exchange's session hours from the market calendar, so [[session.isFirstBar]] marks each session's open, the range forms and the script trades. In version 0.8.0 the backtest does not fill the levels [[exit()]] sets, so in the Backtest panel each trade closes on the clock exit. The Strategies panel refuses it, because it calls `exit()` and sizes in lots.
+The /trading chart and the Backtest panel take each exchange's session hours from the market calendar, so [[session.isFirstBar]] marks each session's open, the range forms and the script trades. In version 0.8.1 the backtest does not fill the levels [[exit()]] sets, so in the Backtest panel each trade closes on the clock exit. The Strategies panel refuses it, because it calls `exit()` and sizes in lots.
 :::
 
 ## 12. Short premium, combined stop

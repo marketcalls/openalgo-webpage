@@ -143,7 +143,7 @@ plot(basis, "Basis", orange, width = 2)
 [[bar.updates]] (how many times the newest bar has run) and [[bar.isConfirmed]] (whether the bar has closed) are in that panel on purpose. During market hours the newest bar is still forming and runs again on every update, and those two facts explain most reports of "it worked in the backtest". See [Realtime and confirmation](/script/language/realtime-and-confirmation).
 
 :::tip
-A study may declare more than one table. The chart adapter in version 0.8.0 draws each one in the corner its `position` names when the host states that it draws on openalgo-charts 2.5.4 or newer, and otherwise refuses the study with OS6024 before any bar runs rather than dropping a table in silence. The /trading page in current OpenAlgo releases still runs library 0.5.0, which draws only the first table a study declares, so there add the debug rows to the table you already have rather than declaring a second one.
+A study may declare more than one table. The chart adapter in version 0.8.1 draws each one in the corner its `position` names when the host states that it draws on openalgo-charts 2.5.4 or newer, and otherwise refuses the study with OS6024 before any bar runs rather than dropping a table in silence. The /trading page in current OpenAlgo releases still runs library 0.5.0, which draws only the first table a study declares, so there add the debug rows to the table you already have rather than declaring a second one.
 :::
 
 {{screen: table-dashboard}}

@@ -1,9 +1,9 @@
 ---
 title: Backtesting
-description: Running a strategy over history from the Backtest panel in /trading, choosing the range and the inputs, knowing how much history the first trade needs, and what the backtest in version 0.8.0 does and does not model.
+description: Running a strategy over history from the Backtest panel in /trading, choosing the range and the inputs, knowing how much history the first trade needs, and what the backtest in version 0.8.1 does and does not model.
 ---
 
-A backtest runs a strategy over the bars of the chart you are looking at, one bar at a time, oldest first, exactly as the chart runs a study, and reports what the strategy would have done. This page covers running one from the **Backtest** panel in the /trading page of OpenAlgo: what to pick, how far back to reach, how much history the first trade needs before it means anything, and which parts of a strategy the backtest in version 0.8.0 does not model yet.
+A backtest runs a strategy over the bars of the chart you are looking at, one bar at a time, oldest first, exactly as the chart runs a study, and reports what the strategy would have done. This page covers running one from the **Backtest** panel in the /trading page of OpenAlgo: what to pick, how far back to reach, how much history the first trade needs before it means anything, and which parts of a strategy the backtest in version 0.8.1 does not model yet.
 
 There is no separate backtest mode in the language and no backtest-only function. The file you backtest is the file you later [deploy](/script/strategies/sandbox-and-live), and the only thing that differs between the two is where the orders go. In a backtest they go to a fill model over history, and nothing is sent anywhere.
 
@@ -241,7 +241,7 @@ background(warm ? none : fade(silver, 92))
 
 ## What the backtest does not model yet
 
-Some parts of a strategy compile and are not acted on by the backtest in version 0.8.0, or by the Backtest panel. Most of them fail quietly, with a report that looks normal, so know them before you read one. Two are refused before the run starts, with the reason shown in the panel:
+Some parts of a strategy compile and are not acted on by the backtest in version 0.8.1, or by the Backtest panel. Most of them fail quietly, with a report that looks normal, so know them before you read one. Two are refused before the run starts, with the reason shown in the panel:
 
 | In the script | In the Backtest panel | What to do |
 |---|---|---|
@@ -285,7 +285,7 @@ A run tells you what a fixed set of rules did over a fixed set of bars. It canno
 | Trading from the first bar of the range | The first trades fire on half-warm values | Load warmup bars before the traded window |
 | `fillOn = "close"` | Every entry at the price that triggered it | Leave the default |
 | Zero costs | A dense intraday script prints money | Set slippage and commission before reading anything |
-| A stop set with `exit()` | Losses run far past the stop level the script set | Write the stop as a rule: version 0.8.0 does not fill `exit()` levels |
+| A stop set with `exit()` | Losses run far past the stop level the script set | Write the stop as a rule: version 0.8.1 does not fill `exit()` levels |
 | One regime | A long-only strategy over a rising market | Extend or move the range |
 | Tuned on the whole range | Every parameter at a local peak | Hold a section back before tuning |
 | Too few trades | A 22 trade run with a 68 percent win rate | Longer range, finer interval, or drop the idea |

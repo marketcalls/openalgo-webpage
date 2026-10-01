@@ -139,7 +139,7 @@ The first digit after `OS` says which kind of problem the diagnostic describes. 
 | [OS8xxx](/script/errors/warnings) | Warnings | The script compiles and runs, and something in it is probably not meant | Warning | 19 |
 | [OS9xxx](/script/errors/import) | Import | A script written in another chart language could not be translated as written, or was translated with a stated difference | Error or warning | 12 |
 
-Version 0.8.0 catalogues 173 codes. What each range means for your next move:
+Version 0.8.1 catalogues 173 codes. What each range means for your next move:
 
 - **[OS1xxx Syntax errors](/script/errors/syntax).** Something in the text is not part of the language: a tab in the indentation, a semicolon, `&&` for `and`, a bracket that is never closed. Nothing has run. The fix is on the line reported, or on the line where the bracket or block it names was opened.
 - **[OS2xxx Names and types](/script/errors/names-and-types).** The text is a program and its meaning does not work out: a name read before it is assigned or misspelt, a name declared twice, a number added to a string, `[]` on a value that keeps no history. Nothing has run.
@@ -169,9 +169,9 @@ Pasted under a declaration, it gives five errors and a warning. The bracket is n
 
 **Fix errors first, then read the warnings.** A warning never stops the script, but each one describes code that is almost always a mistake.
 
-**OS6018 beside another error.** In version 0.8.0 a few check errors, such as [OS3003](/script/errors/arguments#os3003), [OS3025](/script/errors/arguments#os3025) and [OS2005](/script/errors/names-and-types#os2005), bring [OS6018](/script/errors/data#os6018) ("The compiled program is malformed") onto the same line. Its message is long and technical; you can ignore it. Fix the other error and OS6018 goes with it.
+**OS6018 beside another error.** In version 0.8.1 a few check errors, such as [OS3003](/script/errors/arguments#os3003), [OS3025](/script/errors/arguments#os3025) and [OS2005](/script/errors/names-and-types#os2005), bring [OS6018](/script/errors/data#os6018) ("The compiled program is malformed") onto the same line. Its message is long and technical; you can ignore it. Fix the other error and OS6018 goes with it.
 
-**OS6018 on its own.** Its message then says the fault is in the compiler and asks you to report it together with the script. The /trading page in current OpenAlgo releases still runs library 0.5.0, which reports a setting that does arithmetic on an input, such as `precision = input(2, "Decimals") + 1` or `width = w + 1` where `w` is an input, with OS6018 alone. Version 0.8.0 reports it as [OS3025](/script/errors/arguments#os3025), with OS6018 beside it. Either way, pass the input on its own and put the arithmetic in its default: `precision = input(3, "Decimals")`.
+**OS6018 on its own.** Its message then says the fault is in the compiler and asks you to report it together with the script. The /trading page in current OpenAlgo releases still runs library 0.5.0, which reports a setting that does arithmetic on an input, such as `precision = input(2, "Decimals") + 1` or `width = w + 1` where `w` is an input, with OS6018 alone. Version 0.8.1 reports it as [OS3025](/script/errors/arguments#os3025), with OS6018 beside it. Either way, pass the input on its own and put the arithmetic in its default: `precision = input(3, "Decimals")`.
 
 **Look up the code.** Every code is on its range page with its message, a plain explanation of what usually causes it, the fix, and a before and after example. The before block is the shortest code that raises the code. It may use names such as `fast`, `trending` or a function `band` that a real script would define above it, so pasted on its own it also reports [OS2001](/script/errors/names-and-types#os2001) for those names. The after block is the same code, fixed. For problems described by what you see rather than by a code, use [Troubleshooting](/script/writing/troubleshooting).
 
