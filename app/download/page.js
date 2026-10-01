@@ -45,7 +45,7 @@ export default function DownloadPage() {
     { title: "Indicator Skills", description: "AI agent skills for 100+ indicators, charts & scanners", icon: BarChart3, url: "/skills" },
     { title: "Backtesting Skills", description: "VectorBT backtesting skills for Claude Code, Cursor, Codex", icon: FlaskConical, url: "/skills" },
     { title: "AlgoMirror", description: "Multi Account OpenAlgo Orchestrator", icon: Layers, url: "https://github.com/marketcalls/algomirror" },
-    { title: "OpenAlgo Charts", description: "Dependency-free HTML5 canvas charting engine, 134.69 kB Brotli", icon: LineChart, url: "https://github.com/marketcalls/openalgo-charts", docs: "https://marketcalls.github.io/openalgo-charts" },
+    { title: "OpenAlgo Charts", description: "Dependency-free HTML5 canvas charting engine, 137.53 kB Brotli", icon: LineChart, url: "https://github.com/marketcalls/openalgo-charts", docs: "https://marketcalls.github.io/openalgo-charts" },
     { title: "OpenStatz", description: "Portfolio analytics for quants - Quant Tearsheets", icon: PieChart, url: "https://github.com/marketcalls/openstatz" },
     { title: "OpenAlgo Heatmap", description: "Finviz-style market heatmap (React Component)", icon: LayoutGrid, url: "https://github.com/marketcalls/openalgo-heatmap" },
     { title: "OpenQuest", description: "Realtime Stock Data Aggregator with TradingView Charts", icon: Activity, url: "https://github.com/marketcalls/openquest" },
