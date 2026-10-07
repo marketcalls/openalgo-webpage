@@ -57,7 +57,7 @@ const VARSITY = "Open Varsity";
 const SECTIONS = [
   { slug: null, label: "Open source", title: ["Your personal", "algo trading platform."],
     desc: "Test and execute your trading ideas, connect your trading platforms and build strategies with AI, with a built-in options analytics suite across 35+ brokers.",
-    stats: [["4,95,000+", "Downloads"], ["100%", "Open source"], ["2,900+", "GitHub stars"]] },
+    stats: [["4,95,000+", "Downloads"], ["100%", "Open source"], ["2,800+", "GitHub stars"]] },
   { slug: "charts", label: "OpenAlgo Charts", title: ["Every move.", "A clearer view."],
     desc: "A dependency-free charting library for trading apps: indicators, drawing tools, chart trading, replay and a complete terminal in one import.",
     stats: [["105", "Indicators"], ["87", "Drawing tools"], ["13", "Chart types"], ["0", "Dependencies"]] },

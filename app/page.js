@@ -168,7 +168,7 @@ export default function Home() {
             {[
               { icon: Download, value: "4,95,000+", label: t('hero.statDownloads') },
               { icon: Code2, value: "100%", label: t('hero.statOpenSource') },
-              { icon: Star, value: "2,900+", label: t('hero.statStars') },
+              { icon: Star, value: "2,800+", label: t('hero.statStars') },
             ].map(({ icon: Icon, value, label }) => (
               <div key={label} className="flex items-center gap-3">
                 <Icon className="h-5 w-5 text-on-surface-variant" aria-hidden="true" />
