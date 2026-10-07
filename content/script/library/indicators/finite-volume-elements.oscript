@@ -1,0 +1,26 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © openalgo
+
+version 1
+study("Finite Volume Elements (FVE)", "FVE", precision = 2)
+
+samples = input(22, "Period", min = 1, tooltip = "Bars of signed volume that are added up.")
+cutoff = input(0.3, "Cutoff %", min = 0, step = 0.1, tooltip = "The flow must exceed this percentage of the close before the bar's volume counts.")
+
+// Money flow: where the close sits against the bar's midpoint, plus the
+// change in typical price. The first bar has no previous typical price.
+flow = close - hl2 + change(hlc3)
+cut = cutoff * close / 100
+
+// The bar's volume counts as buying above the cutoff, as selling below minus
+// the cutoff, and not at all in between.
+signedVolume = isNone(flow) ? none : flow > cut ? volume : flow < -cut ? -volume : 0
+
+// FVE: the signed volume over the window as a percentage of all the volume
+// traded in it. A window with no volume has no answer.
+avgVolume = sma(volume, samples)
+net = sum(signedVolume, samples)
+fve = avgVolume == 0 ? none : 100 * net / (avgVolume * samples)
+
+level(0, "Zero", fade(gray, 50), style = "dashed")
+plot(fve, "FVE", #2962FF, width = 2)

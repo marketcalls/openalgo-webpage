@@ -1,0 +1,26 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © openalgo
+
+version 1
+study("Twiggs Money Flow", "TMF", precision = 3)
+
+length = input(21, "Length", min = 1, tooltip = "Bars in the Wilder average of the flow and of volume.")
+
+// The true range of the bar: a gap from the previous close counts as part of
+// it. The first bar has no previous close and uses its own high and low.
+prevClose = orElse(close[1], close)
+trueHigh = bar.index > 0 ? max(high, prevClose) : high
+trueLow = bar.index > 0 ? min(low, prevClose) : low
+spread = trueHigh - trueLow
+
+// Volume weighted by where the close sits in the true range: +1 at the true
+// high, -1 at the true low. A bar with no range carries no flow.
+flow = spread == 0 ? 0 : volume * ((close - trueLow) - (trueHigh - close)) / spread
+
+// Wilder averages of the flow and of volume; their ratio is the money flow.
+avgFlow = rma(flow, length)
+avgVolume = rma(volume, length)
+tmf = avgVolume == 0 ? none : avgFlow / avgVolume
+
+plot(tmf, "TMF", tmf >= 0 ? #4CAF50 : #FF5252, width = 2)
+level(0, "Zero", #787B86, style = "dashed")

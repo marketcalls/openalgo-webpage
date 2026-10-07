@@ -1,0 +1,42 @@
+{
+  "title": "3-10 Oscillator",
+  "summary": "A 3 bar simple average of the close minus a 10 bar one, with a 16 bar average of that gap as a signal line.",
+  "description": "The 3-10 Oscillator is a short-term momentum measure associated with Linda Raschke. It subtracts a 10 bar simple average of the close from a 3 bar simple average of the close. The difference is positive while the most recent bars trade above the slightly longer average and negative while they trade below it. The source can be switched to another price, such as the bar midpoint `(high + low) / 2`.\n\nA 16 bar simple average of the oscillator is drawn as the signal line. The oscillator is shown as a histogram in its own pane, teal at or above zero and red below it, with the signal line in orange and a dashed zero line.",
+  "howToRead": "Readings above zero mean short-term momentum is up, below zero that it is down. Traders watch the oscillator against its signal line: the oscillator turning up through a rising signal line in an uptrend is read as a pullback ending, and a turn down through a falling signal line in a downtrend as a bounce ending. A new price high on a lower oscillator peak suggests the swing is losing force.\n\nBecause the averages are short, the oscillator reacts within a few bars and flips often in a sideways market. It works best read in the direction of the larger trend rather than as a stand-alone buy or sell rule.",
+  "settings": [
+    {
+      "key": "src",
+      "label": "Source",
+      "description": "The price series the averages are taken over. The close is the usual choice; the bar midpoint, hl2, is a common alternative."
+    },
+    {
+      "key": "fastLength",
+      "label": "Fast Length",
+      "description": "Bars in the fast simple average. 3 is the published value; a larger value smooths the oscillator."
+    },
+    {
+      "key": "slowLength",
+      "label": "Slow Length",
+      "description": "Bars in the slow simple average. 10 is the published value."
+    },
+    {
+      "key": "signalLength",
+      "label": "Signal Length",
+      "description": "Bars in the simple average of the oscillator drawn as the signal line. 16 is the published value."
+    }
+  ],
+  "faq": [
+    {
+      "q": "Can I use the bar midpoint instead of the close?",
+      "a": "Yes. Set the Source to hl2. The midpoint of the high and low uses the whole range of the bar, so a single late print near the close moves it less, and the oscillator is slightly smoother."
+    },
+    {
+      "q": "How is it different from MACD?",
+      "a": "It has the same shape, a fast average minus a slow one with a signal line, but uses much shorter simple averages instead of exponential ones, so it reacts faster to short swings."
+    },
+    {
+      "q": "What does the signal line add?",
+      "a": "It is a 16 bar average of the oscillator. The oscillator crossing it marks a change in short-term momentum, and its slope shows the direction of the slower swing."
+    }
+  ]
+}

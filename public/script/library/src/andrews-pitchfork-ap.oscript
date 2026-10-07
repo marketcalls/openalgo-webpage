@@ -36,7 +36,7 @@ lowerValue = p3Price + slope * (bar.index - p3Time)
 // A projection that runs far off the price scale is left out.
 inRange = abs(medianValue) <= 1e9 and abs(upperValue) <= 1e9 and abs(lowerValue) <= 1e9
 
-plot(inRange ? medianValue : none, "Median", #ffeb3b, width = 2)
+plot(inRange ? medianValue : none, "Median", #ff9800, width = 2)
 top = plot(inRange ? upperValue : none, "Upper", #2962ff, width = 1)
 bottom = plot(inRange ? lowerValue : none, "Lower", #2962ff, width = 1)
 fill(top, bottom, #2962ff, opacity = 0.1)

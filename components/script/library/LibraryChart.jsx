@@ -32,11 +32,20 @@ function loadBars() {
   return barsPromise
 }
 
-/** Put the viewport over the newest bars, with room for `ahead` bars past them. */
-function showRecent(widget, count, ahead) {
+/**
+ * Put the viewport over the newest bars, with room for `ahead` bars past them.
+ * A study whose last event is older than that view (`endBack` bars back from
+ * the newest) opens on its last event instead.
+ */
+function showRecent(widget, count, ahead, endBack) {
   if (count <= 0) return
   const last = count - 1
-  widget.chart.setVisibleLogicalRange({ from: Math.max(0, last - VISIBLE_BARS + 1), to: last + Math.max(8, ahead + 4) })
+  if (endBack) {
+    const end = Math.max(0, last - endBack)
+    widget.chart.setVisibleLogicalRange({ from: Math.max(0, end - VISIBLE_BARS + 1), to: end + 2 })
+    return
+  }
+  widget.chart.setVisibleLogicalRange({ from: Math.max(0, last - VISIBLE_BARS + 1), to: last + Math.max(8, ahead + (ahead > 0 ? 10 : 4)) })
 }
 
 /** The furthest any plot draws past its bar, from a literal or a setting's default. */
@@ -62,7 +71,7 @@ function compile(core, name, text) {
   return { ok: true, file, program }
 }
 
-export default function LibraryChart({ name, source, height = 540 }) {
+export default function LibraryChart({ name, source, edited = false, viewEndBack = null, aheadBars = 0, chartSettings = null, height = 540 }) {
   const host = useRef(null)
   const widgetRef = useRef(null)
   const studyRef = useRef(null)
@@ -101,7 +110,7 @@ export default function LibraryChart({ name, source, height = 540 }) {
         })
         widget.series.setData(bars)
         barCountRef.current = bars.length
-        showRecent(widget, bars.length, 0)
+        showRecent(widget, bars.length, 0, viewEndBack)
         widgetRef.current = widget
         libsRef.current = { charts, core, adapter }
         setReady(true)
@@ -142,13 +151,17 @@ export default function LibraryChart({ name, source, height = 540 }) {
         instrument: { exchange: "CRYPTO", lotSize: 1, hasVolume: true, currency: "USD" },
       })
       charts.registerIndicator(descriptor)
-      const study = widget.chart.addIndicator(descriptor.id)
+      // The published script opens with the page's chart settings, when it
+      // names any; an edited one opens with its own defaults.
+      const study = !edited && chartSettings ? widget.chart.addIndicator(descriptor.id, chartSettings) : widget.chart.addIndicator(descriptor.id)
       studyRef.current = study
       // A study in a pane of its own gets a third of the height, so its
       // lines read as clearly as the candles above it.
       // A plot drawn ahead of the newest bar (an Ichimoku cloud) needs that
       // much clear space on the right to be seen.
-      showRecent(widget, barCountRef.current, aheadOf(compiled.program))
+      // An edited script may move its events, so only the published one keeps
+      // the stored view.
+      showRecent(widget, barCountRef.current, Math.max(aheadOf(compiled.program), edited ? 0 : aheadBars), edited ? null : viewEndBack)
       if (study?.paneIndex > 0) {
         widget.chart.setPaneWeight(0, 2)
         widget.chart.setPaneWeight(study.paneIndex, 1)
@@ -157,7 +170,7 @@ export default function LibraryChart({ name, source, height = 540 }) {
     } catch (error) {
       setState({ phase: "study-error", message: error instanceof Error ? error.message : "The study could not be drawn." })
     }
-  }, [name, source, ready])
+  }, [name, source, ready]) // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
     <div className="osl-chart" style={{ height }}>

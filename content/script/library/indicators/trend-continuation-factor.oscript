@@ -1,0 +1,30 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © openalgo
+
+version 1
+study("Trend Continuation Factor (TCF)", "TCF", precision = 2)
+
+src = input(close, "Source")
+length = input(35, "Length", min = 1, tooltip = "Bars in the running sums of both lines.")
+
+// The bar's change, split into a rise and a fall, each as a positive amount.
+// The first bar has no change, so both are absent there.
+chg = change(src)
+plusChange = isNone(chg) ? none : max(chg, 0)
+minusChange = isNone(chg) ? none : max(-chg, 0)
+
+// The continuation factors: consecutive rises (or falls) added up, back to
+// zero on any bar that does not continue the run.
+var plusCf = 0.0
+var minusCf = 0.0
+if not isNone(chg)
+    plusCf = plusChange == 0 ? 0 : plusCf + plusChange
+    minusCf = minusChange == 0 ? 0 : minusCf + minusChange
+
+// Each side's change less the opposite side's run, summed over the window.
+plusTcf = sum(plusChange - minusCf, length)
+minusTcf = sum(minusChange - plusCf, length)
+
+plot(plusTcf, "Plus TCF", #26A69A, width = 2)
+plot(minusTcf, "Minus TCF", #EF5350, width = 2)
+level(0, "Zero", gray, style = "dashed")

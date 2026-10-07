@@ -1,0 +1,34 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © openalgo
+
+version 1
+study("Smoothed Heikin Ashi", "SHA", overlay = true, precision = 2)
+
+len1 = input(10, "First Smoothing", min = 1, tooltip = "Bars in the exponential average applied to the bar's own open, high, low and close.")
+len2 = input(10, "Second Smoothing", min = 1, tooltip = "Bars in the exponential average applied to the finished Heikin Ashi candles.")
+
+// First pass: the bar's four prices, each smoothed.
+o = ema(open, len1)
+h = ema(high, len1)
+l = ema(low, len1)
+c = ema(close, len1)
+
+// Heikin Ashi candles from the smoothed prices. The close is their mean; the
+// open is the midpoint of the previous candle's open and close, or of the
+// smoothed open and close on the first candle.
+var haOpen = none
+var haClose = none
+prevOpen = haOpen
+prevClose = haClose
+haClose = (o + h + l + c) / 4
+haOpen = isNone(prevOpen) ? (o + c) / 2 : (prevOpen + prevClose) / 2
+haHigh = max(h, max(haOpen, haClose))
+haLow = min(l, min(haOpen, haClose))
+
+// Second pass: the candles themselves, each price smoothed again.
+o2 = ema(haOpen, len2)
+h2 = ema(haHigh, len2)
+l2 = ema(haLow, len2)
+c2 = ema(haClose, len2)
+
+plotCandles(o2, h2, l2, c2, "Smoothed HA", colorUp = #26A69A, colorDown = #EF5350)

@@ -1,0 +1,19 @@
+{
+  "title": "UT Bot",
+  "summary": "An ATR trailing stop with a fast moving average of price: Buy and Sell labels where the average crosses the stop, and candles coloured by side.",
+  "description": "UT Bot follows price with a trailing stop set by volatility. The distance is the `Sensitivity` times the average true range over `ATR Period` bars, Wilder's average. While the price stays above the stop, the stop sits that far below it and only ever rises; while the price stays below, it sits that far above and only ever falls. When the price crosses the stop, the stop jumps to the other side.\n\nA short moving average of the same price (Hull by default, over two bars) is drawn in green beside the stop in red. A **Buy** label marks the bar where the average crosses above the stop while the price is above it, and a **Sell** label the reverse. Candles are green while the price is above the stop and red while it is below.\n\nThe price can be read from ordinary candles or from Heikin Ashi candles, whose close is the bar's average price and whose open is the midpoint of the previous Heikin Ashi open and close. The default price is the open, which does not change while a bar forms.",
+  "howToRead": "Read the candle colour as the side: green while the price holds above the trailing stop, red while it holds below. The labels mark the changes, and the red stop line is where the current side would end.\n\nWith the defaults the study reacts quickly and labels often, which suits a trader who wants every turn. A larger `Sensitivity` keeps the stop further away and labels less often; a longer `ATR Period` steadies the distance. Heikin Ashi prices smooth the input and usually cut the number of labels in a choppy market, at the cost of reacting later.",
+  "settings": [
+    { "key": "h", "label": "Signals from Heikin Ashi Candles", "description": "Read the price from Heikin Ashi candles instead of the ordinary ones. Smoother, with fewer and later signals." },
+    { "key": "Price", "label": "Price Source", "description": "Which price the stop and the average follow. Open is the default and does not change while a bar forms." },
+    { "key": "smoothing", "label": "Moving Average Type", "description": "The average drawn against the stop: simple, exponential, weighted or Hull." },
+    { "key": "MA_Period", "label": "MA Period", "description": "Bars in that moving average. Two keeps it close to price." },
+    { "key": "a", "label": "Sensitivity", "description": "How many average true ranges the stop sits from the price. Larger values give fewer signals." },
+    { "key": "c", "label": "ATR Period", "description": "Bars in Wilder's average of the true range that sets the stop's distance." }
+  ],
+  "faq": [
+    { "q": "Why are there so many labels with the defaults?", "a": "A Sensitivity of 1 and a two-bar average keep everything close to price, so small turns cross the stop. Raise the Sensitivity, or read prices from Heikin Ashi candles, to see fewer." },
+    { "q": "Does it place orders?", "a": "No. It is a study: it draws the stop, the average, the labels and the candle colours, and raises a Buy or Sell alert. Turning it into a strategy is a separate script." },
+    { "q": "Why is open the default price?", "a": "The open is fixed for the whole bar, so a label cannot appear and then vanish while the bar is still forming." }
+  ]
+}

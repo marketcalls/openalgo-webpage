@@ -1,0 +1,58 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © openalgo
+
+version 1
+study("Ehlers Rocket RSI", "RocketRSI", precision = 3)
+
+src = input(close, "Source")
+smoothLength = input(8, "Smooth Length", min = 2)
+rsiLength = input(10, "RSI Length", min = 2)
+obosLevel = input(2.0, "Overbought and Oversold Level", min = 0, step = 0.1)
+
+// Two-pole super smoother coefficients, damped by the square root of two.
+arg = sqrt(2) * math.pi / smoothLength
+a1 = exp(-arg)
+c2 = 2 * a1 * math.cos(arg)
+c3 = -a1 * a1
+c1 = 1 - c2 - c3
+
+// Momentum over the RSI window: the source against its value rsiLength - 1
+// bars back.
+momentum = src - src[rsiLength - 1]
+momPrev = momentum[1]
+
+// The smoother runs on the average of this bar's and the previous bar's
+// momentum, and starts as the momentum itself on its first two bars.
+var prev1 = none
+var prev2 = none
+filt = isNone(momentum) ? none : isNone(momPrev) or isNone(prev1) or isNone(prev2) ? momentum : c1 * (momentum + momPrev) / 2 + c2 * prev1 + c3 * prev2
+if not isNone(filt)
+    prev2 = prev1
+    prev1 = filt
+
+// Rises and falls of the smoothed momentum over the last rsiLength changes.
+cu = 0.0
+cd = 0.0
+for k = 0 to rsiLength - 1
+    d = filt[k] - filt[k + 1]
+    if d > 0
+        cu = cu + d
+    if d < 0
+        cd = cd - d
+
+// Their balance runs from -1 to 1 (a window with no movement keeps the
+// previous balance, 0 before the first), is held inside plus and minus 0.999
+// and is stretched by the Fisher transform.
+total = cu + cd
+ready = not isNone(filt[rsiLength])
+var lastBalance = 0.0
+if ready and total != 0
+    lastBalance = (cu - cd) / total
+balance = ready ? lastBalance : none
+held = clamp(balance, -0.999, 0.999)
+rocket = 0.5 * log((1 + held) / (1 - held))
+
+level(obosLevel, "Overbought", #787b86, style = "dashed")
+level(0, "Zero Line", #787b86, style = "dotted")
+level(-obosLevel, "Oversold", #787b86, style = "dashed")
+plot(rocket, "Rocket RSI", #ffeb3b, width = 2)

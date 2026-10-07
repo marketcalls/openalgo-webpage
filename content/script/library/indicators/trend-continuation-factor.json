@@ -1,0 +1,15 @@
+{
+  "title": "Trend Continuation Factor (TCF)",
+  "summary": "Two running sums by M. H. Pee that weigh each bar's rise or fall against the opposite side's run, to show which trend is continuing.",
+  "description": "The Trend Continuation Factor, described by M. H. Pee, measures whether a trend is carrying on by comparing the size of each move with the run of moves against it.\n\nEach bar's change in the source is split in two. The **plus change** is the rise (zero when the bar did not rise) and the **minus change** is the fall as a positive amount (zero when it did not fall). Two continuation factors follow the runs: the plus factor adds up consecutive rises and returns to zero on any bar that does not rise, and the minus factor does the same for falls.\n\n**Plus TCF** is the sum over `Length` bars of the plus change less the minus factor, and **Minus TCF** is the sum of the minus change less the plus factor. A long run of rises builds a large plus factor that pulls Minus TCF down, while the rises themselves lift Plus TCF. The first bar has no change, so both lines begin a bar after the window fills.",
+  "howToRead": "A positive Plus TCF means rises have been strong enough to outweigh the runs of falls, so an uptrend is continuing; a positive Minus TCF says the same for a downtrend. The two lines can never both be above zero, because on every bar each side's change is at most its own run, so their sum is never positive. When Plus TCF is above zero and Minus TCF below it, the uptrend is in control, and the reverse marks a downtrend.\n\nWhen both lines are below zero neither side is continuing, which is a sideways or turning market, and a trend follower stands aside. A crossing of the two lines is an early sign that the side in control has changed. The sums cover 35 bars by default, so the lines react slowly to a sudden reversal.",
+  "settings": [
+    { "key": "src", "label": "Source", "description": "The price series whose bar to bar changes are measured. Close is the default." },
+    { "key": "length", "label": "Length", "description": "Bars in the running sums of both lines. 35 is the published default; shorter lengths react sooner and flip more often." }
+  ],
+  "faq": [
+    { "q": "Why can both lines be negative at the same time?", "a": "Each line subtracts the opposite side's run from its own changes. In a choppy market short runs on both sides keep cancelling the moves, so neither sum stays above zero, and that is the signal that no trend is continuing." },
+    { "q": "What does a continuation factor reset to?", "a": "Zero. The plus factor keeps adding while every bar rises and drops to zero on the first bar that does not, and the minus factor does the same for falls." },
+    { "q": "Is it an overbought or oversold gauge?", "a": "No. It has no fixed range or bounds. It answers which side is extending its run, and is read by the sign of each line and by their crossings." }
+  ]
+}

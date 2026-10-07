@@ -43,7 +43,7 @@ for k = 0 to min(bar.index, length - 1)
         windowCount = windowCount + 1
 rms = windowCount > 0 ? sqrt(sumSq / windowCount) : 0
 
-plot(smooth, "Middle Band", #ffeb3b, width = 2)
+plot(smooth, "Middle Band", #ff9800, width = 2)
 top = plot(smooth + mult * rms, "Upper Band", #ffeb3b, width = 2)
 bottom = plot(smooth - mult * rms, "Lower Band", #ffeb3b, width = 2)
 fill(top, bottom, #2962ff, opacity = 0.1)

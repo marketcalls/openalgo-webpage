@@ -52,4 +52,4 @@ tss = tssCount > 0 ? tssSum : totalSquares
 score = isNone(rss) or isNone(tss) ? none : tss != 0 ? 1 - rss / tss : 1.0
 
 plot(score, "R²", #ffeb3b, width = 2, style = "area")
-plot(model, "EMA", #ffeb3b, width = 1, overlay = true)
+plot(model, "EMA", #ff9800, width = 1, overlay = true)

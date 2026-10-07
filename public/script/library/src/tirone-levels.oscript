@@ -1,0 +1,37 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © openalgo
+
+version 1
+study("Tirone Levels", overlay = true, precision = 2)
+
+length = input(20, "Length", min = 1, tooltip = "Bars in the window whose highest high and lowest low set the levels.")
+method = input("Midpoint", "Method", options = ["Midpoint", "Mean"], tooltip = "Midpoint: three lines dividing the range into thirds and halves. Mean: five lines built around the average of the range's extremes and the close.")
+
+hh = highest(high, length)
+ll = lowest(low, length)
+range = hh - ll
+useMidpoint = method == "Midpoint"
+
+// Midpoint method: the range split into thirds, with its middle between them.
+top = useMidpoint ? hh - range / 3 : none
+centre = useMidpoint ? ll + range / 2 : none
+bottom = useMidpoint ? ll + range / 3 : none
+
+// Mean method: the adjusted mean of the highest high, the lowest low and the
+// close, with two levels a range above and below it and two reflections of the
+// extremes through it.
+adjustedMean = (hh + ll + close) / 3
+extremeHigh = useMidpoint ? none : adjustedMean + range
+regularHigh = useMidpoint ? none : 2 * adjustedMean - ll
+meanLine = useMidpoint ? none : adjustedMean
+regularLow = useMidpoint ? none : 2 * adjustedMean - hh
+extremeLow = useMidpoint ? none : adjustedMean - range
+
+plot(top, "Top", #E57373)
+plot(centre, "Centre", #9E9E9E)
+plot(bottom, "Bottom", #4DB6AC)
+plot(extremeHigh, "Extreme High", #C62828)
+plot(regularHigh, "Regular High", #E57373)
+plot(meanLine, "Adjusted Mean", #FF9800)
+plot(regularLow, "Regular Low", #4DB6AC)
+plot(extremeLow, "Extreme Low", #00796B)

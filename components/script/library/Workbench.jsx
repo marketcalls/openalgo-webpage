@@ -28,7 +28,7 @@ const TABS = [
  * static file fetched once; the chart draws it, or an edited copy the reader
  * chose to run from the editor.
  */
-export default function Workbench({ file, lines, capturedAt, interval }) {
+export default function Workbench({ file, lines, capturedAt, interval, viewEndBack = null, aheadBars = 0, chartSettings = null, chartSettingsText = null, chartNote = null }) {
   const [tab, setTab] = useState("chart")
   const [visited, setVisited] = useState({ chart: true, source: false })
   const [source, setSource] = useState(null)
@@ -92,10 +92,12 @@ export default function Workbench({ file, lines, capturedAt, interval }) {
               <span aria-hidden="true">&middot;</span>
               <span>{interval}</span>
               {edited ? <span className="osl-badge">Your edited script</span> : null}
+              {!edited && chartSettingsText ? <span className="osl-badge" title="Its defaults suit other charts; the source keeps them.">Shown with {chartSettingsText}</span> : null}
             </div>
             <div className="osl-panel-meta">Fixed data to {capturedAt}, UTC</div>
           </div>
-          {visited.chart ? <LibraryChart name={file} source={drawn} /> : null}
+          {chartNote ? <p className="osl-panel-note">{chartNote}</p> : null}
+          {visited.chart ? <LibraryChart name={file} source={drawn} edited={edited} viewEndBack={viewEndBack} aheadBars={aheadBars} chartSettings={chartSettings} /> : null}
         </div>
 
         <div id="osl-panel-source" role="tabpanel" aria-labelledby="osl-tab-source" hidden={tab !== "source"}>

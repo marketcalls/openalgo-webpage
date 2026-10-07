@@ -1,0 +1,21 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © openalgo
+
+version 1
+study("Relative Volume (RVOL)", "RVOL", precision = 2)
+
+length = input(20, "Average Length", min = 1, tooltip = "How many earlier bars make up the baseline volume.")
+threshold = input(2.0, "Highlight Above", min = 0.1, step = 0.1, tooltip = "Columns at or above this multiple of the baseline are drawn in the highlight colour.")
+normalColor = input(fade(gray, 40), "Column Color")
+highColor = input(orange, "Highlight Color")
+
+// The baseline is the simple average of the volume over the bars before this
+// one, so a surge is never diluted by its own bar.
+baseline = sma(volume, length)[1]
+rvol = baseline > 0 ? volume / baseline : none
+
+level(1, "Average", fade(gray, 30), style = "dashed")
+plot(rvol, "RVOL", rvol >= threshold ? highColor : normalColor, style = "histogram")
+
+if crossUp(rvol, threshold)
+    alert("Volume rose above the highlight multiple of its average", id = "rvol-high", title = "Relative volume above threshold")

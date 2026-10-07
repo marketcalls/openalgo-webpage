@@ -1,0 +1,21 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © openalgo
+
+version 1
+study("Chande Trend Score", "CTS", precision = 0)
+
+src = input(close, "Source")
+firstLag = input(11, "First Lookback", min = 1, tooltip = "The nearest past bar the source is compared with.")
+lags = input(10, "Number of Lookbacks", min = 1, tooltip = "How many consecutive past bars, starting at the first lookback, are compared.")
+
+// Compare the source with its value at each lag from `firstLag` onward: plus
+// one when it is above the older value, minus one otherwise (a tie counts as
+// not above). The score needs every lag, so it waits for the oldest one.
+lastLag = firstLag + lags - 1
+score = 0
+for k = firstLag to lastLag
+    score += src > src[k] ? 1 : -1
+trendScore = isNone(src[lastLag]) ? none : score
+
+level(0, "Zero", fade(gray, 50), style = "dashed")
+plot(trendScore, "Trend Score", trendScore >= 0 ? #26A69A : #EF5350, width = 2, style = "histogram")

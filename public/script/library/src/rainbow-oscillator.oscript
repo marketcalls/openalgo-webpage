@@ -1,0 +1,42 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © openalgo
+
+version 1
+study("Rainbow Oscillator", "RBO", precision = 2)
+
+src = input(close, "Source")
+smoothing = input(2, "Average Length", min = 1, tooltip = "Bars in each of the ten stacked simple averages.")
+lookback = input(10, "High Low Lookback", min = 2, tooltip = "Bars over which the highest and lowest source set the scale.")
+
+// Ten simple averages, each taken over the one before it, so every layer is
+// smoother and later than the last.
+r1 = sma(src, smoothing)
+r2 = sma(r1, smoothing)
+r3 = sma(r2, smoothing)
+r4 = sma(r3, smoothing)
+r5 = sma(r4, smoothing)
+r6 = sma(r5, smoothing)
+r7 = sma(r6, smoothing)
+r8 = sma(r7, smoothing)
+r9 = sma(r8, smoothing)
+r10 = sma(r9, smoothing)
+
+// The scale: the source's range over the lookback. A flat window has none.
+hiSrc = highest(src, lookback)
+loSrc = lowest(src, lookback)
+scale = hiSrc - loSrc
+validScale = scale > 0 ? scale : none
+
+layerMean = (r1 + r2 + r3 + r4 + r5 + r6 + r7 + r8 + r9 + r10) / 10
+layerTop = max(r1, max(r2, max(r3, max(r4, max(r5, max(r6, max(r7, max(r8, max(r9, r10)))))))))
+layerBottom = min(r1, min(r2, min(r3, min(r4, min(r5, min(r6, min(r7, min(r8, min(r9, r10)))))))))
+
+// The oscillator: how far the source sits from the centre of the ten layers.
+// The band: how far apart the layers are spread, on the same scale.
+osc = 100 * (src - layerMean) / validScale
+band = 100 * (layerTop - layerBottom) / validScale
+
+plot(osc, "Rainbow Oscillator", osc >= 0 ? #26A69A : #EF5350, style = "histogram")
+plot(band, "Upper Band", #ff5252, width = 2)
+plot(-band, "Lower Band", #4caf50, width = 2)
+level(0, "Zero", gray, style = "dashed")

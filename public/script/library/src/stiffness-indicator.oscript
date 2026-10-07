@@ -1,0 +1,23 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © openalgo
+
+version 1
+study("Stiffness Indicator", "Stiffness", precision = 2)
+
+maLength = input(100, "Average Length", min = 2, tooltip = "Bars in the simple average and standard deviation of the close.")
+stdMult = input(0.2, "Deviation Multiplier", min = 0, step = 0.1, tooltip = "How many standard deviations the bound sits below the average.")
+stiffLength = input(60, "Stiffness Length", min = 1, tooltip = "Bars over which closes above the bound are counted.")
+smoothLength = input(3, "Smoothing", min = 1, tooltip = "Bars in the exponential average of the count.")
+
+// The bound: a fraction of a standard deviation below the simple average of
+// the close.
+bound = sma(close, maLength) - stdMult * stdev(close, maLength)
+
+// Each close above the bound counts one. The count over the window, as a
+// percentage of its length, is smoothed by a short exponential average.
+penetration = isNone(bound) ? none : close > bound ? 1 : 0
+raw = sum(penetration, stiffLength) * 100 / stiffLength
+stiffness = ema(raw, smoothLength)
+
+level(90, "Threshold", fade(green, 40), style = "dashed")
+plot(stiffness, "Stiffness", #2962FF, width = 2)

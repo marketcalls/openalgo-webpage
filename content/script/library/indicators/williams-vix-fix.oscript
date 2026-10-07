@@ -1,0 +1,27 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © openalgo
+
+version 1
+study("Williams VIX Fix", "WVF", precision = 2)
+
+pd = input(22, "Lookback Length", min = 1, tooltip = "Bars over which the highest close is taken.")
+bbl = input(20, "Band Length", min = 1, tooltip = "Bars in the average and standard deviation of the upper band.")
+mult = input(2.0, "Band Deviations", min = 0.1, max = 10, step = 0.1, tooltip = "Standard deviations added to the average for the upper band.")
+lb = input(50, "Range Lookback", min = 1, tooltip = "Bars over which the highest reading is taken for the range high.")
+ph = input(0.85, "Range High Factor", min = 0.1, max = 2, step = 0.01, tooltip = "The range high is the highest reading of the lookback times this factor.")
+showLines = input(true, "Show Band and Range Lines")
+
+// How far the low sits below the highest close of the lookback, as a
+// percentage of that close. It rises when price falls hard from a recent high.
+highClose = highest(close, pd)
+wvf = (highClose - low) / highClose * 100
+
+// Upper band: a simple average of the reading plus a multiple of its
+// population standard deviation. Range high: a fraction of the highest reading.
+upper = sma(wvf, bbl) + mult * stdev(wvf, bbl)
+rangeHigh = highest(wvf, lb) * ph
+
+spike = wvf >= upper or wvf >= rangeHigh
+plot(wvf, "WVF", spike ? #4CAF50 : #787B86, width = 2, style = "histogram")
+plot(showLines ? upper : none, "Upper Band", #2962FF, width = 1)
+plot(showLines ? rangeHigh : none, "Range High", #FF9800, width = 1)

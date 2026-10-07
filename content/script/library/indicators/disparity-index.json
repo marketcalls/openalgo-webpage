@@ -1,0 +1,16 @@
+{
+  "title": "Disparity Index",
+  "summary": "Steve Nison's percentage distance of price from its moving average, a 14 bar exponential average by default, plotted around zero.",
+  "description": "The Disparity Index, described by Steve Nison, shows how far price has stretched from its moving average. On each bar it takes the source, the close by default, subtracts the moving average and divides by the average, then multiplies by 100:\n\n`Disparity = 100 * (source - MA) / MA`\n\nNison compared the close with a chosen moving average and left the kind and length open, so both are settings here. The default average is a 14 bar exponential average seeded with the simple average of its first 14 values. The menu also offers a simple, a linearly weighted and a Wilder smoothed average of the same length. Because the result is a percentage, readings compare across instruments and price levels.\n\nThe line is green above zero and red below it, with a dashed zero line for reference.",
+  "howToRead": "Above zero the source is above its average, which is bullish pressure; below zero it is below, bearish pressure. The size of the reading shows how stretched the move is. Readings that reach the extremes the instrument has seen before often come near a pause or pullback, since price tends to return toward its average.\n\nA crossing of zero means price has crossed its average, and a divergence, where price makes a new high on a smaller reading, suggests the move is losing strength. In a strong trend the reading can stay stretched for a long time, so an extreme alone is not a reversal signal.",
+  "settings": [
+    { "key": "src", "label": "Source", "description": "The price series compared with its average. Close is the default." },
+    { "key": "length", "label": "Length", "description": "Bars in the moving average. Shorter lengths make the reading swing more around zero." },
+    { "key": "maType", "label": "Average Type", "description": "The kind of moving average: exponential (the default), simple, linearly weighted or Wilder smoothed." }
+  ],
+  "faq": [
+    { "q": "What reading counts as overbought or oversold?", "a": "There is no fixed level. Look at the extremes the instrument has reached on this timeframe and treat readings near them as stretched." },
+    { "q": "Why is the default an exponential average?", "a": "It reacts faster to recent prices than a simple average of the same length, which suits a measure of short-term stretch. The menu lets you switch to the others." },
+    { "q": "How is it different from a price oscillator?", "a": "A price oscillator compares two averages; the Disparity Index compares price itself with one average, so it reacts to every bar's close." }
+  ]
+}

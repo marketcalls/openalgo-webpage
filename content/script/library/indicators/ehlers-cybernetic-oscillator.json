@@ -1,0 +1,17 @@
+{
+  "title": "Ehlers Cybernetic Oscillator",
+  "summary": "John Ehlers' oscillator: a highpass filter removes the trend, a super smoother removes the noise, and the RMS scales the result.",
+  "description": "The Cybernetic Oscillator by John Ehlers shows the cycles in price with both the trend and the noise taken out. A two-pole highpass filter with its cutoff at `Highpass Length` bars removes the trend, keeping swings shorter than that. A two-pole super smoother with its cutoff at `Lowpass Length` bars then removes the fast noise, keeping swings longer than that.\n\nThe filtered line is divided by its root mean square over `RMS Length` bars, the square root of the average of its squares, so the output is a count of typical swings: 1 is a swing of ordinary size on any instrument.\n\nBoth filters use `a1 = exp(-1.414 * pi / period)`, `c2 = 2 * a1 * cos(1.414 * pi / period)` and `c3 = -a1 * a1`. The highpass is `c1 * (src - 2 * src[1] + src[2]) + c2 * HP[1] + c3 * HP[2]` with `c1 = (1 + c2 - c3) / 4`, zero on the first three bars. The super smoother is `c1 * (HP + HP[1]) / 2 + c2 * SS[1] + c3 * SS[2]` with `c1 = 1 - c2 - c3`, equal to its input on the first three bars. The oscillator appears once the RMS window has filled, and where the RMS is zero it keeps its previous value.",
+  "howToRead": "The line swings around zero. A turn up from below zero is the start of an upswing and a turn down from above zero the start of a downswing, with the zero cross as confirmation. Readings beyond about 2 or -2 are stretched swings that tend to pull back.\n\nWith the defaults it keeps swings between 20 and 30 bars long. Moving the two lengths apart widens that band and lets more of the trend or more noise through; moving them together narrows it. Because the trend is removed, a strong trend can keep the oscillator on one side of zero without a clean turn, so read it with a trend view.",
+  "settings": [
+    { "key": "src", "label": "Source", "description": "The price series the filters are applied to. Close is the default." },
+    { "key": "hpLength", "label": "Highpass Length", "description": "Cutoff period of the highpass filter. Swings slower than this many bars, the trend, are removed. 30 is the default." },
+    { "key": "lpLength", "label": "Lowpass Length", "description": "Cutoff period of the super smoother. Swings faster than this many bars, the noise, are removed. 20 is the default." },
+    { "key": "rmsLength", "label": "RMS Length", "description": "Bars in the root mean square that scales the output. The oscillator starts once this many bars exist." }
+  ],
+  "faq": [
+    { "q": "Why two filters?", "a": "The highpass removes the trend and the super smoother removes the noise. Together they leave only the swings between the two lengths, which is what an oscillator should show." },
+    { "q": "What happens if I set the lowpass length above the highpass length?", "a": "The band between the two cutoffs closes, so very little passes through. The scaling still brings the result to its usual size, so the line then shows mostly the edges of the two filters rather than a clear cycle. Keep the lowpass length below the highpass length." },
+    { "q": "Why is the start of the chart empty?", "a": "The scaling needs a full window of RMS Length bars, 100 by default, before the first value can be drawn." }
+  ]
+}

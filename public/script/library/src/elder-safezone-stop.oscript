@@ -1,0 +1,42 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © openalgo
+
+version 1
+study("Elder SafeZone Stop", "SafeZone", overlay = true, precision = 2)
+
+length = input(10, "Lookback", min = 1, tooltip = "Bars over which the penetrations are averaged.")
+coeff = input(2.5, "Coefficient", min = 0, step = 0.1, tooltip = "How many average penetrations the stop sits beyond the previous bar's extreme.")
+holdBars = input(3, "Bars to Hold", min = 1, tooltip = "Bars over which the stop is kept from moving against the position.")
+
+// A penetration is how far this bar's low fell below the previous low (or its
+// high rose above the previous high); zero when it did not. The first bar has
+// no previous bar and so no penetration.
+penDown = bar.isFirst ? none : low < low[1] ? low[1] - low : 0
+penUp = bar.isFirst ? none : high > high[1] ? high - high[1] : 0
+hitDown = bar.isFirst ? none : penDown > 0 ? 1 : 0
+hitUp = bar.isFirst ? none : penUp > 0 ? 1 : 0
+
+// The average penetration counts only the bars that had one; with none in
+// the window it is zero.
+fn averagePenetration(total, hits) =>
+    isNone(total) or isNone(hits) ? none : hits == 0 ? 0 : total / hits
+
+avgDown = averagePenetration(sum(penDown, length), sum(hitDown, length))
+avgUp = averagePenetration(sum(penUp, length), sum(hitUp, length))
+
+// The stop in force on this bar is set from what was known when it opened:
+// the previous bar's low (or high) and the average over the lookback that
+// ends with the previous bar. Each is kept from moving against the position
+// for a few bars.
+longRaw = low[1] - coeff * avgDown[1]
+shortRaw = high[1] + coeff * avgUp[1]
+longStop = highest(longRaw, holdBars)
+shortStop = lowest(shortRaw, holdBars)
+
+plot(longStop, "Long Stop", #26A69A, width = 2)
+plot(shortStop, "Short Stop", #EF5350, width = 2)
+
+if crossDown(close, longStop)
+    alert("Close fell through the long SafeZone stop", id = "long-stop", title = "Long Stop Hit")
+if crossUp(close, shortStop)
+    alert("Close rose through the short SafeZone stop", id = "short-stop", title = "Short Stop Hit")

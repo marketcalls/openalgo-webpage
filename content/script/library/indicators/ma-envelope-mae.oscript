@@ -46,7 +46,7 @@ middle = maType == "SMA" ? maSma : maType == "WMA" ? maWma : maEma
 // Each band sits a fixed percentage of the average away from it.
 dist = middle * percentage / 100.0
 
-plot(middle, "Middle", #ffeb3b, width = 2)
+plot(middle, "Middle", #ff9800, width = 2)
 top = plot(middle + dist, "Upper", #ffeb3b, width = 2)
 bottom = plot(middle - dist, "Lower", #ffeb3b, width = 2)
 fill(top, bottom, #2196f3, opacity = 0.1)

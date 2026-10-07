@@ -1,0 +1,16 @@
+{
+  "title": "Elder SafeZone Stop",
+  "summary": "Alexander Elder's SafeZone stops: the average recent penetration of lows and highs, scaled and set beyond the previous bar's extreme.",
+  "description": "The SafeZone Stop, described by Alexander Elder, places a stop just outside the market's ordinary noise. For the long side it measures, on every bar, how far the low fell below the previous bar's low; a bar whose low held counts as no penetration. Over the `Lookback` bars that end with the previous bar, the penetrations that did happen are averaged (their total over their count, zero when there were none), and the long stop sits `Coefficient` times that average below the previous bar's low. The stop drawn on a bar is therefore known when that bar opens: it uses nothing from the bar itself.\n\nA stop should not be loosened, so the long stop drawn is the highest of the last `Bars to Hold` raw values: a single wide bar cannot drag it down at once. The short stop mirrors all of this with upside penetrations, how far each high rose above the previous high, set above the previous bar's high and held as the lowest of the recent raw values.",
+  "howToRead": "In an uptrend the green line is the level for a protective stop on a long position, and in a downtrend the red line is the one for a short position; the study draws both, and the trader picks the side that matches the trend. A close through the line in force is the market moving further against the position than its recent noise explains.\n\nA larger `Coefficient` keeps the stop further away and survives more noise at the cost of a bigger loss when hit. The stops react to the size of recent penetrations, so after a quiet stretch they sit close and a sudden wide bar can reach them.",
+  "settings": [
+    { "key": "length", "label": "Lookback", "description": "Bars over which the penetrations are averaged. Longer values give a steadier stop distance." },
+    { "key": "coeff", "label": "Coefficient", "description": "How many average penetrations each stop sits beyond the previous bar's low or high. Larger values give wider stops." },
+    { "key": "holdBars", "label": "Bars to Hold", "description": "Bars over which each stop is kept from moving against the position: the long stop is the highest and the short stop the lowest of this many raw values." }
+  ],
+  "faq": [
+    { "q": "Why are only bars with a penetration averaged?", "a": "Bars whose low held above the previous low say nothing about how deep the noise reaches. Counting them as zeros would shrink the average and pull the stop too close, so only actual penetrations are averaged." },
+    { "q": "Which line do I use?", "a": "The green long stop for a long position and the red short stop for a short one. Elder pairs the SafeZone with a trend filter, such as the slope of an exponential average, to decide which side to trade." },
+    { "q": "Which alerts does it offer?", "a": "One when the close falls through the long stop and one when it rises through the short stop. The stop on each bar is the one in force while that bar traded, set from the bars before it." }
+  ]
+}

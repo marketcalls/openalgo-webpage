@@ -1,0 +1,30 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © openalgo
+
+version 1
+study("Double Smoothed Stochastic (DSS)", "DSS", precision = 2)
+
+length = input(13, "Stochastic Length", min = 1)
+smoothLength = input(8, "EMA Length", min = 1)
+
+// Where a value sits inside its range, from 0 at the low to 100 at the high.
+// A window with no range reads as the midpoint, 50, and an absent input
+// (during warmup) gives an absent answer.
+fn position(x, lo, hi) =>
+    isNone(x) or isNone(hi) or isNone(lo) ? none : hi == lo ? 50 : 100 * (x - lo) / (hi - lo)
+
+// First pass: the close inside the high to low range of the window, smoothed
+// by an exponential average.
+hh = highest(high, length)
+ll = lowest(low, length)
+smooth1 = ema(position(close, ll, hh), smoothLength)
+
+// Second pass: the smoothed line inside its own range over the same window,
+// smoothed again.
+hh2 = highest(smooth1, length)
+ll2 = lowest(smooth1, length)
+dss = ema(position(smooth1, ll2, hh2), smoothLength)
+
+level(80, "Overbought", #787b86, style = "dashed")
+level(20, "Oversold", #787b86, style = "dashed")
+plot(dss, "DSS", #2962FF, width = 2)

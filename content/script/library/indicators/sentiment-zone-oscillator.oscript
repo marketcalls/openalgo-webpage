@@ -1,0 +1,31 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © openalgo
+
+version 1
+study("Sentiment Zone Oscillator (SZO)", "SZO", precision = 2)
+
+len = input(14, "Length", min = 1, tooltip = "Bars in each of the three exponential averages that smooth the score.")
+longLen = input(30, "Zone Length", min = 1, tooltip = "Bars of the oscillator's own history the overbought and oversold lines are set from.")
+percent = input(95, "Zone Percent", min = 0, max = 100, tooltip = "How far through the oscillator's recent range the overbought line sits, measured up from its low; the oversold line sits the same share down from its high.")
+
+// Score each bar +1 for a close above the previous close and -1 otherwise.
+// The first bar has no previous close and no score.
+score = close > close[1] ? 1 : close <= close[1] ? -1 : none
+
+// A triple exponential average of the score, scaled by the length, so a run
+// of up closes approaches 100 / len.
+szo = 100 * tema(score, len) / len
+
+// Zones that move with the oscillator's own range over the zone length.
+hiZone = highest(szo, longLen)
+loZone = lowest(szo, longLen)
+zoneRange = hiZone - loZone
+ob = loZone + zoneRange * percent / 100
+os = hiZone - zoneRange * percent / 100
+
+plot(szo, "SZO", #2962FF, width = 2)
+plot(ob, "Overbought", #FF5252)
+plot(os, "Oversold", #4CAF50)
+level(7, "Upper", #787B86, style = "dashed")
+level(0, "Zero", #787B86, style = "dashed")
+level(-7, "Lower", #787B86, style = "dashed")

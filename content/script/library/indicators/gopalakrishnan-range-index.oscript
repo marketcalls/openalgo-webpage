@@ -1,0 +1,15 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © openalgo
+
+version 1
+study("Gopalakrishnan Range Index (GAPO)", "GAPO", precision = 3)
+
+length = input(5, "Length", min = 2, tooltip = "Bars in the window whose full range is measured.")
+
+// The natural logarithm of the window's full range, from the highest high to
+// the lowest low, divided by the logarithm of the window length. A window
+// with no range has no logarithm, so it gives no value.
+range = highest(high, length) - lowest(low, length)
+gapo = log(range) / log(length)
+
+plot(gapo, "GAPO", #2962FF, width = 2)

@@ -1,0 +1,27 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © openalgo
+
+version 1
+study("Commodity Selection Index (CSI)", "CSI", precision = 2)
+
+len = input(14, "Length", min = 2, tooltip = "Bars in every Wilder average: the directional movement, the ADX and the average true range.")
+atrPercent = input(true, "ATR as Percent of Close", tooltip = "Measure volatility as a percentage of the close, so the index compares across instruments and price levels.")
+pointValue = input(1.0, "Point Value", min = 0.0001, step = 0.1, tooltip = "Money value of a one point move in the contract.")
+margin = input(1.0, "Margin", min = 0.0001, step = 0.1, tooltip = "Margin needed for one contract.")
+commission = input(0.0, "Commission", min = 0, step = 0.1, tooltip = "Commission for one round trip.")
+
+// Trend strength: ADXR is the mean of this bar's ADX and the ADX `len` bars
+// ago, as Wilder defined it. Every average is Wilder's smoothing.
+adxValue = adx(len, len)[0]
+adxr = (adxValue + adxValue[len]) / 2
+
+// Volatility: the average true range, in price or as a percentage of close.
+atrValue = atr(len)
+vol = atrPercent ? atrValue / close * 100 : atrValue
+
+// Wilder's constant: point value over the square root of the margin, divided
+// by 150 plus the commission, times 100.
+k = pointValue / sqrt(margin) / (150 + commission) * 100
+csi = adxr * vol * k
+
+plot(csi, "CSI", #2962FF, width = 2)

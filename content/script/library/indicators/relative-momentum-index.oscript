@@ -1,0 +1,22 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © openalgo
+
+version 1
+study("Relative Momentum Index (RMI)", "RMI", precision = 2)
+
+src = input(close, "Source")
+length = input(20, "Length", min = 1)
+momentum = input(5, "Momentum", min = 1)
+
+// The change over `momentum` bars rather than one, split into rises and falls.
+move = src - src[momentum]
+up = rma(max(move, 0), length)
+down = rma(max(-move, 0), length)
+
+// Wilder's ratio of average rise to average fall, on a 0 to 100 scale.
+rmi = down == 0 ? 100 : 100 - 100 / (1 + up / down)
+
+level(70, "Overbought", #787b86, style = "dashed")
+level(50, "Midline", #787b86, style = "dashed")
+level(30, "Oversold", #787b86, style = "dashed")
+plot(rmi, "RMI", #7e57c2, width = 2)

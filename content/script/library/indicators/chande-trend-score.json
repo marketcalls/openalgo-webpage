@@ -1,0 +1,16 @@
+{
+  "title": "Chande Trend Score",
+  "summary": "Tushar Chande's count of how many of the closes 11 to 20 bars back sit below today's close, scored from minus 10 to plus 10.",
+  "description": "The Chande Trend Score, designed by Tushar Chande, grades a trend by comparing the current close with the closes of ten earlier bars, from 11 bars back through 20 bars back. Each comparison scores plus 1 when the current close is above the older close and minus 1 when it is not, so a tie counts as minus 1. The trend score is the sum of the ten scores.\n\nThe result is a whole number between minus 10 and plus 10, drawn as a histogram in its own pane: green at zero and above, red below, with a dashed zero line. `First Lookback` moves the nearest of the compared bars and `Number of Lookbacks` sets how many consecutive bars are compared, so the range of the score is always plus or minus that number. The first value appears once the oldest compared bar exists.",
+  "howToRead": "Plus 10 means the close is above every close from 11 to 20 bars ago, a steady up trend; minus 10 means it is below all of them, a steady down trend. Readings near zero mean the close sits in the middle of where it traded 11 to 20 bars ago, which is what a range looks like.\n\nBecause the score only counts comparisons, it ignores how far price has moved: a slow grind and a sharp rally can both score plus 10. Skipping the most recent ten bars makes it slow to react, so it is a filter for the direction of the larger trend rather than a timing signal.",
+  "settings": [
+    { "key": "src", "label": "Source", "description": "The price series that is compared with its own past values. Close is the published choice." },
+    { "key": "firstLag", "label": "First Lookback", "description": "The nearest past bar in the comparison. 11 is the published value; a smaller value makes the score react sooner." },
+    { "key": "lags", "label": "Number of Lookbacks", "description": "How many consecutive past bars are compared, starting at the first lookback. 10 is the published value, giving a score from minus 10 to plus 10." }
+  ],
+  "faq": [
+    { "q": "Why does it skip the last ten bars?", "a": "Comparing with closes 11 to 20 bars back measures where price stands against the recent past as a whole, so a few days of noise do not flip the score. Lower the first lookback for a faster reading." },
+    { "q": "How is a tie scored?", "a": "As minus 1. A point is added only when the current close is strictly above the older close." },
+    { "q": "Why is the score always an even number with the defaults?", "a": "Each of the ten comparisons adds plus 1 or minus 1, so the total of an even number of them is always even. With an odd number of lookbacks it is always odd." }
+  ]
+}

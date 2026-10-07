@@ -62,7 +62,7 @@ adxr = isNone(adxValue) ? none : (adxValue + historical) / 2
 
 e = e * (1 - 1 / period)
 
-plot(adxr, "ADXR", #ffeb3b, width = 2)
+plot(adxr, "ADXR", #ff9800, width = 2)
 plot(adxValue, "ADX", #ffeb3b, width = 2)
-plot(plusDi, "+DI", #ffeb3b, width = 2)
-plot(minusDi, "-DI", #ffeb3b, width = 2)
+plot(plusDi, "+DI", #4caf50, width = 2)
+plot(minusDi, "-DI", #ff5252, width = 2)

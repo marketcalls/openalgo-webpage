@@ -1,0 +1,19 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © openalgo
+
+version 1
+study("Momentum Pinball", "Pinball", precision = 2)
+
+src = input(close, "Source")
+rocLength = input(1, "Rate of Change Length", min = 1, tooltip = "Bars over which the change in price is measured.")
+rsiLength = input(3, "RSI Length", min = 1, tooltip = "Bars in the relative strength index taken over that change.")
+
+// The change in price over `rocLength` bars, in points rather than as a
+// percentage, and a short relative strength index of that change.
+priceChange = src - src[rocLength]
+pinball = rsi(priceChange, rsiLength)
+
+level(70, "Upper", fade(red, 40), style = "dashed")
+level(50, "Middle", fade(gray, 50), style = "dashed")
+level(30, "Lower", fade(green, 40), style = "dashed")
+plot(pinball, "Momentum Pinball", #2962FF, width = 2)

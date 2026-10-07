@@ -1,0 +1,31 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © openalgo
+
+version 1
+study("Projection Oscillator", "PO", precision = 2)
+
+length = input(14, "Length", min = 2)
+triggerLength = input(3, "Trigger Length", min = 1)
+
+// The Projection Bands: every high in the last `length` bars carried forward
+// to this bar along the least squares slope of the highs, and every low along
+// the slope of the lows. The upper band is the largest carried high and the
+// lower band the smallest carried low.
+slopeHigh = linreg(high, length, 0) - linreg(high, length, 1)
+slopeLow = linreg(low, length, 0) - linreg(low, length, 1)
+upper = high + 0 * slopeHigh
+lower = low + 0 * slopeLow
+for i = 1 to length - 1
+    upper = max(upper, high[i] + i * slopeHigh)
+    lower = min(lower, low[i] + i * slopeLow)
+
+// Where the close sits between the bands, from 0 at the lower band to 100 at
+// the upper, and a short exponential average of it as the trigger line.
+po = upper == lower ? none : 100 * (close - lower) / (upper - lower)
+trigger = ema(po, triggerLength)
+
+plot(po, "Projection Oscillator", #2962FF, width = 2)
+plot(trigger, "Trigger", #FF6D00)
+level(80, "Upper Level", #787b86, style = "dashed")
+level(50, "Middle Level", #787b86, style = "dotted")
+level(20, "Lower Level", #787b86, style = "dashed")

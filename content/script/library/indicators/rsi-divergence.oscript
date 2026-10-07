@@ -1,0 +1,68 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © openalgo
+
+version 1
+study("RSI Divergence", "RSI Div", precision = 2, range = [0, 100])
+
+src = input(close, "Source")
+len = input(14, "RSI Length", min = 1)
+lbL = input(5, "Pivot Lookback Left", min = 1, tooltip = "Bars before a pivot whose RSI it must be beyond.")
+lbR = input(5, "Pivot Lookback Right", min = 1, tooltip = "Bars after a pivot whose RSI it must be beyond. A pivot is known this many bars late.")
+rangeMin = input(5, "Min Bars Between Pivots", min = 1)
+rangeMax = input(60, "Max Bars Between Pivots", min = 1)
+showBull = input(true, "Show Bullish Divergence")
+showBear = input(true, "Show Bearish Divergence")
+
+osc = rsi(src, len)
+
+level(70, "Overbought", fade(red, 50), style = "dashed")
+level(50, "Middle", fade(gray, 60), style = "dashed")
+level(30, "Oversold", fade(green, 50), style = "dashed")
+plot(osc, "RSI", #7E57C2, width = 2)
+
+// A pivot is an RSI value strictly beyond the lbL values before it and the lbR
+// values after it, so it is known lbR bars after the bar it formed on.
+pivotLowOsc = pivotLow(osc, lbL, lbR)
+pivotHighOsc = pivotHigh(osc, lbL, lbR)
+pivotBar = bar.index - lbR
+pivotTime = time[lbR]
+pivotLowPrice = low[lbR]
+pivotHighPrice = high[lbR]
+
+var lastLowOsc = none
+var lastLowPrice = none
+var lastLowTime = none
+var lastLowBar = none
+var lastHighOsc = none
+var lastHighPrice = none
+var lastHighTime = none
+var lastHighBar = none
+
+// Regular bullish divergence: price makes a lower low while RSI makes a higher
+// low, with the two pivots rangeMin to rangeMax bars apart. Every new pivot
+// becomes the one the next is compared with, in range or not.
+if not isNone(pivotLowOsc)
+    if not isNone(lastLowBar)
+        span = pivotBar - lastLowBar
+        if showBull and span >= rangeMin and span <= rangeMax and pivotLowPrice < lastLowPrice and pivotLowOsc > lastLowOsc
+            draw.line(lastLowTime, lastLowOsc, pivotTime, pivotLowOsc, color = #26A69A, width = 2)
+            draw.label(pivotTime, pivotLowOsc, "Bull", color = #26A69A, textColor = white)
+            alert("RSI regular bullish divergence", id = "bull", title = "Bullish Divergence")
+    lastLowOsc = pivotLowOsc
+    lastLowPrice = pivotLowPrice
+    lastLowTime = pivotTime
+    lastLowBar = pivotBar
+
+// Regular bearish divergence: price makes a higher high while RSI makes a lower
+// high, on the same spacing.
+if not isNone(pivotHighOsc)
+    if not isNone(lastHighBar)
+        span = pivotBar - lastHighBar
+        if showBear and span >= rangeMin and span <= rangeMax and pivotHighPrice > lastHighPrice and pivotHighOsc < lastHighOsc
+            draw.line(lastHighTime, lastHighOsc, pivotTime, pivotHighOsc, color = #EF5350, width = 2)
+            draw.label(pivotTime, pivotHighOsc, "Bear", color = #EF5350, textColor = white)
+            alert("RSI regular bearish divergence", id = "bear", title = "Bearish Divergence")
+    lastHighOsc = pivotHighOsc
+    lastHighPrice = pivotHighPrice
+    lastHighTime = pivotTime
+    lastHighBar = pivotBar

@@ -1,0 +1,25 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © openalgo
+
+version 1
+study("Volume Price Confirmation Indicator (VPCI)", "VPCI", precision = 2)
+
+src = input(close, "Source")
+shortLength = input(5, "Short Length", min = 1)
+longLength = input(20, "Long Length", min = 1)
+signalLength = input(5, "Signal Length", min = 1)
+
+// Confirmation: the long volume-weighted average minus the long simple one.
+vpc = vwma(src, longLength) - sma(src, longLength)
+// Ratio: the short volume-weighted average over the short simple one.
+vpr = vwma(src, shortLength) / sma(src, shortLength)
+// Multiplier: short average volume over long average volume.
+vm = sma(volume, shortLength) / sma(volume, longLength)
+
+vpci = vpc * vpr * vm
+// The signal line smooths the index with a volume-weighted average.
+signalLine = vwma(vpci, signalLength)
+
+level(0, "Zero", #787b86, style = "dashed")
+plot(vpci, "VPCI", #2962ff, width = 2)
+plot(signalLine, "Signal", #ff6d00)

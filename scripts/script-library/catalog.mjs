@@ -87,9 +87,19 @@ function categoryOf(dir, original, title) {
 
 const bars = readBars()
 const rows = []
+// The original library carries five formulas twice, under one title each;
+// the library keeps one copy of each.
+const DUPLICATES = new Set(["oa-exptrans.js", "oa-lineartrans.js", "oa-logtrans.js", "oa-sqrttrans.js", "oa-ttmtrend.js",
+  // Two more that draw nothing on a price chart: e to the power of a price
+  // overflows, and prices almost never repeat exactly, so the mode is empty.
+  "oa-exp.js", "oa-mode.js",
+  // The same for the logistic and the hyperbolic tangent: both read 1 for
+  // any price, so they draw a flat line.
+  "oa-sigmoid.js", "oa-tanh.js"])
+
 // GPL-3.0 originals are not ported into the library: see gen-library.mjs.
 for (const dir of ["MIT", "MPL-2.0"]) {
-  for (const name of readdirSync(join(root, "indicators", dir)).filter((f) => f.endsWith(".js")).sort()) {
+  for (const name of readdirSync(join(root, "indicators", dir)).filter((f) => f.endsWith(".js") && !DUPLICATES.has(f)).sort()) {
     const path = join(root, "indicators", dir, name)
     const text = readFileSync(path, "utf8")
     const author = authorOf(text)
@@ -132,6 +142,11 @@ for (const dir of ["MIT", "MPL-2.0"]) {
 // reference implementation kept in this repository instead of an original.
 const OWN_WORK = {
   "ichimoku-cloud": { reference: "content/script/library/references/ichimoku-cloud.mjs" },
+  supertrend: { reference: "content/script/library/references/supertrend.mjs", title: "Supertrend" },
+  // The original's running sums subtract the sum from `period` bars back
+  // rather than the term, an unstable recurrence that reaches 1e76 on a long
+  // history; this is Wilder's definition instead.
+  "average-directional-movement-index-adx": { reference: "content/script/library/references/average-directional-movement-index-adx.mjs" },
 }
 for (const r of rows) {
   const own = OWN_WORK[r.originalName ? plainTitle(r.originalName).toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "") : ""]
@@ -140,6 +155,45 @@ for (const r of rows) {
   r.author = null
   r.reference = own.reference
   r.header = [MPL, "// © openalgo"]
+  if (own.title) r.title = own.title
+}
+
+// Studies with no JavaScript original at all: openalgo's conversions of
+// open-source MPL-2.0 scripts named by the user. Each carries its original
+// author's credit and is compared with a reference kept in this repository.
+const EXTRA = [
+  { slug: "range-filter", title: "Range Filter", category: "Trend Strength", author: "DonovanWall, guikroth and tvenn" },
+  { slug: "alphatrend", title: "AlphaTrend", category: "Trend Strength", author: "KivancOzbilgic" },
+  { slug: "ut-bot", title: "UT Bot", category: "Trend Strength", author: "HPotter and SeaSide420" },
+  { slug: "ssl-hybrid", title: "SSL Hybrid", category: "Trend Strength", author: "Mihkel00" },
+  { slug: "candlestick-patterns", title: "Candlestick Patterns", category: "Reversals", author: "repo32" },
+  { slug: "smc-structures-and-fvg", title: "SMC Structures and FVG", category: "Smart Money", author: "LudoGH68" },
+  // A textbook formula with no author to credit: openalgo's own study.
+  { slug: "elliott-wave-oscillator", title: "Elliott Wave Oscillator", category: "Oscillators", author: null },
+  // openalgo's own studies written from published formulas, listed with a
+  // short statement of each formula in own-studies.json.
+  ...JSON.parse(readFileSync(join(LIBRARY_DIR, "own-studies.json"), "utf8")).map((e) => ({ ...e, author: null })),
+]
+for (const e of EXTRA) {
+  rows.push({
+    slug: e.slug,
+    file: null,
+    licence: e.author ? "MPL-2.0" : "OWN",
+    author: e.author,
+    header: e.author ? [MPL, "// © openalgo", `// Original work (c) ${e.author}, MPL-2.0`] : [MPL, "// © openalgo"],
+    title: e.title,
+    originalName: null,
+    category: e.category,
+    originalCategory: null,
+    placement: e.placement ?? "onchart",
+    inputs: null,
+    plots: null,
+    hooks: [],
+    bytes: null,
+    runs: true,
+    error: null,
+    reference: `content/script/library/references/${e.slug}.mjs`,
+  })
 }
 
 // Two originals can share a name (a study and its scanner, or two ports of

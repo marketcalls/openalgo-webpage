@@ -1288,7 +1288,7 @@ plot(showLegacy and eventCandidateValid ? eventAvwap : none, "Event AVWAP", with
 
 plot(showLegacy and gapOpen ? gapHigh : none, "Active Gap High", withAlpha(#FB7185, 0.35), width = 1)
 plot(showLegacy and gapOpen ? gapLow : none, "Active Gap Low", withAlpha(#34D399, 0.35), width = 1)
-plot(showLegacy and gapOpen ? gapMid : none, "Active Gap Mid", withAlpha(#FBBF24, 0.3), width = 1)
+plot(showLegacy and gapOpen ? gapMid : none, "Active Gap Mid", withAlpha(#A3E635, 0.5), width = 1)
 plot(showLegacy and gapOpen ? gapUnfilledBoundary : none, "Active Gap Unfilled Boundary", withAlpha(#F8FAFC, 0.45), width = 1)
 
 // ---- zone boxes ------------------------------------------------------------------------

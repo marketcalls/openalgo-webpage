@@ -1,0 +1,36 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © openalgo
+
+version 1
+study("Price Zone Oscillator (PZO)", "PZO", precision = 2)
+
+length = input(14, "Length", min = 1)
+
+// The close counts as positive when it rose from the previous close, as
+// negative when it fell, and as nothing when it was unchanged. The first bar
+// has no previous close, so it is left out of both averages: they then run
+// over the same bars with the same weights and the reading stays within
+// -100 to 100.
+chg = change(close)
+signedClose = sign(chg) * close
+baseClose = isNone(chg) ? none : close
+
+// The share of the smoothed close that came from rising bars, from -100
+// (every bar fell) to 100 (every bar rose).
+cp = ema(signedClose, length)
+tc = ema(baseClose, length)
+pzo = 100 * cp / tc
+
+plot(pzo, "PZO", #2962FF, width = 2)
+level(60, "Overbought", #787b86, style = "dashed")
+level(40, "Bullish Zone", #787b86, style = "dashed")
+level(15, "Upper Neutral", #787b86, style = "dashed")
+level(0, "Zero", #787b86, style = "dashed")
+level(-5, "Lower Neutral", #787b86, style = "dashed")
+level(-40, "Bearish Zone", #787b86, style = "dashed")
+level(-60, "Oversold", #787b86, style = "dashed")
+
+if crossUp(pzo, 40)
+    alert("PZO crossed above 40", id = "pzo-cross-up-40", title = "PZO enters the bullish zone")
+if crossDown(pzo, -40)
+    alert("PZO crossed below -40", id = "pzo-cross-down-40", title = "PZO enters the bearish zone")

@@ -1,0 +1,46 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © openalgo
+
+version 1
+study("Ehlers Cybernetic Oscillator", "CO", precision = 3)
+
+src = input(close, "Source")
+hpLength = input(30, "Highpass Length", min = 2, step = 1, tooltip = "Cutoff period of the highpass filter that removes the trend.")
+lpLength = input(20, "Lowpass Length", min = 2, step = 1, tooltip = "Cutoff period of the super smoother that removes the noise.")
+rmsLength = input(100, "RMS Length", min = 1, step = 1, tooltip = "Bars in the root mean square that scales the output.")
+
+// The coefficients of each filter for its own period.
+hpA1 = exp(-1.414 * math.pi / hpLength)
+hpC2 = 2 * hpA1 * math.cos(1.414 * math.pi / hpLength)
+hpC3 = -hpA1 * hpA1
+hpC1 = (1 + hpC2 - hpC3) / 4
+lpA1 = exp(-1.414 * math.pi / lpLength)
+lpC2 = 2 * lpA1 * math.cos(1.414 * math.pi / lpLength)
+lpC3 = -lpA1 * lpA1
+lpC1 = 1 - lpC2 - lpC3
+
+// The highpass removes the trend. It is zero on the first three bars, which
+// lack the history the recursion needs.
+var hp1 = 0.0
+var hp2 = 0.0
+hp = bar.index < 3 ? 0 : hpC1 * (src - 2 * src[1] + src[2]) + hpC2 * hp1 + hpC3 * hp2
+hp2 = hp1
+hp1 = hp
+
+// The super smoother removes the noise from the highpass output. It passes
+// its input through on the first three bars.
+var lp1 = 0.0
+var lp2 = 0.0
+lp = bar.index < 3 ? hp : lpC1 * (hp + hp[1]) / 2 + lpC2 * lp1 + lpC3 * lp2
+lp2 = lp1
+lp1 = lp
+
+// Scaled by its own root mean square, so 1 is a typical swing. Where the
+// RMS is zero the oscillator keeps its previous value.
+var coPrev = none
+rms = sqrt(sma(lp * lp, rmsLength))
+co = rms == 0 ? coPrev : lp / rms
+coPrev = co
+
+level(0, "Zero", #787b86, style = "dashed")
+plot(co, "Cybernetic Oscillator", #2962FF, width = 2)

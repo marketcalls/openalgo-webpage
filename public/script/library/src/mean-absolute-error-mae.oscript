@@ -22,4 +22,4 @@ window = min(period, 4000)
 mae = avgSkip(absErr, window)
 
 plot(mae, "MAE", #ffeb3b, width = 2, style = "area")
-plot(reference, "EMA", #ffeb3b, width = 1, overlay = true)
+plot(reference, "EMA", #ff9800, width = 1, overlay = true)

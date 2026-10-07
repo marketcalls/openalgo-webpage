@@ -1,0 +1,23 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © openalgo
+
+version 1
+study("Disparity Index", "DI", precision = 2)
+
+src = input(close, "Source")
+length = input(14, "Length", min = 1, tooltip = "Bars in the moving average the source is compared with.")
+maType = input("EMA", "Average Type", options = ["EMA", "SMA", "WMA", "RMA"])
+
+// Every average is computed on every bar, so each keeps its own history
+// whichever one the menu picks.
+maEma = ema(src, length)
+maSma = sma(src, length)
+maWma = wma(src, length)
+maRma = rma(src, length)
+basis = maType == "SMA" ? maSma : maType == "WMA" ? maWma : maType == "RMA" ? maRma : maEma
+
+// How far the source sits from its average, as a percentage of the average.
+disparity = basis == 0 ? none : (src - basis) / basis * 100
+
+plot(disparity, "Disparity", disparity >= 0 ? #4CAF50 : #FF5252, width = 2)
+level(0, "Zero", #787B86, style = "dashed")

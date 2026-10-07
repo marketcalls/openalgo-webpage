@@ -112,8 +112,10 @@ under `/fundamentals`, `/python`, `/quant`, etc., indexed by `/learn`.
 
 ## /script/library (OpenScript indicator library)
 
-- 440 OpenScript studies, each a port of one indicator from
-  `openalgo-js-indicator-library` (MIT and MPL-2.0 originals only). The 57
+- 502 OpenScript studies (2026-10-07): 428 ports of indicators from
+  `openalgo-js-indicator-library` (MIT and MPL-2.0 originals only), the
+  6 community scripts, 3 originals rewritten as openalgo's own (Ichimoku,
+  Supertrend, ADX) and 65 openalgo studies written from formulas. The 57
   GPL-3.0 originals are deliberately NOT published (copyleft combined-work
   risk); their ports are kept outside the repo in
   `D:\OpenAlgo-Voice\openscript-library-gpl`.
@@ -154,13 +156,55 @@ under `/fundamentals`, `/python`, `/quant`, etc., indexed by `/learn`.
   extra bars (an original that paints history backwards once a later bar
   decides it). Do not widen either rule to get a port through.
 - openalgo's own studies: a catalog row listed in `OWN_WORK` in `catalog.mjs`
-  is written by openalgo rather than ported (Ichimoku Cloud, rewritten
-  2026-10-07 to the user's own spec). It carries only the two header lines and
-  no credit line, and the gate compares it with a reference implementation in
-  `content/script/library/references/<slug>.mjs` instead of an original. A
+  is written by openalgo rather than ported (Ichimoku Cloud and Supertrend,
+  rewritten 2026-10-07 to the user's spec). It carries only the two header
+  lines and no credit line, and the gate compares it with a reference
+  implementation in `content/script/library/references/<slug>.mjs` instead of
+  an original.
+- Studies with no JavaScript original (`EXTRA` in `catalog.mjs`): Range
+  Filter, AlphaTrend, UT Bot, SSL Hybrid and Candlestick Patterns, converted from open-source
+  community scripts the user supplied. These were published open source with
+  no other licence named, which the platform publishes as MPL-2.0 by default,
+  so each keeps the MPL-2.0 header plus the original author's credit on
+  line 3, and is gated against its reference in `references/`. HalfTrend was
+  NOT added: its source states GPL-3.0. Check a script's licence before adding
+  it; a stated GPL or non-commercial licence is out. UT Bot's source was a
+  strategy; the library keeps it as a study (no orders, TP or SL inputs).
+- `content/script/library/own-studies.json`: openalgo's own studies written
+  from published indicator formulas (Ehlers' articles and the classics that
+  circulate as magazine and AFL formulas), one row each. Each was written
+  from the formula and then checked by a second agent against the published
+  definition. Formulas are not copyrightable but code listings
+  are: write each from the definition, never translate a published listing,
+  and never name the magazine, platform or site it came from (the gate
+  refuses TASC, Stocks & Commodities, AmiBroker, AFL, MetaStock, TradeStation
+  and similar). Two-line header, no credit line; the inventor is named in the
+  page text. The verified study and its page text are the definition; the
+  file holds only slug, title, category and placement. A
   plot offset taken from a setting compiles to `{ input: key }`; the harness
   and the thumbnails resolve it (`plotOffset`), and the chart widens its right
   margin for a plot drawn ahead of the newest bar.
+- Parity cannot catch a fault the original itself has: the mihakralj ADX used
+  an unstable running sum that reached 1e76, and its port matched it exactly.
+  After any batch of changes run `node scripts/script-library/sweep.mjs`, the
+  visual sweep (duplicate titles, one colour for unrelated lines, lines too
+  dark for the dark chart, a price-pane plot far from price, nothing visible
+  in the opening view, values that blow up). It must report 0 flagged. Then
+  review the thumbnails by eye; a contact sheet of all of them is quick to make
+  with sharp. ADX is now openalgo's own (Wilder's definition, built-in adx()).
+- Removed as meaningless on prices, not ported: the exponential, logistic and
+  hyperbolic-tangent transforms (e^price overflows, the other two read 1) and
+  the mode (prices rarely repeat), plus five duplicate copies of one formula
+  (`DUPLICATES` in catalog.mjs). Their files are in
+  `D:\OpenAlgo-Voice\openscript-library-dropped`.
+- Page metadata may carry `chartSettings` ({ inputKey: value }) when the
+  defaults draw nothing on the hourly BTCUSD sample: the page chart, the
+  thumbnail and the view use them, the panel says "Shown with ...", and the
+  gate checks the keys exist. The defaults stay the original's and parity
+  still runs on them. `chartNote` is a line of text under the chart for a
+  study that cannot show much on hourly bars (the futures setups).
+- A plot `opacity` is a 0 to 1 dimmer: `opacity = 10` meant 10% but draws
+  opaque (Projection Bands had it).
 - Thumbnails (`public/script/library/thumbs/*.svg`) are drawn by
   `gen-library.mjs` from a real engine run and stamped with a hash of the
   source plus `RENDERER_VERSION`; bump that constant after changing the

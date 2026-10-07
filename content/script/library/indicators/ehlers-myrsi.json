@@ -1,0 +1,16 @@
+{
+  "title": "Ehlers MyRSI",
+  "summary": "John Ehlers' MyRSI: the balance of rises and falls of a smoothed price, (CU - CD) / (CU + CD), on a scale from -1 to 1 centred on zero.",
+  "description": "MyRSI is John Ehlers' restatement of the relative strength index on a scale centred on zero. The price is first smoothed with a two-pole super smoother of `Smooth Length` bars (8 by default), run on the average of this bar's and the previous bar's price, so that the shortest wiggles do not count as moves. The smoother starts from the price itself on its first two bars.\n\nOver the last `RSI Length` changes of the smoothed price (14 by default), CU adds up every rise and CD every fall. The study is (CU - CD) / (CU + CD). When every change in the window is a rise it reads 1, when every change is a fall it reads -1, and an even mix reads 0. If the smoothed price does not move at all in the window, the previous reading is kept. It is the classic RSI rescaled: an RSI of 70 is a MyRSI of 0.4.",
+  "howToRead": "Above zero the rises in the window outweigh the falls, below zero the falls outweigh the rises. Readings near 1 or -1 show a window that moved almost only one way, which in a range often comes just before a turn and in a trend can last a long time. Zero crossings mark the balance changing side, and the smoothing keeps them fewer than an RSI on raw price would give.\n\nThe study has no fixed overbought or oversold lines; many traders treat plus and minus 0.5 (an RSI of 75 and 25) as stretched. The smoother adds a few bars of lag, so the line turns after price does.",
+  "settings": [
+    { "key": "src", "label": "Source", "description": "The price series that is smoothed and measured. Close is the default." },
+    { "key": "smoothLength", "label": "Smooth Length", "description": "Length of the super smoother applied to the price before the rises and falls are counted. Longer is smoother and later." },
+    { "key": "rsiLength", "label": "RSI Length", "description": "How many changes of the smoothed price are summed. Shorter reacts faster and reaches the extremes more often." }
+  ],
+  "faq": [
+    { "q": "How does MyRSI relate to the usual RSI?", "a": "An RSI built from plain sums of the same changes maps onto MyRSI as (RSI - 50) / 50, so 70 becomes 0.4 and 30 becomes -0.4. The usual RSI averages its gains and losses with a running average instead, so its readings differ a little, and MyRSI here also smooths the price first." },
+    { "q": "Why smooth the price first?", "a": "Bar to bar noise adds equal amounts to the rises and the falls and pulls every reading toward zero. Removing it with the super smoother leaves the swings that matter and makes the line cleaner." },
+    { "q": "What does a reading of exactly 1 mean?", "a": "Every one of the last RSI Length changes of the smoothed price was a rise, with no fall at all in the window." }
+  ]
+}

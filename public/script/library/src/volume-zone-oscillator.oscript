@@ -1,0 +1,36 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © openalgo
+
+version 1
+study("Volume Zone Oscillator (VZO)", "VZO", precision = 2)
+
+length = input(14, "Length", min = 1)
+
+// Volume counts as buying when the close rose from the previous close, as
+// selling when it fell, and as nothing when it was unchanged. The first bar
+// has no previous close, so it is left out of both averages: they then run
+// over the same bars with the same weights and the reading stays within
+// -100 to 100.
+chg = change(close)
+signedVolume = sign(chg) * volume
+baseVolume = isNone(chg) ? none : volume
+
+// The share of the smoothed volume that went with rising closes, from -100
+// (every bar fell) to 100 (every bar rose).
+vp = ema(signedVolume, length)
+tv = ema(baseVolume, length)
+vzo = 100 * vp / tv
+
+plot(vzo, "VZO", #2962FF, width = 2)
+level(60, "Overbought", #787b86, style = "dashed")
+level(40, "Bullish Zone", #787b86, style = "dashed")
+level(15, "Upper Neutral", #787b86, style = "dashed")
+level(0, "Zero", #787b86, style = "dashed")
+level(-5, "Lower Neutral", #787b86, style = "dashed")
+level(-40, "Bearish Zone", #787b86, style = "dashed")
+level(-60, "Oversold", #787b86, style = "dashed")
+
+if crossUp(vzo, 40)
+    alert("VZO crossed above 40", id = "vzo-cross-up-40", title = "VZO enters the bullish zone")
+if crossDown(vzo, -40)
+    alert("VZO crossed below -40", id = "vzo-cross-down-40", title = "VZO enters the bearish zone")

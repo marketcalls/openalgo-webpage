@@ -1,0 +1,15 @@
+{
+  "title": "Ehlers Ultimate Strength Index (USI)",
+  "summary": "John Ehlers' strength index: up and down moves smoothed with his Ultimate Smoother and balanced into a reading from -1 to 1.",
+  "description": "The Ultimate Strength Index measures the balance of buying and selling pressure in the way an RSI does, with less lag. Each bar's change in the source is split into an up part (the rise, or zero) and a down part (the fall, or zero). Each part is averaged over the last four bars, and each average is then smoothed with John Ehlers' Ultimate Smoother over the `Length`.\n\nThe index is `(up - down) / (up + down)`. It is 1 when every recent move was up, -1 when every move was down, and 0 when the two balance. The first bar has no change, so both parts are zero there, and a part before the first bar counts as zero in the four-bar average. Where up and down are both zero the ratio is undefined, so the index keeps its previous value.\n\nThe Ultimate Smoother is a two-pole filter that removes short swings while passing the slow part with almost no delay, which is why the index turns sooner than an RSI of a similar length.",
+  "howToRead": "Above zero the up moves outweigh the down moves, below zero the reverse. A cross of zero is the plain signal of a change in pressure, and readings near 1 or -1 show one-sided moves that often stretch too far. Because the scale is centred on zero, the index reads the same on any instrument.\n\nLike any momentum reading it can stay near an extreme for a long time in a strong trend, so an extreme is a warning, not a reversal. A longer length gives a smoother line with fewer zero crossings.",
+  "settings": [
+    { "key": "src", "label": "Source", "description": "The price series whose bar to bar changes are measured. Close is the default." },
+    { "key": "length", "label": "Length", "description": "The period of the Ultimate Smoother applied to the up and down averages. 28 is the default; shorter reacts faster." }
+  ],
+  "faq": [
+    { "q": "How does it compare with an RSI?", "a": "Both balance up moves against down moves. The RSI averages them with a slow recursive average and scales to 0 to 100; this index smooths them with the Ultimate Smoother, which lags less, and scales to -1 to 1." },
+    { "q": "What do the levels mean?", "a": "Zero is the balance point. 1 means every recent change was up and -1 every recent change was down, so readings near either end show a one-sided market." },
+    { "q": "Why the four-bar average before the smoother?", "a": "It removes the shortest bar to bar noise, the swings of two to four bars, before the main smoothing." }
+  ]
+}

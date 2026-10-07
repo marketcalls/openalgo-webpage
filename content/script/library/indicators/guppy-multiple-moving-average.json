@@ -1,0 +1,26 @@
+{
+  "title": "Guppy Multiple Moving Average (GMMA)",
+  "summary": "Twelve exponential averages of the close in two groups, 3 to 15 bars and 30 to 60 bars, that show trend strength by how they spread.",
+  "description": "The Guppy Multiple Moving Average, devised by Daryl Guppy, draws twelve exponential moving averages of the close on the price chart in two groups. The short group, 3, 5, 8, 10, 12 and 15 bars, is drawn in blue and stands for the behaviour of short-term traders. The long group, 30, 35, 40, 45, 50 and 60 bars, is drawn in red and stands for longer-term investors.\n\nEach average weights the newest value by `2 / (length + 1)` and starts on its first full window, seeded with the simple average of that window, so the longest line appears from the 60th bar. Every length can be changed, and the source can be switched from the close to another price.",
+  "howToRead": "Read the two groups as bands rather than as twelve separate lines. When the short group sits above the long group and both are fanned out, the uptrend has support from both kinds of trader; the reverse holds for a downtrend. When a group compresses so its lines nearly touch, the traders it represents agree on value, and a compression often comes before a change of direction or a breakout.\n\nA trend change is usually read when the short group crosses through the long group and the long group then starts to widen in the new direction. A short group that dips into a wide, steady long group and turns back is read as a pullback within the trend. Like all moving averages, the bands lag price and give many crossings in a sideways market.",
+  "settings": [
+    { "key": "src", "label": "Source", "description": "The price series all twelve averages are taken over. Close is the published choice." },
+    { "key": "short1", "label": "Short Length 1", "description": "Bars in the fastest average of the short group. 3 by default." },
+    { "key": "short2", "label": "Short Length 2", "description": "Bars in the second average of the short group. 5 by default." },
+    { "key": "short3", "label": "Short Length 3", "description": "Bars in the third average of the short group. 8 by default." },
+    { "key": "short4", "label": "Short Length 4", "description": "Bars in the fourth average of the short group. 10 by default." },
+    { "key": "short5", "label": "Short Length 5", "description": "Bars in the fifth average of the short group. 12 by default." },
+    { "key": "short6", "label": "Short Length 6", "description": "Bars in the slowest average of the short group. 15 by default." },
+    { "key": "long1", "label": "Long Length 1", "description": "Bars in the fastest average of the long group. 30 by default." },
+    { "key": "long2", "label": "Long Length 2", "description": "Bars in the second average of the long group. 35 by default." },
+    { "key": "long3", "label": "Long Length 3", "description": "Bars in the third average of the long group. 40 by default." },
+    { "key": "long4", "label": "Long Length 4", "description": "Bars in the fourth average of the long group. 45 by default." },
+    { "key": "long5", "label": "Long Length 5", "description": "Bars in the fifth average of the long group. 50 by default." },
+    { "key": "long6", "label": "Long Length 6", "description": "Bars in the slowest average of the long group. 60 by default." }
+  ],
+  "faq": [
+    { "q": "Why twelve averages instead of two?", "a": "Two averages give one crossing. Two groups of six show how much agreement there is inside each time frame: the width of each band and the gap between them say more about trend strength than a single crossing does." },
+    { "q": "What does it mean when the long group compresses?", "a": "The longer-term averages have come together, so longer-term participants see value in a narrow range. A trend is weak at that point, and a widening that follows shows which way the new trend is going." },
+    { "q": "Why do the lines start at different bars?", "a": "Each average needs a full window before it has a value, so the 3 bar line starts on the third bar and the 60 bar line on the 60th." }
+  ]
+}

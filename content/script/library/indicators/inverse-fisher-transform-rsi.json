@@ -1,0 +1,16 @@
+{
+  "title": "Inverse Fisher Transform of RSI",
+  "summary": "John Ehlers' inverse Fisher transform applied to a smoothed, rescaled RSI, giving a line that snaps between -1 and 1 with clear crossings of 0.5 and -0.5.",
+  "description": "The inverse Fisher transform, `(exp(2x) - 1) / (exp(2x) + 1)`, takes any value and squeezes it into the range -1 to 1. Values near zero pass almost unchanged, while larger ones are pushed quickly toward the edges. John Ehlers applied it to the RSI to turn its gradual swings into sharp, almost on and off readings.\n\nThe study first takes a 5 bar RSI of the source and rescales it to `0.1 * (RSI - 50)`, which centres it on zero with a range of about -5 to 5. A 9 bar weighted moving average smooths that value, and the inverse Fisher transform is applied to the result. The RSI is Wilder's, with its average gain and loss smoothed over the RSI length.\n\nThe line is drawn in its own pane with dashed levels at 0.5 and -0.5.",
+  "howToRead": "Because of the transform, the line spends most of its time near 1 or -1 and moves between them quickly. A cross down through 0.5 after a stay near the top is the usual sell reading, and a cross up through -0.5 after a stay near the bottom the usual buy reading; the level crossings are clearer than the gradual turns of a plain RSI.\n\nThe short RSI makes it fast, so it gives many signals in a choppy market, and in a strong trend it can sit pinned at one edge for a long time. Many traders confirm its crossings with the trend or with a slower tool.",
+  "settings": [
+    { "key": "src", "label": "Source", "description": "The price series the RSI is computed on. Close is the default." },
+    { "key": "rsiLength", "label": "RSI Length", "description": "Bars in the RSI. The short default of 5 gives quick swings; raise it for fewer, slower ones." },
+    { "key": "wmaLength", "label": "Smoothing Length", "description": "Bars in the weighted moving average applied to the rescaled RSI before the transform. Longer smoothing gives fewer false crossings but later ones." }
+  ],
+  "faq": [
+    { "q": "Why rescale the RSI before the transform?", "a": "The transform works on values around zero, where a range of about -5 to 5 spans its whole curve. Subtracting 50 and multiplying by 0.1 puts the RSI's 0 to 100 into that range." },
+    { "q": "Why are the levels at 0.5 and -0.5?", "a": "The line moves quickly between the extremes, so a crossing of 0.5 or -0.5 marks a real change of state rather than noise near the edge. They are the levels the method is usually read with." },
+    { "q": "Can the line reach exactly 1 or -1?", "a": "No. The transform approaches the edges but never reaches them, although with a short RSI it often comes very close." }
+  ]
+}

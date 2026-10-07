@@ -1,0 +1,37 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © openalgo
+
+version 1
+study("Random Walk Index (RWI)", "RWI", precision = 3)
+
+minLength = input(2, "Shortest Lookback", min = 1)
+length = input(14, "Longest Lookback", min = 1)
+
+// The true range of every bar; the first bar's is its high minus its low.
+tr = trueRange()
+
+// For each lookback n from the shortest to the longest, the move from n bars
+// back to this bar, divided by the distance a random walk covers in n steps:
+// the simple average true range over the n + 1 bars of the move times the
+// square root of n. Each line keeps the largest ratio. Both wait for the
+// longest lookback, and a lookback with no true range is skipped.
+rwiHigh = none
+rwiLow = none
+if bar.index >= length
+    sumTr = tr
+    hi = none
+    lo = none
+    for j = 1 to length
+        sumTr = sumTr + tr[j]
+        scale = sumTr / (j + 1) * sqrt(j)
+        if j >= minLength and scale > 0
+            up = (high - low[j]) / scale
+            dn = (high[j] - low) / scale
+            hi = isNone(hi) ? up : max(hi, up)
+            lo = isNone(lo) ? dn : max(lo, dn)
+    rwiHigh = hi
+    rwiLow = lo
+
+plot(rwiHigh, "RWI High", #26A69A, width = 2)
+plot(rwiLow, "RWI Low", #EF5350, width = 2)
+level(1, "Random Walk", #787b86, style = "dashed")

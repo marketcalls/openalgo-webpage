@@ -1,0 +1,34 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © openalgo
+
+version 1
+study("Value Chart", "VC", precision = 2)
+
+len = input(5, "Length", min = 1, tooltip = "Bars in the floating axis. The volatility unit averages five blocks of about a fifth of this many bars each.")
+
+// The floating axis is the average midpoint of the last `len` bars.
+axis = sma(hl2, len)
+
+// The volatility unit is a fifth of the mean range of the last five blocks,
+// each block about `len` / 5 bars (at least one). A one-bar block with no
+// range counts the absolute change from the previous close instead.
+blockLen = max(1, round(len / 5))
+blockRange = highest(high, blockLen) - lowest(low, blockLen)
+closeMove = abs(close - close[1])
+flatBar = blockLen == 1 and blockRange == 0
+blockSize = flatBar ? closeMove : blockRange
+unit = 0.2 * (blockSize + blockSize[blockLen] + blockSize[2 * blockLen] + blockSize[3 * blockLen] + blockSize[4 * blockLen]) / 5
+
+// Each price of the bar, as its distance from the axis in volatility units.
+// A unit of zero leaves the bar empty.
+vOpen = (open - axis) / unit
+vHigh = (high - axis) / unit
+vLow = (low - axis) / unit
+vClose = (close - axis) / unit
+
+plotCandles(vOpen, vHigh, vLow, vClose, "Value Chart", colorUp = #4CAF50, colorDown = #FF5252)
+level(8, "Overbought", #FF5252, style = "dashed")
+level(4, "Upper Fair Value", #787B86, style = "dashed")
+level(0, "Axis", #787B86, style = "dashed")
+level(-4, "Lower Fair Value", #787B86, style = "dashed")
+level(-8, "Oversold", #4CAF50, style = "dashed")

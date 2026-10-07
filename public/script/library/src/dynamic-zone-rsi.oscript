@@ -1,0 +1,31 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © openalgo
+
+version 1
+study("Dynamic Zone RSI", "DZRSI", precision = 2)
+
+src = input(close, "Source")
+rsiLength = input(9, "RSI Length", min = 1)
+lookback = input(70, "Zone Lookback", min = 2, tooltip = "How many past RSI readings the zones are measured over.")
+upperProb = input(10, "Overbought Probability %", min = 0, max = 50, tooltip = "The share of past readings at or above the overbought zone.")
+lowerProb = input(10, "Oversold Probability %", min = 0, max = 50, tooltip = "The share of past readings at or below the oversold zone.")
+
+rsiValue = rsi(src, rsiLength)
+
+// Each zone is a reading of the RSI's own last `lookback` values: the
+// overbought zone is the k-th highest of them, where k readings make up
+// upperProb percent of the window, and the oversold zone is the k-th lowest
+// for lowerProb. A probability of 0 still takes one reading, the extreme.
+kUpper = max(1, ceil(upperProb * lookback / 100))
+kLower = max(1, ceil(lowerProb * lookback / 100))
+// The k-th highest of n sorted readings sits at position n - k counting from
+// zero, and the k-th lowest at k - 1. A percentile aimed exactly at a
+// position returns that reading itself, with nothing interpolated.
+upperZone = percentile(rsiValue, lookback, 100 * (lookback - kUpper) / (lookback - 1))
+lowerZone = percentile(rsiValue, lookback, 100 * (kLower - 1) / (lookback - 1))
+
+u = plot(upperZone, "Overbought Zone", #EF5350)
+l = plot(lowerZone, "Oversold Zone", #26A69A)
+fill(u, l, #7E57C2, opacity = 0.08)
+plot(rsiValue, "RSI", #7E57C2, width = 2)
+level(50, "Middle", gray, style = "dashed")

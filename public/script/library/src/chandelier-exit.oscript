@@ -1,0 +1,42 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © openalgo
+
+version 1
+study("Chandelier Exit", "CE", overlay = true, precision = 2)
+
+length = input(22, "ATR Period", min = 1, tooltip = "Bars in the average true range and in the highest high and lowest low.")
+mult = input(3.0, "ATR Multiplier", min = 0, step = 0.1, tooltip = "How many average true ranges each stop hangs from the extreme.")
+showSignals = input(true, "Show Buy/Sell Marks")
+
+// The long stop hangs below the highest high of the window and the short stop
+// sits above the lowest low, each a multiple of the average true range away.
+atrValue = atr(length)
+longRaw = highest(high, length) - mult * atrValue
+shortRaw = lowest(low, length) + mult * atrValue
+prevLong = longRaw[1]
+prevShort = shortRaw[1]
+
+// The side starts long on the first bar the stops exist. While long, a close
+// below the previous bar's long stop turns it short; while short, a close
+// above the previous bar's short stop turns it long.
+var dirState = none
+side = isNone(longRaw) ? none : isNone(dirState) ? 1 : dirState == 1 and close < prevLong ? -1 : dirState == -1 and close > prevShort ? 1 : dirState
+prevSide = dirState
+dirState = side
+
+// Only the stop of the side in force is drawn.
+plot(side == 1 ? longRaw : none, "Long Stop", #26A69A, width = 2)
+plot(side == -1 ? shortRaw : none, "Short Stop", #EF5350, width = 2)
+
+turnedLong = not isNone(prevSide) and side == 1 and prevSide == -1
+turnedShort = not isNone(prevSide) and side == -1 and prevSide == 1
+
+if showSignals and turnedLong
+    signal("Buy", color = #26A69A, at = "below", shape = "label")
+if showSignals and turnedShort
+    signal("Sell", color = #EF5350, at = "above", shape = "label")
+
+if turnedLong
+    alert("Chandelier Exit turned long", id = "buy", title = "Chandelier Buy")
+if turnedShort
+    alert("Chandelier Exit turned short", id = "sell", title = "Chandelier Sell")

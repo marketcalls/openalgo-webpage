@@ -1,0 +1,37 @@
+{
+  "title": "Momentum Pinball",
+  "summary": "Linda Raschke's three bar relative strength index of the one bar change in price, a fast oscillator with levels at 70 and 30.",
+  "description": "Momentum Pinball, designed by Linda Raschke, is a very short relative strength index applied not to price but to the change in price. First the study takes the one bar rate of change of the close in points, `close - close[1]`. Then it takes a 3 bar relative strength index of that series, with Wilder's smoothing seeded by a simple average of the first three changes.\n\nBecause the input is already a change, the index measures whether the change itself is speeding up or slowing down. The result swings quickly between 0 and 100 and is drawn as a line in its own pane with dashed levels at 70, 50 and 30. `Rate of Change Length` widens the change to more than one bar, and `RSI Length` lengthens the index.",
+  "howToRead": "A reading above 70 means the bar to bar change has been rising strongly for a few bars, and a reading below 30 means it has been falling. Raschke used it as a short term timing tool: a first close of the line below 30 is a setup to look for a long entry on the next bar, and a close above 70 a setup for a short entry, usually taken only in the direction of the larger trend.\n\nIt is deliberately twitchy. With a 3 bar index the line reaches the extremes often, so the levels mark short pullbacks and bursts rather than lasting turns, and on their own they are not a trend signal.",
+  "settings": [
+    {
+      "key": "src",
+      "label": "Source",
+      "description": "The price series whose change is measured. Close is the published choice."
+    },
+    {
+      "key": "rocLength",
+      "label": "Rate of Change Length",
+      "description": "Bars over which the change in price is measured. 1 is the published value; a longer change is smoother."
+    },
+    {
+      "key": "rsiLength",
+      "label": "RSI Length",
+      "description": "Bars in the relative strength index taken over the change. 3 is the published value; a longer index swings less often to the levels."
+    }
+  ],
+  "faq": [
+    {
+      "q": "How is it different from a 3 bar RSI of the close?",
+      "a": "A plain RSI of the close looks at the bar to bar changes of price. Momentum Pinball looks at the bar to bar changes of those changes, so it measures whether the move is accelerating or decelerating rather than its direction."
+    },
+    {
+      "q": "Why is the rate of change in points and not a percentage?",
+      "a": "The published definition uses the change in points. A percentage would divide each change by a slightly different price, which moves the readings a little but rarely changes which side of the levels the line is on."
+    },
+    {
+      "q": "When does the first value appear?",
+      "a": "On the fifth bar with the default settings: one bar for the first change, one more for the first change of that change, and three changes to seed the index."
+    }
+  ]
+}

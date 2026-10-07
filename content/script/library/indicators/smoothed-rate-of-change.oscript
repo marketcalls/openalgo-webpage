@@ -1,0 +1,18 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © openalgo
+
+version 1
+study("Smoothed Rate of Change (SROC)", "SROC", precision = 2)
+
+src = input(close, "Source")
+emaLength = input(13, "Smoothing Length", min = 1, tooltip = "Bars in the exponential average that smooths the source first.")
+rocLength = input(21, "Rate of Change Length", min = 1, tooltip = "How many bars back the smoothed value is compared with.")
+
+// Smooth the source with an exponential average, then take the percentage
+// change of that average over the rate of change length.
+smoothed = ema(src, emaLength)
+prior = smoothed[rocLength]
+sroc = 100 * (smoothed - prior) / prior
+
+plot(sroc, "SROC", #2962FF, width = 2)
+level(0, "Zero", gray, style = "dashed")

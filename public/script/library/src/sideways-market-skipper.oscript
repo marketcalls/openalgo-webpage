@@ -175,8 +175,8 @@ plot(stDirection < 0 ? none : stValue, "Supertrend Down", #FF5252, width = 2, ov
 // bar back, so the step starts on the bar that opened the range.
 topLine = rangeDisplay and not isNone(topPrice) and toBool(topPrice == prevTopPrice) ? topPrice : none
 bottomLine = rangeDisplay and not isNone(bottomPrice) and toBool(bottomPrice == prevBottomPrice) ? bottomPrice : none
-plot(topLine, "Top Range", #26A69A, width = 1, style = "step", offset = -1, overlay = true)
-plot(bottomLine, "Bottom Range", #FF5252, width = 1, style = "step", offset = -1, overlay = true)
+plot(topLine, "Top Range", #80CBC4, width = 1, style = "step", offset = -1, overlay = true)
+plot(bottomLine, "Bottom Range", #EF9A9A, width = 1, style = "step", offset = -1, overlay = true)
 
 plot(atrRange, "ATR", #2962FF, width = 2)
 plot(atrSmaV, "ATR SMA", #FF6D00, width = 2)

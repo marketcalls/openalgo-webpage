@@ -1,0 +1,112 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © openalgo
+
+version 1
+study("Zig Zag", "ZZ", overlay = true, precision = 2)
+
+deviation = input(5.0, "Deviation %", min = 0.1, step = 0.1, tooltip = "How far, in percent, price must reverse from a swing's extreme to confirm it as a pivot.")
+priceSource = input("High/Low", "Price", options = ["High/Low", "Close"], tooltip = "High/Low swings between bar highs and lows. Close uses closing prices only.")
+showLabels = input(true, "Show Pivot Labels")
+lineColor = input(orange, "Line Color")
+
+d = deviation / 100
+useHighLow = priceSource == "High/Low"
+hp = useHighLow ? high : close
+lp = useHighLow ? low : close
+// Labels sit half an average range beyond the pivot so they clear the line.
+pad = orElse(atr(14), high - low) * 0.5
+
+// trend: 0 before the first swing, 1 in an up leg, -1 in a down leg.
+var trend = 0
+var hiC = none
+var hiT = none
+var loC = none
+var loT = none
+var extP = none
+var extT = none
+var leg = none
+var lastPivotHigh = none
+var lastPivotLow = none
+
+// A confirmed pivot: is it a high, its time and its price.
+confirmed = false
+pivotIsHigh = false
+pivotT = none
+pivotP = none
+
+if trend == 0
+    // Before the first swing, track the highest and lowest prices so far;
+    // the older of the two becomes the first pivot once they are far enough
+    // apart.
+    if isNone(hiC) or hp > hiC
+        hiC = hp
+        hiT = time
+    if isNone(loC) or lp < loC
+        loC = lp
+        loT = time
+    if hiC >= loC * (1 + d) and hiT != loT
+        confirmed = true
+        if loT < hiT
+            trend = 1
+            extP = hiC
+            extT = hiT
+            pivotIsHigh = false
+            pivotT = loT
+            pivotP = loC
+        else
+            trend = -1
+            extP = loC
+            extT = loT
+            pivotIsHigh = true
+            pivotT = hiT
+            pivotP = hiC
+else if trend == 1
+    // An up leg: a new high moves its end; a big enough fall from that end
+    // confirms the end as a pivot high and starts a down leg.
+    if hp > extP
+        extP = hp
+        extT = time
+        draw.setTo(leg, time, hp)
+    else if lp <= extP * (1 - d)
+        confirmed = true
+        pivotIsHigh = true
+        pivotT = extT
+        pivotP = extP
+        trend = -1
+        extP = lp
+        extT = time
+else
+    // A down leg, the mirror image.
+    if lp < extP
+        extP = lp
+        extT = time
+        draw.setTo(leg, time, lp)
+    else if hp >= extP * (1 + d)
+        confirmed = true
+        pivotIsHigh = false
+        pivotT = extT
+        pivotP = extP
+        trend = 1
+        extP = hp
+        extT = time
+
+if confirmed
+    if showLabels
+        if pivotIsHigh
+            caption = isNone(lastPivotHigh) ? "H" : pivotP > lastPivotHigh ? "HH" : "LH"
+            draw.label(pivotT, pivotP + pad, caption, color = fade(red, 20), textColor = white, tooltip = text(pivotP, 2))
+        else
+            caption = isNone(lastPivotLow) ? "L" : pivotP < lastPivotLow ? "LL" : "HL"
+            draw.label(pivotT, pivotP - pad, caption, color = fade(teal, 20), textColor = white, tooltip = text(pivotP, 2))
+    if pivotIsHigh
+        lastPivotHigh = pivotP
+    else
+        lastPivotLow = pivotP
+    // The newest leg runs from this pivot to the current extreme and keeps
+    // moving until the next pivot is confirmed.
+    leg = draw.line(pivotT, pivotP, extT, extP, color = lineColor, width = 2)
+
+if confirmed and pivotIsHigh
+    alert("Zig Zag confirmed a swing high", id = "pivot-high", title = "Swing high confirmed")
+if confirmed and not pivotIsHigh
+    alert("Zig Zag confirmed a swing low", id = "pivot-low", title = "Swing low confirmed")

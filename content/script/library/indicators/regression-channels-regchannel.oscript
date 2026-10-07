@@ -42,7 +42,7 @@ if bar.index >= period - 1 and denom != 0
     spread = sqrt(sumResiduals2 / period)
 
 top = plot(regression + multiplier * spread, "Upper Band", #ffeb3b, width = 2)
-mid = plot(regression, "Regression Line", #ffeb3b, width = 2)
+mid = plot(regression, "Regression Line", #ff9800, width = 2)
 bottom = plot(regression - multiplier * spread, "Lower Band", #ffeb3b, width = 2)
 fill(top, mid, #ef5350, opacity = 0.1)
 fill(mid, bottom, #26a69a, opacity = 0.1)

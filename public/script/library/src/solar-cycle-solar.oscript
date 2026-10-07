@@ -34,6 +34,6 @@ autumnFall = solar[1] > 0 and solar <= 0 and delta1 < 0
 
 // Each mark sits on the curve at a solstice and on the zero line at an equinox.
 plot(peakSummer ? solar : none, "Peak Summer", #ff5252, style = "lineWithMarkers")
-plot(springRise ? 0 : none, "Spring Rise", #ffeb3b, style = "lineWithMarkers")
+plot(springRise ? 0 : none, "Spring Rise", #4caf50, style = "lineWithMarkers")
 plot(peakWinter ? solar : none, "Peak Winter", #2196f3, style = "lineWithMarkers")
-plot(autumnFall ? 0 : none, "Autumn Fall", #ffeb3b, style = "lineWithMarkers")
+plot(autumnFall ? 0 : none, "Autumn Fall", #ff9800, style = "lineWithMarkers")

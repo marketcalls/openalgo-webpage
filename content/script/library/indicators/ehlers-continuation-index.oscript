@@ -1,0 +1,89 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © openalgo
+
+version 1
+study("Ehlers Continuation Index", "CI", precision = 3)
+
+src = input(close, "Source")
+gama = input(0.8, "Gamma", min = 0, max = 0.99, step = 0.01, tooltip = "Laguerre damping. Higher smooths more and lags more.")
+order = input(8, "Order", min = 1, max = 10, tooltip = "Number of Laguerre stages averaged, 1 to 10.")
+length = input(40, "Length", min = 2, tooltip = "Laguerre and scaling length. The fast smoother uses half of it.")
+
+// The UltimateSmoother: the source passes straight through on the first
+// three bars, then a two-pole recursion. Each call keeps its own history.
+fn ultimateSmoother(x, period) =>
+    a1 = exp(-1.414 * math.pi / period)
+    c2 = 2 * a1 * math.cos(1.414 * math.pi / period)
+    c3 = -a1 * a1
+    c1 = (1 + c2 - c3) / 4
+    var us1 = 0.0
+    var us2 = 0.0
+    us = bar.index < 3 ? x : (1 - c1) * x + (2 * c1 - c2) * x[1] - (c1 + c3) * x[2] + c2 * us1 + c3 * us2
+    us2 = us1
+    us1 = us
+    us
+
+usHalf = ultimateSmoother(src, length / 2)
+usFull = ultimateSmoother(src, length)
+
+// The Laguerre filter. Its first stage is the full-length smoother; each
+// further stage is built from last bar's values of the stage below it and of
+// itself. Every stage starts at the first value, so there is no start-up
+// transient. All ten stages are kept; only the first `order` are averaged.
+var p1 = none
+var p2 = none
+var p3 = none
+var p4 = none
+var p5 = none
+var p6 = none
+var p7 = none
+var p8 = none
+var p9 = none
+var p10 = none
+first = isNone(p1)
+q2 = first ? usFull : -gama * p1 + p1 + gama * p2
+q3 = first ? usFull : -gama * p2 + p2 + gama * p3
+q4 = first ? usFull : -gama * p3 + p3 + gama * p4
+q5 = first ? usFull : -gama * p4 + p4 + gama * p5
+q6 = first ? usFull : -gama * p5 + p5 + gama * p6
+q7 = first ? usFull : -gama * p6 + p6 + gama * p7
+q8 = first ? usFull : -gama * p7 + p7 + gama * p8
+q9 = first ? usFull : -gama * p8 + p8 + gama * p9
+q10 = first ? usFull : -gama * p9 + p9 + gama * p10
+p1 = usFull
+p2 = q2
+p3 = q3
+p4 = q4
+p5 = q5
+p6 = q6
+p7 = q7
+p8 = q8
+p9 = q9
+p10 = q10
+
+stageSum = usFull + (order >= 2 ? q2 : 0) + (order >= 3 ? q3 : 0) + (order >= 4 ? q4 : 0) + (order >= 5 ? q5 : 0) + (order >= 6 ? q6 : 0) + (order >= 7 ? q7 : 0) + (order >= 8 ? q8 : 0) + (order >= 9 ? q9 : 0) + (order >= 10 ? q10 : 0)
+laguerre = stageSum / order
+
+// The gap between the fast smoother and the Laguerre filter, doubled and
+// divided by its mean absolute size over `length` bars. When that scale is
+// zero the previous reading is kept.
+gap = usHalf - laguerre
+scale = sma(abs(gap), length)
+var ref = 0.0
+if not isNone(scale) and scale != 0
+    ref = 2 * gap / scale
+
+// Inverse Fisher transform, (e^2r - 1) / (e^2r + 1), written so a large
+// reading cannot overflow. It squeezes the reading into -1 to 1.
+t = exp(-2 * abs(ref))
+ci = isNone(scale) ? none : sign(ref) * (1 - t) / (1 + t)
+
+plot(ci, "Continuation Index", ci >= 0 ? #26A69A : #EF5350, width = 2)
+level(0.5, "Upper", #787b86, style = "dashed")
+level(0, "Zero", #787b86, style = "dashed")
+level(-0.5, "Lower", #787b86, style = "dashed")
+
+if crossUp(ci, 0)
+    alert("Continuation Index crossed above zero", id = "ci-cross-up", title = "Continuation Index turns up")
+if crossDown(ci, 0)
+    alert("Continuation Index crossed below zero", id = "ci-cross-down", title = "Continuation Index turns down")

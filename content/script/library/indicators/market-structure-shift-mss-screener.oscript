@@ -306,3 +306,7 @@ if bar.isLast
             cell(g, r + 2, 0, when, textColor = ink, bgColor = withAlpha(ink, 0.1), align = "left")
             cell(g, r + 2, 1, priceText(element(sigPrices, at)), textColor = ink, bgColor = withAlpha(ink, 0.1), align = "left")
             cell(g, r + 2, 2, side == 1 ? "Bullish" : "Bearish", textColor = ink, bgColor = withAlpha(ink, 0.1), align = "left")
+
+// The chart draws a study's markers and bar colours only when the study has
+// a plot, so one fully transparent column carries them. It shows nothing.
+plot(close, "Marker Anchor", rgba(0, 0, 0, 0))

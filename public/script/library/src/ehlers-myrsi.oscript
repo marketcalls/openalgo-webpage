@@ -1,0 +1,47 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © openalgo
+
+version 1
+study("Ehlers MyRSI", "MyRSI", precision = 3)
+
+src = input(close, "Source")
+smoothLength = input(8, "Smooth Length", min = 2)
+rsiLength = input(14, "RSI Length", min = 1)
+
+// Two-pole super smoother coefficients, damped by the square root of two.
+arg = sqrt(2) * math.pi / smoothLength
+a1 = exp(-arg)
+c2 = 2 * a1 * math.cos(arg)
+c3 = -a1 * a1
+c1 = 1 - c2 - c3
+
+// The smoother runs on the average of this bar's and the previous bar's
+// price, and starts as the price itself on its first two bars.
+var prev1 = none
+var prev2 = none
+filt = bar.index < 2 ? src : c1 * (src + src[1]) / 2 + c2 * prev1 + c3 * prev2
+prev2 = prev1
+prev1 = filt
+
+// CU sums the rises and CD the falls of the smoothed price over the last
+// rsiLength changes.
+cu = 0.0
+cd = 0.0
+for k = 0 to rsiLength - 1
+    d = filt[k] - filt[k + 1]
+    if d > 0
+        cu = cu + d
+    if d < 0
+        cd = cd - d
+
+// (CU - CD) / (CU + CD) runs from -1 to 1; a window with no movement keeps
+// the previous value (0 before the first).
+total = cu + cd
+ready = not isNone(filt[rsiLength])
+var lastRsi = 0.0
+if ready and total != 0
+    lastRsi = (cu - cd) / total
+myRsi = ready ? lastRsi : none
+
+level(0, "Zero Line", #787b86, style = "dotted")
+plot(myRsi, "MyRSI", #2962ff, width = 2)

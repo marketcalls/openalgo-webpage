@@ -1,0 +1,16 @@
+{
+  "title": "Sentiment Zone Oscillator (SZO)",
+  "summary": "Walid Khalil's oscillator of up and down closes, smoothed by a triple exponential average, with overbought and oversold lines that follow its own range.",
+  "description": "The Sentiment Zone Oscillator, from Walid Khalil, measures how one-sided recent trading has been by counting closes rather than measuring their size. Each bar scores **+1** when it closes above the previous close and **-1** otherwise. The score is smoothed by a triple exponential average (TEMA) over `Length` bars and multiplied by 100 / `Length`, so with the default 14 a long run of up closes approaches about +7 and a run of down closes about -7.\n\nInstead of fixed thresholds, the overbought and oversold lines are set from the oscillator's own history. Over the last `Zone Length` bars (30 by default) the study takes the highest and lowest SZO value; the **Overbought** line sits 95 percent of the way up that range from the low, and the **Oversold** line 95 percent of the way down from the high. Dashed reference lines mark +7, zero and -7.\n\nEach exponential average is seeded with a simple average of its first values, and the first bar has no previous close and so no score.",
+  "howToRead": "Above zero, more of the recent closes were up than down, a positive sentiment; below zero, the reverse. Readings near the top of the pane, and above the Overbought line, mean the market has closed higher almost every bar and may be stretched; readings below the Oversold line mean persistent selling.\n\nBecause the zones follow the oscillator's own range, they widen in a strong trend and tighten in a quiet one, so a touch of a zone means extreme relative to the last 30 bars rather than extreme in absolute terms. The oscillator ignores how far each close moved, so a few large moves count no more than many small ones, and in a steady trend it can stay pinned near a zone for a long time.",
+  "settings": [
+    { "key": "len", "label": "Length", "description": "Bars in each of the three exponential averages that smooth the score. A longer length gives a smoother, slower line and a smaller scale." },
+    { "key": "longLen", "label": "Zone Length", "description": "Bars of the oscillator's own history the overbought and oversold lines are set from. Longer keeps the zones steadier." },
+    { "key": "percent", "label": "Zone Percent", "description": "How far through the recent range the zones sit. At 95 they hug the extremes; lower values bring them toward the middle." }
+  ],
+  "faq": [
+    { "q": "Why does the oscillator stay between about -7 and +7?", "a": "The score is always +1 or -1, so its average stays between those, and the study multiplies it by 100 / Length. With the default 14 that is about 7.14 either way." },
+    { "q": "Why do the overbought and oversold lines move?", "a": "They are set from the highest and lowest oscillator values over the zone length, so they adapt to how far the oscillator has been swinging lately rather than using fixed levels." },
+    { "q": "Does a flat close count as up or down?", "a": "As down. Only a close above the previous close scores +1; an equal or lower close scores -1." }
+  ]
+}

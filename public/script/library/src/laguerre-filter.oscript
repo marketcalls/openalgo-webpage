@@ -1,0 +1,31 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © openalgo
+
+version 1
+study("Laguerre Filter", "LagF", overlay = true, precision = 2)
+
+src = input(hl2, "Source")
+lagAlpha = input(0.2, "Alpha", min = 0, max = 1, step = 0.1, tooltip = "Weight of the newest price. Smaller values smooth more and lag more.")
+colorchange = input(true, "Change Color ?")
+
+gamma = 1 - lagAlpha
+
+// Four Laguerre stages, each a one-pole all-pass of the one before, starting
+// from zero; reading a stage above the line that updates it gives its value
+// on the previous bar.
+var l0 = 0.0
+var l1 = 0.0
+var l2 = 0.0
+var l3 = 0.0
+p0 = l0
+p1 = l1
+p2 = l2
+l0 = (1 - gamma) * src + gamma * p0
+l1 = -gamma * l0 + p0 + gamma * p1
+l2 = -gamma * l1 + p1 + gamma * p2
+l3 = -gamma * l2 + p2 + gamma * l3
+
+lagF = (l0 + 2 * l1 + 2 * l2 + l3) / 6
+
+// Green while the filter rises, red otherwise; one colour when switched off.
+plot(lagF, "LagF", colorchange ? (lagF > lagF[1] ? #4CAF50 : #FF5252) : #FFEB3B, width = 2)

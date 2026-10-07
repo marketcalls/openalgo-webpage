@@ -1,0 +1,41 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © openalgo
+
+version 1
+study("Ehlers Ultimate Oscillator", "UO", precision = 3)
+
+src = input(close, "Source")
+bandEdge = input(20, "Band Edge", min = 2, step = 1, tooltip = "The shorter cutoff period, in bars.")
+bandWidth = input(2.0, "Bandwidth", min = 1.4, step = 0.1, tooltip = "The longer cutoff is this multiple of the band edge.")
+rmsLength = input(100, "RMS Length", min = 1, step = 1, tooltip = "Bars in the root mean square that scales the output.")
+
+// A two-pole highpass filter with its cutoff at `len` bars. It is zero on the
+// first three bars, which lack the history the recursion needs.
+fn highpass(x, len) =>
+    a1 = exp(-1.414 * math.pi / len)
+    c2 = 2 * a1 * math.cos(1.414 * math.pi / len)
+    c3 = -a1 * a1
+    c1 = (1 + c2 - c3) / 4
+    var out1 = 0.0
+    var out2 = 0.0
+    out = bar.index < 3 ? 0 : c1 * (x - 2 * x[1] + x[2]) + c2 * out1 + c3 * out2
+    out2 = out1
+    out1 = out
+    out
+
+// The slower highpass keeps cycles shorter than the long cutoff, the faster
+// one cycles shorter than the band edge, so their difference keeps the
+// cycles between the two periods.
+hpLong = highpass(src, bandWidth * bandEdge)
+hpShort = highpass(src, bandEdge)
+band = hpLong - hpShort
+
+// Scaled by its own root mean square, so 1 is a typical swing. Where the
+// RMS is zero the oscillator keeps its previous value.
+var uoPrev = none
+rms = sqrt(sma(band * band, rmsLength))
+uo = rms == 0 ? uoPrev : band / rms
+uoPrev = uo
+
+level(0, "Zero", #787b86, style = "dashed")
+plot(uo, "Ultimate Oscillator", #2962FF, width = 2)

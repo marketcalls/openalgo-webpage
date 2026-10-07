@@ -1,0 +1,14 @@
+{
+  "title": "Price Zone Oscillator (PZO)",
+  "summary": "The share of the smoothed close that came from rising bars, from -100 to 100, with zones at 60, 40, 15, -5, -40 and -60.",
+  "description": "The Price Zone Oscillator, described by Walid Khalil and David Steckler as a companion to their Volume Zone Oscillator, applies the zone idea to price alone. Each bar's close is given a sign: positive when it is above the previous close, negative when it is below, and zero when it is unchanged.\n\nThe oscillator divides an exponential average of that signed close by an exponential average of the plain close over the same `Length` (14 bars by default) and multiplies by 100. Both averages start on the second bar (the first has no previous close) and are seeded with a simple average of their first `Length` values, so they always cover the same bars with the same weights and the reading stays between -100 and 100. Because the close changes little from bar to bar, the result is close to the balance of up bars against down bars in the average, weighted toward the newest.\n\nDashed levels mark the zones: 60 and -60 for overbought and oversold, 40 and -40 for the edges of a bullish or bearish trend, and 15 and -5 around a neutral middle.",
+  "howToRead": "Above 40 most recent bars closed higher, which is read as a bullish trend; below -40 as a bearish trend. Readings beyond 60 or -60 are stretched and often come before a pause. Between 15 and -5 the market has no clear side, and a crossing of zero shows the balance of up and down closes changing.\n\nIn a trend, traders use dips back toward 40 (or rallies toward -40) as pullbacks within the move. The oscillator counts the direction of each close, not its size, so a run of small gains reads as strongly as a run of large ones, and in a sideways market it swings around zero.",
+  "settings": [
+    { "key": "length", "label": "Length", "description": "Bars in both exponential averages. Shorter reacts faster and crosses the zones more often; 14 is the usual value." }
+  ],
+  "faq": [
+    { "q": "How is it related to the Volume Zone Oscillator?", "a": "It is the same calculation with the close in place of volume, so it works on instruments without volume and reads the direction of closes alone." },
+    { "q": "Why are the neutral zones not symmetric?", "a": "The published zones put the upper neutral line at 15 and the lower at -5, so a reading must be clearly positive before it counts as bullish." },
+    { "q": "Does the size of a move matter?", "a": "Barely. Each bar adds its own close with a plus or minus sign, so a bar that rose by a little counts almost the same as one that rose by a lot." }
+  ]
+}

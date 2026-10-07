@@ -23,6 +23,6 @@ windowLow = lowest(lowSource, period)
 upperEdge = bar.index < period - 1 ? runHigh : windowHigh
 lowerEdge = bar.index < period - 1 ? runLow : windowLow
 
-top = plot(upperEdge, "Highest High", #ffeb3b, width = 2)
-bottom = plot(lowerEdge, "Lowest Low", #ffeb3b, width = 2)
+top = plot(upperEdge, "Highest High", #ff5252, width = 2)
+bottom = plot(lowerEdge, "Lowest Low", #4caf50, width = 2)
 fill(top, bottom, #2962ff, opacity = 0.1)

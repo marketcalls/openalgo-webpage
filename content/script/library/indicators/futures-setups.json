@@ -533,5 +533,6 @@
       "a": "They are readings the study keeps for the data window and are not drawn: the entry, stop and targets on the bar a plan opens, the weighted and chart-timeframe regime scores on every bar, and the score of the best zone price touched most recently."
     }
   ],
-  "deviation": "When the chart states no tick size, the original infers one from the median bar range of the whole chart, later bars included, which a study computed bar by bar cannot see; this version then uses a tick of 0.01, so its tick-based zone widths, pool tolerances, stop buffer and stop caps differ on such a chart."
+  "deviation": "When the chart states no tick size, the original infers one from the median bar range of the whole chart, later bars included, which a study computed bar by bar cannot see; this version then uses a tick of 0.01, so its tick-based zone widths, pool tolerances, stop buffer and stop caps differ on such a chart.",
+  "chartNote": "Built for 1 to 5 minute index futures charts. On this hourly sample its zone and setup logic stays idle, so only the regime panel and the session lines show."
 }

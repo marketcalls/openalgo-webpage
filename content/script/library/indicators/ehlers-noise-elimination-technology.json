@@ -1,0 +1,17 @@
+{
+  "title": "Ehlers Noise Elimination Technology (NET)",
+  "summary": "John Ehlers' NET: a Kendall rank correlation of MyRSI against a straight line, which keeps the oscillator's direction and removes its jitter.",
+  "description": "Noise Elimination Technology is John Ehlers' way of cleaning an oscillator without the lag of a smoothing filter. The oscillator here is MyRSI on the source: over the last `MyRSI Length` changes (14 by default), the rises are summed into one total and the falls into another, and MyRSI is (rises - falls) / (rises + falls), from -1 to 1. If nothing moved in the window, the previous reading is kept.\n\nNET then asks only one question of the last `NET Length` MyRSI values (14 by default): how consistently are they rising or falling? It compares every pair of values in the window. A pair in which the newer value is higher adds 1, a pair in which it is lower takes away 1, and a tie adds nothing. The total is divided by the number of pairs, n(n-1)/2, which is Kendall's rank correlation of the oscillator with a straight line. The result runs from -1, every value lower than the one before it, to 1, every value higher. Because only the order of the values counts, small wiggles that do not change the order have no effect.",
+  "howToRead": "NET near 1 means MyRSI has been climbing steadily through the whole window, near -1 that it has been falling steadily. A move from one extreme toward zero shows the oscillator losing its direction, and a zero crossing shows the ordering changing from mostly rising to mostly falling or back. The grey MyRSI line can be shown beside it to see what NET is ranking.\n\nNET measures direction, not size: a slow drift and a sharp swing both read 1 if every value is higher than the last. It also reacts to the oscillator, not to price directly, so it turns after MyRSI starts to turn, and it ignores how far MyRSI is from zero.",
+  "settings": [
+    { "key": "src", "label": "Source", "description": "The price series MyRSI is computed on. Close is the default." },
+    { "key": "rsiLength", "label": "MyRSI Length", "description": "How many price changes MyRSI sums. Shorter gives a faster, noisier oscillator for NET to clean." },
+    { "key": "netLength", "label": "NET Length", "description": "How many MyRSI values are ranked. Longer gives a steadier line that needs a longer run in one direction to reach the extremes." },
+    { "key": "showMyRsi", "label": "Show MyRSI", "description": "Draw the MyRSI oscillator beside NET, in grey." }
+  ],
+  "faq": [
+    { "q": "Why is NET smoother than MyRSI without adding lag like an average?", "a": "It looks only at the order of the values in the window, so a wiggle that does not change which values are higher than which has no effect at all. An average responds to every wiggle in proportion to its size." },
+    { "q": "What does a reading of 0.5 mean?", "a": "Of all the pairs of MyRSI values in the window, the pairs in which the newer value is higher outnumber those in which it is lower by half the total number of pairs, so the oscillator is rising more often than not." },
+    { "q": "Can NET be applied to another oscillator?", "a": "The ranking works on any series. This study ranks MyRSI, as the definition does; the ranking step is the same for any other oscillator." }
+  ]
+}

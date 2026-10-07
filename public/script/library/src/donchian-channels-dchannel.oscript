@@ -21,7 +21,7 @@ runLow = isNone(runLow) ? lowSource : min(runLow, lowSource)
 upperBand = bar.index >= period - 1 ? windowHigh : runHigh
 lowerBand = bar.index >= period - 1 ? windowLow : runLow
 
-plot((upperBand + lowerBand) / 2, "Basis", #ffeb3b, width = 2)
+plot((upperBand + lowerBand) / 2, "Basis", #ff9800, width = 2)
 top = plot(upperBand, "Upper", #ffeb3b, width = 2)
 bottom = plot(lowerBand, "Lower", #ffeb3b, width = 2)
 fill(top, bottom, #2962ff, opacity = 0.1)

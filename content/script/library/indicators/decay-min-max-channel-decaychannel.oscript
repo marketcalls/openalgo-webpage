@@ -54,6 +54,6 @@ else
     currentMax = min(currentMax, periodMax)
     currentMin = max(currentMin, periodMin)
 
-top = plot(currentMax, "Decaying High", #ffeb3b, width = 2)
-bottom = plot(currentMin, "Decaying Low", #ffeb3b, width = 2)
+top = plot(currentMax, "Decaying High", #ff5252, width = 2)
+bottom = plot(currentMin, "Decaying Low", #4caf50, width = 2)
 fill(top, bottom, #2962ff, opacity = 0.1)

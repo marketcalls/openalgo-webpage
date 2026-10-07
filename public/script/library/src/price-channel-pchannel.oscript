@@ -25,7 +25,7 @@ windowLow = lowest(lo, length)
 highestHigh = bar.index < length - 1 ? runHigh : windowHigh
 lowestLow = bar.index < length - 1 ? runLow : windowLow
 
-plot((highestHigh + lowestLow) / 2.0, "Middle Channel", #ffeb3b, width = 2)
+plot((highestHigh + lowestLow) / 2.0, "Middle Channel", #ff9800, width = 2)
 top = plot(highestHigh, "Upper Channel", #ffeb3b, width = 2)
 bottom = plot(lowestLow, "Lower Channel", #ffeb3b, width = 2)
 fill(top, bottom, #2196f3, opacity = 0.1)

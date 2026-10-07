@@ -102,5 +102,5 @@ prevFinal = finalPhase
 prevDerived = derived
 
 plot(finalPhase, "Phasor Angle", #ffeb3b, width = 2)
-plot(showDerivedPeriod ? derived : none, "Derived Period", #ffeb3b, width = 2)
-plot(showTrendState ? trendState : none, "Trend State", #ffeb3b, width = 2, style = "histogram")
+plot(showDerivedPeriod ? derived : none, "Derived Period", #2962ff, width = 2)
+plot(showTrendState ? trendState : none, "Trend State", #ff9800, width = 2, style = "histogram")

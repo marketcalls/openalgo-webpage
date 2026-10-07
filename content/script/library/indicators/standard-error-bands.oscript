@@ -1,0 +1,45 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © openalgo
+
+version 1
+study("Standard Error Bands", "SEB", overlay = true, precision = 2)
+
+src = input(close, "Source")
+length = input(21, "Regression Length", min = 3, tooltip = "Bars in the least squares line. At least 3, as the standard error divides by length - 2.")
+smooth = input(3, "Smoothing", min = 1, tooltip = "Bars in the simple average applied to both the end value and the standard error.")
+mult = input(2.0, "Standard Errors", min = 0.1, step = 0.1, tooltip = "How many smoothed standard errors the bands sit from the middle line.")
+
+// The least squares line through the last `length` values, with x counting up
+// from the oldest bar in the window to length - 1 on this bar.
+sx = 0.0
+sy = 0.0
+sxy = 0.0
+sxx = 0.0
+for k = 0 to length - 1
+    x = length - 1 - k
+    y = src[k]
+    sx = sx + x
+    sy = sy + y
+    sxy = sxy + x * y
+    sxx = sxx + x * x
+slope = (length * sxy - sx * sy) / (length * sxx - sx * sx)
+intercept = (sy - slope * sx) / length
+
+// The standard error: the spread of the values around the line, the square
+// root of the summed squared residuals over length - 2.
+sse = 0.0
+for k = 0 to length - 1
+    residual = src[k] - (intercept + slope * (length - 1 - k))
+    sse = sse + residual * residual
+endValue = intercept + slope * (length - 1)
+stdErr = sqrt(sse / (length - 2))
+
+middle = sma(endValue, smooth)
+smoothErr = sma(stdErr, smooth)
+upper = middle + mult * smoothErr
+lower = middle - mult * smoothErr
+
+u = plot(upper, "Upper Band", #EF5350)
+plot(middle, "Middle", #9E9E9E)
+l = plot(lower, "Lower Band", #26A69A)
+fill(u, l, fade(gray, 92))

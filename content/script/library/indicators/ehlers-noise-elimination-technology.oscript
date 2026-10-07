@@ -1,0 +1,43 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © openalgo
+
+version 1
+study("Ehlers Noise Elimination Technology (NET)", "NET", precision = 3)
+
+src = input(close, "Source")
+rsiLength = input(14, "MyRSI Length", min = 1)
+netLength = input(14, "NET Length", min = 2)
+showMyRsi = input(true, "Show MyRSI")
+
+// The oscillator: MyRSI on the source, the balance of rises and falls over
+// the last rsiLength changes, (rises - falls) / (rises + falls). A window in
+// which nothing moved keeps the previous value (0 before the first).
+cu = 0.0
+cd = 0.0
+for k = 0 to rsiLength - 1
+    d = src[k] - src[k + 1]
+    if d > 0
+        cu = cu + d
+    if d < 0
+        cd = cd - d
+total = cu + cd
+ready = not isNone(src[rsiLength])
+var lastRsi = 0.0
+if ready and total != 0
+    lastRsi = (cu - cd) / total
+osc = ready ? lastRsi : none
+
+// Kendall rank correlation of the last netLength values against a straight
+// line rising toward this bar: each pair adds 1 when the newer value is
+// higher, takes away 1 when it is lower and adds nothing on a tie, and the
+// total is divided by the number of pairs.
+num = 0.0
+for c = 1 to netLength - 1
+    for k = 0 to c - 1
+        num = num - sign(osc[c] - osc[k])
+denom = netLength * (netLength - 1) / 2
+net = isNone(osc[netLength - 1]) ? none : num / denom
+
+level(0, "Zero Line", #787b86, style = "dotted")
+plot(net, "NET", #ff9800, width = 2)
+plot(showMyRsi ? osc : none, "MyRSI", #787b86, width = 1)

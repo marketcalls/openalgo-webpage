@@ -15,8 +15,8 @@ barsSinceLow = lowestBars(low, period)
 aroonUp = 100 * (period - barsSinceHigh) / period
 aroonDown = 100 * (period - barsSinceLow) / period
 
-plot(aroonUp, "Aroon Up", #ffeb3b, width = 2)
-plot(aroonDown, "Aroon Down", #ffeb3b, width = 2)
+plot(aroonUp, "Aroon Up", #4caf50, width = 2)
+plot(aroonDown, "Aroon Down", #ff5252, width = 2)
 level(70, "Upper Level", #787b86, style = "dashed")
 level(50, "Mid Level", #787b86, style = "dashed")
 level(30, "Lower Level", #787b86, style = "dashed")

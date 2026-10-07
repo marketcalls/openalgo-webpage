@@ -128,6 +128,7 @@ const FORBIDDEN = [
   [/\bported\b|\bport of\b|\btranslated from\b|\bconverted from\b/i, "says the script came from somewhere else"],
   [/gemini|binance|coinbase|bitmex|kraken|bybit|zerodha|upstox|dhan\b|angel one|fyers/i, "names an exchange, broker or data provider"],
   [/\bICT\b|inner circle trader|meridian|\bSM Radar\b/, "names a product or trademark"],
+  [/\bTASC\b|stocks\s*(&|and)\s*commodities|traders'? tips|amibroker|\bAFL\b|metastock|tradestation|easylanguage|ninjatrader|wisestocktrader|mesasoftware/i, "names a publication, platform or code source"],
   [/paper trading|virtual trading/i, 'say "sandbox trading (analyzer mode in OpenAlgo)"'],
   [/\blive\b/i, 'never imply data is live: say "real" or "latest"'],
   [/[–—]/, "contains an en or em dash"],
@@ -170,6 +171,10 @@ export function lintMeta(row, meta, programInputs) {
     const keys = new Set(meta.settings.map((s) => s.key))
     for (const input of programInputs) if (!keys.has(input.key)) problems.push(`settings has no description for input "${input.key}"`)
     for (const s of meta.settings) if (!s.description || s.description.length < 15) problems.push(`settings entry "${s.key}" needs a description`)
+  }
+  if (meta.chartSettings !== undefined) {
+    const keys = new Set((programInputs ?? []).map((i) => i.key))
+    for (const k of Object.keys(meta.chartSettings ?? {})) if (!keys.has(k)) problems.push(`chartSettings names "${k}", which is not an input`)
   }
   problems.push(...forbiddenIn(JSON.stringify(meta, null, 1), "metadata"))
   return problems

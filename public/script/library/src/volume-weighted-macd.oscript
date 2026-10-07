@@ -1,0 +1,25 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © openalgo
+
+version 1
+study("Volume-Weighted MACD (VW-MACD)", "VW-MACD", precision = 2)
+
+src = input(close, "Source")
+fastLength = input(12, "Fast Length", min = 1)
+slowLength = input(26, "Slow Length", min = 1)
+signalLength = input(9, "Signal Length", min = 1)
+
+// Volume-weighted averages take the place of the exponential ones: each is
+// the sum of source times volume over the window divided by the sum of volume.
+fastVw = vwma(src, fastLength)
+slowVw = vwma(src, slowLength)
+
+macdLine = fastVw - slowVw
+// The signal is an exponential average of the line; the histogram is the gap.
+signalLine = ema(macdLine, signalLength)
+hist = macdLine - signalLine
+
+level(0, "Zero", #787b86, style = "dashed")
+plot(hist, "Histogram", hist >= 0 ? #26a69a : #ef5350, style = "histogram")
+plot(macdLine, "VW-MACD", #2962ff, width = 2)
+plot(signalLine, "Signal", #ff6d00)

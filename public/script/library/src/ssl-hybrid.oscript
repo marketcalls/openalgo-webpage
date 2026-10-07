@@ -1,0 +1,410 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © openalgo
+// Original work (c) Mihkel00, MPL-2.0
+
+version 1
+study("SSL Hybrid", overlay = true, precision = 2)
+
+// Display controls
+display_mode = input("Full Display", "Display Mode", options = ["Baseline Only", "Baseline + SSL", "SSL Only", "Entry/Exit Only", "Full Display"], group = "Display Controls")
+color_bars = input(true, "Color Bars", group = "Display Controls")
+show_signals = input(true, "Show Signal Diamonds", tooltip = "Candle > 1 ATR within baseline range - Potential false breakout warning", group = "Display Controls")
+show_risk_table = input(true, "Show Risk Table", group = "Display Controls")
+
+// Colours
+master_bullish_color = input(#00c3ff, "Bullish Color", group = "Colors")
+master_bearish_color = input(#ff0062, "Bearish Color", group = "Colors")
+
+// Baseline
+maType = input("HMA", "Baseline Type", options = ["SMA", "EMA", "DEMA", "TEMA", "LSMA", "WMA", "MF", "VAMA", "TMA", "HMA", "JMA", "Kijun v2", "EDSMA", "McGinley"], group = "Baseline Settings")
+len = input(60, "Baseline Length", group = "Baseline Settings")
+src = input(close, "Source", group = "Baseline Settings")
+show_baseline_channel = input(true, "Show Baseline Channel", group = "Baseline Settings")
+multy = input(0.2, "Channel Multiplier", step = 0.05, group = "Baseline Settings")
+useTrueRange = input(true, "Use True Range for Channel", group = "Baseline Settings")
+
+// SSL2
+SSL2Type = input("JMA", "SSL2 Type", options = ["SMA", "EMA", "DEMA", "TEMA", "WMA", "MF", "VAMA", "TMA", "HMA", "JMA", "McGinley"], group = "SSL Settings")
+len2 = input(5, "SSL2 Length", group = "SSL Settings")
+atr_crit = input(0.9, "Continuation ATR Criteria", step = 0.1, group = "SSL Settings")
+
+// Exit line
+SSL3Type = input("HMA", "Exit Type", options = ["DEMA", "TEMA", "LSMA", "VAMA", "TMA", "HMA", "JMA", "Kijun v2", "McGinley", "MF"], group = "Exit Settings")
+len3 = input(15, "Exit Length", group = "Exit Settings")
+
+// Average true range
+atrlen = input(14, "ATR Period", group = "ATR Settings")
+mult = input(1.0, "ATR Multiplier", step = 0.1, group = "ATR Settings")
+smoothing = input("WMA", "ATR Smoothing", options = ["RMA", "SMA", "EMA", "WMA"], group = "ATR Settings")
+show_atr_bands = input(false, "Show ATR Bands", group = "ATR Settings")
+
+// Risk assessment
+risk_lookback = input(100, "Risk Lookback Period", min = 50, max = 500, group = "Risk Assessment")
+risk_sensitivity = input(2.0, "Risk Sensitivity", min = 0.2, max = 3.0, step = 0.1, group = "Risk Assessment")
+enable_risk_gradient = input(true, "Enable Risk Gradient", group = "Risk Assessment")
+
+// Settings of individual average types
+jurik_phase = input(3, "Phase", group = "Jurik (JMA) Settings")
+jurik_power = input(1, "Power", group = "Jurik (JMA) Settings")
+kidiv = input(1, "Kijun MOD Divider", max = 4, group = "Kijun Settings")
+volatility_lookback = input(10, "Volatility Lookback Length", group = "VAMA Settings")
+beta = input(0.8, "Beta", min = 0, max = 1, step = 0.1, group = "Modular Filter Settings")
+feedback = input(false, "Feedback", group = "Modular Filter Settings")
+z = input(0.5, "Feedback Weighting", min = 0, max = 1, step = 0.1, group = "Modular Filter Settings")
+ssfLength = input(20, "Super Smoother Filter Length", min = 1, group = "EDSMA Settings")
+// The pole count is a menu, and a menu holds text, so the two counts are "2" and "3".
+ssfPoles = input("2", "Super Smoother Filter Poles", options = ["2", "3"], group = "EDSMA Settings")
+
+// ---------------------------------------------------------------------------
+// Averages
+// ---------------------------------------------------------------------------
+
+// An exponential average that starts from its first value: absent while its
+// input is absent, then alpha * x + (1 - alpha) * previous, with
+// alpha = 2 / (length + 1). An absent input in mid-series makes it absent for
+// that bar, and it starts again from the next value.
+fn emaFromFirst(x, n) =>
+    var e = none
+    k = 2 / (n + 1)
+    e = isNone(e) ? x : k * x + (1 - k) * e
+    e
+
+// Two-pole super smoother. Its previous two values read as zero before they exist.
+fn superSmoother2(x, n) =>
+    piValue = 2 * math.asin(1)
+    arg = sqrt(2) * piValue / n
+    a1 = exp(-arg)
+    b1 = 2 * a1 * math.cos(arg)
+    c2 = b1
+    c3 = -pow(a1, 2)
+    c1 = 1 - c2 - c3
+    var s1 = none
+    var s2 = none
+    s = c1 * x + c2 * orElse(s1, 0) + c3 * orElse(s2, 0)
+    s2 = s1
+    s1 = s
+    s
+
+// Three-pole super smoother, on the same terms.
+fn superSmoother3(x, n) =>
+    piValue = 2 * math.asin(1)
+    arg = piValue / n
+    a1 = exp(-arg)
+    b1 = 2 * a1 * math.cos(1.738 * arg)
+    c1 = pow(a1, 2)
+    coef2 = b1 + c1
+    coef3 = -(c1 + b1 * c1)
+    coef4 = pow(c1, 2)
+    coef1 = 1 - coef2 - coef3 - coef4
+    var s1 = none
+    var s2 = none
+    var s3 = none
+    s = coef1 * x + coef2 * orElse(s1, 0) + coef3 * orElse(s2, 0) + coef4 * orElse(s3, 0)
+    s3 = s2
+    s2 = s1
+    s1 = s
+    s
+
+// Every average type the menus offer, computed on every bar, then the one the
+// menu names is returned. Computing all of them keeps each one's history whole
+// whichever is chosen. The settings come in as arguments.
+//
+// Lengths made by dividing a whole-number length (n / 2 and n / kidiv) are
+// whole numbers: the quotient is rounded down, and is at least 1. So the
+// triangular average's ceil(n / 2) is that same rounded-down half, and its
+// second length is floor(n / 2) + 1.
+fn averageOf(maKind, x, n, fbOn, fbWeight, mfBeta, volLen, phase, power, kdiv, ssfLen, poles) =>
+    half = max(1, floor(n / 2))
+    kijunLen = max(1, floor(n / kdiv))
+
+    smaV = sma(x, n)
+    wmaV = wma(x, n)
+    lsmaV = linreg(x, n, 0)
+
+    // Exponential family, each average starting from its first value.
+    e1 = emaFromFirst(x, n)
+    e2 = emaFromFirst(e1, n)
+    e3 = emaFromFirst(e2, n)
+    demaV = 2 * e1 - e2
+    temaV = 3 * (e1 - e2) + e3
+
+    // Triangular: a simple average of a simple average.
+    tmaV = sma(sma(x, half), floor(n / 2) + 1)
+
+    // Volatility adjusted: the exponential average plus the middle of the
+    // highest and lowest distance of the source from it.
+    devV = x - e1
+    vamaV = e1 + (highest(devV, volLen) + lowest(devV, volLen)) / 2
+
+    // HMA: a weighted average of twice the half-length weighted average less
+    // the full-length one, over the rounded square root of the length.
+    hmaV = wma(2 * wma(x, half) - wmaV, round(sqrt(n)))
+
+    // JMA: three smoothing stages, each previous value read as zero before it exists.
+    phaseRatio = phase < -100 ? 0.5 : phase > 100 ? 2.5 : phase / 100 + 1.5
+    jb = 0.45 * (n - 1) / (0.45 * (n - 1) + 2)
+    ja = pow(jb, power)
+    var j0 = none
+    var j1 = none
+    var j2 = none
+    var jm = none
+    j0 = (1 - ja) * x + ja * orElse(j0, 0)
+    j1 = (x - j0) * (1 - jb) + jb * orElse(j1, 0)
+    j2 = (j0 + phaseRatio * j1 - orElse(jm, 0)) * pow(1 - ja, 2) + pow(ja, 2) * orElse(j2, 0)
+    jm = j2 + orElse(jm, 0)
+
+    // Kijun v2: the midpoint of the bar range over the length, averaged with
+    // the midpoint over the length divided by the divider. It reads the bars'
+    // highs and lows whatever the source.
+    kijunV = ((lowest(low, n) + highest(high, n)) / 2 + (lowest(low, kijunLen) + highest(high, kijunLen)) / 2) / 2
+
+    // McGinley: starts at the exponential average (the first value), then
+    // closes on price by a step scaled by the fourth power of price over itself.
+    var mg = none
+    mg = isNone(mg) ? e1 : mg + (x - mg) / (n * pow(x / mg, 4))
+
+    // EDSMA: a super smoother of the two-bar change (an earlier value reads as
+    // zero before it exists), scaled by its own standard deviation, sets the
+    // weight of an exponential average whose previous value starts at zero.
+    // An absent deviation compared with zero is false, so the scale is zero.
+    avgZeros = ((x - orElse(x[2], 0)) + (x[1] - orElse(x[3], 0))) / 2
+    ssf2 = superSmoother2(avgZeros, ssfLen)
+    ssf3 = superSmoother3(avgZeros, ssfLen)
+    ssfV = poles == "2" ? ssf2 : ssf3
+    sdV = stdev(ssfV, n)
+    scaledFilter = not isNone(sdV) and sdV != 0 ? ssfV / sdV : 0
+    edAlpha = 5 * abs(scaledFilter) / n
+    var ed = none
+    ed = edAlpha * x + (1 - edAlpha) * orElse(ed, 0)
+
+    // MF, the modular filter: an upper and a lower envelope that jump to the
+    // input when it breaks out of them, blended by beta on the side of the
+    // last breakout. With feedback, the input leans toward the filter's
+    // previous value (the input itself before there is one).
+    mfAlpha = 2 / (n + 1)
+    var mfTs = none
+    var mfB = none
+    var mfC = none
+    var mfOs = none
+    mfA = fbOn ? fbWeight * x + (1 - fbWeight) * orElse(mfTs, x) : x
+    mfB = mfA > mfAlpha * mfA + (1 - mfAlpha) * orElse(mfB, mfA) ? mfA : mfAlpha * mfA + (1 - mfAlpha) * orElse(mfB, mfA)
+    mfC = mfA < mfAlpha * mfA + (1 - mfAlpha) * orElse(mfC, mfA) ? mfA : mfAlpha * mfA + (1 - mfAlpha) * orElse(mfC, mfA)
+    mfOs = mfA == mfB ? 1 : mfA == mfC ? 0 : mfOs
+    mfUpper = mfBeta * mfB + (1 - mfBeta) * mfC
+    mfLower = mfBeta * mfC + (1 - mfBeta) * mfB
+    mfTs = mfOs * mfUpper + (1 - mfOs) * mfLower
+
+    maKind == "SMA" ? smaV : maKind == "EMA" ? e1 : maKind == "DEMA" ? demaV : maKind == "TEMA" ? temaV : maKind == "LSMA" ? lsmaV : maKind == "WMA" ? wmaV : maKind == "MF" ? mfTs : maKind == "VAMA" ? vamaV : maKind == "TMA" ? tmaV : maKind == "HMA" ? hmaV : maKind == "JMA" ? jm : maKind == "Kijun v2" ? kijunV : maKind == "McGinley" ? mg : maKind == "EDSMA" ? ed : none
+
+// ---------------------------------------------------------------------------
+// Average true range and risk
+// ---------------------------------------------------------------------------
+
+// The true range, the first bar's being its high minus its low, smoothed by
+// the chosen average: RMA (seeded with a simple average), SMA, EMA (from the
+// first value) or, for anything else, WMA.
+trueRangeNow = trueRange()
+atrRma = rma(trueRangeNow, atrlen)
+atrSma = sma(trueRangeNow, atrlen)
+atrEma = emaFromFirst(trueRangeNow, atrlen)
+atrWma = wma(trueRangeNow, atrlen)
+atr_slen = smoothing == "RMA" ? atrRma : smoothing == "SMA" ? atrSma : smoothing == "EMA" ? atrEma : atrWma
+upper_band = atr_slen * mult + close
+lower_band = close - atr_slen * mult
+
+// Percentile of the average true range: the share of the previous
+// risk_lookback values at or below this one, times 100. Absent until all of
+// those earlier values exist.
+atr_percentile = none
+if not isNone(atr_slen) and bar.index >= risk_lookback
+    rankCount = 0
+    rankFull = true
+    for i = 1 to risk_lookback
+        earlier = atr_slen[i]
+        if isNone(earlier)
+            rankFull = false
+        else if earlier <= atr_slen
+            rankCount += 1
+    atr_percentile = rankFull ? rankCount / risk_lookback * 100 : none
+
+// Transparency from risk: the percentile raised to the sensitivity, then 0
+// up to 25, 10 up to 50, and from 25 rising to 50 above that. Absent while
+// the percentile is, and the colours built from it are absent with it.
+adjusted_percentile = pow(atr_percentile / 100, risk_sensitivity) * 100
+risk_saturation = not enable_risk_gradient ? 0 : isNone(adjusted_percentile) ? none : adjusted_percentile <= 25 ? 0 : adjusted_percentile <= 50 ? 10 : round(25 + (adjusted_percentile - 50) / 50 * 25)
+
+bullish_color = fade(master_bullish_color, risk_saturation)
+bearish_color = fade(master_bearish_color, risk_saturation)
+neutral_color = #666666
+transparent_bull = fade(master_bullish_color, max(80, risk_saturation + 20))
+transparent_bear = fade(master_bearish_color, max(80, risk_saturation + 20))
+transparent_neutral = fade(#666666, 80)
+
+// ---------------------------------------------------------------------------
+// Baseline, SSL lines and exit line
+// ---------------------------------------------------------------------------
+
+BBMC = averageOf(maType, close, len, feedback, z, beta, volatility_lookback, jurik_phase, jurik_power, kidiv, ssfLength, ssfPoles)
+Keltma = averageOf(maType, src, len, feedback, z, beta, volatility_lookback, jurik_phase, jurik_power, kidiv, ssfLength, ssfPoles)
+// The channel's range: the true range (absent on the first bar) or the bar's
+// high minus low, in an exponential average from its first value.
+plainTrueRange = bar.isFirst ? none : trueRangeNow
+rangeValue = useTrueRange ? plainTrueRange : high - low
+rangema = emaFromFirst(rangeValue, len)
+upperk = Keltma + rangema * multy
+lowerk = Keltma - rangema * multy
+
+// SSL1: the baseline average of the highs and of the lows. The side flips when
+// the close leaves that channel, and the line is the opposite edge.
+emaHigh = averageOf(maType, high, len, feedback, z, beta, volatility_lookback, jurik_phase, jurik_power, kidiv, ssfLength, ssfPoles)
+emaLow = averageOf(maType, low, len, feedback, z, beta, volatility_lookback, jurik_phase, jurik_power, kidiv, ssfLength, ssfPoles)
+var hlvState = none
+Hlv = close > emaHigh ? 1 : close < emaLow ? -1 : hlvState
+hlvState = Hlv
+sslDown = Hlv < 0 ? emaHigh : emaLow
+
+// SSL2, the same on its own average and length.
+maHigh = averageOf(SSL2Type, high, len2, feedback, z, beta, volatility_lookback, jurik_phase, jurik_power, kidiv, ssfLength, ssfPoles)
+maLow = averageOf(SSL2Type, low, len2, feedback, z, beta, volatility_lookback, jurik_phase, jurik_power, kidiv, ssfLength, ssfPoles)
+var hlv2State = none
+Hlv2 = close > maHigh ? 1 : close < maLow ? -1 : hlv2State
+hlv2State = Hlv2
+sslDown2 = Hlv2 < 0 ? maHigh : maLow
+
+// The exit line, the same again.
+ExitHigh = averageOf(SSL3Type, high, len3, feedback, z, beta, volatility_lookback, jurik_phase, jurik_power, kidiv, ssfLength, ssfPoles)
+ExitLow = averageOf(SSL3Type, low, len3, feedback, z, beta, volatility_lookback, jurik_phase, jurik_power, kidiv, ssfLength, ssfPoles)
+var hlv3State = none
+Hlv3 = close > ExitHigh ? 1 : close < ExitLow ? -1 : hlv3State
+hlv3State = Hlv3
+sslExit = Hlv3 < 0 ? ExitHigh : ExitLow
+
+// ---------------------------------------------------------------------------
+// Readings and signals
+// ---------------------------------------------------------------------------
+
+// Distance of the close from the baseline in average true ranges. An absent
+// distance compares false, so it reads "Far".
+distance_from_baseline = abs(close - BBMC) / atr_slen
+entry_distance = distance_from_baseline < 1 ? "Near" : distance_from_baseline < 2 ? "Extended" : "Far"
+risk_level = atr_percentile > 75 ? "High" : atr_percentile < 25 ? "Low" : "Normal"
+
+// The close crossing the exit line.
+base_cross_Long = crossUp(close, sslExit)
+base_cross_Short = crossUp(sslExit, close)
+
+// A candle whose body is larger than one average true range while the
+// baseline sits inside one average true range of the close.
+difference = abs(close - open)
+atr_violation = difference > atr_slen
+InRange = upper_band > BBMC and lower_band < BBMC
+candlesize_violation = atr_violation and InRange
+
+// SSL2 continuation: the close beyond the baseline and SSL2 on one side, with
+// SSL2 within atr_crit average true ranges of the close.
+upper_half = atr_slen * atr_crit + close
+lower_half = close - atr_slen * atr_crit
+buy_inatr = lower_half < sslDown2
+sell_inatr = upper_half > sslDown2
+sell_cont = close < BBMC and close < sslDown2
+buy_cont = close > BBMC and close > sslDown2
+sell_atr = sell_inatr and sell_cont
+buy_atr = buy_inatr and buy_cont
+
+// ---------------------------------------------------------------------------
+// Drawing
+// ---------------------------------------------------------------------------
+
+baseline_color = close > upperk ? bullish_color : close < lowerk ? bearish_color : neutral_color
+ssl_color = close > sslDown ? bullish_color : close < sslDown ? bearish_color : neutral_color
+ssl2_color = buy_atr ? bullish_color : sell_atr ? bearish_color : neutral_color
+channel_fill_color = close > upperk ? transparent_bull : close < lowerk ? transparent_bear : transparent_neutral
+
+show_baseline = display_mode == "Baseline Only" or display_mode == "Baseline + SSL" or display_mode == "Full Display"
+show_ssl1 = display_mode == "SSL Only" or display_mode == "Baseline + SSL" or display_mode == "Full Display"
+show_ssl2 = display_mode == "SSL Only" or display_mode == "Full Display"
+show_exit = display_mode == "Entry/Exit Only" or display_mode == "Full Display"
+show_channel = show_baseline and show_baseline_channel
+
+plot(show_baseline ? BBMC : none, "Baseline", baseline_color, width = 3)
+upper_channel = plot(show_channel ? upperk : none, "Upper Channel", baseline_color)
+lower_channel = plot(show_channel ? lowerk : none, "Lower Channel", baseline_color)
+fill(upper_channel, lower_channel, color = show_channel ? channel_fill_color : none)
+
+plot(show_ssl1 ? sslDown : none, "SSL1", ssl_color, width = 2)
+plot(show_ssl2 ? sslDown2 : none, "SSL2", ssl2_color, width = 2, style = "lineWithMarkers")
+
+plot(show_atr_bands ? upper_band : none, "+ATR", neutral_color)
+plot(show_atr_bands ? lower_band : none, "-ATR", neutral_color)
+
+// Exit arrows: up below the bar when the close crosses above the exit line,
+// down above the bar when it crosses below.
+if show_exit and base_cross_Long
+    signal("", color = master_bullish_color, at = "below", shape = "arrowUp")
+if show_exit and not base_cross_Long and base_cross_Short
+    signal("", color = master_bearish_color, at = "above", shape = "arrowDown")
+
+// Signal diamonds: a large candle while the baseline is within one average
+// true range.
+if show_signals and candlesize_violation
+    signal("", color = white, at = "above", shape = "diamond")
+
+barColor(color_bars ? baseline_color : none)
+
+// ---------------------------------------------------------------------------
+// Risk table
+// ---------------------------------------------------------------------------
+
+panelBg = fade(#1a1a1a, 5)
+riskTable = table("Risk", 4, 2, position = "bottomRight")
+if bar.isLast and show_risk_table
+    risk_color = risk_level == "High" ? bearish_color : risk_level == "Low" ? bullish_color : neutral_color
+    entry_color = entry_distance == "Near" ? bullish_color : entry_distance == "Extended" ? yellow : bearish_color
+    cell(riskTable, 0, 0, "Risk Level", textColor = white, bgColor = panelBg)
+    cell(riskTable, 0, 1, risk_level, textColor = risk_color, bgColor = panelBg)
+    cell(riskTable, 1, 0, "Entry Distance", textColor = white, bgColor = panelBg)
+    cell(riskTable, 1, 1, entry_distance, textColor = entry_color, bgColor = panelBg)
+    cell(riskTable, 2, 0, "Vol %ile", textColor = white, bgColor = panelBg)
+    cell(riskTable, 2, 1, text(round(atr_percentile * 10) / 10) + "%", textColor = white, bgColor = panelBg)
+    cell(riskTable, 3, 0, "ATR", textColor = white, bgColor = panelBg)
+    cell(riskTable, 3, 1, text(round(atr_slen * 10000) / 10000), textColor = white, bgColor = panelBg)
+
+// ---------------------------------------------------------------------------
+// Alerts
+// ---------------------------------------------------------------------------
+
+exit_long = crossDown(close, sslExit)
+exit_short = crossUp(close, sslExit)
+// The previous bar's condition reads as false before the first bar.
+ssl2_buy_signal = buy_atr and not orElse(buy_atr[1], false)
+ssl2_sell_signal = sell_atr and not orElse(sell_atr[1], false)
+baseline_bullish = crossUp(close, upperk)
+baseline_bearish = crossDown(close, lowerk)
+price_above_baseline = close > BBMC and close[1] <= BBMC
+price_below_baseline = close < BBMC and close[1] >= BBMC
+high_risk_entry = risk_level == "High" and entry_distance == "Far"
+false_breakout_warning = candlesize_violation
+extreme_volatility = atr_percentile > 90
+
+if exit_long
+    alert("EXIT LONG Signal: see chart for price and risk details", id = "exit-long", title = "EXIT LONG Signal")
+if exit_short
+    alert("EXIT SHORT Signal: see chart for price and risk details", id = "exit-short", title = "EXIT SHORT Signal")
+if ssl2_buy_signal
+    alert("SSL2 BUY Continuation: see chart for ATR details", id = "ssl2-buy", title = "SSL2 BUY Continuation")
+if ssl2_sell_signal
+    alert("SSL2 SELL Continuation: see chart for ATR details", id = "ssl2-sell", title = "SSL2 SELL Continuation")
+if baseline_bullish
+    alert("Price Above Upper Channel: price has broken above upper band", id = "above-upper-channel", title = "Price Above Upper Channel")
+if baseline_bearish
+    alert("Price Below Lower Channel: price has broken below lower band", id = "below-lower-channel", title = "Price Below Lower Channel")
+if price_above_baseline
+    alert("Price Crossed Above Baseline", id = "above-baseline", title = "Price Crossed Above Baseline")
+if price_below_baseline
+    alert("Price Crossed Below Baseline", id = "below-baseline", title = "Price Crossed Below Baseline")
+if high_risk_entry
+    alert("HIGH RISK Entry: check chart for context", id = "high-risk-entry", title = "HIGH RISK Entry Conditions")
+if false_breakout_warning
+    alert("FALSE BREAKOUT WARNING: possible trap candle", id = "false-breakout", title = "FALSE BREAKOUT WARNING")
+if extreme_volatility
+    alert("EXTREME VOLATILITY: check ATR levels on chart", id = "extreme-volatility", title = "EXTREME VOLATILITY")

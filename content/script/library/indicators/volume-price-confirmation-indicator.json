@@ -1,0 +1,17 @@
+{
+  "title": "Volume Price Confirmation Indicator (VPCI)",
+  "summary": "Measures whether volume confirms or contradicts the price trend, from volume-weighted and simple averages over 5 and 20 bars.",
+  "description": "The Volume Price Confirmation Indicator, designed by Buff Dormeier, asks whether volume agrees with the price trend. It compares volume-weighted averages, which weigh each bar's price by the volume traded on it, with simple averages of the same length.\n\nIt multiplies three parts. Confirmation (VPC) is the long (20 bar) volume-weighted average minus the long simple average: positive when the heavy-volume bars sit at higher prices. The ratio (VPR) is the short (5 bar) volume-weighted average divided by the short simple average. The volume multiplier (VM) is the short average of volume divided by the long average of volume. VPCI = VPC * VPR * VM.\n\nThe signal line smooths VPCI with a volume-weighted average over the signal length, 5 bars by default. Both lines are drawn in their own pane around zero.",
+  "howToRead": "A positive and rising VPCI in an uptrend means volume confirms the advance: the heaviest trading happens at the higher prices. A falling or negative VPCI while price still rises is a contradiction, a sign the advance lacks support. In a downtrend the reading works the other way round. Crossings of VPCI over its signal line mark the shifts between confirmation and contradiction.\n\nThe index is in price units scaled by two ratios near 1, so its size depends on the instrument and is best read against its own history. It needs volume on every bar and lags price by roughly the long length.",
+  "settings": [
+    { "key": "src", "label": "Source", "description": "The price series the averages are taken over. Close is the default." },
+    { "key": "shortLength", "label": "Short Length", "description": "Bars in the short averages used for the ratio and the volume multiplier. 5 is the published default." },
+    { "key": "longLength", "label": "Long Length", "description": "Bars in the long averages used for the confirmation and the volume multiplier. 20 is the published default." },
+    { "key": "signalLength", "label": "Signal Length", "description": "Bars in the volume-weighted average that smooths VPCI into the signal line." }
+  ],
+  "faq": [
+    { "q": "What does a negative reading mean in an uptrend?", "a": "That the long volume-weighted average is below the long simple average: the heavier volume traded at the lower prices of the window, so volume is not confirming the rise." },
+    { "q": "Why is the signal line volume-weighted?", "a": "Its author recommends smoothing VPCI with a volume-weighted average, so bars with more trading count for more in the signal as well." },
+    { "q": "Does it work without volume?", "a": "No. Every part of the formula depends on volume; on an instrument with no volume the study shows nothing." }
+  ]
+}

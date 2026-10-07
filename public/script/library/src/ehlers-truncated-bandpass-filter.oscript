@@ -1,0 +1,42 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © openalgo
+
+version 1
+study("Ehlers Truncated Bandpass Filter", "TBP", precision = 2)
+
+src = input(close, "Source")
+period = input(20, "Period", min = 4, step = 1, tooltip = "The cycle period, in bars, the filter is centred on.")
+bandwidth = input(0.1, "Bandwidth", min = 0.01, max = 0.5, step = 0.01, tooltip = "The width of the pass band as a fraction of the centre frequency.")
+length = input(10, "Length", min = 1, max = 100, step = 1, tooltip = "How many bars the truncated filter looks back before it restarts from zero.")
+
+// Bandpass coefficients: L1 sets the centre frequency, S1 the bandwidth.
+l1 = math.cos(2 * math.pi / period)
+g1 = math.cos(bandwidth * 2 * math.pi / period)
+s1 = 1 / g1 - sqrt(1 / (g1 * g1) - 1)
+gain = 0.5 * (1 - s1)
+feedback = l1 * (1 + s1)
+
+// The ordinary bandpass, which carries its whole history. It is zero on the
+// first three bars.
+var bp1 = 0.0
+var bp2 = 0.0
+bp = bar.index < 3 ? 0 : gain * (src - src[2]) + feedback * bp1 - s1 * bp2
+bp2 = bp1
+bp1 = bp
+
+// The truncated bandpass. Every bar the recursion restarts from zero `length`
+// bars back and runs forward to this bar, so nothing older than `length` bars
+// reaches the output.
+t1 = 0.0
+t2 = 0.0
+if bar.index >= length + 1
+    for j = 0 to length - 1
+        back = length - j
+        v = gain * (src[back - 1] - src[back + 1]) + feedback * t1 - s1 * t2
+        t2 = t1
+        t1 = v
+bpt = bar.index >= length + 1 ? t1 : none
+
+plot(bpt, "Truncated BP", #2962ff, width = 2)
+plot(bp, "Bandpass", #ff6d00, width = 1)
+level(0, "Zero", #787b86, style = "dashed")

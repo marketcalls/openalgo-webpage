@@ -325,6 +325,14 @@
 .osl-panel-meta {
   color: var(--osd-dim);
 }
+.osl-panel-note {
+  padding: 0.55rem 1rem;
+  border-bottom: 1px solid var(--osd-line);
+  font-family: var(--osd-mono);
+  font-size: 12px;
+  line-height: 1.5;
+  color: var(--osd-dim);
+}
 .osl-badge {
   padding: 0.1rem 0.5rem;
   border: 1px solid var(--osd-line);

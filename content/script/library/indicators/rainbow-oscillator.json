@@ -1,0 +1,16 @@
+{
+  "title": "Rainbow Oscillator",
+  "summary": "Mel Widner's oscillator: how far price sits from the centre of ten stacked averages, with a band showing how widely those averages are spread.",
+  "description": "The Rainbow Oscillator was described by Mel Widner. It starts from ten simple averages stacked on top of each other: the first is a 2 bar average of the close, the second is a 2 bar average of the first, and so on up to the tenth. Each layer is smoother and later than the one below it, which is where the rainbow name comes from when the ten are drawn on price.\n\nThe oscillator is the distance between the close and the mean of the ten layers, scaled by the range of the close over the last 10 bars and multiplied by 100. The band is the distance between the highest and the lowest of the ten layers on the same scale: the upper band is that spread and the lower band is its negative.\n\nThe oscillator is drawn as a histogram around zero, green above and red below, with the two bands as lines. A bar whose close did not move at all over the lookback has no range to scale by and shows nothing.",
+  "howToRead": "Above zero, price is above the centre of its own smoothed layers, a sign of upward pressure; below zero, the reverse. The bands widen when the layers fan out, which happens in a steady trend, and narrow when they bunch together in a quiet market. A histogram that pushes outside the bands marks a move that is stretched compared with how spread out the averages are, and a histogram shrinking back toward zero while the bands stay wide often comes before a pause.\n\nThe reading is scaled by a short range, so on a very quiet stretch small moves look large. Read it with the price chart, not alone.",
+  "settings": [
+    { "key": "src", "label": "Source", "description": "The price series the ten averages, the oscillator and the range are taken from. Close is the usual choice." },
+    { "key": "smoothing", "label": "Average Length", "description": "Bars in each of the ten stacked simple averages. Longer values make every layer smoother and spread the band wider." },
+    { "key": "lookback", "label": "High Low Lookback", "description": "Bars over which the highest and lowest source set the scale. A longer lookback gives smaller, steadier readings." }
+  ],
+  "faq": [
+    { "q": "Why ten averages?", "a": "That is how the indicator is defined. Each extra layer is a little later than the last, and the spread across all ten shows whether the market has been trending or going sideways." },
+    { "q": "What does it mean when the histogram is outside the bands?", "a": "Price has moved further from the centre of its layers than the layers are spread apart. It marks a stretched move; it does not on its own say the move is over." },
+    { "q": "Why is the lower band a mirror of the upper one?", "a": "Both come from the same spread between the highest and lowest layer. The lower band is drawn as its negative so the oscillator can be compared with it on either side of zero." }
+  ]
+}

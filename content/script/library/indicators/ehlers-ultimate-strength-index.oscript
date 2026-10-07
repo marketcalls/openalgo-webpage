@@ -1,0 +1,44 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © openalgo
+
+version 1
+study("Ehlers Ultimate Strength Index (USI)", "USI", precision = 3)
+
+src = input(close, "Source")
+length = input(28, "Length", min = 2, step = 1)
+
+// The Ultimate Smoother: the input minus a two-pole highpass of it, as one
+// recursion. It passes the input through on the first three bars.
+fn ultimateSmoother(x, len) =>
+    a1 = exp(-1.414 * math.pi / len)
+    c2 = 2 * a1 * math.cos(1.414 * math.pi / len)
+    c3 = -a1 * a1
+    c1 = (1 + c2 - c3) / 4
+    var out1 = none
+    var out2 = none
+    out = bar.index < 3 ? x : (1 - c1) * x + (2 * c1 - c2) * x[1] - (c1 + c3) * x[2] + c2 * out1 + c3 * out2
+    out2 = out1
+    out1 = out
+    out
+
+// The up and down parts of each bar's change. The first bar has no change,
+// so both are zero there.
+su = bar.index == 0 ? 0 : max(src - src[1], 0)
+sd = bar.index == 0 ? 0 : max(src[1] - src, 0)
+
+// Each part averaged over four bars (a part before the first bar counts as
+// zero), then smoothed over the length.
+suAvg = (su + orElse(su[1], 0) + orElse(su[2], 0) + orElse(su[3], 0)) / 4
+sdAvg = (sd + orElse(sd[1], 0) + orElse(sd[2], 0) + orElse(sd[3], 0)) / 4
+up = ultimateSmoother(suAvg, length)
+down = ultimateSmoother(sdAvg, length)
+
+// The balance of up and down, from -1 (all down) to 1 (all up). Where both
+// are zero the ratio is undefined and the index keeps its previous value.
+var usiPrev = none
+total = up + down
+usi = total == 0 ? usiPrev : (up - down) / total
+usiPrev = usi
+
+level(0, "Zero", #787b86, style = "dashed")
+plot(usi, "USI", #2962FF, width = 2)

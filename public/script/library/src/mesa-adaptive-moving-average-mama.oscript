@@ -91,4 +91,4 @@ else
     fama = 0.5 * factor * mama + (1 - 0.5 * factor) * prevFama
 
 plot(mama, "MAMA", #ffeb3b, width = 2)
-plot(fama, "FAMA", #ffeb3b, width = 2)
+plot(fama, "FAMA", #2962ff, width = 2)

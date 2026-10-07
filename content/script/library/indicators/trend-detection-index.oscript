@@ -1,0 +1,23 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © openalgo
+
+version 1
+study("Trend Detection Index (TDI)", "TDI", precision = 2)
+
+src = input(close, "Source")
+length = input(20, "Length", min = 1)
+
+// Momentum: the change of the source over `length` bars.
+momentum = src - src[length]
+absMom = abs(momentum)
+
+// Direction: the net momentum of the last `length` bars. The index is the
+// size of that net momentum less the absolute momentum of the `length` bars
+// before them, so it is positive when the recent push outweighs the noise of
+// the earlier stretch.
+direction = sum(momentum, length)
+tdi = abs(direction) - (sum(absMom, 2 * length) - sum(absMom, length))
+
+plot(tdi, "TDI", #2962FF, width = 2)
+plot(direction, "Direction", #FF6D00)
+level(0, "Zero Line", #787b86, style = "dashed")

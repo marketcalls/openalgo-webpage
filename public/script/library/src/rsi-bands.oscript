@@ -1,0 +1,34 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © openalgo
+
+version 1
+study("RSI Bands", overlay = true, precision = 2)
+
+src = input(close, "Source")
+length = input(14, "RSI Length", min = 1)
+overbought = input(70, "Overbought Level", min = 51, max = 99, tooltip = "The RSI level the upper band is drawn for.")
+oversold = input(30, "Oversold Level", min = 1, max = 49, tooltip = "The RSI level the lower band is drawn for.")
+
+// Wilder's averages of the up moves and down moves, the two halves of RSI.
+delta = src - src[1]
+avgUp = rma(max(delta, 0), length)
+avgDown = rma(max(-delta, 0), length)
+
+// The price at which the next bar's RSI would equal `target`. A gain of g on
+// the next bar makes RSI reach the level when
+// (avgUp * (length - 1) + g) / (avgDown * (length - 1)) = target / (100 - target);
+// a loss of l when avgUp * (length - 1) / (avgDown * (length - 1) + l) does.
+// The gain form applies while RSI is below the level, the loss form otherwise.
+fn bandFor(target, c, upAvg, downAvg, len) =>
+    rs = target / (100 - target)
+    gain = (len - 1) * (downAvg * rs - upAvg)
+    gain >= 0 ? c + gain : c - (len - 1) * (upAvg / rs - downAvg)
+
+upper = bandFor(overbought, src, avgUp, avgDown, length)
+middle = bandFor(50, src, avgUp, avgDown, length)
+lower = bandFor(oversold, src, avgUp, avgDown, length)
+
+pu = plot(upper, "Upper Band", #EF5350, width = 2)
+plot(middle, "Middle Band", fade(gray, 30))
+pl = plot(lower, "Lower Band", #26A69A, width = 2)
+fill(pu, pl, #2962FF, opacity = 0.06)

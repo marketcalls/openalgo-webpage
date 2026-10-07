@@ -1,0 +1,30 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © openalgo
+
+version 1
+study("Fractal Dimension Index (FDI)", "FDI", precision = 3)
+
+src = input(close, "Source")
+length = input(30, "Length", min = 2, tooltip = "Bars in the window whose path is measured.")
+
+// Sevcik's estimate of the fractal dimension of the last `length` values. The
+// window is mapped onto the unit square: time runs from 0 to 1 in equal steps
+// and price from the window's lowest value to its highest. L is the total
+// length of the straight segments joining the points, and
+// FDI = 1 + (ln L + ln 2) / ln(2 * (length - 1)). Sevcik's own estimate
+// leaves out the ln 2; the index keeps it, so a full-range zigzag reads 2 and
+// a random walk about 1.5. A window with no range is a flat path of length 1.
+hi = highest(src, length)
+lo = lowest(src, length)
+priceRange = hi - lo
+dx = 1 / (length - 1)
+
+pathLength = 0.0
+for k = 1 to length - 1
+    dy = priceRange > 0 ? (src[k - 1] - src[k]) / priceRange : 0
+    pathLength = pathLength + sqrt(dy * dy + dx * dx)
+
+fdi = isNone(priceRange) ? none : 1 + (log(pathLength) + log(2)) / log(2 * (length - 1))
+
+plot(fdi, "FDI", #7E57C2, width = 2)
+level(1.5, "Random Walk", #787B86, style = "dashed")

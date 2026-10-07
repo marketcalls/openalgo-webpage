@@ -1,0 +1,41 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © openalgo
+
+version 1
+study("Ehlers Fisherized Deviation-Scaled Oscillator (FDSO)", "FDSO", precision = 3)
+
+src = input(close, "Source")
+period = input(40, "Period", min = 2, step = 1, tooltip = "Bars in the root mean square window. The smoother's cutoff is half of it.")
+
+// Super smoother coefficients, with the cutoff at half the period.
+a1 = exp(-1.414 * math.pi / (0.5 * period))
+c2 = 2 * a1 * math.cos(1.414 * math.pi / (0.5 * period))
+c3 = -a1 * a1
+c1 = 1 - c2 - c3
+
+// The two-bar change has no response at the lowest and the highest frequency,
+// so it is centred on zero with no lag added.
+zeros = src - src[2]
+
+// Smooth it. An earlier output that does not exist yet reads as zero.
+var filt1 = none
+var filt2 = none
+filt = c1 * (zeros + zeros[1]) / 2 + c2 * orElse(filt1, 0) + c3 * orElse(filt2, 0)
+filt2 = filt1
+filt1 = filt
+
+// Scale in standard deviations: divide by the root mean square of the window.
+rms = sqrt(sum(filt * filt, period) / period)
+scaled = rms != 0 ? filt / rms : none
+
+// Halve it and apply the Fisher transform. Only a value strictly inside two
+// deviations is transformed; beyond that, or when the root mean square is
+// zero, the oscillator keeps its previous reading.
+var fdso = none
+inRange = not isNone(scaled) and abs(scaled) < 2
+if inRange
+    half = scaled / 2
+    fdso = 0.5 * log((1 + half) / (1 - half))
+
+plot(fdso, "FDSO", #2962ff, width = 2)
+level(0, "Zero", #787b86, style = "dashed")

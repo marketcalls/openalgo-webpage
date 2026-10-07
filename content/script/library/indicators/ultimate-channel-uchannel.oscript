@@ -45,7 +45,7 @@ trueRangeValue = topRange - bottomRange
 smoothedRange = ultraSmooth(trueRangeValue, strLength)
 centerline = ultraSmooth(source, length)
 
-plot(centerline, "Middle Channel", #ffeb3b, width = 2)
+plot(centerline, "Middle Channel", #ff9800, width = 2)
 top = plot(centerline + numSTRs * smoothedRange, "Upper Channel", #ffeb3b, width = 2)
 bottom = plot(centerline - numSTRs * smoothedRange, "Lower Channel", #ffeb3b, width = 2)
 fill(top, bottom, #2962ff, opacity = 0.1)

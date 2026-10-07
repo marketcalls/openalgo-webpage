@@ -1,0 +1,27 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © openalgo
+
+version 1
+study("SMI Ergodic Indicator", "SMIEI", precision = 2)
+
+src = input(close, "Source")
+longLength = input(20, "Long Length", min = 1)
+shortLength = input(5, "Short Length", min = 1)
+signalLength = input(5, "Signal Length", min = 1)
+
+// The bar to bar change of the source and its size, each smoothed by a long
+// and then a short exponential average; the indicator is the first as a
+// percentage of the second (the true strength index).
+diff = change(src)
+num = ema(ema(diff, longLength), shortLength)
+den = ema(ema(abs(diff), longLength), shortLength)
+smi = den != 0 ? 100 * num / den : none
+
+// The signal line, and the oscillator: the indicator minus its signal.
+signalLine = ema(smi, signalLength)
+osc = smi - signalLine
+
+plot(osc, "Oscillator", osc >= 0 ? #26A69A : #EF5350, style = "histogram")
+plot(smi, "SMI", #2962FF, width = 2)
+plot(signalLine, "Signal", #FF6D00)
+level(0, "Zero Line", #787b86, style = "dashed")

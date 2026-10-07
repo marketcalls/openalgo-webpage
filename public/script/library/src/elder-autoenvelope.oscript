@@ -1,0 +1,24 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © openalgo
+
+version 1
+study("Elder AutoEnvelope", "AutoEnv", overlay = true, precision = 2)
+
+src = input(close, "Source")
+length = input(22, "Average Length", min = 1, tooltip = "Bars in the exponential average at the centre of the channel.")
+lookback = input(100, "Lookback", min = 2, tooltip = "Bars over which the spread of highs and lows around the average is measured.")
+mult = input(2.7, "Deviations", min = 0.1, step = 0.1, tooltip = "How many deviations each envelope sits from the average.")
+
+mid = ema(src, length)
+
+// On each bar, the larger of the high's and the low's distance from the
+// average, as a fraction of the average. Its standard deviation over the
+// lookback, scaled back to price by the average, sets one width that serves
+// both sides.
+farthest = max(abs(high - mid), abs(low - mid)) / mid
+width = mult * stdev(farthest, lookback) * mid
+
+u = plot(mid + width, "Upper Envelope", #EF5350)
+plot(mid, "EMA", #2962FF, width = 2)
+l = plot(mid - width, "Lower Envelope", #26A69A)
+fill(u, l, fade(gray, 92))

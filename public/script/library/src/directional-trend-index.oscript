@@ -1,0 +1,26 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © openalgo
+
+version 1
+study("Directional Trend Index (DTI)", "DTI", precision = 2)
+
+firstLength = input(14, "First Smoothing", min = 1)
+secondLength = input(10, "Second Smoothing", min = 1)
+thirdLength = input(5, "Third Smoothing", min = 1)
+
+// The up move is the rise in the high from the previous bar, zero when the
+// high fell; the down move is the fall in the low, zero when the low rose.
+upMove = max(high - high[1], 0)
+downMove = max(low[1] - low, 0)
+move = upMove - downMove
+
+// The net move and its size, each smoothed by three exponential averages in
+// a row; the index is the first as a percentage of the second.
+num = ema(ema(ema(move, firstLength), secondLength), thirdLength)
+den = ema(ema(ema(abs(move), firstLength), secondLength), thirdLength)
+dti = den != 0 ? 100 * num / den : none
+
+plot(dti, "DTI", #2962FF, width = 2)
+level(25, "Upper Level", #787b86, style = "dashed")
+level(0, "Zero Line", #787b86, style = "dashed")
+level(-25, "Lower Level", #787b86, style = "dashed")

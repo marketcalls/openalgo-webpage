@@ -249,3 +249,7 @@ if showPerfTable and bar.isLast
         writePerf(perfTopLeft, cumPchg, volPchg, currVol, volBase)
     else
         writePerf(perfTopRight, cumPchg, volPchg, currVol, volBase)
+
+// The chart draws a study's markers and bar colours only when the study has
+// a plot, so one fully transparent column carries them. It shows nothing.
+plot(close, "Marker Anchor", rgba(0, 0, 0, 0))

@@ -1,0 +1,34 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © openalgo
+
+version 1
+study("Elder Impulse System", "Impulse", overlay = true, precision = 2)
+
+emaLength = input(13, "EMA Length", min = 1)
+fastLength = input(12, "MACD Fast Length", min = 1)
+slowLength = input(26, "MACD Slow Length", min = 1)
+signalLength = input(9, "MACD Signal Length", min = 1)
+
+// The trend: an exponential average of the close.
+trendLine = ema(close, emaLength)
+
+// The momentum: the MACD histogram, the gap between a fast and a slow
+// exponential average minus its own signal average.
+m = macd(close, fastLength, slowLength, signalLength)
+hist = m[2]
+
+// Green when both rose from the previous bar, red when both fell, blue when
+// they disagree or either is unchanged. Nothing is painted until both have a
+// previous value.
+ready = not isNone(trendLine[1]) and not isNone(hist[1])
+bullImpulse = trendLine > trendLine[1] and hist > hist[1]
+bearImpulse = trendLine < trendLine[1] and hist < hist[1]
+impulse = not ready ? none : bullImpulse ? #26A69A : bearImpulse ? #EF5350 : #2962FF
+
+plot(trendLine, "EMA", isNone(impulse) ? #787b86 : impulse, width = 2)
+barColor(impulse)
+
+if ready and ready[1] and bullImpulse and not bullImpulse[1]
+    alert("Impulse turned green", id = "green", title = "Impulse Green")
+if ready and ready[1] and bearImpulse and not bearImpulse[1]
+    alert("Impulse turned red", id = "red", title = "Impulse Red")

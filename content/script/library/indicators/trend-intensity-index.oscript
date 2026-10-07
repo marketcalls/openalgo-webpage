@@ -1,0 +1,37 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © openalgo
+
+version 1
+study("Trend Intensity Index (TII)", "TII", precision = 2)
+
+src = input(close, "Source")
+length = input(60, "Length", min = 2)
+signalLength = input(9, "Signal Length", min = 1)
+
+// The gap between the source and its simple average over the full length.
+dev = src - sma(src, length)
+
+// Over the last half of the length (rounded down), sum the positive gaps and
+// the size of the negative ones; the index is the positive share, 0 to 100.
+half = floor(length / 2)
+tii = none
+if bar.index >= length + half - 2
+    pos = 0.0
+    neg = 0.0
+    for k = 0 to half - 1
+        d = dev[k]
+        if d > 0
+            pos = pos + d
+        else
+            neg = neg - d
+    total = pos + neg
+    tii = total > 0 ? 100 * pos / total : none
+
+// The signal line: an exponential average of the index.
+signalLine = ema(tii, signalLength)
+
+plot(tii, "TII", #2962FF, width = 2)
+plot(signalLine, "Signal", #FF6D00)
+level(80, "Upper Level", #787b86, style = "dashed")
+level(50, "Mid Level", #787b86, style = "dashed")
+level(20, "Lower Level", #787b86, style = "dashed")

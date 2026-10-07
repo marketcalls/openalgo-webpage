@@ -51,11 +51,11 @@ vwapValue = sumVol > 0 ? sumPv / sumVol : source
 bandVariance = sumVol > 0 and barsWithVolume > 1 ? max(0, sumPv2 / sumVol - vwapValue * vwapValue) : 0
 sd = sqrt(bandVariance)
 
-plot(vwapValue, "VWAP", #ffeb3b, width = 2)
+plot(vwapValue, "VWAP", #ff9800, width = 2)
 upper1 = plot(vwapValue + multiplier * sd, "Upper Band 1 SD", #ffeb3b, width = 2)
 lower1 = plot(vwapValue - multiplier * sd, "Lower Band 1 SD", #ffeb3b, width = 2)
-upper2 = plot(showBands2 ? vwapValue + 2 * multiplier * sd : none, "Upper Band 2 SD", #ffeb3b, width = 2)
-lower2 = plot(showBands2 ? vwapValue - 2 * multiplier * sd : none, "Lower Band 2 SD", #ffeb3b, width = 2)
+upper2 = plot(showBands2 ? vwapValue + 2 * multiplier * sd : none, "Upper Band 2 SD", #90caf9, width = 2)
+lower2 = plot(showBands2 ? vwapValue - 2 * multiplier * sd : none, "Lower Band 2 SD", #90caf9, width = 2)
 fill(upper1, lower1, #2196f3, opacity = 0.1)
 fill(upper2, upper1, #9c27b0, opacity = 0.1)
 fill(lower1, lower2, #9c27b0, opacity = 0.1)

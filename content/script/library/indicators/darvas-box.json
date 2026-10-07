@@ -1,0 +1,15 @@
+{
+  "title": "Darvas Box",
+  "summary": "Nicolas Darvas's trading range: a top and a bottom that each hold for three bars form a box, drawn until a close breaks out above or below it.",
+  "description": "The Darvas Box follows the method Nicolas Darvas used to frame consolidations inside a trend. The study looks for a **top**, a high that is not exceeded for the next `Confirmation Bars` bars (3 by default). After the top it tracks the lowest low; once that low has held for the same number of bars without a lower low, and the top still has not been exceeded, the low becomes the **bottom** and the box is formed. A higher high at any point before then becomes the new candidate top and the search for a bottom starts again.\n\nA formed box is drawn as a top and a bottom line with a light fill, from the bar it is confirmed onward. It stays in place until a bar **closes** above the top, a breakout, or below the bottom, a breakdown. That bar still shows the box and carries a mark, and the search for the next box starts from its high.\n\nEverything is decided bar by bar, so a box appears only once it is confirmed and is never redrawn later.",
+  "howToRead": "A box is a range where buyers and sellers have reached a balance: the top is where rallies stopped and the bottom is where dips were bought. Darvas bought when price closed above the top of a box, expecting the trend to carry on to a new, higher box, and treated a close below the bottom as the sign to step aside. The Breakout and Breakdown marks show those bars.\n\nBecause a box needs a confirmed top and a confirmed bottom, it is drawn a few bars after the range actually began, and in a fast trend boxes may be short or rare. In a choppy market price can break a box and quickly return, so many traders combine the breakout with volume or a broader trend filter.",
+  "settings": [
+    { "key": "confirm", "label": "Confirmation Bars", "description": "Bars the top must go unbroken, and then the bottom must hold, before the box is formed. Larger values give fewer, wider boxes." },
+    { "key": "showSignals", "label": "Show Breakouts", "description": "Mark the bars that close above a box top (Breakout) or below a box bottom (Breakdown)." }
+  ],
+  "faq": [
+    { "q": "Why does a box appear a few bars after the top?", "a": "The top has to go unbroken and the bottom has to hold for the confirmation bars first. The box is drawn from the bar it is confirmed, so it never changes after it appears." },
+    { "q": "Is the breakout judged on the close or on the high?", "a": "On the close. A wick through the top or the bottom does not end the box; a close outside it does." },
+    { "q": "What happens after a breakout?", "a": "The box ends on that bar, and the search for a new box begins with that bar's high as the first candidate top." }
+  ]
+}

@@ -1,0 +1,78 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © openalgo
+// Original work (c) HPotter and SeaSide420, MPL-2.0
+
+version 1
+study("UT Bot", overlay = true, precision = 2)
+
+h = input(false, "Signals from Heikin Ashi Candles")
+Price = input("open", "Price Source", options = ["open", "high", "low", "close", "hl2", "hlc3", "ohlc4"], tooltip = "Open is recommended: it is fixed for the whole bar, so signals do not change while a bar forms.")
+smoothing = input("HMA", "Moving Average Type", options = ["SMA", "EMA", "WMA", "HMA"])
+MA_Period = input(2, "MA Period", min = 1)
+a = input(1.0, "Sensitivity", min = 0.1, step = 0.1, tooltip = "Multiplier of the average true range that sets how far the trailing stop sits from price.")
+c = input(11, "ATR Period", min = 1)
+
+// Heikin Ashi candles: the close is the bar's average price, and the open the
+// midpoint of the previous Heikin Ashi open and close.
+haClose = ohlc4
+var haOpenState = none
+haOpen = isNone(haOpenState) ? (open + close) / 2 : (haOpenState + haClose[1]) / 2
+haOpenState = haOpen
+haHigh = max(high, max(haOpen, haClose))
+haLow = min(low, min(haOpen, haClose))
+
+fn pick(which, o, hi, lo, cl) =>
+    which == "high" ? hi : which == "low" ? lo : which == "close" ? cl : which == "hl2" ? (hi + lo) / 2 : which == "hlc3" ? (hi + lo + cl) / 3 : which == "ohlc4" ? (o + hi + lo + cl) / 4 : o
+
+src = h ? pick(Price, haOpen, haHigh, haLow, haClose) : pick(Price, open, high, low, close)
+
+// The trailing stop sits `Sensitivity` average true ranges from the price.
+// While the price stays above it, it only rises; while below, it only falls;
+// when the price crosses it, it jumps to the other side. Its previous value
+// reads as zero before it exists.
+nLoss = a * atr(c)
+var stopState = none
+prevStop = orElse(stopState, 0)
+iff1 = src > prevStop ? src - nLoss : src + nLoss
+iff2 = src < prevStop and src[1] < prevStop ? min(prevStop, src + nLoss) : iff1
+trailingStop = src > prevStop and src[1] > prevStop ? max(prevStop, src - nLoss) : iff2
+stopState = trailingStop
+
+// A short moving average of the same price. Every type is computed on every
+// bar; the menu picks one. The exponential average starts from its first
+// value, and the Hull average halves its length rounding down.
+fn emaFromFirst(x, len) =>
+    var e = none
+    k = 2 / (len + 1)
+    e = isNone(e) ? x : k * x + (1 - k) * e
+    e
+
+maSma = sma(src, MA_Period)
+maEma = emaFromFirst(src, MA_Period)
+maWma = wma(src, MA_Period)
+maHma = wma(2 * wma(src, max(1, floor(MA_Period / 2))) - wma(src, MA_Period), max(1, round(sqrt(MA_Period))))
+thema = smoothing == "SMA" ? maSma : smoothing == "EMA" ? maEma : smoothing == "WMA" ? maWma : maHma
+
+plot(thema, "Moving Average", #4CAF50, width = 2)
+plot(trailingStop, "Trailing Stop", #FF5252, width = 2)
+
+// Buy when the average crosses above the stop with the price above it; Sell
+// on the reverse.
+// The crossings are taken on every bar, outside the `and`, so each keeps its
+// own history.
+above = crossUp(thema, trailingStop)
+below = crossUp(trailingStop, thema)
+buySignal = src > trailingStop and above
+sellSignal = src < trailingStop and below
+
+if buySignal
+    signal("Buy", color = #4CAF50, at = "below", shape = "label")
+if sellSignal
+    signal("Sell", color = #FF5252, at = "above", shape = "label")
+
+barColor(src > trailingStop ? #4CAF50 : src < trailingStop ? #FF5252 : none)
+
+if buySignal
+    alert("UT Bot Buy", id = "buy", title = "UT Bot Buy")
+if sellSignal
+    alert("UT Bot Sell", id = "sell", title = "UT Bot Sell")

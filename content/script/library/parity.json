@@ -1,7 +1,7 @@
 {
  "bars": "btcusd-1h.json",
- "studies": 440,
- "passing": 440,
+ "studies": 502,
+ "passing": 502,
  "results": [
   {
    "slug": "aberration-abber",
@@ -774,24 +774,10 @@
    "deviation": null
   },
   {
-   "slug": "exponential-transformation-exp",
-   "ok": true,
-   "parity": true,
-   "variants": 2,
-   "deviation": null
-  },
-  {
    "slug": "exponential-distribution-cdf-expdist",
    "ok": true,
    "parity": true,
    "variants": 4,
-   "deviation": null
-  },
-  {
-   "slug": "exptrans",
-   "ok": true,
-   "parity": true,
-   "variants": 2,
    "deviation": null
   },
   {
@@ -1313,13 +1299,6 @@
    "deviation": null
   },
   {
-   "slug": "lineartrans",
-   "ok": true,
-   "parity": true,
-   "variants": 5,
-   "deviation": null
-  },
-  {
    "slug": "linear-regression-linreg",
    "ok": true,
    "parity": true,
@@ -1359,13 +1338,6 @@
    "ok": true,
    "parity": true,
    "variants": 4,
-   "deviation": null
-  },
-  {
-   "slug": "logtrans",
-   "ok": true,
-   "parity": true,
-   "variants": 2,
    "deviation": null
   },
   {
@@ -1576,13 +1548,6 @@
    "ok": true,
    "parity": true,
    "variants": 4,
-   "deviation": null
-  },
-  {
-   "slug": "mode",
-   "ok": true,
-   "parity": true,
-   "variants": 3,
    "deviation": null
   },
   {
@@ -2188,13 +2153,6 @@
    "deviation": null
   },
   {
-   "slug": "logistic-function-sigmoid",
-   "ok": true,
-   "parity": true,
-   "variants": 3,
-   "deviation": null
-  },
-  {
    "slug": "ehlers-sine-wave-sine",
    "ok": true,
    "parity": true,
@@ -2273,13 +2231,6 @@
   },
   {
    "slug": "square-root-transformation-sqrt",
-   "ok": true,
-   "parity": true,
-   "variants": 2,
-   "deviation": null
-  },
-  {
-   "slug": "sqrttrans",
    "ok": true,
    "parity": true,
    "variants": 2,
@@ -2394,7 +2345,7 @@
    "slug": "supertrend",
    "ok": true,
    "parity": true,
-   "variants": 4,
+   "variants": 3,
    "deviation": null
   },
   {
@@ -2416,13 +2367,6 @@
    "ok": true,
    "parity": true,
    "variants": 4,
-   "deviation": null
-  },
-  {
-   "slug": "hyperbolic-tangent-tanh",
-   "ok": true,
-   "parity": true,
-   "variants": 3,
    "deviation": null
   },
   {
@@ -2525,13 +2469,6 @@
   },
   {
    "slug": "ttm-scalper-alert",
-   "ok": true,
-   "parity": true,
-   "variants": 4,
-   "deviation": null
-  },
-  {
-   "slug": "ttmtrend",
    "ok": true,
    "parity": true,
    "variants": 4,
@@ -3081,6 +3018,503 @@
    "ok": true,
    "parity": true,
    "variants": 24,
+   "deviation": null
+  },
+  {
+   "slug": "range-filter",
+   "ok": true,
+   "parity": true,
+   "variants": 4,
+   "deviation": null
+  },
+  {
+   "slug": "alphatrend",
+   "ok": true,
+   "parity": true,
+   "variants": 6,
+   "deviation": null
+  },
+  {
+   "slug": "ut-bot",
+   "ok": true,
+   "parity": true,
+   "variants": 14,
+   "deviation": null
+  },
+  {
+   "slug": "ssl-hybrid",
+   "ok": true,
+   "parity": true,
+   "variants": 24,
+   "deviation": null
+  },
+  {
+   "slug": "candlestick-patterns",
+   "ok": true,
+   "parity": true,
+   "variants": 3,
+   "deviation": null
+  },
+  {
+   "slug": "smc-structures-and-fvg",
+   "ok": true,
+   "parity": true,
+   "variants": 24,
+   "deviation": null
+  },
+  {
+   "slug": "elliott-wave-oscillator",
+   "ok": true,
+   "parity": true,
+   "variants": 5,
+   "deviation": null
+  },
+  {
+   "slug": "ehlers-ultimate-smoother",
+   "ok": true,
+   "parity": true,
+   "variants": 3,
+   "deviation": null
+  },
+  {
+   "slug": "ehlers-ultimate-strength-index",
+   "ok": true,
+   "parity": true,
+   "variants": 3,
+   "deviation": null
+  },
+  {
+   "slug": "ehlers-ultimate-oscillator",
+   "ok": true,
+   "parity": true,
+   "variants": 5,
+   "deviation": null
+  },
+  {
+   "slug": "ehlers-cybernetic-oscillator",
+   "ok": true,
+   "parity": true,
+   "variants": 5,
+   "deviation": null
+  },
+  {
+   "slug": "ehlers-truncated-bandpass-filter",
+   "ok": true,
+   "parity": true,
+   "variants": 5,
+   "deviation": null
+  },
+  {
+   "slug": "ehlers-fisherized-deviation-scaled-oscillator",
+   "ok": true,
+   "parity": true,
+   "variants": 3,
+   "deviation": null
+  },
+  {
+   "slug": "ehlers-elegant-oscillator",
+   "ok": true,
+   "parity": true,
+   "variants": 4,
+   "deviation": null
+  },
+  {
+   "slug": "inverse-fisher-transform-rsi",
+   "ok": true,
+   "parity": true,
+   "variants": 4,
+   "deviation": null
+  },
+  {
+   "slug": "ehlers-rocket-rsi",
+   "ok": true,
+   "parity": true,
+   "variants": 5,
+   "deviation": null
+  },
+  {
+   "slug": "ehlers-myrsi",
+   "ok": true,
+   "parity": true,
+   "variants": 4,
+   "deviation": null
+  },
+  {
+   "slug": "ehlers-noise-elimination-technology",
+   "ok": true,
+   "parity": true,
+   "variants": 5,
+   "deviation": null
+  },
+  {
+   "slug": "ehlers-directional-movement-hann",
+   "ok": true,
+   "parity": true,
+   "variants": 2,
+   "deviation": null
+  },
+  {
+   "slug": "ehlers-continuation-index",
+   "ok": true,
+   "parity": true,
+   "variants": 5,
+   "deviation": null
+  },
+  {
+   "slug": "volume-flow-indicator",
+   "ok": true,
+   "parity": true,
+   "variants": 7,
+   "deviation": null
+  },
+  {
+   "slug": "volume-zone-oscillator",
+   "ok": true,
+   "parity": true,
+   "variants": 2,
+   "deviation": null
+  },
+  {
+   "slug": "price-zone-oscillator",
+   "ok": true,
+   "parity": true,
+   "variants": 2,
+   "deviation": null
+  },
+  {
+   "slug": "trend-thrust-indicator",
+   "ok": true,
+   "parity": true,
+   "variants": 5,
+   "deviation": null
+  },
+  {
+   "slug": "volume-weighted-macd",
+   "ok": true,
+   "parity": true,
+   "variants": 5,
+   "deviation": null
+  },
+  {
+   "slug": "volume-price-confirmation-indicator",
+   "ok": true,
+   "parity": true,
+   "variants": 5,
+   "deviation": null
+  },
+  {
+   "slug": "relative-momentum-index",
+   "ok": true,
+   "parity": true,
+   "variants": 4,
+   "deviation": null
+  },
+  {
+   "slug": "random-walk-index",
+   "ok": true,
+   "parity": true,
+   "variants": 3,
+   "deviation": null
+  },
+  {
+   "slug": "trend-intensity-index",
+   "ok": true,
+   "parity": true,
+   "variants": 4,
+   "deviation": null
+  },
+  {
+   "slug": "directional-trend-index",
+   "ok": true,
+   "parity": true,
+   "variants": 4,
+   "deviation": null
+  },
+  {
+   "slug": "smi-ergodic-indicator",
+   "ok": true,
+   "parity": true,
+   "variants": 5,
+   "deviation": null
+  },
+  {
+   "slug": "double-smoothed-stochastic",
+   "ok": true,
+   "parity": true,
+   "variants": 3,
+   "deviation": null
+  },
+  {
+   "slug": "elder-impulse-system",
+   "ok": true,
+   "parity": true,
+   "variants": 5,
+   "deviation": null
+  },
+  {
+   "slug": "elder-safezone-stop",
+   "ok": true,
+   "parity": true,
+   "variants": 4,
+   "deviation": null
+  },
+  {
+   "slug": "chandelier-exit",
+   "ok": true,
+   "parity": true,
+   "variants": 4,
+   "deviation": null
+  },
+  {
+   "slug": "williams-vix-fix",
+   "ok": true,
+   "parity": true,
+   "variants": 7,
+   "deviation": null
+  },
+  {
+   "slug": "gopalakrishnan-range-index",
+   "ok": true,
+   "parity": true,
+   "variants": 2,
+   "deviation": null
+  },
+  {
+   "slug": "disparity-index",
+   "ok": true,
+   "parity": true,
+   "variants": 6,
+   "deviation": null
+  },
+  {
+   "slug": "twiggs-money-flow",
+   "ok": true,
+   "parity": true,
+   "variants": 2,
+   "deviation": null
+  },
+  {
+   "slug": "projection-bands",
+   "ok": true,
+   "parity": true,
+   "variants": 2,
+   "deviation": null
+  },
+  {
+   "slug": "projection-oscillator",
+   "ok": true,
+   "parity": true,
+   "variants": 3,
+   "deviation": null
+  },
+  {
+   "slug": "trend-detection-index",
+   "ok": true,
+   "parity": true,
+   "variants": 3,
+   "deviation": null
+  },
+  {
+   "slug": "chande-kroll-stop",
+   "ok": true,
+   "parity": true,
+   "variants": 4,
+   "deviation": null
+  },
+  {
+   "slug": "fractal-dimension-index",
+   "ok": true,
+   "parity": true,
+   "variants": 3,
+   "deviation": null
+  },
+  {
+   "slug": "guppy-multiple-moving-average",
+   "ok": true,
+   "parity": true,
+   "variants": 14,
+   "deviation": null
+  },
+  {
+   "slug": "wilder-volatility-stop",
+   "ok": true,
+   "parity": true,
+   "variants": 4,
+   "deviation": null
+  },
+  {
+   "slug": "three-ten-oscillator",
+   "ok": true,
+   "parity": true,
+   "variants": 5,
+   "deviation": null
+  },
+  {
+   "slug": "relative-volume",
+   "ok": true,
+   "parity": true,
+   "variants": 3,
+   "deviation": null
+  },
+  {
+   "slug": "tirone-levels",
+   "ok": true,
+   "parity": true,
+   "variants": 3,
+   "deviation": null
+  },
+  {
+   "slug": "zig-zag",
+   "ok": true,
+   "parity": true,
+   "variants": 4,
+   "deviation": null
+  },
+  {
+   "slug": "standard-error-bands",
+   "ok": true,
+   "parity": true,
+   "variants": 5,
+   "deviation": null
+  },
+  {
+   "slug": "commodity-selection-index",
+   "ok": true,
+   "parity": true,
+   "variants": 5,
+   "deviation": null
+  },
+  {
+   "slug": "sentiment-zone-oscillator",
+   "ok": true,
+   "parity": true,
+   "variants": 4,
+   "deviation": null
+  },
+  {
+   "slug": "darvas-box",
+   "ok": true,
+   "parity": true,
+   "variants": 3,
+   "deviation": null
+  },
+  {
+   "slug": "value-chart",
+   "ok": true,
+   "parity": true,
+   "variants": 2,
+   "deviation": null
+  },
+  {
+   "slug": "rsi-bands",
+   "ok": true,
+   "parity": true,
+   "variants": 5,
+   "deviation": null
+  },
+  {
+   "slug": "trend-trigger-factor",
+   "ok": true,
+   "parity": true,
+   "variants": 2,
+   "deviation": null
+  },
+  {
+   "slug": "rsi-divergence",
+   "ok": true,
+   "parity": true,
+   "variants": 9,
+   "deviation": null
+  },
+  {
+   "slug": "absolute-strength-histogram",
+   "ok": true,
+   "parity": true,
+   "variants": 9,
+   "deviation": null
+  },
+  {
+   "slug": "rainbow-oscillator",
+   "ok": true,
+   "parity": true,
+   "variants": 4,
+   "deviation": null
+  },
+  {
+   "slug": "smoothed-heikin-ashi",
+   "ok": true,
+   "parity": true,
+   "variants": 3,
+   "deviation": null
+  },
+  {
+   "slug": "zero-lag-heikin-ashi",
+   "ok": true,
+   "parity": true,
+   "variants": 4,
+   "deviation": null
+  },
+  {
+   "slug": "dynamic-zone-rsi",
+   "ok": true,
+   "parity": true,
+   "variants": 6,
+   "deviation": null
+  },
+  {
+   "slug": "momentum-pinball",
+   "ok": true,
+   "parity": true,
+   "variants": 4,
+   "deviation": null
+  },
+  {
+   "slug": "chande-trend-score",
+   "ok": true,
+   "parity": true,
+   "variants": 4,
+   "deviation": null
+  },
+  {
+   "slug": "stiffness-indicator",
+   "ok": true,
+   "parity": true,
+   "variants": 5,
+   "deviation": null
+  },
+  {
+   "slug": "finite-volume-elements",
+   "ok": true,
+   "parity": true,
+   "variants": 3,
+   "deviation": null
+  },
+  {
+   "slug": "trend-continuation-factor",
+   "ok": true,
+   "parity": true,
+   "variants": 3,
+   "deviation": null
+  },
+  {
+   "slug": "smoothed-rate-of-change",
+   "ok": true,
+   "parity": true,
+   "variants": 4,
+   "deviation": null
+  },
+  {
+   "slug": "elder-autoenvelope",
+   "ok": true,
+   "parity": true,
+   "variants": 5,
+   "deviation": null
+  },
+  {
+   "slug": "laguerre-filter",
+   "ok": true,
+   "parity": true,
+   "variants": 3,
    "deviation": null
   }
  ]

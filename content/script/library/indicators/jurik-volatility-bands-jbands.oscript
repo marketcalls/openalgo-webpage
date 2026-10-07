@@ -46,6 +46,6 @@ kv = pow(len2 / (len2 + 1), sqrt(pow(rvolty, pow1)))
 upperBand = del1 > 0 ? high : high - kv * del1
 lowerBand = del2 < 0 ? low : low - kv * del2
 
-top = plot(upperBand, "Upper", #ffeb3b, width = 2)
-bottom = plot(lowerBand, "Lower", #ffeb3b, width = 2)
+top = plot(upperBand, "Upper", #ff5252, width = 2)
+bottom = plot(lowerBand, "Lower", #4caf50, width = 2)
 fill(top, bottom, #2962ff, opacity = 0.1)

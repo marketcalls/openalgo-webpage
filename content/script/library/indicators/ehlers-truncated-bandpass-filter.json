@@ -1,0 +1,17 @@
+{
+  "title": "Ehlers Truncated Bandpass Filter",
+  "summary": "John Ehlers' bandpass filter restarted over only the last few bars, shown beside the ordinary bandpass so the effect of its long memory is visible.",
+  "description": "A bandpass filter keeps the swings of price that repeat near one cycle length and removes both the slow trend and the bar-to-bar noise. John Ehlers' design takes the two-bar change of the source and feeds it through a two-pole resonant recursion: `L1 = cos(2 pi / Period)` places the centre of the band, and `S1 = 1 / G1 - sqrt(1 / G1^2 - 1)`, with `G1 = cos(Bandwidth * 2 pi / Period)`, sets how wide it is. With the defaults the band is centred on a 20 bar cycle with a bandwidth of 0.1.\n\nBecause each output feeds back into the next, the ordinary filter has an infinite memory: a large shock many bars ago still rings through it. The truncated version removes that. On every bar it starts the same recursion from zero `Length` bars back (10 by default) and runs it forward to the current bar, so nothing older than `Length` bars can affect the reading.\n\nThe study draws the truncated filter as a blue line and the ordinary bandpass as an orange line in a pane of their own, around a dashed zero line.",
+  "howToRead": "Both lines swing above and below zero with the cycle the filter is tuned to. A peak marks the top of a swing and a trough its bottom, so a turn of the blue line away from an extreme is the cycle turning. Where the two lines part, the ordinary filter is still ringing from an old move that the truncated one has already forgotten; where they agree, the cycle is consistent with recent bars.\n\nThe truncated line reacts faster after a sharp move and settles sooner, but with a short `Length` it is also smaller and rougher. In a strong trend with no regular cycle, both lines say little.",
+  "settings": [
+    { "key": "src", "label": "Source", "description": "The price series both filters run on. Close is the default." },
+    { "key": "period", "label": "Period", "description": "The cycle length, in bars, the band is centred on. Raise it to follow slower swings." },
+    { "key": "bandwidth", "label": "Bandwidth", "description": "The width of the band as a fraction of its centre frequency. A wider band passes more nearby cycles and responds faster; a narrower one rings longer." },
+    { "key": "length", "label": "Length", "description": "How many bars back the truncated filter restarts from zero. Shorter forgets old moves sooner but gives a smaller, rougher line." }
+  ],
+  "faq": [
+    { "q": "Why truncate a bandpass filter at all?", "a": "The ordinary filter feeds its own output back, so an old shock keeps echoing in it for a long time. Restarting the recursion from zero a fixed number of bars back limits its memory to that window." },
+    { "q": "Why does the blue line start later than the orange one?", "a": "The truncated filter needs `Length + 1` earlier bars before it can run its window, so it is absent on the first bars of the chart." },
+    { "q": "Which line should I trade from?", "a": "The truncated line is the point of the study: it shows the cycle in recent bars only. The ordinary bandpass is drawn for comparison, to show when old moves are still distorting the usual reading." }
+  ]
+}

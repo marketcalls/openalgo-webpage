@@ -69,10 +69,10 @@ kcDn = middle - offsetKc
 squeeze = bbUp < kcUp and bbDn > kcDn
 
 plot(showBands ? bbUp : none, "BB Upper", #2962ff80, width = 1)
-plot(showBands ? basis : none, "BB Middle", #2962ff80, width = 1)
+plot(showBands ? basis : none, "BB Middle", #ffeb3b, width = 1)
 plot(showBands ? bbDn : none, "BB Lower", #2962ff80, width = 1)
 plot(showChannels ? kcUp : none, "KC Upper", #ff980080, width = 1)
-plot(showChannels ? middle : none, "KC Middle", #ff980080, width = 1)
+plot(showChannels ? middle : none, "KC Middle", #ffcc80, width = 1)
 plot(showChannels ? kcDn : none, "KC Lower", #ff980080, width = 1)
 
 // A dot under every bar: red in a squeeze, green otherwise.

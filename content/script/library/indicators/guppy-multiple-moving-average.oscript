@@ -1,0 +1,38 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © openalgo
+
+version 1
+study("Guppy Multiple Moving Average (GMMA)", "GMMA", overlay = true, precision = 2)
+
+src = input(close, "Source")
+short1 = input(3, "Short Length 1", min = 1)
+short2 = input(5, "Short Length 2", min = 1)
+short3 = input(8, "Short Length 3", min = 1)
+short4 = input(10, "Short Length 4", min = 1)
+short5 = input(12, "Short Length 5", min = 1)
+short6 = input(15, "Short Length 6", min = 1)
+long1 = input(30, "Long Length 1", min = 1)
+long2 = input(35, "Long Length 2", min = 1)
+long3 = input(40, "Long Length 3", min = 1)
+long4 = input(45, "Long Length 4", min = 1)
+long5 = input(50, "Long Length 5", min = 1)
+long6 = input(60, "Long Length 6", min = 1)
+
+// Two groups of exponential averages of the source. The short group follows
+// the shorter-term traders, the long group the longer-term ones. Each average
+// is seeded on its first full window with the simple average of that window.
+shortColor = #2962FF
+longColor = #F23645
+
+plot(ema(src, short1), "Short EMA 1", shortColor)
+plot(ema(src, short2), "Short EMA 2", shortColor)
+plot(ema(src, short3), "Short EMA 3", shortColor)
+plot(ema(src, short4), "Short EMA 4", shortColor)
+plot(ema(src, short5), "Short EMA 5", shortColor)
+plot(ema(src, short6), "Short EMA 6", shortColor)
+plot(ema(src, long1), "Long EMA 1", longColor)
+plot(ema(src, long2), "Long EMA 2", longColor)
+plot(ema(src, long3), "Long EMA 3", longColor)
+plot(ema(src, long4), "Long EMA 4", longColor)
+plot(ema(src, long5), "Long EMA 5", longColor)
+plot(ema(src, long6), "Long EMA 6", longColor)

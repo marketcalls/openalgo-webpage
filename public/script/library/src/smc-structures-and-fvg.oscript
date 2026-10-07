@@ -1,0 +1,343 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © openalgo
+// Original work (c) LudoGH68, MPL-2.0
+
+version 1
+study("SMC Structures and FVG", overlay = true, precision = 2)
+
+// ---- Fair value gaps ------------------------------------------------------------
+isFvgToShow = input(true, "Display FVG", group = "Fair Value Gap")
+bullishFvgColor = input(fade(#4CAF50, 50), "Bullish FVG Color", group = "Fair Value Gap")
+bearishFvgColor = input(fade(#F23645, 50), "Bearish FVG Color", group = "Fair Value Gap")
+mitigatedFvgColor = input(fade(#787B86, 50), "Mitigated FVG Color", group = "Fair Value Gap")
+fvgHistoryNbr = input(5, "Number of FVG to show", min = 1, max = 50, group = "Fair Value Gap", tooltip = "The study keeps one more gap than this number.")
+isMitigatedFvgToReduce = input(false, "Reduce mitigated FVG", group = "Fair Value Gap", tooltip = "Shrink a gap to the part price has not yet traded back into.")
+
+// ---- Structures -----------------------------------------------------------------
+isStructBodyCandleBreak = input(true, "Break with candle's body", group = "Structures", tooltip = "A break needs a close beyond the level. Off, a wick beyond it is enough.")
+isCurrentStructToShow = input(true, "Display current structure", group = "Structures")
+bullishBosColor = input(#B2B5BE, "Bullish BOS Color", group = "Structures")
+bearishBosColor = input(#B2B5BE, "Bearish BOS Color", group = "Structures")
+bosLineStyleOption = input("Solid", "BOS Style", options = ["Solid", "Dotted", "Dashed"], group = "Structures")
+bosLineWidth = input(1, "BOS Width", min = 1, max = 5, group = "Structures")
+bullishChochColor = input(#FFEB3B, "Bullish CHoCH Color", group = "Structures")
+bearishChochColor = input(#FFEB3B, "Bearish CHoCH Color", group = "Structures")
+chochLineStyleOption = input("Solid", "CHoCH Style", options = ["Solid", "Dotted", "Dashed"], group = "Structures")
+chochLineWidth = input(1, "CHoCH Width", min = 1, max = 5, group = "Structures")
+currentStructColor = input(#2962FF, "Current structure Color", group = "Structures")
+currentStructLineStyleOption = input("Solid", "Current structure Style", options = ["Solid", "Dotted", "Dashed"], group = "Structures")
+currentStructLineWidth = input(1, "Current structure Width", min = 1, max = 5, group = "Structures")
+structHistoryNbr = input(10, "Number of break to show", min = 1, max = 50, group = "Structures")
+
+// ---- Fibonacci levels of the current structure ----------------------------------
+isFibo1ToShow = input(true, "Fibonacci 1", group = "Structure Fibonacci")
+fibo1Value = input(0.786, "Fibonacci 1 Level", step = 0.001, group = "Structure Fibonacci")
+fibo1Color = input(#64B5F6, "Fibonacci 1 Color", group = "Structure Fibonacci")
+fibo1StyleOption = input("Solid", "Fibonacci 1 Style", options = ["Solid", "Dotted", "Dashed"], group = "Structure Fibonacci")
+fibo1LineWidth = input(1, "Fibonacci 1 Width", min = 1, max = 5, group = "Structure Fibonacci")
+
+isFibo2ToShow = input(true, "Fibonacci 2", group = "Structure Fibonacci")
+fibo2Value = input(0.705, "Fibonacci 2 Level", step = 0.001, group = "Structure Fibonacci")
+fibo2Color = input(#F23645, "Fibonacci 2 Color", group = "Structure Fibonacci")
+fibo2StyleOption = input("Solid", "Fibonacci 2 Style", options = ["Solid", "Dotted", "Dashed"], group = "Structure Fibonacci")
+fibo2LineWidth = input(1, "Fibonacci 2 Width", min = 1, max = 5, group = "Structure Fibonacci")
+
+isFibo3ToShow = input(true, "Fibonacci 3", group = "Structure Fibonacci")
+fibo3Value = input(0.618, "Fibonacci 3 Level", step = 0.001, group = "Structure Fibonacci")
+fibo3Color = input(#089981, "Fibonacci 3 Color", group = "Structure Fibonacci")
+fibo3StyleOption = input("Solid", "Fibonacci 3 Style", options = ["Solid", "Dotted", "Dashed"], group = "Structure Fibonacci")
+fibo3LineWidth = input(1, "Fibonacci 3 Width", min = 1, max = 5, group = "Structure Fibonacci")
+
+isFibo4ToShow = input(true, "Fibonacci 4", group = "Structure Fibonacci")
+fibo4Value = input(0.5, "Fibonacci 4 Level", step = 0.001, group = "Structure Fibonacci")
+fibo4Color = input(#4CAF50, "Fibonacci 4 Color", group = "Structure Fibonacci")
+fibo4StyleOption = input("Solid", "Fibonacci 4 Style", options = ["Solid", "Dotted", "Dashed"], group = "Structure Fibonacci")
+fibo4LineWidth = input(1, "Fibonacci 4 Width", min = 1, max = 5, group = "Structure Fibonacci")
+
+isFibo5ToShow = input(true, "Fibonacci 5", group = "Structure Fibonacci")
+fibo5Value = input(0.382, "Fibonacci 5 Level", step = 0.001, group = "Structure Fibonacci")
+fibo5Color = input(#81C784, "Fibonacci 5 Color", group = "Structure Fibonacci")
+fibo5StyleOption = input("Solid", "Fibonacci 5 Style", options = ["Solid", "Dotted", "Dashed"], group = "Structure Fibonacci")
+fibo5LineWidth = input(1, "Fibonacci 5 Width", min = 1, max = 5, group = "Structure Fibonacci")
+
+fn lineStyle(option) =>
+    option == "Dotted" ? "dotted" : option == "Dashed" ? "dashed" : "solid"
+
+// The time of an earlier bar, given its bar index.
+fn timeAt(index) =>
+    time[bar.index - index]
+
+// Labels on the Fibonacci levels sit 20 bar intervals to the right of the
+// newest bar.
+barMs = orElse(chart.intervalMinutes * 60000, time - time[1])
+
+// ---- Fair value gaps --------------------------------------------------------------
+// A gap is read across the bars three back and one back: a bullish gap when
+// the low one bar back is above the high three bars back, a bearish gap when
+// the high one bar back is below the low three bars back. Its box runs from
+// two bars back to one bar back, and its label sits at the box's middle bar.
+// Each gap keeps its box, its label, its side, whether price has traded into
+// it, and the numbers behind the box.
+var fvgBoxes: array<box> = []
+var fvgLabels: array<label> = []
+var fvgTypes: array<bool> = []
+var isFvgMitigated: array<bool> = []
+var fvgLeft: array<number> = []
+var fvgRight: array<number> = []
+var fvgTop: array<number> = []
+var fvgBottom: array<number> = []
+
+isBullishFVG = bar.index >= 3 and high[3] < low[1]
+isBearishFVG = bar.index >= 3 and low[3] > high[1]
+
+if (isBullishFVG or isBearishFVG) and isFvgToShow
+    gapTop = isBullishFVG ? low[1] : low[3]
+    gapBottom = isBullishFVG ? high[3] : high[1]
+    gapLeft = bar.index - 2
+    gapRight = bar.index - 1
+    push(fvgBoxes, draw.box(time[2], gapTop, time[1], gapBottom, color = none, fillColor = isBullishFVG ? bullishFvgColor : bearishFvgColor, opacity = 1))
+    push(fvgLabels, draw.label(timeAt(floor((gapLeft + gapRight) / 2)), gapTop - (gapTop - gapBottom) / 2, "FVG", color = none, textColor = white))
+    push(fvgTypes, isBullishFVG)
+    push(isFvgMitigated, false)
+    push(fvgLeft, gapLeft)
+    push(fvgRight, gapRight)
+    push(fvgTop, gapTop)
+    push(fvgBottom, gapBottom)
+    // Only the newest fvgHistoryNbr + 1 gaps are kept.
+    if size(fvgBoxes) > fvgHistoryNbr + 1
+        draw.delete(shift(fvgBoxes))
+        draw.delete(shift(fvgLabels))
+        shift(fvgTypes)
+        shift(isFvgMitigated)
+        shift(fvgLeft)
+        shift(fvgRight)
+        shift(fvgTop)
+        shift(fvgBottom)
+
+// Every gap is checked against this bar, oldest first. A bullish gap is filled
+// when the low reaches its bottom, a bearish one when the high reaches its
+// top, and a filled gap is deleted. A gap price has traded into but not
+// filled turns the mitigated colour and, if asked, shrinks to the untouched
+// part. A deletion moves the walk on to the next position, so the gap that
+// takes the deleted one's place waits until the next bar.
+fvgMitigatedNow = false
+gapIndex = 0
+while gapIndex < size(fvgBoxes)
+    isBull = element(fvgTypes, gapIndex)
+    filled = isBull ? low <= element(fvgBottom, gapIndex) : high >= element(fvgTop, gapIndex)
+    if filled
+        draw.delete(remove(fvgBoxes, gapIndex))
+        draw.delete(remove(fvgLabels, gapIndex))
+        remove(fvgTypes, gapIndex)
+        remove(isFvgMitigated, gapIndex)
+        remove(fvgLeft, gapIndex)
+        remove(fvgRight, gapIndex)
+        remove(fvgTop, gapIndex)
+        remove(fvgBottom, gapIndex)
+    else
+        gapBox = element(fvgBoxes, gapIndex)
+        if isBull ? low < element(fvgTop, gapIndex) : high > element(fvgBottom, gapIndex)
+            draw.setFillColor(gapBox, mitigatedFvgColor)
+            if not element(isFvgMitigated, gapIndex)
+                fvgMitigatedNow = true
+                set(isFvgMitigated, gapIndex, true)
+            if isMitigatedFvgToReduce
+                if isBull
+                    set(fvgTop, gapIndex, low)
+                else
+                    set(fvgBottom, gapIndex, high)
+        set(fvgRight, gapIndex, bar.index)
+        top = element(fvgTop, gapIndex)
+        bottom = element(fvgBottom, gapIndex)
+        draw.setBounds(gapBox, timeAt(element(fvgLeft, gapIndex)), top, time, bottom)
+        draw.setAt(element(fvgLabels, gapIndex), timeAt(floor((element(fvgLeft, gapIndex) + bar.index) / 2)), top - (top - bottom) / 2)
+    gapIndex += 1
+
+// ---- Structure ------------------------------------------------------------------
+// The swing bar of a window is its highest high (lowest low), the most recent
+// bar on a tie. The window is the last 10 bars, or every bar so far while
+// there are at most 11. Returned as bars back.
+fn extremeBack(wantHigh) =>
+    len = bar.index > 10 ? 10 : bar.index + 1
+    back = len - 1
+    best = wantHigh ? high[back] : low[back]
+    for k = len - 2 to 0 step -1
+        v = wantHigh ? high[k] : low[k]
+        if wantHigh ? v >= best : v <= best
+            best = v
+            back = k
+    back
+
+// The structure's swing bar: the furthest back local peak (trough) of the last
+// 10 bars that is no older than the window's extreme. Where there is none,
+// the previous bar's answer stands as a count of bars back; it falls back to
+// the window's extreme only while it is 0.
+var hiIdx = 0
+var loIdx = 0
+maxBack = extremeBack(true)
+minBack = extremeBack(false)
+for k = 1 to 10
+    if k + 1 <= bar.index and k <= maxBack and high[k] > high[k + 1] and high[k - 1] <= high[k]
+        hiIdx = k
+    if k + 1 <= bar.index and k <= minBack and low[k] < low[k + 1] and low[k - 1] >= low[k]
+        loIdx = k
+hiIdx = hiIdx == 0 ? maxBack : hiIdx
+loIdx = loIdx == 0 ? minBack : loIdx
+structureMaxBar = bar.index - hiIdx
+structureMinBar = bar.index - loIdx
+
+var structureLines: array<line> = []
+var structureLabels: array<label> = []
+var structureHigh = 0.0
+var structureLow = 0.0
+var structureHighStartIndex = 0
+var structureLowStartIndex = 0
+// 0 before the first break, 1 after a break down, 2 after a break up.
+var structureDirection = 0
+var isBOSAlert = false
+var isCHOCHAlert = false
+
+if bar.index == 0
+    structureHighStartIndex = 0
+    structureLowStartIndex = 0
+    structureHigh = high
+    structureLow = low
+
+// A break is read on the close, or on the wick when the body option is off.
+lowStructBreakPrice = isStructBodyCandleBreak ? close : low
+highStructBreakPrice = isStructBodyCandleBreak ? close : high
+
+// A level breaks cleanly when this bar crosses it after three bars that held,
+// all three later than the bar that set it. Against the current direction
+// (a low after a break up, a high after a break down) any cross breaks it.
+isStuctureLowBroken = (bar.index >= 3 and lowStructBreakPrice < structureLow and lowStructBreakPrice[1] >= structureLow and lowStructBreakPrice[2] >= structureLow and lowStructBreakPrice[3] >= structureLow and bar.index - 3 > structureLowStartIndex) or (structureDirection == 2 and lowStructBreakPrice < structureLow)
+isStructureHighBroken = (bar.index >= 3 and highStructBreakPrice > structureHigh and highStructBreakPrice[1] <= structureHigh and highStructBreakPrice[2] <= structureHigh and highStructBreakPrice[3] <= structureHigh and bar.index - 3 > structureHighStartIndex) or (structureDirection == 1 and highStructBreakPrice > structureHigh)
+
+// The line runs from the bar that set the level to this bar, with its label
+// at the middle bar; only the newest structHistoryNbr are kept.
+if (isStuctureLowBroken or isStructureHighBroken) and size(structureLines) >= structHistoryNbr
+    draw.delete(shift(structureLines))
+    draw.delete(shift(structureLabels))
+
+if isStuctureLowBroken
+    labelTime = timeAt(floor((bar.index + structureLowStartIndex) / 2))
+    if structureDirection == 1
+        // A break down in a falling structure continues it.
+        push(structureLines, draw.line(timeAt(structureLowStartIndex), structureLow, time, structureLow, color = bearishBosColor, style = lineStyle(bosLineStyleOption), width = bosLineWidth))
+        push(structureLabels, draw.label(labelTime, structureLow, "BOS", color = none, textColor = bearishBosColor))
+        isBOSAlert = true
+    else
+        // A break down out of a rising structure changes its character.
+        push(structureLines, draw.line(timeAt(structureLowStartIndex), structureLow, time, structureLow, color = bearishChochColor, style = lineStyle(chochLineStyleOption), width = chochLineWidth))
+        push(structureLabels, draw.label(labelTime, structureLow, "CHoCH", color = none, textColor = bearishChochColor))
+        isCHOCHAlert = true
+    structureDirection = 1
+    structureHighStartIndex = structureMaxBar
+    structureLowStartIndex = bar.index
+    structureHigh = high[bar.index - structureHighStartIndex]
+    structureLow = low
+else if isStructureHighBroken
+    labelTime = timeAt(floor((bar.index + structureHighStartIndex) / 2))
+    if structureDirection == 2
+        push(structureLines, draw.line(timeAt(structureHighStartIndex), structureHigh, time, structureHigh, color = bullishBosColor, style = lineStyle(bosLineStyleOption), width = bosLineWidth))
+        push(structureLabels, draw.label(labelTime, structureHigh, "BOS", color = none, textColor = bullishBosColor))
+        isBOSAlert = true
+    else
+        push(structureLines, draw.line(timeAt(structureHighStartIndex), structureHigh, time, structureHigh, color = bullishChochColor, style = lineStyle(chochLineStyleOption), width = chochLineWidth))
+        push(structureLabels, draw.label(labelTime, structureHigh, "CHoCH", color = none, textColor = bullishChochColor))
+        isCHOCHAlert = true
+    structureDirection = 2
+    structureHighStartIndex = bar.index
+    structureLowStartIndex = structureMinBar
+    structureHigh = high
+    structureLow = low[bar.index - structureLowStartIndex]
+else
+    isBOSAlert = false
+    isCHOCHAlert = false
+    // Without a break, a new extreme moves the level when the level was set
+    // within the last three bars, or always when wicks break.
+    if high > structureHigh and (structureDirection == 0 or structureDirection == 2)
+        if not isStructBodyCandleBreak or not (bar.index >= 3 and bar.index - 3 > structureHighStartIndex)
+            structureHigh = high
+            structureHighStartIndex = bar.index
+    else if low < structureLow and (structureDirection == 0 or structureDirection == 1)
+        if not isStructBodyCandleBreak or not (bar.index >= 3 and bar.index - 3 > structureLowStartIndex)
+            structureLow = low
+            structureLowStartIndex = bar.index
+
+structureRange = abs(structureHigh - structureLow)
+
+// ---- Current structure and its Fibonacci levels, redrawn on every bar -----------
+var structureHighLine: line = none
+var structureLowLine: line = none
+var fibo1Line: line = none
+var fibo2Line: line = none
+var fibo3Line: line = none
+var fibo4Line: line = none
+var fibo5Line: line = none
+var fibo1Label: label = none
+var fibo2Label: label = none
+var fibo3Label: label = none
+var fibo4Label: label = none
+var fibo5Label: label = none
+
+// A level of `value` sits value times the range back from the newest
+// extreme: below the structure high after a break up (and before the first
+// break), above the structure low after a break down.
+fn fiboPrice(value) =>
+    structureDirection == 1 ? structureHigh - (structureRange - structureRange * value) : structureLow + (structureRange - structureRange * value)
+
+fiboStart = timeAt(structureDirection == 1 ? structureHighStartIndex : structureLowStartIndex)
+labelAt = time + 20 * barMs
+
+if isCurrentStructToShow
+    draw.delete(structureHighLine)
+    draw.delete(structureLowLine)
+    structureHighLine = draw.line(timeAt(structureHighStartIndex), structureHigh, time, structureHigh, color = currentStructColor, style = lineStyle(currentStructLineStyleOption), width = currentStructLineWidth)
+    structureLowLine = draw.line(timeAt(structureLowStartIndex), structureLow, time, structureLow, color = currentStructColor, style = lineStyle(currentStructLineStyleOption), width = currentStructLineWidth)
+
+    if isFibo1ToShow
+        draw.delete(fibo1Line)
+        draw.delete(fibo1Label)
+        p1 = fiboPrice(fibo1Value)
+        fibo1Line = draw.line(fiboStart, p1, time, p1, color = fibo1Color, style = lineStyle(fibo1StyleOption), width = fibo1LineWidth)
+        fibo1Label = draw.label(labelAt, p1, text(fibo1Value) + "(" + text(p1, 2) + ")", color = none, textColor = fibo1Color)
+
+    if isFibo2ToShow
+        draw.delete(fibo2Line)
+        draw.delete(fibo2Label)
+        p2 = fiboPrice(fibo2Value)
+        fibo2Line = draw.line(fiboStart, p2, time, p2, color = fibo2Color, style = lineStyle(fibo2StyleOption), width = fibo2LineWidth)
+        fibo2Label = draw.label(labelAt, p2, text(fibo2Value) + "(" + text(p2, 2) + ")", color = none, textColor = fibo2Color)
+
+    if isFibo3ToShow
+        draw.delete(fibo3Line)
+        draw.delete(fibo3Label)
+        p3 = fiboPrice(fibo3Value)
+        fibo3Line = draw.line(fiboStart, p3, time, p3, color = fibo3Color, style = lineStyle(fibo3StyleOption), width = fibo3LineWidth)
+        fibo3Label = draw.label(labelAt, p3, text(fibo3Value) + "(" + text(p3, 2) + ")", color = none, textColor = fibo3Color)
+
+    if isFibo4ToShow
+        draw.delete(fibo4Line)
+        draw.delete(fibo4Label)
+        p4 = fiboPrice(fibo4Value)
+        fibo4Line = draw.line(fiboStart, p4, time, p4, color = fibo4Color, style = lineStyle(fibo4StyleOption), width = fibo4LineWidth)
+        fibo4Label = draw.label(labelAt, p4, text(fibo4Value) + "(" + text(p4, 2) + ")", color = none, textColor = fibo4Color)
+
+    if isFibo5ToShow
+        draw.delete(fibo5Line)
+        draw.delete(fibo5Label)
+        p5 = fiboPrice(fibo5Value)
+        fibo5Line = draw.line(fiboStart, p5, time, p5, color = fibo5Color, style = lineStyle(fibo5StyleOption), width = fibo5LineWidth)
+        fibo5Label = draw.label(labelAt, p5, text(fibo5Value) + "(" + text(p5, 2) + ")", color = none, textColor = fibo5Color)
+
+// The chart draws a study's objects only when the study has a plot, so one
+// fully transparent line carries them. It shows nothing.
+plot(close, "Marker Anchor", rgba(0, 0, 0, 0))
+
+if fvgMitigatedNow
+    alert("FVG has been mitigated", id = "fvg-mitigated", title = "FVG mitigated")
+if isBOSAlert
+    alert("BOS", id = "bos", title = "BOS")
+if isCHOCHAlert
+    alert("CHOCH", id = "choch", title = "CHOCH")

@@ -1,0 +1,17 @@
+{
+  "title": "Zig Zag",
+  "summary": "Straight lines joining swing highs and lows that reversed by at least a set percentage, with labels marking each confirmed pivot.",
+  "description": "Zig Zag filters out small price moves and draws only the swings that matter. A swing is confirmed when price reverses from its extreme by at least the `Deviation %`. While price is rising, each new high moves the end of the current leg up; once price falls that percentage below the leg's highest point, that point is confirmed as a swing high and a new down leg starts. Falling legs work the same way in reverse.\n\nThe study joins each confirmed pivot to the next with a straight line. The newest line, from the last confirmed pivot to the most extreme price since, keeps moving with each new extreme until the reversal that confirms it arrives. With `Price` set to High/Low the swings run between bar highs and lows; with Close they use closing prices only, which ignores wicks.\n\nEach confirmed pivot gets a label: HH or LH for a swing high above or below the previous swing high, HL or LL for a swing low above or below the previous swing low, and H or L for the first of each.",
+  "howToRead": "A run of HH and HL labels describes a rising market and a run of LH and LL labels a falling one; a mix of them is a range. The lines make support and resistance at old swing points easy to see, and the length of each leg in price and bars gives a feel for the market's normal swing size.\n\nThe last leg is not settled. Its end moves as long as price keeps extending, and the pivot it ends at is only confirmed after price has reversed by the full percentage, so the study never marks a turn on the bar that made it. Treat it as a way to read structure after the fact, not as a timing signal. A smaller deviation shows more, shorter swings; a larger one shows only the major turns.",
+  "settings": [
+    { "key": "deviation", "label": "Deviation %", "description": "How far price must reverse from a swing's extreme, in percent, before that extreme is confirmed as a pivot." },
+    { "key": "priceSource", "label": "Price", "description": "High/Low builds swings from bar highs and lows. Close uses closing prices only, which ignores wicks." },
+    { "key": "showLabels", "label": "Show Pivot Labels", "description": "Draw an HH, LH, HL or LL label at each confirmed pivot (H or L for the first swing high or low)." },
+    { "key": "lineColor", "label": "Line Color", "description": "The colour of the lines joining the pivots." }
+  ],
+  "faq": [
+    { "q": "Why does the last line keep changing?", "a": "Its end is the most extreme price since the last pivot. Until price reverses from it by the full percentage, a further extreme moves the end there." },
+    { "q": "Does Zig Zag repaint?", "a": "Confirmed pivots never move. Only the last leg changes, and a pivot is confirmed some bars after it formed, once the reversal is large enough, so the label appears late but stays." },
+    { "q": "Why is there no line at the very start of the chart?", "a": "The first pivot needs a move of the full deviation between the highest and lowest prices seen so far. Until then there is nothing to join." }
+  ]
+}

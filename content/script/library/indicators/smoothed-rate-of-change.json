@@ -1,0 +1,16 @@
+{
+  "title": "Smoothed Rate of Change (SROC)",
+  "summary": "Fred G. Schutzman's momentum line: the percentage change over 21 bars of a 13 bar exponential average, a calmer rate of change around zero.",
+  "description": "The Smoothed Rate of Change, described by Fred G. Schutzman, is a rate of change taken on a smoothed price instead of on the raw price. The source is first smoothed with an exponential average over `Smoothing Length` bars (13 by default), and the line is the percentage change of that average over `Rate of Change Length` bars (21 by default): 100 times the average now less the average back then, divided by the average back then.\n\nBecause both ends of the comparison are averages, a single unusual bar barely moves the line. The plain rate of change reacts twice to such a bar, once when it arrives and again when it drops out of the window, and the smoothing removes most of that noise. The exponential average starts from the simple average of its first bars, so the line begins once both lengths are covered.",
+  "howToRead": "Above zero the smoothed price is higher than it was a rate of change length ago, an upswing; below zero it is lower. The slope shows whether that momentum is building or fading, and a turn in the line often comes before the zero crossing. Some traders treat the zero crossing as the trend signal and the turns as early warnings.\n\nA new price high on a lower SROC peak shows the move is losing momentum. The smoothing adds lag, so the line confirms turns a few bars after price makes them, and in a narrow range it drifts around zero without clear swings.",
+  "settings": [
+    { "key": "src", "label": "Source", "description": "The price series that is smoothed. Close is the default." },
+    { "key": "emaLength", "label": "Smoothing Length", "description": "Bars in the exponential average applied before the change is measured. Longer lengths give a smoother, slower line." },
+    { "key": "rocLength", "label": "Rate of Change Length", "description": "How many bars back the smoothed value is compared with. Longer lengths measure broader swings." }
+  ],
+  "faq": [
+    { "q": "How is this different from the plain rate of change?", "a": "The plain rate of change compares two single closes, so one spike moves it twice. This version compares two values of an exponential average, which gives a smoother line with fewer false crossings." },
+    { "q": "What do the values mean?", "a": "A reading of 2 means the smoothed price is 2 percent higher than it was a rate of change length ago; a reading of -2 means it is 2 percent lower." },
+    { "q": "Why does the line start later than the price?", "a": "The exponential average needs its smoothing length to start, and the comparison then needs another rate of change length of bars." }
+  ]
+}

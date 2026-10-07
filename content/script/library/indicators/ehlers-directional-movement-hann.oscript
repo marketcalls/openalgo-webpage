@@ -1,0 +1,35 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © openalgo
+
+version 1
+study("Ehlers Directional Movement with Hann Windowing (DMH)", "DMH", precision = 2)
+
+length = input(14, "Length", min = 1)
+
+// Plus and minus directional movement: the larger of the rise in the high and
+// the fall in the low counts if it is positive, and the other is zero.
+upper = high - high[1]
+lower = low[1] - low
+plusDM = upper > lower and upper > 0 ? upper : 0
+minusDM = lower > upper and lower > 0 ? lower : 0
+
+// Their difference, smoothed by an exponential average with alpha 1 / length
+// that starts from zero on the first bar that has a previous bar.
+sf = 1 / length
+var prevEma = 0.0
+emaValue = bar.index > 0 ? sf * (plusDM - minusDM) + (1 - sf) * prevEma : none
+if bar.index > 0
+    prevEma = emaValue
+
+// A Hann-windowed average of the last length values, newest first, weights
+// 1 - cos(2 pi k / (length + 1)) for k = 1 to length.
+total = 0.0
+coef = 0.0
+for k = 1 to length
+    w = 1 - math.cos(2 * math.pi * k / (length + 1))
+    total = total + w * emaValue[k - 1]
+    coef = coef + w
+dmh = isNone(emaValue[length - 1]) or coef == 0 ? none : total / coef
+
+level(0, "Zero Line", #787b86, style = "dotted")
+plot(dmh, "DMH", dmh >= 0 ? #26a69a : #ef5350, width = 2)

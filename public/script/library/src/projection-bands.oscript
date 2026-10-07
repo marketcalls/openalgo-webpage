@@ -1,0 +1,27 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © openalgo
+
+version 1
+study("Projection Bands", "PB", overlay = true, precision = 2)
+
+length = input(14, "Length", min = 2)
+
+// The slope per bar of a least squares line through the last `length` highs,
+// and of another through the last `length` lows.
+slopeHigh = linreg(high, length, 0) - linreg(high, length, 1)
+slopeLow = linreg(low, length, 0) - linreg(low, length, 1)
+
+// Carry every high and low in the window forward to this bar along its slope:
+// a high `i` bars back rises (or falls) by `i` times the slope of the highs.
+// The upper band is the largest carried high, the lower band the smallest
+// carried low. The slopes are absent until the window is full, so the bands
+// are too.
+upper = high + 0 * slopeHigh
+lower = low + 0 * slopeLow
+for i = 1 to length - 1
+    upper = max(upper, high[i] + i * slopeHigh)
+    lower = min(lower, low[i] + i * slopeLow)
+
+u = plot(upper, "Upper Band", #ff5252, width = 2)
+l = plot(lower, "Lower Band", #4caf50, width = 2)
+fill(u, l, #2962FF, opacity = 0.1)

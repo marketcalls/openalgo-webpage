@@ -61,10 +61,12 @@ const mdInline = (text) => (text ? marked.parseInline(String(text)) : "")
 // ---------------------------------------------------------------------------
 
 // Bump to redraw every picture after a change to the renderer below.
-const RENDERER_VERSION = "2"
+const RENDERER_VERSION = "5"
 const W = 640
 const H = 360
 const SHOWN = 140
+/** Bars the page's chart shows when it opens; LibraryChart's VISIBLE_BARS. */
+const VIEW_BARS = 220
 const BG = "#0f0f10"
 const GRID = "#1d1d20"
 const UP = "#26a69a"
@@ -76,10 +78,46 @@ const rgba = (c, alpha = 1) => {
   return `rgba(${Math.round(r)},${Math.round(g)},${Math.round(b)},${+(a * alpha).toFixed(3)})`
 }
 
-function thumbnail(program, run, engine) {
+/**
+ * The last bar that carries one of the study's events: a marker, a label or
+ * other drawing, a bar colour or a background. Plots are not events.
+ */
+function lastEventIndex(program, run, engine) {
+  let last = -1
+  const index = new Map(bars.map((b, i) => [b.time * 1000, i]))
+  const channels = [...(program.outputs.markers ?? []).map((m) => m.channel)]
+  if (program.outputs.barColor) channels.push(program.outputs.barColor.channel)
+  if (program.outputs.background) channels.push(program.outputs.background.channel)
+  run.bars.forEach((bar, i) => {
+    if (channels.some((ch) => bar.columns[ch] !== null && bar.columns[ch] !== undefined)) last = i
+  })
+  for (const d of engine.drawings()) for (const a of d.anchors) last = Math.max(last, index.get(Number(a.time)) ?? -1)
+  return last
+}
+
+/**
+ * Where the default view ends. A study whose events all fall before the
+ * newest stretch of bars opens on its last event instead, so its first view
+ * is not an empty chart.
+ */
+function viewEndOf(lastEvent) {
   const n = bars.length
-  const from = Math.max(0, n - SHOWN)
-  const view = bars.slice(from)
+  return lastEvent >= 0 && lastEvent < n - VIEW_BARS + 20 ? Math.min(n - 1, lastEvent + 40) : null
+}
+
+/** How many bar intervals past the newest bar any drawing reaches. */
+function aheadOfDrawings(engine) {
+  const lastMs = bars.at(-1).time * 1000
+  let ahead = 0
+  for (const d of engine.drawings()) for (const a of d.anchors) ahead = Math.max(ahead, Math.ceil((Number(a.time) - lastMs) / 3600000))
+  return Math.min(ahead, 200)
+}
+
+function thumbnail(program, run, engine, viewEnd) {
+  const n = bars.length
+  const end = viewEnd ?? n - 1
+  const from = Math.max(0, end + 1 - SHOWN)
+  const view = bars.slice(from, end + 1)
   const isOverlay = programOverlay(program)
   const priceTop = 14
   const priceBottom = isOverlay ? H - 14 : Math.round(H * 0.62)
@@ -105,7 +143,7 @@ function thumbnail(program, run, engine) {
   const span0 = hi - lo
   if (isOverlay) {
     for (const { values } of plots)
-      for (let i = from; i < n; i++) {
+      for (let i = from; i <= end; i++) {
         const v = values[i]
         if (v !== null && v > lo - span0 * 0.6 && v < hi + span0 * 0.6) {
           lo = Math.min(lo, v)
@@ -121,14 +159,18 @@ function thumbnail(program, run, engine) {
   let pLo = Infinity
   let pHi = -Infinity
   if (!isOverlay) {
-    for (const { values } of plots)
-      for (let i = from; i < n; i++) {
+    // Only the plots drawn in the study's pane set its scale; a plot sent to
+    // the price pane (overlay = true) would flatten everything else.
+    for (const { p, values } of plots) {
+      if (p.overlay === true) continue
+      for (let i = from; i <= end; i++) {
         const v = values[i]
         if (v !== null) {
           pLo = Math.min(pLo, v)
           pHi = Math.max(pHi, v)
         }
       }
+    }
     for (const l of program.outputs.levels ?? []) {
       const v = engine.column(l.channel).at(-1)
       if (typeof v === "number" && Number.isFinite(v) && pHi > pLo && v >= pLo - (pHi - pLo) && v <= pHi + (pHi - pLo)) {
@@ -156,7 +198,7 @@ function thumbnail(program, run, engine) {
 
   // Background shading, behind everything.
   if (program.outputs.background) {
-    for (let i = from; i < n; i++) {
+    for (let i = from; i <= end; i++) {
       const c = rgba(run.bars[i].columns[program.outputs.background.channel])
       if (c) out.push(`<rect x="${(xAt(i) - step / 2).toFixed(1)}" y="0" width="${step.toFixed(2)}" height="${H}" fill="${c}"/>`)
     }
@@ -177,7 +219,7 @@ function thumbnail(program, run, engine) {
       }
       seg = []
     }
-    for (let i = from; i < n; i++) {
+    for (let i = from; i <= end; i++) {
       const va = a.values[i]
       const vb = b.values[i]
       if (va === null || vb === null) flush()
@@ -188,7 +230,7 @@ function thumbnail(program, run, engine) {
 
   // Candles, recoloured where the study paints them.
   const w = Math.max(1, step * 0.62)
-  for (let i = from; i < n; i++) {
+  for (let i = from; i <= end; i++) {
     const b = bars[i]
     const painted = program.outputs.barColor ? rgba(run.bars[i].columns[program.outputs.barColor.channel]) : null
     const c = painted ?? (b.close >= b.open ? UP : DOWN)
@@ -217,7 +259,7 @@ function thumbnail(program, run, engine) {
     const width = Math.max(1, Math.min(3, Number(p.width) || 1.5))
     if (p.type === "histogram" || p.type === "column") {
       const zero = p.type === "histogram" ? clampY(y(0), top, bottom) : bottom
-      for (let i = from; i < n; i++) {
+      for (let i = from; i <= end; i++) {
         const v = values[i]
         if (v === null) continue
         const c = (colours && rgba(colours[i])) ?? base
@@ -228,7 +270,7 @@ function thumbnail(program, run, engine) {
     }
     let path = ""
     let prev = false
-    for (let i = from; i < n; i++) {
+    for (let i = from; i <= end; i++) {
       const v = values[i]
       if (v === null) {
         prev = false
@@ -272,7 +314,7 @@ function thumbnail(program, run, engine) {
   // Markers from signal().
   for (const m of program.outputs.markers ?? []) {
     const c = rgba(m.color) ?? "#9e9e9e"
-    for (let i = from; i < n; i++) {
+    for (let i = from; i <= end; i++) {
       if (run.bars[i].columns[m.channel] === null || run.bars[i].columns[m.channel] === undefined) continue
       const x = xAt(i)
       const below = m.position === "below"
@@ -351,13 +393,22 @@ for (const row of catalog.filter(PUBLISHED)) {
 
   changed += writeIfChanged(join(PUBLIC, "src", `${row.slug}.oscript`), source)
 
-  // The picture is redrawn only when the source or the renderer changes.
+  // The picture is redrawn only when the source or the renderer changes. Its
+  // first line records the hash it was drawn from and where the view ends,
+  // which the page's chart reuses, so an unchanged study needs no run.
   const thumbPath = join(PUBLIC, "thumbs", `${row.slug}.svg`)
-  const stamp = `<!-- ${sha(source + RENDERER_VERSION)} -->`
+  // A study whose defaults draw nothing on these bars can name settings for
+  // the page's chart; the picture and the view use them too.
+  const chartSettings = meta.chartSettings && Object.keys(meta.chartSettings).length ? meta.chartSettings : null
+  const hash = sha(source + RENDERER_VERSION + JSON.stringify(chartSettings ?? {}))
   const existing = existsSync(thumbPath) ? readFileSync(thumbPath, "utf8") : ""
-  if (!existing.startsWith(stamp)) {
+  const recorded = existing.match(/^<!-- ([0-9a-f]{16}) end=(\d+|none) ahead=(\d+) -->/)
+  let viewEnd = recorded && recorded[1] === hash ? (recorded[2] === "none" ? null : Number(recorded[2])) : undefined
+  let ahead = recorded && recorded[1] === hash ? Number(recorded[3]) : 0
+  if (viewEnd === undefined) {
     const loaded = load(program, {
       source: compiled.file,
+      settings: chartSettings ?? undefined,
       host: {
         instrument: { symbol: "BTCUSD", exchange: "CRYPTO", interval: "60", timezone: "UTC", tickSize: 0.01, lotSize: 1, currency: "USD", hasVolume: true },
         now: bars.at(-1).time * 1000,
@@ -366,7 +417,9 @@ for (const row of catalog.filter(PUBLISHED)) {
     if (loaded.ok) {
       const run = loaded.engine.run(bars.map((b) => ({ ...b, time: b.time * 1000 })))
       if (!run.diagnostic) {
-        writeFileSync(thumbPath, stamp + thumbnail(program, run, loaded.engine))
+        viewEnd = viewEndOf(lastEventIndex(program, run, loaded.engine))
+        ahead = aheadOfDrawings(loaded.engine)
+        writeFileSync(thumbPath, `<!-- ${hash} end=${viewEnd ?? "none"} ahead=${ahead} -->` + thumbnail(program, run, loaded.engine, viewEnd))
         thumbs++
       }
     }
@@ -402,6 +455,18 @@ for (const row of catalog.filter(PUBLISHED)) {
     interval: "1h",
     dataFrom: dateOf(bars[0].time),
     dataTo: dateOf(bars.at(-1).time),
+    // Bars back from the newest that the chart's view should end on, when the
+    // study's last event is older than the default view.
+    viewEndBack: viewEnd === null || viewEnd === undefined ? null : bars.length - 1 - viewEnd,
+    // Bars past the newest that a drawing reaches (a label placed ahead).
+    aheadBars: ahead,
+    chartSettings,
+    chartNote: meta.chartNote ?? null,
+    chartSettingsText: chartSettings
+      ? Object.entries(chartSettings)
+          .map(([k, v]) => `${labels[k] ?? k} ${v}`)
+          .join(", ")
+      : null,
   }
   pages.set(row.slug, page)
 }
@@ -441,6 +506,17 @@ if (existsSync(APP)) {
   }
 }
 if (existsSync(LIB_PAGES)) rmSync(LIB_PAGES, { recursive: true, force: true })
+
+// Sources and pictures of studies no longer published go with them.
+const published = new Set(index.map((e) => e.slug))
+for (const [dir, ext] of [["src", ".oscript"], ["thumbs", ".svg"]]) {
+  for (const f of readdirSync(join(PUBLIC, dir))) {
+    if (f.endsWith(ext) && !published.has(f.slice(0, -ext.length))) {
+      rmSync(join(PUBLIC, dir, f))
+      changed++
+    }
+  }
+}
 
 const categories = Object.entries(byCategory)
   .map(([name, slugs]) => ({ name, count: slugs.length }))

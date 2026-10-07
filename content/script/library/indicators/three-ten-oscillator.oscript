@@ -1,0 +1,20 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © openalgo
+
+version 1
+study("3-10 Oscillator", "3-10", precision = 2)
+
+src = input(close, "Source")
+fastLength = input(3, "Fast Length", min = 1)
+slowLength = input(10, "Slow Length", min = 1)
+signalLength = input(16, "Signal Length", min = 1)
+
+// The gap between a fast and a slow simple average of the source (the close
+// in the widely documented definition), and a simple average of that gap as
+// the signal line.
+osc = sma(src, fastLength) - sma(src, slowLength)
+signalLine = sma(osc, signalLength)
+
+plot(osc, "Oscillator", osc >= 0 ? #26A69A : #EF5350, style = "histogram")
+plot(signalLine, "Signal", #FF9800, width = 2)
+level(0, "Zero", #787B86, style = "dashed")

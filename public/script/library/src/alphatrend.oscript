@@ -1,0 +1,80 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © openalgo
+// Original work (c) KivancOzbilgic, MPL-2.0
+
+version 1
+study("AlphaTrend", "AT", overlay = true, precision = 2)
+
+coeff = input(1.0, "Multiplier", step = 0.1)
+AP = input(14, "Common Period", min = 1)
+src = input(close, "Source")
+showsignalsk = input(true, "Show Signals?")
+novolumedata = input(false, "Change calculation (no volume data)?")
+
+// The range: a simple average of the true range. The first bar has no
+// previous close, so it has no true range and the average starts a bar later.
+tr = bar.isFirst ? none : trueRange()
+atrValue = sma(tr, AP)
+upT = low - atrValue * coeff
+downT = high + atrValue * coeff
+
+// Money flow on the typical price, as a 0 to 100 reading. A bar whose typical
+// price did not rise adds nothing to the upper sum, and one that did not fall
+// adds nothing to the lower; the first bar has no change and counts on both.
+chg = change(hlc3)
+upper = sum(orElse(volume, 0) * (chg <= 0 ? 0 : hlc3), AP)
+lower = sum(orElse(volume, 0) * (chg >= 0 ? 0 : hlc3), AP)
+moneyFlow = 100 - 100 / (1 + upper / lower)
+momentum = rsi(src, AP)
+
+// The line trails below the low while money flow (or momentum, without
+// volume) is at or above 50, and above the high otherwise, and only ever
+// moves toward price. Its previous value reads as zero before it exists.
+bullish = novolumedata ? momentum >= 50 : moneyFlow >= 50
+var atState = none
+prevAt = orElse(atState, 0)
+alphaTrend = bullish ? (upT < prevAt ? prevAt : upT) : (downT > prevAt ? prevAt : downT)
+atState = alphaTrend
+
+lagged = alphaTrend[2]
+k1 = plot(alphaTrend, "AlphaTrend", #0022FC, width = 3)
+k2 = plot(lagged, "AlphaTrend 2 Bars Back", #FC0400, width = 3)
+// Green while the line is above its value two bars back, dark red while it
+// is below; on a tie, the previous bar's comparison decides.
+fill(k1, k2, alphaTrend > lagged ? #00E60F : alphaTrend < lagged ? #80000B : alphaTrend[1] > alphaTrend[3] ? #00E60F : #80000B)
+
+buySignalk = crossUp(alphaTrend, lagged)
+sellSignalk = crossDown(alphaTrend, lagged)
+K1 = barsSince(buySignalk)
+K2 = barsSince(sellSignalk)
+O1 = barsSince(buySignalk[1])
+O2 = barsSince(sellSignalk[1])
+
+// A signal is the first crossing since the opposite one.
+buyFirst = buySignalk and O1 > K2
+sellFirst = sellSignalk and O2 > K1
+if showsignalsk and buyFirst
+    draw.label(time, lagged * 0.9999, "BUY", color = #0022FC, textColor = white)
+if showsignalsk and sellFirst
+    draw.label(time, lagged * 1.0001, "SELL", color = maroon, textColor = white)
+
+if buyFirst
+    alert("BUY SIGNAL!", id = "potential-buy", title = "Potential BUY Alarm")
+if sellFirst
+    alert("SELL SIGNAL!", id = "potential-sell", title = "Potential SELL Alarm")
+if buySignalk[1] and O1[1] > K2
+    alert("BUY SIGNAL APPROVED!", id = "confirmed-buy", title = "Confirmed BUY Alarm")
+if sellSignalk[1] and O2[1] > K1
+    alert("SELL SIGNAL APPROVED!", id = "confirmed-sell", title = "Confirmed SELL Alarm")
+if cross(close, alphaTrend)
+    alert("Price - AlphaTrend Crossing!", id = "price-cross", title = "Price Cross Alert")
+if crossUp(low, alphaTrend)
+    alert("LAST BAR is ABOVE ALPHATREND", id = "candle-crossover", title = "Candle CrossOver Alarm")
+if crossDown(high, alphaTrend)
+    alert("LAST BAR is BELOW ALPHATREND!", id = "candle-crossunder", title = "Candle CrossUnder Alarm")
+if cross(close[1], alphaTrend[1])
+    alert("Price - AlphaTrend Crossing!", id = "price-cross-after-close", title = "Price Cross Alert After Bar Close")
+if crossUp(low[1], alphaTrend[1])
+    alert("LAST BAR is ABOVE ALPHATREND!", id = "candle-crossover-after-close", title = "Candle CrossOver Alarm After Bar Close")
+if crossDown(high[1], alphaTrend[1])
+    alert("LAST BAR is BELOW ALPHATREND!", id = "candle-crossunder-after-close", title = "Candle CrossUnder Alarm After Bar Close")

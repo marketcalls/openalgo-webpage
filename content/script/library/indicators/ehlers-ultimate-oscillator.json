@@ -1,0 +1,17 @@
+{
+  "title": "Ehlers Ultimate Oscillator",
+  "summary": "John Ehlers' oscillator: the difference of two highpass filters, keeping the swings between two periods, scaled by its own RMS.",
+  "description": "This oscillator by John Ehlers isolates the price swings that fall in a chosen band of periods. It runs two two-pole highpass filters on the source: one with its cutoff at `Bandwidth * Band Edge` bars (40 with the defaults) and one with its cutoff at the `Band Edge` (20). The first keeps every swing shorter than 40 bars, the second every swing shorter than 20, so their difference holds the swings between 20 and 40 bars and drops both the trend and the fast noise.\n\nThe difference is then divided by its root mean square over `RMS Length` bars: the square root of the average of its squares. That makes the output a count of typical swings, so a reading of 1 is a swing of ordinary size and 2 an unusually large one, on any instrument.\n\nEach highpass uses `a1 = exp(-1.414 * pi / period)`, `c2 = 2 * a1 * cos(1.414 * pi / period)`, `c3 = -a1 * a1` and `c1 = (1 + c2 - c3) / 4`, with output `c1 * (src - 2 * src[1] + src[2]) + c2 * HP[1] + c3 * HP[2]`, and is zero on the first three bars. The oscillator appears once the RMS window has filled, and where the RMS is zero it keeps its previous value.",
+  "howToRead": "The line swings around zero with the cycles in the chosen band. A turn up from below zero marks the start of an upswing and a turn down from above zero the start of a downswing; crossings of zero confirm them. Because the output is scaled by its own size, readings beyond about 2 or below about -2 are stretched moves.\n\nIt says nothing about the trend, which it removes on purpose, so read it alongside a trend view. When the market has no swing near the chosen band, the line wanders with little structure.",
+  "settings": [
+    { "key": "src", "label": "Source", "description": "The price series the two filters are applied to. Close is the default." },
+    { "key": "bandEdge", "label": "Band Edge", "description": "The shorter cutoff period, in bars. Swings faster than this are removed. 20 is the published default." },
+    { "key": "bandWidth", "label": "Bandwidth", "description": "The longer cutoff is this multiple of the band edge, so a larger value widens the band toward slower swings. 2 is the published default and suits most charts; the lowest value offered is 1.4, the narrowest band the definition recommends." },
+    { "key": "rmsLength", "label": "RMS Length", "description": "Bars in the root mean square that scales the output. 100 is the published value. The oscillator starts once this many bars exist." }
+  ],
+  "faq": [
+    { "q": "Why the difference of two highpass filters?", "a": "Each highpass removes swings slower than its cutoff. Subtracting the faster cutoff from the slower one leaves only the swings between the two periods, which works as a band filter without the ringing of a narrow one." },
+    { "q": "What does a reading of 1 mean?", "a": "The filtered swing is as large as its own root mean square over the RMS length, a swing of typical size. 2 is twice that." },
+    { "q": "Why is the start of the chart empty?", "a": "The scaling needs a full window of RMS Length bars, 100 by default, before the first value can be drawn." }
+  ]
+}

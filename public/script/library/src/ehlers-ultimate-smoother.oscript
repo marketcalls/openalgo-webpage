@@ -1,0 +1,26 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © openalgo
+
+version 1
+study("Ehlers Ultimate Smoother", "US", overlay = true, precision = 2)
+
+src = input(close, "Source")
+length = input(20, "Period", min = 2, step = 1)
+
+// Coefficients of the two-pole filter for this period. The angle is
+// 1.414 * pi / period in radians.
+a1 = exp(-1.414 * math.pi / length)
+c2 = 2 * a1 * math.cos(1.414 * math.pi / length)
+c3 = -a1 * a1
+c1 = (1 + c2 - c3) / 4
+
+// The output is the source minus a two-pole highpass of it, written as one
+// recursion on the last three inputs and the last two outputs. The first
+// three bars, which lack that history, pass the source straight through.
+var us1 = none
+var us2 = none
+us = bar.index < 3 ? src : (1 - c1) * src + (2 * c1 - c2) * src[1] - (c1 + c3) * src[2] + c2 * us1 + c3 * us2
+us2 = us1
+us1 = us
+
+plot(us, "Ultimate Smoother", #2962FF, width = 2)

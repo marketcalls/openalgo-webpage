@@ -261,10 +261,10 @@ continuous = signalMode == "Continuous Signals"
 shortSignal = continuous ? shortTrigger : shortEntry
 longSignal = continuous ? longTrigger : longEntry
 
-plot(maDisplay ? ema1 : none, "EMA 1", #26A69A, width = 1)
+plot(maDisplay ? ema1 : none, "EMA 1", #00BCD4, width = 1)
 plot(maDisplay ? ema2 : none, "EMA 2", #2962FF, width = 1)
 plot(maDisplay ? ema3 : none, "EMA 3", #FF6D00, width = 1)
-plot(maDisplay ? ema4 : none, "EMA 4", #FF5252, width = 1)
+plot(maDisplay ? ema4 : none, "EMA 4", #E040FB, width = 1)
 plot(vtwapDisplay ? vtwap : none, "VWAP/TWAP", #D1D4DC, width = 2)
 plot(stDir < 0 ? stShown : none, "Supertrend Up", #26A69A, width = 2)
 plot(stDir > 0 ? stShown : none, "Supertrend Down", #FF5252, width = 2)

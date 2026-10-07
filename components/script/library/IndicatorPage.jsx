@@ -88,7 +88,7 @@ export default function IndicatorPage({ data }) {
           </div>
           <p className="osl-lede">{data.summary}</p>
 
-          <Workbench file={data.file} lines={data.lines} capturedAt={data.dataTo} interval={data.interval} />
+          <Workbench file={data.file} lines={data.lines} capturedAt={data.dataTo} interval={data.interval} viewEndBack={data.viewEndBack ?? null} aheadBars={data.aheadBars ?? 0} chartSettings={data.chartSettings ?? null} chartSettingsText={data.chartSettingsText ?? null} chartNote={data.chartNote ?? null} />
         </div>
       </section>
 

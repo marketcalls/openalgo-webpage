@@ -1,0 +1,21 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © openalgo
+
+version 1
+study("Inverse Fisher Transform of RSI", "IFT RSI", precision = 3)
+
+src = input(close, "Source")
+rsiLength = input(5, "RSI Length", min = 1, step = 1, tooltip = "Bars in the RSI.")
+wmaLength = input(9, "Smoothing Length", min = 1, step = 1, tooltip = "Bars in the weighted moving average applied before the transform.")
+
+// Rescale the RSI to about -5 to 5, centred on zero, and smooth it.
+v1 = 0.1 * (rsi(src, rsiLength) - 50)
+v2 = wma(v1, wmaLength)
+
+// The inverse Fisher transform squeezes the result into -1 to 1.
+expTwice = exp(2 * v2)
+ift = (expTwice - 1) / (expTwice + 1)
+
+plot(ift, "IFT RSI", #2962ff, width = 2)
+level(0.5, "Upper", #787b86, style = "dashed")
+level(-0.5, "Lower", #787b86, style = "dashed")

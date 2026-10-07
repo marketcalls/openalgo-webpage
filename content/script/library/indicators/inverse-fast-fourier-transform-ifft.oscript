@@ -3,7 +3,7 @@
 // Original work (c) mihakralj, MIT License
 
 version 1
-study("Inverse Fast Fourier Transform (IFFT)", overlay = true, precision = 2)
+study("Inverse Fast Fourier Transform (IFFT)", precision = 2)
 
 source = input(close, "Source")
 window = input(64, "Window Size", min = 32, max = 128, step = 32, tooltip = "DFT window; larger = finer frequency resolution")

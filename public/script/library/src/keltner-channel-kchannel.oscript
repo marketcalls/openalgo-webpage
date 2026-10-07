@@ -36,7 +36,7 @@ basis = emaSum / emaWeight
 
 bandWidth = mult * orElse(atrValue, 0)
 
-plot(basis, "Middle", #ffeb3b, width = 2)
+plot(basis, "Middle", #ff9800, width = 2)
 top = plot(basis + bandWidth, "Upper", #ffeb3b, width = 2)
 bottom = plot(basis - bandWidth, "Lower", #ffeb3b, width = 2)
 fill(top, bottom, #2962ff, opacity = 0.1)

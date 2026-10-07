@@ -38,6 +38,6 @@ prevLower = orElse(finalLower, basicLower)
 finalUpper = bar.index == 0 ? basicUpper : basicUpper < prevUpper or prevClose > prevUpper ? basicUpper : prevUpper
 finalLower = bar.index == 0 ? basicLower : basicLower > prevLower or prevClose < prevLower ? basicLower : prevLower
 
-top = plot(finalUpper, "Upper Band", #ffeb3b, width = 2)
-bottom = plot(finalLower, "Lower Band", #ffeb3b, width = 2)
+top = plot(finalUpper, "Upper Band", #ff5252, width = 2)
+bottom = plot(finalLower, "Lower Band", #4caf50, width = 2)
 fill(top, bottom, #2962ff, opacity = 0.1)

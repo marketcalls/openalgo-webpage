@@ -1,0 +1,38 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © openalgo
+
+version 1
+study("Heikin Ashi Zero-Lag Average", "ZLHA", overlay = true, precision = 2)
+
+length = input(55, "Average Length", min = 1, tooltip = "Bars in each of the exponential averages behind both zero-lag lines.")
+src = input(hlc3, "Price Line Source")
+showSignals = input(true, "Show Crossings")
+
+// The zero-lag average: a triple exponential average of the series, taken
+// again over itself, with the difference between the two added back.
+fn zeroLag(values, len) =>
+    t1 = tema(values, len)
+    t2 = tema(t1, len)
+    t1 + (t1 - t2)
+
+// Heikin Ashi open: the midpoint of the previous open and the previous bar's
+// mean price; on the first bar, the midpoint of its own open and close.
+var haOpen = none
+prevOpen = haOpen
+haOpen = bar.isFirst ? (open + close) / 2 : (prevOpen + ohlc4[1]) / 2
+// Heikin Ashi close in Vervoort's form: the mean of the bar's mean price, the
+// Heikin Ashi open, and the open pushed out to the high and to the low.
+haClose = (ohlc4 + haOpen + max(high, haOpen) + min(low, haOpen)) / 4
+
+zlHa = zeroLag(haClose, length)
+zlPrice = zeroLag(src, length)
+
+plot(zlHa, "Zero-Lag Heikin Ashi", #EF5350, width = 2)
+plot(zlPrice, "Zero-Lag Price", #26A69A, width = 2)
+
+// The price line crossing above the Heikin Ashi line turns the reading up;
+// crossing below turns it down.
+up = crossUp(zlPrice, zlHa)
+down = crossDown(zlPrice, zlHa)
+signal(showSignals and up ? "Up" : none, color = #26A69A, at = "below", shape = "triangleUp")
+signal(showSignals and down ? "Down" : none, color = #EF5350, at = "above", shape = "triangleDown")

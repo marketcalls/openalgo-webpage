@@ -1,0 +1,16 @@
+{
+  "title": "Laguerre Filter",
+  "summary": "John Ehlers' four-stage Laguerre filter of the bar midpoint, a smooth low-lag average coloured green while it rises and red while it falls.",
+  "description": "The Laguerre Filter is John Ehlers' way of getting a smooth average with little lag from only four values of memory. The first stage is an exponential average of the source, `L0 = alpha * price + (1 - alpha) * L0 of the previous bar`. Each of the next three stages is an all-pass filter of the stage before it, `L(k) = -gamma * L(k-1) + L(k-1) of the previous bar + gamma * L(k) of the previous bar`, with `gamma = 1 - alpha`, so each stage delays the signal a little more without changing its size.\n\nThe filter is the weighted average of the four stages, `(L0 + 2*L1 + 2*L2 + L3) / 6`. The source defaults to the bar midpoint, `(high + low) / 2`. Every stage starts from zero, so the line climbs to price over the first stretch of bars before it settles.",
+  "howToRead": "Read the line as a trend average: price above a rising green line is an uptrend and price below a falling red line a downtrend. A change of colour marks the bar where the filter turns, which comes earlier than with a simple average of similar smoothness.\n\n`Alpha` sets the trade-off. A small alpha such as 0.2 weights the past heavily, giving a smooth line that follows the trend; a larger alpha follows price more closely and turns more often. Ignore the first bars, where the line is still rising from zero.",
+  "settings": [
+    { "key": "src", "label": "Source", "description": "The price series filtered. The bar midpoint, (high + low) / 2, is the default." },
+    { "key": "lagAlpha", "label": "Alpha", "description": "Weight of the newest price, from 0 to 1; gamma is 1 minus alpha. Smaller values smooth more and lag more." },
+    { "key": "colorchange", "label": "Change Color ?", "description": "Colour the line green while it rises and red while it falls; off draws it in one colour." }
+  ],
+  "faq": [
+    { "q": "Why does the line start at zero?", "a": "Every stage of the filter starts from zero, so on the first bars the output is a fraction of the price and climbs toward it. After a few dozen bars at the default alpha the start no longer matters." },
+    { "q": "How is it different from an exponential average?", "a": "The first stage is an exponential average; the three all-pass stages and the weighted average of the four reduce the lag that a single exponential average of the same smoothness would have." },
+    { "q": "How does it differ from the library's Ehlers Laguerre Filter (LAGUERRE)?", "a": "Both use Ehlers' formula. This one takes alpha rather than gamma, reads the bar midpoint by default, starts every stage from zero and colours the line by slope." }
+  ]
+}

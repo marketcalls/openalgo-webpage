@@ -77,5 +77,10 @@
       "q": "Why are some old boxes missing?",
       "a": "Only the newest 50 boxes are kept, to keep a long chart readable. The EQH and EQL tags stay on every pair."
     }
-  ]
+  ],
+  "chartSettings": {
+    "left": 10,
+    "right": 10,
+    "eqPercent": 0.1
+  }
 }

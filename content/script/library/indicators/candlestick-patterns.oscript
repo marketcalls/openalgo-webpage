@@ -1,0 +1,102 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © openalgo
+// Original work (c) repo32, MPL-2.0
+
+version 1
+study("Candlestick Patterns", overlay = true, precision = 2)
+
+trend = input(5, "Trend in Bars", min = 1, tooltip = "How many bars back the open is compared with, to require a prior move for the reversal patterns.")
+dojiSize = input(0.05, "Doji size", min = 0.01, step = 0.01, tooltip = "A doji's body is at most this fraction of its range.")
+
+bullColor = input(lime, "Bullish Arrow Color")
+bearColor = input(red, "Bearish Arrow Color")
+dojiColor = input(white, "Other (Doji) Symbol Color")
+
+body = abs(open - close)
+range = high - low
+openBack = open[trend]
+
+// A test that reads a bar before the first one is false.
+doji = body <= range * dojiSize
+bearHarami = close[1] > open[1] and open > close and open <= close[1] and open[1] <= close and open - close < close[1] - open[1] and openBack < open
+bullHarami = open[1] > close[1] and close > open and close <= open[1] and close[1] <= open and close - open < open[1] - close[1] and openBack > open
+bearEng = close[1] > open[1] and open > close and open >= close[1] and open[1] >= close and open - close > close[1] - open[1] and openBack < open
+bullEng = open[1] > close[1] and close > open and close >= open[1] and close[1] >= open and close - open > open[1] - close[1] and openBack > open
+piercing = close[1] < open[1] and open < low[1] and close > close[1] + (open[1] - close[1]) / 2 and close < open[1] and openBack > open
+// The lowest low of the ten bars before this one.
+lowerBefore = lowest(low, 10)[1]
+bullBelt = low == open and open < lowerBefore and open < close and close > (high[1] - low[1]) / 2 + low[1] and openBack > open
+bullKick = open[1] > close[1] and open >= open[1] and close > open and openBack > open
+bearKick = open[1] < close[1] and open <= open[1] and close <= open and openBack < open
+hangingMan = range > 4 * body and (close - low) / (0.001 + range) >= 0.75 and (open - low) / (0.001 + range) >= 0.75 and openBack < open and high[1] < open and high[2] < open
+eveningStar = close[2] > open[2] and min(open[1], close[1]) > close[2] and open < min(open[1], close[1]) and close < open
+morningStar = close[2] < open[2] and max(open[1], close[1]) < close[2] and open > max(open[1], close[1]) and close > open
+shootingStar = open[1] < close[1] and open > close[1] and high - max(open, close) >= body * 3 and min(close, open) - low <= body
+hammer = range > 3 * body and (close - low) / (0.001 + range) > 0.6 and (open - low) / (0.001 + range) > 0.6
+invHammer = range > 3 * body and (high - close) / (0.001 + range) > 0.6 and (high - open) / (0.001 + range) > 0.6
+
+// The chart draws a study's markers only when the study has a plot, so one
+// fully transparent column carries them. It shows nothing.
+plot(close, "Patterns", rgba(0, 0, 0, 0))
+
+if doji
+    signal("Doji", color = dojiColor, at = "above", shape = "cross")
+if bearHarami
+    signal("Bearish Harami", color = bearColor, at = "above", shape = "arrowDown")
+if bullHarami
+    signal("Bullish Harami", color = bullColor, at = "below", shape = "arrowUp")
+if bearEng
+    signal("Bearish Engulfing", color = bearColor, at = "above", shape = "arrowDown")
+if bullEng
+    signal("Bullish Engulfing", color = bullColor, at = "below", shape = "arrowUp")
+if piercing
+    signal("Piercing Line", color = bullColor, at = "below", shape = "arrowUp")
+if bullBelt
+    signal("Bullish Belt", color = bullColor, at = "below", shape = "arrowUp")
+if bullKick
+    signal("Bullish Kicker", color = bullColor, at = "below", shape = "arrowUp")
+if bearKick
+    signal("Bearish Kicker", color = bearColor, at = "above", shape = "arrowDown")
+if hangingMan
+    signal("Hanging Man", color = bearColor, at = "above", shape = "arrowDown")
+if eveningStar
+    signal("Evening Star", color = bearColor, at = "above", shape = "arrowDown")
+if morningStar
+    signal("Morning Star", color = bullColor, at = "below", shape = "arrowUp")
+if shootingStar
+    signal("Shooting Star", color = bearColor, at = "above", shape = "arrowDown")
+if hammer
+    signal("H", color = dojiColor, at = "below", shape = "diamond")
+if invHammer
+    signal("IH", color = dojiColor, at = "below", shape = "diamond")
+
+if doji
+    alert("Doji detected", id = "doji", title = "Doji")
+if bearHarami
+    alert("Bearish Harami detected", id = "bearish-harami", title = "Bearish Harami")
+if bullHarami
+    alert("Bullish Harami detected", id = "bullish-harami", title = "Bullish Harami")
+if bearEng
+    alert("Bearish Engulfing detected", id = "bearish-engulfing", title = "Bearish Engulfing")
+if bullEng
+    alert("Bullish Engulfing detected", id = "bullish-engulfing", title = "Bullish Engulfing")
+if piercing
+    alert("Piercing Line detected", id = "piercing-line", title = "Piercing Line")
+if bullBelt
+    alert("Bullish Belt detected", id = "bullish-belt", title = "Bullish Belt")
+if bullKick
+    alert("Bullish Kicker detected", id = "bullish-kicker", title = "Bullish Kicker")
+if bearKick
+    alert("Bearish Kicker detected", id = "bearish-kicker", title = "Bearish Kicker")
+if hangingMan
+    alert("Hanging Man detected", id = "hanging-man", title = "Hanging Man")
+if eveningStar
+    alert("Evening Star detected", id = "evening-star", title = "Evening Star")
+if morningStar
+    alert("Morning Star detected", id = "morning-star", title = "Morning Star")
+if shootingStar
+    alert("Shooting Star detected", id = "shooting-star", title = "Shooting Star")
+if hammer
+    alert("Hammer detected", id = "hammer", title = "Hammer")
+if invHammer
+    alert("Inverted Hammer detected", id = "inverted-hammer", title = "Inverted Hammer")

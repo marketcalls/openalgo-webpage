@@ -1,0 +1,14 @@
+{
+  "title": "Ehlers Directional Movement with Hann Windowing (DMH)",
+  "summary": "John Ehlers' DMH: Wilder's plus and minus directional movement as one net value, smoothed by an exponential average and a Hann window.",
+  "description": "DMH is John Ehlers' rework of Wilder's directional movement into a single smooth line around zero. On each bar the rise in the high and the fall in the low are compared, as Wilder defined them: if the rise is the larger and is positive it is plus directional movement, if the fall is the larger and is positive it is minus directional movement, and the other side is zero. When they are equal neither counts.\n\nThe study takes plus minus minus directional movement, so a bar that extends upward adds and a bar that extends downward subtracts, and smooths it twice. First an exponential average with alpha 1 / `Length` (14 by default), starting from zero. Then a Hann-windowed average of the last `Length` values of that average, with weights 1 - cos(2 pi k / (Length + 1)) for k = 1 to Length, newest first: the weights rise smoothly from small at both ends to largest in the middle, which removes the jagged edges a plain window would leave. The result is in price units.",
+  "howToRead": "Above zero, bars have been extending their highs more than their lows, an upward push; below zero, the lows have been extending more, a downward push. The farther from zero the line is, the stronger and more one-sided that push has been. Zero crossings mark the dominant direction of extension changing, and the double smoothing keeps such crossings rare in a steady trend.\n\nBecause the value is in price units, its size depends on the instrument and the bar length, so compare readings on one chart rather than across instruments. The Hann window centres its weight about half the length back, so the line lags price by roughly that many bars.",
+  "settings": [
+    { "key": "length", "label": "Length", "description": "Sets both the exponential average (alpha 1 / Length) and the number of bars in the Hann window. Longer is smoother and later." }
+  ],
+  "faq": [
+    { "q": "How is DMH different from Wilder's ADX and DI lines?", "a": "It keeps the same plus and minus directional movement but does not divide by the true range or build an ADX. It shows one signed line, so the direction of the push and its size are read from a single plot." },
+    { "q": "Why use a Hann window instead of a second plain average?", "a": "A plain average gives full weight to the oldest bar and then drops it at once, which causes small jumps. The Hann window fades the oldest and newest bars in gently, so the line is smoother for the same length." },
+    { "q": "Why does the line start a little after the first bar?", "a": "Directional movement needs a previous bar, and the Hann window needs Length values of the exponential average before it can answer." }
+  ]
+}

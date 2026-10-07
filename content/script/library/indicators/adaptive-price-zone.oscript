@@ -48,7 +48,7 @@ if warmup
 
 bandWidth = bandPct * adaptiveRange
 
-plot(mid, "Middle", #ffeb3b, width = 2)
+plot(mid, "Middle", #ff9800, width = 2)
 top = plot(mid + bandWidth, "Upper", #ffeb3b, width = 1)
 bottom = plot(mid - bandWidth, "Lower", #ffeb3b, width = 1)
 fill(top, bottom, #ffeb3b, opacity = 0.1)

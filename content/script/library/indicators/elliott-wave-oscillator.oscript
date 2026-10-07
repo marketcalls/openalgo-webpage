@@ -1,0 +1,17 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © openalgo
+
+version 1
+study("Elliott Wave Oscillator", "EWO", precision = 2)
+
+src = input(close, "Source")
+sma1length = input(5, "Fast Length", min = 1)
+sma2length = input(35, "Slow Length", min = 1)
+UsePercent = input(true, "Show Dif as percent of current Candle")
+
+// The gap between a fast and a slow simple average of the source, either as a
+// percentage of the source or in price.
+dif = sma(src, sma1length) - sma(src, sma2length)
+smadif = UsePercent ? dif / src * 100 : dif
+
+plot(smadif, "EWO", smadif <= 0 ? #FF5252 : #4CAF50, width = 2, style = "histogram")

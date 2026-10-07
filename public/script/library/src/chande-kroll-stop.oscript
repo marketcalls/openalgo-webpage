@@ -1,0 +1,24 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © openalgo
+
+version 1
+study("Chande Kroll Stop", "CKS", overlay = true, precision = 2)
+
+atrLength = input(10, "ATR Length", min = 1)
+multiplier = input(1.0, "ATR Multiplier", min = 0, step = 0.1)
+stopLength = input(9, "Stop Length", min = 1)
+
+// The first stops: the highest high less `multiplier` average true ranges, and
+// the lowest low plus the same distance, both over `atrLength` bars. The
+// average true range is Wilder's running average.
+range = atr(atrLength)
+firstHighStop = highest(high, atrLength) - multiplier * range
+firstLowStop = lowest(low, atrLength) + multiplier * range
+
+// The stops themselves: the highest first high stop and the lowest first low
+// stop over `stopLength` bars.
+stopShort = highest(firstHighStop, stopLength)
+stopLong = lowest(firstLowStop, stopLength)
+
+plot(stopLong, "Stop Long", #089981, width = 2)
+plot(stopShort, "Stop Short", #F23645, width = 2)

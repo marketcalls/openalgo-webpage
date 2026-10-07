@@ -29,7 +29,7 @@ basis = sumValue / windowCount
 // the subtraction can dip just below it on a flat series.
 deviation = windowCount > 1 ? multiplier * sqrt(max(0, sumSq / windowCount - basis * basis)) : 0
 
-plot(basis, "Basis", #ffeb3b, width = 2)
+plot(basis, "Basis", #ff9800, width = 2)
 top = plot(basis + deviation, "Upper", #ffeb3b, width = 2)
 bottom = plot(basis - deviation, "Lower", #ffeb3b, width = 2)
 fill(top, bottom, #2962ff, opacity = 0.1)

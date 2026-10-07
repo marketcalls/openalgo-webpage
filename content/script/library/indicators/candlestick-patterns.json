@@ -1,0 +1,18 @@
+{
+  "title": "Candlestick Patterns",
+  "summary": "Labels fifteen classic one, two and three bar candlestick patterns, from dojis and hammers to engulfings, kickers and morning and evening stars.",
+  "description": "Candlestick Patterns tests every bar for fifteen patterns and labels each one it finds. Bullish patterns are marked with a green arrow below the bar, bearish ones with a red arrow above it, and neutral ones in white.\n\n- **Doji**: the body is at most `Doji size` of the bar's range.\n- **Harami** (bullish and bearish): a body that sits inside the previous bar's body, in the opposite colour.\n- **Engulfing** (bullish and bearish): a body that covers the previous bar's body, in the opposite colour.\n- **Piercing Line**: after a down bar, a gap below its low that closes back above the middle of its body.\n- **Bullish Belt**: a bar that opens on its low, below the lowest low of the previous ten bars, and closes up.\n- **Kicker** (bullish and bearish): a bar that opens beyond the previous bar's open and runs the other way.\n- **Hanging Man**, **Shooting Star**, **Hammer** (H) and **Inverted Hammer** (IH): small bodies at one end of a long range.\n- **Morning Star** and **Evening Star**: three bars where a small middle bar gaps away and the third bar reverses.\n\nThe harami, engulfing, piercing, belt, kicker and hanging man patterns also require a prior move: the open `Trend in Bars` bars ago must be above the current open for a bullish pattern and below it for a bearish one.",
+  "howToRead": "Treat each label as a description of what the last bars did, not as an instruction. A reversal pattern matters most where a move is stretched and the pattern forms at a level you already watch, such as a prior high or low; the same pattern in the middle of a range means little.\n\nLook for confirmation from the next bar: a bullish engulfing followed by a higher close says more than the engulfing alone. On a busy chart several patterns can mark the same bar, because the definitions overlap (a hammer can also be a hanging man, depending on the trend before it).",
+  "settings": [
+    { "key": "trend", "label": "Trend in Bars", "description": "How many bars back the open is compared with, to require a prior move before a reversal pattern counts." },
+    { "key": "dojiSize", "label": "Doji size", "description": "The largest body, as a fraction of the bar's range, that still counts as a doji." },
+    { "key": "bullColor", "label": "Bullish Arrow Color", "description": "Colour of the arrows and labels for bullish patterns." },
+    { "key": "bearColor", "label": "Bearish Arrow Color", "description": "Colour of the arrows and labels for bearish patterns." },
+    { "key": "dojiColor", "label": "Other (Doji) Symbol Color", "description": "Colour of the doji, hammer and inverted hammer marks." }
+  ],
+  "faq": [
+    { "q": "Why do some bars carry more than one label?", "a": "The definitions overlap. A bar with a small body near its high can be a hammer and a hanging man, and a doji can also meet another pattern's rules, so each pattern that holds is marked." },
+    { "q": "What does Trend in Bars do?", "a": "It asks for a move before the pattern: for a bullish pattern the open that many bars ago must be above the current open, so the pattern comes after a decline. A larger value looks further back." },
+    { "q": "Can I be alerted to a pattern?", "a": "Yes. Each of the fifteen patterns has its own alert, raised on the bar it forms." }
+  ]
+}

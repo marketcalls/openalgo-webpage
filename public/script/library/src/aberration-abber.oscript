@@ -38,5 +38,5 @@ lower = basis - multiplier * avgDeviation
 
 top = plot(upper, "Upper Band", #ffeb3b, width = 2)
 bottom = plot(lower, "Lower Band", #ffeb3b, width = 2)
-plot(showMa ? basis : none, "MA", #ffeb3b, width = 2)
+plot(showMa ? basis : none, "MA", #ff9800, width = 2)
 fill(top, bottom, #2962ff, opacity = 0.1)

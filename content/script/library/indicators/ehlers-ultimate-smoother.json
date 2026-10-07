@@ -1,0 +1,15 @@
+{
+  "title": "Ehlers Ultimate Smoother",
+  "summary": "John Ehlers' two-pole filter that follows price with almost no lag in slow moves while cutting out the fast wiggles.",
+  "description": "The Ultimate Smoother is a moving average built by John Ehlers from two filters. A two-pole highpass filter picks out the fast part of price, the swings shorter than the `Period`. Subtracting that from the source leaves the slow part, and the whole thing is written as one recursion: each value combines the current and two previous source values with the two previous outputs.\n\nThe coefficients follow from the period: `a1 = exp(-1.414 * pi / period)`, `c2 = 2 * a1 * cos(1.414 * pi / period)`, `c3 = -a1 * a1` and `c1 = (1 + c2 - c3) / 4`. The output is `(1 - c1) * src + (2 * c1 - c2) * src[1] - (c1 + c3) * src[2] + c2 * US[1] + c3 * US[2]`. On the first three bars, which lack that history, the line equals the source.\n\nBecause the slow part is passed with no change in gain or timing, the line keeps pace with a steady trend far better than a simple or exponential average of the same length, and only cycles shorter than the period are damped.",
+  "howToRead": "Read it as a moving average that hugs price in a trend: price above a rising line is an uptrend, price below a falling line a downtrend, and the slope of the line is the cleanest read of direction. Crossings of price and the line come sooner than with a classic average of the same length.\n\nThe cost of the low lag is that a sharp reversal can make the line overshoot price for a few bars before it settles. A longer period gives a calmer line that ignores more of the short swings; a shorter one follows price more tightly.",
+  "settings": [
+    { "key": "src", "label": "Source", "description": "The price series the filter is applied to. Close is the default." },
+    { "key": "length", "label": "Period", "description": "Swings shorter than this many bars are smoothed out. 20 is the published default." }
+  ],
+  "faq": [
+    { "q": "How is it different from an exponential moving average?", "a": "An exponential average delays every part of price, including the trend. The Ultimate Smoother removes only the short cycles and passes the slow part with almost no delay, so it sits closer to price in a steady move." },
+    { "q": "Why does the line sometimes run past price after a turn?", "a": "The filter has two poles, and that kind of filter can overshoot briefly after a sudden change in direction. It settles back within a few bars." },
+    { "q": "Why does the line equal the price on the first bars?", "a": "The recursion needs two earlier inputs and two earlier outputs. Until they exist the line simply takes the source." }
+  ]
+}

@@ -1,0 +1,16 @@
+{
+  "title": "Range Filter",
+  "summary": "A filter line that moves only when price travels more than its average range, with target bands, coloured candles and Buy and Sell labels.",
+  "description": "Range Filter separates movement from noise. It measures the average range of the source as an exponential average of its bar-to-bar change over the `Sampling Period`, smooths that again over `2 * Sampling Period - 1` bars and scales it by the `Range Multiplier`.\n\nThe filter line follows the source but stays put until the source has moved further than that range from it. When the source rises above the filter by more than the range, the filter steps up to the source minus the range; when it falls below by more than the range, the filter steps down to the source plus the range. The **High Target** and **Low Target** bands sit one range above and below the filter.\n\nThe filter is drawn white while it has been rising, blue while it has been falling, and light blue when it has not moved. Candles take the same colours: white when the source is above a rising filter, blue when it is below a falling one.",
+  "howToRead": "Read the filter's colour as the trend and its flat stretches as a market that is not travelling far enough to matter. A **Buy** label marks the first bar the source is above a rising filter after a stretch on the short side, and a **Sell** label the first bar below a falling filter after a stretch on the long side, so each label marks a change of side rather than every bar of a trend.\n\nThe target bands show how far price would have to travel to move the filter again. The defaults suit a fast intraday chart; on slower charts or calmer instruments a shorter `Sampling Period` or a smaller `Range Multiplier` lets the filter respond sooner, at the cost of more signals in a sideways market.",
+  "settings": [
+    { "key": "src", "label": "Source", "description": "The price series the filter follows. Close is the default." },
+    { "key": "per", "label": "Sampling Period", "description": "Bars in the average of the bar-to-bar change. The average is smoothed again over twice this many bars, minus one." },
+    { "key": "mult", "label": "Range Multiplier", "description": "Scales the average range. Larger values need a bigger move before the filter steps, so it flips less often." }
+  ],
+  "faq": [
+    { "q": "Why are there fewer labels than coloured candles?", "a": "Candles are coloured on every bar the conditions hold, but a label appears only on the first bar of a new side, after the opposite condition last held." },
+    { "q": "Why does the filter stay flat for long stretches?", "a": "It moves only when the source travels more than the average range away from it. A quiet or sideways market never travels that far, so the filter waits." },
+    { "q": "Which alerts does it offer?", "a": "A Buy alert, a Sell alert, and one alert for either, each on the bar a label is drawn." }
+  ]
+}

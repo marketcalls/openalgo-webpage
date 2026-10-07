@@ -33,8 +33,8 @@ if not isNone(source)
 
 trendColor = isNone(trend) or trend == 0 ? #787b86 : trend > 0 ? #4caf50 : #ff5252
 plot(ttm, "TTM Trend", trendColor, width = 3)
-upperBand = plot(showStrength ? ttm + half : none, "Upper Strength", #2962ff, width = 1)
-lowerBand = plot(showStrength ? ttm - half : none, "Lower Strength", #2962ff, width = 1)
+upperBand = plot(showStrength ? ttm + half : none, "Upper Strength", #4caf50, width = 1)
+lowerBand = plot(showStrength ? ttm - half : none, "Lower Strength", #ff5252, width = 1)
 fill(upperBand, lowerBand, #2962ff, opacity = 0.1)
 
 // A mark on every bar where the direction of the slope changes, compared

@@ -1,0 +1,25 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © openalgo
+
+version 1
+study("Trend Trigger Factor (TTF)", "TTF", precision = 2)
+
+length = input(15, "Length", min = 1, tooltip = "Bars in each of the two windows that are compared.")
+
+// Two back to back windows of `length` bars. Buy power is how far the latest
+// highs reach above the earlier lows; sell power is how far the earlier highs
+// reach above the latest lows.
+hh = highest(high, length)
+ll = lowest(low, length)
+buyPower = hh - ll[length]
+sellPower = hh[length] - ll
+
+// The factor is the difference of the two powers as a percentage of their
+// mean. A mean of zero (a flat market) has no answer.
+mean = 0.5 * (buyPower + sellPower)
+ttf = mean == 0 ? none : 100 * (buyPower - sellPower) / mean
+
+level(100, "Buy Level", fade(green, 40), style = "dashed")
+level(0, "Zero", fade(gray, 50), style = "dashed")
+level(-100, "Sell Level", fade(red, 40), style = "dashed")
+plot(ttf, "TTF", #2962FF, width = 2)

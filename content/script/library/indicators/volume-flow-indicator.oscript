@@ -1,0 +1,49 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © openalgo
+
+version 1
+study("Volume Flow Indicator (VFI)", "VFI", precision = 2)
+
+length = input(130, "Length", min = 2)
+coef = input(0.2, "Cutoff Coefficient", min = 0, step = 0.05)
+vcoef = input(2.5,"Volume Cap", min = 0.1, step = 0.1)
+volLength = input(30, "Volatility Length", min = 2)
+smoothing = input(3, "Smoothing", min = 1)
+signalLength = input(5, "Signal Length", min = 1)
+
+// The cutoff: a multiple of the standard deviation of the log change of the
+// typical price, turned into a price distance by the close. Moves smaller
+// than this are treated as noise.
+inter = log(hlc3) - log(hlc3[1])
+cutoff = coef * stdev(inter, volLength) * close
+
+// Average volume over the previous `length` bars, ending on the bar before,
+// and each bar's volume capped at a multiple of it so one spike cannot
+// dominate the sum.
+vave = sma(volume, length)[1]
+vc = isNone(vave) ? none : min(volume, vave * vcoef)
+
+// A rise in the typical price larger than the cutoff adds the capped volume,
+// a fall larger than it subtracts it, and anything smaller adds nothing.
+mf = change(hlc3)
+vcp = isNone(cutoff) or isNone(vc) ? none : mf > cutoff ? vc : mf < -cutoff ? -vc : 0
+
+// The net flow over the window in units of average volume, smoothed.
+raw = sum(vcp, length) / vave
+vfi = ema(raw, smoothing)
+signalLine = ema(vfi, signalLength)
+hist = vfi - signalLine
+
+plot(vfi, "VFI", #2962FF, width = 2)
+plot(signalLine, "Signal", #FF6D00)
+plot(hist, "Histogram", hist >= 0 ? #26A69A : #EF5350, style = "histogram")
+level(0, "Zero", #787b86, style = "dashed")
+
+if crossUp(vfi, 0)
+    alert("VFI crossed above zero", id = "vfi-cross-up-zero", title = "VFI turns positive")
+if crossDown(vfi, 0)
+    alert("VFI crossed below zero", id = "vfi-cross-down-zero", title = "VFI turns negative")
+if crossUp(vfi, signalLine)
+    alert("VFI crossed above its signal", id = "vfi-cross-up-signal", title = "VFI above signal")
+if crossDown(vfi, signalLine)
+    alert("VFI crossed below its signal", id = "vfi-cross-down-signal", title = "VFI below signal")

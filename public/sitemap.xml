@@ -3203,17 +3203,7 @@
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://openalgo.in/script/library/exponential-transformation-exp</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  <url>
     <loc>https://openalgo.in/script/library/exponential-distribution-cdf-expdist</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  <url>
-    <loc>https://openalgo.in/script/library/exptrans</loc>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
@@ -3588,11 +3578,6 @@
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://openalgo.in/script/library/lineartrans</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  <url>
     <loc>https://openalgo.in/script/library/linear-regression-linreg</loc>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -3619,11 +3604,6 @@
   </url>
   <url>
     <loc>https://openalgo.in/script/library/log-normal-distribution-cdf-lognormdist</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  <url>
-    <loc>https://openalgo.in/script/library/logtrans</loc>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
@@ -3774,11 +3754,6 @@
   </url>
   <url>
     <loc>https://openalgo.in/script/library/min-max-channel-mmchannel</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  <url>
-    <loc>https://openalgo.in/script/library/mode</loc>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
@@ -4213,11 +4188,6 @@
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://openalgo.in/script/library/logistic-function-sigmoid</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  <url>
     <loc>https://openalgo.in/script/library/ehlers-sine-wave-sine</loc>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -4274,11 +4244,6 @@
   </url>
   <url>
     <loc>https://openalgo.in/script/library/square-root-transformation-sqrt</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  <url>
-    <loc>https://openalgo.in/script/library/sqrttrans</loc>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
@@ -4378,11 +4343,6 @@
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://openalgo.in/script/library/hyperbolic-tangent-tanh</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  <url>
     <loc>https://openalgo.in/script/library/td-sequential-td-seq</loc>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -4454,11 +4414,6 @@
   </url>
   <url>
     <loc>https://openalgo.in/script/library/ttm-scalper-alert</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  <url>
-    <loc>https://openalgo.in/script/library/ttmtrend</loc>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
@@ -4849,6 +4804,361 @@
   </url>
   <url>
     <loc>https://openalgo.in/script/library/sideways-market-skipper</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://openalgo.in/script/library/range-filter</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://openalgo.in/script/library/alphatrend</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://openalgo.in/script/library/ut-bot</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://openalgo.in/script/library/ssl-hybrid</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://openalgo.in/script/library/candlestick-patterns</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://openalgo.in/script/library/smc-structures-and-fvg</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://openalgo.in/script/library/elliott-wave-oscillator</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://openalgo.in/script/library/ehlers-ultimate-smoother</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://openalgo.in/script/library/ehlers-ultimate-strength-index</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://openalgo.in/script/library/ehlers-ultimate-oscillator</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://openalgo.in/script/library/ehlers-cybernetic-oscillator</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://openalgo.in/script/library/ehlers-truncated-bandpass-filter</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://openalgo.in/script/library/ehlers-fisherized-deviation-scaled-oscillator</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://openalgo.in/script/library/ehlers-elegant-oscillator</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://openalgo.in/script/library/inverse-fisher-transform-rsi</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://openalgo.in/script/library/ehlers-rocket-rsi</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://openalgo.in/script/library/ehlers-myrsi</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://openalgo.in/script/library/ehlers-noise-elimination-technology</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://openalgo.in/script/library/ehlers-directional-movement-hann</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://openalgo.in/script/library/ehlers-continuation-index</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://openalgo.in/script/library/volume-flow-indicator</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://openalgo.in/script/library/volume-zone-oscillator</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://openalgo.in/script/library/price-zone-oscillator</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://openalgo.in/script/library/trend-thrust-indicator</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://openalgo.in/script/library/volume-weighted-macd</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://openalgo.in/script/library/volume-price-confirmation-indicator</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://openalgo.in/script/library/relative-momentum-index</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://openalgo.in/script/library/random-walk-index</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://openalgo.in/script/library/trend-intensity-index</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://openalgo.in/script/library/directional-trend-index</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://openalgo.in/script/library/smi-ergodic-indicator</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://openalgo.in/script/library/double-smoothed-stochastic</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://openalgo.in/script/library/elder-impulse-system</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://openalgo.in/script/library/elder-safezone-stop</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://openalgo.in/script/library/chandelier-exit</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://openalgo.in/script/library/williams-vix-fix</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://openalgo.in/script/library/gopalakrishnan-range-index</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://openalgo.in/script/library/disparity-index</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://openalgo.in/script/library/twiggs-money-flow</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://openalgo.in/script/library/projection-bands</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://openalgo.in/script/library/projection-oscillator</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://openalgo.in/script/library/trend-detection-index</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://openalgo.in/script/library/chande-kroll-stop</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://openalgo.in/script/library/fractal-dimension-index</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://openalgo.in/script/library/guppy-multiple-moving-average</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://openalgo.in/script/library/wilder-volatility-stop</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://openalgo.in/script/library/three-ten-oscillator</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://openalgo.in/script/library/relative-volume</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://openalgo.in/script/library/tirone-levels</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://openalgo.in/script/library/zig-zag</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://openalgo.in/script/library/standard-error-bands</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://openalgo.in/script/library/commodity-selection-index</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://openalgo.in/script/library/sentiment-zone-oscillator</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://openalgo.in/script/library/darvas-box</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://openalgo.in/script/library/value-chart</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://openalgo.in/script/library/rsi-bands</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://openalgo.in/script/library/trend-trigger-factor</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://openalgo.in/script/library/rsi-divergence</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://openalgo.in/script/library/absolute-strength-histogram</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://openalgo.in/script/library/rainbow-oscillator</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://openalgo.in/script/library/smoothed-heikin-ashi</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://openalgo.in/script/library/zero-lag-heikin-ashi</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://openalgo.in/script/library/dynamic-zone-rsi</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://openalgo.in/script/library/momentum-pinball</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://openalgo.in/script/library/chande-trend-score</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://openalgo.in/script/library/stiffness-indicator</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://openalgo.in/script/library/finite-volume-elements</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://openalgo.in/script/library/trend-continuation-factor</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://openalgo.in/script/library/smoothed-rate-of-change</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://openalgo.in/script/library/elder-autoenvelope</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://openalgo.in/script/library/laguerre-filter</loc>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>

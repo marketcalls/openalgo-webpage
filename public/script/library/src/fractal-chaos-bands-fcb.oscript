@@ -32,10 +32,10 @@ runLow = isNone(runLow) ? loFractal : min(runLow, loFractal)
 upperBand = bar.index >= period - 1 ? windowHigh : runHigh
 lowerBand = bar.index >= period - 1 ? windowLow : runLow
 
-top = plot(upperBand, "Upper Band", #ffeb3b, width = 2)
-bottom = plot(lowerBand, "Lower Band", #ffeb3b, width = 2)
+top = plot(upperBand, "Upper Band", #ff5252, width = 2)
+bottom = plot(lowerBand, "Lower Band", #4caf50, width = 2)
 fill(top, bottom, #2962ff, opacity = 0.1)
 
 // Each fractal is marked on the bar that printed it, one bar back.
-plot(showFractals and isHighFractal ? high[1] : none, "Fractal High", #ffeb3b, style = "lineWithMarkers", offset = -1)
-plot(showFractals and isLowFractal ? low[1] : none, "Fractal Low", #ffeb3b, style = "lineWithMarkers", offset = -1)
+plot(showFractals and isHighFractal ? high[1] : none, "Fractal High", #ff9800, style = "lineWithMarkers", offset = -1)
+plot(showFractals and isLowFractal ? low[1] : none, "Fractal Low", #2962ff, style = "lineWithMarkers", offset = -1)

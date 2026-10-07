@@ -1,0 +1,44 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © openalgo
+
+version 1
+study("Absolute Strength Histogram (ASH)", "ASH", precision = 2)
+
+src = input(close, "Source")
+mode = input("RSI", "Method", options = ["RSI", "Stochastic", "ADX"], tooltip = "RSI reads each bar's change; Stochastic reads the distance from the lowest and highest values of the window; ADX reads the rise of the high and the fall of the low.")
+length = input(9, "Length", min = 1, tooltip = "Bars the raw bull and bear strength are averaged over.")
+smooth = input(3, "Smoothing", min = 1, tooltip = "Bars the two averages are smoothed over again.")
+maType = input("SMA", "Average Type", options = ["SMA", "EMA", "WMA", "RMA"])
+
+// Raw strength per bar. By the RSI method a rise is all bull strength and a
+// fall all bear strength. By the Stochastic method bulls are the distance above
+// the window's lowest value and bears the distance below its highest. By the
+// ADX method a higher high is bull strength and a lower low bear strength.
+delta = src - src[1]
+rsiBulls = 0.5 * (abs(delta) + delta)
+rsiBears = 0.5 * (abs(delta) - delta)
+stochBulls = src - lowest(src, length)
+stochBears = highest(src, length) - src
+highRise = high - high[1]
+lowFall = low[1] - low
+adxBulls = 0.5 * (abs(highRise) + highRise)
+adxBears = 0.5 * (abs(lowFall) + lowFall)
+bullsRaw = mode == "Stochastic" ? stochBulls : mode == "ADX" ? adxBulls : rsiBulls
+bearsRaw = mode == "Stochastic" ? stochBears : mode == "ADX" ? adxBears : rsiBears
+
+// Every average type is computed on every bar; the menu picks one.
+fn average(x, len, kind) =>
+    s = sma(x, len)
+    e = ema(x, len)
+    w = wma(x, len)
+    r = rma(x, len)
+    kind == "EMA" ? e : kind == "WMA" ? w : kind == "RMA" ? r : s
+
+bulls = average(average(bullsRaw, length, maType), smooth, maType)
+bears = average(average(bearsRaw, length, maType), smooth, maType)
+diff = bulls - bears
+
+plot(bulls, "Bulls", #26A69A, width = 2)
+plot(bears, "Bears", #EF5350, width = 2)
+plot(diff, "Histogram", diff >= 0 ? fade(#26A69A, 40) : fade(#EF5350, 40), style = "histogram")
+level(0, "Zero", fade(gray, 50), style = "dashed")

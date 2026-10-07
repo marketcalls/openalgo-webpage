@@ -1,0 +1,71 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © openalgo
+
+version 1
+study("Darvas Box", overlay = true, precision = 2)
+
+confirm = input(3, "Confirmation Bars", min = 1, tooltip = "Bars the top must go unbroken, and then the bottom must hold, before the box is formed.")
+showSignals = input(true, "Show Breakouts")
+
+// The search for a box. A high above the candidate top becomes the new top
+// and clears the bottom. On every other bar the top has held one more bar,
+// and the low either becomes the new candidate bottom (the first low after
+// the top, or a lower one) or adds one bar to the bottom's count. When both
+// have held for `confirm` bars, the box is formed.
+var topCand = none
+var topCount = 0
+var botCand = none
+var botCount = 0
+var active = false
+var boxTop = none
+var boxBot = none
+
+showTop = none
+showBot = none
+breakUp = false
+breakDown = false
+
+if active
+    // A formed box is drawn until a close leaves it (a close, not a wick, so
+    // a brief poke through an edge does not end the box). The bar that closes
+    // outside still shows the box and starts a new search from its own high.
+    showTop = boxTop
+    showBot = boxBot
+    if close > boxTop
+        breakUp = true
+    else if close < boxBot
+        breakDown = true
+    if breakUp or breakDown
+        active = false
+        topCand = high
+        topCount = 0
+        botCand = none
+        botCount = 0
+else
+    if isNone(topCand) or high > topCand
+        topCand = high
+        topCount = 0
+        botCand = none
+        botCount = 0
+    else
+        topCount = topCount + 1
+        if isNone(botCand) or low < botCand
+            botCand = low
+            botCount = 0
+        else
+            botCount = botCount + 1
+    if not isNone(botCand) and topCount >= confirm and botCount >= confirm
+        active = true
+        boxTop = topCand
+        boxBot = botCand
+        showTop = boxTop
+        showBot = boxBot
+
+pTop = plot(showTop, "Box Top", #4CAF50, width = 2, style = "step")
+pBot = plot(showBot, "Box Bottom", #FF5252, width = 2, style = "step")
+fill(pTop, pBot, rgba(41, 98, 255, 0.08))
+
+if showSignals and breakUp
+    signal("Breakout", color = #4CAF50, at = "below", shape = "arrowUp")
+if showSignals and breakDown
+    signal("Breakdown", color = #FF5252, at = "above", shape = "arrowDown")

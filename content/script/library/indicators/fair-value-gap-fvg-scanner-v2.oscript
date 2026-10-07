@@ -331,3 +331,7 @@ atLeft = tablePosition == "top-left" or tablePosition == "middle-left" or tableP
 if bar.isLast and showTable
     target = atTop ? (atLeft ? gridTopLeft : gridTopRight) : (atLeft ? gridBottomLeft : gridBottomRight)
     writePanel(target, cumPchg, cumVolPchg, dayVol, prevDayVol, size(gapIds) == 0)
+
+// The chart draws a study's markers and bar colours only when the study has
+// a plot, so one fully transparent column carries them. It shows nothing.
+plot(close, "Marker Anchor", rgba(0, 0, 0, 0))

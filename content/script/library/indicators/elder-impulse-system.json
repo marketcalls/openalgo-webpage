@@ -1,0 +1,17 @@
+{
+  "title": "Elder Impulse System",
+  "summary": "Alexander Elder's impulse colouring: candles turn green when trend and momentum both rise, red when both fall, blue otherwise.",
+  "description": "The Elder Impulse System, described by Alexander Elder, joins a trend reading and a momentum reading into one colour per candle. The trend is an exponential average of the close over `EMA Length` bars, drawn on the chart. The momentum is the MACD histogram: the gap between a fast and a slow exponential average of the close, minus an exponential average of that gap over `MACD Signal Length` bars.\n\nOn each bar both readings are compared with the previous bar. When the average and the histogram both rose, the candle is painted green; when both fell, red; when they disagree or either is unchanged, blue. Every exponential average starts from the simple average of its first values, and candles are left unpainted until both readings have a previous value to compare with.",
+  "howToRead": "Green says trend and momentum are pushing up together and red that they are pushing down together; blue is a pause or a disagreement. The usual reading is as a filter rather than a trigger: avoid buying on red bars and avoid selling short on green ones, and treat a change to blue after a run of one colour as the impulse fading.\n\nThe colours change bar by bar and can flicker in a sideways market. The average line takes the same colour as the candles, so the picture holds even with candle colouring turned off.",
+  "settings": [
+    { "key": "emaLength", "label": "EMA Length", "description": "Bars in the exponential average that sets the trend reading and is drawn on the chart." },
+    { "key": "fastLength", "label": "MACD Fast Length", "description": "Bars in the fast exponential average of the MACD line." },
+    { "key": "slowLength", "label": "MACD Slow Length", "description": "Bars in the slow exponential average of the MACD line." },
+    { "key": "signalLength", "label": "MACD Signal Length", "description": "Bars in the exponential average of the MACD line that the histogram is measured from." }
+  ],
+  "faq": [
+    { "q": "Why is a bar blue when price clearly rose?", "a": "Colour depends on whether the average and the histogram both rose, not on price. A bar can close higher while the histogram shrinks, and then the two readings disagree and the bar is blue." },
+    { "q": "Why are the first bars not coloured?", "a": "The histogram needs the slow average and then its signal average to fill before it exists, and one more bar before it can be compared. With the defaults the first coloured bar is the 35th." },
+    { "q": "Which alerts does it offer?", "a": "One when the impulse turns green and one when it turns red, each on the first bar of the new colour." }
+  ]
+}

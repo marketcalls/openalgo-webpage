@@ -1,0 +1,52 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © openalgo
+
+version 1
+study("Wilder Volatility Stop", "WVS", overlay = true, precision = 2)
+
+atrLength = input(7, "ATR Length", min = 1)
+arcConstant = input(3.0, "ARC Constant", min = 0.1, step = 0.1, tooltip = "Multiple of the average true range between the significant close and the stop. Values from 2.8 to 3.1 are the usual range.")
+showSignals = input(true, "Show Reversals")
+
+// The average range of a bar times a constant: the distance the stop keeps
+// from the significant close.
+arc = arcConstant * atr(atrLength)
+
+// While long the significant close is the highest close since the trade began
+// and the stop sits arc below it; while short it is the lowest close and the
+// stop sits arc above it. A close beyond the previous bar's stop reverses the
+// position and restarts the significant close at that close. The first bar
+// with an average range starts long.
+var direction = 0
+var sic = none
+var stopLevel = none
+toLong = false
+toShort = false
+if not isNone(arc)
+    if direction == 0
+        direction = 1
+        sic = close
+    else if direction == 1 and close < stopLevel
+        direction = -1
+        sic = close
+        toShort = true
+    else if direction == -1 and close > stopLevel
+        direction = 1
+        sic = close
+        toLong = true
+    else
+        sic = direction == 1 ? max(sic, close) : min(sic, close)
+    stopLevel = direction == 1 ? sic - arc : sic + arc
+
+plot(direction == 1 and not isNone(arc) ? stopLevel : none, "Long Stop", #26A69A, width = 2)
+plot(direction == -1 and not isNone(arc) ? stopLevel : none, "Short Stop", #EF5350, width = 2)
+
+if showSignals and toLong
+    signal("Long", color = #26A69A, at = "below", shape = "label")
+if showSignals and toShort
+    signal("Short", color = #EF5350, at = "above", shape = "label")
+
+if toLong
+    alert("Wilder Volatility Stop reversed to long", id = "long", title = "Reversal to long")
+if toShort
+    alert("Wilder Volatility Stop reversed to short", id = "short", title = "Reversal to short")

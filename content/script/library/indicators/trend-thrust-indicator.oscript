@@ -1,0 +1,31 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © openalgo
+
+version 1
+study("Trend Thrust Indicator (TTI)", "TTI", precision = 2)
+
+src = input(close, "Source")
+fastLength = input(12, "Fast Length", min = 1)
+slowLength = input(26, "Slow Length", min = 1)
+signalLength = input(9, "Signal Length", min = 1)
+
+// A fast and a slow volume-weighted average of the source.
+fastVw = vwma(src, fastLength)
+slowVw = vwma(src, slowLength)
+
+// The volume multiple: average volume over the fast length divided by
+// average volume over the slow length. Above 1 when volume is expanding.
+multiple = sma(volume, fastLength) / sma(volume, slowLength)
+
+// The squared multiple enlarges the fast average and its squared reciprocal
+// shrinks the slow one, so the spread widens when volume expands.
+enhancedFast = fastVw * pow(multiple, 2)
+enhancedSlow = slowVw * pow(1 / multiple, 2)
+tti = enhancedFast - enhancedSlow
+
+// The signal line: a simple average of the indicator.
+signalLine = sma(tti, signalLength)
+
+level(0, "Zero", #787b86, style = "dashed")
+plot(tti, "TTI", #2962ff, width = 2)
+plot(signalLine, "Signal", #ff6d00)

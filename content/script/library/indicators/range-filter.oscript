@@ -1,0 +1,78 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © openalgo
+// Original work (c) DonovanWall, guikroth and tvenn, MPL-2.0
+
+version 1
+study("Range Filter", overlay = true, precision = 2)
+
+src = input(close, "Source")
+per = input(100, "Sampling Period", min = 1)
+mult = input(3.0, "Range Multiplier", min = 0.1)
+
+// An exponential average that starts from its first value rather than from
+// a simple average, so it answers as soon as its input does.
+fn emaFromFirst(x, len) =>
+    var e = none
+    a = 2 / (len + 1)
+    e = isNone(e) ? x : isNone(x) ? e : a * x + (1 - a) * e
+    e
+
+// The average range: the bar-to-bar change of the source, averaged, then
+// averaged again over 2 * period - 1 bars and scaled by the multiplier.
+avrng = emaFromFirst(abs(src - src[1]), per)
+smrng = emaFromFirst(avrng, per * 2 - 1) * mult
+
+// The filter follows the source, but moves only once the source has travelled
+// more than the average range away from it. The previous value reads as zero
+// before it exists, and a comparison with an absent value is false.
+var filtState = none
+prevFilt = orElse(filtState, 0)
+filt = src > prevFilt ? (src - smrng < prevFilt ? prevFilt : src - smrng) : (src + smrng > prevFilt ? prevFilt : src + smrng)
+filtState = filt
+
+// How many bars in a row the filter has risen, or fallen.
+var upState = 0.0
+var downState = 0.0
+upward = filt > filt[1] ? upState + 1 : filt < filt[1] ? 0 : upState
+downward = filt < filt[1] ? downState + 1 : filt > filt[1] ? 0 : downState
+upState = upward
+downState = downward
+
+hband = filt + smrng
+lband = filt - smrng
+
+upColor = white
+midColor = #90BFF9
+downColor = #2196F3
+
+filtColor = upward > 0 ? upColor : downward > 0 ? downColor : midColor
+filtPlot = plot(filt, "Range Filter", filtColor, width = 2)
+hbandPlot = plot(hband, "High Target", rgba(255, 255, 255, 0.3))
+lbandPlot = plot(lband, "Low Target", rgba(33, 150, 243, 0.3))
+fill(hbandPlot, filtPlot, rgba(255, 255, 255, 0.1))
+fill(lbandPlot, filtPlot, rgba(33, 150, 243, 0.1))
+
+// A long condition: the source above the filter while the filter is rising;
+// a short one: below it while the filter is falling.
+longCond = src > filt and src > src[1] and upward > 0 or src > filt and src < src[1] and upward > 0
+shortCond = src < filt and src < src[1] and downward > 0 or src < filt and src > src[1] and downward > 0
+barColor(longCond ? upColor : shortCond ? downColor : midColor)
+
+// The side the last condition chose, absent until the first one.
+var condState = none
+prevCond = condState
+condState = longCond ? 1 : shortCond ? -1 : condState
+longCondition = longCond and prevCond == -1
+shortCondition = shortCond and prevCond == 1
+
+if longCondition
+    signal("Buy", color = #AAAAAACC, at = "below", shape = "label")
+if shortCondition
+    signal("Sell", color = #2196F3CC, at = "above", shape = "label")
+
+if longCondition
+    alert("Buy alert on Range Filter", id = "buy", title = "Buy alert on Range Filter")
+if shortCondition
+    alert("Sell alert on Range Filter", id = "sell", title = "Sell alert on Range Filter")
+if longCondition or shortCondition
+    alert("Buy and Sell alert on Range Filter", id = "buy-and-sell", title = "Buy and Sell alert on Range Filter")

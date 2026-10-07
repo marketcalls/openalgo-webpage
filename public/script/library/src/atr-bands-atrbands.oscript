@@ -35,7 +35,7 @@ atrValue = e > 1e-10 ? rawRma / (1 - e) : rawRma
 
 bandWidth = orElse(atrValue * multiplier, 0)
 
-plot(middleBand, "Middle", #ffeb3b, width = 2)
+plot(middleBand, "Middle", #ff9800, width = 2)
 top = plot(middleBand + bandWidth, "Upper", #ffeb3b, width = 2)
 bottom = plot(middleBand - bandWidth, "Lower", #ffeb3b, width = 2)
 fill(top, bottom, #2962ff, opacity = 0.1)

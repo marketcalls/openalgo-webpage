@@ -1,0 +1,21 @@
+{
+  "title": "RSI Divergence",
+  "summary": "RSI with regular bullish and bearish divergences drawn as lines between confirmed RSI pivots that disagree with price.",
+  "description": "This study plots the relative strength index (Wilder's RSI, 14 bars by default) in its own pane with levels at 70, 50 and 30, and marks **regular divergences**: places where RSI and price disagree about the direction of the last two swings.\n\nA swing is an RSI pivot. A pivot low is a bar whose RSI is strictly lower than on the `Pivot Lookback Left` bars before it and the `Pivot Lookback Right` bars after it (5 and 5 by default); a pivot high is the mirror. Each new pivot is compared with the previous pivot of the same kind when the two are between `Min Bars Between Pivots` and `Max Bars Between Pivots` bars apart (5 to 60 by default).\n\nA **bullish** divergence is a lower low in price, read from the bars' lows, under a higher low in RSI. A **bearish** divergence is a higher high in price, read from the bars' highs, under a lower high in RSI. Each divergence draws a line between the two RSI pivots and a Bull or Bear label on the later one.",
+  "howToRead": "A bullish divergence says that price pushed to a new low while the selling behind it was weaker than at the previous low; a bearish divergence says a new high was reached on weaker buying. Traders read them as early warnings that a swing is losing force, and look for a reversal pattern or a break of structure before acting.\n\nA pivot is only confirmed `Pivot Lookback Right` bars after it forms, so every line and label is added only once the pivot is confirmed, that many bars after it formed, though it is drawn back at the pivot itself. It is never moved or removed once drawn. In a strong trend divergences can repeat several times before price turns, so a divergence alone is not a signal to trade against the trend.",
+  "settings": [
+    { "key": "src", "label": "Source", "description": "The price series RSI is computed on. Close is the default; the divergence test always compares the bars' highs and lows." },
+    { "key": "len", "label": "RSI Length", "description": "Bars in Wilder's averages behind RSI. 14 is the standard value." },
+    { "key": "lbL", "label": "Pivot Lookback Left", "description": "Bars before a pivot whose RSI it must be beyond. A larger value finds fewer, more significant swings." },
+    { "key": "lbR", "label": "Pivot Lookback Right", "description": "Bars after a pivot whose RSI it must be beyond. It is also how many bars late each divergence is drawn." },
+    { "key": "rangeMin", "label": "Min Bars Between Pivots", "description": "The fewest bars allowed between the two pivots of a divergence, so two pivots of one small wiggle are not compared." },
+    { "key": "rangeMax", "label": "Max Bars Between Pivots", "description": "The most bars allowed between the two pivots, so swings too far apart to be related are not compared." },
+    { "key": "showBull", "label": "Show Bullish Divergence", "description": "Draw the lines and labels of regular bullish divergences." },
+    { "key": "showBear", "label": "Show Bearish Divergence", "description": "Draw the lines and labels of regular bearish divergences." }
+  ],
+  "faq": [
+    { "q": "Why do the lines appear several bars after the pivot?", "a": "A pivot needs `Pivot Lookback Right` bars after it to prove it was a turning point. Until then the next bar could still go further, so the study waits and draws the line once the pivot is confirmed." },
+    { "q": "Does it mark hidden divergences?", "a": "No. It marks only regular divergences: a lower low in price with a higher low in RSI, and a higher high in price with a lower high in RSI. Hidden divergences, which point to trend continuation, are not drawn." },
+    { "q": "Why was an obvious divergence not marked?", "a": "Either one of the swings was not a strict RSI pivot on the lookback settings, the two pivots were closer than the minimum or further apart than the maximum, or a pivot formed between them, since each pivot is compared only with the one immediately before it." }
+  ]
+}

@@ -1,0 +1,34 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © openalgo
+
+version 1
+study("Ehlers Elegant Oscillator", "EO", precision = 3)
+
+src = input(close, "Source")
+bandEdge = input(20, "Band Edge", min = 2, step = 1, tooltip = "The super smoother's cutoff period, in bars.")
+rmsLength = input(50, "RMS Length", min = 2, step = 1, tooltip = "Bars in the root mean square window the change is normalized by.")
+
+// Super smoother coefficients, with the cutoff at the band edge.
+a1 = exp(-1.414 * math.pi / bandEdge)
+c2 = 2 * a1 * math.cos(1.414 * math.pi / bandEdge)
+c3 = -a1 * a1
+c1 = 1 - c2 - c3
+
+// The two-bar change, normalized by its root mean square over the window.
+deriv = src - src[2]
+rms = sqrt(sum(deriv * deriv, rmsLength) / rmsLength)
+normalized = rms != 0 ? deriv / rms : none
+
+// The inverse Fisher transform squeezes the normalized change into -1 to 1.
+expTwice = exp(2 * normalized)
+ifish = (expTwice - 1) / (expTwice + 1)
+
+// Smooth it. An earlier output that does not exist yet reads as zero.
+var eo1 = none
+var eo2 = none
+eo = c1 * (ifish + ifish[1]) / 2 + c2 * orElse(eo1, 0) + c3 * orElse(eo2, 0)
+eo2 = eo1
+eo1 = eo
+
+plot(eo, "Elegant Oscillator", #2962ff, width = 2)
+level(0, "Zero", #787b86, style = "dashed")
