@@ -134,7 +134,38 @@ under `/fundamentals`, `/python`, `/quant`, etc., indexed by `/learn`.
 - Every file starts with the MPL-2.0 header, `// © openalgo`, then
   `// Original work (c) <author>, <licence>` (required by MIT/MPL). Never name
   any brand but openalgo, and never say a script was ported from anything or
-  mention Pine Script.
+  mention Pine Script. Titles carrying a product, trademark or person prefix
+  were renamed in `catalog.mjs` (`plainTitle`: "ICT ...", "Meridian - ...",
+  setups named after people); inventor-named formulas (Hull, Ehlers,
+  McGinley) keep their names. `verify.mjs` and `PORTING.md` deliberately spell
+  out the banned names: that is how the gate finds them. They are tooling and
+  never ship to a page.
+- Data: `content/script/library/btcusd-1h.json`, 1463 hourly BTCUSD bars, Aug 6
+  to Oct 6 2026 (UTC), captured once. Parity, thumbnails and the page dates are
+  all tied to this file. Replacing it means re-running the gate over all 440
+  (some ports may need work), and the thumbnails redraw on the next gen. Never
+  make the chart fetch or poll a feed.
+- Deviations: a port that cannot match in OpenScript 0.8.1 states why in its
+  `<slug>.json` `deviation` field, shown as a note on the page (16 do,
+  e.g. table text size or a plot offset that cannot follow a setting). The
+  gate still fails unless one of two narrow exemptions holds:
+  `deviationVariants: ["<variant label>"]` exempts exactly those settings
+  variants (never `defaults`), or every value agrees and the port only draws
+  extra bars (an original that paints history backwards once a later bar
+  decides it). Do not widen either rule to get a port through.
+- Thumbnails (`public/script/library/thumbs/*.svg`) are drawn by
+  `gen-library.mjs` from a real engine run and stamped with a hash of the
+  source plus `RENDERER_VERSION`; bump that constant after changing the
+  renderer, or old pictures stay.
+- The generator owns a marked block in `public/sitemap.xml`
+  (`script-library:start` / `script-library:end`); edit the rest of the
+  sitemap by hand as before.
+- Pages render in the Worker at request time (median ~12 ms in workerd). The
+  index cards use `prefetch={false}`, per the CPU-limit note below.
+- The porting knowledge also lives in the openalgo repo's skill:
+  `.claude/skills/openscript/reference/porting-from-javascript.md` (chart
+  helpers whose OpenScript twin differs, e.g. the chart core `ema` is seeded
+  with the first value while OpenScript `ema` is SMA-seeded).
 
 ## /script documentation (OpenScript)
 
@@ -196,6 +227,10 @@ the CPU limit. Two mitigations are in place; keep both:
 - Orphaned `workerd.exe` from a prior `preview` locks `.open-next\assets`,
   causing EPERM on cleanup. Pre-deploy: `Stop-Process` any `workerd`, then
   `Remove-Item -Recurse -Force .open-next .next`.
+- Stop `next dev` before deleting `.next` for a build. Stopping the `npx`
+  wrapper can leave its `node ...\next\dist\server\lib\start-server.js` child
+  holding the port (EADDRINUSE on the next `next dev`); find it with
+  `Get-NetTCPConnection -LocalPort 3000` and stop that process.
 - DO NOT upgrade to Next 16 and deploy from Windows: `next/og`'s resvg/yoga wasm
   fails to bundle under OpenNext, and the resulting Worker 500s at runtime
   (took production down once; recovered via `wrangler rollback`). If Next 16 is
