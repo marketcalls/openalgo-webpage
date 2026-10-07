@@ -32,6 +32,27 @@ function loadBars() {
   return barsPromise
 }
 
+/** Put the viewport over the newest bars, with room for `ahead` bars past them. */
+function showRecent(widget, count, ahead) {
+  if (count <= 0) return
+  const last = count - 1
+  widget.chart.setVisibleLogicalRange({ from: Math.max(0, last - VISIBLE_BARS + 1), to: last + Math.max(8, ahead + 4) })
+}
+
+/** The furthest any plot draws past its bar, from a literal or a setting's default. */
+function aheadOf(program) {
+  let ahead = 0
+  for (const p of program.outputs.plots) {
+    let o = p.offset ?? 0
+    if (o && typeof o === "object" && typeof o.input === "string") {
+      const d = program.inputs.find((i) => i.key === o.input)?.default
+      o = Array.isArray(d) && typeof d[1] === "number" ? d[1] : 0
+    }
+    if (typeof o === "number" && o > ahead) ahead = o
+  }
+  return ahead
+}
+
 function compile(core, name, text) {
   const file = core.sourceFile(name, text)
   const bag = new core.DiagnosticBag()
@@ -46,6 +67,7 @@ export default function LibraryChart({ name, source, height = 540 }) {
   const widgetRef = useRef(null)
   const studyRef = useRef(null)
   const libsRef = useRef(null)
+  const barCountRef = useRef(0)
   const [ready, setReady] = useState(false)
   const [state, setState] = useState({ phase: "loading" })
 
@@ -78,8 +100,8 @@ export default function LibraryChart({ name, source, height = 540 }) {
           shortcutsEditor: false,
         })
         widget.series.setData(bars)
-        const last = bars.length - 1
-        widget.chart.setVisibleLogicalRange({ from: Math.max(0, last - VISIBLE_BARS + 1), to: last + 8 })
+        barCountRef.current = bars.length
+        showRecent(widget, bars.length, 0)
         widgetRef.current = widget
         libsRef.current = { charts, core, adapter }
         setReady(true)
@@ -124,6 +146,9 @@ export default function LibraryChart({ name, source, height = 540 }) {
       studyRef.current = study
       // A study in a pane of its own gets a third of the height, so its
       // lines read as clearly as the candles above it.
+      // A plot drawn ahead of the newest bar (an Ichimoku cloud) needs that
+      // much clear space on the right to be seen.
+      showRecent(widget, barCountRef.current, aheadOf(compiled.program))
       if (study?.paneIndex > 0) {
         widget.chart.setPaneWeight(0, 2)
         widget.chart.setPaneWeight(study.paneIndex, 1)

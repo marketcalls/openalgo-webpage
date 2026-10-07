@@ -1,44 +1,31 @@
 // This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
 // © openalgo
-// Original work (c) mihakralj, MIT License
 
 version 1
-study("Ichimoku Cloud", overlay = true, precision = 2)
+study("Ichimoku Cloud", "Ichimoku", overlay = true, precision = 2)
 
-tenkan = input(9, "Tenkan Period", min = 1, max = 5000, step = 1)
-kijun = input(26, "Kijun Period", min = 1, max = 5000, step = 1)
-senkouB = input(52, "Senkou B Period", min = 1, max = 5000, step = 1)
-displacement = input(26, "Displacement", min = 1, max = 500, step = 1, tooltip = "Bars the cloud is pushed forward and the lagging span pulled back by.")
+conversionPeriods = input(9, "Conversion Line Length", min = 1)
+basePeriods = input(26, "Base Line Length", min = 1)
+laggingSpan2Periods = input(52, "Leading Span B Length", min = 1)
+// A plot offset is fixed before the first bar and takes a setting only as its
+// whole value, so the two directions are two settings. 25 and -25 are a
+// displacement of 26: the cloud starts on the 26th bar ahead and the lagging
+// span on the 26th bar back, counting the current bar as the first.
+cloudOffset = input(25, "Cloud Offset", min = 0, max = 500, tooltip = "Bars ahead the leading spans and the cloud are drawn.")
+laggingOffset = input(-25, "Lagging Span Offset", min = -500, max = 0, tooltip = "Bars back the closing price is drawn, as a negative number.")
 
-// The midpoint of the highest high and lowest low over the last `len` bars.
-// On the first bars the window is every bar so far, so each line answers
-// from the first bar.
-fn midpoint(len) =>
-    win = min(bar.index + 1, len)
-    hi = high
-    lo = low
-    for k = 1 to win - 1
-        hi = max(hi, high[k])
-        lo = min(lo, low[k])
-    (hi + lo) / 2
+// Each line is the midpoint of a range: the average of the lowest low and the
+// highest high over its length, which is the middle element of donchian().
+conversionLine = donchian(conversionPeriods)[1]
+baseLine = donchian(basePeriods)[1]
+leadLine1 = (conversionLine + baseLine) / 2
+leadLine2 = donchian(laggingSpan2Periods)[1]
 
-tenkanLine = midpoint(tenkan)
-kijunLine = midpoint(kijun)
-spanBLine = midpoint(senkouB)
-spanALine = (tenkanLine + kijunLine) / 2
+plot(conversionLine, "Conversion Line", #2962FF)
+plot(baseLine, "Base Line", #B71C1C)
+plot(close, "Lagging Span", #43A047, offset = laggingOffset)
+p1 = plot(leadLine1, "Leading Span A", #A5D6A7, offset = cloudOffset)
+p2 = plot(leadLine2, "Leading Span B", #EF9A9A, offset = cloudOffset)
 
-// The leading spans are shown `displacement` bars after the bar that
-// computed them, on the bars that exist.
-leadA = spanALine[displacement]
-leadB = spanBLine[displacement]
-
-plot(tenkanLine, "Tenkan-sen", #2962ff, width = 1)
-plot(kijunLine, "Kijun-sen", #ff5252, width = 1)
-// The lagging span is the close drawn 26 bars back. A plot offset takes an
-// input only as the whole of its value, and this one would need the input
-// negated, so it stays at the default distance.
-plot(close, "Chikou Span", #9c27b0, width = 1, offset = -26)
-spanA = plot(leadA, "Senkou Span A", #4caf50, width = 1)
-spanB = plot(leadB, "Senkou Span B", #ff5252, width = 1)
-// Green where span A leads, red where span B does.
-fill(spanA, spanB, leadA > leadB ? #4caf50 : #ff5252, opacity = 0.1)
+// Green where Leading Span A is above B, red where it is below.
+fill(p1, p2, leadLine1 > leadLine2 ? rgba(67, 160, 71, 0.1) : rgba(244, 67, 54, 0.1))

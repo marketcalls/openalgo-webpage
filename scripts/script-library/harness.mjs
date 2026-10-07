@@ -75,7 +75,7 @@ export function runScript(program, file, bars, settings = undefined) {
   // A candle plot is four columns; each is compared on its own, under the
   // plot's title and the column's name, as the original's candles are.
   const plots = program.outputs.plots.flatMap((p) => {
-    const offset = Number(p.offset ?? 0) || 0
+    const offset = plotOffset(p, program, settings)
     if (p.ohlc) return ["open", "high", "low", "close"].map((k) => ({ title: `${p.title} ${k}`, values: shifted(k === "close" ? p.channel : p.ohlc[k], offset) }))
     return [{ title: p.title, type: p.type, values: shifted(p.channel, offset) }]
   })
@@ -102,6 +102,23 @@ export function runScript(program, file, bars, settings = undefined) {
     outputs: program.outputs,
     inputs: program.inputs,
   }
+}
+
+/**
+ * A plot's offset in bars. Written as a literal it is a number; written as a
+ * setting it compiles to { input: key }, read from the settings the run used
+ * or else from that input's default.
+ */
+export function plotOffset(p, program, settings = {}) {
+  const o = p.offset ?? 0
+  if (typeof o === "number") return o
+  if (o && typeof o === "object" && typeof o.input === "string") {
+    if (settings && typeof settings[o.input] === "number") return settings[o.input]
+    const input = program.inputs.find((i) => i.key === o.input)
+    const d = input?.default
+    return Array.isArray(d) && typeof d[1] === "number" ? d[1] : 0
+  }
+  return 0
 }
 
 function anchorTime(anchor) {

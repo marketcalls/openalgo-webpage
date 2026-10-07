@@ -181,7 +181,9 @@ export async function verifySlug(row) {
   const metaPath = join(PORTS_DIR, `${row.slug}.json`)
   if (!existsSync(portPath)) return { slug: row.slug, ok: false, missing: true, error: `${portPath} does not exist` }
   const text = readFileSync(portPath, "utf8")
-  const parity = await verifyParity(join(ORIGINALS_ROOT, row.file), `${row.slug}.oscript`, text)
+  // openalgo's own studies are compared with a reference kept in this repo.
+  const original = row.reference ? join(ROOT, row.reference) : join(ORIGINALS_ROOT, row.file)
+  const parity = await verifyParity(original, `${row.slug}.oscript`, text)
   const source = lintSource(row, text)
   let meta = null
   let metaProblems = []

@@ -27,7 +27,7 @@ import { join } from "node:path"
 import { Marked } from "marked"
 import { load } from "openalgo-script"
 
-import { LIBRARY_DIR, ROOT, compileScript, readBars } from "./harness.mjs"
+import { LIBRARY_DIR, ROOT, compileScript, plotOffset, readBars } from "./harness.mjs"
 
 const PORTS = join(LIBRARY_DIR, "indicators")
 const PUBLIC = join(ROOT, "public", "script", "library")
@@ -41,6 +41,7 @@ const bars = readBars()
 const LICENCE = {
   MIT: { spdx: "MPL-2.0", name: "Mozilla Public License 2.0", url: "https://mozilla.org/MPL/2.0/", original: "MIT License" },
   "MPL-2.0": { spdx: "MPL-2.0", name: "Mozilla Public License 2.0", url: "https://mozilla.org/MPL/2.0/", original: "MPL-2.0" },
+  OWN: { spdx: "MPL-2.0", name: "Mozilla Public License 2.0", url: "https://mozilla.org/MPL/2.0/", original: null },
   "GPL-3.0": { spdx: "GPL-3.0", name: "GNU General Public License 3.0", url: "https://www.gnu.org/licenses/gpl-3.0.html", original: "GPL-3.0" },
 }
 
@@ -92,7 +93,7 @@ function thumbnail(program, run, engine) {
   const col = (ch) => Array.from(engine.column(ch), (v) => (typeof v === "number" && Number.isFinite(v) ? v : null))
   const plots = program.outputs.plots.map((p) => {
     const raw = col(p.channel)
-    const off = Number(p.offset ?? 0) || 0
+    const off = plotOffset(p, program)
     const values = new Array(n).fill(null)
     for (let i = 0; i < n; i++) if (i - off >= 0 && i - off < n) values[i] = raw[i - off]
     return { p, values, colours: p.colorChannel !== null && p.colorChannel !== undefined ? run.bars.map((b) => b.columns[p.colorChannel]) : null }
@@ -394,7 +395,7 @@ for (const row of catalog.filter(PUBLISHED)) {
     deviation: meta.deviation ?? null,
     licenceName: licence.name,
     licenceUrl: licence.url,
-    credit: `Original work (c) ${row.author}, ${licence.original}`,
+    credit: row.author ? `Original work (c) ${row.author}, ${licence.original}` : null,
     inputs: program.inputs.length,
     plots: program.outputs.plots.length,
     file: `${row.slug}.oscript`,

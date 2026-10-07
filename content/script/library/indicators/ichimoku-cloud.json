@@ -1,46 +1,19 @@
 {
   "title": "Ichimoku Cloud",
-  "summary": "Five lines built from the midpoints of recent highs and lows, with a shaded cloud between the two leading spans to frame trend, support and resistance.",
-  "description": "Ichimoku builds a full trend frame from one simple quantity: the midpoint between the highest high and the lowest low over a window of bars. On the first bars of the chart, before a window has filled, the window is every bar so far, so each line has a value from the first bar.\n\n**Tenkan-sen** is that midpoint over the Tenkan period (9 bars by default) and **Kijun-sen** over the Kijun period (26). **Senkou Span A** is the average of the Tenkan-sen and the Kijun-sen, and **Senkou Span B** is the midpoint over the Senkou B period (52). Both spans are shown `displacement` bars after the bar that computed them, which is why the cloud reads as a level set in the past and carried forward. **Chikou Span** is the close drawn 26 bars back, so it can be compared with the price of that earlier time.\n\nThe area between the two spans is the cloud. It is shaded green where Span A is above Span B and red where Span B is above Span A.",
-  "howToRead": "Price above the cloud is read as an uptrend and price below it as a downtrend; price inside the cloud is undecided. The cloud's edges act as support and resistance, and a thick cloud is usually read as a stronger barrier than a thin one. A green cloud means the faster midpoint leads the slower one; a change of colour is an early sign that the balance is shifting.\n\nThe Tenkan-sen crossing the Kijun-sen is the classic short term signal, and it carries more weight when it agrees with price's position against the cloud. The Chikou Span above the price of 26 bars ago confirms strength, below it weakness. Every line is built from past highs and lows, so the frame confirms trends rather than predicting turns.",
+  "summary": "Five lines built from range midpoints, with a shaded cloud projected ahead of price that marks trend, support and resistance at a glance.",
+  "description": "Ichimoku Cloud reads the market from the midpoints of recent ranges. Each of its averages is not a mean of closes but the average of the highest high and the lowest low over a window, so it follows where price has traded rather than where it closed.\n\nThe **Conversion Line** is the midpoint of the last 9 bars and the **Base Line** the midpoint of the last 26. **Leading Span A** is the average of those two lines, and **Leading Span B** is the midpoint of the last 52 bars. Both leading spans are drawn 25 bars ahead of the bar that computed them, so the cloud between them extends past the newest candle into the space on the right. The **Lagging Span** is the close drawn 25 bars back.\n\nThe cloud is shaded green where Leading Span A is above Leading Span B and red where it is below. With the default offsets the projection matches the classic displacement of 26, counting the current bar as the first.",
+  "howToRead": "Price above the cloud is usually read as an uptrend and price below it as a downtrend; price inside the cloud is a market without a clear side. The cloud's edges act as support and resistance, and a thick cloud is a stronger barrier than a thin one.\n\nA green cloud ahead of price means the shorter midpoint leads the longer one, a red cloud the reverse, and a change of colour in the projected part is an early sign that the balance is shifting. Many traders also watch the Conversion Line crossing the Base Line, and check that the Lagging Span sits clear of the candles from 25 bars ago before trusting a move. Like every trend tool it lags in a sideways market, where the lines tangle and the cloud flips often.",
   "settings": [
-    {
-      "key": "tenkan",
-      "label": "Tenkan Period",
-      "description": "The window for the Tenkan-sen midpoint, the fastest line. A shorter window makes it hug price more closely."
-    },
-    {
-      "key": "kijun",
-      "label": "Kijun Period",
-      "description": "The window for the Kijun-sen midpoint, which also feeds Senkou Span A. A longer window gives a steadier baseline."
-    },
-    {
-      "key": "senkouB",
-      "label": "Senkou B Period",
-      "description": "The window for Senkou Span B, the slow edge of the cloud. A longer window makes the cloud flatter and wider."
-    },
-    {
-      "key": "displacement",
-      "label": "Displacement",
-      "description": "How many bars after their own bar the two leading spans are shown. The lagging span stays 26 bars back whatever this is set to."
-    }
+    { "key": "conversionPeriods", "label": "Conversion Line Length", "description": "Bars in the window for the Conversion Line, the fastest midpoint. Shorter lengths react to price sooner." },
+    { "key": "basePeriods", "label": "Base Line Length", "description": "Bars in the window for the Base Line. It also feeds Leading Span A, which averages the Conversion and Base lines." },
+    { "key": "laggingSpan2Periods", "label": "Leading Span B Length", "description": "Bars in the window for Leading Span B, the slowest midpoint and the cloud's longer edge." },
+    { "key": "cloudOffset", "label": "Cloud Offset", "description": "How many bars ahead the leading spans and the cloud are drawn. 25 matches a displacement of 26." },
+    { "key": "laggingOffset", "label": "Lagging Span Offset", "description": "How many bars back the close is drawn, written as a negative number. -25 matches a displacement of 26." }
   ],
   "faq": [
-    {
-      "q": "Why is the cloud not drawn ahead of the newest bar?",
-      "a": "Each leading span is shown on the bar that comes `displacement` bars after the one that computed it, and only bars that exist are drawn on. The cloud therefore ends at the newest bar instead of running ahead of it."
-    },
-    {
-      "q": "Why do the lines start on the first bar?",
-      "a": "While fewer bars exist than a window needs, the midpoint is taken over every bar so far. The early values rest on short windows and settle once each window has filled."
-    },
-    {
-      "q": "What does the cloud colour mean?",
-      "a": "Green where Senkou Span A is above Senkou Span B, red where it is below. The colour shows which of the two midpoints is higher on that bar."
-    }
-  ],
-  "deviation": "The Chikou Span is always drawn 26 bars back: a plot offset can take a setting only as its whole value, and pulling the line back needs that setting negated, so changing Displacement moves the cloud but not the lagging span.",
-  "deviationVariants": [
-    "displacement=39"
+    { "q": "Why are there two offset settings instead of one displacement?", "a": "In OpenScript a plot's offset is fixed before the first bar and can take a setting only as its whole value, not a calculation on it. Projecting the cloud forward and the Lagging Span back needs two different numbers, so each is its own setting. The defaults, 25 and -25, give the classic displacement of 26." },
+    { "q": "Why does the cloud continue past the last candle?", "a": "The leading spans are drawn 25 bars after the bar that computed them, so the most recent values land in the space to the right of the newest candle. That projected part of the cloud is known now and does not change as new bars arrive." },
+    { "q": "Why is the Lagging Span missing on the most recent bars?", "a": "It is the close drawn 25 bars back, so the last 25 bars have no close yet to show there." },
+    { "q": "What do the colours of the cloud mean?", "a": "Green where Leading Span A is above Leading Span B, red where it is below. The colour says which midpoint leads, not where price is." }
   ]
 }

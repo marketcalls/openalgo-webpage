@@ -127,6 +127,21 @@ for (const dir of ["MIT", "MPL-2.0"]) {
   }
 }
 
+// Studies openalgo wrote itself, which replace the port of a catalog row.
+// They carry only the two-line header, and the gate compares them with a
+// reference implementation kept in this repository instead of an original.
+const OWN_WORK = {
+  "ichimoku-cloud": { reference: "content/script/library/references/ichimoku-cloud.mjs" },
+}
+for (const r of rows) {
+  const own = OWN_WORK[r.originalName ? plainTitle(r.originalName).toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "") : ""]
+  if (!own) continue
+  r.licence = "OWN"
+  r.author = null
+  r.reference = own.reference
+  r.header = [MPL, "// © openalgo"]
+}
+
 // Two originals can share a name (a study and its scanner, or two ports of
 // one formula). The second takes its file stem, which is unique.
 const slugs = new Set()

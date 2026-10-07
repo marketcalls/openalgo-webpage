@@ -162,7 +162,7 @@ export default function IndicatorPage({ data }) {
                 </a>
                 .
               </p>
-              <p className="osl-card-body osl-dim">{data.credit}.</p>
+              {data.credit ? <p className="osl-card-body osl-dim">{data.credit}.</p> : null}
             </div>
 
             <div className="osl-card">

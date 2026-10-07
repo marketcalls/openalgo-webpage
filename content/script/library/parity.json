@@ -1112,9 +1112,9 @@
   {
    "slug": "ichimoku-cloud",
    "ok": true,
-   "parity": false,
-   "variants": 5,
-   "deviation": "The Chikou Span is always drawn 26 bars back: a plot offset can take a setting only as its whole value, and pulling the line back needs that setting negated, so changing Displacement moves the cloud but not the lagging span."
+   "parity": true,
+   "variants": 6,
+   "deviation": null
   },
   {
    "slug": "inverse-fast-fourier-transform-ifft",

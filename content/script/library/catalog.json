@@ -3591,12 +3591,11 @@
  {
   "slug": "ichimoku-cloud",
   "file": "indicators/MIT/oa-ichimoku.js",
-  "licence": "MIT",
-  "author": "mihakralj",
+  "licence": "OWN",
+  "author": null,
   "header": [
    "// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/",
-   "// © openalgo",
-   "// Original work (c) mihakralj, MIT License"
+   "// © openalgo"
   ],
   "title": "Ichimoku Cloud",
   "originalName": "Ichimoku Cloud",
@@ -3610,7 +3609,8 @@
   ],
   "bytes": 5628,
   "runs": true,
-  "error": null
+  "error": null,
+  "reference": "content/script/library/references/ichimoku-cloud.mjs"
  },
  {
   "slug": "inverse-fast-fourier-transform-ifft",

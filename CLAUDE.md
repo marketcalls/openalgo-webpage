@@ -153,6 +153,14 @@ under `/fundamentals`, `/python`, `/quant`, etc., indexed by `/learn`.
   variants (never `defaults`), or every value agrees and the port only draws
   extra bars (an original that paints history backwards once a later bar
   decides it). Do not widen either rule to get a port through.
+- openalgo's own studies: a catalog row listed in `OWN_WORK` in `catalog.mjs`
+  is written by openalgo rather than ported (Ichimoku Cloud, rewritten
+  2026-10-07 to the user's own spec). It carries only the two header lines and
+  no credit line, and the gate compares it with a reference implementation in
+  `content/script/library/references/<slug>.mjs` instead of an original. A
+  plot offset taken from a setting compiles to `{ input: key }`; the harness
+  and the thumbnails resolve it (`plotOffset`), and the chart widens its right
+  margin for a plot drawn ahead of the newest bar.
 - Thumbnails (`public/script/library/thumbs/*.svg`) are drawn by
   `gen-library.mjs` from a real engine run and stamped with a hash of the
   source plus `RENDERER_VERSION`; bump that constant after changing the
