@@ -1,0 +1,32 @@
+{
+  "title": "Variance, Dispersion or Spread (VARIANCE)",
+  "summary": "The population variance of the source over the lookback, showing how widely price has been spread around its own mean.",
+  "description": "Variance measures dispersion: the average squared distance of each value in the window from the window's mean. This study keeps a running sum and a running sum of squares over the last period values, and on each bar reports the mean of the squares minus the square of the mean. That is the population variance, dividing by the number of values rather than one less.\n\nUntil the window fills, the average is taken over however many values have arrived, so the line starts on the first bar, where a single value reports 0. Because subtracting two large, nearly equal numbers can dip a hair below zero on a flat window, the result is clamped at zero. A missing source value counts as zero. The units are price squared, so the numbers are large on a high-priced instrument.",
+  "howToRead": "Read the line as a gauge of how spread out recent prices are, regardless of direction. A rising line means prices in the window are moving further from their average, which happens in expanding, volatile phases. A falling line means prices are bunching together in a quieter phase. Variance reacts strongly to large moves because the distances are squared.\n\nThe square root of variance is the standard deviation, which is in price units and easier to compare with a move on the chart. Compare variance on the same instrument over time rather than across instruments.",
+  "settings": [
+    {
+      "key": "period",
+      "label": "Period",
+      "description": "How many bars the window holds. A longer period gives a steadier reading that responds later to a change in volatility."
+    },
+    {
+      "key": "source",
+      "label": "Source",
+      "description": "The series whose dispersion is measured, usually the close."
+    }
+  ],
+  "faq": [
+    {
+      "q": "Why are the numbers so large?",
+      "a": "Variance is in price squared. On an instrument priced in the tens of thousands, a typical move of a few hundred points becomes a variance in the tens of thousands or more. Take the square root for a figure in price units."
+    },
+    {
+      "q": "Why does it start at 0?",
+      "a": "On the first bar the window holds one value, and one value has no spread. The window grows bar by bar until it holds the full period."
+    },
+    {
+      "q": "Is this the sample or the population variance?",
+      "a": "The population variance: the sum of squared distances is divided by the number of values in the window, not by one less."
+    }
+  ]
+}

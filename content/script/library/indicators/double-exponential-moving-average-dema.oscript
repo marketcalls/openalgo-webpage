@@ -1,0 +1,40 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © openalgo
+// Original work (c) mihakralj, MIT License
+
+version 1
+study("Double Exponential Moving Average (DEMA)", overlay = true, precision = 2)
+
+period = input(10, "Period", min = 1, max = 5000, step = 1)
+source = input(close, "Source")
+
+a = 2.0 / (period + 1)
+beta = 1.0 - a
+
+// Two chained exponential averages, both started from zero. While beta^n is
+// still above 1e-10 each is divided by 1 - beta^n, which removes the zero
+// seed so the line is unbiased from the first bar.
+var warmup = true
+var e = 1.0
+var ema1Raw = 0.0
+var ema2Raw = 0.0
+var ema1 = 0.0
+var ema2 = 0.0
+demaValue = none
+if not isNone(source)
+    ema1Raw = a * (source - ema1Raw) + ema1Raw
+    if warmup
+        e = e * beta
+        denom = 1.0 - e
+        c = denom != 0 ? 1.0 / denom : 1.0
+        ema1 = c * ema1Raw
+        ema2Raw = a * (ema1 - ema2Raw) + ema2Raw
+        ema2 = c * ema2Raw
+        warmup = e > 1e-10
+    else
+        ema1 = ema1Raw
+        ema2Raw = a * (ema1 - ema2Raw) + ema2Raw
+        ema2 = ema2Raw
+    demaValue = 2 * ema1 - ema2
+
+plot(demaValue, "DEMA", #ffeb3b, width = 2)

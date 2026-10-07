@@ -1,0 +1,51 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © openalgo
+// Original work (c) mihakralj, MIT License
+
+version 1
+study("Ultimate Channel (UCHANNEL)", overlay = true, precision = 2)
+
+source = input(close, "Source for Centerline")
+highSource = input(high, "Source for High")
+lowSource = input(low, "Source for Low")
+strLength = input(20, "STR Length", min = 1, max = 5000, step = 1, tooltip = "Lookback period for smoothing the True Range.")
+length = input(20, "Centerline Length", min = 1, max = 5000, step = 1, tooltip = "Lookback period for smoothing the centerline (close price).")
+numSTRs = input(1, "STR Multiplier", min = 0.01, max = 100, step = 0.01, tooltip = "Number of Smoothed True Ranges for channel width.")
+
+// A two-pole ultra smooth filter. Its coefficients depend only on the period.
+// Missing history repeats the nearest value there is, and the first two bars
+// pass the raw value through because the filter has no outputs to feed back.
+fn ultraSmooth(value, period) =>
+    var prevValue1 = none
+    var prevValue2 = none
+    var out1 = none
+    var out2 = none
+    arg = sqrt(2) * math.pi / period
+    expArg = exp(-arg)
+    c2 = 2 * expArg * math.cos(arg)
+    c3 = -expArg * expArg
+    c1 = (1 + c2 - c3) / 4
+    s0 = isNone(value) ? prevValue1 : value
+    s1 = isNone(prevValue1) ? s0 : prevValue1
+    s2 = isNone(prevValue2) ? s1 : prevValue2
+    result = isNone(out1) or isNone(out2) ? s0 : (1 - c1) * s0 + (2 * c1 - c2) * s1 - (c1 + c3) * s2 + c2 * out1 + c3 * out2
+    prevValue2 = prevValue1
+    prevValue1 = value
+    out2 = out1
+    out1 = result
+    result
+
+// True range anchored on the previous centreline source rather than the
+// previous close. On the first bar it is this bar's own high minus low.
+prevCenter = source[1]
+topRange = isNone(prevCenter) ? highSource : max(highSource, prevCenter)
+bottomRange = isNone(prevCenter) ? lowSource : min(lowSource, prevCenter)
+trueRangeValue = topRange - bottomRange
+
+smoothedRange = ultraSmooth(trueRangeValue, strLength)
+centerline = ultraSmooth(source, length)
+
+plot(centerline, "Middle Channel", #ffeb3b, width = 2)
+top = plot(centerline + numSTRs * smoothedRange, "Upper Channel", #ffeb3b, width = 2)
+bottom = plot(centerline - numSTRs * smoothedRange, "Lower Channel", #ffeb3b, width = 2)
+fill(top, bottom, #2962ff, opacity = 0.1)

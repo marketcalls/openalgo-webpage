@@ -1,0 +1,16 @@
+{
+  "title": "Median Absolute Error",
+  "summary": "The rolling median of the absolute gap between an actual series and a predicted one, a typical error that ignores outliers.",
+  "description": "Median Absolute Error compares an actual series (the close by default) with a predicted series (the open by default). On every bar it takes the absolute gap between them, and then reports the median of the last `Length` gaps instead of their average. An absent value on either series is read as zero.\n\nThe median here is the nearest-rank middle value: the gaps in the window are sorted and the value at rank `ceil(Length / 2)` is taken. For an odd window that is the exact middle; for an even window it is the lower of the two middle values rather than their average. The line has no value until the window has filled.\n\nThe pane shows a dashed zero line for reference.",
+  "howToRead": "Read the value as the size of a typical gap, in price units, over the recent window. With the default inputs it is the typical bar body, the distance from open to close. Half the bars in the window had a smaller gap and half a larger one.\n\nBecause it is a median, one very wide bar barely moves it, which makes it steadier than a mean absolute error. The flip side is that it is slow to admit a real change: the line only shifts once about half the window has changed character. It is in price units, so compare it with its own history rather than across instruments.",
+  "settings": [
+    { "key": "length", "label": "Length", "description": "How many bars the median is taken over. A longer window gives a steadier, slower line." },
+    { "key": "actual", "label": "Actual", "description": "The series treated as the outcome. The close by default." },
+    { "key": "predicted", "label": "Predicted", "description": "The series treated as the forecast of the actual series. The open by default." }
+  ],
+  "faq": [
+    { "q": "Why use a median rather than a mean?", "a": "A mean is pulled up by a single large miss. The median reports the middle gap in the window, so occasional outliers have almost no effect." },
+    { "q": "What happens with an even Length?", "a": "The study takes the lower of the two middle values rather than averaging them, so the reading is always one of the actual gaps in the window." },
+    { "q": "Why does the line move in steps?", "a": "The median is always one of the gaps in the window, so it holds its value while the gaps entering and leaving the window fall on the same side of the middle, and jumps to a neighbouring gap when they do not." }
+  ]
+}

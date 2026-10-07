@@ -1,0 +1,74 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © openalgo
+// Original work (c) mihakralj, MIT License
+
+version 1
+study("Fractal Adaptive Moving Average (FRAMA)", overlay = true, precision = 2)
+
+period = input(16, "Period", min = 2, max = 1000, step = 1)
+source = input(close, "Source")
+
+// The window is rounded up to an even length so its two halves match.
+pAdj = period % 2 == 0 ? period : period + 1
+halfLen = floor(pAdj / 2)
+
+dataAvailable = bar.index >= pAdj - 1 and not isNone(source[pAdj - 1])
+
+// The price range of the newer half, of the older half and of the whole
+// window, each divided by its length.
+n1 = none
+n2 = none
+n3 = none
+if dataAvailable
+    hh1 = source
+    ll1 = source
+    for k = 1 to halfLen - 1
+        val = source[k]
+        if not isNone(val)
+            hh1 = max(hh1, val)
+            ll1 = min(ll1, val)
+
+    hh2 = source[halfLen]
+    ll2 = source[halfLen]
+    secondHalfNa = isNone(hh2)
+    if not secondHalfNa
+        for k = halfLen + 1 to pAdj - 1
+            val = source[k]
+            if isNone(val)
+                secondHalfNa = true
+                break
+            hh2 = max(hh2, val)
+            ll2 = min(ll2, val)
+
+    hh3 = source
+    ll3 = source
+    for k = 1 to pAdj - 1
+        val = source[k]
+        if not isNone(val)
+            hh3 = max(hh3, val)
+            ll3 = min(ll3, val)
+
+    if not isNone(hh1) and not isNone(ll1)
+        n1 = (hh1 - ll1) / halfLen
+    if not secondHalfNa
+        n2 = (hh2 - ll2) / halfLen
+    if not isNone(hh3) and not isNone(ll3)
+        n3 = (hh3 - ll3) / pAdj
+
+// The fractal dimension of the window sets the smoothing: near 1 in a clean
+// trend, which follows price closely, and near 2 in a choppy range, which
+// barely moves. A flat or incomplete window leaves the weight at 1.
+weight = 1.0
+if orElse(n1 > 0 and n2 > 0 and n3 > 0, false)
+    dimen = (log(n1 + n2) - log(n3)) / log(2)
+    if not isNone(dimen)
+        weight = max(0.01, min(1, exp(-4.6 * (dimen - 1))))
+
+var result = none
+if isNone(source)
+    result = none
+else
+    prevF = orElse(result, source)
+    result = weight * source + (1 - weight) * prevF
+
+plot(dataAvailable ? result : none, "FRAMA", #ffeb3b, width = 2)

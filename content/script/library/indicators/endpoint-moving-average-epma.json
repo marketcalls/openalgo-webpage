@@ -1,0 +1,15 @@
+{
+  "title": "Endpoint Moving Average (EPMA)",
+  "summary": "A linearly weighted average whose weights fall from the newest bar to the oldest, plotted from the first bar.",
+  "description": "The Endpoint Moving Average weights the bars of its window in a straight line: the newest bar takes a weight equal to the window length, the bar before it one less, and so on down to a weight of one on the oldest bar. The weighted prices are added up and divided by the sum of the weights, so the newest price carries the most of the line.\n\nThe window grows with the chart. On the first bar it holds one price, on the second bar two, and it keeps growing until it holds `period` bars, after which it rolls forward one bar at a time. That is why the line is drawn from the very first bar rather than after a warmup. A missing price adds neither value nor weight, so the remaining bars keep their relative weighting.",
+  "howToRead": "Read the EPMA as a moving average that leans toward the most recent price. It follows price more closely than a simple average of the same length and turns sooner, so a close above a rising EPMA describes a market holding its recent gains, and a close below a falling one the opposite.\n\nIts first few values rest on fewer bars than the period, so they track price almost exactly. Like every average it trails a sharp move, and on a short period it reacts to noise as well as trend.",
+  "settings": [
+    { "key": "period", "label": "Period", "description": "Number of bars in the full window. A longer period smooths more and reacts later." },
+    { "key": "source", "label": "Source", "description": "The price series the average is taken from, the close by default." }
+  ],
+  "faq": [
+    { "q": "How does the EPMA weight its bars?", "a": "In a straight line: the newest bar gets a weight equal to the window length and each older bar one less, down to one on the oldest bar." },
+    { "q": "Why is there no warmup?", "a": "The window grows with the chart until it holds the full period, so every bar has a value. Early values use fewer bars and sit very close to price." },
+    { "q": "How is it different from a simple moving average?", "a": "A simple average gives every bar in the window the same weight. The EPMA gives the newest bars more, so it lags less and turns sooner." }
+  ]
+}

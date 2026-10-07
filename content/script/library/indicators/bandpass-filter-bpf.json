@@ -1,0 +1,16 @@
+{
+  "title": "Bandpass Filter (BPF)",
+  "summary": "Runs price through a two-pole highpass and a two-pole lowpass, then plots the price with the band that survives both stages taken out.",
+  "description": "The Bandpass Filter chains two recursive two-pole stages and draws the price minus their output on the price chart.\n\nThe first stage is a highpass filter whose period is the *Lower Cutoff*: it damps swings slower than that period and keeps the faster movement, starting from zero on the first bar. The second stage is a lowpass filter whose period is the *Higher Cutoff*: it damps swings faster than that period, starting from the first highpass value. Whatever gets through both stages is the band, and the plotted line is the source minus that band.\n\nThe two cutoffs decide how much passes. With the lower cutoff below the higher one, as in the defaults of 10 and 20, the two stages overlap in what they damp, so the band is narrow and weak: it peaks for swings of about 14 bars (the geometric mean of the two cutoffs) at roughly a fifth of their size, and the line stays close to price. With the lower cutoff above the higher one, for example 48 and 10, swings between the two periods pass almost in full, and the line keeps only the slow trend and the fastest bar to bar noise.",
+  "howToRead": "Read the line as price with one band of swings taken out. Where price oscillates at a period inside the band, the line is calmer than price; slow trends and very fast spikes sit outside the band, so there the line follows price closely.\n\nThe gap between price and the line is the band itself, so a wider gap shows a stronger swing of that length. At the default settings the band is small and the line rarely strays far from price. The first bars are a settling period while both recursive stages warm up, so give the line a few cutoff lengths before relying on its shape.",
+  "settings": [
+    { "key": "lower", "label": "Lower Cutoff", "description": "The period, in bars, of the highpass stage. Swings slower than this are damped before the lowpass stage." },
+    { "key": "upper", "label": "Higher Cutoff", "description": "The period, in bars, of the lowpass stage. Swings faster than this are damped out of the band." },
+    { "key": "source", "label": "Source", "description": "The price series the filter runs on. The close by default." }
+  ],
+  "faq": [
+    { "q": "Why is the line on the price chart instead of a separate pane?", "a": "It plots the source minus the filtered band, which keeps it at the price level. The band on its own would oscillate around zero." },
+    { "q": "Why does the line barely differ from price at the default settings?", "a": "With a lower cutoff of 10 and a higher cutoff of 20, each stage damps much of what the other keeps, so at most about a fifth of a 14-bar swing gets through to be removed. Set the lower cutoff above the higher one to pass a wide band between the two periods." },
+    { "q": "Does a missing price break the line?", "a": "A missing price borrows the previous bar's value. Only when both are missing is that bar left blank, and the highpass picks up again from zero on the next bar." }
+  ]
+}

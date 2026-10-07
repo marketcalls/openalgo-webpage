@@ -1,0 +1,15 @@
+{
+  "title": "EDCF: Ehlers Distance Coefficient Filter",
+  "summary": "A weighted average whose weights are each bar's summed squared distance from the bars before it, so it turns quickly on sharp moves.",
+  "description": "The Distance Coefficient Filter is a finite window average with weights that adapt to price. For each of the last `length` prices it adds up the squared differences between that price and each of the `length - 1` prices before it. That sum is the bar's weight.\n\nThe filter is the sum of weight times price divided by the sum of the weights. In a flat stretch the weights are nearly equal and the filter behaves like a simple average. When price moves sharply, the bars around the move are far from their neighbours, get much larger weights and pull the filter toward them, so it turns quickly and then settles. The weights reach back 2 x (length - 1) bars, so until that much history exists the line shows the price itself, and a perfectly flat window, where every weight is zero, also falls back to the price.",
+  "howToRead": "Use it like an adaptive moving average. In quiet conditions it is smooth and close to a simple average; when price breaks out it moves to the new level faster than a fixed average would. Price holding above a rising line shows upward pressure, and below a falling line downward pressure.\n\nIts speed comes from weighting outlier bars heavily, so a single sharp spike can tug the line noticeably until it leaves the window. The first bars of the chart show the raw price rather than a filtered value.",
+  "settings": [
+    { "key": "length", "label": "Length", "description": "The number of prices averaged and the distance window for each weight. Larger is smoother with more lag." },
+    { "key": "source", "label": "Source", "description": "The price series the filter runs on. The bar midpoint, high plus low over two, by default." }
+  ],
+  "faq": [
+    { "q": "Why does the line equal price at the start of the chart?", "a": "Each value needs 2 x (length - 1) bars of history to compute every distance. Until then the line shows the price itself rather than a partial average." },
+    { "q": "Why does it react quickly to breakouts?", "a": "Bars that sit far from their neighbours get large weights, so the prices right after a sharp move dominate the average and the line jumps toward them." },
+    { "q": "What happens in a perfectly flat market?", "a": "Every distance is zero, so every weight is zero and there is no average to take. The line falls back to the current price." }
+  ]
+}

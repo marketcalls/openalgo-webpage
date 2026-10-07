@@ -1,0 +1,29 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © openalgo
+// Original work (c) mihakralj, MIT License
+
+version 1
+study("McGinley Dynamic Indicator (MGDI)", overlay = true, precision = 2)
+
+period = input(10, "Period", min = 1, max = 5000, step = 1)
+factor = input(0.6, "Factor", min = 0.01, max = 5, step = 0.01)
+source = input(close, "Source")
+
+// The line starts at the first price. On every later bar it moves toward
+// price by the gap divided by factor * period * (price / line) ^ 4, so it
+// follows faster when price is below the line and slower when price is above.
+var mgdi = none
+if isNone(mgdi)
+    mgdi = source
+else if abs(mgdi) < 1e-10
+    mgdi = source
+else
+    priceRatio = source / mgdi
+    denom = factor * period * pow(priceRatio, 4)
+    denom = sign(denom) * max(0.001, abs(denom))
+    if not isNone(denom) and denom != 0
+        nextValue = mgdi + (source - mgdi) / denom
+        if not isNone(nextValue)
+            mgdi = nextValue
+
+plot(mgdi, "MGDI", #ffeb3b, width = 2)

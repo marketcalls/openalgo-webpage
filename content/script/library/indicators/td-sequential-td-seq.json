@@ -1,0 +1,14 @@
+{
+  "title": "TD Sequential (TD_SEQ)",
+  "summary": "Counts consecutive closes against the close a few bars back up to 9, then a slower countdown toward 13, to flag a move that may be exhausted.",
+  "description": "TD Sequential is a counting system in two phases. The **setup** compares each close with the close `comparePeriod` bars earlier. A close above it extends a positive count, a close below it extends a negative count, and an equal close resets the count to zero. A count that flips direction starts again from plus or minus 1, and the count is capped at plus or minus 9.\n\nWhen the setup first reaches 9 or -9, a **countdown** opens in the same direction. Unlike the setup it does not need consecutive bars: it steps by one only on bars where the close is above the high of two bars earlier (for an up countdown) or below the low of two bars earlier (for a down countdown). It stops at plus or minus 13, and a completed setup in the opposite direction restarts it the other way. The setup is drawn as a histogram and the countdown as a line, with reference levels at 0, plus or minus 9 and plus or minus 13.",
+  "howToRead": "A setup bar reaching +9 means nine closes in a row above the close four bars earlier, a stretched advance; -9 is the same for a decline. Traders read a completed setup as a sign that the move is mature, not as an order to trade against it.\n\nThe countdown line then tracks whether the move keeps making progress. A countdown reaching +13 or -13 is the stronger exhaustion reading, and the line holds at that value until a new setup restarts it. Both counts describe how extended a move is; neither says where it will turn, and a strong trend can complete several setups in a row.",
+  "settings": [
+    { "key": "comparePeriod", "label": "Compare Period", "description": "How many bars back each close is compared with during the setup. A shorter gap makes setups complete more often; a longer one demands a more sustained move." }
+  ],
+  "faq": [
+    { "q": "What resets the setup count?", "a": "A close equal to the close `comparePeriod` bars earlier resets it to zero, and a close on the other side starts a new count from plus or minus 1 in the opposite direction." },
+    { "q": "Why does the countdown move more slowly than the setup?", "a": "It steps only on bars that close beyond the high or low of two bars earlier, and the bars in between do not have to qualify. A countdown can take many more bars than 13 to complete." },
+    { "q": "Why does the countdown line stay flat at 13 or -13?", "a": "Once it reaches 13 the countdown is complete and stops counting. The line keeps that value until a new setup in either direction starts a fresh countdown from zero." }
+  ]
+}

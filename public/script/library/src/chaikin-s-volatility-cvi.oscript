@@ -1,0 +1,26 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © openalgo
+// Original work (c) mihakralj, MIT License
+
+version 1
+study("Chaikin's Volatility (CVI)", precision = 2)
+
+rocLength = input(10, "ROC Length", min = 1, max = 500, step = 1, tooltip = "Period for Rate of Change calculation")
+smoothLength = input(10, "Smoothing Length", min = 1, max = 500, step = 1, tooltip = "Period for EMA smoothing of high-low range")
+
+// The bar's high-low range, a missing one read as zero.
+hlRange = orElse(high - low, 0)
+
+// An exponential average of the range with weight 2 / (smoothLength + 1).
+// On the first bar it starts from that bar's range divided by the smoothing
+// length, as if the bars before the chart had no range.
+weight = 2 / (smoothLength + 1)
+var smoothed = hlRange / smoothLength
+smoothed = (hlRange - smoothed) * weight + smoothed
+
+// The percentage change of the smoothed range over `rocLength` bars.
+past = smoothed[rocLength]
+cvi = past != 0 ? (smoothed - past) / past * 100 : none
+
+plot(cvi, "CVI", #ffeb3b, width = 2)
+plot(0, "Zero", #787b86, width = 1)

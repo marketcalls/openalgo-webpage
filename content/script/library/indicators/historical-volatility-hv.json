@@ -1,0 +1,42 @@
+{
+  "title": "Historical Volatility (HV)",
+  "summary": "The population standard deviation of log returns over a rolling window, optionally scaled to an annual figure.",
+  "description": "Historical Volatility is the classic realised volatility measure. For each bar it takes the log return of the source, the natural logarithm of this value over the previous one, and keeps the last `Length` returns.\n\nIt then takes the population standard deviation of those returns: the average of the squared returns minus the square of their average, floored at zero, and the square root of that. Until the window is full it uses the returns available, so the line starts on the second bar, reading zero while there is only one return. With `Annualize Volatility` on, the result is multiplied by the square root of `Annual Periods`.",
+  "howToRead": "A rising line means returns are becoming more spread out, a falling line means the market is calming. Compare the reading with its own history: a stretch near the bottom of its range marks a calm market, and a spike follows a burst of large returns.\n\nEvery return in the window counts equally and drops out all at once when it leaves, so a single large bar lifts the line for exactly `Length` bars and then lets it fall in one step. The default 252 periods suits daily bars; on other timeframes set `Annual Periods` to the bars in a year or switch annualising off.",
+  "settings": [
+    {
+      "key": "source",
+      "label": "Source",
+      "description": "The price series whose returns are measured, the close by default."
+    },
+    {
+      "key": "length",
+      "label": "Length",
+      "description": "How many recent returns go into the standard deviation. A longer window gives a smoother, slower line."
+    },
+    {
+      "key": "annualize",
+      "label": "Annualize Volatility",
+      "description": "When on, the standard deviation is multiplied by the square root of Annual Periods."
+    },
+    {
+      "key": "annualPeriods",
+      "label": "Annual Periods",
+      "description": "Bars in a year used for annualising: 252 for daily bars, 52 for weekly bars."
+    }
+  ],
+  "faq": [
+    {
+      "q": "Why does the line drop suddenly sometimes?",
+      "a": "A large return leaves the window all at once after Length bars, so the standard deviation falls in a single step on that bar."
+    },
+    {
+      "q": "Is it a sample or a population standard deviation?",
+      "a": "Population: the squared deviations are divided by the number of returns, not by one less."
+    },
+    {
+      "q": "Why is it zero on the second bar?",
+      "a": "With a single return there is nothing to spread around, so the standard deviation is zero until a second return arrives."
+    }
+  ]
+}

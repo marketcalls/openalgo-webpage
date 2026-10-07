@@ -1,0 +1,23 @@
+{
+  "title": "KST Oscillator (KST)",
+  "summary": "Four rates of change over increasing lookbacks, each smoothed and summed with weights 1 to 4, plus a smoothed signal line.",
+  "description": "The KST Oscillator blends momentum over four horizons into one line. It takes four rates of change of the source, in percent, over the ROC periods (10, 15, 20 and 30 bars by default). Until a lookback exists, the earlier value reads as zero and that rate of change reads zero.\n\nEach rate of change is smoothed by its own simple average (10, 10, 10 and 15 bars by default), and the four smoothed rates are added with weights 1, 2, 3 and 4, so the longer horizons count for more. The **Signal** line is a simple average of KST over the signal period.\n\nEvery simple average here starts on the first bar: until its window has filled, it averages every value so far. A missing source value counts as zero.",
+  "howToRead": "KST above zero means momentum across the four horizons is positive overall, and below zero negative. A cross of KST above its Signal line is read as momentum turning up and a cross below as momentum turning down; crossings of zero show a change in the broader momentum. Divergence between KST and price, such as a new price high with a lower KST peak, warns that the move is weakening.\n\nBecause it is built from long lookbacks and heavy smoothing, KST is slow, and its signals suit swings rather than single bars. The opening stretch of bars, before the longest lookback and smoothing have filled, is a warmup.",
+  "settings": [
+    { "key": "source", "label": "Source", "description": "The price series the rates of change are measured on." },
+    { "key": "r1", "label": "ROC Period 1", "description": "Lookback of the shortest rate of change, which carries weight 1." },
+    { "key": "r2", "label": "ROC Period 2", "description": "Lookback of the second rate of change, which carries weight 2." },
+    { "key": "r3", "label": "ROC Period 3", "description": "Lookback of the third rate of change, which carries weight 3." },
+    { "key": "r4", "label": "ROC Period 4", "description": "Lookback of the longest rate of change, which carries weight 4." },
+    { "key": "s1", "label": "SMA Smooth 1", "description": "Length of the simple average applied to the first rate of change." },
+    { "key": "s2", "label": "SMA Smooth 2", "description": "Length of the simple average applied to the second rate of change." },
+    { "key": "s3", "label": "SMA Smooth 3", "description": "Length of the simple average applied to the third rate of change." },
+    { "key": "s4", "label": "SMA Smooth 4", "description": "Length of the simple average applied to the fourth rate of change." },
+    { "key": "signalPeriod", "label": "Signal Period", "description": "Length of the simple average of KST that forms the Signal line." }
+  ],
+  "faq": [
+    { "q": "Why are the longer rates weighted more?", "a": "The weights 1, 2, 3 and 4 make the slower horizons dominate, so the line follows the broader swing while the shorter rates help it turn sooner." },
+    { "q": "Why does the line start on the first bar?", "a": "Each average uses every value so far until its window fills, and a rate of change without its lookback reads zero, so there is always a value. The first stretch of bars is still a warmup." },
+    { "q": "Is KST bounded?", "a": "No. It is a weighted sum of percentages, so its range depends on how volatile the instrument is. Read its crossings and turns rather than a fixed level." }
+  ]
+}

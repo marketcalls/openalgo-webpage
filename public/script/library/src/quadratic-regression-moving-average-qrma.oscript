@@ -1,0 +1,56 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © openalgo
+// Original work (c) mihakralj, MIT License
+
+version 1
+study("Quadratic Regression Moving Average (QRMA)", overlay = true, precision = 2)
+
+period = input(14, "Period", min = 3, max = 1000, step = 1)
+source = input(close, "Source")
+
+// Sums of x, x^2, x^3 and x^4 for x = 0 to n - 1, the fixed part of the
+// least squares normal equations for y = a + b x + c x^2.
+n = period
+sx = n * (n - 1.0) / 2.0
+sx2 = n * (n - 1.0) * (2.0 * n - 1.0) / 6.0
+sx3 = sx * sx
+sx4 = n * (n - 1.0) * (2.0 * n - 1.0) * (3.0 * n * n - 3.0 * n - 1.0) / 30.0
+
+d00 = n
+d01 = sx
+d02 = sx2
+d10 = sx
+d11 = sx2
+d12 = sx3
+d20 = sx2
+d21 = sx3
+d22 = sx4
+det = d00 * (d11 * d22 - d12 * d21) - d01 * (d10 * d22 - d12 * d20) + d02 * (d10 * d21 - d11 * d20)
+solvable = not isNone(det) and abs(det) >= 1e-20
+
+// An absent price counts as zero.
+price = orElse(source, 0)
+
+// The price sums over the window, with x = 0 at the oldest bar.
+sy = 0.0
+sxy = 0.0
+sx2y = 0.0
+if bar.index >= period - 1
+    for j = 0 to period - 1
+        val = price[period - 1 - j]
+        sy += val
+        sxy += j * val
+        sx2y += j * j * val
+
+// Cramer's rule gives the three coefficients, and the fitted curve is read at
+// the newest bar, x = n - 1.
+detA = sy * (d11 * d22 - d12 * d21) - d01 * (sxy * d22 - sx2y * d21) + d02 * (sxy * d21 - sx2y * d11)
+detB = d00 * (sxy * d22 - sx2y * d21) - sy * (d10 * d22 - d12 * d20) + d02 * (d10 * sx2y - sxy * d20)
+detC = d00 * (d11 * sx2y - sxy * d21) - d01 * (d10 * sx2y - sxy * d20) + sy * (d10 * d21 - d11 * d20)
+xEnd = n - 1.0
+fitted = detA / det + detB / det * xEnd + detC / det * xEnd * xEnd
+
+// Until the window is full the line shows the price itself.
+qrma = bar.index < period - 1 or not solvable ? price : orElse(fitted, price)
+
+plot(qrma, "QRMA", #ffeb3b, width = 2)

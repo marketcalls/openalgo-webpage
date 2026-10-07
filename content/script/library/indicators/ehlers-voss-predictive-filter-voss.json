@@ -1,0 +1,17 @@
+{
+  "title": "Ehlers Voss Predictive Filter (VOSS)",
+  "summary": "A two-pole bandpass around one cycle length, with a feedback predictor line that runs a few bars ahead of it so cycle turns show earlier.",
+  "description": "The Voss Predictive Filter starts with a two-pole bandpass filter tuned to the cycle length in `Period`, with a width set by `Bandwidth`. The bandpass takes the change in price over two bars and keeps only the swings close to that cycle length, giving the red `Bandpass` line around zero. It is held at zero for the first six bars so the recursion is not started by a jump.\n\nThe blue `Voss` line is built from the bandpass with negative feedback. On each bar it takes the bandpass times `(3 + order) / 2` and subtracts a weighted sum of its own last `order` values, where `order` is three times `Predict` and the oldest value carries the smallest weight. Values before the start of the chart count as zero.\n\nThe effect is a line that leads the bandpass by roughly `Predict` bars for a clean cycle, at the price of more noise.",
+  "howToRead": "Read the two lines together. When the blue `Voss` line crosses above the red `Bandpass` line, the predicted cycle has turned up ahead of the filtered one; a cross below is the matching turn down. Both lines centre on zero, so their swings above and below zero are the cycle's highs and lows.\n\nThe lead only works while price is actually cycling near `Period`. In a strong trend or when the dominant cycle changes length, the prediction can turn too early or whipsaw. A larger `Predict` leads further but amplifies noise.",
+  "settings": [
+    { "key": "period", "label": "Period", "description": "The cycle length in bars the bandpass is centred on." },
+    { "key": "predict", "label": "Predict", "description": "How many bars ahead the Voss line aims to lead. It also sets how many past values the feedback uses." },
+    { "key": "bandwidth", "label": "Bandwidth", "description": "The width of the bandpass as a fraction of the period. Wider lets more cycle lengths through." },
+    { "key": "source", "label": "Source", "description": "The price series the filter runs on, the close by default." }
+  ],
+  "faq": [
+    { "q": "Does the Voss line really predict price?", "a": "It leads the bandpass line for a steady cycle near the chosen period. It does not forecast price itself, and it loses its lead when the market stops cycling." },
+    { "q": "Why are both lines flat at zero on the first bars?", "a": "The bandpass is held at zero for the first six bars so the recursion is not started by an arbitrary jump." },
+    { "q": "What is the usual signal?", "a": "A crossing of the Voss line through the Bandpass line, read as an early turn of the cycle." }
+  ]
+}

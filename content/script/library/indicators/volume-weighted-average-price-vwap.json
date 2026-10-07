@@ -1,0 +1,15 @@
+{
+  "title": "Volume Weighted Average Price (VWAP)",
+  "summary": "The average price paid since the chosen period began, each bar weighted by its volume, so it shows where the traded value actually sits.",
+  "description": "Volume Weighted Average Price is the running average of price since the start of the period, with each bar weighted by its volume. The study multiplies each bar's source price, the typical price of high, low and close by default, by its volume and adds it to a running sum, adds the volume to a second sum, and draws the first divided by the second. Bars with no volume add nothing, and until the period has seen any volume the line falls back to the source itself.\n\nThe Session Reset menu sets when the sums start again. Intraday choices from one minute to four hours split each trading session into buckets counted from its first bar (the first bar of each calendar day where no session hours are known), `1D` resets at each new calendar day, `1W` at each Monday, and the monthly, quarterly, half-year and yearly choices at the start of each calendar period. `Never` keeps one average from the first bar of the chart. All boundaries are read in the chart's timezone.\n\nBecause busy bars weigh more, the line sits where most of the trading in the period took place rather than at the middle of the prices seen.",
+  "howToRead": "Read VWAP as the average cost of everyone who traded in the period. Price above it means trades are now taking place above the period's volume weighted average; below it, the reverse. Many traders treat it as a level that intraday pullbacks test, and as a benchmark for judging their own fills.\n\nEarly in each period the line moves with every bar because few bars have been counted, and it becomes harder to move as volume accumulates. The reset makes it jump at period boundaries, so avoid reading crossings right at the reset bar.",
+  "settings": [
+    { "key": "source", "label": "Source", "description": "The price weighted by volume on each bar. The default is the typical price, the average of high, low and close." },
+    { "key": "sessionType", "label": "Session Reset", "description": "When the running sums start again: an intraday bucket, a day, a week, a calendar month, quarter, half-year or year, or never." }
+  ],
+  "faq": [
+    { "q": "Why does VWAP jump at certain bars?", "a": "Those are reset bars. When a new period begins the sums start again from that bar, so the line lands on its price and then settles as more volume arrives." },
+    { "q": "What happens on a market without volume?", "a": "Bars with no volume add nothing to the sums, and while the period has no volume at all the line simply follows the source price." },
+    { "q": "Which reset should I use?", "a": "The daily reset is the usual intraday benchmark. Weekly or monthly resets give a slower average cost that is useful for swing trading, and Never gives one average over the whole chart." }
+  ]
+}

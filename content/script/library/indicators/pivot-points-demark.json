@@ -1,0 +1,42 @@
+{
+  "title": "Pivot Points (DeMark)",
+  "summary": "A pivot, one resistance and one support from the previous period, weighted by whether that period closed above, below or at its open.",
+  "description": "This pivot method weighs the previous period by how it closed. It first forms a sum X from the previous period's open, high, low and close. When the period closed below its open, X is the high plus twice the low plus the close. When it closed above its open, X is twice the high plus the low plus the close. When it closed exactly at its open, X is the high plus the low plus twice the close.\n\nThe pivot is X divided by 4, the resistance R1 is X divided by 2 less the previous low, and the support S1 is X divided by 2 less the previous high. The period can be a day, a Monday-start week or a calendar month. The study folds the chart's own bars into those periods, remembering each period's first open, highest high, lowest low and last close, and every bar of a period reads the period before it.",
+  "howToRead": "Read R1 as the expected high and S1 as the expected low of the current period, and the pivot as its centre. Because a down period leans on its low and an up period on its high, the levels shift in the direction the previous period moved, rather than sitting symmetrically around its average.\n\nWith only one level on each side, a break beyond R1 or S1 leaves no further reference from this study. The levels are projections from the previous period, so treat them as areas to watch rather than as prices that must hold.",
+  "settings": [
+    {
+      "key": "timeframe",
+      "label": "Pivot Timeframe",
+      "description": "The period the levels are built from: D uses the previous day, W the previous Monday-start week and M the previous calendar month. A longer period gives wider levels that stay in place for longer."
+    },
+    {
+      "key": "showPp",
+      "label": "Show Pivot Point",
+      "description": "Draw the central pivot line. Turning it off hides the line without changing any other level."
+    },
+    {
+      "key": "showR1",
+      "label": "Show R1",
+      "description": "Draw the first resistance level. Turning it off hides that line only."
+    },
+    {
+      "key": "showS1",
+      "label": "Show S1",
+      "description": "Draw the first support level. Turning it off hides that line only."
+    }
+  ],
+  "faq": [
+    {
+      "q": "Why does this study have only one support and one resistance?",
+      "a": "The method defines a single projected high and low for the period. There are no second or third levels to draw."
+    },
+    {
+      "q": "What decides the weighting?",
+      "a": "Only the previous period's close against its open. A close below the open doubles the weight of the low, a close above doubles the high, and an unchanged close doubles the close."
+    },
+    {
+      "q": "Do the levels move during the day?",
+      "a": "No. Every bar of a period reads the period before it, which has already closed, so the lines are fixed for the whole period and step to new values when the next one begins."
+    }
+  ]
+}

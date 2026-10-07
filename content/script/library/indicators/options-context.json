@@ -1,0 +1,321 @@
+{
+  "title": "Options Context",
+  "summary": "An intraday context score from -100 to 100 that blends trend, session structure, momentum, volume, persistence and higher timeframes, with a confidence line.",
+  "description": "Options Context grades the intraday backdrop on one scale. Six components are each scored from -100 (strongly bearish) to +100 (strongly bullish): **trend** (the gap and slope of a fast and a slow EMA, in ATR), **structure** (the close against the session VWAP, the session open and the opening range), **momentum** (a volatility-normalized log return, its recent change and RSI), **participation** (where the bar closed and its one-bar return, weighted by relative volume), **persistence** (how consistently recent regular-session bars closed on one side of VWAP, closed up or down from the previous close, and had the fast EMA on one side of the slow EMA) and the **higher timeframes**.\n\nEvery distance is divided by ATR and passed through a soft saturation, `x / (1 + |x|)`, so no single reading can run away. Relative volume compares each regular-session bar with the same slot of the previous sessions, both for the bar alone and for the volume so far today. The 1H, 4H, daily and weekly readings are folded from the chart's own bars, with intraday buckets anchored to the first bar of each day, and every chart bar reads the last *closed* higher-timeframe bar, so a reading never changes after the fact.\n\nContext Direction is the weighted mean of the components that exist on the bar. Confidence, from 0 to 100, is a weighted blend of four things: how strongly and how consistently the components agree, the volume intensity behind the participation score, a volatility term that is highest when the volatility reading sits near 65, and the size of the persistence score. Direction is then latched into seven regimes, from strong bear to strong bull, with hysteresis: a regime is held on a weaker score than the one that entered it, so it does not flip back and forth around a threshold. The regime colours the line and shades the background.",
+  "howToRead": "Read the line as a bias, not a signal. Above +20 the context leans bullish, above +45 it is bullish and above +75 strongly so; the same levels below zero read bearish. The Confidence line says how much to trust that bias: below 35 the components disagree or volume is thin, and the dashboard's Levels Bias then reads LOW CONVICTION. With confidence of 35 or more, Levels Bias reads PREFER SUPPORT at +45 and above (SUPPORT LEAN from +20), PREFER RESISTANCE at -45 and below (RESISTANCE LEAN from -20) and TWO-SIDED in between, which is the side of the market the context favours working from.\n\nThe columns show relative volume scaled to the display cap, tinted by whether participation was buying or selling. Structure, participation and persistence only exist inside the regular session, so outside it the blend rests on trend, momentum and the higher timeframes. The opening range only counts on charts whose bars are no longer than the range. The score describes the latest bars; it does not forecast, and on a market that trades around the clock the session you choose decides what counts as the open.",
+  "settings": [
+    {
+      "key": "timezone",
+      "label": "Session timezone",
+      "description": "The IANA zone the regular session, the day boundaries and the week boundaries are read in, such as America/New_York or Asia/Kolkata. A blank field reads New York time; a name that is not a timezone stops the script with an error."
+    },
+    {
+      "key": "session",
+      "label": "Regular session",
+      "description": "The regular session as two HHMM clock times joined by a hyphen, on the wall clock of the session timezone. An end before the start crosses midnight. An unreadable value falls back to 0930-1600."
+    },
+    {
+      "key": "weekdaysOnly",
+      "label": "Monday-Friday only",
+      "description": "When on, only Monday to Friday bars count as regular-session bars. Turn it off for an instrument that also trades at the weekend."
+    },
+    {
+      "key": "openingRangeMinutes",
+      "label": "Opening-range minutes",
+      "description": "How long the opening range lasts from the first regular-session bar. The range is ignored when a chart bar is longer than this."
+    },
+    {
+      "key": "atrLength",
+      "label": "ATR length",
+      "description": "The average true range that every distance in the trend, structure and momentum scores is measured in."
+    },
+    {
+      "key": "fastEmaLength",
+      "label": "Fast EMA",
+      "description": "Length of the fast exponential average used by the trend score, the persistence score and the legacy vote."
+    },
+    {
+      "key": "slowEmaLength",
+      "label": "Slow EMA",
+      "description": "Length of the slow exponential average the fast one is compared with."
+    },
+    {
+      "key": "trendSlopeLookback",
+      "label": "Slope lookback",
+      "description": "How many bars back the slope of each average is measured over."
+    },
+    {
+      "key": "trendSpreadScale",
+      "label": "EMA spread scale (ATR)",
+      "description": "The gap between the two averages, in ATR, that scores about half way to the extreme. Larger values make the trend score less sensitive."
+    },
+    {
+      "key": "trendSlopeScale",
+      "label": "EMA slope scale (ATR)",
+      "description": "The slope of an average, in ATR, that scores about half way to the extreme."
+    },
+    {
+      "key": "vwapSource",
+      "label": "RTH VWAP source",
+      "description": "The price the session VWAP is built from."
+    },
+    {
+      "key": "vwapDistanceScale",
+      "label": "VWAP displacement scale (ATR)",
+      "description": "The distance from the session VWAP, in ATR, that scores about half way to the extreme in the structure score."
+    },
+    {
+      "key": "openingRangeBreakScale",
+      "label": "Opening-range break scale (ATR)",
+      "description": "How far past the opening range, in ATR, a close must sit before the break score approaches its extreme."
+    },
+    {
+      "key": "sessionOpenScale",
+      "label": "RTH-open displacement scale (ATR)",
+      "description": "The distance from the session open, in ATR, that scores about half way to the extreme."
+    },
+    {
+      "key": "rsiSource",
+      "label": "RSI source",
+      "description": "The price the RSI in the momentum score is computed on."
+    },
+    {
+      "key": "rsiLength",
+      "label": "RSI length",
+      "description": "Length of the RSI on the chart, and of the RSI inside every higher-timeframe reading."
+    },
+    {
+      "key": "momentumLookback",
+      "label": "Normalized-return lookback",
+      "description": "How many bars back the log return in the momentum score is measured over."
+    },
+    {
+      "key": "momentumScale",
+      "label": "Normalized-return scale",
+      "description": "The volatility-normalized return that scores about half way to the extreme. Larger values damp the momentum score."
+    },
+    {
+      "key": "momentumDeltaLookback",
+      "label": "Momentum-change lookback",
+      "description": "How many bars back the change in the return score is measured over."
+    },
+    {
+      "key": "momentumDeltaScale",
+      "label": "Momentum-change scale",
+      "description": "The change in the return score that scores about half way to the extreme."
+    },
+    {
+      "key": "rvolLookbackDays",
+      "label": "RVOL historical days",
+      "description": "How many earlier sessions the relative volume compares each bar with, slot by slot."
+    },
+    {
+      "key": "participationReturnScale",
+      "label": "Directional-return scale (ATR)",
+      "description": "The one-bar return, in ATR terms, that counts about half way to a full directional push in the participation score."
+    },
+    {
+      "key": "rvolLogScale",
+      "label": "RVOL intensity scale",
+      "description": "How quickly volume above normal turns into participation intensity. Larger values need more volume for the same intensity."
+    },
+    {
+      "key": "highRvolThreshold",
+      "label": "High RVOL threshold",
+      "description": "Relative volume at or above this is high: it casts a legacy vote, is marked in the dashboard and can raise the aligned volume alert."
+    },
+    {
+      "key": "extremeRvolThreshold",
+      "label": "Extreme RVOL threshold",
+      "description": "Relative volume at or above this is labelled extreme in the dashboard."
+    },
+    {
+      "key": "rvolDisplayCap",
+      "label": "RVOL display cap",
+      "description": "The relative volume that fills a column to 100. Higher values are drawn at 100."
+    },
+    {
+      "key": "persistenceLength",
+      "label": "Persistence bars",
+      "description": "How many bars the persistence score averages its three side votes over."
+    },
+    {
+      "key": "volatilityShortLength",
+      "label": "Short ATR length",
+      "description": "The fast average true range in the volatility ratio."
+    },
+    {
+      "key": "volatilityLongLength",
+      "label": "Long ATR length",
+      "description": "The slow average true range the fast one is divided by."
+    },
+    {
+      "key": "volatilityZLookback",
+      "label": "Volatility history",
+      "description": "How many bars of the volatility ratio its mean and standard deviation are taken over."
+    },
+    {
+      "key": "volatilityZScale",
+      "label": "Volatility z-score scale",
+      "description": "The z-score that moves the volatility reading about half way from 50 to its extreme."
+    },
+    {
+      "key": "includeHigherTimeframes",
+      "label": "Include HTF trend in Context",
+      "description": "When on, the higher-timeframe composite joins the blend with weight 0.15 and the local weights are scaled to 85 percent."
+    },
+    {
+      "key": "showHigherTimeframeMatrix",
+      "label": "Show 1H / 4H / 1D / 1W states",
+      "description": "Adds the two rows with each higher timeframe's score and state to the detailed dashboard."
+    },
+    {
+      "key": "htfFastEmaLength",
+      "label": "HTF fast EMA",
+      "description": "Length of the fast average on each folded higher timeframe."
+    },
+    {
+      "key": "htfSlowEmaLength",
+      "label": "HTF slow EMA",
+      "description": "Length of the slow average on each folded higher timeframe. A daily or weekly reading needs this many closed days or weeks before it appears."
+    },
+    {
+      "key": "htfAtrLength",
+      "label": "HTF ATR length",
+      "description": "The average true range each higher timeframe's distances are measured in."
+    },
+    {
+      "key": "htfSlopeLookback",
+      "label": "HTF EMA slope bars",
+      "description": "How many higher-timeframe bars back the slope of each average is measured over."
+    },
+    {
+      "key": "htfPathLookback",
+      "label": "HTF recent-path bars",
+      "description": "How many higher-timeframe bars the path return and path efficiency look back over."
+    },
+    {
+      "key": "htfPersistenceLength",
+      "label": "HTF persistence bars",
+      "description": "How many higher-timeframe bars the balance of closes above and below the fast average is taken over."
+    },
+    {
+      "key": "htfSpreadScale",
+      "label": "HTF EMA spread scale (ATR)",
+      "description": "The gap between the higher-timeframe averages, in ATR, that scores about half way to the extreme."
+    },
+    {
+      "key": "htfSlopeScale",
+      "label": "HTF EMA slope scale (ATR/bar)",
+      "description": "The slope per bar, in ATR, that scores about half way to the extreme on a higher timeframe."
+    },
+    {
+      "key": "htfReturnScale",
+      "label": "HTF path-return scale",
+      "description": "The path return, in ATR times the square root of the path length, that scores about half way to the extreme."
+    },
+    {
+      "key": "htfDirectionalThreshold",
+      "label": "HTF directional threshold",
+      "description": "How far from zero a higher-timeframe score must be to count as bullish or bearish in the dashboard's breadth count."
+    },
+    {
+      "key": "showContextLine",
+      "label": "Show Context Direction",
+      "description": "Draws the Context Direction line and its shading to zero."
+    },
+    {
+      "key": "showConfidenceLine",
+      "label": "Show Context Confidence",
+      "description": "Draws the Confidence line."
+    },
+    {
+      "key": "showRvol",
+      "label": "Show RVOL columns",
+      "description": "Draws the relative volume columns, coloured by the sign of the participation score."
+    },
+    {
+      "key": "showRsiMomentum",
+      "label": "Show RSI momentum score",
+      "description": "Draws the RSI part of the momentum score on the same -100 to 100 scale."
+    },
+    {
+      "key": "showHtfComposite",
+      "label": "Show HTF composite",
+      "description": "Draws the weighted higher-timeframe composite."
+    },
+    {
+      "key": "showRegimeBackground",
+      "label": "Subtle regime background",
+      "description": "Shades each bar's background in the colour of the latched regime."
+    },
+    {
+      "key": "regimeBackgroundTransparency",
+      "label": "Regime background transparency",
+      "description": "How transparent the regime shading is, from 85 to 100. At 100 nothing is shaded."
+    },
+    {
+      "key": "showDashboard",
+      "label": "Show dashboard",
+      "description": "Shows the table of readings for the newest bar."
+    },
+    {
+      "key": "dashboardMode",
+      "label": "Dashboard mode",
+      "description": "Detailed lists every component, the higher timeframes, volume, volatility and session state. Compact keeps the summary, HTF, RVOL and volatility rows."
+    },
+    {
+      "key": "dashboardPosition",
+      "label": "Dashboard position",
+      "description": "The corner of the pane the dashboard sits in."
+    },
+    {
+      "key": "dashboardSize",
+      "label": "Dashboard text size",
+      "description": "Kept so saved settings load. The table is drawn at the chart's own text size, so it changes nothing on this chart."
+    },
+    {
+      "key": "enableAlerts",
+      "label": "Enable alert conditions",
+      "description": "Turns all eight alerts on or off."
+    },
+    {
+      "key": "highConfidenceDirectionThreshold",
+      "label": "High-confidence direction threshold",
+      "description": "How far from zero Context Direction must be for the high-confidence alert."
+    },
+    {
+      "key": "highConfidenceThreshold",
+      "label": "High-confidence confidence threshold",
+      "description": "The confidence the high-confidence alert also requires."
+    },
+    {
+      "key": "contextFailureWindow",
+      "label": "Strong-regime failure window (bars)",
+      "description": "How many bars after entering a strong regime a fall back through 20 (or a rise back through -20) counts as a failure alert."
+    },
+    {
+      "key": "showLegacyComparison",
+      "label": "Show v0.1 binary-score comparison",
+      "description": "Draws the older five-vote score, times 20, for comparison with the graded blend."
+    }
+  ],
+  "faq": [
+    {
+      "q": "Why are the daily and weekly readings blank on my chart?",
+      "a": "Each higher timeframe needs as many closed buckets as the HTF slow EMA length (50 by default) before it has a reading, so on an intraday chart with a few months of history the weekly reading, and sometimes the daily, stays empty. The composite uses whichever timeframes have a reading."
+    },
+    {
+      "q": "Why does the line sometimes rest on fewer components?",
+      "a": "Structure, participation and persistence are only computed on regular-session bars, and participation also needs earlier sessions to compare volume with. A missing component drops out of the weighted mean and the remaining weights are rescaled."
+    },
+    {
+      "q": "What does the regime add over the line itself?",
+      "a": "The regime is a latch with hysteresis. A strong bull state entered at 75 is kept until the score falls below 68, and a bull state entered at 45 is kept down to 38, so the colour and the background change on a real shift rather than on every wiggle around a threshold."
+    },
+    {
+      "q": "Which session should I set for an instrument that trades around the clock?",
+      "a": "Set the hours you treat as the main session, in the zone you care about. The session decides the VWAP reset, the opening range, the relative-volume slots and where persistence counts, so a different window gives a different reading."
+    }
+  ]
+}

@@ -1,0 +1,82 @@
+{
+  "title": "Pivot Points (Extended)",
+  "summary": "The classic floor pivot carried out to five resistance and five support levels, built from the previous day, week or month's high, low and close.",
+  "description": "Extended pivot points start from the classic pivot, the average of the previous period's high, low and close, and carry the levels further out. R1 and S1 are twice the pivot less the previous low or high, and R2 and S2 sit one full previous range above and below the pivot. From the third level on, each step adds another multiple of the distance between the pivot and the previous low (for resistances) or high (for supports): R3 is the previous high plus twice that distance, R4 plus three times and R5 plus four times, and the supports mirror them below the previous low.\n\nThe period can be a day, a Monday-start week or a calendar month. The study folds the chart's own bars into those periods and starts a new period on the bar whose date, week or month differs from the bar before it. Every bar of a period reads the period before it, so the levels hold steady for the whole period.",
+  "howToRead": "Use the inner levels the way classic pivots are used: the pivot as the balance point, R1 and S1 as the first levels to watch for a pause. The outer levels, R4, R5, S4 and S5, are reached only when the current period travels well beyond the previous period's range, so price trading out there marks an exceptional move rather than a normal one.\n\nThe outer levels are spaced evenly and grow with the previous range, so after a wide period they can sit far away and rarely matter. Hide the ones you do not use to keep the chart readable.",
+  "settings": [
+    {
+      "key": "timeframe",
+      "label": "Pivot Timeframe",
+      "description": "The period the levels are built from: D uses the previous day, W the previous Monday-start week and M the previous calendar month. A longer period gives wider levels that stay in place for longer."
+    },
+    {
+      "key": "showPp",
+      "label": "Show Pivot Point",
+      "description": "Draw the central pivot line. Turning it off hides the line without changing any other level."
+    },
+    {
+      "key": "showR1",
+      "label": "Show R1",
+      "description": "Draw the first resistance level. Turning it off hides that line only."
+    },
+    {
+      "key": "showR2",
+      "label": "Show R2",
+      "description": "Draw the second resistance level. Turning it off hides that line only."
+    },
+    {
+      "key": "showR3",
+      "label": "Show R3",
+      "description": "Draw the third resistance level. Turning it off hides that line only."
+    },
+    {
+      "key": "showR4",
+      "label": "Show R4",
+      "description": "Draw the fourth resistance level. Turning it off hides that line only."
+    },
+    {
+      "key": "showR5",
+      "label": "Show R5",
+      "description": "Draw the fifth resistance level. Turning it off hides that line only."
+    },
+    {
+      "key": "showS1",
+      "label": "Show S1",
+      "description": "Draw the first support level. Turning it off hides that line only."
+    },
+    {
+      "key": "showS2",
+      "label": "Show S2",
+      "description": "Draw the second support level. Turning it off hides that line only."
+    },
+    {
+      "key": "showS3",
+      "label": "Show S3",
+      "description": "Draw the third support level. Turning it off hides that line only."
+    },
+    {
+      "key": "showS4",
+      "label": "Show S4",
+      "description": "Draw the fourth support level. Turning it off hides that line only."
+    },
+    {
+      "key": "showS5",
+      "label": "Show S5",
+      "description": "Draw the fifth support level. Turning it off hides that line only."
+    }
+  ],
+  "faq": [
+    {
+      "q": "How do the extended levels differ from the classic ones?",
+      "a": "R1 to R3 and S1 to S3 are the same as the classic pivot levels. R4, R5, S4 and S5 continue the pattern of R3 and S3 by adding one more multiple of the pivot's distance from the previous low or high each time."
+    },
+    {
+      "q": "Do the levels move during the day?",
+      "a": "No. Every bar of a period reads the period before it, which has already closed, so the lines are fixed for the whole period and step to new values when the next one begins."
+    },
+    {
+      "q": "Which calendar decides where a day or week starts?",
+      "a": "The chart's own timezone. Days start at midnight, weeks start on Monday and months start on the first, all on that calendar, so a chart shown in a different timezone can group its bars into different periods."
+    }
+  ]
+}

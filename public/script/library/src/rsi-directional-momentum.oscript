@@ -1,0 +1,408 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © openalgo
+// Original work (c) Arun K Bhaskar, MPL-2.0
+
+version 1
+study("RSI Directional Momentum", precision = 2)
+
+// Scanner
+scanMethod = input("Continuous Break", "Scanning Method", options = ["Continuous Break", "Continuous Retracement", "Flip Break", "Flip Retracement", "Divergence", "Hidden Divergence"], tooltip = "Continuous Break: RSI crosses 60 (40), dips back, then breaks the previous high (low) while holding above 60 (below 40). Continuous Retracement: price returns to the Fibonacci level of the breaking candle and turns. Flip Break and Flip Retracement report only the direction changes. Divergence: price makes a lower low while RSI makes a higher low. Hidden Divergence: price makes a higher low while RSI makes a lower low.")
+showLong = input(true, "Long Signals")
+showShort = input(true, "Short Signals")
+
+// RSI
+rsiLength = input(14, "RSI Length", min = 1, max = 5000, step = 1)
+rsiSource = input(close, "RSI Source")
+rsiMaLength = input(14, "SMA Length", min = 1, max = 5000, step = 1)
+fibValue = input(0.5, "Fib Value", min = 0, max = 1, step = 0.1, tooltip = "0 is the bottom of a bullish and the top of a bearish breaking candle, 1 the other end, 0.5 its midpoint.")
+showBull = input(true, "Display Bullish Divergence")
+showBear = input(true, "Display Bearish Divergence")
+showHiddenBull = input(true, "Display Hidden Bullish Divergence")
+showHiddenBear = input(true, "Display Hidden Bearish Divergence")
+pivotRight = input(5, "Pivot Lookback Right", min = 1, max = 200, step = 1)
+pivotLeft = input(5, "Pivot Lookback Left", min = 1, max = 200, step = 1)
+rangeMax = input(60, "Max of Lookback Range", min = 1, max = 1000, step = 1)
+rangeMin = input(5, "Min of Lookback Range", min = 1, max = 1000, step = 1)
+
+// Additional filters
+pchgFilter = input(false, "Apply % Change Filter", tooltip = "Percentage change of the day. The rule asks for the day to be both above +N and below -N, so switching this on blocks every signal.")
+pchgAboveBelow = input(2, "% Change Above/Below +/-", min = 0, max = 1000, step = 0.1)
+volFilter = input(false, "Apply Volume Filter (Day Total)", tooltip = "Cumulative volume of the running day must clear the level below.")
+volAbove = input(500000, "Volume Above", min = 0, max = 1000000000, step = 1000)
+volPchgFilter = input(false, "Apply Volume % Change Filter", tooltip = "0% means the running day volume must exceed the previous day total. 300%+ often marks a major breakout.")
+volPchgAbove = input(0, "Volume % Change Above", min = 0, max = 100000, step = 1)
+atrFilter = input(false, "Apply ATR Filter", tooltip = "Filters out longer or more volatile signal candles.")
+atrLength = input(14, "ATR Length", min = 1, max = 1000, step = 1)
+atrMulti = input(1, "ATR Multiplier", min = 1, max = 100, step = 0.1)
+bodyFilter = input(false, "Apply Body % Filter", tooltip = "80 means the body covers 80%+ of the candle.")
+bodyPercent = input(70, "Body % Above", min = 0, max = 100, step = 1)
+bodySizeFilter = input(false, "Apply Body Size Filter", tooltip = "2 means the candle is twice the size of the previous one.")
+bodySizeMulti = input(2, "Body Size Multiplier (x)", min = 0, max = 100, step = 1)
+volumeFilter = input(false, "Apply Volume Filter (vs SMA)", tooltip = "Filter candles with volume above the SMA of volume.")
+volSmaLength = input(20, "Volume SMA Length", min = 1, max = 1000, step = 1)
+relVolFilter = input(false, "Apply Relative Volume Filter", tooltip = "Filter candles with relative volume above its own average times the multiplier.")
+relVolLength = input(90, "Relative Volume Length", min = 2, max = 1000, step = 1)
+relVolMulti = input(5, "Rel Vol SMA Multiplier", min = 0, max = 100, step = 0.1)
+timeFilter = input(false, "Apply Time Filter", tooltip = "Keep signals inside a window of the trading day.")
+hourFrom = input(9, "Time From (Hour)", min = 0, max = 23, step = 1)
+minuteFrom = input(15, "Time From (Minute)", min = 0, max = 59, step = 1)
+hourTo = input(10, "Time To (Hour)", min = 0, max = 23, step = 1)
+minuteTo = input(15, "Time To (Minute)", min = 0, max = 59, step = 1)
+dateFilter = input(false, "Apply Date Filter", tooltip = "Keep signals on one calendar date only.")
+filterDay = input(25, "Day", min = 1, max = 31, step = 1)
+filterMonth = input(10, "Month", min = 1, max = 12, step = 1)
+filterYear = input(2024, "Year", min = 0, max = 2999, step = 1)
+
+// Performance table
+showTable = input(true, "Display")
+tablePosition = input("bottom-right", "Position", options = ["top-left", "top-center", "top-right", "middle-left", "middle-center", "middle-right", "bottom-left", "bottom-center", "bottom-right"])
+tableSize = input("normal", "Size", options = ["auto", "tiny", "small", "normal", "large", "huge"])
+
+// The fixed RSI bands.
+BREAKOUT = 60
+BREAKDOWN = 40
+
+isDivergence = scanMethod == "Divergence"
+isHidden = scanMethod == "Hidden Divergence"
+isContLine = scanMethod == "Continuous Break"
+isContRetLine = scanMethod == "Continuous Retracement"
+isCont = isContLine or isContRetLine
+isFlip = scanMethod == "Flip Break"
+isFlipRet = scanMethod == "Flip Retracement"
+
+// Every stateful reading is taken on every bar, at the top level.
+r = rsi(rsiSource, rsiLength)
+rm = sma(r, rsiMaLength)
+atrValue = atr(atrLength)
+volSma = sma(volume, volSmaLength)
+avgVol = sma(volume, relVolLength)
+// Relative volume divides by the previous bar's average, or by this bar's
+// volume while that average is still warming up (a reading of exactly 1).
+relDenom = orElse(avgVol[1], volume)
+relVol = relDenom > 0 ? volume / relDenom : none
+relVolSma = sma(relVol, relVolLength)
+pl = pivotLow(r, pivotLeft, pivotRight)
+ph = pivotHigh(r, pivotLeft, pivotRight)
+
+// ---- the running day: percentage change and volume ----------------------
+dayKey = date.year(time) * 10000 + date.month(time) * 100 + date.day(time)
+isNewDay = bar.index > 0 and dayKey != dayKey[1]
+dayPchg = bar.index > 0 and orElse(close[1] != 0, false) ? (close - close[1]) / close[1] * 100 : 0
+
+var cumPchg = none
+cumPchg = isNewDay ? dayPchg : isNone(cumPchg) ? dayPchg : cumPchg + dayPchg
+
+var currCumVol = none
+var prevCumVol = none
+if isNewDay
+    prevCumVol = currCumVol
+    currCumVol = volume
+else
+    currCumVol = isNone(currCumVol) ? volume : currCumVol + volume
+prevSafe = isNone(prevCumVol) ? currCumVol : prevCumVol
+cumVolPchg = not isNone(currCumVol) and not isNone(prevSafe) and prevSafe != 0 ? (currCumVol - prevSafe) / prevSafe * 100 : none
+
+// ---- additional filters ---------------------------------------------------
+barRange = high - low
+bodySize = abs(close - open)
+prevRange = high[1] - low[1]
+bodyPct = min(100, max(0, bodyPercent)) / 100
+
+// As written, the percentage filter needs the day above +N and below -N at
+// once, so switching it on blocks every signal.
+pchgAboveOk = not pchgFilter or orElse(cumPchg > pchgAboveBelow, false)
+pchgBelowOk = not pchgFilter or orElse(cumPchg < -pchgAboveBelow, false)
+volOk = not volFilter or orElse(currCumVol >= volAbove, false)
+volPchgOk = not volPchgFilter or orElse(cumVolPchg >= volPchgAbove, false)
+atrOk = not atrFilter or orElse(barRange > atrValue * max(1, atrMulti), false)
+bodyOk = not bodyFilter or (barRange > 0 and bodySize / barRange >= bodyPct)
+bodySizeOk = not bodySizeFilter or (barRange > 0 and bodySize / barRange >= bodyPct and orElse(barRange >= prevRange * bodySizeMulti, false))
+volumeOk = not volumeFilter or orElse(volume > volSma, false)
+relVolOk = not relVolFilter or orElse(relVol > relVolSma * relVolMulti, false)
+hourNow = date.hour(time)
+minuteNow = date.minute(time)
+timeOk = not timeFilter or ((hourNow > hourFrom or (hourNow == hourFrom and minuteNow >= minuteFrom)) and (hourNow < hourTo or (hourNow == hourTo and minuteNow < minuteTo)))
+dateOk = not dateFilter or (date.year(time) == filterYear and date.month(time) == filterMonth and date.day(time) == filterDay)
+filtersOk = pchgAboveOk and pchgBelowOk and volOk and volPchgOk and atrOk and bodyOk and bodySizeOk and volumeOk and relVolOk and timeOk and dateOk
+
+// ---- the three-step state machine ------------------------------------------
+// 1 and 4: RSI broke 40 (60). 2 and 5: it pulled back through the level.
+// 3 and 6: the close took out the low (high) of the breaking candle.
+var state = 0
+if state == 3 or state == 6
+    state = 0
+
+crossUnderBreakdown = orElse(r < BREAKDOWN and r[1] >= BREAKDOWN, false)
+crossOverBreakout = orElse(r > BREAKOUT and r[1] <= BREAKOUT, false)
+
+var short1Low = none
+var short1Bar = -1
+var long1High = none
+var long1Bar = -1
+
+short1 = crossUnderBreakdown and orElse(r < rm, false) and (state == 0 or (state >= 4 and state <= 5))
+if short1
+    short1Low = low
+    short1Bar = bar.index
+short2 = orElse(r > BREAKDOWN, false)
+short3 = not isNone(short1Low) and orElse(r < BREAKDOWN and r < rm and close < short1Low, false) and filtersOk and bar.isConfirmed
+
+long1 = crossOverBreakout and orElse(r > rm, false) and (state == 0 or (state >= 1 and state <= 2))
+if long1
+    long1High = high
+    long1Bar = bar.index
+long2 = orElse(r < BREAKOUT, false)
+long3 = not isNone(long1High) and orElse(r > BREAKOUT and r > rm and close > long1High, false) and filtersOk and bar.isConfirmed
+
+if short1
+    state = 1
+else if short2 and state == 1
+    state = 2
+else if short3 and state == 2
+    state = 3
+else if long1
+    state = 4
+else if long2 and state == 4
+    state = 5
+else if long3 and state == 5
+    state = 6
+
+shortContBreak = state == 3
+longContBreak = state == 6
+
+// ---- continuous retracement -------------------------------------------------
+var shortSignalHigh = none
+var shortSignalLow = none
+var shortSignalBar = -1
+var longSignalHigh = none
+var longSignalLow = none
+var longSignalBar = -1
+if shortContBreak
+    shortSignalHigh = high
+    shortSignalLow = low
+    shortSignalBar = bar.index
+if longContBreak
+    longSignalHigh = high
+    longSignalLow = low
+    longSignalBar = bar.index
+shortFib = shortSignalHigh - (shortSignalHigh - shortSignalLow) * fibValue
+longFib = longSignalLow + (longSignalHigh - longSignalLow) * fibValue
+
+var shortActive = false
+var longActive = false
+var shortRetDone = false
+var longRetDone = false
+if shortContBreak
+    shortActive = true
+    longActive = false
+    shortRetDone = false
+    longRetDone = false
+if longContBreak
+    longActive = true
+    shortActive = false
+    longRetDone = false
+    shortRetDone = false
+
+// The high crosses over the level as it stood on the previous bar, and the
+// previous high also sits under this bar's level.
+shortContRet = shortActive and not shortRetDone and orElse(high > shortFib and high[1] <= shortFib[1] and high[1] < shortFib, false)
+longContRet = longActive and not longRetDone and orElse(low < longFib and low[1] >= longFib[1] and low[1] > longFib, false)
+
+var shortRetHigh = none
+var longRetLow = none
+if shortContRet
+    shortRetDone = true
+    shortRetHigh = high
+if longContRet
+    longRetDone = true
+    longRetLow = low
+
+// ---- flip signals: only a change of side counts ------------------------------
+var flipBreakPrev = none
+fbNow = longContBreak ? 1 : shortContBreak ? -1 : flipBreakPrev
+fbEntry = not isNone(fbNow) and not isNone(flipBreakPrev) and fbNow != flipBreakPrev
+longFlipBreak = fbEntry and fbNow == 1
+shortFlipBreak = fbEntry and fbNow == -1
+flipBreakPrev = fbNow
+
+var flipRetPrev = none
+frNow = longContRet ? 1 : shortContRet ? -1 : flipRetPrev
+frEntry = not isNone(frNow) and not isNone(flipRetPrev) and frNow != flipRetPrev
+longFlipRet = frEntry and frNow == 1
+shortFlipRet = frEntry and frNow == -1
+flipRetPrev = frNow
+
+// ---- the guide levels ----------------------------------------------------------
+// A guide runs from the bar that started a sequence to the bar that completed
+// it, so its first bars are only known once the sequence completes, and a plot
+// cannot write a value onto a bar already drawn. Each guide is therefore held
+// in a buffer of the last GUIDE_DELAY + 1 bars and its column is drawn
+// GUIDE_DELAY bars back, which puts every value on the bar it belongs to. The
+// cost: the newest GUIDE_DELAY bars carry no guide yet, and a sequence longer
+// than GUIDE_DELAY bars loses its oldest stretch. The plots below repeat the
+// number as their literal offset.
+GUIDE_DELAY = 120
+
+var shortBreakBuf: array<number> = []
+var longBreakBuf: array<number> = []
+var shortRetBuf: array<number> = []
+var longRetBuf: array<number> = []
+
+fn advance(buf) =>
+    push(buf, none)
+    if size(buf) > GUIDE_DELAY + 1
+        shift(buf)
+    0
+
+fn paint(buf, fromBar, guideLevel) =>
+    last = size(buf) - 1
+    start = max(fromBar, bar.index - last)
+    for k = start to bar.index
+        set(buf, last - (bar.index - k), guideLevel)
+    0
+
+fn delayed(buf) => size(buf) == GUIDE_DELAY + 1 ? element(buf, 0) : none
+
+advance(shortBreakBuf)
+advance(longBreakBuf)
+advance(shortRetBuf)
+advance(longRetBuf)
+
+if shortContBreak and isContLine and not isNone(short1Low) and short1Bar >= 0
+    paint(shortBreakBuf, short1Bar, short1Low)
+if longContBreak and isContLine and not isNone(long1High) and long1Bar >= 0
+    paint(longBreakBuf, long1Bar, long1High)
+if shortContRet and isContRetLine and not isNone(shortFib) and not isNone(shortRetHigh) and shortSignalBar >= 0
+    paint(shortRetBuf, shortSignalBar, shortFib)
+if longContRet and isContRetLine and not isNone(longFib) and not isNone(longRetLow) and longSignalBar >= 0
+    paint(longRetBuf, longSignalBar, longFib)
+
+// ---- divergence -------------------------------------------------------------
+plFound = not isNone(pl)
+phFound = not isNone(ph)
+rsiLBR = r[pivotRight]
+lowLBR = low[pivotRight]
+highLBR = high[pivotRight]
+
+var lastPlBar = -1
+var lastPhBar = -1
+var prevPlRsi = none
+var prevPlLow = none
+var prevPhRsi = none
+var prevPhHigh = none
+
+// The gap back to the previous pivot, less one bar.
+plGap = lastPlBar >= 0 ? bar.index - lastPlBar - 1 : none
+phGap = lastPhBar >= 0 ? bar.index - lastPhBar - 1 : none
+plInRange = orElse(plGap >= rangeMin and plGap <= rangeMax, false)
+phInRange = orElse(phGap >= rangeMin and phGap <= rangeMax, false)
+
+rsiHL = orElse(rsiLBR > prevPlRsi, false) and plInRange
+priceLL = orElse(lowLBR < prevPlLow, false)
+bullDiv = isDivergence and showBull and priceLL and rsiHL and plFound
+
+rsiLH = orElse(rsiLBR < prevPhRsi, false) and phInRange
+priceHH = orElse(highLBR > prevPhHigh, false)
+bearDiv = isDivergence and showBear and priceHH and rsiLH and phFound
+
+rsiLL = orElse(rsiLBR < prevPlRsi, false) and plInRange
+priceHL = orElse(lowLBR > prevPlLow, false)
+hiddenBullDiv = isHidden and showHiddenBull and priceHL and rsiLL and plFound
+
+rsiHH = orElse(rsiLBR > prevPhRsi, false) and phInRange
+priceLH = orElse(highLBR < prevPhHigh, false)
+hiddenBearDiv = isHidden and showHiddenBear and priceLH and rsiHH and phFound
+
+divLowFlag = bullDiv or hiddenBullDiv
+divHighFlag = bearDiv or hiddenBearDiv
+
+if plFound
+    lastPlBar = bar.index
+    prevPlRsi = rsiLBR
+    prevPlLow = lowLBR
+if phFound
+    lastPhBar = bar.index
+    prevPhRsi = rsiLBR
+    prevPhHigh = highLBR
+
+// A pivot is known pivotRight bars after it forms. The divergence columns are
+// drawn 5 bars back (a plot's offset is fixed before the first bar), so with a
+// lookback of 5 or less the reading is taken from the bar 5 bars after the
+// pivot, which lands each point on its pivot. With a longer lookback the point
+// lands pivotRight - 5 bars after its pivot.
+divLag = max(0, 5 - pivotRight)
+divOn = isDivergence or isHidden
+divLowShown = divOn and orElse(plFound[divLag], false)
+divHighShown = divOn and orElse(phFound[divLag], false)
+divLowColor = orElse(divLowFlag[divLag], false) ? #089981 : fade(#089981, 100)
+divHighColor = orElse(divHighFlag[divLag], false) ? #F23645 : fade(#F23645, 100)
+
+// ---- plots -----------------------------------------------------------------
+plot(r, "RSI", #2962FF, width = 2)
+plot(rm, "RSI Moving Average", #FF6D00, width = 1)
+bandBull = plot(BREAKOUT, "Band Bullish", fade(#D1D4DC, 50), width = 1)
+bandBear = plot(BREAKDOWN, "Band Bearish", fade(#D1D4DC, 50), width = 1)
+plot(divLowShown ? rsiLBR[divLag] : none, "Line Bull Div", color = divLowColor, width = 2, offset = -5)
+plot(divHighShown ? rsiLBR[divLag] : none, "Line Bear Div", color = divHighColor, width = 2, offset = -5)
+plot(divLowShown ? lowLBR[divLag] : none, "Line Bull Div (Price)", color = divLowColor, width = 2, offset = -5, overlay = true)
+plot(divHighShown ? highLBR[divLag] : none, "Line Bear Div (Price)", color = divHighColor, width = 2, offset = -5, overlay = true)
+plot(delayed(shortBreakBuf), "Short Break Level", #F23645, width = 1, offset = -120, overlay = true)
+plot(delayed(longBreakBuf), "Long Break Level", #089981, width = 1, offset = -120, overlay = true)
+plot(delayed(shortRetBuf), "Short Retracement Level", #F23645, width = 1, offset = -120, overlay = true)
+plot(delayed(longRetBuf), "Long Retracement Level", #089981, width = 1, offset = -120, overlay = true)
+
+fill(bandBull, bandBear, #D1D4DC, opacity = 0.05)
+level(70, "Band Overbought", fade(#F23645, 50), style = "dotted")
+level(50, "Band Middle", fade(#D1D4DC, 50), style = "dotted")
+level(30, "Band Oversold", fade(#089981, 50), style = "dotted")
+
+// ---- markers, background and candle colours -----------------------------------
+if isCont and showShort and short1
+    signal("", color = #FAA1A4, at = "above", shape = "circle")
+if isCont and showLong and long1
+    signal("", color = #70CCBD, at = "below", shape = "circle")
+if isCont and showShort and shortContBreak
+    signal("2", color = #FAA1A4, at = "above", shape = "triangleDown")
+if isCont and showLong and longContBreak
+    signal("2", color = #70CCBD, at = "below", shape = "triangleUp")
+if isContRetLine and showShort and shortContRet
+    signal("3", color = #FAA1A4, at = "above", shape = "triangleDown")
+if isContRetLine and showLong and longContRet
+    signal("3", color = #70CCBD, at = "below", shape = "triangleUp")
+if isFlip and showShort and shortFlipBreak
+    signal("2", color = #FAA1A4, at = "above", shape = "triangleDown")
+if isFlip and showLong and longFlipBreak
+    signal("2", color = #70CCBD, at = "below", shape = "triangleUp")
+if isFlipRet and showShort and shortFlipRet
+    signal("3", color = #FAA1A4, at = "above", shape = "triangleDown")
+if isFlipRet and showLong and longFlipRet
+    signal("3", color = #70CCBD, at = "below", shape = "triangleUp")
+
+// A later shade wins where two overlap, so the retracement and flip shades
+// come first in the chain.
+shadeShort = isFlipRet and showShort and shortFlipRet
+shadeLong = isFlipRet and showLong and longFlipRet
+background(shadeShort ? fade(#FAA1A4, 90) : shadeLong ? fade(#70CCBD, 90) : (isFlip and showShort and shortFlipBreak) ? fade(#FAA1A4, 90) : (isFlip and showLong and longFlipBreak) ? fade(#70CCBD, 90) : (isContRetLine and showShort and shortContRet) ? fade(#FAA1A4, 90) : (isContRetLine and showLong and longContRet) ? fade(#70CCBD, 90) : (isCont and showShort and shortContBreak) ? fade(#FAA1A4, 90) : (isCont and showLong and longContBreak) ? fade(#70CCBD, 90) : none)
+barColor(shadeShort ? #FAA1A4 : shadeLong ? #70CCBD : (isFlip and showShort and shortFlipBreak) ? #FAA1A4 : (isFlip and showLong and longFlipBreak) ? #70CCBD : (isContRetLine and showShort and shortContRet) ? #FAA1A4 : (isContRetLine and showLong and longContRet) ? #70CCBD : (isCont and showShort and shortContBreak) ? #FAA1A4 : (isCont and showLong and longContBreak) ? #70CCBD : (isCont and showShort and short1) ? #FAA1A4 : (isCont and showLong and long1) ? #70CCBD : none)
+
+// ---- performance table --------------------------------------------------------
+// Two decimals at most, with trailing zeros dropped.
+fn fmt2(x) => isNone(x) ? "n/a" : text(floor(x * 100 + 0.5) / 100)
+fn lakh(v) => isNone(v) ? "n/a" : fmt2(v / 100000) + " L"
+
+// The grid carries no background of its own, so switching the table off
+// leaves the corner empty; each written cell carries the dark background.
+panel = table("Performance", 4, 2, position = "bottomRight", textColor = #D1D4DC)
+
+if showTable and bar.isLast
+    pchgCol = orElse(cumPchg > 0, false) ? #089981 : #F23645
+    volPchgCol = orElse(cumVolPchg > 0, false) ? #089981 : #F23645
+    prevVolCol = orElse(prevSafe < currCumVol, false) ? #F23645 : #089981
+    cell(panel, 0, 0, "%Chg", bgColor = #0F0F0F)
+    cell(panel, 0, 1, fmt2(cumPchg) + " %", textColor = pchgCol, bgColor = #0F0F0F, align = "right")
+    cell(panel, 1, 0, "Vol %Chg", bgColor = #0F0F0F)
+    cell(panel, 1, 1, fmt2(cumVolPchg) + " %", textColor = volPchgCol, bgColor = #0F0F0F, align = "right")
+    cell(panel, 2, 0, "Vol", bgColor = #0F0F0F)
+    cell(panel, 2, 1, lakh(currCumVol), textColor = volPchgCol, bgColor = #0F0F0F, align = "right")
+    cell(panel, 3, 0, "PD Vol", bgColor = #0F0F0F)
+    cell(panel, 3, 1, lakh(prevSafe), textColor = prevVolCol, bgColor = #0F0F0F, align = "right")

@@ -1,0 +1,27 @@
+{
+  "title": "Balance of Power (BOP)",
+  "summary": "Measures where each bar closed relative to its open, as a share of its range, and smooths it with a warmup-corrected exponential average.",
+  "description": "Balance of Power reads each bar as a contest between buyers and sellers. The raw value is `(close - open) / (high - low)`: +1 when the bar opened at its low and closed at its high, -1 for the reverse, and 0 for a bar that closed where it opened. A bar with no range at all reads 0.\n\nThe raw value is then smoothed with an exponential average of weight `2 / (length + 1)`, seeded with the first bar's raw value. While the average is young it is multiplied by a warmup factor `1 / (1 - e)`, where `e` is the product of `1 - weight` over the bars so far. The factor is large on the first bars and shrinks toward 1 as history builds, and once `e` falls below 1e-10 it is no longer applied.\n\nA Smoothing Length of 0 turns the smoothing off and plots the raw value of each bar.",
+  "howToRead": "Values above zero mean closes have tended to finish above their opens, a sign buyers controlled the bars; values below zero mean sellers did. The further from zero, the more one-sided the bars. Many traders watch for the smoothed line crossing zero, or for it fading while price keeps rising, as a sign the move is losing support.\n\nThe raw reading is noisy from bar to bar, which is why it is smoothed by default. It ignores gaps between bars and volume, so it describes the shape of the bars, not the size of the trade behind them.",
+  "settings": [
+    {
+      "key": "smoothing",
+      "label": "Smoothing Length",
+      "description": "The length of the exponential average applied to the raw value. 0 plots the raw value with no smoothing."
+    }
+  ],
+  "faq": [
+    {
+      "q": "What range can it take?",
+      "a": "The raw value lies between -1 and +1, and the smoothed line normally stays inside that range too. On the first few bars the warmup factor is large and can push the line beyond it."
+    },
+    {
+      "q": "Why does the line move a lot on the first bars?",
+      "a": "The early average has few bars behind it and is multiplied by a warmup factor that starts large. The factor shrinks as bars accumulate, and the line settles."
+    },
+    {
+      "q": "How is a bar with the same high and low handled?",
+      "a": "It has no range, so its raw value is 0 rather than a division by zero."
+    }
+  ]
+}

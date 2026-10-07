@@ -1,0 +1,192 @@
+{
+  "title": "Momentum Investing Setup with Scanner",
+  "summary": "Flags a bar only when the 250-bar change, RSI, MFI, CCI and a volume surge all agree, with Supertrend on price and mini oscillator curves under the candles.",
+  "description": "This setup is a five-filter momentum screen drawn on the price chart. A bar is flagged **Long** only when all five agree on strength: the percentage change from the close 250 bars back is above the threshold, RSI is above its overbought level, the Money Flow Index is above its overbought level, CCI is above its overbought level, and the bar's volume is larger than its exponential average multiplied by the volume multiplier. A **Short** needs the mirror image on every filter: the change below the negative threshold and each oscillator below its oversold level, again on a volume surge.\n\nThe percentage change is measured as the move over 250 bars divided by the current close. RSI is computed on the close, MFI on the typical price (high, low and close averaged) with volume, and CCI on the typical price. The volume average is an exponential average seeded with the simple average of its first values. A Supertrend line rides the price, drawn in green while the trend is up and in red while it is down, with the line breaking at each flip.\n\nOver the most recent bars, set by Display Length, the study redraws RSI with its simple average, MFI, and CCI with its simple average as small curves in price space below the candles, each with its overbought, middle and oversold levels and a tag showing the latest reading. A volume histogram sits above the candles with the volume threshold (the average times the multiplier) running through it, and a tag giving the buying and selling share of the newest bar, its volume and that threshold. The histogram is drawn only when the newest bar carries volume. A small table in a corner lists the latest value of each filter, coloured green, red or grey by its verdict.",
+  "howToRead": "A **Long** triangle under a bar, with the candle recoloured light green, means price, momentum, money flow and volume all pointed up on that bar. A **Short** triangle above a bar, with a light red candle, is the same agreement to the downside. Signal bars near the newest bar, within roughly Display Length bars, are also shaded. The Supertrend line gives a trailing level to judge whether the move is holding.\n\nThe table shows which filters are already in place and which are missing, which is useful between signals. The volume filter is strict by design: with the multiplier at 5 a bar needs five times its average volume, so signals are rare and a chart can show none for a long stretch. The 250-bar change also means nothing can be flagged until 250 bars of history exist. The mini curves are rescaled to the recent price range, so read them for shape and position against their own levels, not for their price.",
+  "settings": [
+    {
+      "key": "pchgPct",
+      "label": "Above/Below %",
+      "description": "The 250-bar percentage change a bar must exceed for a long signal, or fall below the negative of for a short signal. Lower it on intraday charts."
+    },
+    {
+      "key": "rsiDisplay",
+      "label": "RSI Display",
+      "description": "Draw the RSI curve, its average, its levels and its tag below the candles. The RSI filter still applies when this is off."
+    },
+    {
+      "key": "rsiLen",
+      "label": "RSI Length",
+      "description": "Bars in the RSI calculation. A longer length gives a smoother, slower reading."
+    },
+    {
+      "key": "rsiSmaLen",
+      "label": "RSI SMA Length",
+      "description": "Bars in the simple average drawn with the RSI curve. It does not affect the signals."
+    },
+    {
+      "key": "rsiOb",
+      "label": "RSI Overbought",
+      "description": "The RSI level a long signal must be above, also drawn as the upper reference line."
+    },
+    {
+      "key": "rsiOs",
+      "label": "RSI Oversold",
+      "description": "The RSI level a short signal must be below, also drawn as the lower reference line."
+    },
+    {
+      "key": "rsiVoffset",
+      "label": "RSI Vertical Offset",
+      "description": "How far below the recent low the RSI curve sits, in multiples of the recent price range. Larger moves it further down."
+    },
+    {
+      "key": "rsiHeight",
+      "label": "RSI Height",
+      "description": "How tall the RSI curve is drawn, as a multiple of the recent price range."
+    },
+    {
+      "key": "mfiDisplay",
+      "label": "MFI Display",
+      "description": "Draw the Money Flow Index curve, its levels and its tag below the candles. The MFI filter still applies when this is off."
+    },
+    {
+      "key": "mfiLen",
+      "label": "MFI Length",
+      "description": "Bars in the Money Flow Index window."
+    },
+    {
+      "key": "mfiOb",
+      "label": "MFI Overbought",
+      "description": "The MFI level a long signal must be above, also drawn as the upper reference line."
+    },
+    {
+      "key": "mfiOs",
+      "label": "MFI Oversold",
+      "description": "The MFI level a short signal must be below, also drawn as the lower reference line."
+    },
+    {
+      "key": "mfiVoffset",
+      "label": "MFI Vertical Offset",
+      "description": "How far below the recent low the MFI curve sits, in multiples of the recent price range."
+    },
+    {
+      "key": "mfiHeight",
+      "label": "MFI Height",
+      "description": "How tall the MFI curve is drawn, as a multiple of the recent price range."
+    },
+    {
+      "key": "cciDisplay",
+      "label": "CCI Display",
+      "description": "Draw the CCI curve, its average, its levels and its tag below the candles. The CCI filter still applies when this is off."
+    },
+    {
+      "key": "cciLen",
+      "label": "CCI Length",
+      "description": "Bars in the Commodity Channel Index calculation on the typical price."
+    },
+    {
+      "key": "cciSmaLen",
+      "label": "CCI SMA Length",
+      "description": "Bars in the simple average drawn with the CCI curve. It does not affect the signals."
+    },
+    {
+      "key": "cciOb",
+      "label": "CCI Overbought",
+      "description": "The CCI level a long signal must be above, also drawn as the upper reference line."
+    },
+    {
+      "key": "cciOs",
+      "label": "CCI Oversold",
+      "description": "The CCI level a short signal must be below, also drawn as the lower reference line."
+    },
+    {
+      "key": "cciVoffset",
+      "label": "CCI Vertical Offset",
+      "description": "How far below the recent low the CCI curve sits, in multiples of the recent price range."
+    },
+    {
+      "key": "cciHeight",
+      "label": "CCI Height",
+      "description": "How tall the CCI curve is drawn. CCI runs on a wider scale than RSI and MFI, so this is kept small."
+    },
+    {
+      "key": "volDisplay",
+      "label": "Display MA Line",
+      "description": "Draw the volume threshold (the exponential average times the multiplier) as a line through the volume histogram."
+    },
+    {
+      "key": "volType",
+      "label": "Type",
+      "description": "Regular Volume colours each histogram bar by the candle direction; Buying/Selling Volume draws the whole bar in green with the selling share over it in red; None hides the histogram, its threshold line and its tag."
+    },
+    {
+      "key": "volMaLen",
+      "label": "MA Length",
+      "description": "Bars in the exponential volume average that the volume filter compares against."
+    },
+    {
+      "key": "volMaMulti",
+      "label": "MA Multiplier (x)",
+      "description": "How many times its average the volume must be for a signal. 1 means any above-average bar qualifies; 5 asks for a strong surge."
+    },
+    {
+      "key": "volVoffset",
+      "label": "Volume Vertical Offset",
+      "description": "How far above the recent high the volume histogram starts, in multiples of the recent price range."
+    },
+    {
+      "key": "volHeight",
+      "label": "Volume Height",
+      "description": "How tall the tallest histogram bar is drawn, as a multiple of the recent price range."
+    },
+    {
+      "key": "stDisplay",
+      "label": "Supertrend Display",
+      "description": "Show or hide the Supertrend line. The line plays no part in the signals."
+    },
+    {
+      "key": "stAtrPeriod",
+      "label": "ATR Length",
+      "description": "Bars in the average true range that sets the Supertrend's distance from price."
+    },
+    {
+      "key": "stFactor",
+      "label": "Factor",
+      "description": "Multiple of the average true range between price and the Supertrend line. Larger values flip less often."
+    },
+    {
+      "key": "displayLen",
+      "label": "Display Length",
+      "description": "How many recent bars the mini curves and the volume histogram cover, and roughly how far back signal bars are shaded. The shading counts bar intervals back from the chart clock, so on a market with session breaks it covers fewer bars."
+    },
+    {
+      "key": "tablePosition",
+      "label": "Position",
+      "description": "Where the readout table sits. A table here can only sit in a corner: Top Left and Middle Left go to the top left, Bottom Left to the bottom left, Bottom Center and Bottom Right to the bottom right, and the other three to the top right."
+    },
+    {
+      "key": "tableSize",
+      "label": "Size",
+      "description": "Kept with the other table settings, but a table here has no text size, so it does not change the drawing."
+    }
+  ],
+  "faq": [
+    {
+      "q": "Why are there no signals on my chart?",
+      "a": "All five filters must agree on the same bar, and the volume filter asks for five times the average volume by default. That is rare on most instruments. Lower MA Multiplier (x) or the percentage threshold to see more signals, and remember that nothing can fire until 250 bars of history exist."
+    },
+    {
+      "q": "What do the curves below the candles show?",
+      "a": "They are RSI, MFI and CCI redrawn in price space over the most recent bars, each with its overbought, middle and oversold lines. Their height is scaled to the recent price range, so the price axis does not read their values; the tag beside each curve gives the latest reading."
+    },
+    {
+      "q": "Does the Supertrend line affect the signals?",
+      "a": "No. The signals come only from the five filters. Supertrend is drawn as a trailing level to judge whether a move is holding after a signal."
+    },
+    {
+      "q": "Is the percentage change measured from the old close?",
+      "a": "No. The move over 250 bars is divided by the current close, not the close 250 bars back, so the figure is a little smaller than a plain rate of change after a large rise."
+    }
+  ],
+  "deviation": "Signal bars are shaded by counting whole chart intervals back from the chart clock rather than by counting bars, because a study cannot know on an earlier bar how many bars follow it, so on a market that closes, or when the clock is well past the newest bar, fewer bars are shaded; and the readout table sits in the nearest of four corners at the chart text size, because a table here has no centre positions and no size setting."
+}

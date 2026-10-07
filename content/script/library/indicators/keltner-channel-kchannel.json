@@ -1,0 +1,37 @@
+{
+  "title": "Keltner Channel (KCHANNEL)",
+  "summary": "An exponential average of the source with bands a multiple of the average true range above and below, drawn from the first bar.",
+  "description": "This channel places bands around an exponential moving average at a distance set by the average true range. The middle line keeps a running sum and a running weight that both decay by the exponential factor, and divides one by the other, so on the first bar it equals the source and it needs no seed window.\n\nThe true range of a bar is the largest of its high minus its low, the distance from its high to the previous close and the distance from its low to the previous close. The study smooths it with a running average whose weight is one over the length, starting from zero, and divides out the weight that zero start still holds, so the average true range is unbiased from the first bar.\n\nThe upper band is the middle line plus the multiplier times the average true range, and the lower band is the middle line minus it.",
+  "howToRead": "In a steady trend price tends to stay on one side of the middle line and lean on one band. A close outside the channel is a move larger than the typical bar range would suggest, which trend traders read as strength and range traders as stretch. Some traders treat a pullback to the middle line inside a trend as an entry area.\n\nBecause the width comes from true range rather than closing deviation, the channel does not widen just because closes drift away from the average, and it does widen on gaps. It still lags a sharp turn by roughly the length.",
+  "settings": [
+    {
+      "key": "source",
+      "label": "Source",
+      "description": "The price series the middle exponential average follows, the close by default."
+    },
+    {
+      "key": "length",
+      "label": "Length",
+      "description": "The length of the exponential average and of the true range smoothing. Longer is smoother and slower."
+    },
+    {
+      "key": "mult",
+      "label": "ATR Multiplier",
+      "description": "How many average true ranges the bands sit from the middle line. Larger values give a wider channel."
+    }
+  ],
+  "faq": [
+    {
+      "q": "Why is the channel present from the first bar?",
+      "a": "Both the average and the true range smoothing correct for their zero start, so they have usable values from bar one."
+    },
+    {
+      "q": "How is this different from a standard deviation band?",
+      "a": "The width comes from bar ranges and gaps instead of from how far closes stray from the mean, so a steady drift in closes does not widen it, while gaps and large bars do."
+    },
+    {
+      "q": "What is the first bar's true range?",
+      "a": "With no previous close, the first bar compares against its own close, so its true range is its high minus its low."
+    }
+  ]
+}

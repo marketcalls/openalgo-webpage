@@ -1,0 +1,45 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © openalgo
+// Original work (c) mihakralj, MIT License
+
+version 1
+study("Inverse Fast Fourier Transform (IFFT)", overlay = true, precision = 2)
+
+source = input(close, "Source")
+window = input(64, "Window Size", min = 32, max = 128, step = 32, tooltip = "DFT window; larger = finer frequency resolution")
+harmonics = input(5, "Harmonics", min = 1, max = 32, step = 1, tooltip = "Number of lowest-frequency components to keep; fewer = smoother")
+
+// The transform needs a power of two: 32, 64 or 128. Any other value falls
+// back to 64.
+windowSize = window == 32 or window == 128 ? window : 64
+
+// The forward transform of the Hann-windowed last N bars, cut to the DC term
+// and the lowest H harmonics, and summed back, is the DC term plus 2 * Re(X_k)
+// for k = 1 to H. Both sums run over the same samples, so the result is one
+// weighted sum of the window with a fixed weight per lag:
+//
+//   weight(n) = w(n) * (1 + 2 * sum over k of cos(2 * pi * k * n / N)) / N
+//
+// where w(n) is the Hann window. The weights depend only on the settings, so
+// they are built once, on the first bar.
+var weights: array<number> = []
+if bar.index == 0
+    keep = min(harmonics, windowSize / 2)
+    angleStep = 2 * math.pi / windowSize
+    for n = 0 to windowSize - 1
+        hann = 0.5 - 0.5 * math.cos(angleStep * n)
+        gain = 1.0
+        for k = 1 to keep
+            gain += 2 * math.cos(angleStep * k * n)
+        push(weights, hann * gain / windowSize)
+
+// A bar before the first one counts as zero, so the line answers from the
+// first bar with a zero-padded window and settles once N bars exist.
+total = 0.0
+for n = 0 to windowSize - 1
+    sample = source[n]
+    if isNone(sample)
+        continue
+    total += sample * element(weights, n)
+
+plot(total, "IFFT", #ffeb3b, width = 2)

@@ -1,0 +1,16 @@
+{
+  "title": "Baxter-King Band-Pass Filter (BAXTERKING)",
+  "summary": "A centred, zero-sum band-pass filter on the close that keeps only cycles between two periods and oscillates around zero.",
+  "description": "The Baxter-King Band-Pass Filter extracts the cyclical part of the close whose period lies between *Min Period* and *Max Period*. It is a symmetric moving filter with K leads and K lags around a centre bar, so it uses 2K + 1 closes for each value.\n\nThe weights start from the ideal band-pass weights: B0 = (b - a) / pi for the centre bar and Bj = (sin(jb) - sin(ja)) / (pi j) for a bar j steps away, where a and b are the angular frequencies of the longest and shortest periods. The same amount is then subtracted from every weight so that all 2K + 1 of them add up to zero. That makes the filter remove any constant level and any straight-line trend, so the output swings around zero.\n\nBecause the window is centred, each value describes the bar K bars back, and the first 2K bars of the chart are left blank until a full window exists.",
+  "howToRead": "Above zero, the close is in the upper part of a cycle within the chosen band; below zero, it is in the lower part. Turns in the line mark the peaks and troughs of those cycles, and the height of the swings shows how strong the cycle is compared with the rest of the price movement.\n\nThe filter is centred, so the newest value reflects the bar K bars ago, not the current bar. That lag is built in: it gives a clean, symmetric picture of past cycles but is late for timing a turn as it happens. A larger K sharpens the band at the cost of more lag and more blank bars at the start.",
+  "settings": [
+    { "key": "pLow", "label": "Min Period (pLow)", "description": "The shortest cycle, in bars, that passes through. Faster swings are filtered out." },
+    { "key": "pHigh", "label": "Max Period (pHigh)", "description": "The longest cycle, in bars, that passes through. Slower swings and the trend are filtered out. It is kept at least one bar above the minimum." },
+    { "key": "k", "label": "Filter Half-Length (K)", "description": "The number of bars on each side of the centre bar. Larger values give a sharper band but lag by K bars and leave the first 2K bars blank." }
+  ],
+  "faq": [
+    { "q": "Why does the line start 2K bars into the chart?", "a": "Each value needs K bars on both sides of its centre bar, so the first full window is complete only after 2K bars. Those bars are left blank rather than drawn from a partial window." },
+    { "q": "Why does it oscillate around zero?", "a": "Its weights are adjusted to add up to zero, so any steady level or straight-line trend in the close cancels out and only the cycles inside the band remain." },
+    { "q": "Is the newest value about the current bar?", "a": "No. The window is centred, so the latest value describes the bar K bars back. This is the price of a symmetric filter that does not shift cycle timing." }
+  ]
+}

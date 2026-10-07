@@ -1,0 +1,28 @@
+{
+  "title": "Double Weighted Moving Average (DWMA)",
+  "summary": "A linearly weighted moving average applied twice over the same period, smoother than one pass while still leaning on recent bars.",
+  "description": "DWMA runs a linearly weighted moving average over the source, then runs a second one over that result, both with the same period. In each pass the newest bar carries weight equal to the window fill and the oldest weight 1, and the sum is divided by the total weight.\n\nEach pass is kept with running sums. While the window is still filling it averages the values so far, so both passes, and the line, answer from the first bar. Once the window is full, each new bar removes the window sum from the weighted sum and adds the new value at the top weight. A missing source value counts as zero.",
+  "howToRead": "Read DWMA as a smooth trend line. The second pass removes most of the jitter one weighted average leaves, at the cost of more lag than a single pass. Price above a rising DWMA points to an uptrend and price below a falling one to a downtrend; turns in the line are cleaner than in a single weighted average.\n\nBecause it is smoothed twice, DWMA turns later than the price it follows. Pair it with a faster average if you want an early warning.",
+  "settings": [
+    {
+      "key": "period",
+      "label": "Period",
+      "description": "The window for both weighted passes. A longer period gives a smoother, slower line."
+    },
+    {
+      "key": "source",
+      "label": "Source",
+      "description": "The series being averaged, usually the close."
+    }
+  ],
+  "faq": [
+    {
+      "q": "How is it different from a single weighted average?",
+      "a": "It applies the weighted average twice. The second pass smooths the first, so the line is steadier but lags more."
+    },
+    {
+      "q": "Why is there a value on the first bar?",
+      "a": "Each pass averages the values that have arrived so far while its window fills, rather than waiting for a full period."
+    }
+  ]
+}

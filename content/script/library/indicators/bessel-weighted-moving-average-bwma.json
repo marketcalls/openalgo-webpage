@@ -1,0 +1,33 @@
+{
+  "title": "Bessel-Weighted Moving Average (BWMA)",
+  "summary": "A moving average whose weights follow a Bessel-style window, zero at both ends and heaviest in the middle, with an adjustable taper.",
+  "description": "BWMA weights the bars in its window with a smooth hump. Across the window, a position x runs from -1 at the newest bar to 1 at the oldest, and each bar's weight is `1 - x^2` raised to the power `order / 2 + 0.5`. The weight is zero at both ends of the window and largest in the middle. The weights are normalised to sum to 1, and the average is the weighted sum of the prices.\n\nThe order sets the taper: order 0 uses `1 - x^2` itself, order 1 its 1.5 power, and orders 2 and 3 higher powers that concentrate the weight more sharply on the centre of the window. The window grows from the first bar up to the period, so the line is drawn from the start of the chart; on the first two bars, where every weight comes out as zero, the line is the price itself, and with a period of 1 or 2 it stays the price on every bar.",
+  "howToRead": "Read BWMA as a smooth moving average. Because the newest and oldest bars carry zero weight and their neighbours very little, the line is less jumpy than a simple average of the same length, and a single bar entering or leaving the window barely moves it. The trade-off is lag: the weights are symmetric around the middle of the window, so the line trails price by about half the period.\n\nUse it to read the direction of the trend and its turns rather than for tight entries. A higher order concentrates the weight on fewer central bars; because the weights stay symmetric, the lag stays at about half the period whatever the order.",
+  "settings": [
+    {
+      "key": "period",
+      "label": "Period",
+      "description": "Number of bars in the window. A longer period gives a smoother, slower line."
+    },
+    {
+      "key": "order",
+      "label": "Bessel Order",
+      "description": "How sharply the weights taper toward the ends of the window, from 0 to 3. Higher orders put more of the weight on the centre."
+    },
+    {
+      "key": "source",
+      "label": "Source",
+      "description": "The series being averaged, usually the close."
+    }
+  ],
+  "faq": [
+    {
+      "q": "Why does the newest bar carry no weight?",
+      "a": "The window is symmetric and falls to zero at both ends, which is what keeps the line smooth. The cost is that the line responds to a move only as it reaches the middle of the window."
+    },
+    {
+      "q": "What does raising the order change?",
+      "a": "It raises the power applied to the weights, which narrows the hump. The line then depends more on the bars around the centre of the window."
+    }
+  ]
+}

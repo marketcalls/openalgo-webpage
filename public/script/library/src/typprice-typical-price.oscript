@@ -1,0 +1,12 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © openalgo
+// Original work (c) mihakralj, MIT License
+
+version 1
+study("TYPPRICE: Typical Price", overlay = true, precision = 2)
+
+// The plain average of the bar's high, low and close. One value per bar,
+// with no warmup.
+typPrice = (high + low + close) / 3
+
+plot(typPrice, "TypPrice", #4caf50, width = 2)

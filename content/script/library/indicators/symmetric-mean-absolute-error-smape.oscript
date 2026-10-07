@@ -1,0 +1,45 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © openalgo
+// Original work (c) mihakralj, MIT License
+
+version 1
+study("Symmetric Mean Absolute %Error (SMAPE)", precision = 2)
+
+source = input(close, "Source")
+period = input(100, "Period", min = 1, max = 5000, step = 1)
+
+// The total and the count of the present values among the last p bars.
+// Before p bars have passed the window is everything so far, so both answer
+// from the first bar.
+fn windowSum(x, p) =>
+    var running = 0.0
+    if not isNone(x)
+        running = running + x
+    rolled = sumSkip(x, p)
+    bar.index < p - 1 ? running : rolled
+
+fn windowCount(x, p) =>
+    var n = 0
+    if not isNone(x)
+        n = n + 1
+    rolled = countPresent(x, p)
+    bar.index < p - 1 ? n : rolled
+
+// The reference is an exponential mean seeded with the simple average of its
+// first period values, so it has no value through the warmup.
+reference = ema(source, period)
+
+// The symmetric percentage gap: twice the absolute gap over the sum of the
+// two magnitudes, times 100. While the reference has no value the gap counts
+// as zero, and those zeros enter the average.
+absDiff = abs(source - reference)
+sumAbs = abs(source) + abs(reference)
+symmetricError = isNone(absDiff) or isNone(sumAbs) ? 0 : sumAbs != 0 ? 200 * absDiff / sumAbs : 0
+
+// Mean over the last period bars (at most 4000), or over every bar so far
+// while fewer have passed.
+window = min(period, 4000)
+smape = windowSum(symmetricError, window) / windowCount(symmetricError, window)
+
+plot(smape, "SMAPE", #ff5252, width = 2, style = "area")
+plot(reference, "EMA", #ffeb3b, width = 1, overlay = true)

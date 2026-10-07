@@ -1,0 +1,24 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © openalgo
+// Original work (c) mihakralj, MIT License
+
+version 1
+study("Weighted Mean Absolute Percentage Error", precision = 2)
+
+length = input(14, "Length", min = 1, max = 5000, step = 1)
+actual = input(close, "Actual")
+predicted = input(open, "Predicted")
+
+// An absent value on either side counts as zero.
+a = orElse(actual, 0)
+p = orElse(predicted, 0)
+
+// Total absolute error over the window divided by the total absolute actual,
+// in percent. A window whose actuals are all zero has no scale and reads 0.
+epsilon = 1e-10
+sumError = sum(abs(a - p), length)
+sumActual = sum(abs(a), length)
+wmape = isNone(sumActual) ? none : sumActual > epsilon ? sumError / sumActual * 100 : 0
+
+plot(wmape, "WMAPE", #ffeb3b, width = 2)
+level(0, "Perfect", #4caf50, style = "dashed")

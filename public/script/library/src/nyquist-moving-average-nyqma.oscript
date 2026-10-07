@@ -1,0 +1,38 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © openalgo
+// Original work (c) mihakralj, MIT License
+
+version 1
+study("Nyquist Moving Average (NYQMA)", overlay = true, precision = 2)
+
+period = input(89, "Period (N1)", min = 3, max = 5000, step = 1)
+nyquistPeriod = input(21, "Nyquist Period (N2)", min = 1, max = 5000, step = 1, tooltip = "Secondary weighted-average period, clamped to at most half of Period (N1).")
+source = input(close, "Source")
+
+// The second period is held at or below half the first.
+n2 = min(max(nyquistPeriod, 1), floor(period / 2))
+lagGain = n2 / (period - n2)
+
+// An absent price counts as zero.
+price = orElse(source, 0)
+
+// First average: linearly weighted over the period, the newest bar weighing
+// most. While the window fills it covers every bar seen so far.
+p1 = min(bar.index + 1, period)
+weighted1 = 0.0
+for k = 0 to p1 - 1
+    weighted1 += price[k] * (p1 - k)
+ma1 = weighted1 / (p1 * (p1 + 1) * 0.5)
+
+// Second average: the same weighting applied to the first, over n2 bars.
+p2 = min(bar.index + 1, n2)
+weighted2 = 0.0
+for k = 0 to p2 - 1
+    weighted2 += ma1[k] * (p2 - k)
+ma2 = weighted2 / (p2 * (p2 + 1) * 0.5)
+
+// The first average is pushed forward by lagGain times its distance from the
+// second, which takes back the lag of the weighting.
+nyqma = (1.0 + lagGain) * ma1 - lagGain * ma2
+
+plot(nyqma, "NYQMA", #ffeb3b, width = 2)

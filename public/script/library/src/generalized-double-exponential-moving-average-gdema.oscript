@@ -1,0 +1,41 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © openalgo
+// Original work (c) mihakralj, MIT License
+
+version 1
+study("Generalized Double Exponential Moving Average (GDEMA)", overlay = true, precision = 2)
+
+period = input(10, "Period", min = 1, max = 5000, step = 1)
+vfactor = input(1.0, "Volume Factor (v)", min = 0, max = 3, step = 0.1, tooltip = "0=EMA, 1=standard DEMA, >1=more aggressive lag removal")
+source = input(close, "Source")
+
+weightA = 2 / (period + 1)
+beta = 1 - weightA
+
+// Two exponential stages that both start from zero. While the decay term e
+// is still large, each stage is divided by (1 - e), which removes the bias
+// of starting at zero and lets the line answer from the first bar.
+var warmup = true
+var e = 1.0
+var ema1Raw = 0.0
+var ema2Raw = 0.0
+
+ema1Raw = weightA * (source - ema1Raw) + ema1Raw
+ema1 = ema1Raw
+ema2 = 0.0
+if warmup
+    e = e * beta
+    c = 1 / (1 - e)
+    ema1 = c * ema1Raw
+    ema2Raw = weightA * (ema1 - ema2Raw) + ema2Raw
+    ema2 = c * ema2Raw
+    warmup = e > 1e-10
+else
+    ema2Raw = weightA * (ema1 - ema2Raw) + ema2Raw
+    ema2 = ema2Raw
+
+// v = 0 is the first stage alone, v = 1 is the classic double exponential
+// mean, and a larger v subtracts more of the lag.
+gdema = (1 + vfactor) * ema1 - vfactor * ema2
+
+plot(gdema, "GDEMA", #ffeb3b, width = 2)

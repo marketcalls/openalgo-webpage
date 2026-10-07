@@ -1,0 +1,25 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © openalgo
+// Original work (c) mihakralj, MIT License
+
+version 1
+study("Realized Volatility (RV)", precision = 4)
+
+length = input(20, "Smoothing Length", min = 1, max = 5000, step = 1, tooltip = "Lookback period for smoothing the period realized volatilities (e.g., daily RVs).")
+annualize = input(true, "Annualize Volatility", tooltip = "Annualize the Realized Volatility output.")
+annualPeriods = input(252, "Annual Periods", min = 1, max = 100000, step = 1, tooltip = "Number of main chart periods in a year for annualization (e.g., 252 for Daily chart, 52 for Weekly).")
+
+// Each bar's realized variance is its squared close-to-close log return, and
+// the bar's volatility is the square root of that. The first bar has no
+// previous close, and a non-positive price has no logarithm.
+validPair = bar.index > 0 and close > 0 and close[1] > 0
+logReturn = validPair ? log(close / close[1]) : none
+vol = sqrt(logReturn * logReturn)
+
+// A simple average of the per-bar volatility, optionally scaled to a yearly
+// figure by the square root of the periods in a year.
+smoothed = sma(vol, length)
+scale = annualize ? sqrt(annualPeriods) : 1
+rv = smoothed * scale
+
+plot(rv, "RV", #ffeb3b, width = 2)

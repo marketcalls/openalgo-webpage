@@ -1,0 +1,12 @@
+{
+  "title": "AVGPRICE: Average Price",
+  "summary": "The plain mean of each bar's open, high, low and close, drawn on the price chart as one number for where the bar traded.",
+  "description": "Average Price reduces each bar to a single value: the sum of its open, high, low and close, divided by four. Every one of the four prices carries the same weight, so the line reflects the whole bar rather than only its last print.\n\nThe study draws that value as a line over the price chart. There is no lookback window and no smoothing between bars, so it answers from the very first bar and each point depends on its own bar alone. On a wide bar it sits near the middle of the candle; on a bar that opened and closed near one extreme it leans toward that end.",
+  "howToRead": "Read the line as the centre of gravity of each bar. When the close sits above the average price, the bar closed above its own average level; when it sits below, the bar closed below it.\n\nBecause it is not smoothed, the line moves as much as the bars do. It is most useful as a source series for other studies, such as a moving average or a band, that want a value representing the whole bar instead of the close alone.",
+  "settings": [],
+  "faq": [
+    { "q": "How is this different from the close?", "a": "The close is one print at the end of the bar. Average Price weighs the open, the high, the low and the close equally, so a late move that sets no new high or low shifts it by a quarter of what it shifts the close." },
+    { "q": "Does it have a warmup period?", "a": "No. Each value uses only its own bar, so the line starts on the first bar of the chart." },
+    { "q": "Why is there nothing to configure?", "a": "The calculation is fixed: four prices, each weighted a quarter. There is no window length or source to choose." }
+  ]
+}

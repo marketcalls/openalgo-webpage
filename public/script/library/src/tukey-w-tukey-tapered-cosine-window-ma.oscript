@@ -1,0 +1,33 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © openalgo
+// Original work (c) mihakralj, MIT License
+
+version 1
+study("TUKEY_W: Tukey (Tapered Cosine) Window MA", overlay = true, precision = 2)
+
+period = input(20, "Period", min = 2, max = 1000, step = 1)
+// The setting is keyed by its title, alpha, because alpha is a library name.
+taperFraction = min(1, max(0, input(0.5, "alpha", min = 0, max = 1, step = 0.05, tooltip = "0=SMA, 1=Hann, 0.5=half taper")))
+
+// The window weights: flat through the middle and cosine tapered over the
+// first and last alpha * (period - 1) / 2 positions. Alpha 0 leaves every
+// weight at 1, a simple average; alpha 1 tapers the whole window.
+lastIndex = period - 1
+taper = taperFraction * lastIndex
+weightSum = 0.0
+weighted = 0.0
+for i = 0 to lastIndex
+    w = 1.0
+    if taper > 0
+        if i < taper / 2
+            w = 0.5 * (1 - math.cos(2 * math.pi * i / taper))
+        else if i > lastIndex - taper / 2
+            w = 0.5 * (1 - math.cos(2 * math.pi * (lastIndex - i) / taper))
+    weightSum += w
+    weighted += close[i] * w
+
+// The average needs a full window of closes (a missing close leaves the bar
+// empty), and a set of weights that are not all zero.
+tukey = bar.index >= lastIndex and weightSum > 0 ? weighted / weightSum : none
+
+plot(tukey, "TUKEY_W", #ffeb3b, width = 2)

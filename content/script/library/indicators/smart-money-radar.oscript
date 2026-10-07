@@ -1,0 +1,475 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © openalgo
+// Original work (c) CedInvest, MPL-2.0
+
+version 1
+study("Smart Money Radar", overlay = true, precision = 2)
+
+// Order blocks
+showOB = input(true, "Order Blocks", group = "Order Blocks")
+obPivotLen = input(5, "Pivot Length (BOS validation)", min = 2, max = 30, step = 1, group = "Order Blocks", tooltip = "Bars on each side of the pivot. Higher means rarer but sturdier order blocks.")
+obMaxAge = input(80, "Max Age (bars)", min = 10, max = 500, step = 1, group = "Order Blocks")
+obKeepMitigated = input(false, "Keep Mitigated Blocks (faded)", group = "Order Blocks")
+obBullColorSwatch = input(#00C853, "Bullish OB", group = "Order Blocks")
+obBearColorSwatch = input(#D50000, "Bearish OB", group = "Order Blocks")
+obBorderWidth = input(1, "Border Width", min = 0, max = 4, step = 1, group = "Order Blocks")
+
+// Fair value gaps
+showFVG = input(true, "Fair Value Gaps", group = "Fair Value Gaps")
+fvgMinSizePct = input(0.0, "Min Size (% of price)", min = 0, max = 100, step = 0.05, group = "Fair Value Gaps", tooltip = "Filters out insignificant micro gaps. 0 keeps every gap detected.")
+fvgMaxAge = input(60, "FVG Max Age (bars)", min = 5, max = 300, step = 1, group = "Fair Value Gaps")
+fvgFadeWithAge = input(true, "Fade With Age", group = "Fair Value Gaps")
+fvgBullColorSwatch = input(#00B0FF, "Bullish FVG", group = "Fair Value Gaps")
+fvgBearColorSwatch = input(#FF6F00, "Bearish FVG", group = "Fair Value Gaps")
+
+// Liquidity
+showEq = input(true, "Equal Highs / Equal Lows", group = "Liquidity")
+eqTolPct = input(0.07, "Equal Level Tolerance (% of price)", min = 0.01, max = 10, step = 0.01, group = "Liquidity")
+eqLookback = input(60, "Lookback (bars)", min = 10, max = 300, step = 1, group = "Liquidity")
+showPDHL = input(true, "Previous Day H/L", group = "Liquidity")
+showPWHL = input(true, "Previous Week H/L", group = "Liquidity")
+showPMHL = input(true, "Previous Month H/L", group = "Liquidity")
+liqLineColorSwatch = input(#FFC107, "Equal Level Colour", group = "Liquidity", tooltip = "Colour of the equal-high and equal-low lines. The day, week and month levels are ordinary plots and are styled from the chart.")
+
+// Sessions
+showSes = input(true, "Sessions", group = "Sessions")
+showAsia = input(true, "Asia (00:00-08:00 UTC)", group = "Sessions")
+showLondon = input(true, "London (07:00-16:00 UTC)", group = "Sessions")
+showNY = input(true, "New York (12:00-21:00 UTC)", group = "Sessions")
+sesAsiaColSwatch = input(#9E9E9E, "Asia", group = "Sessions")
+sesLondonColSwatch = input(#7B1FA2, "London", group = "Sessions")
+sesNYColSwatch = input(#1E88E5, "New York", group = "Sessions")
+sesShowLines = input(true, "Keep H/L Lines After Session", group = "Sessions")
+
+// Market structure
+showStruct = input(true, "BOS / CHoCH", group = "Market Structure")
+msPivotLen = input(7, "Structure Pivot Length", min = 3, max = 30, step = 1, group = "Market Structure")
+bosColorSwatch = input(#26A69A, "BOS", group = "Market Structure")
+chochColorSwatch = input(#EF5350, "CHoCH", group = "Market Structure")
+
+// Watermark
+showBrand = input(true, "Watermark", group = "Branding")
+brandPos = input("bottom-right", "Watermark Position", options = ["top-left", "top-right", "bottom-left", "bottom-right"], group = "Branding")
+brandTextSize = input("small", "Watermark Text Size", options = ["tiny", "small", "normal", "large"], group = "Branding")
+
+// A transparency pushed toward 99 by a fade fraction, returned as a fill alpha.
+fn fadeOpacity(baseT, extraFade) =>
+    t = min(99, floor(baseT + extraFade * (99 - baseT)))
+    max(0.01, (100 - t) / 100)
+
+// ---------------------------------------------------------------------------
+// Swing points. The order block pivots also feed the equal-level search, and
+// the structure pivots drive the BOS and CHoCH labels. Each is confirmed
+// `len` bars after the bar it describes.
+// ---------------------------------------------------------------------------
+obPH = pivotHigh(high, obPivotLen, obPivotLen)
+obPL = pivotLow(low, obPivotLen, obPivotLen)
+msPH = pivotHigh(high, msPivotLen, msPivotLen)
+msPL = pivotLow(low, msPivotLen, msPivotLen)
+
+hasPrev = bar.index > 0
+
+// ---------------------------------------------------------------------------
+// Order blocks. A close through the last confirmed swing high is a bullish
+// break; the last bearish candle before it, searched up to 50 bars back,
+// becomes the block. A bearish break mirrors it. A block ends when a later
+// bar trades into its range, or when it is older than the maximum age.
+// ---------------------------------------------------------------------------
+var swingHigh = none
+var swingHighIdx = none
+var swingLow = none
+var swingLowIdx = none
+if not isNone(obPH)
+    swingHigh = obPH
+    swingHighIdx = bar.index - obPivotLen
+if not isNone(obPL)
+    swingLow = obPL
+    swingLowIdx = bar.index - obPivotLen
+
+obBosBull = toBool(hasPrev and not isNone(swingHigh) and close > swingHigh and close[1] <= swingHigh)
+obBosBear = toBool(hasPrev and not isNone(swingLow) and close < swingLow and close[1] >= swingLow)
+
+var obIdx: array<number> = []
+var obTop: array<number> = []
+var obBot: array<number> = []
+var obIsBull: array<bool> = []
+var obMitigated: array<bool> = []
+var obBoxes: array<box> = []
+
+obBorderAlpha = obBorderWidth > 0 ? 0.7 : 0
+obLineWidth = max(1, obBorderWidth)
+
+if showOB and obBosBull and not isNone(swingHighIdx)
+    lookback = min(50, bar.index - swingHighIdx)
+    if lookback >= 1
+        for k = 1 to lookback
+            if bar.index - k < 0
+                break
+            if close[k] < open[k]
+                push(obIdx, bar.index - k)
+                push(obTop, high[k])
+                push(obBot, low[k])
+                push(obIsBull, true)
+                push(obMitigated, false)
+                push(obBoxes, draw.box(time[k], high[k], time, low[k], color = withAlpha(obBullColorSwatch, obBorderAlpha), fillColor = withAlpha(obBullColorSwatch, 0.25), opacity = 1, width = obLineWidth))
+                break
+
+if showOB and obBosBear and not isNone(swingLowIdx)
+    lookback = min(50, bar.index - swingLowIdx)
+    if lookback >= 1
+        for k = 1 to lookback
+            if bar.index - k < 0
+                break
+            if close[k] > open[k]
+                push(obIdx, bar.index - k)
+                push(obTop, high[k])
+                push(obBot, low[k])
+                push(obIsBull, false)
+                push(obMitigated, false)
+                push(obBoxes, draw.box(time[k], high[k], time, low[k], color = withAlpha(obBearColorSwatch, obBorderAlpha), fillColor = withAlpha(obBearColorSwatch, 0.25), opacity = 1, width = obLineWidth))
+                break
+
+// Newest first, so removing one never skips the next.
+if size(obIdx) > 0
+    for k = size(obIdx) - 1 to 0 step -1
+        idx = element(obIdx, k)
+        dropBlock = bar.index - idx > obMaxAge
+        if not dropBlock and not element(obMitigated, k) and bar.index > idx + 1
+            // Mitigated when this bar's range overlaps the zone.
+            if low <= element(obTop, k) and high >= element(obBot, k)
+                set(obMitigated, k, true)
+                if obKeepMitigated
+                    draw.setTo(element(obBoxes, k), time, element(obBot, k))
+                    draw.setFillColor(element(obBoxes, k), withAlpha(element(obIsBull, k) ? obBullColorSwatch : obBearColorSwatch, fadeOpacity(75, 0.55)))
+                else
+                    dropBlock = true
+        if dropBlock
+            draw.delete(remove(obBoxes, k))
+            remove(obIdx, k)
+            remove(obTop, k)
+            remove(obBot, k)
+            remove(obIsBull, k)
+            remove(obMitigated, k)
+        else if not element(obMitigated, k)
+            // An open block reaches the newest bar.
+            draw.setTo(element(obBoxes, k), time, element(obBot, k))
+
+// ---------------------------------------------------------------------------
+// Fair value gaps: three bars where the first and third do not overlap. The
+// gap is anchored on the middle bar, dies when price crosses it completely,
+// and stops extending once price has traded into it.
+// ---------------------------------------------------------------------------
+var fvIdx: array<number> = []
+var fvTop: array<number> = []
+var fvBot: array<number> = []
+var fvIsBull: array<bool> = []
+var fvTouched: array<bool> = []
+var fvBoxes: array<box> = []
+
+if showFVG and bar.index > 3 and close != 0
+    if low[1] > high[3]
+        gapTop = low[1]
+        gapBot = high[3]
+        if (gapTop - gapBot) / close * 100 >= fvgMinSizePct
+            push(fvIdx, bar.index - 2)
+            push(fvTop, gapTop)
+            push(fvBot, gapBot)
+            push(fvIsBull, true)
+            push(fvTouched, false)
+            push(fvBoxes, draw.box(time[2], gapTop, time, gapBot, color = withAlpha(fvgBullColorSwatch, 0.5), fillColor = withAlpha(fvgBullColorSwatch, 0.35), opacity = 1, width = 1))
+    if high[1] < low[3]
+        gapTop = low[3]
+        gapBot = high[1]
+        if (gapTop - gapBot) / close * 100 >= fvgMinSizePct
+            push(fvIdx, bar.index - 2)
+            push(fvTop, gapTop)
+            push(fvBot, gapBot)
+            push(fvIsBull, false)
+            push(fvTouched, false)
+            push(fvBoxes, draw.box(time[2], gapTop, time, gapBot, color = withAlpha(fvgBearColorSwatch, 0.5), fillColor = withAlpha(fvgBearColorSwatch, 0.35), opacity = 1, width = 1))
+
+if size(fvIdx) > 0
+    for k = size(fvIdx) - 1 to 0 step -1
+        idx = element(fvIdx, k)
+        isBullGap = element(fvIsBull, k)
+        dropGap = bar.index - idx > fvgMaxAge
+        if not dropGap and bar.index > idx + 1
+            fullCross = isBullGap ? low <= element(fvBot, k) : high >= element(fvTop, k)
+            if fullCross
+                dropGap = true
+            else
+                partTouch = isBullGap ? (low <= element(fvTop, k) and low >= element(fvBot, k)) : (high >= element(fvBot, k) and high <= element(fvTop, k))
+                if partTouch
+                    // The right edge stops at the latest bar that traded into it.
+                    set(fvTouched, k, true)
+                    draw.setTo(element(fvBoxes, k), time, element(fvBot, k))
+        if dropGap
+            draw.delete(remove(fvBoxes, k))
+            remove(fvIdx, k)
+            remove(fvTop, k)
+            remove(fvBot, k)
+            remove(fvIsBull, k)
+            remove(fvTouched, k)
+        else
+            if not element(fvTouched, k)
+                draw.setTo(element(fvBoxes, k), time, element(fvBot, k))
+            ratio = fvgMaxAge > 0 ? min(1, (bar.index - idx) / fvgMaxAge) : 1
+            gapAlpha = fvgFadeWithAge ? fadeOpacity(65, ratio * 0.6) : 0.35
+            draw.setFillColor(element(fvBoxes, k), withAlpha(isBullGap ? fvgBullColorSwatch : fvgBearColorSwatch, gapAlpha))
+
+// ---------------------------------------------------------------------------
+// Equal highs and equal lows. Each confirmed order block pivot is compared
+// with the five pivots before it; one within the tolerance, and no further
+// back than the lookback, makes a liquidity level. A level stays until price
+// trades through it by more than the tolerance, then five bars more.
+// ---------------------------------------------------------------------------
+var pHVal: array<number> = []
+var pHIdx: array<number> = []
+var pHTime: array<number> = []
+var pLVal: array<number> = []
+var pLIdx: array<number> = []
+var pLTime: array<number> = []
+
+if not isNone(obPH)
+    push(pHVal, obPH)
+    push(pHIdx, bar.index - obPivotLen)
+    push(pHTime, time[obPivotLen])
+    if size(pHVal) > 30
+        shift(pHVal)
+        shift(pHIdx)
+        shift(pHTime)
+if not isNone(obPL)
+    push(pLVal, obPL)
+    push(pLIdx, bar.index - obPivotLen)
+    push(pLTime, time[obPivotLen])
+    if size(pLVal) > 30
+        shift(pLVal)
+        shift(pLIdx)
+        shift(pLTime)
+
+var eqLevel: array<number> = []
+var eqLast: array<number> = []
+var eqIsHigh: array<bool> = []
+var eqSwept: array<bool> = []
+var eqLines: array<line> = []
+var eqLabels: array<label> = []
+
+pivotIdx = bar.index - obPivotLen
+pivotTime = time[obPivotLen]
+
+if showEq and not isNone(obPH) and size(pHVal) >= 2
+    stopAt = max(0, size(pHVal) - 6)
+    for j = size(pHVal) - 2 to stopAt step -1
+        if pivotIdx - element(pHIdx, j) > eqLookback or obPH == 0
+            continue
+        if abs(obPH - element(pHVal, j)) / abs(obPH) * 100 <= eqTolPct
+            push(eqLevel, obPH)
+            push(eqLast, pivotIdx)
+            push(eqIsHigh, true)
+            push(eqSwept, false)
+            push(eqLines, draw.line(element(pHTime, j), obPH, pivotTime, obPH, color = withAlpha(liqLineColorSwatch, 0.5), width = 1, style = "dashed", extendRight = true))
+            push(eqLabels, draw.label(pivotTime, obPH, "EQH", textColor = withAlpha(liqLineColorSwatch, 0.5), align = "left"))
+            break
+
+if showEq and not isNone(obPL) and size(pLVal) >= 2
+    stopAt = max(0, size(pLVal) - 6)
+    for j = size(pLVal) - 2 to stopAt step -1
+        if pivotIdx - element(pLIdx, j) > eqLookback or obPL == 0
+            continue
+        if abs(obPL - element(pLVal, j)) / abs(obPL) * 100 <= eqTolPct
+            push(eqLevel, obPL)
+            push(eqLast, pivotIdx)
+            push(eqIsHigh, false)
+            push(eqSwept, false)
+            push(eqLines, draw.line(element(pLTime, j), obPL, pivotTime, obPL, color = withAlpha(liqLineColorSwatch, 0.5), width = 1, style = "dashed", extendRight = true))
+            push(eqLabels, draw.label(pivotTime, obPL, "EQL", textColor = withAlpha(liqLineColorSwatch, 0.5), align = "left"))
+            break
+
+if size(eqLevel) > 0
+    for k = size(eqLevel) - 1 to 0 step -1
+        lvl = element(eqLevel, k)
+        tolAbs = lvl * eqTolPct / 100
+        if not element(eqSwept, k)
+            isHighLevel = element(eqIsHigh, k)
+            sweptNow = isHighLevel ? high > lvl + tolAbs : low < lvl - tolAbs
+            if sweptNow
+                set(eqSwept, k, true)
+                set(eqLast, k, bar.index)
+                draw.setColor(element(eqLines, k), withAlpha(liqLineColorSwatch, 0.2))
+                draw.setText(element(eqLabels, k), isHighLevel ? "EQH swept" : "EQL swept")
+        else if bar.index - element(eqLast, k) > 5
+            draw.delete(remove(eqLines, k))
+            draw.delete(remove(eqLabels, k))
+            remove(eqLevel, k)
+            remove(eqLast, k)
+            remove(eqIsHigh, k)
+            remove(eqSwept, k)
+
+// At most 500 levels are kept; the oldest goes first.
+while size(eqLevel) > 500
+    draw.delete(shift(eqLines))
+    draw.delete(shift(eqLabels))
+    shift(eqLevel)
+    shift(eqLast)
+    shift(eqIsHigh)
+    shift(eqSwept)
+
+// ---------------------------------------------------------------------------
+// Previous completed day, week and month high and low, folded from the
+// chart's own bars so an unfinished period is never read.
+// ---------------------------------------------------------------------------
+fn previousExtremes(periodKey) =>
+    var curKey = none
+    var curHi = none
+    var curLo = none
+    var prevHi = none
+    var prevLo = none
+    if isNone(curKey)
+        curKey = periodKey
+        curHi = high
+        curLo = low
+    else if periodKey != curKey
+        prevHi = curHi
+        prevLo = curLo
+        curKey = periodKey
+        curHi = high
+        curLo = low
+    else
+        curHi = max(curHi, high)
+        curLo = min(curLo, low)
+    [prevHi, prevLo]
+
+dayKey = floor(time / 86400000)
+// Weeks start on Monday: day 0 of the count, 1 January 1970, was a Thursday.
+weekKey = floor((dayKey + 3) / 7)
+monthKey = date.year(time, "UTC") * 12 + date.month(time, "UTC")
+
+dayHL = previousExtremes(dayKey)
+weekHL = previousExtremes(weekKey)
+monthHL = previousExtremes(monthKey)
+
+plot(showPDHL ? element(dayHL, 0) : none, "PDH", #FFC107, width = 1)
+plot(showPDHL ? element(dayHL, 1) : none, "PDL", #FFC107, width = 1)
+plot(showPWHL ? element(weekHL, 0) : none, "PWH", #FFA000, width = 2)
+plot(showPWHL ? element(weekHL, 1) : none, "PWL", #FFA000, width = 2)
+plot(showPMHL ? element(monthHL, 0) : none, "PMH", #FF6F00, width = 2)
+plot(showPMHL ? element(monthHL, 1) : none, "PML", #FF6F00, width = 2)
+
+// ---------------------------------------------------------------------------
+// Session ranges, fixed windows in UTC. Each session draws a box over its
+// range while it trades, keeps the last ten, and leaves rays at its high and
+// low once it ends (the last five of each).
+// ---------------------------------------------------------------------------
+fn sessionRange(inWindow, tint, caption, keepLines) =>
+    var active = false
+    var hi = none
+    var lo = none
+    var startTime = none
+    var current = none
+    var closedBoxes: array<box> = []
+    var hiLines: array<line> = []
+    var loLines: array<line> = []
+    if inWindow and not active
+        active = true
+        hi = high
+        lo = low
+        startTime = time
+        current = draw.box(time, high, time, low, color = withAlpha(tint, 0.5), fillColor = withAlpha(tint, 0.12), opacity = 1, width = 1, text = caption, textColor = tint)
+    else if inWindow and active
+        hi = max(hi, high)
+        lo = min(lo, low)
+        draw.setBounds(current, startTime, hi, time, lo)
+    else if not inWindow and active
+        active = false
+        // The finished box ends on the first bar after the session.
+        draw.setTo(current, time, lo)
+        push(closedBoxes, current)
+        current = none
+        if size(closedBoxes) > 10
+            draw.delete(shift(closedBoxes))
+        if keepLines
+            barStep = time - time[1]
+            push(hiLines, draw.line(time, hi, time + barStep, hi, color = withAlpha(tint, 0.7), width = 1, style = "dotted", extendRight = true))
+            push(loLines, draw.line(time, lo, time + barStep, lo, color = withAlpha(tint, 0.7), width = 1, style = "dotted", extendRight = true))
+            if size(hiLines) > 5
+                draw.delete(shift(hiLines))
+            if size(loLines) > 5
+                draw.delete(shift(loLines))
+    active
+
+minuteOfDay = mod(floor(time / 60000), 1440)
+sessionsOn = showSes and chart.isIntraday
+inAsia = sessionsOn and showAsia and minuteOfDay < 480
+inLondon = sessionsOn and showLondon and minuteOfDay >= 420 and minuteOfDay < 960
+inNY = sessionsOn and showNY and minuteOfDay >= 720 and minuteOfDay < 1260
+
+sessionRange(inAsia, sesAsiaColSwatch, "Asia", sesShowLines)
+sessionRange(inLondon, sesLondonColSwatch, "London", sesShowLines)
+sessionRange(inNY, sesNYColSwatch, "NY", sesShowLines)
+
+// ---------------------------------------------------------------------------
+// Market structure. A close through the last confirmed structure pivot is a
+// break of structure (BOS) while it agrees with the trend, and a change of
+// character (CHoCH) when it reverses it.
+// ---------------------------------------------------------------------------
+var lastPH = none
+var lastPHTime = none
+var lastPL = none
+var lastPLTime = none
+var trendDir = 0
+var msLines: array<line> = []
+var msLabels: array<label> = []
+
+if not isNone(msPH)
+    lastPH = msPH
+    lastPHTime = time[msPivotLen]
+if not isNone(msPL)
+    lastPL = msPL
+    lastPLTime = time[msPivotLen]
+
+msBull = toBool(hasPrev and not isNone(lastPH) and close > lastPH and close[1] <= lastPH)
+msBear = toBool(hasPrev and not isNone(lastPL) and close < lastPL and close[1] >= lastPL)
+
+if showStruct and msBull
+    isChoch = trendDir == -1
+    tint = isChoch ? chochColorSwatch : bosColorSwatch
+    push(msLines, draw.line(lastPHTime, lastPH, time, lastPH, color = tint, width = 1, style = "dashed"))
+    push(msLabels, draw.label(time, lastPH, isChoch ? "CHoCH" : "BOS", color = withAlpha(tint, 0.2), textColor = tint))
+    trendDir = 1
+if showStruct and msBear
+    isChoch = trendDir == 1
+    tint = isChoch ? chochColorSwatch : bosColorSwatch
+    push(msLines, draw.line(lastPLTime, lastPL, time, lastPL, color = tint, width = 1, style = "dashed"))
+    push(msLabels, draw.label(time, lastPL, isChoch ? "CHoCH" : "BOS", color = withAlpha(tint, 0.2), textColor = tint))
+    trendDir = -1
+
+while size(msLines) > 500
+    draw.delete(shift(msLines))
+    draw.delete(shift(msLabels))
+
+// ---------------------------------------------------------------------------
+// Alerts
+// ---------------------------------------------------------------------------
+if obBosBull
+    alert("A bullish order block has just been confirmed.", id = "ob-bullish", title = "Bullish order block formed")
+if obBosBear
+    alert("A bearish order block has just been confirmed.", id = "ob-bearish", title = "Bearish order block formed")
+if msBull
+    alert("Bullish break of structure (BOS or CHoCH).", id = "ms-bullish", title = "Bullish market structure break")
+if msBear
+    alert("Bearish break of structure (BOS or CHoCH).", id = "ms-bearish", title = "Bearish market structure break")
+
+// ---------------------------------------------------------------------------
+// Watermark, in the corner the setting names.
+// ---------------------------------------------------------------------------
+// A table's corner is fixed before the first bar, so each corner has its own
+// grid and the setting picks which one is written. The default corner is
+// declared first, because a chart with room for one grid draws the first.
+markBottomRight = table("Watermark bottom right", 1, 1, position = "bottomRight")
+markTopLeft = table("Watermark top left", 1, 1, position = "topLeft")
+markTopRight = table("Watermark top right", 1, 1, position = "topRight")
+markBottomLeft = table("Watermark bottom left", 1, 1, position = "bottomLeft")
+
+if bar.isLast and showBrand
+    mark = brandPos == "top-left" ? markTopLeft : brandPos == "top-right" ? markTopRight : brandPos == "bottom-left" ? markBottomLeft : markBottomRight
+    cell(mark, 0, 0, "Smart Money Radar", align = "center")

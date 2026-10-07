@@ -1,0 +1,48 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © openalgo
+// Original work (c) mihakralj, MIT License
+
+version 1
+study("Blackman Moving Average (BLMA)", overlay = true, precision = 2)
+
+period = input(10, "Period", min = 1, max = 5000, step = 1)
+source = input(close, "Source")
+
+// The window grows from the first bar up to the period. Weight k follows the
+// Blackman window 0.42 - 0.5 cos(2 pi r) + 0.08 cos(4 pi r), with r = k / (p - 1),
+// which falls to zero at both ends; the weights are normalised to sum to 1.
+a0 = 0.42
+a1 = 0.5
+a2 = 0.08
+pi2 = 2 * math.pi
+pi4 = 4 * math.pi
+
+p = min(bar.index + 1, period)
+blma = source
+if p > 1
+    invPMinus1 = 1 / (p - 1)
+    weights = [0.0]
+    clear(weights)
+    totalWeight = 0.0
+    for k = 0 to p - 1
+        ratio = k * invPMinus1
+        term1 = a1 * math.cos(pi2 * ratio)
+        term2 = a2 * math.cos(pi4 * ratio)
+        w = a0 - term1 + term2
+        push(weights, w)
+        totalWeight += w
+    // If the weights add up to exactly zero there is nothing to normalise, and
+    // the line falls back to this bar's value.
+    if totalWeight != 0
+        invTotal = 1 / totalWeight
+        total = 0.0
+        weightSum = 0.0
+        for k = 0 to p - 1
+            price = source[k]
+            if not isNone(price)
+                w = element(weights, k) * invTotal
+                total += price * w
+                weightSum += w
+        blma = orElse(total / weightSum, source)
+
+plot(blma, "BLMA", #ffeb3b, width = 2)

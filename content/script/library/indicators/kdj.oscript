@@ -1,0 +1,59 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © openalgo
+// Original work (c) mihakralj, MIT License
+
+version 1
+study("KDJ", precision = 2)
+
+length = input(9, "Length", min = 1, max = 500, step = 1)
+// The smoothing setting is saved under the key signal, which is also the
+// name of a built-in, so it is read where it is declared.
+weight = 1 / input(3, "signal", min = 1, max = 50, step = 1)
+beta = 1 - weight
+
+// The highest high and lowest low of the last length bars, or of every bar
+// so far while fewer than length exist.
+n = min(length, bar.index + 1)
+hi = high
+lo = low
+for i = 1 to n - 1
+    hi = max(hi, high[i])
+    lo = min(lo, low[i])
+priceRange = hi - lo
+
+// The raw stochastic value. A flat window reads 50.
+rsv = priceRange > 0 ? 100 * (close - lo) / priceRange : 50
+
+// K smooths it, and D smooths the uncorrected K state, each as a running
+// average with weight 1 / signal that starts from zero. While each is filling,
+// it is divided by the weight gathered so far, and both are held inside 0 to
+// 100. D inherits the zero-start bias of the uncorrected K, so it opens low.
+var kState = 0.0
+var dState = 0.0
+kState = weight * rsv + beta * kState
+dState = weight * kState + beta * dState
+
+var warmupK = true
+var warmupD = true
+var eK = 1.0
+var eD = 1.0
+resultK = max(0, min(100, kState))
+if warmupK
+    eK = eK * beta
+    resultK = max(0, min(100, 1 / (1 - eK) * kState))
+    warmupK = eK > 1e-10
+resultD = max(0, min(100, dState))
+if warmupD
+    eD = eD * beta
+    resultD = max(0, min(100, 1 / (1 - eD) * dState))
+    warmupD = eD > 1e-10
+
+// J is three times K less twice D, so it leads both and can leave 0 to 100.
+plot(resultK, "K", #2962ff, width = 2)
+plot(resultD, "D", #ff5252, width = 2)
+plot(3 * resultK - 2 * resultD, "J", #ffeb3b, width = 2)
+level(80, "Overbought K", #ff5252, style = "dashed")
+level(70, "Overbought D", #ff9800, style = "dashed")
+level(50, "Midline", #787b86, style = "dashed")
+level(30, "Oversold D", #00e676, style = "dashed")
+level(20, "Oversold K", #4caf50, style = "dashed")

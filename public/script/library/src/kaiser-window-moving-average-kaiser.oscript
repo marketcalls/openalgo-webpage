@@ -1,0 +1,52 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © openalgo
+// Original work (c) mihakralj, MIT License
+
+version 1
+study("Kaiser Window Moving Average (KAISER)", overlay = true, precision = 2)
+
+source = input(close, "Source")
+period = input(14, "Period", min = 2, max = 5000, step = 1)
+beta = input(3.0, "Beta (shape)", min = 0, max = 20, step = 0.1, tooltip = "0=rectangular(SMA), 3=good general, 5.65 approximates Blackman, 8.6=Hamming-like")
+
+len = max(2, floor(period))
+shape = min(20, max(0, beta))
+
+// The modified Bessel function of the first kind, order zero, summed as a
+// 25-term power series.
+fn besselI0(x) =>
+    total = 1.0
+    term = 1.0
+    halfX = x / 2
+    for m = 1 to 25
+        term *= halfX / m
+        total += term * term
+    total
+
+// The Kaiser window, built once and scaled to sum to one. Tap k runs from the
+// oldest bar of the window (k = 0) to the newest; beta sets how sharply the
+// weights fall away from the centre, and beta 0 gives equal weights.
+var weights: array<number> = []
+if size(weights) == 0
+    i0Beta = besselI0(shape)
+    last = len - 1
+    wsum = 0.0
+    for k = 0 to len - 1
+        t = last > 0 ? 2 * k / last - 1 : 0.0
+        argSq = 1 - t * t
+        arg = argSq > 0 ? sqrt(argSq) : 0.0
+        w = i0Beta > 0 ? besselI0(shape * arg) / i0Beta : 1.0
+        push(weights, w)
+        wsum += w
+    if wsum > 0
+        for k = 0 to len - 1
+            set(weights, k, element(weights, k) / wsum)
+
+// Until the window is full the line sits on the price. A missing value
+// counts as zero.
+result = 0.0
+for j = 0 to len - 1
+    result += orElse(source[len - 1 - j], 0) * element(weights, j)
+kaiser = bar.index < len - 1 ? orElse(source, 0) : result
+
+plot(kaiser, "KAISER", #ffeb3b, width = 2)

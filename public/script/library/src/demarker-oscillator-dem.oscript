@@ -1,0 +1,28 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © openalgo
+// Original work (c) mihakralj, MIT License
+
+version 1
+study("DeMarker Oscillator (DEM)", precision = 3)
+
+period = input(14, "Period", min = 1, max = 5000, step = 1, tooltip = "Smoothing period over which the up and down extensions are summed. Traditional value is 14.")
+
+// How far this bar reached beyond the previous bar's high and low. The first
+// bar compares against itself, so both start at zero.
+upExt = max(high - orElse(high[1], high), 0)
+downExt = max(orElse(low[1], low) - low, 0)
+
+// Totals over the last `period` bars, where bars before the first count as
+// zero, so the totals are partial until the window fills.
+var upSum = 0.0
+var downSum = 0.0
+upSum -= orElse(upExt[period], 0)
+downSum -= orElse(downExt[period], 0)
+upSum += upExt
+downSum += downExt
+
+denom = upSum + downSum
+level(0.7, "Overbought", #ff5252, style = "dashed")
+level(0.5, "Midline", #787b86, style = "dashed")
+level(0.3, "Oversold", #4caf50, style = "dashed")
+plot(denom != 0 ? upSum / denom : 0.5, "DEM", #ffeb3b, width = 2)

@@ -1,0 +1,48 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © openalgo
+// Original work (c) mihakralj, MIT License
+
+version 1
+study("Ehlers Decycler Oscillator (DECO)", precision = 2)
+
+shortPeriod = input(30, "Short Period", min = 1, max = 500, step = 1, tooltip = "Short cycle cutoff period for high-pass filter.")
+longPeriod = input(60, "Long Period", min = 2, max = 1000, step = 1, tooltip = "Long cycle cutoff period for high-pass filter.")
+source = input(close, "Source", tooltip = "Price series to analyze.")
+
+// Two-pole high-pass filter coefficients for one cutoff period, returned as
+// [a1, b1, c1].
+fn hpCoeffs(len) =>
+    arg = 0.707 * 2.0 * math.pi / len
+    cosArg = math.cos(arg)
+    a = (cosArg + math.sin(arg) - 1.0) / cosArg
+    omah = 1.0 - a * 0.5
+    oma = 1.0 - a
+    [omah * omah, 2.0 * oma, -(oma * oma)]
+
+cs = hpCoeffs(shortPeriod)
+cl = hpCoeffs(longPeriod)
+
+// A missing source value reads as zero, and so does every bar before the first.
+x = orElse(source, 0)
+x1 = bar.index >= 1 ? x[1] : 0
+x2 = bar.index >= 2 ? x[2] : 0
+diff = x - 2.0 * x1 + x2
+
+// Each filter starts at zero for its first two bars.
+var hpS = 0.0
+var hpS1 = 0.0
+var hpL = 0.0
+var hpL1 = 0.0
+newHpS = bar.index < 2 ? 0 : cs[0] * diff + cs[1] * hpS + cs[2] * hpS1
+newHpL = bar.index < 2 ? 0 : cl[0] * diff + cl[1] * hpL + cl[2] * hpL1
+hpS1 = hpS
+hpS = newHpS
+hpL1 = hpL
+hpL = newHpL
+
+// The band between the two cutoffs: what the long filter keeps and the short
+// one removes. Nothing is drawn unless the short cutoff is below the long one.
+deco = shortPeriod < longPeriod and not isNone(source) ? newHpL - newHpS : none
+
+level(0, "Zero Line", #787b86, style = "dashed")
+plot(deco, "DECO", #ffeb3b, width = 2)

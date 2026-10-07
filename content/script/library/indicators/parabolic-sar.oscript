@@ -1,0 +1,67 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © openalgo
+// Original work (c) mihakralj, MIT License
+
+version 1
+study("Parabolic SAR", overlay = true, precision = 2)
+
+afStart = input(0.02, "Start AF", min = 0.001, max = 1, step = 0.001)
+afIncrement = input(0.02, "AF Increment", min = 0.001, max = 1, step = 0.001)
+afMax = input(0.2, "Max AF", min = 0.001, max = 1, step = 0.01, tooltip = "Ceiling for the acceleration factor. Values at or below Start AF are lifted to Start AF.")
+
+// The factors are held inside 0.001 to 1, and a ceiling below the start is
+// lifted to the start, so the factor then simply never grows.
+startAf = clamp(afStart, 0.001, 1)
+stepAf = clamp(afIncrement, 0.001, 1)
+maxAf = max(clamp(afMax, 0.001, 1), startAf)
+
+// The stop, the extreme point of the current trend and the acceleration
+// factor, carried bar to bar.
+var isLong = true
+var sar = none
+var ep = none
+var af = none
+
+if bar.index == 0
+    // The first bar sets the side from its own direction and starts the stop
+    // at the far end of its range.
+    isLong = close > open
+    sar = isLong ? low : high
+    ep = isLong ? high : low
+    af = startAf
+else
+    newSar = sar + af * (ep - sar)
+    if isLong
+        // A rising stop may never sit above the prior one or two lows.
+        newSar = min(newSar, low[1])
+        if bar.index > 1
+            newSar = min(newSar, low[2])
+        if low < newSar
+            // Price traded through the stop: flip short, the stop jumps to
+            // the old extreme and the factor starts again.
+            isLong = false
+            newSar = ep
+            ep = low
+            af = startAf
+        else if high > ep
+            ep = high
+            af = min(af + stepAf, maxAf)
+    else
+        // A falling stop may never sit below the prior one or two highs.
+        newSar = max(newSar, high[1])
+        if bar.index > 1
+            newSar = max(newSar, high[2])
+        if high > newSar
+            isLong = true
+            newSar = ep
+            ep = high
+            af = startAf
+        else if low < ep
+            ep = low
+            af = min(af + stepAf, maxAf)
+    sar = newSar
+
+// The stop is drawn in two colours: above the close on one line, below it on
+// the other, and on neither when it sits exactly on the close.
+plot(sar > close ? sar : none, "PSAR Above", #ef5350, width = 2)
+plot(sar < close ? sar : none, "PSAR Below", #26a69a, width = 2)

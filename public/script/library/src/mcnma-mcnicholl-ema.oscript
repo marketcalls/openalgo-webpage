@@ -1,0 +1,45 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © openalgo
+// Original work (c) mihakralj, MIT License
+
+version 1
+study("MCNMA - McNicholl EMA", overlay = true, precision = 2)
+
+source = input(close, "Source")
+period = input(14, "Period", min = 1, max = 5000, step = 1)
+
+weight = 2 / (period + 1)
+keep = 1 - weight
+
+// Six cascaded exponential stages, all seeded with the first source value so
+// the line answers from the first bar. An absent source reads as zero.
+price = orElse(source, 0)
+var e1 = none
+var e2 = none
+var e3 = none
+var e4 = none
+var e5 = none
+var e6 = none
+if isNone(e1)
+    e1 = price
+    e2 = price
+    e3 = price
+    e4 = price
+    e5 = price
+    e6 = price
+else
+    e1 = weight * price + keep * e1
+    e2 = weight * e1 + keep * e2
+    e3 = weight * e2 + keep * e3
+    stage1 = 3 * e1 - 3 * e2 + e3
+    e4 = weight * stage1 + keep * e4
+    e5 = weight * e4 + keep * e5
+    e6 = weight * e5 + keep * e6
+
+// Twice the first triple exponential mean, less the triple exponential mean of
+// it, which subtracts the lag of the smoothing back out.
+tema1 = 3 * e1 - 3 * e2 + e3
+tema2 = 3 * e4 - 3 * e5 + e6
+mcnma = 2 * tema1 - tema2
+
+plot(mcnma, "MCNMA", #ffeb3b, width = 2)

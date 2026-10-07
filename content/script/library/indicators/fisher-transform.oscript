@@ -1,0 +1,35 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © openalgo
+// Original work (c) mihakralj, MIT License
+
+version 1
+study("Fisher Transform", precision = 4)
+
+period = input(10, "Period", min = 1, max = 500, step = 1)
+source = input(hl2, "Source")
+
+hh = highest(source, period)
+ll = lowest(source, period)
+
+weight = 0.33
+
+// The source is placed inside its recent range on a scale of -1 to 1. While
+// the range is still filling, or is flat, it reads as the middle.
+priceRange = hh - ll
+normalized = 2 * (orElse(priceRange, 0) > 0 and not isNone(source) ? (source - ll) / priceRange : 0.5) - 1
+
+// Smoothed, held just inside the bounds, then stretched by the inverse
+// hyperbolic tangent.
+var value = 0.0
+value = weight * normalized + (1 - weight) * value
+value = max(-0.999, min(0.999, value))
+fisherState = 0.5 * log((1 + value) / (1 - value))
+
+var signalState = 0.0
+signalState = weight * fisherState + (1 - weight) * signalState
+
+plot(fisherState, "Fisher", #ffeb3b, width = 2)
+plot(signalState, "Signal", #ff9800, width = 1)
+level(2, "Overbought", #ff5252, style = "dashed")
+level(0, "Zero", #787b86, style = "dashed")
+level(-2, "Oversold", #4caf50, style = "dashed")

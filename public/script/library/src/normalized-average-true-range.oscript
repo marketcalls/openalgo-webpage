@@ -1,0 +1,23 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © openalgo
+// Original work (c) mihakralj, MIT License
+
+version 1
+study("Normalized Average True Range", precision = 4)
+
+length = input(14, "Length", min = 1, max = 5000, step = 1, tooltip = "Number of bars used for the ATR calculation")
+
+// True range, the first bar measured against its own close.
+prevClose = orElse(close[1], close)
+tr = max(high - low, max(abs(high - prevClose), abs(low - prevClose)))
+
+// A running average of the true range with weight 1 / length, started from
+// zero and divided by the weight it has gathered, so it answers from the
+// first bar.
+var rawRma = 0.0
+var e = 1.0
+rawRma = (rawRma * (length - 1) + tr) / length
+e = e * (1 - 1 / length)
+atrValue = e > 1e-10 ? rawRma / (1 - e) : rawRma
+
+plot(close != 0 ? atrValue / close * 100 : 0, "NATR", #ffeb3b, width = 2)

@@ -1,0 +1,140 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © openalgo
+// Original work (c) mihakralj, MIT License
+
+version 1
+study("EACP: Ehlers Autocorrelation Periodogram", precision = 2)
+
+source = input(close, "Source")
+minPeriod = input(8, "Min Period", min = 3, max = 500, step = 1)
+maxPeriod = input(48, "Max Period", min = 4, max = 500, step = 1)
+avgLength = input(3, "Autocorrelation Length", min = 0, max = 500, step = 1, tooltip = "Averaging length for the Pearson correlation. Zero uses the lag itself.")
+enhance = input(true, "Enhance Resolution")
+
+// The range is held inside 3 to 500 and kept non-empty.
+lowP = min(500, max(3, floor(minPeriod)))
+highP0 = min(500, max(4, floor(maxPeriod)))
+highP = highP0 <= lowP ? min(500, lowP + 1) : highP0
+corrLen = min(500, max(0, floor(avgLength)))
+
+rootTwoPi = sqrt(2) * math.pi
+
+// High-pass coefficients, fixed by the longest period.
+cosHp = math.cos(rootTwoPi / highP)
+sinHp = math.sin(rootTwoPi / highP)
+alphaHp = cosHp != 0 ? (cosHp + sinHp - 1) / cosHp : 0
+hpGain = pow(1 - alphaHp / 2, 2)
+hpB = 2 * (1 - alphaHp)
+hpC = pow(1 - alphaHp, 2)
+
+// Super smoother coefficients, fixed by the shortest period.
+a1 = exp(-rootTwoPi / lowP)
+c2 = 2 * a1 * math.cos(rootTwoPi / lowP)
+c3 = -(a1 * a1)
+c1 = 1 - c2 - c3
+
+// A missing price, and any bar before the first, reads as zero.
+price = orElse(source, 0)
+price1 = orElse(source[1], 0)
+price2 = orElse(source[2], 0)
+
+hp = 0.0
+hp = hpGain * (price - 2 * price1 + price2) + hpB * orElse(hp[1], 0) - hpC * orElse(hp[2], 0)
+filt = 0.0
+filt = c1 * (hp + orElse(hp[1], 0)) * 0.5 + c2 * orElse(filt[1], 0) + c3 * orElse(filt[2], 0)
+
+// The transform angles never change, so the cosine and sine tables are built
+// once, one row of highP + 1 columns per period. The spectrum keeps 80 per
+// cent of its previous value in every bin, so it lives for the whole run.
+cols = highP + 1
+var cosTable: array<number> = []
+var sinTable: array<number> = []
+var smoothPwr: array<number> = []
+if size(smoothPwr) == 0
+    for p = 0 to highP
+        push(smoothPwr, 0.0)
+    for p = lowP to highP
+        for k = 0 to highP
+            push(cosTable, k >= 2 ? math.cos(2 * math.pi * k / p) : 0.0)
+            push(sinTable, k >= 2 ? math.sin(2 * math.pi * k / p) : 0.0)
+
+// Pearson correlation of the filtered series against itself at each lag.
+corr = []
+for lag = 0 to highP
+    corrVal = 0.0
+    if lag >= 2
+        span = corrLen == 0 ? lag : corrLen
+        span = max(span, 2)
+        sx = 0.0
+        sy = 0.0
+        sxx = 0.0
+        syy = 0.0
+        sxy = 0.0
+        for k = 0 to span - 1
+            x = orElse(filt[k], 0)
+            y = orElse(filt[lag + k], 0)
+            sx += x
+            sy += y
+            sxx += x * x
+            syy += y * y
+            sxy += x * y
+        denom = (span * sxx - sx * sx) * (span * syy - sy * sy)
+        corrVal = denom > 0 ? (span * sxy - sx * sy) / sqrt(denom) : 0
+    push(corr, corrVal)
+
+// Discrete transform of the correlations into a power spectrum, each bin
+// smoothed 0.2 / 0.8 against its previous bar, and the largest bin found.
+localMaxPwr = 0.0
+for p = lowP to highP
+    row = (p - lowP) * cols
+    cosAcc = 0.0
+    sinAcc = 0.0
+    for k = 2 to highP
+        cv = element(corr, k)
+        cosAcc += cv * element(cosTable, row + k)
+        sinAcc += cv * element(sinTable, row + k)
+    sq = cosAcc * cosAcc + sinAcc * sinAcc
+    set(smoothPwr, p, 0.2 * sq * sq + 0.8 * element(smoothPwr, p))
+for p = lowP to highP
+    if element(smoothPwr, p) > localMaxPwr
+        localMaxPwr = element(smoothPwr, p)
+
+// The running peak decays a little each bar unless a new peak arrives.
+diffP = highP - lowP
+decay = diffP > 0 ? pow(10, -0.15 / diffP) : 1
+var maxPwr = 0.0
+maxPwr = localMaxPwr > maxPwr ? localMaxPwr : decay * maxPwr
+
+// The dominant cycle is the centre of gravity of the bins holding at least
+// half the peak power, optionally sharpened by a cube.
+var dom = (lowP + highP) * 0.5
+weighted = 0.0
+sumWeight = 0.0
+domPower = []
+for p = lowP to highP
+    pwr = maxPwr > 0 ? element(smoothPwr, p) / maxPwr : 0
+    if enhance
+        pwr = pow(pwr, 3)
+    push(domPower, pwr)
+    if pwr >= 0.5
+        weighted += p * pwr
+        sumWeight += pwr
+base = sumWeight >= 0.25 ? weighted / sumWeight : dom
+dom = 0.2 * (base - dom) + dom
+
+// While the decay of the smoother is still large, the state itself is scaled
+// by one over one minus that decay. The scaled value feeds back, which is
+// what draws the large opening transient.
+var decayLeft = 1.0
+var warming = true
+if warming
+    decayLeft = decayLeft * (1 - 0.2)
+    gain = 1 - decayLeft != 0 ? 1 / (1 - decayLeft) : 1
+    dom = gain * dom
+    warming = decayLeft > 1e-10
+
+domIdx = isNone(round(dom)) ? lowP : round(dom)
+domIdx = min(max(domIdx, lowP), highP)
+
+plot(dom, "Dominant Cycle", #ffeb3b, width = 2)
+plot(element(domPower, domIdx - lowP), "Normalized Power", #ff9800, width = 2)

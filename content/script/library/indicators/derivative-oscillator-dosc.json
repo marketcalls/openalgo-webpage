@@ -1,0 +1,47 @@
+{
+  "title": "Derivative Oscillator (DOSC)",
+  "summary": "A double-smoothed RSI minus its own moving average, a momentum line that crosses zero as the smoothed RSI moves through its average.",
+  "description": "The Derivative Oscillator (DOSC) starts from an RSI of the source (14 bars by default). It smooths that RSI twice with exponential averages (5 and then 3 bars), each starting from its first input, and then subtracts a simple average of the double-smoothed line (9 bars) used as a signal line. The plotted value is the gap between the smoothed RSI and that signal line.\n\nThe RSI here treats the bar before the first as a price of zero, and until the RSI period has passed its averages are simply the current bar's gain and loss; after that they are smoothed with weight one over the period. The signal average uses the bars it has while its window fills, so the oscillator is drawn from the first bar.",
+  "howToRead": "Above zero, the double-smoothed RSI sits above its own recent average, so momentum has been improving. Below zero it sits under that average, so momentum has been weakening. Crossings of the zero line are the main event: a cross up suggests momentum has turned higher and a cross down that it has turned lower. A shrinking distance from zero shows the current swing in momentum losing strength.\n\nThe opening bars are dominated by the warmup and should be ignored. Like any momentum measure it can cross back and forth in a flat market.",
+  "settings": [
+    {
+      "key": "source",
+      "label": "Source",
+      "description": "The price series the calculation reads, such as the close or the bar midpoint."
+    },
+    {
+      "key": "rsiPeriod",
+      "label": "RSI Period",
+      "description": "Length of the RSI the oscillator is built from."
+    },
+    {
+      "key": "ema1Period",
+      "label": "EMA1 Period",
+      "description": "Length of the first exponential smoothing applied to the RSI."
+    },
+    {
+      "key": "ema2Period",
+      "label": "EMA2 Period",
+      "description": "Length of the second exponential smoothing, applied to the first."
+    },
+    {
+      "key": "sigPeriod",
+      "label": "Signal Period",
+      "description": "Length of the simple average used as the signal line that is subtracted."
+    }
+  ],
+  "faq": [
+    {
+      "q": "What does a cross above zero mean?",
+      "a": "The double-smoothed RSI has moved above its own recent average, which means RSI momentum has turned upward."
+    },
+    {
+      "q": "Why are the first bars so extreme?",
+      "a": "The bar before the first counts as a price of zero, so the first change is a full-size gain and the RSI starts at 100. The smoothing works that start out over the following bars."
+    },
+    {
+      "q": "Is it the same as an RSI?",
+      "a": "No. It is built from an RSI but shows how far the smoothed RSI sits from its own average, so it centres on zero rather than 50 and its sign shows whether that smoothed RSI is above or below its recent mean."
+    }
+  ]
+}

@@ -1,0 +1,18 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © openalgo
+// Original work (c) mihakralj, MIT License
+
+version 1
+study("Williams Fractals", overlay = true, precision = 2)
+
+showUp = input(true, "Show Up Fractals", tooltip = "Display bearish fractals (resistance).")
+showDown = input(true, "Show Down Fractals", tooltip = "Display bullish fractals (support).")
+
+// A fractal is the middle of five bars, so it is known two bars after it
+// forms. Each test runs on the bar that confirms it and is drawn two bars
+// back, on the bar it describes.
+upFractal = high[2] > high[4] and high[2] > high[3] and high[2] > high[1] and high[2] > high ? high[2] : none
+downFractal = low[2] < low[4] and low[2] < low[3] and low[2] < low[1] and low[2] < low ? low[2] : none
+
+plot(showUp ? upFractal : none, "Up Fractal", #ff5252, style = "lineWithMarkers", offset = -2)
+plot(showDown ? downFractal : none, "Down Fractal", #4caf50, style = "lineWithMarkers", offset = -2)

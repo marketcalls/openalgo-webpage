@@ -1,0 +1,55 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © openalgo
+// Original work (c) mihakralj, MIT License
+
+version 1
+study("Pearson's Correlation (CORRELATION)", precision = 3)
+
+source1 = input(close, "Source 1")
+source2 = input(volume, "Source 2", tooltip = "A second series of the chart's own symbol to correlate with the first.")
+period = input(20, "Period", min = 2, max = 5000, step = 1)
+
+// Running sums over the last `period` bars. A bar enters only when both
+// series are present, so the window starts from the first bar and the
+// coefficient appears as soon as two pairs are held.
+var count2 = 0
+var sum1 = 0.0
+var sum2 = 0.0
+var sumSq1 = 0.0
+var sumSq2 = 0.0
+var sumProd = 0.0
+
+old1 = source1[period]
+old2 = source2[period]
+if not isNone(old1) and not isNone(old2)
+    sum1 -= old1
+    sum2 -= old2
+    sumSq1 -= old1 * old1
+    sumSq2 -= old2 * old2
+    sumProd -= old1 * old2
+    count2 -= 1
+
+if not isNone(source1) and not isNone(source2)
+    sum1 += source1
+    sum2 += source2
+    sumSq1 += source1 * source1
+    sumSq2 += source2 * source2
+    sumProd += source1 * source2
+    count2 += 1
+
+// Population covariance over the product of the two standard deviations. A
+// flat series has no deviation and no defined correlation.
+coef = none
+if count2 > 1
+    mean1 = sum1 / count2
+    mean2 = sum2 / count2
+    cov = sumProd / count2 - mean1 * mean2
+    var1 = sumSq1 / count2 - mean1 * mean1
+    var2 = sumSq2 / count2 - mean2 * mean2
+    sd1 = sqrt(max(0, var1))
+    sd2 = sqrt(max(0, var2))
+    denominator = sd1 * sd2
+    if denominator != 0
+        coef = cov / denominator
+
+plot(coef, "Correlation", #ffeb3b, width = 2)

@@ -1,0 +1,46 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © openalgo
+// Original work (c) mihakralj, MIT License
+
+version 1
+study("Average Directional Movement Index (ADX)", precision = 2)
+
+period = input(14, "Period", min = 1, max = 5000, step = 1, tooltip = "Number of bars used in the calculation.")
+
+// True range, with the first bar's range as its own.
+tr = bar.index > 0 ? max(high - low, max(abs(high - close[1]), abs(low - close[1]))) : high - low
+// Directional movement: the part of this bar's range beyond the previous bar,
+// counted on one side only. The first bar has none.
+upMove = bar.index > 0 ? high - high[1] : 0
+downMove = bar.index > 0 ? low[1] - low : 0
+plusDm = upMove > downMove and upMove > 0 ? upMove : 0
+minusDm = downMove > upMove and downMove > 0 ? downMove : 0
+
+// Each running total adds this bar's term and subtracts the total itself as it
+// stood `period` bars ago, so every total keeps its own history. This is not a
+// moving sum: once it starts subtracting earlier totals it feeds back on itself
+// and, for any period above 1, grows without bound.
+var trSum = 0.0
+var plusDmSum = 0.0
+var minusDmSum = 0.0
+backTr = bar.index >= period ? trSum[period] : 0
+backPlus = bar.index >= period ? plusDmSum[period] : 0
+backMinus = bar.index >= period ? minusDmSum[period] : 0
+trSum = trSum - backTr + orElse(tr, 0)
+plusDmSum = plusDmSum - backPlus + plusDm
+minusDmSum = minusDmSum - backMinus + minusDm
+
+// Each directional index is capped at 50 before the ratio is taken.
+plusDi = trSum != 0 ? min(100 * plusDmSum / trSum, 50) : 0
+minusDi = trSum != 0 ? min(100 * minusDmSum / trSum, 50) : 0
+diSum = plusDi + minusDi
+dx = diSum != 0 ? 100 * abs(plusDi - minusDi) / diSum : 0
+
+var dxSum = 0.0
+backDx = bar.index >= period ? dxSum[period] : 0
+dxSum = dxSum - backDx + dx
+adxValue = dxSum / period
+
+plot(adxValue, "ADX", #ffeb3b, width = 2)
+plot(plusDi, "+DI", #ffeb3b, width = 2)
+plot(minusDi, "-DI", #ffeb3b, width = 2)

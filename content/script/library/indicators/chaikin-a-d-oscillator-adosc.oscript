@@ -1,0 +1,37 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © openalgo
+// Original work (c) mihakralj, MIT License
+
+version 1
+study("Chaikin A/D Oscillator (ADOSC)", precision = 0)
+
+shortPeriod = input(3, "Short Period", min = 1, max = 5000, step = 1)
+longPeriod = input(10, "Long Period", min = 1, max = 5000, step = 1)
+
+// The accumulation/distribution line: volume signed and scaled by where the
+// close sits in the bar's range, added up from the first bar. A bar without
+// volume or without range adds nothing.
+vol = orElse(volume, 0)
+rng = high - low
+mf = rng != 0 ? (2 * close - high - low) / rng * vol : 0
+var cumulative = 0.0
+cumulative = cumulative + orElse(mf, 0)
+
+// Two exponential averages of the line, each started from zero. e is the
+// weight the zero start still holds in the slow average; both are divided by
+// (1 - e) to remove it while e is above a tiny threshold. On the first bar e
+// is still 1, so the reading is not defined there.
+shortAlpha = 2.0 / (shortPeriod + 1)
+longAlpha = 2.0 / (longPeriod + 1)
+var e = 1.0
+var shortRawEma = 0.0
+var longRawEma = 0.0
+denom = 1 - e
+compensate = e > 1e-10
+shortRawEma = shortAlpha * (cumulative - shortRawEma) + shortRawEma
+shortEma = compensate ? (denom != 0 ? shortRawEma / denom : none) : shortRawEma
+longRawEma = longAlpha * (cumulative - longRawEma) + longRawEma
+longEma = compensate ? (denom != 0 ? longRawEma / denom : none) : longRawEma
+e = (1.0 - longAlpha) * e
+
+plot(shortEma - longEma, "ADOSC", #ffeb3b, width = 2)

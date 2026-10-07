@@ -1,0 +1,15 @@
+{
+  "title": "Percentage Change (CHANGE)",
+  "summary": "Plots the fractional change of the source over a set number of bars, so an unchanged series reads zero and a doubling reads one.",
+  "description": "Percentage Change (CHANGE) compares the source with its own value a fixed number of bars back. It divides the current value by the value `length` bars ago and subtracts one, so the result is a fraction: `0.01` is a one percent rise, `-0.02` a two percent fall, and `1` a doubling.\n\nThe first `length` bars have no earlier value to compare with and are left blank. A bar whose earlier value is zero is also left blank rather than dividing by zero. With the default length of one, the line is the bar-to-bar return of the source.",
+  "howToRead": "Read the line around zero. Above zero the source is higher than it was `length` bars ago, below zero it is lower, and the distance from zero is the size of the move as a fraction. Spikes show the largest moves over the chosen span, and a line that stays near zero shows a market that has gone nowhere over that span.\n\nThe value is a ratio, so it compares fairly across price levels: a one percent move reads the same whether price is high or low. It measures only the start and end of the span and says nothing about the path in between.",
+  "settings": [
+    { "key": "source", "label": "Source", "description": "The price series to measure, such as the close or the bar midpoint." },
+    { "key": "length", "label": "Length", "description": "How many bars back the comparison reaches. One gives the bar-to-bar change; a larger value gives the change over a longer span." }
+  ],
+  "faq": [
+    { "q": "Why is the value 0.01 and not 1 for a one percent rise?", "a": "The line is the raw ratio minus one, a fraction rather than a number of percent. Multiply by 100 to read it in percent." },
+    { "q": "Why are the first bars blank?", "a": "Each value needs the source from length bars earlier. Until that many bars exist there is nothing to compare with, so the study draws nothing." },
+    { "q": "How is it different from momentum?", "a": "Momentum is usually the difference between the two prices, in price units. This is their ratio minus one, so it is independent of the price level." }
+  ]
+}

@@ -1,0 +1,14 @@
+{
+  "title": "Ahrens Moving Average (AHRENS)",
+  "summary": "A recursive average that steps toward price from the midpoint of its previous value and its value one period ago.",
+  "description": "The Ahrens Moving Average updates itself from its own history. On each bar it takes the midpoint of its previous value and its value `Period` bars ago, measures how far the source sits from that midpoint, and moves its previous value by that distance divided by `Period`.\n\nUsing the midpoint of two of its own past values, rather than the previous value alone, corrects some of the lag a plain recursive average builds up. On the first bar the line starts at the source, and until it has a value `Period` bars back the source stands in for that older value.",
+  "howToRead": "Read it as a smooth trend line. Price above a rising line describes an uptrend and price below a falling line a downtrend; the slope of the line shows the direction of the trend and how firmly it is holding.\n\nThe line moves only `1 / Period` of the gap each bar, so it is slow to respond to a sudden move and can trail price for some time after a sharp break. A shorter period makes it follow more closely at the cost of more noise.",
+  "settings": [
+    { "key": "period", "label": "Period", "description": "How far back the older value is taken and how small each step is. Longer is smoother and slower." },
+    { "key": "source", "label": "Source", "description": "The price series the average follows, the close by default." }
+  ],
+  "faq": [
+    { "q": "Why does it use its own value from a period ago?", "a": "The midpoint of the previous value and the value a period back sits closer to the centre of recent movement, which offsets some of the lag of stepping from the previous value alone." },
+    { "q": "Does it need a warmup?", "a": "No. It starts at the source on the first bar, but the first `Period` bars use the source in place of the older value, so they settle in over that stretch." }
+  ]
+}

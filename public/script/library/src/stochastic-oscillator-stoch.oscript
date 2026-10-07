@@ -1,0 +1,40 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © openalgo
+// Original work (c) mihakralj, MIT License
+
+version 1
+study("Stochastic Oscillator (STOCH)", precision = 2)
+
+kPeriod = input(14, "K Length", min = 1, max = 5000, step = 1)
+dPeriod = input(3, "D Smooth", min = 1, max = 5000, step = 1)
+
+// The lowest low and highest high of the last kPeriod bars, or of every bar so
+// far while fewer than kPeriod have been seen. A missing price reads as 0.
+lo = orElse(low, 0)
+hi = orElse(high, 0)
+lowestLow = lo
+highestHigh = hi
+for k = 1 to kPeriod - 1
+    if k <= bar.index
+        lowestLow = min(lowestLow, lo[k])
+        highestHigh = max(highestHigh, hi[k])
+
+// %K places the close inside that range, 0 at the low and 100 at the high, and
+// reads 0 when the range is flat.
+range = highestHigh - lowestLow
+kRaw = not isNone(range) and range > 0 and not isNone(close) ? 100 * (close - lowestLow) / range : 0
+kVal = orElse(kRaw, 0)
+
+// %D is a simple average of %K over dPeriod bars. On the first bar every slot
+// of the window holds that bar's %K, so the average answers from bar 0.
+var firstK = 0.0
+var dSum = 0.0
+if bar.index == 0
+    firstK = kVal
+    dSum = kVal * dPeriod
+else
+    dSum = dSum - (bar.index > dPeriod ? kVal[dPeriod] : firstK) + kVal
+dVal = dSum / dPeriod
+
+plot(kVal, "Stochastic %K", #26a69a, width = 2)
+plot(dVal, "Stochastic %D", #ef5350, width = 2)

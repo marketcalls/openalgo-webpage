@@ -1,0 +1,63 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © openalgo
+// Original work (c) mihakralj, MIT License
+
+version 1
+study("TRIX", precision = 4)
+
+period = input(14, "Period", min = 1, max = 100, step = 1, tooltip = "Period for triple exponential smoothing")
+source = input(close, "Source", tooltip = "Price series to analyze")
+
+smoothing = 2 / (period + 1)
+decay = 1 - smoothing
+
+// A missing source value falls back to the previous bar's value.
+src = isNone(source) ? source[1] : source
+
+// Three exponential means stacked on one another, each started from zero.
+// While the start still matters, each is divided by its own 1 - decay^k, so
+// all three read as the source from the first bar instead of climbing up
+// from zero. The correction stops once it falls below 1e-10.
+var e1 = 1.0
+var e2 = 1.0
+var e3 = 1.0
+var warmup = true
+var rema1 = 0.0
+var rema2 = 0.0
+var rema3 = 0.0
+var ema1 = none
+var ema2 = none
+var ema3 = none
+var prevEma3 = none
+var seeded = false
+
+if not seeded
+    ema1 = src
+    ema2 = src
+    ema3 = src
+    prevEma3 = src
+    seeded = true
+
+rema1 = smoothing * (src - rema1) + rema1
+if warmup
+    e1 *= decay
+    e2 *= decay
+    e3 *= decay
+    ema1 = rema1 / (1 - e1)
+    rema2 = smoothing * (ema1 - rema2) + rema2
+    ema2 = rema2 / (1 - e2)
+    rema3 = smoothing * (ema2 - rema3) + rema3
+    ema3 = rema3 / (1 - e3)
+    warmup = e1 > 1e-10
+else
+    ema1 = rema1
+    rema2 = smoothing * (ema1 - rema2) + rema2
+    ema2 = rema2
+    rema3 = smoothing * (ema2 - rema3) + rema3
+    ema3 = rema3
+
+// The one-bar percentage change of the triple mean.
+trixValue = not isNone(prevEma3) and prevEma3 != 0 ? 100 * (ema3 - prevEma3) / prevEma3 : 0
+prevEma3 = ema3
+
+plot(isNone(source) ? none : trixValue, "TRIX", #ffeb3b, width = 2)

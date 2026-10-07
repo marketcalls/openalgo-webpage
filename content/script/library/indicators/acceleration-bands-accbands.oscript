@@ -1,0 +1,40 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © openalgo
+// Original work (c) mihakralj, MIT License
+
+version 1
+study("Acceleration Bands (ACCBANDS)", overlay = true, precision = 2)
+
+period = input(20, "Period", min = 1, max = 5000, step = 1)
+factor = input(2.0, "Factor", min = 0.001, max = 100, step = 0.1)
+
+// Running sums over the last `period` bars. Until the window is full the sums
+// cover every bar so far and divide by that count, so the bands are drawn
+// from the first bar as an expanding mean. Once full, the oldest bar leaves
+// the sums before the newest one joins them.
+var sumHigh = 0.0
+var sumLow = 0.0
+var sumClose = 0.0
+if bar.index >= period
+    sumHigh = sumHigh - orElse(high[period], 0)
+    sumLow = sumLow - orElse(low[period], 0)
+    sumClose = sumClose - orElse(close[period], 0)
+sumHigh = sumHigh + orElse(high, 0)
+sumLow = sumLow + orElse(low, 0)
+sumClose = sumClose + orElse(close, 0)
+windowCount = min(bar.index + 1, period)
+
+smaHigh = sumHigh / windowCount
+smaLow = sumLow / windowCount
+smaClose = sumClose / windowCount
+
+// The bands sit beyond the averaged high and low by a multiple of the
+// averaged bar spread.
+bandWidth = (smaHigh - smaLow) * factor
+upperBand = smaHigh + bandWidth
+lowerBand = smaLow - bandWidth
+
+plot(smaClose, "Middle", #ffeb3b, width = 2)
+top = plot(upperBand, "Upper", #ffeb3b, width = 2)
+bottom = plot(lowerBand, "Lower", #ffeb3b, width = 2)
+fill(top, bottom, #2962ff, opacity = 0.1)

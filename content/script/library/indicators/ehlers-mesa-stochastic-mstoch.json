@@ -1,0 +1,42 @@
+{
+  "title": "Ehlers MESA Stochastic (MSTOCH)",
+  "summary": "A stochastic taken on filtered price, with trend and noise removed first, then smoothed into an oscillator between 0 and 1.",
+  "description": "The Ehlers MESA Stochastic (MSTOCH) first passes the source through a roofing filter: a 2-pole high-pass filter (48 bars by default) removes the trend and longer cycles, and a super smoother (10 bars) removes the short noise. It then measures where the filtered value sits between its highest and lowest values over the stochastic length (20 bars), and smooths that reading with the same super smoother.\n\nOn the first bars, missing earlier prices fold back onto the nearest price that exists, and bars before the first read the current filtered value in the stochastic window. When the window has no range the raw stochastic is 0.5. The result is held between 0 and 1.",
+  "howToRead": "Readings above 0.8 mean the filtered price is near the top of its recent range and readings below 0.2 mean it is near the bottom, with 0.5 in the middle. Because trend and noise are filtered out before the stochastic is taken, the line follows the swings between the two cutoff periods rather than raw price, and a turn back out of a zone marks a turn in that filtered swing.\n\nThe filters need bars to settle, so the opening stretch is not reliable. In a strong trend the filtered series can still cycle through both zones, so the reading describes the swing around the trend rather than the trend itself.",
+  "settings": [
+    {
+      "key": "stochLength",
+      "label": "Stochastic Length",
+      "description": "How many bars of filtered price the highest and lowest values are taken over."
+    },
+    {
+      "key": "hpLength",
+      "label": "HP Length",
+      "description": "High-pass cutoff period: cycles longer than this, including the trend, are removed."
+    },
+    {
+      "key": "ssLength",
+      "label": "SS Length",
+      "description": "Super smoother cutoff period: cycles shorter than this are removed, and the final line is smoothed with it too."
+    },
+    {
+      "key": "source",
+      "label": "Source",
+      "description": "The price series the calculation reads, such as the close or the bar midpoint."
+    }
+  ],
+  "faq": [
+    {
+      "q": "How is it different from an ordinary stochastic?",
+      "a": "An ordinary stochastic works on raw price. This one removes the trend and the short noise first, so it reacts to the swings in between."
+    },
+    {
+      "q": "Which levels matter?",
+      "a": "The pane marks 0.8 and 0.2 as the upper and lower zones and 0.5 as the midline."
+    },
+    {
+      "q": "Why does it start at 0.5?",
+      "a": "On the first bar the filtered series has no range yet, so the stochastic reads the neutral 0.5 and the smoother starts from there."
+    }
+  ]
+}

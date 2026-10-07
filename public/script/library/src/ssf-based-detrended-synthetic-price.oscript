@@ -1,0 +1,54 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © openalgo
+// Original work (c) mihakralj, MIT License
+
+version 1
+study("SSF-Based Detrended Synthetic Price", precision = 4)
+
+source = input(hlc3, "Source")
+period = input(40, "Dominant Cycle Period", min = 4, max = 200, step = 1, tooltip = "Dominant cycle period. Quarter-cycle and half-cycle SSFs calculated from this value.")
+
+// Two Super Smoother filters, one tuned to a quarter of the cycle and one to
+// half of it. Their difference removes the trend and keeps the cycle.
+fastPeriod = max(2, round(period / 4))
+slowPeriod = max(3, round(period / 2))
+
+argFast = sqrt(2) * math.pi / fastPeriod
+expFast = exp(-argFast)
+c2Fast = 2 * expFast * math.cos(argFast)
+c3Fast = -expFast * expFast
+c1Fast = 1 - c2Fast - c3Fast
+
+argSlow = sqrt(2) * math.pi / slowPeriod
+expSlow = exp(-argSlow)
+c2Slow = 2 * expSlow * math.cos(argSlow)
+c3Slow = -expSlow * expSlow
+c1Slow = 1 - c2Slow - c3Slow
+
+// The filters read the average of this bar and the previous one. An absent
+// value reads as zero, and an absent previous value as this bar's.
+current = orElse(source, 0)
+previous = orElse(source[1], current)
+smoothed = (current + previous) * 0.5
+
+// Both filter states start at the first input, so the output starts at zero.
+var fast1 = none
+var fast2 = none
+var slow1 = none
+var slow2 = none
+if isNone(fast1)
+    fast1 = smoothed
+    fast2 = smoothed
+    slow1 = smoothed
+    slow2 = smoothed
+
+ssfFast = c1Fast * smoothed + c2Fast * fast1 + c3Fast * fast2
+fast2 = fast1
+fast1 = ssfFast
+
+ssfSlow = c1Slow * smoothed + c2Slow * slow1 + c3Slow * slow2
+slow2 = slow1
+slow1 = ssfSlow
+
+plot(ssfFast - ssfSlow, "SSF-DSP", #ffeb3b, width = 2)
+level(0, "Zero Line", #787b86, style = "dashed")

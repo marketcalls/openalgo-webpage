@@ -1,0 +1,27 @@
+{
+  "title": "Decay Min-Max Channel (DECAYCHANNEL)",
+  "summary": "A high and low channel whose edges are pulled toward the middle harder the longer they go without a new extreme.",
+  "description": "The Decay Min-Max Channel starts from the highest high and lowest low of recent bars, but its edges do not wait for the window to drop an old extreme. Each edge keeps a clock of how many bars have passed since price set a new extreme on that side. A new high resets the upper clock and moves the upper edge to that high; a new low does the same below.\n\nOn every bar each edge moves toward the channel midpoint by a share of its distance from it. That share is one minus the exponential of minus the decay rate times the clock, and the decay rate is the natural log of two divided by the period. On the bar right after a new extreme the share is small; once an edge has gone `period` bars without a new extreme it closes half its gap to the midpoint on every bar. Because the pull repeats bar after bar, a quiet edge comes in well before `period` bars have passed.\n\nThe edges are then held inside the highest high and lowest low of the last `period` bars, or of every bar so far while that window is still filling.",
+  "howToRead": "A fresh extreme snaps the edge outward, so an edge that sits on price marks a side that is still making new highs or lows. An edge that has drifted inward shows a side that has gone quiet. When both edges converge, the market has stopped making new extremes in either direction and the range is tightening.\n\nA break of a decayed edge is a smaller move than a break of the full range, so this channel reacts sooner than a plain high and low channel, at the cost of more false breaks.",
+  "settings": [
+    {
+      "key": "period",
+      "label": "Period",
+      "description": "The window for the high and low limits, and the number of bars without a new extreme after which an edge closes half its gap to the midpoint on each bar. Longer periods decay more slowly and give a wider channel."
+    }
+  ],
+  "faq": [
+    {
+      "q": "How fast do the edges decay?",
+      "a": "The share of the gap to the midpoint that an edge closes on a bar grows with the bars since its last new extreme: it is one minus two to the power of minus that count over the period. It reaches one half after `period` quiet bars, and because the pull compounds, the edge is already well inside the range by then."
+    },
+    {
+      "q": "Can an edge move past the window's high or low?",
+      "a": "No. After decaying, the upper edge is capped at the window's highest high and the lower edge is floored at its lowest low."
+    },
+    {
+      "q": "Why does an edge jump outward?",
+      "a": "A bar that reaches or passes the current edge resets that side's clock and moves the edge to the bar's extreme."
+    }
+  ]
+}

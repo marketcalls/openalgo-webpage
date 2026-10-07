@@ -1,0 +1,28 @@
+{
+  "title": "MCNMA - McNicholl EMA",
+  "summary": "A low-lag average: twice a triple exponential average minus the triple exponential average of it, built from six cascaded stages.",
+  "description": "MCNMA chains six exponential averages that all use the weight `2 / (period + 1)`. The first three form a triple exponential average of the source, `3 * e1 - 3 * e2 + e3`. That result feeds the next three, which form a triple exponential average of the first one.\n\nThe line is twice the first triple average minus the second. The second is a smoothed copy of the first, so the difference between them estimates the lag the smoothing adds, and subtracting it pushes the line back toward price.\n\nAll six stages are seeded with the first source value, so the line answers from the first bar. An absent source reads as zero.",
+  "howToRead": "MCNMA is a very responsive trend line. It turns close to where price turns and stays close to price in a steady trend, so it suits faster crossover systems and trailing references.\n\nThe lag removal also amplifies noise and makes the line overshoot after sharp moves. On noisy charts a longer period helps, and a cross of price through the line is stronger evidence when the line itself has turned.",
+  "settings": [
+    {
+      "key": "source",
+      "label": "Source",
+      "description": "The price series the average follows. Close is the usual choice; hl2 or another blend smooths out closes that jump around."
+    },
+    {
+      "key": "period",
+      "label": "Period",
+      "description": "Length of every exponential stage. A longer period gives a smoother, slower line that overshoots less."
+    }
+  ],
+  "faq": [
+    {
+      "q": "How does it remove lag?",
+      "a": "It subtracts a smoothed copy of a triple exponential average from twice that average. The difference between the two is an estimate of the lag, so taking it out brings the line back toward price."
+    },
+    {
+      "q": "Why does it overshoot?",
+      "a": "Removing lag means projecting recent movement forward. After a sharp move that reverses, the projection runs past price for a few bars."
+    }
+  ]
+}

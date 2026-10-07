@@ -1,0 +1,12 @@
+{
+  "title": "OHLC Average (OHLC4)",
+  "summary": "Draws the mean of each bar's open, high, low and close, one quieter representative price for the whole bar.",
+  "description": "OHLC Average (OHLC4) adds the open, high, low and close of each bar and multiplies the sum by `0.25`. The result is the plain mean of the four prices, computed bar by bar with no lookback and no smoothing.\n\nBecause every part of the bar contributes equally, the value moves less than the close alone on a bar that ends at an extreme, and less than the range midpoint on a bar with a long wick on one side. That balance is why the four-price mean is a common input to other studies: it gives one representative price per bar that is less sensitive to any single print.",
+  "howToRead": "Read the line as the bar's average price. A close above it means the bar finished above its own average, a sign that the later part of the bar was stronger; a close below it means the opposite. When the line itself rises bar after bar, the whole bar, not just its close, is moving higher.\n\nIt carries every bar's noise because it has no lookback. Use it as a reference price on the chart, or as a smoother source for averages and oscillators.",
+  "settings": [],
+  "faq": [
+    { "q": "Is this the same as the volume weighted average price?", "a": "No. It uses only the four prices of each bar, weights them equally and ignores volume. A volume weighted average accumulates price times volume over a session." },
+    { "q": "Why would I feed it to another indicator?", "a": "It is less tied to the closing tick than the close, so an average or oscillator built on it tends to react a little more smoothly to bars with long wicks." },
+    { "q": "Does it repaint?", "a": "No. A completed bar's value is fixed. On the newest bar it moves with the close and with any new high or low." }
+  ]
+}

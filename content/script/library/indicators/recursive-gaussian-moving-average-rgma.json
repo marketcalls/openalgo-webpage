@@ -1,0 +1,16 @@
+{
+  "title": "Recursive Gaussian Moving Average (RGMA)",
+  "summary": "A cascade of identical exponential stages that approximates a Gaussian filter, giving a very smooth line with an even response.",
+  "description": "RGMA passes the source through a chain of exponential averages, one per pass, with each stage smoothing the output of the stage before it on the same bar. Repeating a simple exponential filter several times makes its response approach the bell shape of a Gaussian filter, which smooths noise evenly without the sharp edges of a plain window.\n\nTo keep the overall smoothing about the same whatever the number of passes, the period is divided by the square root of the passes before the smoothing factor is computed: `alpha = 2 / (period / sqrt(passes) + 1)`. Every stage is seeded with the first source value and that value is drawn on the first bar, so the line has no warmup gap.",
+  "howToRead": "RGMA is a smooth trend line. Its direction describes the trend, and price crossing it marks a move that has outlasted the filter's noise. Because the cascade spreads its weight smoothly over recent bars, the line bends gradually rather than in steps.\n\nMore passes make the response more bell shaped and the line smoother, but every extra stage adds some delay, so turns are confirmed late. Fewer passes make it closer to a single exponential average. Choose the period for the swing size you care about and leave the passes at the default unless the line is too jagged.",
+  "settings": [
+    { "key": "period", "label": "Period", "description": "The base smoothing length. A larger period gives a smoother, slower line." },
+    { "key": "passes", "label": "Passes", "description": "How many exponential stages are chained, from 1 to 10. More passes make the smoothing more Gaussian." },
+    { "key": "source", "label": "Source", "description": "The price series that is averaged, the close by default." }
+  ],
+  "faq": [
+    { "q": "Why is the period divided by the square root of the passes?", "a": "Each extra stage adds smoothing. Shortening the per-stage length by the square root of the passes keeps the total smoothing roughly the same, so changing the passes changes the shape of the response more than its length." },
+    { "q": "What does one pass give?", "a": "A single exponential average with the smoothing factor two over the period plus one." },
+    { "q": "Is this an exact Gaussian filter?", "a": "No. It is a recursive approximation: chaining exponential stages approaches a Gaussian response as the passes rise, without computing Gaussian weights." }
+  ]
+}

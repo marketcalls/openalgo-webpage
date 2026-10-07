@@ -1,0 +1,23 @@
+{
+  "title": "Price Volume Rank (PVR)",
+  "summary": "Classifies every bar from 0 to 4 by whether price and volume rose or fell together against the bar before.",
+  "description": "Price Volume Rank sorts each bar into one of five cases by comparing its price and volume with the previous bar. A rank of 1 means price rose and volume rose. A rank of 2 means price rose while volume fell or stayed the same. A rank of 3 means price fell and volume fell. A rank of 4 means price fell while volume rose or stayed the same. A rank of 0 means price was unchanged, whatever the volume did.\n\nThe price compared is the **Price Source** setting, the close by default, and a missing volume reads as zero. The first bar compares with itself, so it ranks 0. The result is drawn as a step line, so each bar's class shows as a flat segment.",
+  "howToRead": "Ranks 1 and 3 are the confirmed cases, where volume moved the same way as price: rising price on rising volume, falling price on falling volume. Ranks 2 and 4 are the divergent cases. A run of 1s suggests a well supported advance, while a run of 2s suggests the advance is happening on thinning volume.\n\nThe rank is a single-bar classification with no smoothing, so it changes often. It is most useful read as a pattern over several bars, or smoothed with an average of your own, rather than acting on any one bar.",
+  "settings": [
+    {
+      "key": "source",
+      "label": "Price Source",
+      "description": "The price compared with the previous bar to decide whether price rose, fell or was unchanged, the close by default."
+    }
+  ],
+  "faq": [
+    {
+      "q": "Which ranks are up bars and which are down bars?",
+      "a": "Ranks 1 and 2 are bars where price rose, ranks 3 and 4 bars where it fell. Within each pair the rank only tells you whether volume moved the same way as price (1 and 3) or the other way (2 and 4)."
+    },
+    {
+      "q": "Why is the first bar ranked 0?",
+      "a": "There is no earlier bar, so it compares with itself and its price is unchanged."
+    }
+  ]
+}

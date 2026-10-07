@@ -1,0 +1,26 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © openalgo
+// Original work (c) mihakralj, MIT License
+
+version 1
+study("Efficiency Ratio (ER)", precision = 3)
+
+source = input(close, "Source")
+period = input(10, "Period", min = 1, max = 500, step = 1)
+
+// A missing source value reads as zero.
+price = orElse(source, 0)
+
+// Noise: the sum of every bar-to-bar move over the last `period` bars.
+absChange = bar.index > 0 ? abs(price - price[1]) : 0
+var noise = 0.0
+if bar.index >= period
+    noise -= absChange[period]
+noise += absChange
+
+// Signal: the net move across the same span, zero until `period` bars exist.
+netMove = bar.index >= period ? abs(price - price[period]) : 0
+ratio = noise != 0 ? netMove / noise : 0
+
+level(0.5, "Midline", #9e9e9e, style = "dashed")
+plot(clamp(ratio, 0, 1), "ER", #ffeb3b, width = 2)

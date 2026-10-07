@@ -1,0 +1,48 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © openalgo
+// Original work (c) mihakralj, MIT License
+
+version 1
+study("Regression Channels (REGCHANNEL)", overlay = true, precision = 2)
+
+period = input(20, "Period", min = 2, max = 5000, step = 1)
+source = input(close, "Source")
+multiplier = input(2, "Standard Deviation Multiplier", min = 0.1, max = 100, step = 0.1, tooltip = "Band distance as a multiple of the root mean square residual of the regression fit.")
+
+// x runs 0 to Period - 1 across the window, oldest first, so the sums of x and
+// of x squared are the same on every bar.
+sumX = 0.0
+sumX2 = 0.0
+for k = 0 to period - 1
+    sumX = sumX + k
+    sumX2 = sumX2 + k * k
+denom = period * sumX2 - sumX * sumX
+
+// A least-squares line through the last Period values. The window is read
+// oldest first, so the value at x = k is source[period - 1 - k].
+regression = none
+spread = none
+if bar.index >= period - 1 and denom != 0
+    sumY = 0.0
+    sumXY = 0.0
+    for k = 0 to period - 1
+        y = source[period - 1 - k]
+        sumY = sumY + y
+        sumXY = sumXY + k * y
+    slope = (period * sumXY - sumX * sumY) / denom
+    intercept = (sumY - slope * sumX) / period
+    regression = slope * (period - 1) + intercept
+
+    // The band width is the root mean square of the residuals from the line,
+    // divided by Period rather than Period - 1.
+    sumResiduals2 = 0.0
+    for k = 0 to period - 1
+        residual = source[period - 1 - k] - (slope * k + intercept)
+        sumResiduals2 = sumResiduals2 + residual * residual
+    spread = sqrt(sumResiduals2 / period)
+
+top = plot(regression + multiplier * spread, "Upper Band", #ffeb3b, width = 2)
+mid = plot(regression, "Regression Line", #ffeb3b, width = 2)
+bottom = plot(regression - multiplier * spread, "Lower Band", #ffeb3b, width = 2)
+fill(top, mid, #ef5350, opacity = 0.1)
+fill(mid, bottom, #26a69a, opacity = 0.1)

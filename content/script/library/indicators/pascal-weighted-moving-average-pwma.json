@@ -1,0 +1,15 @@
+{
+  "title": "Pascal Weighted Moving Average (PWMA)",
+  "summary": "A moving average weighted by a row of Pascal's triangle, a bell of binomial weights that puts most of the weight on the middle of the window.",
+  "description": "The Pascal Weighted Moving Average weights each bar of its window by a binomial coefficient. With `p` bars in the window the weights are one row of Pascal's triangle: the first is 1 and each next one is the previous times `(p - k) / k`. For a window of five that gives 1, 4, 6, 4, 1. The weighted sum of the source is divided by the sum of the weights.\n\nThe binomial weights form a bell centred on the middle of the window, very close to a Gaussian, so bars near the ends count for almost nothing and the middle bars dominate. The window grows with the data until it reaches `period`, so the line starts on the first bar. A missing price is left out with its weight.",
+  "howToRead": "Read it as a very smooth trend line. Because the bell is narrow, the effective smoothing is shorter than the period suggests, and the line lags price by about half the window. A rising line with price above it describes an uptrend, and a falling line with price below it a downtrend.\n\nIts slope is the useful part: turns in the line are clean and seldom reverse on a single bar. Until `period` bars exist the window is shorter, so the earliest values follow price more closely.",
+  "settings": [
+    { "key": "period", "label": "Period", "description": "How many bars the binomial bell spans. A longer period smooths more and lags more." },
+    { "key": "source", "label": "Source", "description": "The price series that is averaged, the close by default." }
+  ],
+  "faq": [
+    { "q": "Why do the bars at the ends hardly count?", "a": "Binomial coefficients grow quickly toward the middle of the row. In a 10-bar window the two end bars weigh 1 each while the middle ones weigh 126, so the ends barely move the result." },
+    { "q": "Is there an upper limit on the period?", "a": "Yes, 1000. The coefficients become too large to hold in a number much beyond that." },
+    { "q": "How is it different from a Gaussian average?", "a": "A binomial row is the whole-number cousin of a Gaussian bell. The two give very similar lines, but this one needs no width setting: the period fixes the shape." }
+  ]
+}

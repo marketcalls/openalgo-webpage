@@ -1,0 +1,15 @@
+{
+  "title": "TUKEY_W: Tukey (Tapered Cosine) Window MA",
+  "summary": "An average of the close whose weights are flat through the middle of the window and taper off along a cosine curve at both ends.",
+  "description": "This study averages the last `Period` closes with a tapered cosine window. Bars in the middle of the window carry a weight of 1. Over a stretch at each end the weight falls along half a cosine curve, from 1 down to 0 at the very edge. The weighted closes are added up and divided by the sum of the weights.\n\nThe `alpha` setting decides how much of the window is tapered. At 0 there is no taper and the result is a simple moving average. At 1 the whole window is one cosine bell, which is a Hann window. At the default of 0.5, a quarter of the window at each end is tapered and the middle half is flat. The line starts once a full window of closes exists, and it always uses the close.",
+  "howToRead": "Read it like any trend average: price above a rising line describes an uptrend, price below a falling line a downtrend. The taper softens the moment a bar enters or leaves the window, so the line is smoother than a simple average of the same length and jumps less when an outlier bar drops out of the window.\n\nRaising alpha makes the line smoother and gives the middle of the window more say, which adds lag; lowering it moves the line toward a simple average. Like every average built from a window, it turns only after price has turned.",
+  "settings": [
+    { "key": "period", "label": "Period", "description": "The number of closes in the window. Longer is smoother and slower." },
+    { "key": "alpha", "label": "alpha", "description": "The share of the window that is tapered, from 0 to 1. 0 gives a simple average, 1 a full cosine bell, 0.5 tapers a quarter at each end." }
+  ],
+  "faq": [
+    { "q": "What does alpha 0 give?", "a": "Every weight is 1, so the study is a simple moving average of the close over the period." },
+    { "q": "Why does it use the close and not a source setting?", "a": "The calculation is defined on the close, and the study keeps that, so there is no source choice." },
+    { "q": "Why are the first bars blank?", "a": "The weights are fixed for a full window, so the line waits until `Period` closes exist before it draws." }
+  ]
+}

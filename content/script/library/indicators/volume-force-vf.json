@@ -1,0 +1,14 @@
+{
+  "title": "Volume Force (VF)",
+  "summary": "Each bar's price change multiplied by its volume, smoothed with an exponential average corrected so it reads accurately from the first bar.",
+  "description": "Volume Force combines how far price moved with how much traded. On every bar the study takes the change in the close from the previous bar and multiplies it by the bar's volume. A large move on heavy volume gives a large force, a large move on thin volume a small one, and a bar with no volume no force at all. The first bar compares its close with itself and has no force.\n\nThe raw force is noisy, so it is smoothed with an exponential average whose weight is `2 / (period + 1)`. An exponential average that starts at zero is pulled towards zero for its first stretch of bars, so the study divides it by the share of weight gathered so far. That correction makes the first values a fair average of the bars seen rather than a fraction of one, and it switches off once the missing weight becomes negligible.\n\nThe pane shows the smoothed force with a dashed zero line, and is shaded green while the force is positive and red while it is zero or negative.",
+  "howToRead": "Above zero, rising prices have been carrying more volume than falling ones over the smoothing window; below zero, the reverse. The green and red shading makes the side easy to see at a glance. A crossing of zero marks a change in which side is pushing harder.\n\nWatch the size of the swings as well as the sign. A new price high made with a smaller positive force than the last one suggests the move is running on less conviction. Because price change is in price units, the scale depends on the instrument, so compare readings only within one chart.",
+  "settings": [
+    { "key": "length", "label": "Smoothing Period", "description": "The period of the exponential average that smooths the raw force. A longer period gives a calmer line that crosses zero less often." }
+  ],
+  "faq": [
+    { "q": "How is this related to the force index?", "a": "It uses the same raw quantity, price change times volume, smoothed with an exponential average. The difference here is the warmup correction, which lets the line answer accurately from the first bar." },
+    { "q": "Why does the line not start near zero?", "a": "The early values are divided by the weight the average has gathered so far, which removes the pull towards the starting value of zero. The first bars therefore show a true average of the force seen so far." },
+    { "q": "What does the shading mean?", "a": "Green marks bars where the smoothed force is above zero and red where it is zero or below, so the side in control is visible without reading the scale." }
+  ]
+}

@@ -1,0 +1,201 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © openalgo
+// Original work (c) Arun K Bhaskar, MPL-2.0
+
+version 1
+study("Liquidity Void Screener", overlay = true, precision = 2)
+
+showLast = input(2, "Show Last", min = 0, max = 500, step = 1, tooltip = "How many of the most recent voids of each side stay on the chart.")
+lineSource = input("High/Low", "Source", options = ["High/Low", "OTE 0.79%", "50%"], tooltip = "Where inside the void the level sits: the far edge, the 0.79 retracement, or the midpoint.")
+showBear = input(true, "Bearish")
+showBull = input(true, "Bullish")
+hideCrossed = input(false, "Hide Crossed", tooltip = "Remove a void once price has traded all the way back through it.")
+filterUsing = input("ATR", "Filter Using", options = ["ATR", "Percentage"], tooltip = "Filters remove narrow liquidity voids. ATR filtering adjusts automatically when the timeframe changes, a percentage filter stays constant across timeframes. For no filtering choose Percentage and set it to 0.")
+atrLength = input(14, "ATR Period", min = 1, max = 5000, step = 1, tooltip = "Applicable only if Filter Using is ATR.")
+atrMulti = input(4, "ATR Multiplier", min = 1, max = 100, step = 0.1, tooltip = "Higher the number, filters higher void height.")
+percentage = input(2.5, "Percentage Above", min = 0, max = 100, step = 0.1, tooltip = "Filters liquidity void above the given percentage.")
+direction = input("Both", "Direction", options = ["Both", "Bullish", "Bearish"])
+onlyBullish = input(true, "Only Bullish")
+onlyBearish = input(true, "Only Bearish")
+
+bearColor = #f7525f
+bullColor = #22ab94
+
+// The height filter reads a continuous average true range over every bar.
+atrValue = atr(atrLength)
+
+// A void must be taller than the filter allows. An absent reading never
+// passes, so nothing is drawn before the average true range exists. Every
+// setting the functions need is handed to them as an argument.
+fn passesFilter(prev, other, atrNow, useAtr, mult, pct) =>
+    pass = false
+    if not isNone(prev) and not isNone(other)
+        if useAtr
+            pass = not isNone(atrNow) and abs(prev - other) > atrNow * mult
+        else if prev != 0
+            pass = abs((prev - other) / prev * 100) > pct
+    pass
+
+// Where the level sits inside the void: its far edge, the 0.79 retracement
+// from the near edge, or the midpoint.
+fn priceSource(prev, other, mode) =>
+    mode == "High/Low" ? prev : mode == "OTE 0.79%" ? other + (prev - other) * 0.79 : (prev + other) / 2
+
+filterAtr = filterUsing == "ATR"
+confirmed = bar.isConfirmed
+bullishCandle = close > open
+bearishCandle = close < open
+
+// Bearish voids. A bearish void opens on a rising candle whose high stays at
+// or below the low of the previous rising candle, leaving the range between
+// them untraded. Each void holds a box from that low down to this high and a
+// level line, both stretching right until price trades back into them.
+var bearPrev = none
+var bearPrevTime = none
+var bearLevel = none
+var bearLines: array<line> = []
+var bearLinePrice: array<number> = []
+var bearLineKept: array<bool> = []
+var bearBoxes: array<box> = []
+var bearBoxTop: array<number> = []
+var bearBoxBottom: array<number> = []
+var bearBoxKept: array<bool> = []
+
+if showBear and confirmed and bullishCandle
+    prevB = bearPrev
+    otherB = high
+    gappedB = not isNone(prevB) and otherB <= prevB
+    if gappedB and passesFilter(prevB, otherB, atrValue, filterAtr, atrMulti, percentage)
+        levelB = priceSource(prevB, otherB, lineSource)
+        push(bearLines, draw.line(bearPrevTime, levelB, time, levelB, color = bearColor, width = 2, style = "solid"))
+        push(bearLinePrice, levelB)
+        push(bearLineKept, false)
+        push(bearBoxes, draw.box(bearPrevTime, otherB, time, prevB, color = bearColor, fillColor = bearColor, opacity = 0.25))
+        push(bearBoxTop, otherB)
+        push(bearBoxBottom, prevB)
+        push(bearBoxKept, false)
+        // Only the newest Show Last of each kind survive.
+        if size(bearLines) > showLast
+            draw.delete(shift(bearLines))
+            shift(bearLinePrice)
+            shift(bearLineKept)
+        if size(bearBoxes) > showLast
+            draw.delete(shift(bearBoxes))
+            shift(bearBoxTop)
+            shift(bearBoxBottom)
+            shift(bearBoxKept)
+        bearLevel = levelB
+    bearPrev = low
+    bearPrevTime = time
+
+// Each drawing stretches right until this bar's range reaches it, and is then
+// frozen there: the level for a line, the near edge for a box.
+for i = 0 to size(bearLines) - 1
+    if not bearLineKept[i]
+        p = bearLinePrice[i]
+        draw.setTo(bearLines[i], time, p)
+        if high >= p and low <= p
+            set(bearLineKept, i, true)
+for i = 0 to size(bearBoxes) - 1
+    if not bearBoxKept[i]
+        draw.setTo(bearBoxes[i], time, bearBoxBottom[i])
+        t = bearBoxTop[i]
+        if high >= t and low <= t
+            set(bearBoxKept, i, true)
+
+// Hide Crossed removes a frozen drawing once price reaches it again: the
+// level for a line, the far edge for a box.
+if hideCrossed
+    for i = size(bearLines) - 1 to 0 step -1
+        p = bearLinePrice[i]
+        if bearLineKept[i] and high >= p and low <= p
+            draw.delete(remove(bearLines, i))
+            remove(bearLinePrice, i)
+            remove(bearLineKept, i)
+    for i = size(bearBoxes) - 1 to 0 step -1
+        b = bearBoxBottom[i]
+        if bearBoxKept[i] and high >= b and low <= b
+            draw.delete(remove(bearBoxes, i))
+            remove(bearBoxTop, i)
+            remove(bearBoxBottom, i)
+            remove(bearBoxKept, i)
+
+// Bullish voids, the mirror image: a falling candle whose low stays at or
+// above the high of the previous falling candle.
+var bullPrev = none
+var bullPrevTime = none
+var bullLevel = none
+var bullLines: array<line> = []
+var bullLinePrice: array<number> = []
+var bullLineKept: array<bool> = []
+var bullBoxes: array<box> = []
+var bullBoxTop: array<number> = []
+var bullBoxBottom: array<number> = []
+var bullBoxKept: array<bool> = []
+
+if showBull and confirmed and bearishCandle
+    prevU = bullPrev
+    otherU = low
+    gappedU = not isNone(prevU) and otherU >= prevU
+    if gappedU and passesFilter(prevU, otherU, atrValue, filterAtr, atrMulti, percentage)
+        levelU = priceSource(prevU, otherU, lineSource)
+        push(bullLines, draw.line(bullPrevTime, levelU, time, levelU, color = bullColor, width = 2, style = "solid"))
+        push(bullLinePrice, levelU)
+        push(bullLineKept, false)
+        push(bullBoxes, draw.box(bullPrevTime, otherU, time, prevU, color = bullColor, fillColor = bullColor, opacity = 0.25))
+        push(bullBoxTop, otherU)
+        push(bullBoxBottom, prevU)
+        push(bullBoxKept, false)
+        if size(bullLines) > showLast
+            draw.delete(shift(bullLines))
+            shift(bullLinePrice)
+            shift(bullLineKept)
+        if size(bullBoxes) > showLast
+            draw.delete(shift(bullBoxes))
+            shift(bullBoxTop)
+            shift(bullBoxBottom)
+            shift(bullBoxKept)
+        bullLevel = levelU
+    bullPrev = high
+    bullPrevTime = time
+
+for i = 0 to size(bullLines) - 1
+    if not bullLineKept[i]
+        p = bullLinePrice[i]
+        draw.setTo(bullLines[i], time, p)
+        if high >= p and low <= p
+            set(bullLineKept, i, true)
+for i = 0 to size(bullBoxes) - 1
+    if not bullBoxKept[i]
+        draw.setTo(bullBoxes[i], time, bullBoxBottom[i])
+        t = bullBoxTop[i]
+        if high >= t and low <= t
+            set(bullBoxKept, i, true)
+
+if hideCrossed
+    for i = size(bullLines) - 1 to 0 step -1
+        p = bullLinePrice[i]
+        if bullLineKept[i] and high >= p and low <= p
+            draw.delete(remove(bullLines, i))
+            remove(bullLinePrice, i)
+            remove(bullLineKept, i)
+    for i = size(bullBoxes) - 1 to 0 step -1
+        b = bullBoxBottom[i]
+        if bullBoxKept[i] and high >= b and low <= b
+            draw.delete(remove(bullBoxes, i))
+            remove(bullBoxTop, i)
+            remove(bullBoxBottom, i)
+            remove(bullBoxKept, i)
+
+// A signal fires when price crosses back through the newest void level: the
+// low falling below the bullish level, or the high rising above the bearish
+// level. Both levels must exist on this bar and the one before.
+bearishCross = confirmed and not isNone(bullLevel) and not isNone(bullLevel[1]) and low < bullLevel and low[1] >= bullLevel[1]
+bullishCross = confirmed and not isNone(bearLevel) and not isNone(bearLevel[1]) and high > bearLevel and high[1] <= bearLevel[1]
+allowBear = direction != "Bullish"
+allowBull = direction != "Bearish"
+lowSignal = onlyBullish and bearishCross and allowBear
+highSignal = not lowSignal and onlyBearish and bullishCross and allowBull
+
+signal(lowSignal ? "L" : none, color = #22ab94, at = "below", shape = "label")
+signal(highSignal ? "H" : none, color = #f7525f, at = "above", shape = "label")

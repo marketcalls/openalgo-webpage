@@ -1,0 +1,17 @@
+{
+  "title": "Price Momentum Oscillator (PMO)",
+  "summary": "A percentage rate of change smoothed twice by exponential averages, with a third average as its signal line.",
+  "description": "The Price Momentum Oscillator starts from the percentage rate of change of the source over `rocLength` bars: the source minus the source that many bars back, divided by the older value, times 100. Until the chart has `rocLength` bars the lookback reaches back only to the first bar, so the very first reading is zero.\n\nThat rate of change is smoothed by an exponential average of length `smooth1`, and the result is smoothed again by one of length `smooth2`. The second average is the PMO line. A third exponential average of the PMO over `signalLength` bars is the signal line. Each average uses the weight 2 / (length + 1) and starts from its first value, so both lines are drawn from the first bar.",
+  "howToRead": "The PMO is a smoothed momentum line. Above zero, price has been rising over the rate-of-change lookback; below zero, falling. The double smoothing removes most of the bar-to-bar noise, so a turn in the PMO is usually a real change in momentum rather than one odd bar.\n\nA PMO crossing above its signal line is commonly read as momentum turning up, and a cross below as momentum turning down. Readings far from zero show a stretched move. Because the line is a percentage, its levels can be compared across instruments, though each instrument has its own normal range. The early bars reflect a shorter lookback and settle once the averages have seen enough data.",
+  "settings": [
+    { "key": "source", "label": "Source", "description": "The price series whose rate of change is measured. Close is the default." },
+    { "key": "rocLength", "label": "ROC Length", "description": "How many bars back the percentage rate of change reaches before smoothing." },
+    { "key": "smooth1", "label": "First Smoothing Length", "description": "The length of the first exponential average applied to the rate of change. Longer values give a smoother, slower line." },
+    { "key": "smooth2", "label": "Second Smoothing Length", "description": "The length of the second exponential average, whose output is the PMO line." },
+    { "key": "signalLength", "label": "Signal Line Length", "description": "The length of the exponential average of the PMO that forms the signal line." }
+  ],
+  "faq": [
+    { "q": "Why is the first reading zero?", "a": "On the first bar the lookback can only reach the first bar itself, so the rate of change is zero. The lookback grows with the chart until it reaches `rocLength`." },
+    { "q": "What does the signal line add?", "a": "It is a slower average of the PMO. Its crosses with the PMO mark the points where the smoothed momentum turns, and the gap between the two shows how firmly it is turning." }
+  ]
+}

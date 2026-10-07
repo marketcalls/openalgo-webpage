@@ -1,0 +1,34 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © openalgo
+// Original work (c) mihakralj, MIT License
+
+version 1
+study("EDCF: Ehlers Distance Coefficient Filter", overlay = true, precision = 2)
+
+length = input(15, "Length", min = 2, max = 50, step = 1, tooltip = "Filter window length. Larger = smoother but more lag.")
+source = input(hl2, "Source")
+
+windowLen = min(50, max(2, length))
+
+// The weights reach back (length - 1) + (length - 1) bars, so until that much
+// history exists the line is the price itself.
+maxBack = 2 * (windowLen - 1)
+
+// Each price in the window is weighted by its summed squared distance from the
+// length - 1 prices before it. A missing price anywhere leaves the sum absent.
+sumCoef = 0.0
+num = 0.0
+if bar.index >= maxBack
+    for offsetBar = 0 to windowLen - 1
+        p0 = source[offsetBar]
+        dist2 = 0.0
+        for lookBack = 1 to windowLen - 1
+            diff = p0 - source[offsetBar + lookBack]
+            dist2 += diff * diff
+        sumCoef += dist2
+        num += dist2 * p0
+
+// A flat window makes every weight zero: the line falls back to the price.
+edcf = bar.index < maxBack or isNone(sumCoef) or sumCoef == 0 ? source : num / sumCoef
+
+plot(edcf, "EDCF", #ffeb3b, width = 2)

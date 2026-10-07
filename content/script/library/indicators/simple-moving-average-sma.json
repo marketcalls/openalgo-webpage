@@ -1,0 +1,15 @@
+{
+  "title": "Simple Moving Average (SMA)",
+  "summary": "The plain average of the last N prices, with every bar in the window counted equally, drawn from the very first bar of the chart.",
+  "description": "The Simple Moving Average adds up the source over the last `period` bars and divides by the number of bars. Every bar in the window counts the same, so the line is the centre of gravity of recent prices, and it trails behind them by roughly half the window.\n\nThis version keeps a running total rather than waiting for a full window. On the first bars of the chart it averages every bar seen so far, so the line starts on bar one and settles into the ordinary windowed average once `period` bars exist. A missing price is counted as zero.",
+  "howToRead": "Price above a rising average is the usual picture of an uptrend, and price below a falling one of a downtrend. A flat average with price weaving across it says the market has no direction over that window. Many traders watch for the close crossing the line, or for a short average crossing a long one, as a sign the trend may be turning.\n\nThe average reacts late by design: it only turns after enough new prices have outweighed the old ones. The first `period - 1` bars use a shorter window and so move more than the settled line does.",
+  "settings": [
+    { "key": "period", "label": "Period", "description": "How many bars are averaged. A longer period gives a smoother, slower line." },
+    { "key": "source", "label": "Source", "description": "The price series that is averaged, the close by default." }
+  ],
+  "faq": [
+    { "q": "Why does the line start on the first bar instead of after the period?", "a": "Until the window is full it averages all the bars seen so far, so the first values come from a shorter window. From bar `period` on it is the usual windowed mean." },
+    { "q": "How far behind price does it lag?", "a": "About half the period. A 10-bar average reflects prices centred roughly five bars ago, which is why it turns after the market has already turned." },
+    { "q": "Why use it over a weighted or exponential average?", "a": "It is the easiest to reason about: every bar counts equally and a bar leaves the average exactly `period` bars after it arrived. The cost is more lag than averages that weight recent bars more." }
+  ]
+}

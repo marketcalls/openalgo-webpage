@@ -1,0 +1,16 @@
+{
+  "title": "Kalman Filter (KALMAN)",
+  "summary": "Smooths price with a one-dimensional Kalman filter, where process noise and measurement noise decide how much each new bar moves the line.",
+  "description": "This study treats price as a noisy reading of a hidden level and keeps a running estimate of that level. Each bar it predicts that the level has not moved, adds the process noise **Q** to the uncertainty of that prediction, and then corrects the estimate toward the new price by a gain.\n\nThe gain is `p / (p + R)`, where `p` is the uncertainty after the prediction and **R** is the measurement noise. A large gain means the new price is trusted and the line moves most of the way to it; a small gain means the price is treated as noise and the line barely moves. After the correction the uncertainty shrinks by the share the gain used. The estimate starts at the first price with an uncertainty of 1, and a missing price reading counts as zero.\n\nAfter a few bars the uncertainty settles to a steady value set only by Q and R, so the filter behaves like a smoothing average whose speed you set through those two numbers.",
+  "howToRead": "Read the line as the filtered price level. When price stays above it and it slopes up, the hidden level is rising; when price stays below it and it slopes down, the level is falling. The distance between price and the line shows how much of the latest move the filter has dismissed as noise.\n\nRaise Q or lower R and the line follows price closely with little lag but more wiggle. Lower Q or raise R and it becomes smoother and slower. The filter assumes a level that does not trend, so in a strong steady move it will lag behind price.",
+  "settings": [
+    { "key": "source", "label": "Source", "description": "The price series that is filtered, the close by default." },
+    { "key": "q", "label": "Process Noise (Q)", "description": "How much the hidden level is assumed to move by itself each bar. Larger values make the line track price more closely." },
+    { "key": "r", "label": "Measurement Noise (R)", "description": "How noisy each price reading is assumed to be. Larger values trust each bar less and smooth the line more." }
+  ],
+  "faq": [
+    { "q": "What matters more, Q or R?", "a": "Their balance. Raising Q relative to R speeds the line up; raising R relative to Q slows it down. Moving both together in the same direction changes the line much less." },
+    { "q": "Why does the line start exactly on the first price?", "a": "The estimate is seeded with the first price and an uncertainty of 1, then corrected on every later bar." },
+    { "q": "Is this a prediction of the next bar?", "a": "No. It is an estimate of the current underlying level using the bars so far. The prediction step inside the filter only assumes the level stays where it was." }
+  ]
+}

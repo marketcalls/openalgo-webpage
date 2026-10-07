@@ -1,0 +1,31 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © openalgo
+// Original work (c) mihakralj, MIT License
+
+version 1
+study("Kalman Filter (KF)", overlay = true, precision = 2)
+
+source = input(close, "Source")
+q = input(0.01, "Process Noise (Q)", min = 0.000000001, max = 1000, step = 0.01, tooltip = "How much the hidden level is assumed to move on its own. Larger tracks price more closely.")
+r = input(0.1, "Measurement Noise (R)", min = 0.000000001, max = 1000, step = 0.1, tooltip = "How noisy each price reading is assumed to be. Larger smooths the output more.")
+
+// A missing source reading counts as zero.
+measurement = orElse(source, 0)
+
+// x is the estimate and p its error variance. Both are seeded from the first
+// measurement, and again whenever the estimate has gone missing.
+var x = none
+var p = none
+if bar.index == 0 or isNone(x)
+    x = measurement
+    p = 1.0
+
+// Predict, then correct by the share of the surprise the gain allows.
+xPred = x
+pPred = p + q
+denom = pPred + r
+kGain = denom == 0 ? 0.0 : pPred / denom
+x = xPred + kGain * (measurement - xPred)
+p = (1 - kGain) * pPred
+
+plot(x, "KF", #ffeb3b, width = 2)

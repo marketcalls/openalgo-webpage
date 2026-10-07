@@ -1,0 +1,63 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © openalgo
+// Original work (c) mihakralj, MIT License
+
+version 1
+study("True Strength Index (TSI)", precision = 2)
+
+source = input(close, "Source")
+longLen = input(25, "Long Length", min = 1, max = 5000, step = 1)
+shortLen = input(13, "Short Length", min = 1, max = 5000, step = 1)
+signalLen = input(13, "Signal Length", min = 1, max = 5000, step = 1)
+
+// An exponential mean with weight 2 / length. The first value passes through
+// unchanged and the accumulator starts at zero; after that the accumulator is
+// divided by (1 - e), where e is (1 - weight) raised to the number of updates,
+// until e falls below 1e-10. A bar with no input gives no value and leaves the
+// state alone.
+fn compensatedEma(x, len) =>
+    w = 2 / max(len, 1)
+    var acc = none
+    var e = 1.0
+    var warming = true
+    out = none
+    if not isNone(x)
+        if isNone(acc)
+            acc = 0.0
+            out = x
+        else
+            acc = w * (x - acc) + acc
+            if warming
+                e = e * (1 - w)
+                denom = 1 - e
+                out = denom != 0 ? acc / denom : acc
+                if e <= 1e-10
+                    warming = false
+            else
+                out = acc
+    out
+
+// The bar's change, with a missing previous value read as zero.
+momValue = isNone(source) ? none : source - orElse(source[1], 0)
+absMom = abs(momValue)
+
+doubleMom = compensatedEma(compensatedEma(momValue, longLen), shortLen)
+doubleAbs = compensatedEma(compensatedEma(absMom, longLen), shortLen)
+
+// Double-smoothed change over double-smoothed size, as a percentage. When the
+// size is zero the reading is zero.
+rawTsi = isNone(doubleAbs) or doubleAbs == 0 or isNone(doubleMom) ? 0 : 100 * doubleMom / doubleAbs
+rawSignal = compensatedEma(isNone(source) ? none : rawTsi, signalLen)
+
+// A bar with no source holds the previous reading, or 50 before there is one.
+var tsiValue = none
+var signalValue = none
+if isNone(source)
+    tsiValue = orElse(tsiValue, 50)
+    signalValue = orElse(signalValue, 50)
+else
+    tsiValue = rawTsi
+    signalValue = rawSignal
+
+plot(tsiValue, "TSI", #2196f3, width = 2)
+plot(signalValue, "Signal Line", #f44336, width = 2)

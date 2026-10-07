@@ -1,0 +1,15 @@
+{
+  "title": "AOBV - Archer On-Balance Volume (AOBV)",
+  "summary": "Two smoothed lines of on-balance volume, a fast and a slow, that read accumulation and distribution from the first bar.",
+  "description": "This study smooths on-balance volume with two exponential averages. On-balance volume is a running total: the bar's volume is added when the source is higher than on the previous bar, subtracted when it is lower, and ignored when it is unchanged. A missing volume reads as zero, and a missing source holds the last known one.\n\nThe fast line averages that total over 4 bars and the slow line over 14, each with a weight of 2 divided by the period. Each average starts from zero and, while the weight of that zero start is still above a tiny threshold, is divided by one minus that weight, so neither line has a long dead start. On the first bar both lines show the raw on-balance volume.",
+  "howToRead": "When the fast line is above the slow one, on-balance volume has been rising recently, read as accumulation; when it is below, falling, read as distribution. Crossings of the two lines mark changes in that balance. With periods of 4 and 14 bars both lines react quickly, so crossings are frequent on a choppy chart.\n\nCompare the lines with price: price rising while both lines fall means more volume has been trading on down bars than on up bars during the rise. The level of the lines depends on where the chart starts, so read their direction and their crossings, not their value.",
+  "settings": [
+    { "key": "source", "label": "Source", "description": "The price series whose rise or fall decides whether a bar's volume is added or subtracted." },
+    { "key": "volumeSource", "label": "Volume", "description": "The series used as each bar's volume in the running total." }
+  ],
+  "faq": [
+    { "q": "Can I change the 4 and 14 bar periods?", "a": "No. The two smoothing lengths are fixed at 4 and 14 bars; only the source and the volume series can be changed." },
+    { "q": "Why do both lines start at the same value?", "a": "On the first bar each average has no history, so both show the raw on-balance volume." },
+    { "q": "What does a crossing mean?", "a": "The fast line crossing above the slow one says on-balance volume has turned up recently; crossing below says it has turned down." }
+  ]
+}

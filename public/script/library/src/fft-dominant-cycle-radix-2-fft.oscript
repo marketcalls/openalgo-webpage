@@ -1,0 +1,121 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © openalgo
+// Original work (c) mihakralj, MIT License
+
+version 1
+study("FFT Dominant Cycle (Radix-2 FFT)", precision = 2)
+
+source = input(close, "Source")
+window = input(64, "Window Size", min = 32, max = 128, step = 32, tooltip = "Bars fed to the transform. Must be a power of two, and the longest period it can resolve is half of it.")
+minPeriod = input(4, "Min Period", min = 2, max = 64, step = 1)
+maxPeriod = input(32, "Max Period", min = 4, max = 64, step = 1, tooltip = "Capped at half the window size, which is the longest cycle the transform can resolve.")
+
+// The transform needs a power of two: 32, 64 or 128. Any other value falls
+// back to 64.
+windowSize = window == 32 or window == 128 ? window : 64
+
+// The longest resolvable cycle is half the window, so the period band is
+// clamped into it.
+maxP = min(maxPeriod, floor(windowSize / 2))
+minP = min(minPeriod, maxP)
+
+// The band of frequency bins to search, from the longest period to the
+// shortest, using whole-number division on both sides.
+halfN = windowSize / 2
+minBin = max(1, floor(windowSize / maxP))
+maxBin = min(halfN, floor(windowSize / minP))
+
+// Tables that depend only on the settings, built on the first bar: the Hann
+// window, the bit-reversal permutation, and the twiddle factors of every
+// butterfly stage, stage after stage in one flat list (a stage of half-size h
+// starts at index h - 1).
+var hann: array<number> = []
+var reversed: array<number> = []
+var twiddleRe: array<number> = []
+var twiddleIm: array<number> = []
+var re: array<number> = []
+var im: array<number> = []
+if bar.index == 0
+    bits = 0
+    remaining = windowSize
+    while remaining > 1
+        bits += 1
+        remaining = floor(remaining / 2)
+    for k = 0 to windowSize - 1
+        push(hann, 0.5 - 0.5 * math.cos(2 * math.pi / windowSize * k))
+        r = 0
+        rest = k
+        for b = 0 to bits - 1
+            r = r * 2 + rest % 2
+            rest = floor(rest / 2)
+        push(reversed, r)
+        push(re, 0.0)
+        push(im, 0.0)
+    stageSize = 2
+    while stageSize <= windowSize
+        angleStep = -2 * math.pi / stageSize
+        for k = 0 to stageSize / 2 - 1
+            push(twiddleRe, math.cos(angleStep * k))
+            push(twiddleIm, math.sin(angleStep * k))
+        stageSize *= 2
+
+dominant = none
+if bar.index >= windowSize and maxBin >= minBin
+    // The window, oldest to newest, tapered by the Hann window and written
+    // into bit-reversed order. A missing sample counts as zero.
+    for k = 0 to windowSize - 1
+        sample = source[windowSize - 1 - k]
+        slot = element(reversed, k)
+        set(re, slot, orElse(sample, 0) * element(hann, k))
+        set(im, slot, 0.0)
+
+    // Radix-2 decimation-in-time butterflies, one stage per doubling.
+    stageSize = 2
+    while stageSize <= windowSize
+        half = stageSize / 2
+        base = half - 1
+        for start = 0 to windowSize - 1 step stageSize
+            for k = 0 to half - 1
+                i0 = start + k
+                i1 = i0 + half
+                wr = element(twiddleRe, base + k)
+                wi = element(twiddleIm, base + k)
+                ur = element(re, i0)
+                ui = element(im, i0)
+                vr = element(re, i1)
+                vi = element(im, i1)
+                tr = vr * wr - vi * wi
+                ti = vr * wi + vi * wr
+                set(re, i0, ur + tr)
+                set(im, i0, ui + ti)
+                set(re, i1, ur - tr)
+                set(im, i1, ui - ti)
+        stageSize *= 2
+
+    // The bin with the most power inside the band.
+    bestMag = none
+    bestK = minBin
+    for k = minBin to maxBin
+        mag = element(re, k) * element(re, k) + element(im, k) * element(im, k)
+        if isNone(bestMag) or mag > bestMag
+            bestMag = mag
+            bestK = k
+
+    // A parabola through the peak and its two neighbours refines the bin. At
+    // the edge of the band the missing neighbour mirrors the peak.
+    pb = bestMag
+    pa = pb
+    pc = pb
+    if bestK > minBin
+        pa = element(re, bestK - 1) * element(re, bestK - 1) + element(im, bestK - 1) * element(im, bestK - 1)
+    if bestK < maxBin
+        pc = element(re, bestK + 1) * element(re, bestK + 1) + element(im, bestK + 1) * element(im, bestK + 1)
+    denom = pa - 2 * pb + pc
+    shiftBins = abs(denom) > 0 ? 0.5 * (pa - pc) / denom : 0
+    divisor = bestK + shiftBins
+    if not isNone(divisor) and divisor != 0
+        dominant = max(minP, min(maxP, windowSize / divisor))
+
+plot(dominant, "Dominant Period", #ffeb3b, width = 2)
+level(8, "Fast Cycle", #4caf50, style = "dashed")
+level(20, "Slow Cycle", #ff5252, style = "dashed")

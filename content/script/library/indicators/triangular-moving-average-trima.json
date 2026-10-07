@@ -1,0 +1,14 @@
+{
+  "title": "Triangular Moving Average (TRIMA)",
+  "summary": "A weighted average whose weights peak in the middle of the window, smoother than a simple average of the same length.",
+  "description": "The Triangular Moving Average weights each bar in the window by its distance from the nearer edge. The newest and oldest bars carry a weight of 1, the next ones in carry 2, and so on up to the middle of the window, where the weight peaks. The weighted prices are added up and divided by the sum of the weights.\n\nBecause the middle of the window counts most, the average behaves like a simple average of a simple average: very smooth, but with more lag than a simple average of the same period. Over the first bars the window is simply the bars that exist, so the line is drawn from the very first bar and reaches its full length after `Period` bars.",
+  "howToRead": "Use it as a slow, clean trend line. Price above a rising TRIMA describes an uptrend and price below a falling one a downtrend. Its smoothness makes its slope a steady read of direction, and crossings of price through it are less frequent than with a simple average.\n\nThe cost is lag. The weight is centred on the middle of the window, so the line reflects prices from about half a period ago and turns late after a sharp reversal. The first few bars use a shorter window and are less reliable.",
+  "settings": [
+    { "key": "period", "label": "Period", "description": "The number of bars in the window. Longer is smoother and lags more." },
+    { "key": "source", "label": "Source", "description": "The price series that is averaged, the close by default." }
+  ],
+  "faq": [
+    { "q": "Why does it lag more than a simple moving average?", "a": "The heaviest weights sit in the middle of the window rather than at the newest bar, so the line is centred about half a period back." },
+    { "q": "Why is there a value on the very first bar?", "a": "The window grows from one bar up to the full period, so early values are averages of the bars available so far rather than being left blank." }
+  ]
+}

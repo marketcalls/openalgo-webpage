@@ -1,0 +1,62 @@
+{
+  "title": "Pivot Points (Classic)",
+  "summary": "The classic floor pivot: the previous day, week or month's high, low and close turned into a central pivot with three supports and three resistances.",
+  "description": "Classic pivot points turn the last completed period into a set of horizontal levels for the current one. The central pivot is the average of the previous period's high, low and close. The first resistance is twice the pivot less the previous low, and the first support is twice the pivot less the previous high. The second levels sit one full previous range above and below the pivot, and the third levels extend twice the distance between the pivot and the previous low or high beyond the previous high or low.\n\nThe period can be a day, a Monday-start week or a calendar month. The study folds the chart's own bars into those periods as it goes, keeps the high, low and close of the period being built, and on the first bar of a new period hands them over as the previous period. Every bar of a period therefore shows the same levels, drawn as steps.",
+  "howToRead": "The pivot is the balance point of the previous period: price above it leans bullish for the period and price below it leans bearish. R1 to R3 above and S1 to S3 below are the levels traders watch for price to pause or turn, and once price breaks through one, the next level out becomes the following reference.\n\nThe levels are computed, not observed: they say where the previous period's range projects, not where orders actually sit. They are most useful on intraday charts with the daily setting, and on daily charts with the weekly or monthly setting.",
+  "settings": [
+    {
+      "key": "timeframe",
+      "label": "Pivot Timeframe",
+      "description": "The period the levels are built from: D uses the previous day, W the previous Monday-start week and M the previous calendar month. A longer period gives wider levels that stay in place for longer."
+    },
+    {
+      "key": "showPp",
+      "label": "Show Pivot Point",
+      "description": "Draw the central pivot line. Turning it off hides the line without changing any other level."
+    },
+    {
+      "key": "showR1",
+      "label": "Show R1",
+      "description": "Draw the first resistance level. Turning it off hides that line only."
+    },
+    {
+      "key": "showR2",
+      "label": "Show R2",
+      "description": "Draw the second resistance level. Turning it off hides that line only."
+    },
+    {
+      "key": "showR3",
+      "label": "Show R3",
+      "description": "Draw the third resistance level. Turning it off hides that line only."
+    },
+    {
+      "key": "showS1",
+      "label": "Show S1",
+      "description": "Draw the first support level. Turning it off hides that line only."
+    },
+    {
+      "key": "showS2",
+      "label": "Show S2",
+      "description": "Draw the second support level. Turning it off hides that line only."
+    },
+    {
+      "key": "showS3",
+      "label": "Show S3",
+      "description": "Draw the third support level. Turning it off hides that line only."
+    }
+  ],
+  "faq": [
+    {
+      "q": "Do the levels move during the day?",
+      "a": "No. Every bar of a period reads the period before it, which has already closed, so the lines are fixed for the whole period and step to new values when the next one begins."
+    },
+    {
+      "q": "Why are there no levels at the start of the chart?",
+      "a": "The levels come from the previous completed period. Until the chart holds one whole day, week or month of bars, there is no completed period to read, so the first period on the chart carries no lines."
+    },
+    {
+      "q": "How are R2 and S2 set?",
+      "a": "They sit one full range of the previous period above and below the pivot, so a wide previous period spreads them apart and a quiet one pulls them close."
+    }
+  ]
+}

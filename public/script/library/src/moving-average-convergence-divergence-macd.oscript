@@ -1,0 +1,60 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © openalgo
+// Original work (c) mihakralj, MIT License
+
+version 1
+study("Moving Average Convergence Divergence (MACD)", precision = 2)
+
+fastLength = input(12, "Fast Length", min = 1, max = 5000, step = 1)
+slowLength = input(26, "Slow Length", min = 2, max = 5000, step = 1)
+signalLength = input(9, "Signal Length", min = 1, max = 5000, step = 1)
+source = input(close, "Source")
+
+weightFast = 2 / (fastLength + 1)
+weightSlow = 2 / (slowLength + 1)
+weightSignal = 2 / (signalLength + 1)
+
+// Each exponential mean starts from zero, and while the zero seed still
+// matters it is divided by (1 - e), where e is (1 - weight) raised to the
+// number of bars seen. That removes the seed's pull, so the line answers from
+// the first bar. Once every e has decayed below 1e-10 the correction stops.
+var warming = true
+var eFast = 1.0
+var eSlow = 1.0
+var eSignal = 1.0
+var emaFast = 0.0
+var emaSlow = 0.0
+var emaSignal = 0.0
+var resultFast = 0.0
+var resultSlow = 0.0
+var resultSignal = 0.0
+
+macdLine = none
+signalLine = none
+// A bar with no source value is left blank and the state is untouched.
+if not isNone(source)
+    emaFast = weightFast * (source - emaFast) + emaFast
+    emaSlow = weightSlow * (source - emaSlow) + emaSlow
+    if warming
+        eFast = eFast * (1 - weightFast)
+        eSlow = eSlow * (1 - weightSlow)
+        eSignal = eSignal * (1 - weightSignal)
+        resultFast = eFast != 1 ? emaFast / (1 - eFast) : emaFast
+        resultSlow = eSlow != 1 ? emaSlow / (1 - eSlow) : emaSlow
+        emaSignal = weightSignal * (resultFast - resultSlow - emaSignal) + emaSignal
+        resultSignal = eSignal != 1 ? emaSignal / (1 - eSignal) : emaSignal
+        warming = eFast > 1e-10 or eSlow > 1e-10 or eSignal > 1e-10
+    else
+        resultFast = emaFast
+        resultSlow = emaSlow
+        emaSignal = weightSignal * (resultFast - resultSlow - emaSignal) + emaSignal
+        resultSignal = emaSignal
+    macdLine = resultFast - resultSlow
+    signalLine = resultSignal
+
+histogram = macdLine - signalLine
+
+plot(histogram, "Histogram", histogram >= 0 ? #4caf50 : #ff5252, style = "column")
+plot(macdLine, "MACD", #2196f3, width = 2)
+plot(signalLine, "Signal", #ff5252, width = 2)
+level(0, "Zero Line", #787b86, style = "dashed")

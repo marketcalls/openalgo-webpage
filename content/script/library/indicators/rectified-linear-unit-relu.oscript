@@ -1,0 +1,17 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © openalgo
+// Original work (c) mihakralj, MIT License
+
+version 1
+study("Rectified Linear Unit (ReLU)", precision = 2)
+
+source = input(close, "Source")
+
+// The gap between the source and its 20-bar simple average, split into its
+// positive side and its negative side.
+basis = sma(source, 20)
+reluUp = max(0, source - basis)
+reluDown = 0 - max(0, basis - source)
+
+plot(reluUp, "ReLU Up", #4caf50, width = 2)
+plot(reluDown, "ReLU Down", #ff5252, width = 2)

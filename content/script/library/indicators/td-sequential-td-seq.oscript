@@ -1,0 +1,67 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © openalgo
+// Original work (c) mihakralj, MIT License
+
+version 1
+study("TD Sequential (TD_SEQ)", precision = 0)
+
+comparePeriod = input(4, "Compare Period", min = 1, max = 500, step = 1, tooltip = "Lookback used by the setup comparison: close against close of this many bars ago.")
+
+var setupCount = 0
+var countdownCount = 0
+var countdownDir = 0
+var setupComplete = false
+
+// A close with no history behind it reads as zero, on both sides of the test.
+curClose = orElse(close, 0)
+prevClose = orElse(close[comparePeriod], 0)
+
+// Phase 1: the setup counts consecutive closes above (positive) or below
+// (negative) the close `comparePeriod` bars back, capped at plus or minus 9.
+newSetup = 0
+if curClose < prevClose
+    newSetup = setupCount < 0 ? setupCount - 1 : -1
+else if curClose > prevClose
+    newSetup = setupCount > 0 ? setupCount + 1 : 1
+if newSetup > 9
+    newSetup = 9
+if newSetup < -9
+    newSetup = -9
+
+// A setup that has just reached plus or minus 9 opens a countdown in its
+// direction.
+if abs(newSetup) == 9 and not setupComplete
+    setupComplete = true
+    countdownCount = 0
+    countdownDir = newSetup > 0 ? 1 : -1
+
+// A shrinking or reversing count ends the completed setup.
+if abs(newSetup) < abs(setupCount) or (newSetup > 0 and setupCount < 0) or (newSetup < 0 and setupCount > 0)
+    setupComplete = false
+
+setupCount = newSetup
+
+// Phase 2: the countdown steps only on qualifying bars, a close below the low
+// (or above the high) of two bars back, and stops at plus or minus 13.
+if countdownDir != 0
+    low2 = orElse(low[2], 0)
+    high2 = orElse(high[2], 0)
+    if countdownDir == -1 and curClose < low2
+        countdownCount = countdownCount - 1
+    else if countdownDir == 1 and curClose > high2
+        countdownCount = countdownCount + 1
+    if abs(countdownCount) >= 13
+        countdownCount = countdownDir == 1 ? 13 : -13
+        countdownDir = 0
+    // A completed setup in the other direction restarts the countdown.
+    if (countdownDir == 1 and newSetup == -9) or (countdownDir == -1 and newSetup == 9)
+        countdownCount = 0
+        countdownDir = newSetup > 0 ? 1 : -1
+
+plot(setupCount, "Setup", #ffeb3b, width = 2, style = "histogram")
+plot(countdownCount, "Countdown", #00bcd4, width = 1)
+level(0, "Zero", #8892a6, style = "dashed")
+level(9, "Sell Setup Complete", #ef5350, style = "dashed")
+level(-9, "Buy Setup Complete", #26a69a, style = "dashed")
+level(13, "Sell Countdown", #ef5350, style = "dashed")
+level(-13, "Buy Countdown", #26a69a, style = "dashed")

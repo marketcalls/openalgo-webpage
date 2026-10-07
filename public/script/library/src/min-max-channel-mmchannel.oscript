@@ -1,0 +1,28 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © openalgo
+// Original work (c) mihakralj, MIT License
+
+version 1
+study("Min-Max Channel (MMCHANNEL)", overlay = true, precision = 2)
+
+period = input(20, "Period", min = 1, max = 5000, step = 1)
+highSource = input(high, "High Source")
+lowSource = input(low, "Low Source")
+
+// The channel answers from the first bar over whatever part of the window
+// exists. Until the window is full that part is every bar so far, so a running
+// extreme stands in for the windowed one.
+var runHigh = none
+var runLow = none
+runHigh = isNone(runHigh) ? highSource : max(runHigh, highSource)
+runLow = isNone(runLow) ? lowSource : min(runLow, lowSource)
+
+windowHigh = highest(highSource, period)
+windowLow = lowest(lowSource, period)
+
+upperEdge = bar.index < period - 1 ? runHigh : windowHigh
+lowerEdge = bar.index < period - 1 ? runLow : windowLow
+
+top = plot(upperEdge, "Highest High", #ffeb3b, width = 2)
+bottom = plot(lowerEdge, "Lowest Low", #ffeb3b, width = 2)
+fill(top, bottom, #2962ff, opacity = 0.1)

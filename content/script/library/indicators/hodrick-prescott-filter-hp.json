@@ -1,0 +1,15 @@
+{
+  "title": "Hodrick-Prescott Filter (HP)",
+  "summary": "Splits price into a smooth trend drawn on the chart and a cycle drawn in its own pane, with lambda setting how stiff the trend is.",
+  "description": "This study divides the source into two parts. The **trend** is a smooth line drawn on the price chart, and the **cycle** is whatever is left of price once that trend is removed, drawn around zero in a pane of its own.\n\nThe trend is a causal, one-pass approximation of the classic two-sided smoothing filter, so it uses only the bars up to the current one. The Lambda setting is turned into a smoothing factor `alpha = (r - 1) / (r + 1)`, where `r` is half the square root of lambda, held between 0.0001 and 0.9999. Each bar the trend takes `(1 - alpha)` of the new price, `alpha` of the previous trend, and adds half of `alpha` times the change in the trend over the last bar, a momentum term that helps it keep up with a steady move. The first bar starts the trend at the first price.\n\nThe cycle is simply the source minus the trend, so it is positive when price sits above its trend and negative when it sits below.",
+  "howToRead": "Use the trend line on the chart as the direction of the market with the noise taken out, and the cycle pane as a measure of how stretched price is from that direction. A cycle far above zero means price has run ahead of its trend; far below zero means it has fallen behind. A cycle that turns back toward zero often marks the end of a swing.\n\nRaising lambda gives a stiffer trend that bends slowly and pushes more of the movement into the cycle; lowering it lets the trend hug price. Because only past bars are used, the trend still lags turning points, and the cycle has no fixed upper or lower bound.",
+  "settings": [
+    { "key": "source", "label": "Source", "description": "The price series that is split into trend and cycle, the close by default." },
+    { "key": "lambda", "label": "Lambda (Smoothing)", "description": "How strongly the trend is pulled toward a smooth line. Higher values give a stiffer trend and a larger cycle." }
+  ],
+  "faq": [
+    { "q": "Why is the trend on the price chart while the cycle has its own pane?", "a": "The trend is measured in price and belongs next to the candles. The cycle is a difference from the trend that swings around zero, so it needs its own scale." },
+    { "q": "Does this filter repaint?", "a": "No. This version runs forward one bar at a time and uses only the current and earlier bars, so a value never changes once its bar has closed." },
+    { "q": "What lambda should I use?", "a": "The default of 677 gives a smoothing factor of about 0.86, so each bar the trend takes about 14 percent of the new price. Try larger values for a slower trend that captures only the main direction, or smaller values for one that follows price closely. At a lambda of 4 or less the factor is held at its 0.0001 floor and the trend is almost exactly price." }
+  ]
+}

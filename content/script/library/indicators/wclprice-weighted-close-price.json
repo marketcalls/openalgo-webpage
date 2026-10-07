@@ -1,0 +1,12 @@
+{
+  "title": "WCLPRICE: Weighted Close Price",
+  "summary": "A single-bar average that counts the close twice, so the close carries half the weight and the high and the low a quarter each.",
+  "description": "Weighted Close Price blends three prices from each bar: the high, the low and the close, with the close counted twice. The sum is divided by four, so the close carries half the weight and the high and the low a quarter each. The open is not used.\n\nThe study draws that value as a line over the price chart. It has no lookback window and no smoothing, so it starts on the first bar and every point depends only on its own bar. It sits closer to the close than Typical Price does, while still reflecting the range the bar covered.",
+  "howToRead": "Read the line as a price that respects the close but is pulled toward the middle of the bar's range. When the close is near the high, the line sits in the upper part of the candle; when the close is near the low, it sits in the lower part.\n\nIt is not a trend filter on its own. Use it as the source for averages, bands or oscillators when you want them to follow the close more than Typical Price does, without ignoring the bar's high and low.",
+  "settings": [],
+  "faq": [
+    { "q": "Why give the close double weight?", "a": "The close is where the bar settled. Counting it twice keeps the line near the close while the high and the low still pull it toward the middle of the range." },
+    { "q": "How does it compare with Typical Price?", "a": "Typical Price weighs the high, low and close a third each. Weighted Close Price gives the close half and the high and low a quarter each, so it tracks the close more closely." },
+    { "q": "Does it need any warmup?", "a": "No. It answers from the first bar, because each value uses only its own bar." }
+  ]
+}

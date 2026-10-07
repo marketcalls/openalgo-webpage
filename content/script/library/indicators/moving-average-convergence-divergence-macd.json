@@ -1,0 +1,17 @@
+{
+  "title": "Moving Average Convergence Divergence (MACD)",
+  "summary": "The gap between a fast and a slow exponential average, a smoothed signal line of that gap, and their difference as a coloured histogram.",
+  "description": "MACD measures trend and momentum as the distance between two exponential moving averages of the source. The MACD line is the fast average minus the slow one. The signal line is an exponential average of the MACD line over `signalLength` bars, and the histogram is the MACD line minus the signal line, green when it is zero or above and red when it is below.\n\nThe averages here start from zero and correct for that start. While the starting value still carries weight, each average is divided by (1 - e), where e is (1 - weight) raised to the number of bars seen, and weight is 2 / (length + 1). This removes the pull of the zero seed, so all three lines answer from the first bar instead of after a long warmup. Once every correction has decayed below 1e-10 the averages run as plain exponential averages.",
+  "howToRead": "When the MACD line is above zero the fast average is above the slow one, which is the shape of an uptrend; below zero is the shape of a downtrend. The histogram shows whether that gap is widening or narrowing: bars growing away from zero mean momentum is building, bars shrinking toward zero mean it is fading.\n\nA MACD line crossing above its signal line flips the histogram from red to green, and many traders read it as momentum turning up; the opposite cross reads as momentum turning down. Crosses come late in fast markets and often whipsaw in sideways ones, so they read best alongside the direction of the larger trend.",
+  "settings": [
+    { "key": "fastLength", "label": "Fast Length", "description": "The length of the fast exponential average. A shorter fast length makes the MACD line react sooner." },
+    { "key": "slowLength", "label": "Slow Length", "description": "The length of the slow exponential average that the fast one is measured against." },
+    { "key": "signalLength", "label": "Signal Length", "description": "The length of the exponential average of the MACD line that forms the signal line and sets the histogram." },
+    { "key": "source", "label": "Source", "description": "The price series both averages are taken over. Close is the default." }
+  ],
+  "faq": [
+    { "q": "Why does it draw from the first bar?", "a": "The averages start at zero and divide out the weight of that start while it still matters, so they give a usable value from the first bar instead of waiting for a seed window." },
+    { "q": "What do the histogram colours mean?", "a": "Green bars are zero or above, where the MACD line is at or above its signal line. Red bars are below zero, where it is under the signal line." },
+    { "q": "Is the reading comparable between instruments?", "a": "No. The MACD line is in price units, so its size scales with the instrument's price. The Percentage Price Oscillator gives the same gap as a percentage of the slow average." }
+  ]
+}

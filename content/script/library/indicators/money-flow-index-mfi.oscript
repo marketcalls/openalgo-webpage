@@ -1,0 +1,35 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © openalgo
+// Original work (c) mihakralj, MIT License
+
+version 1
+study("Money Flow Index (MFI)", precision = 2)
+
+length = input(14, "MFI Period", min = 1, max = 100, step = 1)
+
+len = max(1, floor(length))
+
+// Raw money flow is the typical price times volume. It counts as positive on
+// a bar whose typical price rose and negative on one where it fell. The first
+// bar compares with itself, so it is neither.
+typical = (high + low + close) / 3
+rawFlow = isNone(typical) ? 0 : typical * orElse(volume, 0)
+prior = orElse(typical[1], typical)
+positiveFlow = typical > prior ? rawFlow : 0
+negativeFlow = typical < prior ? rawFlow : 0
+
+// Running sums over the last len bars, partial until the window fills.
+var sumPositive = 0.0
+var sumNegative = 0.0
+if bar.index >= len
+    sumPositive -= positiveFlow[len]
+    sumNegative -= negativeFlow[len]
+sumPositive += positiveFlow
+sumNegative += negativeFlow
+
+// With no negative flow in the window the ratio is taken as zero, so the
+// index reads 0 there rather than 100.
+ratio = sumNegative != 0 ? sumPositive / sumNegative : 0
+mfiValue = 100 - 100 / (1 + ratio)
+
+plot(mfiValue, "MFI", #ffeb3b, width = 2)

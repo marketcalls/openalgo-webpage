@@ -1,0 +1,79 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © openalgo
+// Original work (c) mihakralj, MIT License
+
+version 1
+study("HOMOD: Homodyne Discriminator Dominant Cycle", precision = 2)
+
+source = input(hlc3, "Source")
+minPeriod = input(6, "Min Period", min = 1, max = 5000, step = 0.5, tooltip = "Shortest dominant cycle the discriminator is allowed to report.")
+maxPeriod = input(50, "Max Period", min = 2, max = 5000, step = 0.5, tooltip = "Longest dominant cycle the discriminator is allowed to report.")
+
+// The range is kept in order: the longest cycle is at least half a bar above
+// the shortest.
+lowP = max(1, minPeriod)
+highP = max(lowP + 0.5, maxPeriod)
+
+// Quadrant-aware angle, taking the smaller magnitude over the larger one so
+// the divide stays stable. The caller never passes two zeros.
+fn atan2Stable(y, x) =>
+    ay = abs(y)
+    ax = abs(x)
+    base = ax > ay ? math.atan(ay / ax) : math.pi / 2 - math.atan(ax / ay)
+    turned = x < 0 ? math.pi - base : base
+    y < 0 ? -turned : turned
+
+// Every history read takes zero before the first bar.
+price = orElse(source, 0)
+
+// Both periods start at 15 bars. The filter width on this bar follows the
+// smoothed period left by the previous bar.
+var period = 15.0
+var smoothPeriod = 15.0
+var warmDecay = 1.0
+var warming = true
+smoothRate = 0.33
+bandwidth = 0.075 * smoothPeriod + 0.54
+
+// Four-bar weighted smoothing of price, then the Hilbert transform taps.
+smoothPrice = (4 * price + 3 * orElse(price[1], 0) + 2 * orElse(price[2], 0) + orElse(price[3], 0)) / 10
+detrender = (0.0962 * smoothPrice + 0.5769 * orElse(smoothPrice[2], 0) - 0.5769 * orElse(smoothPrice[4], 0) - 0.0962 * orElse(smoothPrice[6], 0)) * bandwidth
+q1 = (0.0962 * detrender + 0.5769 * orElse(detrender[2], 0) - 0.5769 * orElse(detrender[4], 0) - 0.0962 * orElse(detrender[6], 0)) * bandwidth
+i1 = orElse(detrender[3], 0)
+ji = (0.0962 * i1 + 0.5769 * orElse(i1[2], 0) - 0.5769 * orElse(i1[4], 0) - 0.0962 * orElse(i1[6], 0)) * bandwidth
+jq = (0.0962 * q1 + 0.5769 * orElse(q1[2], 0) - 0.5769 * orElse(q1[4], 0) - 0.0962 * orElse(q1[6], 0)) * bandwidth
+
+// The phasor, each leg smoothed 0.2 / 0.8 against its previous bar.
+i2 = 0.0
+q2 = 0.0
+i2 = 0.2 * (i1 - jq) + 0.8 * orElse(i2[1], 0)
+q2 = 0.2 * (q1 + ji) + 0.8 * orElse(q2[1], 0)
+
+// The homodyne product of this phasor with the previous one, smoothed the same
+// way; its angle is how far the cycle turned in one bar.
+re = 0.0
+im = 0.0
+re = 0.2 * (i2 * orElse(i2[1], 0) + q2 * orElse(q2[1], 0)) + 0.8 * orElse(re[1], 0)
+im = 0.2 * (i2 * orElse(q2[1], 0) - q2 * orElse(i2[1], 0)) + 0.8 * orElse(im[1], 0)
+
+// A full turn over the angle is the period, held to the range and blended
+// 0.2 / 0.8 into the running period.
+if abs(re) + abs(im) > 1e-10
+    angle = atan2Stable(im, re)
+    if abs(angle) > 1e-10
+        candidate = 2 * math.pi / angle
+        held = max(lowP, min(highP, abs(candidate)))
+        period = 0.2 * held + 0.8 * period
+
+smoothPeriod = smoothPeriod + smoothRate * (period - smoothPeriod)
+
+// While the decay of the smoother is still large, the output is divided by
+// one minus that decay, which removes the pull of the 15-bar seed.
+result = smoothPeriod
+if warming
+    warmDecay = warmDecay * (1 - smoothRate)
+    denom = 1 - warmDecay
+    result = denom > 1e-10 ? result / denom : result
+    warming = warmDecay > 1e-10
+
+plot(result, "Dominant Cycle Period", #ffeb3b, width = 2)

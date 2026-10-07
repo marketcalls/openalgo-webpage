@@ -1,0 +1,54 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © openalgo
+// Original work (c) mihakralj, MIT License
+
+version 1
+study("Adaptive Price Zone", overlay = true, precision = 2)
+
+period = input(20, "Period", min = 1, max = 5000, step = 1)
+bandPct = input(2.0, "Band Multiplier", min = 0.001, max = 100, step = 0.1, tooltip = "Band distance as a multiple of the double smoothed bar range.")
+source = input(close, "Source")
+
+// The smoothing length is the square root of the period, turned into the
+// usual exponential weight.
+smoothPeriod = sqrt(period)
+weight = 2 / (smoothPeriod + 1)
+beta = 1 - weight
+
+// Two exponential stages on price and two on the bar range, all starting at
+// zero. The compensator below scales the opening values up by 1 / (1 - e),
+// where e is beta squared to the power of the bar count. That is sized for a
+// single stage, so the double smoothed values still start below price and
+// reach it over the first few periods of smoothing.
+var ema1Price = 0.0
+var ema2Price = 0.0
+var ema1Range = 0.0
+var ema2Range = 0.0
+var e = 1.0
+var warmup = true
+
+price = orElse(source, 0)
+barRange = orElse(high - low, 0)
+
+ema1Price = weight * price + beta * ema1Price
+ema2Price = weight * ema1Price + beta * ema2Price
+ema1Range = weight * barRange + beta * ema1Range
+ema2Range = weight * ema1Range + beta * ema2Range
+
+mid = ema2Price
+adaptiveRange = ema2Range
+if warmup
+    // e shrinks by beta squared each bar; the compensator stops once e
+    // falls to 1e-10.
+    e = e * (beta * beta)
+    compensator = 1 - e != 0 ? 1 / (1 - e) : 1
+    mid = compensator * ema2Price
+    adaptiveRange = compensator * ema2Range
+    warmup = e > 1e-10
+
+bandWidth = bandPct * adaptiveRange
+
+plot(mid, "Middle", #ffeb3b, width = 2)
+top = plot(mid + bandWidth, "Upper", #ffeb3b, width = 1)
+bottom = plot(mid - bandWidth, "Lower", #ffeb3b, width = 1)
+fill(top, bottom, #ffeb3b, opacity = 0.1)

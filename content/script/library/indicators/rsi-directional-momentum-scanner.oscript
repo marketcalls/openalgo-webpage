@@ -1,0 +1,407 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © openalgo
+// Original work (c) Arun K Bhaskar, MPL-2.0
+
+version 1
+study("RSI Directional Momentum Scanner", precision = 2, range = [0, 100])
+
+scanMethod = input("Continuous Break", "Scanning Method", options = ["Continuous Break", "Continuous Retracement", "Flip Break", "Flip Retracement", "Divergence", "Hidden Divergence"], group = "Scanner", tooltip = "Continuous Break: RSI crosses above 60, dips below, then breaks the previous high while staying above 60 (mirrored for shorts). Continuous Retracement: price returns to the Fibonacci level of the breaking candle and turns. Flip Break and Flip Retracement: a failed sequence flips the side. Divergence: price lower low with RSI higher low. Hidden Divergence: trend continuation.")
+showLong = input(true, "Long Signals", group = "Scanner")
+showShort = input(true, "Short Signals", group = "Scanner")
+
+rsiLength = input(14, "RSI Length", min = 1, max = 5000, step = 1, group = "RSI")
+rsiSource = input(close, "RSI Source", group = "RSI")
+rsiMaLength = input(14, "SMA Length", min = 1, max = 5000, step = 1, group = "RSI")
+fibValue = input(0.5, "Fib Value", min = 0, max = 1, step = 0.1, group = "RSI", tooltip = "0 is the bottom of a bullish and the top of a bearish breaking candle, 1 is the opposite edge, 0.5 is its midpoint.")
+showBull = input(true, "Display Bullish Divergence", group = "RSI")
+showBear = input(true, "Display Bearish Divergence", group = "RSI")
+showHiddenBull = input(true, "Display Hidden Bullish Divergence", group = "RSI")
+showHiddenBear = input(true, "Display Hidden Bearish Divergence", group = "RSI")
+pivotRight = input(5, "Pivot Lookback Right", min = 1, max = 500, step = 1, group = "RSI")
+pivotLeft = input(5, "Pivot Lookback Left", min = 1, max = 500, step = 1, group = "RSI")
+rangeMax = input(60, "Max of Lookback Range", min = 1, max = 5000, step = 1, group = "RSI")
+rangeMin = input(5, "Min of Lookback Range", min = 0, max = 5000, step = 1, group = "RSI")
+
+pchgFilter = input(false, "Apply % Change Filter", group = "Additional Filters", tooltip = "Day percentage change filter. It requires the change to be both above +N and below -N at once, so turning this on silences every signal.")
+pchgAboveBelow = input(2, "% Change Above/Below +/-", min = 0, max = 1000, step = 0.1, group = "Additional Filters")
+volFilter = input(false, "Apply Volume Filter", group = "Additional Filters", tooltip = "Cumulative volume so far today must clear the figure below.")
+volAbove = input(500000, "Volume Above", min = 0, max = 1000000000000, step = 1, group = "Additional Filters")
+volPchgFilter = input(false, "Apply Volume % Change Filter", group = "Additional Filters", tooltip = "0% means today's volume must exceed the previous day's. 300%+ often signals a major breakout.")
+volPchgAbove = input(0, "Volume % Change Above", min = 0, max = 100000, step = 1, group = "Additional Filters")
+atrFilter = input(false, "Apply ATR Filter", group = "Additional Filters", tooltip = "Filters out longer or more volatile signal candles.")
+atrLength = input(14, "ATR Length", min = 1, max = 5000, step = 1, group = "Additional Filters")
+atrMulti = input(1, "ATR Multiplier", min = 1, max = 100, step = 0.1, group = "Additional Filters")
+bodyFilter = input(false, "Apply Body % Filter", group = "Additional Filters", tooltip = "80 means the body covers 80 percent or more of the candle.")
+bodyPercent = input(70, "Body % Above", min = 0, max = 100, step = 1, group = "Additional Filters")
+bodySizeFilter = input(false, "Apply Body Size Filter", group = "Additional Filters", tooltip = "2 means the candle is twice the size of the previous one.")
+bodySizeMulti = input(2, "Body Size Multiplier (x)", min = 0, max = 1000, step = 1, group = "Additional Filters")
+volumeSmaFilter = input(false, "Apply Volume SMA Filter", group = "Additional Filters", tooltip = "Filter candles with volume above the SMA of volume.")
+volSmaLength = input(20, "Volume SMA Length", min = 1, max = 5000, step = 1, group = "Additional Filters")
+relVolFilter = input(false, "Apply Relative Volume Filter", group = "Additional Filters", tooltip = "Filter candles with volume above the relative volume threshold.")
+relVolLength = input(90, "Relative Volume Length", min = 2, max = 5000, step = 1, group = "Additional Filters")
+relVolMulti = input(5, "Rel Vol SMA Multiplier", min = 0, max = 1000, step = 0.1, group = "Additional Filters")
+timeFilter = input(false, "Apply Time Filter", group = "Additional Filters", tooltip = "Accept signals only inside this window of the chart's clock.")
+hourFrom = input(9, "Time From (hour)", min = 0, max = 23, step = 1, group = "Additional Filters")
+minuteFrom = input(15, "Time From (minute)", min = 0, max = 59, step = 1, group = "Additional Filters")
+hourTo = input(10, "Time To (hour)", min = 0, max = 23, step = 1, group = "Additional Filters")
+minuteTo = input(15, "Time To (minute)", min = 0, max = 59, step = 1, group = "Additional Filters")
+dateFilter = input(false, "Apply Date Filter", group = "Additional Filters", tooltip = "Accept signals on one calendar date only.")
+day = input(25, "Day", min = 1, max = 31, step = 1, group = "Additional Filters")
+month = input(10, "Month", min = 1, max = 12, step = 1, group = "Additional Filters")
+year = input(2024, "Year", min = 0, max = 9999, step = 1, group = "Additional Filters")
+
+showPerfTable = input(true, "Display", group = "Performance Table")
+perfTablePosition = input("bottom-right", "Position", options = ["top-left", "top-center", "top-right", "middle-left", "middle-center", "middle-right", "bottom-left", "bottom-center", "bottom-right"], group = "Performance Table")
+
+// The fixed RSI bands.
+OVERBOUGHT = 70
+BREAKOUT = 60
+MIDDLE = 50
+BREAKDOWN = 40
+OVERSOLD = 30
+
+// How many bars the Signal Level column is held back. The level spans the
+// bars from the setup candle to the candle that completes it, so it is only
+// known once the setup completes; the column is filled that many bars late
+// and drawn back over the bars it describes.
+// LEVEL_LAG below must equal the literal offset of the Signal Level plot.
+LEVEL_LAG = 80
+
+rsiV = rsi(rsiSource, rsiLength)
+rsiMaV = sma(rsiV, rsiMaLength)
+
+// ---- Day statistics: cumulative change and volume, reset each calendar day.
+// The first bar is not a new day.
+isNewDay = bar.isFirst ? false : not date.isSameDay(time, time[1])
+
+prevClose = close[1]
+dayPchg = isNone(prevClose) ? 0 : prevClose == 0 ? 0 : (close - prevClose) / prevClose * 100
+
+var cumPchg = none
+cumPchg = isNewDay ? dayPchg : isNone(cumPchg) ? dayPchg : cumPchg + dayPchg
+
+var currVol = none
+var prevVol = none
+if isNewDay
+    prevVol = currVol
+    currVol = volume
+else
+    currVol = isNone(currVol) ? volume : currVol + volume
+// The previous day's volume, or today's while there is no previous day.
+volBase = isNone(prevVol) ? currVol : prevVol
+cumVolPchg = toBool(volBase != 0) and not isNone(volBase) ? (currVol - volBase) / volBase * 100 : none
+
+// ---- Additional filters. Every average runs on every bar.
+atrV = atr(atrLength)
+volSmaV = sma(volume, volSmaLength)
+avgVol = sma(volume, relVolLength)
+prevAvgVol = avgVol[1]
+relVolBase = isNone(prevAvgVol) ? volume : prevAvgVol
+relVol = not isNone(relVolBase) and relVolBase != 0 ? volume / relVolBase : none
+relVolSma = sma(relVol, relVolLength)
+relVolOk = relVolFilter ? toBool(relVol > relVolSma * relVolMulti) : true
+
+candleRange = high - low
+bodySize = abs(close - open)
+bodyPct = min(1, max(0, bodyPercent / 100))
+prevRange = high[1] - low[1]
+
+// Both halves of the change filter are required together, as the scanner
+// defines it, so with the filter on no bar passes.
+pchgAboveOk = not pchgFilter or toBool(cumPchg > pchgAboveBelow)
+pchgBelowOk = not pchgFilter or toBool(cumPchg < -pchgAboveBelow)
+volOk = not volFilter or toBool(currVol >= volAbove)
+volPchgOk = not volPchgFilter or toBool(cumVolPchg >= volPchgAbove)
+atrOk = not atrFilter or toBool(candleRange > atrV * atrMulti)
+bodyOk = not bodyFilter or (candleRange > 0 ? bodySize / candleRange >= bodyPct : false)
+bodySizeOk = not bodySizeFilter or (candleRange > 0 ? bodySize / candleRange >= bodyPct and toBool(candleRange >= prevRange * floor(bodySizeMulti)) : false)
+volumeOk = not volumeSmaFilter or toBool(volume > volSmaV)
+
+barHour = date.hour(time)
+barMinute = date.minute(time)
+timeOk = not timeFilter or ((barHour > hourFrom or (barHour == hourFrom and barMinute >= minuteFrom)) and (barHour < hourTo or (barHour == hourTo and barMinute < minuteTo)))
+dateOk = not dateFilter or (date.year(time) == year and date.month(time) == month and date.day(time) == day)
+
+filterOk = pchgAboveOk and pchgBelowOk and volOk and volPchgOk and atrOk and bodyOk and bodySizeOk and volumeOk and relVolOk and timeOk and dateOk
+
+// A bar still forming on a moving chart does not complete a setup.
+isSettled = not bar.isRealtime or bar.isConfirmed
+
+// ---- The state machine. 1 and 2 are a short setup in progress, 3 its break;
+// 4 and 5 a long setup in progress, 6 its break. A break lasts one bar.
+var state = 0
+if state == 3 or state == 6
+    state = 0
+
+rsiPrev = rsiV[1]
+crossUnderBreakdown = toBool(rsiV < BREAKDOWN and rsiPrev >= BREAKDOWN)
+crossOverBreakout = toBool(rsiV > BREAKOUT and rsiPrev <= BREAKOUT)
+
+var short1Low = none
+var short1Bar = none
+short1 = crossUnderBreakdown and toBool(rsiV < rsiMaV) and (state == 0 or (state >= 4 and state <= 5))
+if short1
+    short1Low = low
+    short1Bar = bar.index
+short2 = toBool(rsiV > BREAKDOWN)
+short3 = not isNone(short1Low) and toBool(rsiV < BREAKDOWN and rsiV < rsiMaV and close < short1Low) and filterOk and isSettled
+
+var long1High = none
+var long1Bar = none
+long1 = crossOverBreakout and toBool(rsiV > rsiMaV) and (state == 0 or (state >= 1 and state <= 2))
+if long1
+    long1High = high
+    long1Bar = bar.index
+long2 = toBool(rsiV < BREAKOUT)
+long3 = not isNone(long1High) and toBool(rsiV > BREAKOUT and rsiV > rsiMaV and close > long1High) and filterOk and isSettled
+
+if short1
+    state = 1
+else if short2 and state == 1
+    state = 2
+else if short3 and state == 2
+    state = 3
+else if long1
+    state = 4
+else if long2 and state == 4
+    state = 5
+else if long3 and state == 5
+    state = 6
+
+shortContBreak = state == 3
+longContBreak = state == 6
+
+// ---- The retracement to the Fibonacci level of the breaking candle.
+var shortSignalHigh = none
+var shortSignalLow = none
+var shortSignalBar = none
+var longSignalHigh = none
+var longSignalLow = none
+var longSignalBar = none
+if shortContBreak
+    shortSignalHigh = high
+    shortSignalLow = low
+    shortSignalBar = bar.index
+if longContBreak
+    longSignalHigh = high
+    longSignalLow = low
+    longSignalBar = bar.index
+
+shortFib = shortSignalHigh - (shortSignalHigh - shortSignalLow) * fibValue
+longFib = longSignalLow + (longSignalHigh - longSignalLow) * fibValue
+
+var shortActive = false
+var longActive = false
+var shortRetDone = false
+var longRetDone = false
+if shortContBreak
+    shortActive = true
+    longActive = false
+    shortRetDone = false
+    longRetDone = false
+if longContBreak
+    longActive = true
+    shortActive = false
+    longRetDone = false
+    shortRetDone = false
+
+// High crosses up through the short level, and the previous high was below it.
+shortCross = toBool(high > shortFib and high[1] <= shortFib[1])
+shortContRet = shortActive and not shortRetDone and shortCross and toBool(high[1] < shortFib)
+// Low crosses down through the long level, and the previous low was above it.
+longCross = toBool(low < longFib and low[1] >= longFib[1])
+longContRet = longActive and not longRetDone and longCross and toBool(low[1] > longFib)
+
+if shortContRet
+    shortRetDone = true
+if longContRet
+    longRetDone = true
+
+// ---- The Signal Level. Each completed setup paints one span: from the setup
+// candle to the break in Continuous Break, from the break to the retracement
+// in Continuous Retracement. Spans are queued as they complete and read back
+// LEVEL_LAG bars later, when every span covering that bar is known.
+var spanFrom: array<number> = []
+var spanTo: array<number> = []
+var spanPrice: array<number> = []
+var spanSide: array<number> = []
+
+fn addSpan(fromBar, toBar, price, side, froms, tos, prices, sides) =>
+    if not isNone(fromBar) and not isNone(toBar) and not isNone(price)
+        push(froms, min(fromBar, toBar))
+        push(tos, max(fromBar, toBar))
+        push(prices, price)
+        push(sides, side)
+    0
+
+isBreakMode = scanMethod == "Continuous Break"
+isRetMode = scanMethod == "Continuous Retracement"
+
+if shortContBreak and isBreakMode
+    addSpan(short1Bar, bar.index, short1Low, -1, spanFrom, spanTo, spanPrice, spanSide)
+if shortContRet and isRetMode
+    addSpan(shortSignalBar, bar.index, shortFib, -1, spanFrom, spanTo, spanPrice, spanSide)
+if longContBreak and isBreakMode
+    addSpan(long1Bar, bar.index, long1High, 1, spanFrom, spanTo, spanPrice, spanSide)
+if longContRet and isRetMode
+    addSpan(longSignalBar, bar.index, longFib, 1, spanFrom, spanTo, spanPrice, spanSide)
+
+lagBar = bar.index - LEVEL_LAG
+while size(spanTo) > 0 and spanTo[0] < lagBar
+    shift(spanFrom)
+    shift(spanTo)
+    shift(spanPrice)
+    shift(spanSide)
+
+levelValue = none
+levelSide = none
+for k = 0 to size(spanTo) - 1
+    // A later span wins where two cover the same bar.
+    if spanFrom[k] <= lagBar and lagBar <= spanTo[k]
+        levelValue = spanPrice[k]
+        levelSide = spanSide[k]
+
+// ---- Flip signals: a side change of the break, or of the retracement. The
+// first side seen is not a flip.
+var flipBreakSide = none
+prevFlipBreakSide = flipBreakSide
+flipBreakSide = longContBreak ? 1 : shortContBreak ? -1 : prevFlipBreakSide
+flipBreakEntry = not isNone(flipBreakSide) and not isNone(prevFlipBreakSide) and flipBreakSide != prevFlipBreakSide
+longFlipBreak = flipBreakEntry and flipBreakSide == 1
+shortFlipBreak = flipBreakEntry and flipBreakSide == -1
+
+var flipRetSide = none
+prevFlipRetSide = flipRetSide
+flipRetSide = longContRet ? 1 : shortContRet ? -1 : prevFlipRetSide
+flipRetEntry = not isNone(flipRetSide) and not isNone(prevFlipRetSide) and flipRetSide != prevFlipRetSide
+longFlipRet = flipRetEntry and flipRetSide == 1
+shortFlipRet = flipRetEntry and flipRetSide == -1
+
+// ---- Divergences between RSI pivots and price, confirmed pivotRight bars late.
+isDivergence = scanMethod == "Divergence"
+isHidden = scanMethod == "Hidden Divergence"
+
+plRsi = pivotLow(rsiV, pivotLeft, pivotRight)
+phRsi = pivotHigh(rsiV, pivotLeft, pivotRight)
+plFound = not isNone(plRsi)
+phFound = not isNone(phRsi)
+
+rsiAtPivot = rsiV[pivotRight]
+lowAtPivot = low[pivotRight]
+highAtPivot = high[pivotRight]
+timeAtPivot = time[pivotRight]
+
+plSince = barsSince(plFound[1])
+phSince = barsSince(phFound[1])
+inRangePl = toBool(rangeMin <= plSince and plSince <= rangeMax)
+inRangePh = toBool(rangeMin <= phSince and phSince <= rangeMax)
+
+prevPlRsi = valueWhen(plFound, rsiAtPivot, 1)
+prevPlLow = valueWhen(plFound, lowAtPivot, 1)
+prevPlTime = valueWhen(plFound, timeAtPivot, 1)
+prevPhRsi = valueWhen(phFound, rsiAtPivot, 1)
+prevPhHigh = valueWhen(phFound, highAtPivot, 1)
+prevPhTime = valueWhen(phFound, timeAtPivot, 1)
+
+bullDiv = isDivergence and showBull and toBool(lowAtPivot < prevPlLow) and toBool(rsiAtPivot > prevPlRsi) and inRangePl and plFound
+bearDiv = isDivergence and showBear and toBool(highAtPivot > prevPhHigh) and toBool(rsiAtPivot < prevPhRsi) and inRangePh and phFound
+hiddenBullDiv = isHidden and showHiddenBull and toBool(lowAtPivot > prevPlLow) and toBool(rsiAtPivot < prevPlRsi) and inRangePl and plFound
+hiddenBearDiv = isHidden and showHiddenBear and toBool(highAtPivot < prevPhHigh) and toBool(rsiAtPivot > prevPhRsi) and inRangePh and phFound
+
+// Each divergence joins the previous RSI pivot to this one.
+if bullDiv and not isNone(prevPlTime)
+    draw.line(prevPlTime, prevPlRsi, timeAtPivot, rsiAtPivot, color = #089981, width = 2)
+if bearDiv and not isNone(prevPhTime)
+    draw.line(prevPhTime, prevPhRsi, timeAtPivot, rsiAtPivot, color = #F23645, width = 2)
+if hiddenBullDiv and not isNone(prevPlTime)
+    draw.line(prevPlTime, prevPlRsi, timeAtPivot, rsiAtPivot, color = #089981, width = 1)
+if hiddenBearDiv and not isNone(prevPhTime)
+    draw.line(prevPhTime, prevPhRsi, timeAtPivot, rsiAtPivot, color = #F23645, width = 1)
+
+// ---- Signals, gated by the scanning method.
+choiceCont = scanMethod == "Continuous Break" or scanMethod == "Continuous Retracement"
+choiceFlip = scanMethod == "Flip Break"
+choiceFlipRet = scanMethod == "Flip Retracement"
+
+s1Short = choiceCont and short1
+s1Long = choiceCont and long1
+s2Short = (choiceCont and shortContBreak) or (choiceFlip and shortFlipBreak)
+s2Long = (choiceCont and longContBreak) or (choiceFlip and longFlipBreak)
+s3Short = (isRetMode and shortContRet) or (choiceFlipRet and shortFlipRet)
+s3Long = (isRetMode and longContRet) or (choiceFlipRet and longFlipRet)
+
+// The setup candle is a plain circle; the break and the retracement carry
+// their stage number.
+signal(showShort and s1Short ? "" : none, color = #FAA1A4, at = "above", shape = "circle")
+signal(showShort and s2Short ? "2" : none, color = #FAA1A4, at = "above", shape = "triangleDown")
+signal(showShort and s3Short ? "3" : none, color = #FAA1A4, at = "above", shape = "triangleDown")
+signal(showLong and s1Long ? "" : none, color = #70CCBD, at = "below", shape = "circle")
+signal(showLong and s2Long ? "2" : none, color = #70CCBD, at = "below", shape = "triangleUp")
+signal(showLong and s3Long ? "3" : none, color = #70CCBD, at = "below", shape = "triangleUp")
+
+// The latest stage wins: a 3rd signal over a 2nd over a 1st, short before long.
+paint1 = showShort and s1Short ? #FAA1A4 : showLong and s1Long ? #70CCBD : none
+paint2 = showShort and s2Short ? #FAA1A4 : showLong and s2Long ? #70CCBD : none
+paint3 = showShort and s3Short ? #FAA1A4 : showLong and s3Long ? #70CCBD : none
+barColor(isNone(paint3) ? (isNone(paint2) ? paint1 : paint2) : paint3)
+
+shade2 = showShort and s2Short ? fade(#FAA1A4, 90) : showLong and s2Long ? fade(#70CCBD, 90) : none
+shade3 = showShort and s3Short ? fade(#FAA1A4, 90) : showLong and s3Long ? fade(#70CCBD, 90) : none
+background(isNone(shade3) ? shade2 : shade3)
+
+// ---- Plots and bands.
+plot(rsiV, "RSI", #2962FF, width = 2)
+plot(rsiMaV, "RSI Moving Average", #FF6D00, width = 1)
+bandHigh = plot(BREAKOUT, "Band Bullish", #D1D4DC, width = 1)
+bandLow = plot(BREAKDOWN, "Band Bearish", #D1D4DC, width = 1)
+plot(levelValue, "Signal Level", levelSide == 1 ? #089981 : #F23645, width = 1, offset = -80, overlay = true)
+fill(bandHigh, bandLow, #D1D4DC, opacity = 0.05)
+
+level(OVERBOUGHT, "Band Overbought", #F23645, style = "dotted")
+level(MIDDLE, "Band Middle", #D1D4DC, style = "dotted")
+level(OVERSOLD, "Band Oversold", #089981, style = "dotted")
+
+// ---- Performance table on the newest bar. The grid can sit in one of four
+// corners, so each of the nine positions maps to the nearest corner.
+fn fmt2(v) =>
+    s = isNone(v) ? "n/a" : text(v, 2)
+    if not isNone(v)
+        while str.endsWith(s, "0")
+            s = str.substring(s, 0, str.length(s) - 1)
+        if str.endsWith(s, ".")
+            s = str.substring(s, 0, str.length(s) - 1)
+    s
+
+fn lakhs(v) =>
+    isNone(v) ? "n/a" : fmt2(v / 100000) + " L"
+
+fn writePerf(t, pchg, volPchg, cVol, pVol) =>
+    pchgColor = toBool(pchg > 0) ? #089981 : #F23645
+    volPchgColor = toBool(volPchg > 0) ? #089981 : #F23645
+    prevVolColor = toBool(pVol < cVol) ? #F23645 : #089981
+    cell(t, 0, 0, "%Chg", textColor = #D1D4DC, bgColor = #0F0F0F, align = "left")
+    cell(t, 0, 1, fmt2(pchg) + " %", textColor = pchgColor, bgColor = #0F0F0F, align = "right")
+    cell(t, 1, 0, "Vol %Chg", textColor = #D1D4DC, bgColor = #0F0F0F, align = "left")
+    cell(t, 1, 1, fmt2(volPchg) + " %", textColor = volPchgColor, bgColor = #0F0F0F, align = "right")
+    cell(t, 2, 0, "Vol", textColor = #D1D4DC, bgColor = #0F0F0F, align = "left")
+    cell(t, 2, 1, lakhs(cVol), textColor = volPchgColor, bgColor = #0F0F0F, align = "right")
+    cell(t, 3, 0, "PD Vol", textColor = #D1D4DC, bgColor = #0F0F0F, align = "left")
+    cell(t, 3, 1, lakhs(pVol), textColor = prevVolColor, bgColor = #0F0F0F, align = "right")
+    0
+
+perfTopLeft = table("Performance, top left", 4, 2, position = "topLeft")
+perfTopRight = table("Performance, top right", 4, 2, position = "topRight")
+perfBottomLeft = table("Performance, bottom left", 4, 2, position = "bottomLeft")
+perfBottomRight = table("Performance, bottom right", 4, 2, position = "bottomRight")
+
+if showPerfTable and bar.isLast
+    isLeft = str.endsWith(perfTablePosition, "-left")
+    isBottom = str.startsWith(perfTablePosition, "bottom")
+    if isBottom and isLeft
+        writePerf(perfBottomLeft, cumPchg, cumVolPchg, currVol, volBase)
+    else if isBottom
+        writePerf(perfBottomRight, cumPchg, cumVolPchg, currVol, volBase)
+    else if isLeft
+        writePerf(perfTopLeft, cumPchg, cumVolPchg, currVol, volBase)
+    else
+        writePerf(perfTopRight, cumPchg, cumVolPchg, currVol, volBase)

@@ -1,0 +1,22 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © openalgo
+// Original work (c) mihakralj, MIT License
+
+version 1
+study("TTM Scalper Alert", overlay = true, precision = 2)
+
+useCloses = input(false, "Use Closes", tooltip = "Use close prices instead of high and low for pivot detection.")
+showHigh = input(true, "Show Pivot Highs", tooltip = "Display bearish pivot markers.")
+showLow = input(true, "Show Pivot Lows", tooltip = "Display bullish pivot markers.")
+
+upperSrc = useCloses ? close : high
+lowerSrc = useCloses ? close : low
+
+// A three-bar pivot: the middle bar stands above (or below) the bars on both
+// sides. It is known one bar after it forms, so the test runs on the bar that
+// confirms it and the mark is drawn one bar back, on the bar it describes.
+pivotHighPrice = bar.index >= 2 and upperSrc[1] > upperSrc[2] and upperSrc[1] > upperSrc ? upperSrc[1] : none
+pivotLowPrice = bar.index >= 2 and lowerSrc[1] < lowerSrc[2] and lowerSrc[1] < lowerSrc ? lowerSrc[1] : none
+
+plot(showHigh ? pivotHighPrice : none, "Pivot High", #ff5252, style = "lineWithMarkers", offset = -1)
+plot(showLow ? pivotLowPrice : none, "Pivot Low", #4caf50, style = "lineWithMarkers", offset = -1)

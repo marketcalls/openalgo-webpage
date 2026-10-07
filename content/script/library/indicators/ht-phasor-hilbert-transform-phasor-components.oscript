@@ -1,0 +1,59 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © openalgo
+// Original work (c) mihakralj, MIT License
+
+version 1
+study("HT_PHASOR: Hilbert Transform Phasor Components", precision = 4)
+
+source = input(hlc3, "Source")
+
+// Quadrant-aware angle, taking the smaller magnitude over the larger one so
+// the divide stays stable. The callers never pass two zeros.
+fn atan2Stable(y, x) =>
+    ay = abs(y)
+    ax = abs(x)
+    base = ax > ay ? math.atan(ay / ax) : math.pi / 2 - math.atan(ax / ay)
+    turned = x < 0 ? math.pi - base : base
+    y < 0 ? -turned : turned
+
+// Every history read takes zero before the first bar.
+price = orElse(source, 0)
+
+// Both periods start at 15 bars. The filter width on this bar follows the
+// smoothed period left by the previous bar.
+var period = 15.0
+var smoothPeriod = 15.0
+bandwidth = 0.075 * smoothPeriod + 0.54
+
+// Four-bar weighted smoothing of price, then the Hilbert transform taps.
+smoothPrice = (4 * price + 3 * orElse(price[1], 0) + 2 * orElse(price[2], 0) + orElse(price[3], 0)) / 10
+detrender = (0.0962 * smoothPrice + 0.5769 * orElse(smoothPrice[2], 0) - 0.5769 * orElse(smoothPrice[4], 0) - 0.0962 * orElse(smoothPrice[6], 0)) * bandwidth
+q1 = (0.0962 * detrender + 0.5769 * orElse(detrender[2], 0) - 0.5769 * orElse(detrender[4], 0) - 0.0962 * orElse(detrender[6], 0)) * bandwidth
+i1 = orElse(detrender[3], 0)
+ji = (0.0962 * i1 + 0.5769 * orElse(i1[2], 0) - 0.5769 * orElse(i1[4], 0) - 0.0962 * orElse(i1[6], 0)) * bandwidth
+jq = (0.0962 * q1 + 0.5769 * orElse(q1[2], 0) - 0.5769 * orElse(q1[4], 0) - 0.0962 * orElse(q1[6], 0)) * bandwidth
+
+// The phasor, each leg smoothed 0.2 / 0.8 against its previous bar.
+i2 = 0.0
+q2 = 0.0
+i2 = 0.2 * (i1 - jq) + 0.8 * orElse(i2[1], 0)
+q2 = 0.2 * (q1 + ji) + 0.8 * orElse(q2[1], 0)
+
+// The homodyne product of this phasor with the previous one, smoothed the same
+// way; its angle is how far the cycle turned in one bar.
+re = 0.0
+im = 0.0
+re = 0.2 * (i2 * orElse(i2[1], 0) + q2 * orElse(q2[1], 0)) + 0.8 * orElse(re[1], 0)
+im = 0.2 * (i2 * orElse(q2[1], 0) - q2 * orElse(i2[1], 0)) + 0.8 * orElse(im[1], 0)
+
+if im != 0 or re != 0
+    angle = atan2Stable(im, re)
+    if angle != 0
+        period = 2 * math.pi / angle
+
+period = max(6, min(50, period))
+smoothPeriod = 0.33 * period + 0.67 * smoothPeriod
+
+plot(i2, "InPhase", #ffeb3b, width = 2)
+plot(q2, "Quadrature", #2962ff, width = 2)
+level(0, "Zero", #9598a1, style = "solid")

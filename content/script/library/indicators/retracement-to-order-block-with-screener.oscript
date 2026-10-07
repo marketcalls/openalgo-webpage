@@ -1,0 +1,222 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © openalgo
+// Original work (c) Arun K Bhaskar, MPL-2.0
+
+version 1
+study("Retracement to Order Block with Screener", overlay = true, precision = 2)
+
+period = input(30, "Period", min = 1, max = 5000, step = 1, tooltip = "Count of candles used to determine the highest high and lowest low. 30 works on all timeframes but is optimised for 15m and 1h.")
+verticalOffset = input(0, "Vertical Offset (%)", min = 0, max = 100, step = 1, tooltip = "Buffer in case price does not reach the order block exactly. 0 means the third signal needs a precise touch. At 50 a long uses a level half the candle range above the first candle high.")
+
+// ---- Screener -----------------------------------------------------------------
+direction = input("Both", "Direction", options = ["Both", "Bullish", "Bearish"], group = "Screener")
+showBullish = input(true, "Only Bullish", group = "Screener")
+showBearish = input(true, "Only Bearish", group = "Screener")
+displayRows = input(16, "Display Rows", min = 0, max = 100, step = 1, group = "Screener", tooltip = "How many of the most recent third signals the table lists. 0 leaves only the header.")
+tablePosition = input("bottom-left", "Table Position", options = ["top-left", "top-center", "top-right", "middle-left", "middle-center", "middle-right", "bottom-left", "bottom-center", "bottom-right"], group = "Screener")
+tableSize = input("small", "Table Size", options = ["auto", "tiny", "small", "normal", "large", "huge"], group = "Screener")
+
+// ---- Line settings ------------------------------------------------------------
+lineStyle = input("solid", "Style", options = ["solid", "dashed", "dotted"], group = "Line Settings")
+lineWidth = input(1, "Width", min = 1, max = 10, step = 1, group = "Line Settings")
+
+// The palette.
+posColor = #22AB94
+negColor = #F7525F
+neuColor = #B2B5BE
+
+offsetShare = verticalOffset / 100
+allowBull = direction != "Bearish"
+allowBear = direction != "Bullish"
+
+// ---- Signal 1: the momentum candle that breaks the range ----------------------
+// A candle is a momentum candle when its body is more than 66 percent of its
+// range, and it has the support of volatility when its range is at least one
+// ATR. A zero range candle is never a momentum candle.
+wick = high - low
+body = abs(close - open)
+momentum = wick > 0 and body / wick > 0.66
+atrValue = atr(14)
+atrSupport = not isNone(atrValue) and wick >= atrValue
+
+// The highest high and lowest low of the previous `period` candles.
+highestPrev = highest(high, period)[1]
+lowestPrev = lowest(low, period)[1]
+
+primaryLongCondition = open > close and not isNone(lowestPrev) and low < lowestPrev and momentum and atrSupport
+primaryShortCondition = open < close and not isNone(highestPrev) and high > highestPrev and momentum and atrSupport
+
+// The side holds until the other side fires, and only the bar the side changes
+// on is a signal.
+var entryState = 0
+previousEntry = entryState
+currentEntry = primaryLongCondition ? 1 : primaryShortCondition ? -1 : previousEntry
+entryChanged = currentEntry != previousEntry
+primaryLongSignal = entryChanged and currentEntry == 1
+primaryShortSignal = entryChanged and currentEntry == -1
+entryState = currentEntry
+
+// ---- Signal 2: a close beyond the first candle --------------------------------
+var prevHighAtBreak = none
+var prevLowAtBreak = none
+if primaryLongSignal
+    prevHighAtBreak = high
+if primaryShortSignal
+    prevLowAtBreak = low
+
+secondaryLongCondition = open < close and not isNone(prevHighAtBreak) and close > prevHighAtBreak and atrSupport
+secondaryShortCondition = open > close and not isNone(prevLowAtBreak) and close < prevLowAtBreak and atrSupport
+
+// Each stage waits at 0 for the stage before it, at 1 for its own condition,
+// and is the signal bar at 2, falling back to 0 on the bar after.
+var secondaryLongState = 0
+sl = secondaryLongState == 2 ? 0 : secondaryLongState
+if primaryLongSignal and sl == 0
+    sl = 1
+if secondaryLongCondition and sl == 1
+    sl = 2
+secondaryLongState = sl
+secondaryLongSignal = sl == 2
+
+var secondaryShortState = 0
+ss = secondaryShortState == 2 ? 0 : secondaryShortState
+if primaryShortSignal and ss == 0
+    ss = 1
+if secondaryShortCondition and ss == 1
+    ss = 2
+secondaryShortState = ss
+secondaryShortSignal = ss == 2
+
+// ---- Signal 3: the retracement to the order block -----------------------------
+// The order block level is the first candle's high or low, pushed out by a
+// share of that candle's range.
+topPrice = high + wick * offsetShare
+bottomPrice = low - wick * offsetShare
+
+// The crossing reads the level as it stood on the previous bar.
+var obLongLevel = none
+var obShortLevel = none
+obLongPrev = obLongLevel
+obShortPrev = obShortLevel
+if primaryLongSignal
+    obLongLevel = topPrice
+if primaryShortSignal
+    obShortLevel = bottomPrice
+
+tertiaryLongCondition = bar.index > 0 and not isNone(obLongLevel) and not isNone(obLongPrev) ? low < obLongLevel and low[1] >= obLongPrev : false
+tertiaryShortCondition = bar.index > 0 and not isNone(obShortLevel) and not isNone(obShortPrev) ? high > obShortLevel and high[1] <= obShortPrev : false
+
+var tertiaryLongState = 0
+tl = tertiaryLongState == 2 ? 0 : tertiaryLongState
+if secondaryLongSignal and tl == 0
+    tl = 1
+if tertiaryLongCondition and tl == 1
+    tl = 2
+tertiaryLongState = tl
+tertiaryLongSignal = tl == 2
+
+var tertiaryShortState = 0
+ts = tertiaryShortState == 2 ? 0 : tertiaryShortState
+if secondaryShortSignal and ts == 0
+    ts = 1
+if tertiaryShortCondition and ts == 1
+    ts = 2
+tertiaryShortState = ts
+tertiaryShortSignal = ts == 2
+
+// ---- Markers --------------------------------------------------------------------
+if primaryLongSignal
+    signal("1", color = #22AB94, at = "below", shape = "circle")
+if secondaryLongSignal
+    signal("2", color = #22AB94, at = "below", shape = "circle")
+if tertiaryLongSignal
+    signal("3", color = #22AB94, at = "below", shape = "circle")
+if primaryShortSignal
+    signal("1", color = #F7525F, at = "above", shape = "circle")
+if secondaryShortSignal
+    signal("2", color = #F7525F, at = "above", shape = "circle")
+if tertiaryShortSignal
+    signal("3", color = #F7525F, at = "above", shape = "circle")
+
+// ---- The break line -------------------------------------------------------------
+// One line, from the newest first candle at its high (long) or low (short) to
+// the next bar, extended to the right. A new first candle replaces it.
+var breakLine = none
+var breakLineOpen = false
+var breakPrice = none
+if breakLineOpen and not isNone(breakLine)
+    // The line was drawn one bar ahead on the signal bar; this bar is that bar.
+    draw.setTo(breakLine, time, breakPrice)
+    breakLineOpen = false
+if primaryLongSignal or primaryShortSignal
+    if not isNone(breakLine)
+        draw.delete(breakLine)
+        breakLine = none
+    breakPrice = primaryLongSignal ? high : low
+    barStep = isNone(time[1]) ? 60000 : time - time[1]
+    breakLine = draw.line(time, breakPrice, time + barStep, breakPrice, color = primaryLongSignal ? posColor : negColor, width = lineWidth, style = lineStyle, extendRight = true)
+    breakLineOpen = true
+
+// ---- Screener table ---------------------------------------------------------------
+// The screener, run on this instrument: every third signal, bearish tested
+// first, with the close rounded to the tick.
+screenSignal = showBearish and tertiaryShortSignal and allowBear ? -1 : showBullish and tertiaryLongSignal and allowBull ? 1 : none
+
+var sigTimes: array<number> = []
+var sigPrices: array<number> = []
+var sigSides: array<number> = []
+if not isNone(screenSignal)
+    push(sigTimes, time)
+    push(sigPrices, orElse(roundToTick(close), close))
+    push(sigSides, screenSignal)
+    if size(sigTimes) > 100
+        shift(sigTimes)
+        shift(sigPrices)
+        shift(sigSides)
+
+// Grids pin to the four corners, so each position is drawn in its nearest
+// corner: a top row at the top, a middle or bottom row at the bottom, a left
+// column on the left, a centre or right column on the right.
+gridBottomLeft = table("Screener, bottom left", 101, 3, position = "bottomLeft")
+gridBottomRight = table("Screener, bottom right", 101, 3, position = "bottomRight")
+gridTopLeft = table("Screener, top left", 101, 3, position = "topLeft")
+gridTopRight = table("Screener, top right", 101, 3, position = "topRight")
+
+// A price written with up to eight decimals and no trailing zeros.
+fn priceText(v) =>
+    s = text(v, 8)
+    trimming = str.contains(s, ".")
+    while trimming
+        if str.endsWith(s, "0")
+            s = str.substring(s, 0, str.length(s) - 1)
+        else
+            trimming = false
+    if str.endsWith(s, ".")
+        s = str.substring(s, 0, str.length(s) - 1)
+    s
+
+fn tableCell(g, r, c, caption, ink) =>
+    cell(g, r, c, caption, textColor = ink, bgColor = withAlpha(ink, 0.1), align = "left")
+    true
+
+atTop = tablePosition == "top-left" or tablePosition == "top-center" or tablePosition == "top-right"
+atLeft = tablePosition == "top-left" or tablePosition == "middle-left" or tablePosition == "bottom-left"
+
+if bar.isLast
+    g = atTop ? (atLeft ? gridTopLeft : gridTopRight) : (atLeft ? gridBottomLeft : gridBottomRight)
+    // An intraday series has bars less than a day apart.
+    intraday = not isNone(time[1]) and time - time[1] < 86400000
+    tableCell(g, 0, 0, "Time", neuColor)
+    tableCell(g, 0, 1, "Dir", neuColor)
+    tableCell(g, 0, 2, "Price", neuColor)
+    shown = min(size(sigTimes), max(0, floor(displayRows)))
+    if shown > 0
+        for r = 0 to shown - 1
+            at = size(sigTimes) - 1 - r
+            side = element(sigSides, at)
+            stamp = element(sigTimes, at)
+            ink = side == 1 ? posColor : negColor
+            when = intraday ? date.format(stamp, "HH:mm") + "  " + date.format(stamp, "dd-MM-yyyy") : date.format(stamp, "dd-MM-yyyy")
+            tableCell(g, r + 1, 0, when, ink)
+            tableCell(g, r + 1, 1, side == 1 ? "Long" : "Short", ink)
+            tableCell(g, r + 1, 2, priceText(element(sigPrices, at)), ink)

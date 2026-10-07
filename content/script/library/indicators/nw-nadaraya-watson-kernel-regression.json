@@ -1,0 +1,16 @@
+{
+  "title": "NW - Nadaraya-Watson Kernel Regression",
+  "summary": "A backward-looking kernel regression: each bar is a Gaussian weighted average of recent prices, with the bandwidth setting how fast older bars fade.",
+  "description": "This study smooths price with a kernel regression that looks only backward. On each bar it averages the last **Period** values, giving the value `i` bars back the Gaussian weight `exp(-i^2 / (2 * h^2))`, where `h` is the **Bandwidth**. The current bar has weight 1, and the weight of older bars falls away smoothly, quickly for a small bandwidth and slowly for a large one.\n\nThe result is the weighted sum of the prices divided by the sum of the weights. At the start of the chart the window simply holds every bar so far, so the line begins on the first bar and widens to its full length as bars arrive. A missing price counts as zero while still carrying its weight.\n\nBecause it uses only the current and earlier bars, the line never changes once a bar has closed.",
+  "howToRead": "Read the line as a smoothed price. Its slope shows the direction of the recent average and the distance from price shows how far price has moved away from that average. Price crossing the line marks the latest move overtaking the weighted recent past.\n\nThe bandwidth does most of the work: a small bandwidth concentrates the weight on the last few bars and tracks price closely, while a large one spreads it across the window and gives a slow, smooth line. The Period only needs to be long enough to hold the bars that still carry meaningful weight, roughly three bandwidths.",
+  "settings": [
+    { "key": "period", "label": "Period", "description": "How many bars the average looks back over. Bars beyond about three bandwidths carry almost no weight, so a much longer period changes little." },
+    { "key": "bandwidth", "label": "Bandwidth (h)", "description": "The width of the Gaussian kernel. Small values track price closely; large values smooth heavily." },
+    { "key": "source", "label": "Source", "description": "The price series that is averaged, the close by default." }
+  ],
+  "faq": [
+    { "q": "Does this line repaint?", "a": "No. It only weights the current and earlier bars, so each value is fixed once its bar closes. Kernel regressions that also look at later bars do repaint; this one does not." },
+    { "q": "Why does the line appear from the very first bar?", "a": "The window grows with the data: on early bars it uses every bar available, and it reaches the full Period once enough bars exist." },
+    { "q": "Which setting should I adjust first?", "a": "The bandwidth. It decides how quickly older bars lose weight, which is what sets the smoothness. Adjust the Period only if you raise the bandwidth so far that the window cuts off bars that still carry weight." }
+  ]
+}

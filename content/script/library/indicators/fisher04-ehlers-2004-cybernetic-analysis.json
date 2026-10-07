@@ -1,0 +1,14 @@
+{
+  "title": "Fisher04 - Ehlers 2004 Cybernetic Analysis",
+  "summary": "A Fisher transform of the bar midpoint within its recent range, with a signal line that is simply the previous bar's value.",
+  "description": "This variant of the Fisher transform reads the bar midpoint, the average of high and low, and finds where it sits between the highest and lowest midpoint over the length. That position is centred on zero (it runs from -0.5 at the low to +0.5 at the high) and half of the previous bar's value is added to it, which smooths it. While the window is filling, or when it is flat, the value resets to zero. It is then held inside -0.9999 to 0.9999.\n\nThe Fisher line is a quarter of the natural logarithm of (1 + value) / (1 - value), plus half of its own previous value, so the transform itself is also smoothed. The **Signal** line is the Fisher line's value on the previous bar, so the two cross whenever the Fisher line changes direction.",
+  "howToRead": "The Fisher04 line swings between sharp peaks and troughs. A turn of the line, which is the same thing as a cross of the Signal line, is the basic event: crossing down from a high reading suggests the upswing is ending, and crossing up from a low reading the reverse. Readings far from zero show price pressed hard against the edge of its recent range.\n\nBecause the signal is only a one-bar delay, crossings are frequent in choppy markets. Crossings that happen well away from zero mark turns from a stretched reading; crossings near zero are mostly noise.",
+  "settings": [
+    { "key": "length", "label": "Length", "description": "The number of bars the highest and lowest midpoint are taken over. A shorter length gives faster, more frequent turns." }
+  ],
+  "faq": [
+    { "q": "Why is the signal line the previous bar's value?", "a": "That is how this version defines it. A cross of the two lines is then exactly a change of direction of the Fisher line." },
+    { "q": "Can I change the price it reads?", "a": "No. It always reads the bar midpoint, the average of high and low, as the calculation is defined." },
+    { "q": "How does it differ from the other Fisher Transform in the library?", "a": "This one centres the position on zero and smooths with half of the previous value, applies a quarter-log transform with its own smoothing, and uses a one-bar delay as the signal. The other smooths with a 0.33 weight and uses an exponential average as its signal." }
+  ]
+}

@@ -1,0 +1,35 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © openalgo
+// Original work (c) mihakralj, MIT License
+
+version 1
+study("Commodity Channel Index (CCI)", precision = 2)
+
+length = input(20, "Length", min = 1, max = 5000, step = 1)
+
+period = max(1, floor(length))
+
+tp = (high + low + close) / 3
+
+// A running sum over the last period bars, with a filled that grows from the
+// first bar, so the mean and the deviation use a partial window early on.
+var total = 0.0
+var filled = 0
+if bar.index >= period
+    total -= tp[period]
+    filled -= 1
+total += tp
+filled += 1
+
+mean = filled > 0 ? total / filled : tp
+
+// The mean absolute distance of the window's typical prices from the mean.
+devSum = 0.0
+for k = 0 to filled - 1
+    devSum += abs(tp[k] - mean)
+meanDev = filled > 0 ? devSum / filled : 0
+
+// A flat window has no deviation and reads 0.
+cciValue = meanDev > 0 ? (tp - mean) / (0.015 * meanDev) : 0
+
+plot(cciValue, "CCI", #ffeb3b, width = 2)

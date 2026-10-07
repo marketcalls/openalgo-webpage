@@ -1,0 +1,34 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © openalgo
+// Original work (c) mihakralj, MIT License
+
+version 1
+study("Accumulation Swing Index (ASI)", precision = 2)
+
+limitMove = input(3, "Limit Move", min = 0.001, max = 1000000, step = 0.1, tooltip = "Maximum daily price change (T). Use 3.0 for stocks, adjust for futures or forex.")
+
+T = max(0.001, limitMove)
+
+// On the first bar the previous bar is this bar, and its swing is zero.
+prevClose = orElse(close[1], close)
+prevOpen = orElse(open[1], open)
+
+absHC = abs(high - prevClose)
+absLC = abs(low - prevClose)
+absHL = abs(high - low)
+absC1O1 = abs(prevClose - prevOpen)
+K = max(absHC, absLC)
+
+// The swing's range: whichever of the three distances is widest, plus a
+// quarter of the previous bar's body.
+R = absHC >= absLC and absHC >= absHL ? absHC - 0.5 * absLC + 0.25 * absC1O1 : absLC >= absHC and absLC >= absHL ? absLC - 0.5 * absHC + 0.25 * absC1O1 : absHL + 0.25 * absC1O1
+
+swing = (close - prevClose) + 0.5 * (close - open) + 0.25 * (prevClose - prevOpen)
+si = bar.index > 0 and R != 0 ? 50 * swing / R * (K / T) : 0
+
+// The swing index of every bar, summed from the first bar.
+var acc = 0.0
+acc += orElse(si, 0)
+
+plot(acc, "ASI", #ffeb3b, width = 2)
+level(0, "Zero Line", #787b86, style = "dashed")

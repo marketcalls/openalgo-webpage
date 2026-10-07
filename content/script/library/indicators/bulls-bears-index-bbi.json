@@ -1,0 +1,47 @@
+{
+  "title": "Bulls Bears Index (BBI)",
+  "summary": "One line on the price chart that averages four simple moving averages of different lengths, blending very short, short, medium and long trend.",
+  "description": "The Bulls Bears Index takes four simple moving averages of the source, by default over 3, 6, 12 and 24 bars, and plots their plain average as a single line on the price chart. Because the four lengths are spread out, the line reacts faster than a 24-bar average on its own but is steadier than a 3-bar one.\n\nEach average is a rolling mean of the last N values. Until N bars exist it averages the bars it has seen so far, so the line starts on the first bar instead of waiting for the longest window to fill. A missing source value counts as zero in the averages.",
+  "howToRead": "Read it like a single moving average with a balanced lag. Price closing above the line suggests the blended trend favours buyers, and closing below it suggests sellers have the upper hand. The slope of the line shows the direction of that blended trend.\n\nThe first 24 bars or so use shortened windows, so treat the earliest part of the line with care. Like any average it lags turning points and gives many crossings in a sideways market.",
+  "settings": [
+    {
+      "key": "source",
+      "label": "Source",
+      "description": "The price series the calculation reads, such as the close or the bar midpoint."
+    },
+    {
+      "key": "p1",
+      "label": "Period 1 (Ultra-Short)",
+      "description": "Length of the shortest of the four averages. A smaller value makes the line hug price more closely."
+    },
+    {
+      "key": "p2",
+      "label": "Period 2 (Short)",
+      "description": "Length of the second average, the short-term component of the blend."
+    },
+    {
+      "key": "p3",
+      "label": "Period 3 (Medium)",
+      "description": "Length of the third average, the medium-term component of the blend."
+    },
+    {
+      "key": "p4",
+      "label": "Period 4 (Long)",
+      "description": "Length of the longest average. A larger value makes the line smoother and slower."
+    }
+  ],
+  "faq": [
+    {
+      "q": "Why is it drawn on the price chart and not in its own pane?",
+      "a": "It is an average of prices, so it is in the same units as the candles and is easiest to read laid over them."
+    },
+    {
+      "q": "Why does the line start on the very first bar?",
+      "a": "Each of the four averages uses the bars available while its window is still filling, so there is always a value. The early readings rest on fewer bars than the settings ask for."
+    },
+    {
+      "q": "How is it different from a single moving average?",
+      "a": "It mixes four lengths with equal weight, so short-term moves shift it a little without letting it whip around as much as a short average would."
+    }
+  ]
+}

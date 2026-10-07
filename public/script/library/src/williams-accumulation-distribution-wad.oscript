@@ -1,0 +1,22 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © openalgo
+// Original work (c) mihakralj, MIT License
+
+version 1
+study("Williams Accumulation/Distribution (WAD)", precision = 2)
+
+// The first bar compares the close with itself, so its move is zero.
+prevClose = bar.index > 0 ? close[1] : close
+
+// An up close is measured from the true range low, a down close from the true
+// range high, and an unchanged close counts nothing.
+trueRangeHigh = max(high, prevClose)
+trueRangeLow = min(low, prevClose)
+priceMove = close > prevClose ? close - trueRangeLow : close < prevClose ? close - trueRangeHigh : 0.0
+
+// The move weighted by volume and summed from the first bar. A bar with no
+// volume adds nothing.
+var wadTotal = 0.0
+wadTotal += priceMove * orElse(volume, 0)
+
+plot(wadTotal, "WAD", #ffeb3b, width = 2)

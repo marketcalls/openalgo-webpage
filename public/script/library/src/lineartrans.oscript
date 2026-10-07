@@ -1,0 +1,25 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © openalgo
+// Original work (c) mihakralj, MIT License
+
+version 1
+study("Linear Transformation (LINEAR)", precision = 2)
+
+source = input(close, "Source")
+period = input(200, "SMA Period", min = 1, max = 5000, step = 1)
+a = input(2.0, "Scale (a)", min = -1000, max = 1000, step = 0.1)
+b = input(20.0, "Offset (b)", min = -1000000, max = 1000000, step = 1)
+
+// The average is taken over the last period bars, or over every bar so far
+// while fewer than that exist, so the line answers from the first bar.
+var total = 0.0
+total += source
+barsSeen = bar.index + 1
+windowAverage = sma(source, period)
+average = barsSeen < period ? total / barsSeen : windowAverage
+
+// y = a * (x - average) + average + b: the scale stretches or damps the
+// distance from the average and the offset shifts the whole line.
+linearValue = a * (source - average) + average + b
+
+plot(linearValue, "Linear Transformation", #ffeb3b, width = 2)

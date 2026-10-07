@@ -1,0 +1,14 @@
+{
+  "title": "Ehlers Decycler (DECYCLER)",
+  "summary": "Removes the cycles shorter than a cutoff period from price, leaving a trend line with very little lag.",
+  "description": "The Decycler subtracts a high-pass filter from price. A two-pole high-pass filter keeps only the swings shorter than the cutoff `Period` and blocks the slower movement. Taking that output away from price leaves the slower part: the trend, with the short cycles removed.\n\nThe filter works on the second difference of price, the change in the bar-to-bar change, and feeds back its own previous two values. Its coefficients come from the cutoff period through a cosine and a sine of `0.707 * 2 * pi / Period`. The filter is held at zero for the first two bars, and a price before the first bar is read as zero.",
+  "howToRead": "Read the Decycler as a trend line that lags far less than a moving average of a similar length. Price above a rising Decycler describes an uptrend and price below a falling one a downtrend, and a change in its slope marks a change in the trend.\n\nThe cutoff period sets what counts as noise: a cycle shorter than it is removed, a longer one passes through into the line. A short period leaves a line close to price; a long one gives a smoother line that turns later. Over the first stretch of bars the filter is still settling.",
+  "settings": [
+    { "key": "period", "label": "Period", "description": "The cutoff period of the high-pass filter. Swings shorter than this are removed; longer values give a smoother trend line." },
+    { "key": "source", "label": "Source", "description": "The price series that is filtered, the close by default." }
+  ],
+  "faq": [
+    { "q": "Why does it lag less than a moving average?", "a": "Instead of averaging a window of bars, it subtracts a high-pass filter from price. Only the swings shorter than the cutoff are removed, so the slower movement of price passes through almost unchanged." },
+    { "q": "What does the period mean here?", "a": "It is the cycle length in bars at which the filter starts to remove movement. Shorter cycles are taken out, longer ones remain in the line." }
+  ]
+}

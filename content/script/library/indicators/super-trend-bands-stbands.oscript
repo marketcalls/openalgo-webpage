@@ -1,0 +1,43 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © openalgo
+// Original work (c) mihakralj, MIT License
+
+version 1
+study("Super Trend Bands (STBANDS)", overlay = true, precision = 2)
+
+period = input(10, "ATR Period", min = 1, max = 5000, step = 1)
+source = input(close, "Source")
+multiplier = input(3, "ATR Multiplier", min = 0.001, max = 100, step = 0.1)
+
+// A missing price is read as zero rather than as a gap.
+highVal = orElse(high, 0)
+lowVal = orElse(low, 0)
+closeVal = orElse(source, 0)
+
+// The previous source value, which on the first bar is this bar's own.
+prevClose = orElse(source[1], closeVal)
+
+tr = max(highVal - lowVal, max(abs(highVal - prevClose), abs(lowVal - prevClose)))
+
+// A simple mean of the true range over however many bars exist, up to the
+// ATR Period, rather than a recursively smoothed average.
+partialAtr = cum(tr) / (bar.index + 1)
+fullAtr = sma(tr, period)
+atrValue = bar.index < period - 1 ? partialAtr : fullAtr
+
+mid = (highVal + lowVal) / 2
+basicUpper = mid + multiplier * atrValue
+basicLower = mid - multiplier * atrValue
+
+// Each band only moves toward price, until the previous source value closes
+// beyond it, when it resets to the basic band.
+var finalUpper = none
+var finalLower = none
+prevUpper = orElse(finalUpper, basicUpper)
+prevLower = orElse(finalLower, basicLower)
+finalUpper = bar.index == 0 ? basicUpper : basicUpper < prevUpper or prevClose > prevUpper ? basicUpper : prevUpper
+finalLower = bar.index == 0 ? basicLower : basicLower > prevLower or prevClose < prevLower ? basicLower : prevLower
+
+top = plot(finalUpper, "Upper Band", #ffeb3b, width = 2)
+bottom = plot(finalLower, "Lower Band", #ffeb3b, width = 2)
+fill(top, bottom, #2962ff, opacity = 0.1)

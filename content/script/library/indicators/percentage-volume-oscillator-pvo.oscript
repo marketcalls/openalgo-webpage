@@ -1,0 +1,66 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © openalgo
+// Original work (c) mihakralj, MIT License
+
+version 1
+study("Percentage Volume Oscillator (PVO)", precision = 2)
+
+fastPeriod = input(12, "Fast Period", min = 1, max = 5000, step = 1)
+slowPeriod = input(26, "Slow Period", min = 1, max = 5000, step = 1)
+signalPeriod = input(9, "Signal Period", min = 1, max = 5000, step = 1)
+
+// The slow period must be longer than the fast one; when it is not, it is
+// held one bar longer than the fast period.
+fastLen = max(1, floor(fastPeriod))
+slowSet = max(1, floor(slowPeriod))
+slowLen = slowSet <= fastLen ? fastLen + 1 : slowSet
+signalLen = max(1, floor(signalPeriod))
+
+fastAlpha = 2 / (fastLen + 1)
+slowAlpha = 2 / (slowLen + 1)
+signalAlpha = 2 / (signalLen + 1)
+fastBeta = 1 - fastAlpha
+slowBeta = 1 - slowAlpha
+signalBeta = 1 - signalAlpha
+slowestBeta = max(max(fastBeta, slowBeta), signalBeta)
+
+// Exponential means of volume seeded at zero. While the seed still matters
+// each is divided by (1 - e), where e is its beta raised to the bars seen.
+// The correction ends once the slowest e has fallen to 1e-10, and the bar
+// that ends it already reads the uncorrected values.
+var warming = true
+var eFast = 1.0
+var eSlow = 1.0
+var eSignal = 1.0
+var eSlowest = 1.0
+var fastEma = 0.0
+var slowEma = 0.0
+var signalEma = 0.0
+
+volValue = orElse(volume, 0)
+fastEma = fastAlpha * (volValue - fastEma) + fastEma
+slowEma = slowAlpha * (volValue - slowEma) + slowEma
+
+if warming
+    eFast = eFast * fastBeta
+    eSlow = eSlow * slowBeta
+    eSignal = eSignal * signalBeta
+    eSlowest = eSlowest * slowestBeta
+    warming = eSlowest > 1e-10
+
+cFast = warming ? 1 / (1 - eFast) : 1
+cSlow = warming ? 1 / (1 - eSlow) : 1
+cSignal = warming ? 1 / (1 - eSignal) : 1
+
+fastComp = cFast * fastEma
+slowComp = cSlow * slowEma
+pvoValue = slowComp != 0 ? ((fastComp - slowComp) / slowComp) * 100 : 0
+
+signalEma = signalAlpha * (pvoValue - signalEma) + signalEma
+signalValue = cSignal * signalEma
+histogram = pvoValue - signalValue
+
+plot(pvoValue, "PVO", #ffeb3b, width = 2)
+plot(signalValue, "Signal", #f23645, width = 2)
+plot(histogram, "Histogram", #2962ff, width = 2, style = "histogram")
+level(0, "Zero Line", #787b86, style = "solid")

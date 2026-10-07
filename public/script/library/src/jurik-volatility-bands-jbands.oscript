@@ -1,0 +1,51 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © openalgo
+// Original work (c) mihakralj, MIT License
+
+version 1
+study("Jurik Volatility Bands (JBANDS)", overlay = true, precision = 2)
+
+period = input(10, "Period", min = 1, max = 5000, step = 1)
+source = input(close, "Source")
+
+// Constants fixed by the period.
+lenRoot = sqrt(0.5 * (period - 1))
+len1 = lenRoot > 0 ? max(log(lenRoot) / log(2) + 2, 0) : 0
+pow1 = max(len1 - 2, 0.5)
+len2 = lenRoot * len1
+avgVoltyAlpha = 2 / (max(4 * period, 65) + 1)
+div = 1 / (10 + 10 * (min(max(period - 10, 0), 100) / 100))
+rvoltyCap = pow(len1, 1 / pow1)
+
+// Both bands start at the first source value.
+var upperBand = orElse(source, 0)
+var lowerBand = orElse(source, 0)
+var vSum = 0.0
+var avgVolty = 0.0
+
+// Volatility is the larger of the two distances from the bar's midpoint to
+// the previous upper and lower bands.
+mid = (low + high) * 0.5
+del1 = mid - upperBand
+del2 = mid - lowerBand
+volty = max(abs(del1), abs(del2))
+
+// A ten-bar running sum of volatility scaled by div, then its slow
+// exponential average. A missing value ten bars back counts as zero.
+pastVolty = orElse(volty[10], 0)
+vSum = vSum + (volty - pastVolty) * div
+avgVolty = avgVolty + avgVoltyAlpha * (vSum - avgVolty)
+
+// Relative volatility sets how quickly a band falls back toward price.
+rvolty = avgVolty > 0 ? min(max(volty / avgVolty, 1), rvoltyCap) : 1
+kv = pow(len2 / (len2 + 1), sqrt(pow(rvolty, pow1)))
+
+// A band that the midpoint pushes through snaps to the bar's extreme;
+// otherwise it sits beyond that extreme by the share kv of the gap between
+// the previous band and the midpoint.
+upperBand = del1 > 0 ? high : high - kv * del1
+lowerBand = del2 < 0 ? low : low - kv * del2
+
+top = plot(upperBand, "Upper", #ffeb3b, width = 2)
+bottom = plot(lowerBand, "Lower", #ffeb3b, width = 2)
+fill(top, bottom, #2962ff, opacity = 0.1)

@@ -1,0 +1,15 @@
+{
+  "title": "TRIX",
+  "summary": "The one-bar percentage change of a triple exponential moving average, a slow momentum line that crosses zero when the smoothed trend turns.",
+  "description": "TRIX smooths the source three times with exponential moving averages of the same period, each one fed by the one before, and then reports the percentage change of the third average from one bar to the next. The triple smoothing removes most of the movement shorter than the period, so what is left is the slope of the underlying trend.\n\nEach average starts from zero and is divided by a correction factor, one minus the decay raised to the number of bars seen, so all three read as the source from the first bar instead of climbing up from zero. The correction is dropped once it is smaller than one part in ten billion. On the first bar the previous value is the source itself, so the study reads zero.",
+  "howToRead": "TRIX above zero means the triple-smoothed price is rising, and below zero means it is falling. A cross of the zero line is the main reading: it marks a turn in the smoothed trend, and it comes later than a turn in price because of the smoothing.\n\nThe height of the line shows how fast the smoothed price is changing. A line that peaks and rolls over while still above zero shows the advance slowing. Because the values are small percentages, compare them on the same instrument and period rather than across different ones.",
+  "settings": [
+    { "key": "period", "label": "Period", "description": "The length of each of the three exponential averages. A longer period removes more noise and turns later." },
+    { "key": "source", "label": "Source", "description": "The price series that is smoothed. The close is the default; a median or typical price includes more of each bar." }
+  ],
+  "faq": [
+    { "q": "Why smooth three times?", "a": "Each pass removes more of the short swings. After three, little of the movement shorter than the period is left, so the rate of change reflects the slope of the smoothed trend rather than single bars. The cost is delay: each pass makes the line turn later." },
+    { "q": "Why are the values so small?", "a": "TRIX is a percentage change from one bar to the next of a heavily smoothed series. On an hourly chart that change is usually a small fraction of one percent." },
+    { "q": "Does it have a warmup period?", "a": "It answers from the first bar, because each average is corrected for its zero start. The earliest readings rest on very few bars, so give it a few multiples of the period before trusting a zero cross." }
+  ]
+}

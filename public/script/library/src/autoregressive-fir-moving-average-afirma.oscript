@@ -1,0 +1,83 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © openalgo
+// Original work (c) mihakralj, MIT License
+
+version 1
+study("Autoregressive FIR Moving Average (AFIRMA)", overlay = true, precision = 2)
+
+period = input(20, "Period", min = 1, max = 5000, step = 1)
+source = input(close, "Source")
+windowType = input(4, "Window Function", min = 1, max = 4, step = 1, tooltip = "1:Hanning, 2:Hamming, 3:Blackman, 4:Blackman-Harris")
+leastSquares = input(false, "Least Squares Method", tooltip = "Enable cubic polynomial fitting for autoregressive prediction")
+
+len = max(1, floor(period))
+wType = windowType >= 1 ? min(4, round(windowType)) : 4
+
+// The cosine window's terms. Each window type sets its own leading terms;
+// the higher terms keep the fourth window's values for every type.
+a0 = wType == 1 ? 0.5 : wType == 2 ? 0.54 : wType == 3 ? 0.42 : 0.35875
+a1 = wType == 1 ? -0.5 : wType == 2 ? -0.46 : wType == 3 ? -0.5 : -0.48829
+a2 = wType == 3 ? 0.08 : 0.14128
+a3 = -0.01168
+twoPi = 6.28318530718
+
+fn tapWeight(k, taps, w0, w1, w2, w3) =>
+    x = k * (twoPi / taps)
+    coef = w0 + w1 * math.cos(x)
+    if w2 != 0
+        coef += w2 * math.cos(2 * x)
+    if w3 != 0
+        coef += w3 * math.cos(3 * x)
+    coef
+
+// The window grows with the chart until it reaches the period, so the line
+// answers from the first bar.
+p = min(bar.index + 1, len)
+afirma = source
+if p > 1
+    total = 0.0
+    weightSum = 0.0
+    validCount = 0
+    for k = 0 to p - 1
+        price = source[k]
+        if isNone(price)
+            continue
+        w = tapWeight(k, p, a0, a1, a2, a3)
+        total += price * w
+        weightSum += w
+        validCount += 1
+    if validCount > 0 and weightSum > 0
+        afirma = total / weightSum
+
+    // Optionally, the newest n samples are replaced by a least squares
+    // straight line through them, and the window is averaged plainly. The
+    // fitted values sum to the samples they replace, so this mode gives the
+    // simple average of the window.
+    if leastSquares and p > 2
+        n = min(floor((p - 1) / 2), 50)
+        if n >= 2
+            sx = 0.0
+            sx2 = 0.0
+            for k = 0 to n - 1
+                sx += k
+                sx2 += k * k
+            sy = 0.0
+            sxy = 0.0
+            for k = 0 to n - 1
+                yk = orElse(source[k], 0)
+                sy += yk
+                sxy += k * yk
+            denom = n * sx2 - sx * sx
+            if abs(denom) > 1e-10
+                slope = (n * sxy - sx * sy) / denom
+                intercept = (sy - slope * sx) / n
+                lsSum = 0.0
+                lsCount = 0
+                for k = 0 to p - 1
+                    val = k < n ? intercept + slope * k : orElse(source[k], 0)
+                    lsSum += val
+                    lsCount += 1
+                if lsCount > 0
+                    afirma = lsSum / lsCount
+
+plot(afirma, "AFIRMA", #ffeb3b, width = 2)

@@ -1,0 +1,28 @@
+{
+  "title": "Weighted Average (WAVG)",
+  "summary": "A linearly weighted moving average kept with running sums, with the newest bar weighted most and a value from the very first bar.",
+  "description": "The weighted average gives each value in the window a weight by its age: the oldest carries weight 1, the next weight 2, and the newest carries a weight equal to the number of values in the window. The weighted sum is divided by the sum of the weights, `count * (count + 1) / 2`, so the result is an average that leans toward recent prices.\n\nThe study keeps the weighted sum and the plain sum as running totals. While the window is still filling it averages whatever has arrived, so the line starts on the first bar. Once the window is full, each new bar subtracts the plain sum from the weighted sum, which lowers every weight by one and removes the departing value, then adds the new value at the top weight. A missing source value counts as zero.",
+  "howToRead": "Read it as a moving average that responds faster than a simple one of the same length, because the latest bars count most. Price above a rising line points to an uptrend and price below a falling line to a downtrend. A turn in the line arrives sooner than in a simple average, with a little more noise.\n\nOn the first bars the window is short and the line follows price closely; it settles into its full smoothing once a full period has passed.",
+  "settings": [
+    {
+      "key": "source",
+      "label": "Source",
+      "description": "The series being averaged, usually the close."
+    },
+    {
+      "key": "period",
+      "label": "Period",
+      "description": "How many bars the window holds. A longer period gives a smoother line that lags more."
+    }
+  ],
+  "faq": [
+    {
+      "q": "How does it differ from a simple moving average?",
+      "a": "A simple average weighs every bar in the window equally. Here the newest bar carries the most weight and the oldest the least, so the line reacts sooner to a change in price."
+    },
+    {
+      "q": "Why is there a value on the first bar?",
+      "a": "While the window is filling the study averages the values that have arrived so far with weights 1 up to the count, rather than waiting for a full period."
+    }
+  ]
+}

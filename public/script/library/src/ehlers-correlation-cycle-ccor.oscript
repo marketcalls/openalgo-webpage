@@ -1,0 +1,80 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © openalgo
+// Original work (c) mihakralj, MIT License
+
+version 1
+study("Ehlers Correlation Cycle (CCOR)", precision = 2)
+
+period = input(20, "Period", min = 2, max = 2000, step = 1, tooltip = "Presumed dominant cycle wavelength the reference waves are built from.")
+threshold = input(9, "State Threshold (degrees)", min = 0.1, max = 360, step = 0.5, tooltip = "Angle rate of change below which the market reads as trending rather than cycling.")
+source = input(close, "Source")
+
+n = max(2, floor(period))
+minChange = max(0.1, threshold)
+
+// A missing price reads as zero, and a bar before the first one reads as this
+// bar's price, so the window is always full.
+price = orElse(source, 0)
+
+// Correlate the last n prices with one cycle of a cosine and of a negative
+// sine. The reference waves never change, but their sums are rebuilt here in
+// the same order as the price sums.
+syR = 0.0
+syyR = 0.0
+syI = 0.0
+syyI = 0.0
+sx = 0.0
+sxx = 0.0
+sxyR = 0.0
+sxyI = 0.0
+for c = 0 to n - 1
+    a = 2 * math.pi * c / n
+    cosW = math.cos(a)
+    sinW = -math.sin(a)
+    syR += cosW
+    syyR += cosW * cosW
+    syI += sinW
+    syyI += sinW * sinW
+    x = orElse(source[c], price)
+    sx += x
+    sxx += x * x
+    sxyR += x * cosW
+    sxyI += x * sinW
+
+spreadX = n * sxx - sx * sx
+denomR = spreadX * (n * syyR - syR * syR)
+denomI = spreadX * (n * syyI - syI * syI)
+realVal = denomR > 0 ? (n * sxyR - sx * syR) / sqrt(denomR) : 0
+imagVal = denomI > 0 ? (n * sxyI - sx * syI) / sqrt(denomI) : 0
+
+// Phasor angle in degrees, the quadrant taken from the imaginary part. The
+// angle is never allowed to walk backward.
+var prevAngle = 0.0
+angle = 0.0
+if imagVal != 0
+    angle = 90 + math.atan(realVal / imagVal) * 180 / math.pi
+if imagVal > 0
+    angle -= 180
+savedPrev = prevAngle
+if angle < prevAngle
+    angle = prevAngle
+prevAngle = angle
+
+// Market state: a small change of angle reads as a trend, up above zero and
+// down below it; a large change reads as a cycle. It is computed and not
+// drawn, as in the indicator this study reproduces.
+angleChange = abs(angle - savedPrev)
+state = 0
+if angleChange < minChange and angle <= 0
+    state = -1
+if angleChange < minChange and angle >= 0
+    state = 1
+
+// Both correlations are drawn scaled to -100 and +100. Real is green while it
+// leads Imag and red otherwise. On the first bar the window holds one price
+// repeated, the correlation is zero over zero, and only rounding noise is
+// left, so that bar is left blank.
+shown = bar.index > 0
+plot(shown ? realVal * 100 : none, "Real (x100)", realVal > imagVal ? #26a69a : #ef5350, width = 2)
+plot(shown ? imagVal * 100 : none, "Imag (x100)", #787b86, width = 1)
+level(0, "Zero", #787b86, style = "dashed")

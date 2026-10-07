@@ -1,0 +1,84 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © openalgo
+// Original work (c) mihakralj, MIT License
+
+version 1
+study("Dynamic Momentum Index (DYMOI)", precision = 2)
+
+basePeriod = input(14, "Base RSI Period", min = 2, max = 500, step = 1)
+shortPeriod = input(5, "Short StdDev Period", min = 2, max = 500, step = 1)
+longPeriod = input(10, "Long StdDev Period", min = 2, max = 500, step = 1)
+minPeriod = input(3, "Min Period", min = 2, max = 500, step = 1)
+maxPeriod = input(30, "Max Period", min = 2, max = 500, step = 1)
+source = input(close, "Source")
+
+// The long window is kept longer than the short one, and the largest period
+// at or above the smallest.
+longLen = max(shortPeriod + 1, longPeriod)
+maxLen = max(minPeriod, maxPeriod)
+
+// Population standard deviation over the last `len` values, using however
+// many values exist until the window fills. A missing value reads as zero.
+fn partialStdev(src, len) =>
+    var sumV = 0.0
+    var sumSq = 0.0
+    if bar.index >= len
+        oldest = src[len]
+        sumV -= oldest
+        sumSq -= oldest * oldest
+    sumV += src
+    sumSq += src * src
+    n = min(bar.index + 1, len)
+    mean = sumV / n
+    v = sumSq / n - mean * mean
+    v > 0 ? sqrt(v) : 0
+
+price = orElse(source, 0)
+sdShort = partialStdev(price, shortPeriod)
+sdLong = partialStdev(price, longLen)
+
+// Stage 2: the lookback shortens when recent volatility is high against the
+// longer view, and lengthens when it is low, within the two limits.
+ratio = sdLong > 1e-10 ? sdShort / sdLong : 1.0
+rawPeriod = ratio > 1e-10 ? round(basePeriod / ratio) : maxLen
+dynPeriod = max(minPeriod, min(maxLen, rawPeriod))
+
+// Stage 3: an RSI smoothed with weight 1 / period, run at that changing
+// period. Its running averages start at zero and are scaled by 1 / (1 - e),
+// where e is the product of the decay factors so far, until that starting
+// bias has decayed away.
+var prevVal = none
+var avgGain = 0.0
+var avgLoss = 0.0
+var e = 1.0
+var warming = true
+result = 50.0
+if not isNone(source)
+    if isNone(prevVal)
+        prevVal = source
+    else
+        a = 1.0 / dynPeriod
+        b = 1.0 - a
+        delta = source - prevVal
+        gain = delta > 0.0 ? delta : 0.0
+        loss = delta < 0.0 ? -delta : 0.0
+        prevVal = source
+        avgGain = a * gain + b * avgGain
+        avgLoss = a * loss + b * avgLoss
+        if warming
+            e = e * b
+            c = e > 1e-10 ? 1.0 / (1.0 - e) : 1.0
+            aG = avgGain * c
+            aL = avgLoss * c
+            total = aG + aL
+            result = total != 0.0 ? 100.0 * aG / total : 50.0
+            if e <= 1e-10
+                warming = false
+        else
+            total = avgGain + avgLoss
+            result = total != 0.0 ? 100.0 * avgGain / total : 50.0
+
+level(70, "Overbought", #787b86, style = "dashed")
+level(50, "Midline", #787b86, style = "dashed")
+level(30, "Oversold", #787b86, style = "dashed")
+plot(clamp(result, 0, 100), "DYMOI", #ffeb3b, width = 2)

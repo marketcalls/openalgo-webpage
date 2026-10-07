@@ -1,0 +1,41 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © openalgo
+// Original work (c) mihakralj, MIT License
+
+version 1
+study("Average Daily Range (ADR)", precision = 2)
+
+length = input(14, "Length", min = 1, max = 500, step = 1, tooltip = "Number of bars to average the daily range over")
+method = input(1, "Method", min = 1, max = 3, step = 1, tooltip = "1 = SMA, 2 = EMA, 3 = WMA")
+
+// The plain range of each bar, with no gap component. A missing range is
+// read as zero.
+dayRange = orElse(high - low, 0)
+
+// Method 1: the mean of the last `length` ranges, or of every range so far
+// while fewer than that exist, so it answers from the first bar.
+var sumRange = 0.0
+if bar.index >= length
+    sumRange = sumRange - dayRange[length]
+sumRange = sumRange + dayRange
+smaRange = sumRange / min(bar.index + 1, length)
+
+// Method 2: a running average with weight 1 / length, started from zero and
+// divided by (1 - e) to remove the bias of the zero start.
+var rawEma = 0.0
+var e = 1.0
+rawEma = (rawEma * (length - 1) + dayRange) / length
+e = (1 - 1 / length) * e
+emaRange = e > 1e-10 ? rawEma / (1 - e) : rawEma
+
+// Method 3: weights from `length` for this bar down to 1 for the oldest,
+// over the full divisor. Bars before the first count as zero, so the early
+// values ramp up from below.
+wsum = 0.0
+for k = 0 to length - 1
+    wsum = wsum + orElse(dayRange[k], 0) * (length - k)
+wmaRange = wsum / (length * (length + 1) / 2)
+
+adr = method == 2 ? emaRange : method == 3 ? wmaRange : smaRange
+
+plot(adr, "ADR", #ffeb3b, width = 2)

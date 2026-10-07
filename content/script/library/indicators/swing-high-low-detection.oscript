@@ -1,0 +1,42 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © openalgo
+// Original work (c) mihakralj, MIT License
+
+version 1
+study("Swing High/Low Detection", overlay = true, precision = 2)
+
+lookback = input(5, "Lookback Period", min = 1, max = 100, step = 1, tooltip = "Number of bars on each side to confirm swing point.")
+sourceHigh = input(high, "Source High", tooltip = "Price series for swing high detection.")
+sourceLow = input(low, "Source Low", tooltip = "Price series for swing low detection.")
+showHigh = input(true, "Show Swing High Lines")
+showLow = input(true, "Show Swing Low Lines")
+
+// The latest confirmed swing high and swing low, held until a newer one is
+// confirmed.
+var lastSwingHigh = none
+var lastSwingLow = none
+
+// The candidate is the bar `lookback` bars back. It is a swing high when no
+// bar within `lookback` bars on either side has a higher value, and a swing
+// low when none has a lower one. Ties do not disqualify it.
+if bar.index >= lookback * 2
+    centreHigh = sourceHigh[lookback]
+    centreLow = sourceLow[lookback]
+    isSwingHigh = not isNone(centreHigh)
+    isSwingLow = not isNone(centreLow)
+    for i = 1 to lookback
+        leftHigh = sourceHigh[lookback + i]
+        rightHigh = sourceHigh[lookback - i]
+        if (not isNone(leftHigh) and leftHigh > centreHigh) or (not isNone(rightHigh) and rightHigh > centreHigh)
+            isSwingHigh = false
+        leftLow = sourceLow[lookback + i]
+        rightLow = sourceLow[lookback - i]
+        if (not isNone(leftLow) and leftLow < centreLow) or (not isNone(rightLow) and rightLow < centreLow)
+            isSwingLow = false
+    if isSwingHigh
+        lastSwingHigh = centreHigh
+    if isSwingLow
+        lastSwingLow = centreLow
+
+plot(showHigh ? lastSwingHigh : none, "Swing High", #ff5252, width = 2)
+plot(showLow ? lastSwingLow : none, "Swing Low", #4caf50, width = 2)

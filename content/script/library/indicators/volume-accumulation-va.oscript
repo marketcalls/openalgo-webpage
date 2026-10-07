@@ -1,0 +1,14 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © openalgo
+// Original work (c) mihakralj, MIT License
+
+version 1
+study("Volume Accumulation (VA)", precision = 2)
+
+// Each bar's volume times the distance of its close from the middle of its
+// range, summed from the first bar. A bar with no volume adds nothing.
+midpoint = (high + low) / 2
+var vaTotal = 0.0
+vaTotal += orElse(volume, 0) * (close - midpoint)
+
+plot(vaTotal, "VA", #ffeb3b, width = 2)

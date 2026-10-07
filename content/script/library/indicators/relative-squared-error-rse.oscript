@@ -1,0 +1,56 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © openalgo
+// Original work (c) mihakralj, MIT License
+
+version 1
+study("Relative Squared Error (RSE)", precision = 4)
+
+source = input(close, "Source")
+period = input(100, "Period", min = 1, max = 4000, step = 1)
+
+// The total and the count of the present values among the last p bars.
+// Before p bars have passed the window is everything so far, so both answer
+// from the first bar.
+fn windowSum(x, p) =>
+    var running = 0.0
+    if not isNone(x)
+        running = running + x
+    rolled = sumSkip(x, p)
+    bar.index < p - 1 ? running : rolled
+
+fn windowCount(x, p) =>
+    var n = 0
+    if not isNone(x)
+        n = n + 1
+    rolled = countPresent(x, p)
+    bar.index < p - 1 ? n : rolled
+
+// The forecast is an exponential mean seeded with the simple average of its
+// first period values, so it has no value through the warmup.
+forecast = ema(source, period)
+window = min(period, 4000)
+
+// The naive baseline is the mean of the window, which holds this bar too: an
+// expanding mean until the window fills, a rolling one after.
+srcCount = windowCount(source, window)
+srcSum = windowSum(source, window)
+baseMean = srcCount > 0 ? srcSum / srcCount : source
+
+sqError = (source - forecast) * (source - forecast)
+sqBaseline = (source - baseMean) * (source - baseMean)
+
+// Totals of the present values in the window. With none present the bar's
+// own value stands in.
+errCount = windowCount(sqError, window)
+errSum = windowSum(sqError, window)
+baseCount = windowCount(sqBaseline, window)
+baseSum = windowSum(sqBaseline, window)
+totalError = errCount > 0 ? errSum : sqError
+totalBaseline = baseCount > 0 ? baseSum : sqBaseline
+
+// Squared forecast error over squared baseline error. A baseline of zero, or
+// none at all, reads as 1.
+rse = isNone(totalBaseline) or totalBaseline == 0 ? 1.0 : totalError / totalBaseline
+
+plot(rse, "RSE", #ff5252, width = 2, style = "area")
+plot(forecast, "EMA", #ffeb3b, width = 1, overlay = true)

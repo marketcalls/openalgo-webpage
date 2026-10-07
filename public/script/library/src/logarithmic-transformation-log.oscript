@@ -1,0 +1,14 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © openalgo
+// Original work (c) mihakralj, MIT License
+
+version 1
+study("Logarithmic Transformation (LOG)", precision = 4)
+
+source = input(close, "Source")
+
+// The natural logarithm exists only above zero, so a bar whose source is zero
+// or negative is left blank.
+logValue = source > 0 ? log(source) : none
+
+plot(logValue, "Log Transformation", #ffeb3b, width = 2)

@@ -1,0 +1,17 @@
+{
+  "title": "Quantile Loss (Pinball Loss)",
+  "summary": "A rolling average of the pinball loss, an error score that charges misses above and below the forecast at different rates set by a quantile.",
+  "description": "Quantile Loss, also called pinball loss, scores a predicted series against an actual series while treating the two directions of a miss differently. On every bar the difference is the actual value minus the predicted value. When the actual is at or above the prediction, the loss is `Quantile` times that difference. When the actual is below the prediction, the loss is one minus `Quantile` times the size of the miss.\n\nThe study plots the simple average of this loss over the last `Length` bars. At a quantile of 0.5 both directions cost the same and the line is half the mean absolute error. Above 0.5, a prediction that falls short of the actual is charged more; below 0.5, a prediction that overshoots is charged more. An absent value on either side is read as zero.",
+  "howToRead": "A lower line means the predicted series has been closer to the actual one in the way the quantile cares about. With a high quantile, a rising line says the forecast has been too low too often; with a low quantile, it says the forecast has been too high. Compare the line at two quantiles to see which side the misses fall on.\n\nThe loss is in price units, so read it against its own history. It has no value for the first `Length` minus one bars, and it says how large the weighted miss is, not which bars caused it.",
+  "settings": [
+    { "key": "length", "label": "Length", "description": "How many bars the loss is averaged over. A longer window gives a smoother, slower line." },
+    { "key": "quantile", "label": "Quantile", "description": "How the two directions of a miss are weighted. 0.5 weights them equally; higher values charge under-prediction more, lower values charge over-prediction more." },
+    { "key": "actual", "label": "Actual", "description": "The series treated as the truth." },
+    { "key": "predicted", "label": "Predicted", "description": "The series treated as the forecast that is scored against the actual one." }
+  ],
+  "faq": [
+    { "q": "What does a quantile of 0.9 mean here?", "a": "A miss where the actual ends above the prediction costs 0.9 per point, and a miss where it ends below costs 0.1 per point. The line then rewards a forecast that sits near the upper edge of where price lands." },
+    { "q": "How does it relate to the mean absolute error?", "a": "At a quantile of 0.5 every miss costs half its size, so the line is exactly half the mean absolute error over the same window." },
+    { "q": "With the default settings, what is being scored?", "a": "The open is the prediction and the close is the actual, so the line averages each bar's open to close move, weighted by whether the bar closed up or down." }
+  ]
+}

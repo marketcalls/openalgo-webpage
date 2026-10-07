@@ -1,0 +1,560 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © openalgo
+// Original work (c) Arun K Bhaskar, MPL-2.0
+
+version 1
+study("Magnetic Zones Multi-timeframe", overlay = true, precision = 2)
+
+// Fibonacci-spaced support and resistance projected from the previous higher
+// timeframe bar: each level sits a multiple of that bar's range above or below
+// its midpoint, and each drawn level carries a buffer box an eighth of the gap
+// to its neighbouring level deep. Three timeframes can be drawn at once, beside
+// two optional moving averages, an anchored VWAP and a Supertrend.
+
+mz1Tf = input("D", "Zones 1 Timeframe", group = "Magnetic Zones 1", tooltip = "Timeframe code: blank for the chart, a number for minutes, or D, W or M.")
+mz1ShowLast = input(1, "Zones 1 Show Last", min = 0, max = 50, step = 1, group = "Magnetic Zones 1")
+mz1Pdhl = input(true, "Zones 1 PDHL", group = "Magnetic Zones 1")
+mz1P = input(true, "Zones 1 Pivot", group = "Magnetic Zones 1")
+mz1Sr1 = input(true, "Zones 1 SR1", group = "Magnetic Zones 1")
+mz1Sr2 = input(true, "Zones 1 SR2", group = "Magnetic Zones 1")
+mz1Sr3 = input(false, "Zones 1 SR3", group = "Magnetic Zones 1")
+mz1Sr4 = input(false, "Zones 1 SR4", group = "Magnetic Zones 1")
+mz1Sr5 = input(false, "Zones 1 SR5", group = "Magnetic Zones 1")
+mz1Sr6 = input(false, "Zones 1 SR6", group = "Magnetic Zones 1")
+mz1Style = input("solid", "Zones 1 Line Style", options = ["solid", "dashed", "dotted"], group = "Magnetic Zones 1")
+
+mz2Tf = input("W", "Zones 2 Timeframe", group = "Magnetic Zones 2")
+mz2ShowLast = input(0, "Zones 2 Show Last", min = 0, max = 50, step = 1, group = "Magnetic Zones 2")
+mz2Pdhl = input(true, "Zones 2 PDHL", group = "Magnetic Zones 2")
+mz2P = input(true, "Zones 2 Pivot", group = "Magnetic Zones 2")
+mz2Sr1 = input(true, "Zones 2 SR1", group = "Magnetic Zones 2")
+mz2Sr2 = input(true, "Zones 2 SR2", group = "Magnetic Zones 2")
+mz2Style = input("dashed", "Zones 2 Line Style", options = ["solid", "dashed", "dotted"], group = "Magnetic Zones 2")
+
+mz3Tf = input("M", "Zones 3 Timeframe", group = "Magnetic Zones 3")
+mz3ShowLast = input(0, "Zones 3 Show Last", min = 0, max = 50, step = 1, group = "Magnetic Zones 3")
+mz3Pdhl = input(true, "Zones 3 PDHL", group = "Magnetic Zones 3")
+mz3P = input(true, "Zones 3 Pivot", group = "Magnetic Zones 3")
+mz3Sr1 = input(true, "Zones 3 SR1", group = "Magnetic Zones 3")
+mz3Sr2 = input(true, "Zones 3 SR2", group = "Magnetic Zones 3")
+mz3Style = input("dotted", "Zones 3 Line Style", options = ["solid", "dashed", "dotted"], group = "Magnetic Zones 3")
+
+boxTransp = input(70, "Box Transparency", min = 0, max = 100, step = 1, group = "Magnetic Zones General Inputs")
+
+ma1Show = input(false, "Show MA 1", group = "Moving Average")
+ma1Length = input(20, "MA 1 Length", min = 1, max = 5000, step = 1, group = "Moving Average")
+ma1Type = input("EMA", "MA 1 Type", options = ["EMA", "SMA"], group = "Moving Average")
+ma1Source = input(close, "MA 1 Source", group = "Moving Average")
+ma1Tf = input("", "MA 1 Timeframe", group = "Moving Average", tooltip = "Blank uses the chart timeframe.")
+ma2Show = input(false, "Show MA 2", group = "Moving Average")
+ma2Length = input(200, "MA 2 Length", min = 1, max = 5000, step = 1, group = "Moving Average")
+ma2Type = input("EMA", "MA 2 Type", options = ["EMA", "SMA"], group = "Moving Average")
+ma2Source = input(close, "MA 2 Source", group = "Moving Average")
+ma2Tf = input("", "MA 2 Timeframe", group = "Moving Average")
+maLabelLength = input(false, "Label: Length", group = "Moving Average")
+maLabelType = input(false, "Label: Type", group = "Moving Average")
+maLabelTf = input(false, "Label: Timeframe", group = "Moving Average")
+
+vwapShow = input(false, "Show VWAP", group = "VWAP")
+// The anchor menu is read where it is declared: its setting is saved as
+// vwapAnchor, a name the library already gives to a function.
+anchorCode = str.indexOf("DayWeekMonth", input("Day", "vwapAnchor", options = ["Day", "Week", "Month"], group = "VWAP", tooltip = "Restart the VWAP at each day, week or month."))
+vwapSource = input(hlc3, "Source", group = "VWAP")
+
+stShow = input(false, "Show Supertrend", group = "Supertrend")
+stAtrLength = input(7, "ATR Length", min = 1, max = 500, step = 1, group = "Supertrend")
+stFactor = input(2.0, "Factor", min = 0.01, max = 100, step = 0.01, group = "Supertrend")
+
+COLOR_SUB = #9598a1
+COLOR_R_LINE = #e81123
+COLOR_S_LINE = #009e49
+COLOR_R_TOP = #00bcf2
+COLOR_S_TOP = #ff8c00
+COLOR_MA_1 = #22ab94
+COLOR_MA_2 = #f7525f
+COLOR_VWAP = #2962ff
+COLOR_ST_UP = #22ab94
+COLOR_ST_DOWN = #f7525f
+
+// ---------------------------------------------------------------- timeframes
+
+// A timeframe code is a count and a unit: blank is the chart itself, a bare
+// number is minutes, S seconds, m minutes, h hours, D days, W weeks and an
+// upper case M months. Returns [unit, count], where unit is 0 for the chart,
+// 1 seconds, 2 minutes, 3 days, 4 weeks and 5 months. Anything unreadable is
+// read as the chart.
+fn parseTimeframe(spec) =>
+    raw = str.trim(spec)
+    n = str.length(raw)
+    digits = "0123456789"
+    letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz"
+    i = 0
+    while i < n and str.indexOf(digits, str.substring(raw, i, i + 1)) >= 0
+        i += 1
+    j = i
+    while j < n and str.substring(raw, j, j + 1) == " "
+        j += 1
+    k = j
+    while k < n and str.indexOf(letters, str.substring(raw, k, k + 1)) >= 0
+        k += 1
+    unit = 0
+    cnt = 1
+    if n > 0 and k == n
+        if i > 0
+            cnt = max(1, floor(orElse(toNumber(str.substring(raw, 0, i)), 1)))
+        u = k > j ? str.substring(raw, j, j + 1) : "m"
+        if u == "S" or u == "s"
+            unit = 1
+        else if u == "m"
+            unit = 2
+        else if u == "h" or u == "H"
+            unit = 2
+            cnt = cnt * 60
+        else if u == "D" or u == "d"
+            unit = 3
+        else if u == "W" or u == "w"
+            unit = 4
+        else if u == "M"
+            unit = 5
+    [unit, cnt]
+
+// True on the chart bar that opens a new higher timeframe bar. Intraday
+// buckets restart at each day's first bar, so a 240 minute bucket counts from
+// that bar rather than from midnight. Day, week and month buckets follow the
+// chart's calendar, and a count above one groups that many of them.
+fn opensBucket(unit, cnt) =>
+    var lastA = none
+    var lastB = none
+    var ordinal = -1
+    var lastGroup = none
+    var dayKey = none
+    var dayStart = none
+    keyA = bar.index
+    keyB = 0
+    if unit == 1 or unit == 2
+        day = date.startOfDay(time)
+        if isNone(dayKey) or day != dayKey
+            dayKey = day
+            dayStart = time
+        span = unit == 1 ? cnt * 1000 : cnt * 60000
+        keyA = day
+        keyB = floor((time - dayStart) / span)
+    else if unit == 3
+        keyA = date.startOfDay(time)
+    else if unit == 4
+        keyA = date.startOfWeek(time)
+    else if unit == 5
+        keyA = date.startOfMonth(time)
+    if isNone(lastA) or keyA != lastA or keyB != lastB
+        lastA = keyA
+        lastB = keyB
+        ordinal += 1
+    grp = unit >= 3 ? floor(ordinal / cnt) : ordinal
+    opens = isNone(lastGroup) or grp != lastGroup
+    lastGroup = grp
+    opens
+
+// ------------------------------------------------------------------ captions
+
+// Decimal places of the instrument's tick, so a caption reads like a price.
+fn tickDecimals(tick) =>
+    d = 0
+    s = tick
+    while d < 8 and abs(s - round(s)) > 1e-9
+        s = s * 10
+        d += 1
+    d
+
+fn formatPrice(value, tick) =>
+    caption = ""
+    if not isNone(value)
+        if not isNone(tick) and tick > 0
+            caption = text(roundToStep(value, tick), min(8, max(0, tickDecimals(tick))))
+        else
+            mag = abs(value)
+            caption = text(value, mag >= 1000 ? 1 : mag >= 100 ? 2 : mag >= 1 ? 3 : 5)
+    caption
+
+// --------------------------------------------------------------------- zones
+
+// One timeframe's lines and boxes. On the first chart bar of each higher
+// timeframe bar the levels are measured from the previous higher timeframe
+// bar: the pivot is its midpoint and every level sits a Fibonacci multiple of
+// its range away. Each period's drawings run from that first bar to the first
+// bar of the next period, or one bar past the newest bar while the period is
+// still forming. Only the newest `showLast` periods are kept.
+fn zoneSet(spec, showLast, pdhl, pivotOn, sr1, sr2, sr3, sr4, sr5, sr6, lineStyle, transparency, barStep, tick) =>
+    var allBoxes: array<box> = []
+    var allLines: array<line> = []
+    var boxCounts: array<number> = []
+    var lineCounts: array<number> = []
+    var edgeBoxes: array<box> = []
+    var edgeBoxBottoms: array<number> = []
+    var edgeLines: array<line> = []
+    var edgeLinePrices: array<number> = []
+    var curHigh = none
+    var curLow = none
+    var seen = 0
+
+    tf = parseTimeframe(spec)
+    opens = opensBucket(tf[0], tf[1])
+    tfText = str.trim(spec)
+    boxAlpha = clamp((100 - transparency) / 100, 0, 1)
+    subAlpha = clamp((100 - min(100, transparency + 10)) / 100, 0, 1)
+
+    if opens
+        prevHigh = curHigh
+        prevLow = curLow
+        curHigh = high
+        curLow = low
+        seen += 1
+        // The period that just closed ends on this bar.
+        for e = 0 to size(edgeBoxes) - 1
+            draw.setTo(element(edgeBoxes, e), time, element(edgeBoxBottoms, e))
+        for e = 0 to size(edgeLines) - 1
+            draw.setTo(element(edgeLines, e), time, element(edgeLinePrices, e))
+        while size(edgeBoxes) > 0
+            pop(edgeBoxes)
+            pop(edgeBoxBottoms)
+        while size(edgeLines) > 0
+            pop(edgeLines)
+            pop(edgeLinePrices)
+
+        if showLast > 0 and seen >= 2
+            nBoxes = 0
+            nLines = 0
+            if not isNone(prevHigh) and not isNone(prevLow)
+                left = time
+                right = time + barStep
+                pivot = (prevHigh + prevLow) / 2
+                span = prevHigh - prevLow
+                r1 = pivot + 0.236 * span
+                r2 = pivot + 0.786 * span
+                r3 = pivot + 1.618 * span
+                r4 = pivot + 2.618 * span
+                r5 = pivot + 4.236 * span
+                r6 = pivot + 6.618 * span
+                s1 = pivot - 0.236 * span
+                s2 = pivot - 0.786 * span
+                s3 = pivot - 1.618 * span
+                s4 = pivot - 2.618 * span
+                s5 = pivot - 4.236 * span
+                s6 = pivot - 6.618 * span
+
+                // Box tops and bottoms: each level plus or minus an eighth of
+                // the gap to its neighbour.
+                boxTops = []
+                boxBottoms = []
+                boxColors = []
+                boxAlphas = []
+                boxTexts = []
+                if sr1
+                    g = (r1 - s1) / 8
+                    push(boxTops, r1 + g)
+                    push(boxBottoms, s1 - g)
+                    push(boxColors, COLOR_SUB)
+                    push(boxAlphas, boxAlpha)
+                    push(boxTexts, "")
+                    push(boxTops, r1 + g)
+                    push(boxBottoms, r1 - g)
+                    push(boxColors, COLOR_SUB)
+                    push(boxAlphas, subAlpha)
+                    push(boxTexts, tfText == "" ? formatPrice(r1, tick) : formatPrice(r1, tick) + " : " + tfText)
+                    push(boxTops, s1 + g)
+                    push(boxBottoms, s1 - g)
+                    push(boxColors, COLOR_SUB)
+                    push(boxAlphas, subAlpha)
+                    push(boxTexts, tfText == "" ? formatPrice(s1, tick) : formatPrice(s1, tick) + " : " + tfText)
+                if sr2
+                    gr = (r2 - r1) / 8
+                    gs = (s1 - s2) / 8
+                    push(boxTops, r2 + gr)
+                    push(boxBottoms, r2 - gr)
+                    push(boxColors, COLOR_S_LINE)
+                    push(boxAlphas, boxAlpha)
+                    push(boxTexts, formatPrice(r2, tick))
+                    push(boxTops, s2 + gs)
+                    push(boxBottoms, s2 - gs)
+                    push(boxColors, COLOR_R_LINE)
+                    push(boxAlphas, boxAlpha)
+                    push(boxTexts, formatPrice(s2, tick))
+                // SR3 and SR5 are drawn as lines only.
+                if sr4
+                    gr = (r4 - r3) / 8
+                    gs = (s3 - s4) / 8
+                    push(boxTops, r4 + gr)
+                    push(boxBottoms, r4 - gr)
+                    push(boxColors, COLOR_R_TOP)
+                    push(boxAlphas, boxAlpha)
+                    push(boxTexts, formatPrice(r4, tick))
+                    push(boxTops, s4 + gs)
+                    push(boxBottoms, s4 - gs)
+                    push(boxColors, COLOR_S_TOP)
+                    push(boxAlphas, boxAlpha)
+                    push(boxTexts, formatPrice(s4, tick))
+                if sr6
+                    gr = (r6 - r5) / 8
+                    gs = (s5 - s6) / 8
+                    push(boxTops, r6 + gr)
+                    push(boxBottoms, r6 - gr)
+                    push(boxColors, COLOR_R_TOP)
+                    push(boxAlphas, boxAlpha)
+                    push(boxTexts, formatPrice(r6, tick))
+                    push(boxTops, s6 + gs)
+                    push(boxBottoms, s6 - gs)
+                    push(boxColors, COLOR_S_TOP)
+                    push(boxAlphas, boxAlpha)
+                    push(boxTexts, formatPrice(s6, tick))
+                for b = 0 to size(boxTops) - 1
+                    c = element(boxColors, b)
+                    a = element(boxAlphas, b)
+                    bx = draw.box(left, element(boxTops, b), right, element(boxBottoms, b), color = withAlpha(c, a), fillColor = c, opacity = a, text = element(boxTexts, b), textColor = c)
+                    push(allBoxes, bx)
+                    push(edgeBoxes, bx)
+                    push(edgeBoxBottoms, element(boxBottoms, b))
+                    nBoxes += 1
+
+                // Lines: the previous high and low, the pivot, then each
+                // enabled pair of levels.
+                linePrices = []
+                lineColors = []
+                if pdhl
+                    push(linePrices, prevHigh)
+                    push(lineColors, COLOR_SUB)
+                    push(linePrices, prevLow)
+                    push(lineColors, COLOR_SUB)
+                if pivotOn
+                    push(linePrices, pivot)
+                    push(lineColors, COLOR_SUB)
+                if sr1
+                    push(linePrices, r1)
+                    push(lineColors, COLOR_SUB)
+                    push(linePrices, s1)
+                    push(lineColors, COLOR_SUB)
+                if sr2
+                    push(linePrices, r2)
+                    push(lineColors, COLOR_S_LINE)
+                    push(linePrices, s2)
+                    push(lineColors, COLOR_R_LINE)
+                if sr3
+                    push(linePrices, r3)
+                    push(lineColors, COLOR_R_TOP)
+                    push(linePrices, s3)
+                    push(lineColors, COLOR_S_TOP)
+                if sr4
+                    push(linePrices, r4)
+                    push(lineColors, COLOR_R_TOP)
+                    push(linePrices, s4)
+                    push(lineColors, COLOR_S_TOP)
+                if sr5
+                    push(linePrices, r5)
+                    push(lineColors, COLOR_R_TOP)
+                    push(linePrices, s5)
+                    push(lineColors, COLOR_S_TOP)
+                if sr6
+                    push(linePrices, r6)
+                    push(lineColors, COLOR_R_TOP)
+                    push(linePrices, s6)
+                    push(lineColors, COLOR_S_TOP)
+                for l = 0 to size(linePrices) - 1
+                    p = element(linePrices, l)
+                    ln = draw.line(left, p, right, p, color = element(lineColors, l), width = 1, style = lineStyle)
+                    push(allLines, ln)
+                    push(edgeLines, ln)
+                    push(edgeLinePrices, p)
+                    nLines += 1
+            // A period whose previous bar had no range still takes a slot.
+            push(boxCounts, nBoxes)
+            push(lineCounts, nLines)
+            // Keep only the newest showLast periods.
+            while size(boxCounts) > showLast
+                nb = shift(boxCounts)
+                nl = shift(lineCounts)
+                for d = 1 to nb
+                    draw.delete(shift(allBoxes))
+                for d = 1 to nl
+                    draw.delete(shift(allLines))
+    else
+        if not isNone(high)
+            curHigh = isNone(curHigh) ? high : max(curHigh, high)
+        if not isNone(low)
+            curLow = isNone(curLow) ? low : min(curLow, low)
+        // The period still forming reaches one bar past this one.
+        for e = 0 to size(edgeBoxes) - 1
+            draw.setTo(element(edgeBoxes, e), time + barStep, element(edgeBoxBottoms, e))
+        for e = 0 to size(edgeLines) - 1
+            draw.setTo(element(edgeLines, e), time + barStep, element(edgeLinePrices, e))
+    seen
+
+chartStep = isNone(chart.intervalMinutes) ? orElse(time - time[1], 60000) : chart.intervalMinutes * 60000
+chartTick = chart.tickSize
+
+zoneSet(mz1Tf, mz1ShowLast, mz1Pdhl, mz1P, mz1Sr1, mz1Sr2, mz1Sr3, mz1Sr4, mz1Sr5, mz1Sr6, mz1Style, boxTransp, chartStep, chartTick)
+zoneSet(mz2Tf, mz2ShowLast, mz2Pdhl, mz2P, mz2Sr1, mz2Sr2, false, false, false, false, mz2Style, boxTransp, chartStep, chartTick)
+zoneSet(mz3Tf, mz3ShowLast, mz3Pdhl, mz3P, mz3Sr1, mz3Sr2, false, false, false, false, mz3Style, boxTransp, chartStep, chartTick)
+
+// ------------------------------------------------------------ moving averages
+
+// The source setting arrives as a series. A folded higher timeframe bar must
+// know which price it names, so the source is recognised by comparing it with
+// each price series: 0 close, 1 open, 2 high, 3 low, 4 hl2, 5 hlc3, 6 ohlc4,
+// 7 volume.
+fn sourceKind(src) =>
+    var okClose = true
+    var okOpen = true
+    var okHigh = true
+    var okLow = true
+    var okHl2 = true
+    var okHlc3 = true
+    var okOhlc4 = true
+    var okVolume = true
+    if not isNone(src)
+        okClose = okClose and abs(src - close) <= 1e-9 * max(1, abs(src))
+        okOpen = okOpen and abs(src - open) <= 1e-9 * max(1, abs(src))
+        okHigh = okHigh and abs(src - high) <= 1e-9 * max(1, abs(src))
+        okLow = okLow and abs(src - low) <= 1e-9 * max(1, abs(src))
+        okHl2 = okHl2 and abs(src - hl2) <= 1e-9 * max(1, abs(src))
+        okHlc3 = okHlc3 and abs(src - hlc3) <= 1e-9 * max(1, abs(src))
+        okOhlc4 = okOhlc4 and abs(src - ohlc4) <= 1e-9 * max(1, abs(src))
+        okVolume = okVolume and not isNone(volume) and abs(src - volume) <= 1e-9 * max(1, abs(src))
+    okClose ? 0 : okOpen ? 1 : okHigh ? 2 : okLow ? 3 : okHl2 ? 4 : okHlc3 ? 5 : okOhlc4 ? 6 : okVolume ? 7 : 0
+
+// The average on the chart's own bars when the timeframe is blank. Otherwise
+// it is computed on the folded higher timeframe bars, and every chart bar
+// inside period k reads the value period k - 1 closed with, so nothing reads
+// a bar that has not finished. A folded bar's volume is the sum of its chart
+// bars' volumes. The exponential form is seeded with the simple average of
+// its first `length` values.
+fn timeframeAverage(src, spec, isSma, length) =>
+    var bucketOpen = none
+    var bucketHigh = none
+    var bucketLow = none
+    var bucketClose = none
+    var bucketVolume = 0.0
+    var window: array<number> = []
+    var emaSeedSum = 0.0
+    var emaSeen = 0
+    var emaValue = none
+    var held = none
+    var started = false
+
+    chartSma = sma(src, length)
+    chartEma = ema(src, length)
+    kind = sourceKind(src)
+    tf = parseTimeframe(spec)
+    opens = opensBucket(tf[0], tf[1])
+
+    if opens
+        if started and not isNone(bucketClose)
+            v = kind == 1 ? bucketOpen : kind == 2 ? bucketHigh : kind == 3 ? bucketLow : kind == 4 ? (bucketHigh + bucketLow) / 2 : kind == 5 ? (bucketHigh + bucketLow + bucketClose) / 3 : kind == 6 ? (bucketOpen + bucketHigh + bucketLow + bucketClose) / 4 : kind == 7 ? bucketVolume : bucketClose
+            push(window, v)
+            if size(window) > length
+                shift(window)
+            smaValue = size(window) == length ? avg(window) : none
+            emaSeen += 1
+            if emaSeen <= length
+                emaSeedSum += v
+                if emaSeen == length
+                    emaValue = emaSeedSum / length
+            else
+                emaValue = v * (2 / (length + 1)) + emaValue * (1 - 2 / (length + 1))
+            held = isSma ? smaValue : (emaSeen >= length ? emaValue : none)
+        started = true
+        bucketOpen = open
+        bucketHigh = high
+        bucketLow = low
+        bucketClose = close
+        bucketVolume = orElse(volume, 0)
+    else
+        if not isNone(high)
+            bucketHigh = isNone(bucketHigh) ? high : max(bucketHigh, high)
+        if not isNone(low)
+            bucketLow = isNone(bucketLow) ? low : min(bucketLow, low)
+        bucketClose = close
+        if not isNone(volume)
+            bucketVolume += volume
+    tf[0] == 0 ? (isSma ? chartSma : chartEma) : held
+
+ma1 = timeframeAverage(ma1Source, ma1Tf, ma1Type == "SMA", ma1Length)
+ma2 = timeframeAverage(ma2Source, ma2Tf, ma2Type == "SMA", ma2Length)
+
+// ---------------------------------------------------------------------- VWAP
+
+// A running volume weighted mean restarted at each day, week or month. Bars
+// without volume add nothing, and the mean stays empty until some volume has
+// traded in the period.
+newDay = bar.index > 0 and date.startOfDay(time) != date.startOfDay(time[1])
+newWeek = bar.index > 0 and date.startOfWeek(time) != date.startOfWeek(time[1])
+newMonth = bar.index > 0 and date.startOfMonth(time) != date.startOfMonth(time[1])
+newPeriod = anchorCode == 3 ? newWeek : anchorCode == 7 ? newMonth : newDay
+
+var vwapWeighted = 0.0
+var vwapVolume = 0.0
+if newPeriod
+    vwapWeighted = 0.0
+    vwapVolume = 0.0
+barVolume = not isNone(volume) and volume > 0 ? volume : 0
+if barVolume > 0 and not isNone(vwapSource)
+    vwapWeighted += vwapSource * barVolume
+    vwapVolume += barVolume
+vwapValue = vwapVolume > 0 ? vwapWeighted / vwapVolume : none
+
+// ---------------------------------------------------------------- Supertrend
+
+// This Supertrend ratchets each band against the previous close and flips its
+// direction on the current close, which is why it is written out here rather
+// than taken from the library's supertrend.
+band = atr(stAtrLength)
+rawUp = hl2 - stFactor * band
+rawDown = hl2 + stFactor * band
+
+var trendUp = none
+var trendDown = none
+var trend = none
+prevUp = trendUp
+prevDown = trendDown
+prevTrend = trend
+prevClose = close[1]
+trendUp = not isNone(prevClose) and not isNone(prevUp) and prevClose > prevUp ? max(rawUp, prevUp) : rawUp
+trendDown = not isNone(prevClose) and not isNone(prevDown) and prevClose < prevDown ? min(rawDown, prevDown) : rawDown
+if not isNone(prevDown) and close > prevDown
+    trend = 1
+else if not isNone(prevUp) and close < prevUp
+    trend = -1
+else
+    trend = isNone(prevTrend) ? 1 : prevTrend
+stLine = trend == 1 ? trendUp : trendDown
+stDir = isNone(stLine) ? none : trend
+
+// --------------------------------------------------------------------- plots
+
+plot(ma1Show ? ma1 : none, "MA 1", COLOR_MA_1, width = 1)
+plot(ma2Show ? ma2 : none, "MA 2", COLOR_MA_2, width = 1)
+plot(vwapShow ? vwapValue : none, "VWAP", COLOR_VWAP, width = 1)
+plot(stShow ? stLine : none, "Supertrend", stDir == -1 ? COLOR_ST_DOWN : COLOR_ST_UP, width = 1)
+
+// A plate beside the newest bar for each shown average, naming its length,
+// type and timeframe as asked. When the timeframe is the only part shown the
+// caption is the timeframe followed by a lone closing bracket.
+fn resolutionLabel(spec) =>
+    raw = str.trim(spec)
+    raw == "1" ? "1m" : raw == "3" ? "3m" : raw == "5" ? "5m" : raw == "15" ? "15m" : raw == "30" ? "30m" : raw == "45" ? "45m" : raw == "60" ? "1h" : raw == "120" ? "2h" : raw == "180" ? "3h" : raw == "240" ? "4h" : raw == "1D" ? "D" : raw == "1W" ? "W" : raw == "1M" ? "M" : raw
+
+fn maCaption(spec, typeName, length, showLength, showType, showTf) =>
+    caption = ""
+    if showLength
+        caption = text(length, 0)
+    if showType
+        caption = caption + (caption != "" ? " " : "") + typeName
+    res = resolutionLabel(spec)
+    if showTf and res != ""
+        caption = caption + (caption != "" ? " (" : "") + res + ")"
+    caption
+
+if bar.isLast
+    caption1 = maCaption(ma1Tf, ma1Type == "SMA" ? "SMA" : "EMA", ma1Length, maLabelLength, maLabelType, maLabelTf)
+    if ma1Show and caption1 != ""
+        draw.label(time, orElse(ma1, close), caption1, color = none, textColor = COLOR_MA_1, align = "left")
+    caption2 = maCaption(ma2Tf, ma2Type == "SMA" ? "SMA" : "EMA", ma2Length, maLabelLength, maLabelType, maLabelTf)
+    if ma2Show and caption2 != ""
+        draw.label(time, orElse(ma2, close), caption2, color = none, textColor = COLOR_MA_2, align = "left")

@@ -1,0 +1,15 @@
+{
+  "title": "SSF-Based Detrended Synthetic Price",
+  "summary": "Subtracts a half-cycle Super Smoother filter from a quarter-cycle one, leaving a zero-centred oscillator that follows the market's dominant cycle.",
+  "description": "This study builds a synthetic price that keeps the cycle and drops the trend. It runs two Super Smoother filters over the same input. The fast one is tuned to a quarter of the dominant cycle period and the slow one to half of it (with floors of 2 and 3 bars). Each is a two-pole recursive filter whose coefficients come from the period through an exponential and a cosine, which gives a smooth line with little lag for its length.\n\nThe input to both filters is the average of this bar's source and the previous bar's, a light two-bar smoothing. Both filters start from that first value, so the output begins at zero. The plotted value is the fast filter minus the slow filter.\n\nBecause the slow filter follows the trend and the fast one follows the trend plus the cycle, their difference cancels most of the trend and leaves a wave centred on zero, swinging with the cycle length you set.",
+  "howToRead": "Read it as a cycle oscillator. A rise through the zero line marks the upswing of the cycle and a fall through it marks the downswing; the peaks and troughs of the wave tend to sit near the swing highs and lows of price when the cycle period matches the market.\n\nIt works best when the market really is cycling at roughly the period you set. In a strong trend the slow filter lags and the oscillator can stay on one side of zero for a long time. The swings have no fixed scale, so compare a peak with earlier peaks on the same chart rather than with a set number.",
+  "settings": [
+    { "key": "source", "label": "Source", "description": "The price series both filters smooth. The default is the typical price, the average of high, low and close." },
+    { "key": "period", "label": "Dominant Cycle Period", "description": "The cycle length in bars. The fast filter uses a quarter of it and the slow filter half of it, so a longer period gives slower, wider swings." }
+  ],
+  "faq": [
+    { "q": "Why does the line start at zero?", "a": "Both filters are seeded with the same first input, so on the first bar their difference is exactly zero. The oscillator then moves away from zero as the two filters respond at different speeds." },
+    { "q": "How do I choose the cycle period?", "a": "Set it to the typical distance in bars between two swing lows on your chart. If the waves look too choppy, raise it; if they lag the turns of price badly, lower it." },
+    { "q": "Is a reading above zero bullish?", "a": "It means the faster filter sits above the slower one, which is the rising half of the cycle. It is a timing tool for swings, not a statement about the longer trend." }
+  ]
+}

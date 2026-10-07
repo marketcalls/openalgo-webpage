@@ -1,0 +1,37 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © openalgo
+// Original work (c) mihakralj, MIT License
+
+version 1
+study("Lanczos (Sinc) Window Moving Average (LANCZOS)", overlay = true, precision = 2)
+
+period = input(14, "Period", min = 2, max = 5000, step = 1)
+source = input(close, "Source")
+
+len = max(2, floor(period))
+
+// One lobe of the sinc function, sin(pi * x) / (pi * x), with x running from
+// -1 at the oldest bar of the window to 1 at the newest. Built once and
+// scaled to sum to one when the raw weights allow it.
+var weights: array<number> = []
+if size(weights) == 0
+    last = len - 1
+    wsum = 0.0
+    for k = 0 to len - 1
+        x = last > 0 ? 2 * k / last - 1 : 0.0
+        pix = math.pi * x
+        w = abs(pix) < 1e-8 ? 1.0 : math.sin(pix) / pix
+        push(weights, w)
+        wsum += w
+    if wsum > 1e-15
+        for k = 0 to len - 1
+            set(weights, k, element(weights, k) / wsum)
+
+// Until the window is full the line sits on the price. A missing value
+// counts as zero.
+result = 0.0
+for j = 0 to len - 1
+    result += orElse(source[len - 1 - j], 0) * element(weights, j)
+lanczos = bar.index + 1 < len ? orElse(source, 0) : result
+
+plot(lanczos, "LANCZOS", #ffeb3b, width = 2)

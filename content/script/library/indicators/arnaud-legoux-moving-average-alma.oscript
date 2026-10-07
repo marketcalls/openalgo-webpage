@@ -1,0 +1,35 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © openalgo
+// Original work (c) mihakralj, MIT License
+
+version 1
+study("Arnaud Legoux Moving Average (ALMA)", overlay = true, precision = 2)
+
+period = input(50, "Period", min = 1, max = 1000, step = 1, tooltip = "Number of bars used in the calculation")
+offset = input(0.85, "Offset", min = 0, max = 1, step = 0.01)
+sigma = input(6, "Sigma", min = 0.1, max = 20, step = 0.1)
+source = input(close, "Source")
+
+// The window grows from the first bar up to the period, so the line answers
+// from bar 0. Weight k counts bars back from this one and follows a Gaussian
+// whose peak sits at (1 - offset) * (p - 1) bars back: offset 1 puts it on the
+// newest bar.
+p = min(bar.index + 1, period)
+almaLine = source
+if p > 1
+    m = (1 - offset) * (p - 1)
+    s = p / sigma
+    s2 = 2 * (s * s)
+    total = 0.0
+    weightSum = 0.0
+    for k = 0 to p - 1
+        price = source[k]
+        if not isNone(price)
+            diff = k - m
+            w = exp(-(diff * diff) / s2)
+            total += price * w
+            weightSum += w
+    // An empty window falls back to this bar's value.
+    almaLine = weightSum > 0 ? orElse(total / weightSum, source) : source
+
+plot(almaLine, "ALMA", #ffeb3b, width = 2)

@@ -1,0 +1,55 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © openalgo
+// Original work (c) mihakralj, MIT License
+
+version 1
+study("Hull Exponential Moving Average (HEMA)", overlay = true, precision = 2)
+
+period = input(10, "Period", min = 1, max = 5000, step = 1)
+source = input(close, "Source")
+
+// A slow and a fast exponential weight tied together by logarithmic ratios,
+// and a final smoothing weight from the square root of the period. A period
+// of 1 makes the slow weight 3, whose logarithm does not exist, so the line
+// is empty at that setting. A period of 2 makes the slow weight 1, an
+// unbounded log term, and the fast weight is then 1 as well.
+alphaSlow = 3.0 / (2.0 * period - 1.0)
+lambdaSlow = -log(1.0 - alphaSlow)
+ratio = log(2.0) / (1.0 + log(2.0))
+alphaFast = alphaSlow == 1.0 ? 1.0 : 1.0 - exp(-lambdaSlow / ratio)
+alphaSmooth = 2.0 / (sqrt(period) / 2.0 + 1.0)
+betaSlow = 1.0 - alphaSlow
+betaFast = 1.0 - alphaFast
+betaSmooth = 1.0 - alphaSmooth
+
+// Three exponential stages that start from zero. While the slow decay term is
+// still large each stage is divided by (1 - decay), which removes the bias of
+// starting at zero.
+var warmup = true
+var decaySlow = 1.0
+var decayFast = 1.0
+var decaySmooth = 1.0
+var emaSlowRaw = 0.0
+var emaFastRaw = 0.0
+var emaSmoothRaw = 0.0
+
+emaSlowRaw = alphaSlow * (source - emaSlowRaw) + emaSlowRaw
+emaFastRaw = alphaFast * (source - emaFastRaw) + emaFastRaw
+
+hema = 0.0
+if warmup
+    decaySlow = decaySlow * betaSlow
+    decayFast = decayFast * betaFast
+    decaySmooth = decaySmooth * betaSmooth
+    emaSlow = (1.0 / (1.0 - decaySlow)) * emaSlowRaw
+    emaFast = (1.0 / (1.0 - decayFast)) * emaFastRaw
+    deLag = emaFast / (1.0 - ratio) - (ratio * emaSlow) / (1.0 - ratio)
+    emaSmoothRaw = alphaSmooth * (deLag - emaSmoothRaw) + emaSmoothRaw
+    hema = (1.0 / (1.0 - decaySmooth)) * emaSmoothRaw
+    warmup = decaySlow > 1e-10
+else
+    deLag = emaFastRaw / (1.0 - ratio) - (ratio * emaSlowRaw) / (1.0 - ratio)
+    emaSmoothRaw = alphaSmooth * (deLag - emaSmoothRaw) + emaSmoothRaw
+    hema = emaSmoothRaw
+
+plot(hema, "HEMA", #ffeb3b, width = 2)

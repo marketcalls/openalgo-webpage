@@ -1,0 +1,17 @@
+{
+  "title": "Ehlers Automatic Gain Control (AGC)",
+  "summary": "A roofing filter that isolates the price cycle, scaled by its own decaying peak so the oscillator always swings between -1 and +1.",
+  "description": "Automatic Gain Control turns price into a cycle oscillator with a constant height. It first runs a roofing filter: a two-pole highpass with cutoff `HP Length` removes trends longer than that period, and a Super Smoother with cutoff `SS Length` removes noise shorter than its period. What is left is a zero-centred wave, plotted as the grey `Filter` line.\n\nThe study then tracks the peak size of that wave. On every bar the peak shrinks by the `Decay` factor, and if the wave's current magnitude is larger the peak jumps up to it. The `AGC` line is the wave divided by that peak. Because the divisor is never smaller than the current magnitude of the wave, the result stays between -1 and +1 whatever the price level or volatility.\n\nThe highpass starts at zero on the first bar, and its first missing history is read as zero, so the oscillator settles over the first stretch of bars.",
+  "howToRead": "Read the blue `AGC` line as a normalised cycle. Readings near +1 mean the cycle is at a peak as large as anything recently seen, readings near -1 mean a matching trough, and crossings of zero are the turns of the cycle from one side to the other. The grey `Filter` line shows the same wave in price units, so you can see whether a full-height AGC swing came from a big move or a small one.\n\nThe scaling hides absolute size: after a quiet spell the peak has decayed, and even a small wiggle can reach +1 or -1. A slower `Decay` (closer to 1) remembers big swings for longer. The oscillator removes the trend by design, so it says nothing about direction over periods longer than `HP Length`.",
+  "settings": [
+    { "key": "decay", "label": "Decay", "description": "The factor the tracked peak is multiplied by on each bar. Values closer to 1 keep large past swings in memory longer." },
+    { "key": "hpLength", "label": "HP Length", "description": "The highpass cutoff in bars. Cycles and trends longer than this are removed before scaling." },
+    { "key": "ssLength", "label": "SS Length", "description": "The Super Smoother cutoff in bars. Noise faster than this is removed before scaling." },
+    { "key": "source", "label": "Source", "description": "The price series the filters run on, the close by default." }
+  ],
+  "faq": [
+    { "q": "Why does the AGC line stay between -1 and +1?", "a": "It is the filtered wave divided by a peak that is never smaller than the wave's current magnitude, so the ratio cannot exceed one in size." },
+    { "q": "What is the grey Filter line?", "a": "The roofing filter output before scaling: the price cycle in price units, with long trends and short noise removed." },
+    { "q": "Why can a small move read near +1?", "a": "The peak decays every bar. After a quiet stretch it has shrunk, so a modest swing is large compared with it and fills the whole range." }
+  ]
+}

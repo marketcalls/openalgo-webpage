@@ -1,0 +1,19 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © openalgo
+// Original work (c) mihakralj, MIT License
+
+version 1
+study("Price Volume Rank (PVR)", precision = 0)
+
+source = input(close, "Price Source")
+
+// 1: price and volume both rose. 2: price rose on falling or flat volume.
+// 3: price and volume both fell. 4: price fell on rising or flat volume.
+// 0: price unchanged. The first bar compares with itself and ranks 0.
+p = orElse(source, close)
+v = orElse(volume, 0)
+pp = orElse(p[1], p)
+pv = orElse(v[1], v)
+rank = p > pp ? (v > pv ? 1 : 2) : p < pp ? (v < pv ? 3 : 4) : 0
+
+plot(rank, "PVR", #ffeb3b, width = 2, style = "step")

@@ -1,0 +1,35 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © openalgo
+// Original work (c) mihakralj, MIT License
+
+version 1
+study("Price Momentum Oscillator (PMO)", precision = 2)
+
+source = input(close, "Source")
+rocLength = input(35, "ROC Length", min = 1, max = 5000, step = 1)
+smooth1 = input(20, "First Smoothing Length", min = 1, max = 5000, step = 1)
+smooth2 = input(10, "Second Smoothing Length", min = 1, max = 5000, step = 1)
+signalLength = input(10, "Signal Line Length", min = 1, max = 5000, step = 1)
+
+weight1 = 2 / (smooth1 + 1)
+weight2 = 2 / (smooth2 + 1)
+weightSignal = 2 / (signalLength + 1)
+
+// The percentage change over rocLength bars. Until that many bars exist the
+// lookback reaches back to the first bar, so the first bar reads zero.
+offsetBars = min(rocLength, bar.index)
+reference = source[offsetBars]
+rocValue = isNone(reference) or reference == 0 ? none : 100 * (source - reference) / reference
+
+// Two exponential smoothings of the rate of change, then a third for the
+// signal. Each starts from its first value and starts again after a gap.
+var stage1 = none
+var stage2 = none
+var signalLine = none
+stage1 = isNone(stage1) ? rocValue : stage1 * (1 - weight1) + rocValue * weight1
+stage2 = isNone(stage2) ? stage1 : stage2 * (1 - weight2) + stage1 * weight2
+pmoValue = stage2
+signalLine = isNone(signalLine) ? pmoValue : signalLine * (1 - weightSignal) + pmoValue * weightSignal
+
+plot(pmoValue, "PMO", #2962ff, width = 2)
+plot(signalLine, "Signal", #ef5350, width = 2)

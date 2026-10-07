@@ -1,0 +1,781 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © openalgo
+// Original work (c) sukesan7, MPL-2.0
+
+version 1
+study("Options Context", precision = 2, range = [-105, 105])
+
+// 01. Session
+timezone = input("America/New_York", "Session timezone", group = "01. Session", tooltip = "IANA zone the session is read in, for example America/New_York or Asia/Kolkata.")
+session = input("0930-1600", "Regular session", group = "01. Session", tooltip = "Exchange wall clock, HHMM-HHMM. Indian equities are 0915-1530.")
+weekdaysOnly = input(true, "Monday-Friday only", group = "01. Session")
+openingRangeMinutes = input(15, "Opening-range minutes", min = 1, max = 120, step = 1, group = "01. Session")
+
+// 02. Normalization
+atrLength = input(14, "ATR length", min = 5, max = 100, step = 1, group = "02. Normalization")
+
+// 03. Trend
+fastEmaLength = input(9, "Fast EMA", min = 1, max = 100, step = 1, group = "03. Trend")
+slowEmaLength = input(21, "Slow EMA", min = 2, max = 200, step = 1, group = "03. Trend")
+trendSlopeLookback = input(5, "Slope lookback", min = 1, max = 30, step = 1, group = "03. Trend")
+trendSpreadScale = input(0.25, "EMA spread scale (ATR)", min = 0.05, max = 2, step = 0.05, group = "03. Trend")
+trendSlopeScale = input(0.2, "EMA slope scale (ATR)", min = 0.05, max = 2, step = 0.05, group = "03. Trend")
+
+// 04. Structure
+vwapSource = input(hlc3, "RTH VWAP source", group = "04. Structure")
+vwapDistanceScale = input(0.35, "VWAP displacement scale (ATR)", min = 0.05, max = 2, step = 0.05, group = "04. Structure")
+openingRangeBreakScale = input(0.25, "Opening-range break scale (ATR)", min = 0.05, max = 2, step = 0.05, group = "04. Structure")
+sessionOpenScale = input(0.5, "RTH-open displacement scale (ATR)", min = 0.05, max = 3, step = 0.05, group = "04. Structure")
+
+// 05. Momentum
+rsiSource = input(close, "RSI source", group = "05. Momentum")
+rsiLength = input(14, "RSI length", min = 2, max = 100, step = 1, group = "05. Momentum")
+momentumLookback = input(5, "Normalized-return lookback", min = 1, max = 30, step = 1, group = "05. Momentum")
+momentumScale = input(1.0, "Normalized-return scale", min = 0.1, max = 5, step = 0.1, group = "05. Momentum")
+momentumDeltaLookback = input(3, "Momentum-change lookback", min = 1, max = 20, step = 1, group = "05. Momentum")
+momentumDeltaScale = input(0.5, "Momentum-change scale", min = 0.1, max = 2, step = 0.05, group = "05. Momentum")
+
+// 06. Participation
+rvolLookbackDays = input(20, "RVOL historical days", min = 2, max = 100, step = 1, group = "06. Participation")
+participationReturnScale = input(0.5, "Directional-return scale (ATR)", min = 0.1, max = 3, step = 0.1, group = "06. Participation")
+rvolLogScale = input(0.7, "RVOL intensity scale", min = 0.1, max = 3, step = 0.05, group = "06. Participation")
+highRvolThreshold = input(1.5, "High RVOL threshold", min = 1, max = 10, step = 0.1, group = "06. Participation")
+extremeRvolThreshold = input(2.0, "Extreme RVOL threshold", min = 1, max = 20, step = 0.1, group = "06. Participation")
+rvolDisplayCap = input(3.0, "RVOL display cap", min = 1, max = 20, step = 0.25, group = "06. Participation")
+
+// 07. Persistence
+persistenceLength = input(12, "Persistence bars", min = 3, max = 60, step = 1, group = "07. Persistence")
+
+// 08. Volatility
+volatilityShortLength = input(14, "Short ATR length", min = 5, max = 50, step = 1, group = "08. Volatility")
+volatilityLongLength = input(50, "Long ATR length", min = 20, max = 200, step = 1, group = "08. Volatility")
+volatilityZLookback = input(100, "Volatility history", min = 30, max = 500, step = 1, group = "08. Volatility")
+volatilityZScale = input(1.5, "Volatility z-score scale", min = 0.25, max = 5, step = 0.25, group = "08. Volatility")
+
+// 09. Higher Timeframes
+includeHigherTimeframes = input(true, "Include HTF trend in Context", group = "09. Higher Timeframes")
+showHigherTimeframeMatrix = input(true, "Show 1H / 4H / 1D / 1W states", group = "09. Higher Timeframes")
+htfFastEmaLength = input(20, "HTF fast EMA", min = 2, max = 100, step = 1, group = "09. Higher Timeframes")
+htfSlowEmaLength = input(50, "HTF slow EMA", min = 5, max = 300, step = 1, group = "09. Higher Timeframes")
+htfAtrLength = input(14, "HTF ATR length", min = 5, max = 100, step = 1, group = "09. Higher Timeframes")
+htfSlopeLookback = input(3, "HTF EMA slope bars", min = 1, max = 20, step = 1, group = "09. Higher Timeframes")
+htfPathLookback = input(5, "HTF recent-path bars", min = 2, max = 20, step = 1, group = "09. Higher Timeframes")
+htfPersistenceLength = input(6, "HTF persistence bars", min = 3, max = 20, step = 1, group = "09. Higher Timeframes")
+htfSpreadScale = input(0.3, "HTF EMA spread scale (ATR)", min = 0.05, max = 3, step = 0.05, group = "09. Higher Timeframes")
+htfSlopeScale = input(0.12, "HTF EMA slope scale (ATR/bar)", min = 0.02, max = 1, step = 0.01, group = "09. Higher Timeframes")
+htfReturnScale = input(0.85, "HTF path-return scale", min = 0.1, max = 3, step = 0.05, group = "09. Higher Timeframes")
+htfDirectionalThreshold = input(20, "HTF directional threshold", min = 5, max = 50, step = 5, group = "09. Higher Timeframes")
+
+// 10. Visuals
+showContextLine = input(true, "Show Context Direction", group = "10. Visuals")
+showConfidenceLine = input(true, "Show Context Confidence", group = "10. Visuals")
+showRvol = input(true, "Show RVOL columns", group = "10. Visuals")
+showRsiMomentum = input(false, "Show RSI momentum score", group = "10. Visuals")
+showHtfComposite = input(false, "Show HTF composite", group = "10. Visuals")
+showRegimeBackground = input(true, "Subtle regime background", group = "10. Visuals")
+regimeBackgroundTransparency = input(96, "Regime background transparency", min = 85, max = 100, step = 1, group = "10. Visuals")
+
+// 11. Dashboard
+showDashboard = input(true, "Show dashboard", group = "11. Dashboard")
+dashboardMode = input("Detailed", "Dashboard mode", options = ["Detailed", "Compact"], group = "11. Dashboard")
+dashboardPosition = input("top-right", "Dashboard position", options = ["top-right", "top-left", "bottom-right", "bottom-left"], group = "11. Dashboard")
+dashboardSize = input("Small", "Dashboard text size", options = ["Tiny", "Small", "Normal"], group = "11. Dashboard", tooltip = "The table is drawn at the chart's own text size, so this setting changes nothing on this chart.")
+
+// 12. Alerts
+enableAlerts = input(true, "Enable alert conditions", group = "12. Alerts")
+highConfidenceDirectionThreshold = input(55, "High-confidence direction threshold", min = 20, max = 100, step = 5, group = "12. Alerts")
+highConfidenceThreshold = input(60, "High-confidence confidence threshold", min = 20, max = 100, step = 5, group = "12. Alerts")
+contextFailureWindow = input(12, "Strong-regime failure window (bars)", min = 2, max = 50, step = 1, group = "12. Alerts")
+
+// 13. Research
+showLegacyComparison = input(false, "Show v0.1 binary-score comparison", group = "13. Research")
+
+// Palette
+neonPurple = #D946EF
+lightPurple = #C4B5FD
+bullishColor = #22D3EE
+bearishColor = #FB7185
+neutralColor = #A1A1AA
+htfColor = #FBBF24
+legacyColor = #FDE68A
+
+// ---------------------------------------------------------------------------
+// Small scalar helpers
+// ---------------------------------------------------------------------------
+
+// A soft saturation onto (-1, 1), and the same scaled to (-100, 100).
+fn sat(v) => v / (1 + abs(v))
+fn bound(v) => 100 * sat(v)
+
+// The sign, with an absent value read as 0.
+fn sgn(v) => isNone(v) ? 0 : v > 0 ? 1 : v < 0 ? -1 : 0
+
+// Weighted means over the members that exist, absent when none of them do.
+fn wpart(v, w) => isNone(v) ? 0 : v * w
+fn wweight(v, w) => isNone(v) ? 0 : w
+fn weighted2(a, wa, b, wb) =>
+    den = wweight(a, wa) + wweight(b, wb)
+    den > 0 ? (wpart(a, wa) + wpart(b, wb)) / den : none
+fn weighted3(a, wa, b, wb, c, wc) =>
+    den = wweight(a, wa) + wweight(b, wb) + wweight(c, wc)
+    den > 0 ? (wpart(a, wa) + wpart(b, wb) + wpart(c, wc)) / den : none
+fn weighted4(a, wa, b, wb, c, wc, d, wd) =>
+    den = wweight(a, wa) + wweight(b, wb) + wweight(c, wc) + wweight(d, wd)
+    den > 0 ? (wpart(a, wa) + wpart(b, wb) + wpart(c, wc) + wpart(d, wd)) / den : none
+
+// Regime states: -3 strong bear through 3 strong bull, 0 balanced.
+fn rawRegime(score) =>
+    score >= 75 ? 3 : score >= 45 ? 2 : score >= 20 ? 1 : score <= -75 ? -3 : score <= -45 ? -2 : score <= -20 ? -1 : 0
+
+// The hysteresis: a state is held on a weaker score than the one that entered
+// it, so the regime does not flicker around a threshold.
+fn updateRegime(previous, score) =>
+    raw = rawRegime(score)
+    previous == 3 ? (score >= 68 ? 3 : raw) : previous == 2 ? (score >= 75 ? 3 : score >= 38 ? 2 : raw) : previous == 1 ? (score >= 45 ? raw : score >= 14 ? 1 : raw) : previous == -3 ? (score <= -68 ? -3 : raw) : previous == -2 ? (score <= -75 ? -3 : score <= -38 ? -2 : raw) : previous == -1 ? (score <= -45 ? raw : score <= -14 ? -1 : raw) : raw
+
+fn regimeText(state) =>
+    state == 3 ? "STRONG BULL" : state == 2 ? "BULL" : state == 1 ? "BULL LEAN" : state == -3 ? "STRONG BEAR" : state == -2 ? "BEAR" : state == -1 ? "BEAR LEAN" : "BALANCED"
+
+fn regimeColor(state) =>
+    state == 3 ? #39FF88 : state == 2 or state == 1 ? #22D3EE : state == -3 ? #FF4D6D : state == -2 or state == -1 ? #FB7185 : #A1A1AA
+
+fn scoreColor(score) =>
+    isNone(score) ? #A1A1AA : score >= 75 ? #39FF88 : score >= 20 ? #22D3EE : score <= -75 ? #FF4D6D : score <= -20 ? #FB7185 : #A1A1AA
+
+// Rounds halves upward, so -2.5 reads as -2 in the dashboard.
+fn roundHalfUp(v) => floor(v + 0.5)
+fn wholeText(v) => isNone(v) ? "n/a" : text(roundHalfUp(v), 0)
+fn scoreText(v) => isNone(v) ? "n/a" : v > 0 ? "+" + text(roundHalfUp(v), 0) : text(roundHalfUp(v), 0)
+fn ratioText(v) => isNone(v) ? "n/a" : text(v, 2) + "x"
+fn confidenceText(v) => isNone(v) ? "n/a" : v > 65 ? "HIGH" : v >= 35 ? "MOD" : "LOW"
+fn volatilityText(v) =>
+    isNone(v) ? "n/a" : v >= 80 ? "EXTREME" : v >= 60 ? "EXPANDED" : v >= 40 ? "NORMAL" : v >= 20 ? "QUIET" : "CONTRACTED"
+fn componentText(v) =>
+    isNone(v) ? "n/a" : v >= 75 ? "STRONG BULL" : v >= 45 ? "BULL" : v >= 20 ? "BULL LEAN" : v <= -75 ? "STRONG BEAR" : v <= -45 ? "BEAR" : v <= -20 ? "BEAR LEAN" : "BALANCED"
+fn rvolState(v, hi, extreme) => isNone(v) ? "n/a" : v >= extreme ? "EXTREME" : v >= hi ? "HIGH" : v >= 1 ? "NORMAL" : "LOW"
+fn levelsBiasText(direction, confidence) =>
+    isNone(direction) or isNone(confidence) ? "n/a" : confidence < 35 ? "LOW CONVICTION" : direction >= 45 ? "PREFER SUPPORT" : direction <= -45 ? "PREFER RESISTANCE" : direction >= 20 ? "SUPPORT LEAN" : direction <= -20 ? "RESISTANCE LEAN" : "TWO-SIDED"
+fn zonePreference(direction, confidence) =>
+    isNone(direction) or isNone(confidence) ? 0 : confidence < 35 or abs(direction) < 20 ? 0 : direction > 0 ? 1 : -1
+
+// Counts the timeframes leaning one way past the threshold.
+fn present(v) => isNone(v) ? 0 : 1
+fn atLeast(v, t) => isNone(v) ? 0 : v >= t ? 1 : 0
+fn atMost(v, t) => isNone(v) ? 0 : v <= t ? 1 : 0
+fn breadthText(a, b, c, d, threshold) =>
+    available = present(a) + present(b) + present(c) + present(d)
+    bull = atLeast(a, threshold) + atLeast(b, threshold) + atLeast(c, threshold) + atLeast(d, threshold)
+    bear = atMost(a, 0 - threshold) + atMost(b, 0 - threshold) + atMost(c, 0 - threshold) + atMost(d, 0 - threshold)
+    bull > bear ? text(bull, 0) + "/" + text(available, 0) + " BULL" : bear > bull ? text(bear, 0) + "/" + text(available, 0) + " BEAR" : available > 0 ? "MIXED" : "n/a"
+
+// A clock time written as exactly four digits, HHMM, as minutes after
+// midnight. Absent when it is not four digits or not a time of day (hours 00
+// to 23, minutes 00 to 59).
+fn isDigit(c) => str.length(c) == 1 and str.contains("0123456789", c)
+fn clockOf(s) =>
+    fourDigits = str.length(s) == 4 and isDigit(str.substring(s, 0, 1)) and isDigit(str.substring(s, 1, 2)) and isDigit(str.substring(s, 2, 3)) and isDigit(str.substring(s, 3, 4))
+    hh = fourDigits ? toNumber(str.substring(s, 0, 2)) : none
+    mm = fourDigits ? toNumber(str.substring(s, 2, 4)) : none
+    isNone(hh) or isNone(mm) ? none : hh > 23 or mm > 59 ? none : hh * 60 + mm
+
+// ---------------------------------------------------------------------------
+// Session
+// ---------------------------------------------------------------------------
+
+tick = orElse(chart.tickSize, 0.00000001)
+
+// The zone every clock reading below uses. A blank field reads New York
+// time; a name that is not a timezone stops the script with OS6005.
+zoneText = str.trim(timezone)
+sessionZone = zoneText == "" ? "America/New_York" : zoneText
+
+// The regular session as minutes after midnight in the session zone: two
+// four-digit clock times joined by a hyphen, with optional spaces around the
+// hyphen. Anything else (a day list typed into the field, a colon inside a
+// time, an hour of 24) falls back to 09:30 to 16:00.
+sessionParts = str.split(str.trim(session), "-")
+sessionShaped = size(sessionParts) == 2
+parsedOpen = sessionShaped ? clockOf(str.trim(element(sessionParts, 0))) : none
+parsedClose = sessionShaped ? clockOf(str.trim(element(sessionParts, 1))) : none
+sessionReadable = not isNone(parsedOpen) and not isNone(parsedClose)
+rthOpenMinute = sessionReadable ? parsedOpen : 570
+rthCloseMinute = sessionReadable ? parsedClose : 960
+
+// A bar is in the regular session when it opens inside the window, in the
+// session zone, on an allowed weekday. A window that crosses midnight
+// belongs to the weekday it opened on.
+clockMinute = date.hour(time, sessionZone) * 60 + date.minute(time, sessionZone)
+overnight = rthCloseMinute <= rthOpenMinute
+inWindow = overnight ? clockMinute >= rthOpenMinute or clockMinute < rthCloseMinute : clockMinute >= rthOpenMinute and clockMinute < rthCloseMinute
+weekday = date.dayOfWeek(time, sessionZone)
+sessionWeekday = overnight and clockMinute < rthCloseMinute ? (weekday == 1 ? 7 : weekday - 1) : weekday
+dayAllowed = not weekdaysOnly or sessionWeekday <= 5
+inRth = dayAllowed and inWindow
+dayKey = date.startOfDay(time, sessionZone)
+newDay = bar.index == 0 or dayKey != dayKey[1]
+rthStart = inRth and (bar.index == 0 or not inRth[1] or dayKey != dayKey[1])
+
+// The opening range is only meaningful on a chart whose bars are shorter
+// than the range itself.
+barSeconds = orElse(chart.intervalMinutes, 0) * 60
+openingRangeTimeframeWarning = barSeconds > openingRangeMinutes * 60
+
+// ---------------------------------------------------------------------------
+// Normalization
+// ---------------------------------------------------------------------------
+
+trueRangeAverage = atr(atrLength)
+atrSafe = max(orElse(trueRangeAverage, 0), tick)
+atrPct = atrSafe / max(close, tick)
+
+// ---------------------------------------------------------------------------
+// Session VWAP, session open and the opening range
+// ---------------------------------------------------------------------------
+
+var currentOpen = none
+var sumPriceVolume = 0.0
+var sumVolume = 0.0
+var rangeEnd = none
+var rangeHigh = none
+var rangeLow = none
+var finalized = false
+
+if rthStart
+    currentOpen = open
+    sumPriceVolume = 0.0
+    sumVolume = 0.0
+    rangeEnd = time + openingRangeMinutes * 60000
+    rangeHigh = high
+    rangeLow = low
+    finalized = false
+
+// With no volume the weight is 1, so the average is plain rather than blank.
+vwapWeight = volume > 0 ? volume : 1
+if not isNone(vwapSource)
+    sumPriceVolume += vwapSource * vwapWeight
+    sumVolume += vwapWeight
+sessionVwap = sumVolume > 0 ? sumPriceVolume / sumVolume : none
+sessionOpen = currentOpen
+
+inOpeningRange = inRth and not isNone(rangeEnd) and time < rangeEnd
+if inOpeningRange and not rthStart
+    rangeHigh = max(rangeHigh, high)
+    rangeLow = min(rangeLow, low)
+if inRth and not inOpeningRange and not finalized and not isNone(rangeEnd)
+    finalized = true
+openingRangeFinal = finalized
+openingRangeHigh = rangeHigh
+openingRangeLow = rangeLow
+
+// ---------------------------------------------------------------------------
+// Trend
+// ---------------------------------------------------------------------------
+
+fastEma = ema(close, fastEmaLength)
+slowEma = ema(close, slowEmaLength)
+spreadNorm = (fastEma - slowEma) / atrSafe
+slowSlopeNorm = (slowEma - slowEma[trendSlopeLookback]) / atrSafe
+fastSlopeNorm = (fastEma - fastEma[trendSlopeLookback]) / atrSafe
+trendScore = clamp(0.55 * bound(spreadNorm / trendSpreadScale) + 0.3 * bound(slowSlopeNorm / trendSlopeScale) + 0.15 * bound(fastSlopeNorm / trendSlopeScale), -100, 100)
+
+// ---------------------------------------------------------------------------
+// Structure
+// ---------------------------------------------------------------------------
+
+vwapScore = inRth and not isNone(sessionVwap) ? bound(((close - sessionVwap) / atrSafe) / vwapDistanceScale) : none
+
+openingRangeScore = none
+if inRth and openingRangeFinal and not openingRangeTimeframeWarning and not isNone(openingRangeHigh) and not isNone(openingRangeLow)
+    rangeWidth = max(openingRangeHigh - openingRangeLow, tick)
+    if close > openingRangeHigh
+        openingRangeScore = 30 + 70 * sat(((close - openingRangeHigh) / atrSafe) / openingRangeBreakScale)
+    else if close < openingRangeLow
+        openingRangeScore = -30 - 70 * sat(((openingRangeLow - close) / atrSafe) / openingRangeBreakScale)
+    else
+        openingRangeScore = 30 * clamp((2 * (close - openingRangeLow)) / rangeWidth - 1, -1, 1)
+
+openScore = inRth and not isNone(sessionOpen) ? bound(((close - sessionOpen) / atrSafe) / sessionOpenScale) : none
+structureScore = weighted3(vwapScore, 0.6, openingRangeScore, 0.3, openScore, 0.1)
+
+// ---------------------------------------------------------------------------
+// Momentum
+// ---------------------------------------------------------------------------
+
+rsiValue = rsi(rsiSource, rsiLength)
+rsiMomentumScore = bound((rsiValue - 50) / 20)
+momentumBase = close[momentumLookback]
+momentumReturn = momentumBase > 0 ? log(close / momentumBase) : none
+expectedMove = atrPct * sqrt(momentumLookback)
+normalizedReturn = not isNone(momentumReturn) and expectedMove > 0 ? momentumReturn / expectedMove : none
+returnMomentumScore = bound(normalizedReturn / momentumScale)
+deltaRaw = (returnMomentumScore - returnMomentumScore[momentumDeltaLookback]) / 100
+deltaScore = bound(deltaRaw / momentumDeltaScale)
+momentumScore = weighted3(returnMomentumScore, 0.55, rsiMomentumScore, 0.35, deltaScore, 0.1)
+
+// ---------------------------------------------------------------------------
+// Relative volume, from the chart's own sessions
+// ---------------------------------------------------------------------------
+
+// Each regular-session bar takes a slot by its position in the session. Its
+// volume is compared with the mean volume at the same slot over the previous
+// sessions, and the volume so far today with the mean volume so far at that
+// slot. A session too short to reach the slot does not contribute. The
+// sessions are kept as flat arrays: where each starts and how long it is.
+var slotVolume: array<number> = []
+var slotCumulative: array<number> = []
+var sessionFirst: array<number> = []
+var sessionLength: array<number> = []
+var lastRthDay = none
+
+barRvol = none
+cumulativeRvol = none
+if inRth
+    if size(sessionFirst) == 0 or dayKey != lastRthDay
+        lastRthDay = dayKey
+        push(sessionFirst, size(slotVolume))
+        push(sessionLength, 0)
+    barVolume = volume > 0 ? volume : 0
+    current = size(sessionFirst) - 1
+    slot = element(sessionLength, current)
+    soFar = (slot > 0 ? element(slotCumulative, size(slotCumulative) - 1) : 0) + barVolume
+    push(slotVolume, barVolume)
+    push(slotCumulative, soFar)
+    set(sessionLength, current, slot + 1)
+
+    sumBar = 0.0
+    sumCumulative = 0.0
+    contributing = 0
+    oldest = max(0, size(sessionFirst) - 1 - rvolLookbackDays)
+    for d = size(sessionFirst) - 2 to oldest step -1
+        if element(sessionLength, d) > slot
+            k = element(sessionFirst, d) + slot
+            sumBar += element(slotVolume, k)
+            sumCumulative += element(slotCumulative, k)
+            contributing += 1
+    if contributing > 0
+        meanBar = sumBar / contributing
+        meanCumulative = sumCumulative / contributing
+        if meanBar > 0
+            barRvol = barVolume / meanBar
+        if meanCumulative > 0
+            cumulativeRvol = soFar / meanCumulative
+
+// ---------------------------------------------------------------------------
+// Participation
+// ---------------------------------------------------------------------------
+
+barRange = max(high - low, max(atrSafe * 0.02, tick))
+closeLocation = clamp((2 * close - high - low) / barRange, -1, 1)
+oneBarReturnNorm = close[1] > 0 and atrPct > 0 ? log(close / close[1]) / atrPct : none
+returnDirection = isNone(oneBarReturnNorm) ? 0 : sat(oneBarReturnNorm / participationReturnScale)
+directionalProxy = clamp(0.65 * closeLocation + 0.35 * returnDirection, -1, 1)
+barIntensity = barRvol > 0 ? sat(max(log(barRvol), 0) / rvolLogScale) : none
+cumulativeIntensity = cumulativeRvol > 0 ? sat(max(log(cumulativeRvol), 0) / rvolLogScale) : none
+intensity = weighted2(barIntensity, 0.65, cumulativeIntensity, 0.35)
+participationScore = isNone(intensity) ? none : 100 * directionalProxy * intensity
+participationQuality = isNone(intensity) ? none : 100 * intensity
+
+// ---------------------------------------------------------------------------
+// Persistence
+// ---------------------------------------------------------------------------
+
+var rthBarCount = 0
+if rthStart
+    rthBarCount = 1
+else if inRth
+    rthBarCount += 1
+else
+    rthBarCount = 0
+
+vwapPersistenceInput = inRth and not isNone(sessionVwap) ? sgn(close - sessionVwap) : 0
+emaPersistenceInput = inRth ? sgn(fastEma - slowEma) : 0
+returnPersistenceInput = inRth and close[1] > 0 ? sgn(log(close / close[1])) : 0
+vwapPersistenceAverage = sma(vwapPersistenceInput, persistenceLength)
+emaPersistenceAverage = sma(emaPersistenceInput, persistenceLength)
+returnPersistenceAverage = sma(returnPersistenceInput, persistenceLength)
+
+// Early in a session fewer bars than the window have happened, so the mean
+// is rescaled by how many of them are real.
+persistenceDivisor = max(min(persistenceLength, rthBarCount), 1)
+persistenceRescale = persistenceLength / persistenceDivisor
+persistenceBlend = weighted3(vwapPersistenceAverage * persistenceRescale, 0.4, emaPersistenceAverage * persistenceRescale, 0.35, returnPersistenceAverage * persistenceRescale, 0.25)
+persistenceScore = inRth and not isNone(persistenceBlend) ? clamp(100 * persistenceBlend, -100, 100) : none
+
+// ---------------------------------------------------------------------------
+// Volatility
+// ---------------------------------------------------------------------------
+
+shortAtr = atr(volatilityShortLength)
+longAtr = atr(volatilityLongLength)
+volatilityRatio = longAtr > 0 ? shortAtr / longAtr : none
+volatilityMean = sma(volatilityRatio, volatilityZLookback)
+volatilityDeviation = stdev(volatilityRatio, volatilityZLookback)
+volatilityZ = volatilityDeviation > 0 ? (volatilityRatio - volatilityMean) / volatilityDeviation : none
+volatilityScore = isNone(volatilityZ) ? none : clamp(50 + 50 * sat(volatilityZ / volatilityZScale), 0, 100)
+volatilityRelevance = clamp(100 - 1.5 * abs(volatilityScore - 65), 0, 100)
+
+// ---------------------------------------------------------------------------
+// Higher timeframes, folded from the chart's own bars
+// ---------------------------------------------------------------------------
+
+// One higher timeframe. The chart's bars are folded into buckets by `key`.
+// When a bucket closes, its high, low and close extend the higher-timeframe
+// series, and the trend reading of that closed bucket is what every chart
+// bar of the next bucket reports, so no bar ever reads an unfinished bucket.
+// Returns [direction, quality]. Every setting arrives as an argument: an
+// input read directly inside a function body is absent in this version.
+fn foldedTrend(key, atrLen, fastLen, slowLen, rsiLen, slopeLen, pathLen, sideLen, spreadScale, slopeScale, returnScale) =>
+    var bucketKey = none
+    var bucketHigh = none
+    var bucketLow = none
+    var bucketClose = none
+    var direction = none
+    var quality = none
+    var closes: array<number> = []
+    var fasts: array<number> = []
+    var slows: array<number> = []
+    var moves: array<number> = []
+    var sides: array<number> = []
+    var trSum = 0.0
+    var atrValue = none
+    var fastSum = 0.0
+    var fastValue = none
+    var slowSum = 0.0
+    var slowValue = none
+    var upSum = 0.0
+    var downSum = 0.0
+    var upAverage = none
+    var downAverage = none
+    if isNone(bucketKey) or key != bucketKey
+        if not isNone(bucketKey)
+            j = size(closes)
+            h = bucketHigh
+            l = bucketLow
+            c = bucketClose
+            previousClose = j > 0 ? element(closes, j - 1) : none
+
+            // Average true range, a simple mean of the first window then
+            // smoothed with weight 1 / length.
+            tr = j == 0 ? h - l : max(h - l, max(abs(h - previousClose), abs(l - previousClose)))
+            if j < atrLen
+                trSum += tr
+                if j == atrLen - 1
+                    atrValue = trSum / atrLen
+            else
+                atrValue = (atrValue * (atrLen - 1) + tr) / atrLen
+
+            // Exponential means seeded with the simple mean of their first window.
+            fastAlpha = 2 / (fastLen + 1)
+            if j < fastLen
+                fastSum += c
+                if j == fastLen - 1
+                    fastValue = fastSum / fastLen
+            else
+                fastValue = fastAlpha * c + (1 - fastAlpha) * fastValue
+            slowAlpha = 2 / (slowLen + 1)
+            if j < slowLen
+                slowSum += c
+                if j == slowLen - 1
+                    slowValue = slowSum / slowLen
+            else
+                slowValue = slowAlpha * c + (1 - slowAlpha) * slowValue
+
+            // Relative strength over the bucket closes.
+            rsiNow = none
+            if j > 0
+                move = c - previousClose
+                up = max(move, 0)
+                down = max(0 - move, 0)
+                if j <= rsiLen
+                    upSum += up
+                    downSum += down
+                    if j == rsiLen
+                        upAverage = upSum / rsiLen
+                        downAverage = downSum / rsiLen
+                else
+                    upAverage = (upAverage * (rsiLen - 1) + up) / rsiLen
+                    downAverage = (downAverage * (rsiLen - 1) + down) / rsiLen
+                if j >= rsiLen
+                    rsiNow = downAverage == 0 ? 100 : upAverage == 0 ? 0 : 100 - 100 / (1 + upAverage / downAverage)
+
+            push(closes, c)
+            push(fasts, orElse(fastValue, 0))
+            push(slows, orElse(slowValue, 0))
+            push(moves, j > 0 ? abs(c - previousClose) : 0)
+            push(sides, sgn(c - fastValue))
+
+            atrSafeHtf = max(isNone(atrValue) ? tick : atrValue, tick)
+            spreadScore = bound(((fastValue - slowValue) / atrSafeHtf) / spreadScale)
+
+            back = j - slopeLen
+            slowBack = back >= slowLen - 1 ? element(slows, back) : none
+            fastBack = back >= fastLen - 1 ? element(fasts, back) : none
+            slowSlope = back >= 0 ? ((slowValue - slowBack) / max(slopeLen, 1)) / atrSafeHtf : none
+            fastSlope = back >= 0 ? ((fastValue - fastBack) / max(slopeLen, 1)) / atrSafeHtf : none
+            slopeScore = weighted2(bound(slowSlope / slopeScale), 0.65, bound(fastSlope / slopeScale), 0.35)
+
+            from = j - pathLen
+            pathMove = from >= 0 ? c - element(closes, from) : none
+            returnScore = bound((pathMove / (atrSafeHtf * sqrt(pathLen))) / returnScale)
+
+            // The mean absolute move over the path window, absent until the
+            // window holds no first bucket (which has no move).
+            pathTotal = 0.0
+            if j >= pathLen
+                for k = j - pathLen + 1 to j
+                    pathTotal += element(moves, k)
+            pathLength = j >= pathLen ? (pathTotal / pathLen) * pathLen : none
+            efficiencyScore = not isNone(pathLength) and pathLength > tick ? clamp((100 * pathMove) / pathLength, -100, 100) : none
+
+            sideTotal = 0.0
+            if j >= sideLen - 1
+                for k = j - sideLen + 1 to j
+                    sideTotal += element(sides, k)
+            persistenceHtf = j >= sideLen - 1 ? 100 * (sideTotal / sideLen) : none
+            rsiScore = bound((rsiNow - 50) / 20)
+
+            dir = 0.28 * spreadScore + 0.22 * slopeScore + 0.22 * returnScore + 0.13 * efficiencyScore + 0.1 * persistenceHtf + 0.05 * rsiScore
+            magnitude = 0.28 * abs(spreadScore) + 0.22 * abs(slopeScore) + 0.22 * abs(returnScore) + 0.13 * abs(efficiencyScore) + 0.1 * abs(persistenceHtf) + 0.05 * abs(rsiScore)
+            coherence = magnitude > 0 ? clamp(abs(dir) / magnitude, 0, 1) : 0
+            direction = clamp(dir, -100, 100)
+            quality = clamp(magnitude * (0.6 + 0.4 * coherence), 0, 100)
+        bucketKey = key
+        bucketHigh = high
+        bucketLow = low
+        bucketClose = close
+    else
+        bucketHigh = max(bucketHigh, high)
+        bucketLow = min(bucketLow, low)
+        bucketClose = close
+    [direction, quality]
+
+// Intraday buckets are anchored to the first bar of each day, the way a
+// session-aligned higher-timeframe bar lines up with the open.
+var dayAnchor = none
+if newDay
+    dayAnchor = time
+hourKey = dayKey + floor((time - dayAnchor) / 3600000)
+fourHourKey = dayKey + floor((time - dayAnchor) / 14400000)
+weekKey = date.startOfWeek(time, sessionZone)
+
+hourTrend = foldedTrend(hourKey, htfAtrLength, htfFastEmaLength, htfSlowEmaLength, rsiLength, htfSlopeLookback, htfPathLookback, htfPersistenceLength, htfSpreadScale, htfSlopeScale, htfReturnScale)
+fourHourTrend = foldedTrend(fourHourKey, htfAtrLength, htfFastEmaLength, htfSlowEmaLength, rsiLength, htfSlopeLookback, htfPathLookback, htfPersistenceLength, htfSpreadScale, htfSlopeScale, htfReturnScale)
+dayTrend = foldedTrend(dayKey, htfAtrLength, htfFastEmaLength, htfSlowEmaLength, rsiLength, htfSlopeLookback, htfPathLookback, htfPersistenceLength, htfSpreadScale, htfSlopeScale, htfReturnScale)
+weekTrend = foldedTrend(weekKey, htfAtrLength, htfFastEmaLength, htfSlowEmaLength, rsiLength, htfSlopeLookback, htfPathLookback, htfPersistenceLength, htfSpreadScale, htfSlopeScale, htfReturnScale)
+htf1h = hourTrend[0]
+htf4h = fourHourTrend[0]
+htf1d = dayTrend[0]
+htf1w = weekTrend[0]
+quality1h = hourTrend[1]
+quality4h = fourHourTrend[1]
+quality1d = dayTrend[1]
+quality1w = weekTrend[1]
+
+htfNumerator = wpart(htf1h, 0.35) + wpart(htf4h, 0.3) + wpart(htf1d, 0.22) + wpart(htf1w, 0.13)
+htfDenominator = wweight(htf1h, 0.35) + wweight(htf4h, 0.3) + wweight(htf1d, 0.22) + wweight(htf1w, 0.13)
+htfMagnitude = wpart(abs(htf1h), 0.35) + wpart(abs(htf4h), 0.3) + wpart(abs(htf1d), 0.22) + wpart(abs(htf1w), 0.13)
+htfQualityNumerator = wpart(quality1h, 0.35) + wpart(quality4h, 0.3) + wpart(quality1d, 0.22) + wpart(quality1w, 0.13)
+htfQualityDenominator = wweight(quality1h, 0.35) + wweight(quality4h, 0.3) + wweight(quality1d, 0.22) + wweight(quality1w, 0.13)
+htfScore = htfDenominator > 0 ? htfNumerator / htfDenominator : none
+htfCoherence = htfMagnitude > 0 ? clamp(abs(htfNumerator) / htfMagnitude, 0, 1) : none
+htfAverageMagnitude = htfDenominator > 0 ? htfMagnitude / htfDenominator : none
+htfAverageQuality = htfQualityDenominator > 0 ? htfQualityNumerator / htfQualityDenominator : none
+htfConvictionBase = weighted2(htfAverageMagnitude, 0.45, htfAverageQuality, 0.55)
+htfConviction = not isNone(htfConvictionBase) and not isNone(htfCoherence) ? clamp(htfConvictionBase * htfCoherence, 0, 100) : none
+htfTactical = weighted2(htf1h, 0.55, htf4h, 0.45)
+htfMacro = weighted2(htf1d, 0.65, htf1w, 0.35)
+
+// ---------------------------------------------------------------------------
+// The context blend
+// ---------------------------------------------------------------------------
+
+localWeightScale = includeHigherTimeframes ? 0.85 : 1
+trendWeight = 0.26 * localWeightScale
+structureWeight = 0.24 * localWeightScale
+momentumWeight = 0.21 * localWeightScale
+participationWeight = 0.16 * localWeightScale
+persistenceWeight = 0.13 * localWeightScale
+htfWeight = includeHigherTimeframes ? 0.15 : 0
+htfMember = htfWeight > 0 ? htfScore : none
+
+contextNumerator = wpart(trendScore, trendWeight) + wpart(structureScore, structureWeight) + wpart(momentumScore, momentumWeight) + wpart(participationScore, participationWeight) + wpart(persistenceScore, persistenceWeight) + wpart(htfMember, htfWeight)
+contextDenominator = wweight(trendScore, trendWeight) + wweight(structureScore, structureWeight) + wweight(momentumScore, momentumWeight) + wweight(participationScore, participationWeight) + wweight(persistenceScore, persistenceWeight) + wweight(htfMember, htfWeight)
+contextMagnitude = wpart(abs(trendScore), trendWeight) + wpart(abs(structureScore), structureWeight) + wpart(abs(momentumScore), momentumWeight) + wpart(abs(participationScore), participationWeight) + wpart(abs(persistenceScore), persistenceWeight) + wpart(abs(htfMember), htfWeight)
+contextDirection = contextDenominator > 0 ? clamp(contextNumerator / contextDenominator, -100, 100) : none
+contextCoherence = contextMagnitude > 0 ? clamp(abs(contextNumerator) / contextMagnitude, 0, 1) : 0
+contextAverageMagnitude = contextDenominator > 0 ? contextMagnitude / contextDenominator : 0
+agreement = clamp(contextAverageMagnitude * contextCoherence, 0, 100)
+confidenceBlend = weighted4(agreement, 0.45, participationQuality, 0.3, volatilityRelevance, 0.15, abs(persistenceScore), 0.1)
+contextConfidence = isNone(confidenceBlend) ? none : clamp(confidenceBlend, 0, 100)
+
+// ---------------------------------------------------------------------------
+// The regime latch
+// ---------------------------------------------------------------------------
+
+var regime = 0
+if not isNone(contextDirection)
+    regime = updateRegime(regime, contextDirection)
+
+// ---------------------------------------------------------------------------
+// The v0.1 binary comparison: five votes of -1, 0 or +1
+// ---------------------------------------------------------------------------
+
+vwapVote = not inRth or isNone(sessionVwap) ? 0 : close > sessionVwap ? 1 : close < sessionVwap ? -1 : 0
+rsiVote = isNone(rsiValue) ? 0 : rsiValue >= 55 ? 1 : rsiValue <= 45 ? -1 : 0
+emaVote = fastEma > slowEma ? 1 : fastEma < slowEma ? -1 : 0
+orVote = not openingRangeFinal or openingRangeTimeframeWarning ? 0 : close > openingRangeHigh ? 1 : close < openingRangeLow ? -1 : 0
+participationVote = isNone(barRvol) or barRvol < highRvolThreshold ? 0 : close > open ? 1 : close < open ? -1 : 0
+legacyScore = vwapVote + rsiVote + emaVote + orVote + participationVote
+
+// ---------------------------------------------------------------------------
+// Drawing
+// ---------------------------------------------------------------------------
+
+rvolColumn = showRvol and not isNone(barRvol) ? min(barRvol / rvolDisplayCap, 1) * 100 : none
+rvolColor = isNone(participationScore) ? withAlpha(neutralColor, 0.12) : participationScore >= 0 ? withAlpha(bullishColor, 0.18) : withAlpha(bearishColor, 0.18)
+plot(rvolColumn, "RVOL normalized", rvolColor, style = "column")
+baselinePlot = plot(0, "Context Fill Baseline", withAlpha(neutralColor, 0), width = 1)
+contextPlot = plot(showContextLine ? contextDirection : none, "Context Direction", regimeColor(regime), width = 3)
+plot(showConfidenceLine ? contextConfidence : none, "Confidence Line", withAlpha(lightPurple, 0.85), width = 1)
+plot(showRsiMomentum ? rsiMomentumScore : none, "RSI Momentum", withAlpha(neonPurple, 0.75), width = 1)
+plot(showHtfComposite ? htfScore : none, "HTF Composite", withAlpha(htfColor, 0.8), width = 2)
+plot(showLegacyComparison ? legacyScore * 20 : none, "Legacy v0.1 Score x20", withAlpha(legacyColor, 0.7), width = 1)
+fill(contextPlot, baselinePlot, colorUp = bullishColor, colorDown = bearishColor, opacity = 0.09)
+
+level(75, "+75 Strong Bull", #39FF884D, style = "dotted")
+level(45, "+45 Bull", #22D3EE38, style = "dotted")
+level(20, "+20 Bull Lean", #22D3EE1F, style = "dotted")
+level(0, "Balanced", #A1A1AA73, style = "dashed")
+level(-20, "-20 Bear Lean", #FB71851F, style = "dotted")
+level(-45, "-45 Bear", #FB718538, style = "dotted")
+level(-75, "-75 Strong Bear", #FF4D6D4D, style = "dotted")
+
+backgroundTransparency = max(85, min(100, floor(regimeBackgroundTransparency)))
+backgroundAlpha = (100 - backgroundTransparency) / 100
+background(showRegimeBackground and backgroundAlpha > 0 ? withAlpha(regimeColor(regime), backgroundAlpha) : none)
+
+// ---------------------------------------------------------------------------
+// Dashboard, on the newest bar, in the corner the setting picks
+// ---------------------------------------------------------------------------
+
+panelTopRight = table("Context dashboard, top right", 16, 3, position = "topRight")
+panelTopLeft = table("Context dashboard, top left", 16, 3, position = "topLeft")
+panelBottomRight = table("Context dashboard, bottom right", 16, 3, position = "bottomRight")
+panelBottomLeft = table("Context dashboard, bottom left", 16, 3, position = "bottomLeft")
+
+fn labelCell(panel, row, words, alt) =>
+    cell(panel, row, 0, words, textColor = #A1A1AA, bgColor = alt ? #18121F : #111118, align = "left")
+fn valueCell(panel, row, col, words, shade, alt) =>
+    cell(panel, row, col, words, textColor = shade, bgColor = alt ? #18121F : #111118, align = "right")
+fn componentRow(panel, row, name, v, alt) =>
+    labelCell(panel, row, name, alt)
+    valueCell(panel, row, 1, scoreText(v), scoreColor(v), alt)
+    valueCell(panel, row, 2, componentText(v), scoreColor(v), alt)
+
+if bar.isLast and showDashboard
+    panel = dashboardPosition == "top-left" ? panelTopLeft : dashboardPosition == "bottom-right" ? panelBottomRight : dashboardPosition == "bottom-left" ? panelBottomLeft : panelTopRight
+    highRvol = max(1, min(10, highRvolThreshold))
+    extremeRvol = max(1, min(20, extremeRvolThreshold))
+    breadth = breadthText(htf1h, htf4h, htf1d, htf1w, max(5, min(50, htfDirectionalThreshold)))
+    zoneSide = zonePreference(contextDirection, contextConfidence)
+    headColor = withAlpha(neonPurple, 0.88)
+    rvolHot = not isNone(barRvol) and barRvol >= highRvol
+    volatilityHot = not isNone(volatilityScore) and volatilityScore >= 60
+
+    cell(panel, 0, 0, "OPTIONS CONTEXT", textColor = #000000, bgColor = headColor, align = "left")
+    cell(panel, 0, 1, "v0.2.1", textColor = #000000, bgColor = headColor, align = "right")
+    cell(panel, 0, 2, regimeText(regime), textColor = #000000, bgColor = headColor, align = "right")
+    labelCell(panel, 1, "Direction", false)
+    valueCell(panel, 1, 1, scoreText(contextDirection), scoreColor(contextDirection), false)
+    valueCell(panel, 1, 2, regimeText(regime), regimeColor(regime), false)
+    labelCell(panel, 2, "Confidence", true)
+    valueCell(panel, 2, 1, wholeText(contextConfidence), lightPurple, true)
+    valueCell(panel, 2, 2, confidenceText(contextConfidence), lightPurple, true)
+    labelCell(panel, 3, "Levels Bias", false)
+    valueCell(panel, 3, 1, "", neutralColor, false)
+    valueCell(panel, 3, 2, levelsBiasText(contextDirection, contextConfidence), zoneSide > 0 ? bullishColor : zoneSide < 0 ? bearishColor : neutralColor, false)
+
+    if dashboardMode != "Compact"
+        componentRow(panel, 4, "Trend", trendScore, true)
+        componentRow(panel, 5, "Structure", structureScore, false)
+        componentRow(panel, 6, "Momentum", momentumScore, true)
+        componentRow(panel, 7, "Participation", participationScore, false)
+        componentRow(panel, 8, "Persistence", persistenceScore, true)
+        componentRow(panel, 9, "HTF Composite", htfScore, false)
+        labelCell(panel, 10, "HTF Conviction", true)
+        valueCell(panel, 10, 1, wholeText(htfConviction), lightPurple, true)
+        valueCell(panel, 10, 2, breadth, scoreColor(htfScore), true)
+        row = 11
+        if showHigherTimeframeMatrix
+            labelCell(panel, 11, "1H / 4H", false)
+            valueCell(panel, 11, 1, scoreText(htf1h) + " / " + scoreText(htf4h), neutralColor, false)
+            valueCell(panel, 11, 2, componentText(htf1h) + " / " + componentText(htf4h), scoreColor(htfTactical), false)
+            labelCell(panel, 12, "1D / 1W", true)
+            valueCell(panel, 12, 1, scoreText(htf1d) + " / " + scoreText(htf1w), neutralColor, true)
+            valueCell(panel, 12, 2, componentText(htf1d) + " / " + componentText(htf1w), scoreColor(htfMacro), true)
+            row = 13
+        labelCell(panel, row, "RVOL Bar / Cum", false)
+        valueCell(panel, row, 1, ratioText(barRvol) + " / " + ratioText(cumulativeRvol), neutralColor, false)
+        valueCell(panel, row, 2, rvolState(barRvol, highRvol, extremeRvol), rvolHot ? neonPurple : neutralColor, false)
+        labelCell(panel, row + 1, "Volatility", true)
+        valueCell(panel, row + 1, 1, wholeText(volatilityScore), neutralColor, true)
+        valueCell(panel, row + 1, 2, volatilityText(volatilityScore), volatilityHot ? neonPurple : neutralColor, true)
+        orText = openingRangeTimeframeWarning ? "OR: LOWER TF" : openingRangeFinal ? "OR: FINAL" : inOpeningRange ? "OR: FORMING" : "OR: n/a"
+        labelCell(panel, row + 2, "Session", false)
+        valueCell(panel, row + 2, 1, inRth ? "RTH" : "OUTSIDE", inRth ? bullishColor : neutralColor, false)
+        valueCell(panel, row + 2, 2, orText, neutralColor, false)
+    else
+        labelCell(panel, 4, "HTF", true)
+        valueCell(panel, 4, 1, scoreText(htfScore), scoreColor(htfScore), true)
+        valueCell(panel, 4, 2, isNone(htfConviction) ? "n/a" : "Q " + wholeText(htfConviction) + " - " + breadth, scoreColor(htfScore), true)
+        labelCell(panel, 5, "RVOL", false)
+        valueCell(panel, 5, 1, ratioText(barRvol), neutralColor, false)
+        valueCell(panel, 5, 2, rvolState(barRvol, highRvol, extremeRvol), rvolHot ? neonPurple : neutralColor, false)
+        labelCell(panel, 6, "Volatility", true)
+        valueCell(panel, 6, 1, wholeText(volatilityScore), neutralColor, true)
+        valueCell(panel, 6, 2, volatilityText(volatilityScore), volatilityHot ? neonPurple : neutralColor, true)
+
+// ---------------------------------------------------------------------------
+// Alerts
+// ---------------------------------------------------------------------------
+
+hasPrevious = bar.index >= 1
+enteredStrongBull = hasPrevious and regime == 3 and regime[1] != 3
+enteredStrongBear = hasPrevious and regime == -3 and regime[1] != -3
+turnedBullish = hasPrevious and regime > 0 and regime[1] <= 0
+turnedBearish = hasPrevious and regime < 0 and regime[1] >= 0
+
+directionGate = max(20, min(100, highConfidenceDirectionThreshold))
+confidenceGate = max(20, min(100, highConfidenceThreshold))
+highConfidenceRaw = isNone(contextDirection) or isNone(contextConfidence) ? false : abs(contextDirection) >= directionGate and contextConfidence >= confidenceGate
+reachedHighConfidence = hasPrevious and highConfidenceRaw and not highConfidenceRaw[1]
+
+alertRvol = max(1, min(10, highRvolThreshold))
+alignedRaw = isNone(barRvol) or isNone(participationScore) or isNone(contextDirection) ? false : barRvol >= alertRvol and abs(contextDirection) >= 20 and sgn(participationScore) == sgn(contextDirection)
+alignedSurge = hasPrevious and alignedRaw and not alignedRaw[1]
+
+// A failure is direction falling back through +/-20 within the window after
+// the most recent entry into the strong regime on that side.
+failureWindow = max(2, min(50, floor(contextFailureWindow)))
+barsSinceStrongBull = barsSince(enteredStrongBull)
+barsSinceStrongBear = barsSince(enteredStrongBear)
+directionKnown = hasPrevious and not isNone(contextDirection) and not isNone(contextDirection[1])
+bullFailure = directionKnown and contextDirection < 20 and contextDirection[1] >= 20 and not isNone(barsSinceStrongBull) and barsSinceStrongBull <= failureWindow
+bearFailure = directionKnown and contextDirection > -20 and contextDirection[1] <= -20 and not isNone(barsSinceStrongBear) and barsSinceStrongBear <= failureWindow
+
+if enableAlerts and enteredStrongBull
+    alert("Entered Strong Bull context.", id = "context-strong-bull", title = "Strong Bull Context")
+if enableAlerts and enteredStrongBear
+    alert("Entered Strong Bear context.", id = "context-strong-bear", title = "Strong Bear Context")
+if enableAlerts and turnedBullish
+    alert("Transitioned into bullish context.", id = "context-bullish-transition", title = "Bullish Context Transition")
+if enableAlerts and turnedBearish
+    alert("Transitioned into bearish context.", id = "context-bearish-transition", title = "Bearish Context Transition")
+if enableAlerts and reachedHighConfidence
+    alert("Reached a high-confidence directional context.", id = "context-high-confidence", title = "High-Confidence Directional Context")
+if enableAlerts and alignedSurge
+    alert("High-RVOL bar aligned with Context Direction.", id = "context-aligned-rvol", title = "Aligned RVOL Surge")
+if enableAlerts and bullFailure
+    alert("Lost a recent Strong Bull context inside the failure window.", id = "context-bull-failure", title = "Bull Context Failure")
+if enableAlerts and bearFailure
+    alert("Lost a recent Strong Bear context inside the failure window.", id = "context-bear-failure", title = "Bear Context Failure")

@@ -1,0 +1,45 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © openalgo
+// Original work (c) mihakralj, MIT License
+
+version 1
+study("Notch Filter (NOTCH)", overlay = true, precision = 2)
+
+source = input(close, "Source")
+period = input(14, "Period to Remove", min = 2, max = 5000, step = 1, tooltip = "Cycle length placed at the centre of the notch.")
+bandwidth = input(0.3, "Relative Bandwidth", min = 0.01, max = 0.99, step = 0.01, tooltip = "Width of the notch as a fraction of its centre frequency. Narrow removes less either side.")
+
+// Second-order notch coefficients centred on the chosen cycle length. The
+// half-bandwidth angle is held inside a safe range before its tangent.
+omega = 2 * math.pi / period
+bwAbs = bandwidth * omega
+tanArg = max(min(bwAbs / 2, math.pi * 0.499), 0.0001)
+tanBwHalf = math.tan(tanArg)
+pole = (1 - tanBwHalf) / (1 + tanBwHalf)
+cosOmega = math.cos(omega)
+a1 = -2 * cosOmega * pole
+a2 = pole * pole
+b0 = (1 + pole * pole) / 2
+b1 = a1
+b2 = b0
+
+x0 = orElse(source, 0)
+
+// The delay line holds the last two inputs and outputs. On the first bar it
+// is filled with the first price, so the filter starts at rest.
+var x1 = 0.0
+var x2 = 0.0
+var y1 = 0.0
+var y2 = 0.0
+if bar.index == 0
+    x1 = x0
+    x2 = x0
+    y1 = x0
+    y2 = x0
+y0 = b0 * x0 + b1 * x1 + b2 * x2 - a1 * y1 - a2 * y2
+y2 = y1
+y1 = y0
+x2 = x1
+x1 = x0
+
+plot(y0, "Notch", #ffeb3b, width = 2)

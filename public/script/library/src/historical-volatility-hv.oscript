@@ -1,0 +1,31 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © openalgo
+// Original work (c) mihakralj, MIT License
+
+version 1
+study("Historical Volatility (HV)", precision = 4)
+
+source = input(close, "Source")
+length = input(20, "Length", min = 2, max = 5000, step = 1, tooltip = "Period for calculating standard deviation of returns.")
+annualize = input(true, "Annualize Volatility", tooltip = "Annualize the volatility output.")
+annualPeriods = input(252, "Annual Periods", min = 1, max = 100000, step = 1, tooltip = "Number of periods in a year for annualization (252 for daily, 52 for weekly).")
+
+// The log return, absent on the first bar.
+logReturn = source[1] != 0 and source / source[1] > 0 ? log(source / source[1]) : none
+
+// Population standard deviation of the returns in the window. Until the
+// window fills it uses the returns there are, so it answers from bar 1.
+sumR = 0.0
+sumSq = 0.0
+n = 0
+for k = 0 to length - 1
+    r = logReturn[k]
+    if not isNone(r)
+        sumR += r
+        sumSq += r * r
+        n += 1
+mean = n > 0 ? sumR / n : 0.0
+stdDev = n > 1 ? sqrt(max(0, sumSq / n - mean * mean)) : 0.0
+hvValue = annualize ? stdDev * sqrt(annualPeriods) : stdDev
+
+plot(isNone(logReturn) ? none : hvValue, "HV", #ffeb3b, width = 2)

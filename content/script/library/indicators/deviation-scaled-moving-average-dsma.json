@@ -1,0 +1,15 @@
+{
+  "title": "Deviation-Scaled Moving Average (DSMA)",
+  "summary": "An adaptive average that speeds up when its tracking error is large against its recent size and slows down when it is small.",
+  "description": "The DSMA is an exponential-style average whose smoothing factor is set fresh on every bar. It first measures the tracking error, the source minus the previous value of the average. That error is passed through a two-pole smoothing filter tuned to half the period, which removes bar-to-bar noise.\n\nThe smoothed error is then divided by its own root mean square over the last `Period` bars, which says how unusual the current error is. That ratio, made positive and multiplied by `5 * Scale Factor / Period`, is the share of the distance to the source the average moves this bar, capped at 1. On the first bar the average starts at the source.",
+  "howToRead": "In a quiet market the error is small compared with its recent size and the line moves slowly, staying smooth. When price breaks away and the error grows well beyond its usual size, the line accelerates to catch up. So the DSMA keeps out of the way in a range and responds quickly to a genuine move.\n\nRead it as a trend line: price above a rising DSMA describes an uptrend and price below a falling one a downtrend. A sudden spike can still pull the line sharply, and a higher Scale Factor makes it react to smaller deviations.",
+  "settings": [
+    { "key": "source", "label": "Source", "description": "The price series the average follows, the close by default." },
+    { "key": "period", "label": "Period", "description": "Sets the smoothing filter and the window of the root mean square. Longer is smoother and slower." },
+    { "key": "scale", "label": "Scale Factor", "description": "Scales how far the average moves for a given deviation. Higher reacts faster to the deviation-scaled error." }
+  ],
+  "faq": [
+    { "q": "Why does it speed up after a breakout?", "a": "The tracking error grows much larger than its recent root mean square, so the ratio, and with it the step size, rises." },
+    { "q": "Can the step size exceed 1?", "a": "No. It is capped at 1, at which point the average jumps all the way to the source on that bar." }
+  ]
+}

@@ -1,0 +1,51 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © openalgo
+// Original work (c) mihakralj, MIT License
+
+version 1
+study("Directional Movement Index (DX)", precision = 2)
+
+period = input(14, "Period", min = 1, max = 5000, step = 1, tooltip = "Number of bars used in the calculation.")
+
+weight = 1 / period
+decay = 1 - weight
+
+// True range, with the first bar's range as its own. Directional movement
+// needs a previous bar, so the first bar has none.
+tr = bar.index > 0 ? max(high - low, max(abs(high - close[1]), abs(low - close[1]))) : high - low
+upMove = high - high[1]
+downMove = low[1] - low
+plusDm = bar.index > 0 and upMove > downMove and upMove > 0 ? upMove : 0
+minusDm = bar.index > 0 and downMove > upMove and downMove > 0 ? downMove : 0
+
+// Wilder smoothing from a zero start. While the weight of that start is still
+// visible, each value is divided by 1 - e to remove it.
+var warmup = true
+var e = 1.0
+var trEma = 0.0
+var plusDmEma = 0.0
+var minusDmEma = 0.0
+trEma = trEma + weight * (tr - trEma)
+plusDmEma = plusDmEma + weight * (plusDm - plusDmEma)
+minusDmEma = minusDmEma + weight * (minusDm - minusDmEma)
+
+trResult = trEma
+plusDmResult = plusDmEma
+minusDmResult = minusDmEma
+if warmup
+    e = e * decay
+    c = 1 - e != 0 ? 1 / (1 - e) : 1
+    trResult = c * trEma
+    plusDmResult = c * plusDmEma
+    minusDmResult = c * minusDmEma
+    warmup = e > 1e-10
+
+plusDi = trResult != 0 ? 100 * plusDmResult / trResult : 0
+minusDi = trResult != 0 ? 100 * minusDmResult / trResult : 0
+diSum = plusDi + minusDi
+dxValue = diSum != 0 ? 100 * abs(plusDi - minusDi) / diSum : 0
+
+plot(dxValue, "DX", #ffeb3b, width = 2)
+plot(plusDi, "+DI", #4caf50, width = 1)
+plot(minusDi, "-DI", #ff5252, width = 1)
+level(25, "Strong Trend Threshold", #787b86, style = "dashed")

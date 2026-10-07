@@ -1,0 +1,1138 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © openalgo
+// Original work (c) sukesan7, MPL-2.0
+
+version 1
+study("Futures Profile", overlay = true, precision = 2)
+limits(loops = 10_000_000)
+
+// A regular-session time-price-opportunity profile. Each session's bars are
+// bucketed into fixed-minute TPO blocks and into price rows, which gives a
+// developing POC and value area, the initial balance and its extensions,
+// single prints, poor extremes, and an auction reading of the session against
+// the previous one.
+
+ACCENT = #a855f7
+SECONDARY = #6366f1
+VALUE_AREA = #8b5cf6
+OUTSIDE_VALUE = #334155
+PREV_VALUE = #5b4b8a
+PREV_OUTSIDE = #262d3f
+POC_COLOR = #f472b6
+DEVELOPING = #22d3ee
+SINGLE_PRINT = #f9a8d4
+POOR = #f59e0b
+BULLISH = #22c55e
+BEARISH = #ef4444
+NEUTRAL = #94a3b8
+PANEL = #0f172a
+TEXT_COLOR = #f1f5f9
+
+// ---------------------------------------------------------------------------
+// Settings
+// ---------------------------------------------------------------------------
+
+indicatorEnabled = input(true, "Enable indicator", group = "01 - General")
+sessionTimezone = input("America/New_York", "Analysis time zone", group = "01 - General", tooltip = "IANA zone name the RTH session and the block clock are read in, for example America/New_York or Asia/Kolkata.")
+
+rthSession = input("0930-1600:23456", "RTH session", group = "02 - Session + TPO Blocks", tooltip = "Start and end in HHMM, optionally followed by :days where 1 is Sunday. Exchange wall clock in the zone above.")
+rthOpenHour = input(9, "RTH open hour", min = 0, max = 23, step = 1, group = "02 - Session + TPO Blocks")
+rthOpenMinute = input(30, "Minute", min = 0, max = 59, step = 1, group = "02 - Session + TPO Blocks")
+blockSizeInput = input("30 Minutes", "TPO block size", options = ["5 Minutes", "10 Minutes", "15 Minutes", "30 Minutes", "60 Minutes"], group = "02 - Session + TPO Blocks")
+initialBalanceBlocks = input(2, "Initial Balance blocks", min = 1, max = 12, step = 1, group = "02 - Session + TPO Blocks", tooltip = "Two 30-minute blocks produce the conventional 60-minute Initial Balance.")
+maximumChartMinutes = input(30, "Maximum chart timeframe", min = 1, max = 60, step = 1, group = "02 - Session + TPO Blocks", tooltip = "The chart timeframe should not exceed the selected TPO block size. 1m, 5m and 15m charts are recommended.")
+
+rowSizeMode = input("Auto", "Row-size mode", options = ["Auto", "Manual"], group = "03 - Profile Rows")
+manualTicksPerRow = input(8, "Manual ticks per row", min = 1, max = 1000, step = 1, group = "03 - Profile Rows")
+automaticTargetRows = input(70, "Automatic target rows", min = 20, max = 150, step = 1, group = "03 - Profile Rows")
+minimumAutomaticTicks = input(1, "Minimum automatic ticks", min = 1, max = 100, step = 1, group = "03 - Profile Rows")
+maximumRenderedRows = input(100, "Maximum rendered rows", min = 30, max = 140, step = 1, group = "03 - Profile Rows", tooltip = "Profiles with more rows stay mathematically intact but are visually grouped to keep the drawing count sane.")
+maximumRowsPerBlock = input(250, "Maximum rows per TPO block", min = 50, max = 1000, step = 1, group = "03 - Profile Rows", tooltip = "Protects the study when a manual row size is too small for a volatile bar or a gap.")
+valueAreaPercent = input(70, "Value area percentage", min = 50, max = 95, step = 1, group = "03 - Profile Rows")
+
+showCurrentProfile = input(true, "Show current profile", group = "04 - Profile Display")
+showPreviousProfile = input(true, "Show previous profile", group = "04 - Profile Display")
+maximumProfileWidthBars = input(20, "Maximum TPO width (bars)", min = 6, max = 50, step = 1, group = "04 - Profile Display")
+showRowCounts = input(false, "Show TPO count on rows", group = "04 - Profile Display")
+showProfileNames = input(true, "Show Current / Previous labels", group = "04 - Profile Display")
+showValueAreaShading = input(true, "Highlight value-area rows", group = "04 - Profile Display")
+showProfileMidpoint = input(true, "Show profile midpoint", group = "04 - Profile Display")
+profileTransparency = input(28, "Profile transparency", min = 0, max = 90, step = 1, group = "04 - Profile Display")
+previousProfileTransparency = input(48, "Previous profile transparency", min = 0, max = 95, step = 1, group = "04 - Profile Display")
+
+showCurrentLevels = input(true, "Show current POC / VAH / VAL", group = "05 - Levels + Structure")
+extendPreviousLevels = input(true, "Show previous POC / VAH / VAL", group = "05 - Levels + Structure")
+showInitialBalance = input(true, "Show Initial Balance", group = "05 - Levels + Structure")
+showIbExtensions = input(true, "Show IB range extensions", group = "05 - Levels + Structure")
+firstIbExtension = input(0.5, "First IB extension", min = 0.1, max = 5, step = 0.1, group = "05 - Levels + Structure")
+secondIbExtension = input(1.0, "Second IB extension", min = 0.1, max = 10, step = 0.1, group = "05 - Levels + Structure")
+showSessionOpenClose = input(false, "Show session open / close", group = "05 - Levels + Structure")
+acceptanceCloses = input(2, "Closes for prior-value acceptance", min = 1, max = 5, step = 1, group = "05 - Levels + Structure")
+showSinglePrintZones = input(true, "Show previous single-print zones", group = "05 - Levels + Structure")
+showPoorHighLow = input(true, "Show previous poor high / low", group = "05 - Levels + Structure")
+maximumSinglePrintZones = input(12, "Maximum single-print zones", min = 1, max = 30, step = 1, group = "05 - Levels + Structure")
+
+showEstimatedVolume = input(false, "Show estimated volume profile", group = "06 - Estimated Volume Profile", tooltip = "Spreads each bar's volume evenly across every profile row the bar touched. An estimate, not exchange volume at price.")
+estimatedVolumeWidthBars = input(12, "Maximum volume width (bars)", min = 4, max = 30, step = 1, group = "06 - Estimated Volume Profile")
+showEstimatedVolumeLevels = input(true, "Show estimated VPOC / VAH / VAL", group = "06 - Estimated Volume Profile")
+estimatedVolumeValueArea = input(70, "Estimated volume value area", min = 50, max = 95, step = 1, group = "06 - Estimated Volume Profile")
+
+doublePeakMinimumRatio = input(0.62, "Double-distribution secondary peak", min = 0.30, max = 1, step = 0.01, group = "07 - Auction Classification")
+doublePeakValleyRatio = input(0.55, "Double-distribution valley ratio", min = 0.10, max = 0.90, step = 0.01, group = "07 - Auction Classification")
+doublePeakMinimumSeparation = input(5, "Minimum peak separation (rows)", min = 2, max = 30, step = 1, group = "07 - Auction Classification")
+shapeSkewThreshold = input(0.45, "P / b shape skew threshold", min = 0.10, max = 2, step = 0.05, group = "07 - Auction Classification")
+trendRangeExtension = input(1.75, "Trend-profile range / IB", min = 1.1, max = 5, step = 0.05, group = "07 - Auction Classification")
+strongPocMigrationRows = input(2, "Strong POC migration (rows)", min = 0.5, max = 10, step = 0.5, group = "07 - Auction Classification")
+
+showDashboard = input(true, "Show Profile dashboard", group = "08 - Dashboard")
+dashboardWithFuturesLevels = input(true, "Layout with Futures Levels", group = "08 - Dashboard", tooltip = "Pins the dashboard to the top-right so it stacks above a Futures Levels dashboard in the bottom-right corner.")
+dashboardPosition = input("Bottom Right", "Standalone dashboard position", options = ["Top Right", "Top Left", "Bottom Right", "Bottom Left", "Middle Right", "Middle Left"], group = "08 - Dashboard", tooltip = "Used only when Layout with Futures Levels is off.")
+dashboardTextSize = input("Small", "Dashboard text size", options = ["Tiny", "Small", "Normal", "Large"], group = "08 - Dashboard")
+dashboardColumnWidth = input(11, "Dashboard column width (%)", min = 8, max = 20, step = 1, group = "08 - Dashboard")
+dashboardHeaderHeight = input(4, "Header height (%)", min = 2, max = 10, step = 1, group = "08 - Dashboard")
+dashboardCardHeight = input(7, "Card row height (%)", min = 4, max = 14, step = 1, group = "08 - Dashboard")
+dashboardFooterHeight = input(2, "Footer height (%)", min = 1, max = 6, step = 1, group = "08 - Dashboard")
+
+alertPreviousLevels = input(true, "Alert on previous POC / VAH / VAL", group = "09 - Alerts")
+alertSinglePrints = input(true, "Alert on previous single prints", group = "09 - Alerts")
+alertPoorHighLow = input(true, "Alert on poor high / low repair", group = "09 - Alerts")
+alertAuctionChanges = input(true, "Alert on auction-state changes", group = "09 - Alerts")
+
+// Every number is held inside its declared range and whole-number settings
+// are floored, so a value typed outside the range behaves like its limit.
+openHour = floor(clamp(rthOpenHour, 0, 23))
+openMinute = floor(clamp(rthOpenMinute, 0, 59))
+blockMinutes = blockSizeInput == "5 Minutes" ? 5 : blockSizeInput == "10 Minutes" ? 10 : blockSizeInput == "15 Minutes" ? 15 : blockSizeInput == "60 Minutes" ? 60 : 30
+blockMs = blockMinutes * 60000
+ibBlocks = floor(clamp(initialBalanceBlocks, 1, 12))
+maxChartMinutes = floor(clamp(maximumChartMinutes, 1, 60))
+manualMode = rowSizeMode == "Manual"
+manualTicks = floor(clamp(manualTicksPerRow, 1, 1000))
+targetRows = floor(clamp(automaticTargetRows, 20, 150))
+minAutoTicks = floor(clamp(minimumAutomaticTicks, 1, 100))
+maxRenderedRows = floor(clamp(maximumRenderedRows, 30, 140))
+maxRowsPerBlock = floor(clamp(maximumRowsPerBlock, 50, 1000))
+vaPercent = clamp(valueAreaPercent, 50, 95)
+maxProfileWidth = floor(clamp(maximumProfileWidthBars, 6, 50))
+profileTransp = floor(clamp(profileTransparency, 0, 90))
+prevProfileTransp = floor(clamp(previousProfileTransparency, 0, 95))
+firstExt = clamp(firstIbExtension, 0.1, 5)
+secondExt = clamp(secondIbExtension, 0.1, 10)
+acceptN = floor(clamp(acceptanceCloses, 1, 5))
+maxZones = floor(clamp(maximumSinglePrintZones, 1, 30))
+volWidthBars = floor(clamp(estimatedVolumeWidthBars, 4, 30))
+volVaPercent = clamp(estimatedVolumeValueArea, 50, 95)
+peakRatio = clamp(doublePeakMinimumRatio, 0.30, 1)
+valleyRatio = clamp(doublePeakValleyRatio, 0.10, 0.90)
+minSeparation = floor(clamp(doublePeakMinimumSeparation, 2, 30))
+skewThreshold = clamp(shapeSkewThreshold, 0.10, 2)
+trendExtension = clamp(trendRangeExtension, 1.1, 5)
+strongPocRows = clamp(strongPocMigrationRows, 0.5, 10)
+enabled = indicatorEnabled
+// Inputs read inside a function are read through these names.
+shadingOn = showValueAreaShading
+rowCountsOn = showRowCounts
+
+// The zone the session is read in. A blank field means New York.
+zoneText = str.trim(sessionTimezone)
+zone = zoneText == "" ? "America/New_York" : zoneText
+
+// The session field numbers its days from 1 for Sunday. The session test
+// numbers them from 1 for Monday, so each day digit is moved one place.
+specParts = str.split(str.replaceAll(str.trim(rthSession), " ", ""), ":")
+specDays = ""
+if size(specParts) == 2
+    dayDigits = element(specParts, 1)
+    for k = 0 to str.length(dayDigits) - 1
+        digit = toNumber(str.substring(dayDigits, k, k + 1))
+        specDays = specDays + text(mod(digit + 5, 7) + 1, 0)
+sessionSpec = size(specParts) == 2 ? element(specParts, 0) + ":" + specDays : element(specParts, 0)
+
+// The instrument's tick. Where the host states none, one basis point of the
+// first close stands in for it.
+var refClose = none
+if isNone(refClose) and not isNone(close) and abs(close) > 0
+    refClose = abs(close)
+hostTick = chart.tickSize
+tick = not isNone(hostTick) and hostTick > 0 ? hostTick : not isNone(refClose) ? max(0.00000001, pow(10, floor(log10(refClose)) - 4)) : 0.01
+
+// Two index futures roots use a wider default row when there is no previous
+// session to size the rows from.
+symbolUpper = str.upper(chart.symbol)
+defaultRowTicks = str.startsWith(symbolUpper, "MNQ") or str.startsWith(symbolUpper, "NQ") ? 8 : 4
+
+// The chart interval must fit inside one TPO block for the profile to be read.
+chartIntraday = orElse(chart.isIntraday, false)
+chartMinutes = chartIntraday ? round(orElse(chart.intervalMinutes, 0)) : 0
+supportedTimeframe = chartIntraday and chartMinutes >= 1 and chartMinutes <= maxChartMinutes and chartMinutes <= blockMinutes
+chartWarning = not supportedTimeframe
+
+// ---------------------------------------------------------------------------
+// Profile arithmetic
+// ---------------------------------------------------------------------------
+
+// A profile is held as the list of row intervals its TPO blocks covered. The
+// count of a row is the number of intervals that cover it, so the profile is
+// a run of flat segments, and every statistic below is read from those
+// segments rather than row by row.
+fn rangeValid(minRow, maxRow, rowSize) =>
+    ok = false
+    if not isNone(minRow) and not isNone(maxRow) and not isNone(rowSize)
+        ok = maxRow >= minRow and rowSize > 0
+    ok
+
+fn buildSegments(lo, hi, useActive, aLo, aHi, minRow, maxRow, segS, segE, segC) =>
+    clear(segS)
+    clear(segE)
+    clear(segC)
+    if not isNone(minRow) and not isNone(maxRow)
+        if maxRow >= minRow
+            cuts = [minRow, maxRow + 1]
+            for k = 0 to size(lo) - 1
+                a = element(lo, k)
+                b = element(hi, k) + 1
+                if a > minRow and a <= maxRow
+                    push(cuts, a)
+                if b > minRow and b <= maxRow
+                    push(cuts, b)
+            if useActive
+                if aLo > minRow and aLo <= maxRow
+                    push(cuts, aLo)
+                if aHi + 1 > minRow and aHi + 1 <= maxRow
+                    push(cuts, aHi + 1)
+            sort(cuts, "asc")
+            starts = []
+            for k = 0 to size(cuts) - 1
+                c = element(cuts, k)
+                if size(starts) == 0
+                    push(starts, c)
+                else if c != element(starts, size(starts) - 1)
+                    push(starts, c)
+            for k = 0 to size(starts) - 2
+                s = element(starts, k)
+                n = 0
+                for j = 0 to size(lo) - 1
+                    if element(lo, j) <= s and element(hi, j) >= s
+                        n += 1
+                if useActive
+                    if aLo <= s and aHi >= s
+                        n += 1
+                push(segS, s)
+                push(segE, element(starts, k + 1) - 1)
+                push(segC, n)
+    size(segS)
+
+fn segIndex(segS, segE, row) =>
+    found = -1
+    for k = 0 to size(segS) - 1
+        if row >= element(segS, k) and row <= element(segE, k)
+            found = k
+            break
+    found
+
+fn segCount(segS, segE, segC, row) =>
+    k = segIndex(segS, segE, row)
+    k < 0 ? 0 : element(segC, k)
+
+// The TPO statistics of one profile. Returns
+// [pocRow, vahRow, valRow, totalTpo, tpoAbove, tpoBelow, singleRows,
+//  poorHigh, poorLow, skewness, profileHigh, profileLow, profileMid, poc, vah, val].
+fn tpoStats(segS, segE, segC, valid, minRow, maxRow, rowSize, vaPct) =>
+    pocRow = none
+    vahRow = none
+    valRow = none
+    totalTpo = 0
+    tpoAbove = 0
+    tpoBelow = 0
+    singleRows = 0
+    poorHigh = 0
+    poorLow = 0
+    skewness = none
+    if valid
+        midpointRow = (minRow + maxRow) * 0.5
+        weightedSum = 0
+        maximumCount = 0
+        bestDistance = none
+        for k = 0 to size(segS) - 1
+            s = element(segS, k)
+            e = element(segE, k)
+            c = element(segC, k)
+            n = e - s + 1
+            totalTpo += c * n
+            weightedSum += c * (s + e) * n / 2
+            // The busiest row wins; among equal rows the one nearest the
+            // middle of the profile, and between two equally near the higher.
+            if c > 0
+                cand = midpointRow <= s ? s : midpointRow >= e ? e : ceil(midpointRow)
+                dist = abs(cand - midpointRow)
+                better = false
+                if c > maximumCount
+                    better = true
+                else if c == maximumCount
+                    if dist < bestDistance or (dist == bestDistance and cand > pocRow)
+                        better = true
+                if better
+                    maximumCount = c
+                    pocRow = cand
+                    bestDistance = dist
+        if totalTpo > 0 and not isNone(pocRow)
+            meanRow = weightedSum / totalTpo
+            secondMoment = 0
+            thirdMoment = 0
+            for k = 0 to size(segS) - 1
+                s = element(segS, k)
+                e = element(segE, k)
+                c = element(segC, k)
+                n = e - s + 1
+                a = s - meanRow
+                j1 = n * (n - 1) / 2
+                j2 = (n - 1) * n * (2 * n - 1) / 6
+                j3 = j1 * j1
+                secondMoment += c * (n * a * a + 2 * a * j1 + j2)
+                thirdMoment += c * (n * a * a * a + 3 * a * a * j1 + 3 * a * j2 + j3)
+                upFrom = max(s, pocRow + 1)
+                if upFrom <= e
+                    tpoAbove += c * (e - upFrom + 1)
+                downTo = min(e, pocRow - 1)
+                if downTo >= s
+                    tpoBelow += c * (downTo - s + 1)
+                if c == 1
+                    inLo = max(s, minRow + 1)
+                    inHi = min(e, maxRow - 1)
+                    if inHi >= inLo
+                        singleRows += inHi - inLo + 1
+            varianceRows = secondMoment / totalTpo
+            sdRows = sqrt(max(varianceRows, 0))
+            skewness = sdRows > 0.000000001 ? (thirdMoment / totalTpo) / (sdRows * sdRows * sdRows) : 0
+
+            // Grow the value area from the POC, one row at a time toward the
+            // busier neighbour (up on a tie), until it holds the target share.
+            // Rows inside one segment share a count, so a run of steps in the
+            // same direction is taken at once.
+            targetTpo = ceil(totalTpo * vaPct / 100)
+            includedTpo = segCount(segS, segE, segC, pocRow)
+            lowRow = pocRow
+            highRow = pocRow
+            guard = 0
+            while includedTpo < targetTpo and (lowRow > minRow or highRow < maxRow) and guard < 100000
+                guard += 1
+                aboveCount = highRow < maxRow ? segCount(segS, segE, segC, highRow + 1) : -1
+                belowCount = lowRow > minRow ? segCount(segS, segE, segC, lowRow - 1) : -1
+                if aboveCount >= belowCount
+                    upSeg = segIndex(segS, segE, highRow + 1)
+                    stepsInSeg = element(segE, upSeg) - highRow
+                    stepsNeeded = aboveCount > 0 ? ceil((targetTpo - includedTpo) / aboveCount) : stepsInSeg
+                    steps = min(stepsInSeg, stepsNeeded)
+                    highRow += steps
+                    includedTpo += steps * max(aboveCount, 0)
+                else
+                    downSeg = segIndex(segS, segE, lowRow - 1)
+                    stepsInSeg = lowRow - element(segS, downSeg)
+                    stepsNeeded = belowCount > 0 ? ceil((targetTpo - includedTpo) / belowCount) : stepsInSeg
+                    steps = min(stepsInSeg, stepsNeeded)
+                    lowRow -= steps
+                    includedTpo += steps * max(belowCount, 0)
+            vahRow = highRow
+            valRow = lowRow
+            poorHigh = segCount(segS, segE, segC, maxRow) > 1 ? 1 : 0
+            poorLow = segCount(segS, segE, segC, minRow) > 1 ? 1 : 0
+    profileHigh = valid ? (maxRow + 1) * rowSize : none
+    profileLow = valid ? minRow * rowSize : none
+    profileMid = valid ? (profileHigh + profileLow) * 0.5 : none
+    pocPrice = valid and not isNone(pocRow) ? (pocRow + 0.5) * rowSize : none
+    vahPrice = valid and not isNone(vahRow) ? (vahRow + 1) * rowSize : none
+    valPrice = valid and not isNone(valRow) ? valRow * rowSize : none
+    [pocRow, vahRow, valRow, totalTpo, tpoAbove, tpoBelow, singleRows, poorHigh, poorLow, skewness, profileHigh, profileLow, profileMid, pocPrice, vahPrice, valPrice]
+
+// The estimated volume of every row from minRow to maxRow, in row order.
+// Each bar's volume was spread evenly over the rows it touched, and the
+// shares are added in the order the bars arrived.
+fn fillVolumeRows(addLo, addHi, addShare, valid, minRow, maxRow, vals) =>
+    clear(vals)
+    if valid
+        for r = minRow to maxRow
+            push(vals, 0)
+        for k = 0 to size(addLo) - 1
+            fromRow = max(element(addLo, k), minRow)
+            toRow = min(element(addHi, k), maxRow)
+            share = element(addShare, k)
+            if toRow >= fromRow
+                for r = fromRow to toRow
+                    set(vals, r - minRow, element(vals, r - minRow) + share)
+    size(vals)
+
+// The volume statistics. Returns [pocRow, vahRow, valRow, poc, vah, val].
+fn volumeStats(vals, valid, minRow, maxRow, rowSize, vaPct) =>
+    pocRow = none
+    vahRow = none
+    valRow = none
+    if valid
+        midpointRow = (minRow + maxRow) * 0.5
+        totalVolume = 0
+        maximumVolume = 0
+        for r = minRow to maxRow
+            rowVolume = element(vals, r - minRow)
+            totalVolume += rowVolume
+            better = rowVolume > maximumVolume
+            if not better and rowVolume == maximumVolume and rowVolume > 0
+                better = isNone(pocRow) or abs(r - midpointRow) < abs(pocRow - midpointRow)
+            if better
+                maximumVolume = rowVolume
+                pocRow = r
+        if totalVolume > 0 and not isNone(pocRow)
+            targetVolume = (totalVolume * vaPct) / 100
+            includedVolume = element(vals, pocRow - minRow)
+            lowRow = pocRow
+            highRow = pocRow
+            guard = 0
+            while includedVolume < targetVolume and (lowRow > minRow or highRow < maxRow) and guard <= maxRow - minRow + 2
+                aboveVolume = highRow < maxRow ? element(vals, highRow + 1 - minRow) : -1
+                belowVolume = lowRow > minRow ? element(vals, lowRow - 1 - minRow) : -1
+                if aboveVolume >= belowVolume
+                    highRow += 1
+                    includedVolume += max(aboveVolume, 0)
+                else
+                    lowRow -= 1
+                    includedVolume += max(belowVolume, 0)
+                guard += 1
+            vahRow = highRow
+            valRow = lowRow
+    pocPrice = valid and not isNone(pocRow) ? (pocRow + 0.5) * rowSize : none
+    vahPrice = valid and not isNone(vahRow) ? (vahRow + 1) * rowSize : none
+    valPrice = valid and not isNone(valRow) ? valRow * rowSize : none
+    [pocRow, vahRow, valRow, pocPrice, vahPrice, valPrice]
+
+// The profile's shape. Returns [shapeCode, doubleDistribution]: -1 while
+// developing, 0 neutral, 1 D-shaped, 2 P-shaped, 3 b-shaped, 4 double
+// distribution, 5 trend profile.
+fn profileShape(segS, segE, segC, minRow, maxRow, pocRow, skewness, rangeOfProfile, rangeOfIb) =>
+    shapeCode = -1
+    doubleDistribution = false
+    if not isNone(minRow) and not isNone(maxRow) and not isNone(pocRow)
+        if maxRow > minRow
+            primaryCount = segCount(segS, segE, segC, pocRow)
+            secondRow = none
+            secondCount = 0
+            // The busiest row at least the minimum separation from the POC,
+            // the lowest such row on a tie.
+            for k = 0 to size(segS) - 1
+                s = element(segS, k)
+                e = element(segE, k)
+                c = element(segC, k)
+                firstRow = s <= pocRow - minSeparation ? s : max(s, pocRow + minSeparation)
+                if firstRow <= e and c > secondCount
+                    secondCount = c
+                    secondRow = firstRow
+            if not isNone(secondRow)
+                if secondCount >= primaryCount * peakRatio
+                    valleyStart = min(pocRow, secondRow)
+                    valleyEnd = max(pocRow, secondRow)
+                    valleyCount = 1000000
+                    if valleyEnd - valleyStart > 1
+                        for k = 0 to size(segS) - 1
+                            if element(segE, k) >= valleyStart + 1 and element(segS, k) <= valleyEnd - 1
+                                valleyCount = min(valleyCount, element(segC, k))
+                    doubleDistribution = valleyCount <= min(primaryCount, secondCount) * valleyRatio
+            pocLocation = (pocRow - minRow) / max(maxRow - minRow, 1)
+            trendProfile = false
+            if not isNone(rangeOfIb) and not isNone(rangeOfProfile)
+                trendProfile = rangeOfIb > 0 and rangeOfProfile / rangeOfIb >= trendExtension
+            skew = orElse(skewness, 0)
+            if doubleDistribution
+                shapeCode = 4
+            else if trendProfile and (pocLocation >= 0.70 or pocLocation <= 0.30 or abs(skew) >= skewThreshold)
+                shapeCode = 5
+            else if skew <= 0 - skewThreshold and pocLocation > 0.52
+                shapeCode = 2
+            else if skew >= skewThreshold and pocLocation < 0.48
+                shapeCode = 3
+            else if abs(skew) < skewThreshold and pocLocation >= 0.35 and pocLocation <= 0.65
+                shapeCode = 1
+            else
+                shapeCode = 0
+    [shapeCode, doubleDistribution ? 1 : 0]
+
+// Runs of single-print rows inside a completed profile, as start and end rows.
+fn buildZones(segS, segE, segC, valid, minRow, maxRow, zoneS, zoneE) =>
+    clear(zoneS)
+    clear(zoneE)
+    if valid
+        zoneStart = none
+        for k = 0 to size(segS) - 1
+            s = element(segS, k)
+            e = element(segE, k)
+            c = element(segC, k)
+            inLo = max(s, minRow + 1)
+            inHi = min(e, maxRow - 1)
+            if c == 1 and inLo <= inHi
+                if isNone(zoneStart)
+                    zoneStart = inLo
+                if inHi < e
+                    push(zoneS, zoneStart)
+                    push(zoneE, inHi)
+                    zoneStart = none
+            else if not isNone(zoneStart)
+                push(zoneS, zoneStart)
+                push(zoneE, s - 1)
+                zoneStart = none
+        if not isNone(zoneStart)
+            push(zoneS, zoneStart)
+            push(zoneE, maxRow - 1)
+    size(zoneS)
+
+// ---------------------------------------------------------------------------
+// Session state, carried bar to bar
+// ---------------------------------------------------------------------------
+
+var curLo: array<number> = []
+var curHi: array<number> = []
+var prevLo: array<number> = []
+var prevHi: array<number> = []
+var volLo: array<number> = []
+var volHi: array<number> = []
+var volAdd: array<number> = []
+var curRowSize = none
+var prevRowSize = none
+var curMinRow = none
+var curMaxRow = none
+var prevMinRow = none
+var prevMaxRow = none
+var curHasData = false
+var prevHasData = false
+var curOverflow = false
+var prevOverflow = false
+var curStartTime = none
+var curEndTime = none
+var prevStartTime = none
+var prevEndTime = none
+var curOpen = none
+var curClose = none
+var curHigh = none
+var curLow = none
+var prevHigh = none
+var prevLow = none
+var curIbHigh = none
+var curIbLow = none
+var curRotation = 0
+var activeBlockId = -1
+var activeHigh = none
+var activeLow = none
+var lastBlockHigh = none
+var lastBlockLow = none
+var pocState = 0
+var vahState = 0
+var valState = 0
+var inPrevBar = false
+var prevDateKey = -1
+
+// The regular session: the window as written, or the default when it does
+// not read.
+rawInSession = session.isIn(sessionSpec, zone)
+inRTH = isNone(rawInSession) ? orElse(session.isIn("0930-1600:12345", zone), false) : rawInSession
+yy = date.year(time, zone)
+mo = date.month(time, zone)
+dd = date.day(time, zone)
+dateKey = yy * 10000 + mo * 100 + dd
+newRTH = inRTH and (bar.index == 0 or not inPrevBar or dateKey != prevDateKey)
+endRTH = not inRTH and inPrevBar
+rthStart = date.from(yy, mo, dd, openHour, openMinute, 0, zone)
+blockId = inRTH ? floor((time - rthStart) / blockMs) : -1
+
+// A TPO block is committed when the session opens with one still forming,
+// when the bar moves into a new block, and when the session ends. At most one
+// of the three happens on a bar, and each reads the state the bar began with.
+rowSizeOk = rangeValid(0, 0, curRowSize)
+commitAtOpen = newRTH and curHasData and activeBlockId >= 0 and not isNone(activeHigh) and not isNone(activeLow) and not isNone(curRowSize)
+commitOnChange = not newRTH and inRTH and curHasData and rowSizeOk and activeBlockId >= 0 and blockId != activeBlockId
+commitAtEnd = endRTH and curHasData and activeBlockId >= 0 and rowSizeOk
+if commitAtOpen or commitOnChange or commitAtEnd
+    blockLowRow = floor(activeLow / curRowSize)
+    blockHighRow = floor(activeHigh / curRowSize)
+    rowsTouched = blockHighRow - blockLowRow + 1
+    // A block spanning more rows than allowed is left out of the profile.
+    if rowsTouched > 0 and rowsTouched <= maxRowsPerBlock
+        push(curLo, blockLowRow)
+        push(curHi, blockHighRow)
+        curMinRow = isNone(curMinRow) ? blockLowRow : min(curMinRow, blockLowRow)
+        curMaxRow = isNone(curMaxRow) ? blockHighRow : max(curMaxRow, blockHighRow)
+    else if rowsTouched > maxRowsPerBlock
+        curOverflow = true
+    // Rotation: +1 or -1 for each block high and low above or below the last.
+    if not isNone(lastBlockHigh)
+        curRotation += sign(activeHigh - lastBlockHigh) + sign(activeLow - lastBlockLow)
+    lastBlockHigh = activeHigh
+    lastBlockLow = activeLow
+
+if newRTH
+    if curHasData
+        curClose = bar.index > 0 ? close[1] : close
+        curEndTime = bar.index > 0 ? time[1] : time
+        prevLo = copy(curLo)
+        prevHi = copy(curHi)
+        prevRowSize = curRowSize
+        prevMinRow = curMinRow
+        prevMaxRow = curMaxRow
+        prevStartTime = curStartTime
+        prevEndTime = curEndTime
+        prevHigh = curHigh
+        prevLow = curLow
+        prevOverflow = curOverflow
+        prevHasData = size(curLo) > 0
+    // Row size: the previous session's range over the target row count, in
+    // whole ticks, or a fixed number of ticks per row.
+    previousRange = prevHasData and not isNone(prevHigh) and not isNone(prevLow) ? prevHigh - prevLow : none
+    fallbackTicks = max(defaultRowTicks, minAutoTicks)
+    autoTicks = fallbackTicks
+    if not isNone(previousRange)
+        if previousRange > tick
+            autoTicks = ceil(previousRange / tick / targetRows)
+    curRowSize = (manualMode ? manualTicks : max(autoTicks, minAutoTicks)) * tick
+    clear(curLo)
+    clear(curHi)
+    clear(volLo)
+    clear(volHi)
+    clear(volAdd)
+    curMinRow = none
+    curMaxRow = none
+    curHasData = true
+    curOverflow = false
+    curStartTime = time
+    curEndTime = none
+    curOpen = open
+    curClose = none
+    curHigh = high
+    curLow = low
+    curIbHigh = none
+    curIbLow = none
+    curRotation = 0
+    activeBlockId = -1
+    activeHigh = none
+    activeLow = none
+    lastBlockHigh = none
+    lastBlockLow = none
+    // Acceptance of the prior levels is judged afresh in each session.
+    pocState = 0
+    vahState = 0
+    valState = 0
+
+if inRTH and curHasData and rangeValid(0, 0, curRowSize)
+    curHigh = isNone(curHigh) ? high : max(curHigh, high)
+    curLow = isNone(curLow) ? low : min(curLow, low)
+    if blockId >= 0 and blockId < ibBlocks
+        curIbHigh = isNone(curIbHigh) ? high : max(curIbHigh, high)
+        curIbLow = isNone(curIbLow) ? low : min(curIbLow, low)
+    if activeBlockId < 0 or blockId != activeBlockId
+        activeBlockId = blockId
+        activeHigh = high
+        activeLow = low
+    else
+        activeHigh = max(activeHigh, high)
+        activeLow = min(activeLow, low)
+    if showEstimatedVolume
+        barLowRow = floor(low / curRowSize)
+        barHighRow = floor(high / curRowSize)
+        barRows = barHighRow - barLowRow + 1
+        if barRows > 0 and barRows <= maxRowsPerBlock
+            push(volLo, barLowRow)
+            push(volHi, barHighRow)
+            push(volAdd, orElse(volume, 0) / barRows)
+        else if barRows > maxRowsPerBlock
+            curOverflow = true
+
+if commitAtEnd
+    curClose = bar.index > 0 ? close[1] : close
+    curEndTime = bar.index > 0 ? time[1] : time
+    activeBlockId = -1
+    activeHigh = none
+    activeLow = none
+
+// The block still forming counts toward the developing profile.
+includeActive = inRTH and activeBlockId >= 0 and not isNone(activeLow) and not isNone(activeHigh) and rangeValid(0, 0, curRowSize)
+aLow = includeActive ? floor(activeLow / curRowSize) : none
+aHigh = includeActive ? floor(activeHigh / curRowSize) : none
+dispMin = includeActive ? (isNone(curMinRow) ? aLow : min(curMinRow, aLow)) : curMinRow
+dispMax = includeActive ? (isNone(curMaxRow) ? aHigh : max(curMaxRow, aHigh)) : curMaxRow
+
+// The developing profile.
+curSegS = [0.0]
+curSegE = [0.0]
+curSegC = [0.0]
+buildSegments(curLo, curHi, includeActive, aLow, aHigh, dispMin, dispMax, curSegS, curSegE, curSegC)
+curValid = rangeValid(dispMin, dispMax, curRowSize)
+cs = tpoStats(curSegS, curSegE, curSegC, curValid, dispMin, dispMax, curRowSize, vaPercent)
+curPocRow = element(cs, 0)
+curVahRow = element(cs, 1)
+curValRow = element(cs, 2)
+curTotalTpo = element(cs, 3)
+curTpoAbove = element(cs, 4)
+curTpoBelow = element(cs, 5)
+curSingles = element(cs, 6)
+curPoorHigh = element(cs, 7) == 1
+curPoorLow = element(cs, 8) == 1
+curSkew = element(cs, 9)
+curProfileHigh = element(cs, 10)
+curProfileLow = element(cs, 11)
+curProfileMid = element(cs, 12)
+curPoc = element(cs, 13)
+curVah = element(cs, 14)
+curVal = element(cs, 15)
+
+// The previous completed profile.
+prevSegS = [0.0]
+prevSegE = [0.0]
+prevSegC = [0.0]
+buildSegments(prevLo, prevHi, false, none, none, prevMinRow, prevMaxRow, prevSegS, prevSegE, prevSegC)
+prevValid = rangeValid(prevMinRow, prevMaxRow, prevRowSize)
+ps = tpoStats(prevSegS, prevSegE, prevSegC, prevValid, prevMinRow, prevMaxRow, prevRowSize, vaPercent)
+prevPocRow = element(ps, 0)
+prevVahRow = element(ps, 1)
+prevValRow = element(ps, 2)
+prevPoorHigh = element(ps, 7) == 1
+prevPoorLow = element(ps, 8) == 1
+prevProfileHigh = element(ps, 10)
+prevProfileLow = element(ps, 11)
+prevPoc = element(ps, 13)
+prevVah = element(ps, 14)
+prevVal = element(ps, 15)
+zoneStartRows = [0.0]
+zoneEndRows = [0.0]
+buildZones(prevSegS, prevSegE, prevSegC, prevValid, prevMinRow, prevMaxRow, zoneStartRows, zoneEndRows)
+
+// The estimated volume profile of the developing session.
+volValid = size(volLo) > 0 and rangeValid(dispMin, dispMax, curRowSize)
+volRows = [0.0]
+fillVolumeRows(volLo, volHi, volAdd, volValid, dispMin, dispMax, volRows)
+vs = volumeStats(volRows, volValid, dispMin, dispMax, curRowSize, volVaPercent)
+volPocRow = element(vs, 0)
+volVahRow = element(vs, 1)
+volValRow = element(vs, 2)
+
+ibRange = isNone(curIbHigh) or isNone(curIbLow) ? none : curIbHigh - curIbLow
+profileRange = curValid ? curProfileHigh - curProfileLow : none
+shapeOut = profileShape(curSegS, curSegE, curSegC, dispMin, dispMax, curPocRow, curSkew, profileRange, ibRange)
+shapeCode = element(shapeOut, 0)
+doubleDist = element(shapeOut, 1) == 1
+
+// ---------------------------------------------------------------------------
+// Readings against the previous profile
+// ---------------------------------------------------------------------------
+
+// Where today's value area sits against yesterday's.
+valueRel = 0
+if curValid and prevValid
+    if curVal > prevVah
+        valueRel = 1
+    else if curVah < prevVal
+        valueRel = 2
+    else if curVah > prevVah and curVal > prevVal
+        valueRel = 3
+    else if curVah < prevVah and curVal < prevVal
+        valueRel = 4
+    else if curVah <= prevVah and curVal >= prevVal
+        valueRel = 5
+    else if curVah >= prevVah and curVal <= prevVal
+        valueRel = 6
+    else
+        valueRel = 7
+
+// How far the POC has moved, in rows.
+pocMig = 0
+if curValid and prevValid
+    migrationRows = (curPoc - prevPoc) / max(curRowSize, tick)
+    if migrationRows >= strongPocRows
+        pocMig = 1
+    else if migrationRows > 0.5
+        pocMig = 2
+    else if migrationRows <= 0 - strongPocRows
+        pocMig = 3
+    else if migrationRows < -0.5
+        pocMig = 4
+    else
+        pocMig = 5
+
+// Where the session opened against the previous profile.
+openLoc = 0
+if prevValid and not isNone(curOpen)
+    if curOpen > prevProfileHigh
+        openLoc = 1
+    else if curOpen > prevVah
+        openLoc = 2
+    else if curOpen >= prevVal
+        openLoc = 3
+    else if curOpen >= prevProfileLow
+        openLoc = 4
+    else
+        openLoc = 5
+
+// Where the close sits in the developing profile.
+curLoc = 0
+if curValid
+    if close > curProfileHigh
+        curLoc = 1
+    else if close > curVah
+        curLoc = 2
+    else if abs(close - curPoc) <= curRowSize
+        curLoc = 3
+    else if close >= curVal
+        curLoc = 4
+    else if close >= curProfileLow
+        curLoc = 5
+    else
+        curLoc = 6
+
+upwardValue = valueRel == 1 or valueRel == 3
+downwardValue = valueRel == 2 or valueRel == 4
+pocUp = pocMig == 1 or pocMig == 2
+pocDown = pocMig == 3 or pocMig == 4
+aboveIb = isNone(curIbHigh) ? false : close > curIbHigh
+belowIb = isNone(curIbLow) ? false : close < curIbLow
+returnedInsidePriorValue = prevValid ? close <= prevVah and close >= prevVal : false
+openedAbovePriorValue = prevValid and not isNone(curOpen) ? curOpen > prevVah : false
+openedBelowPriorValue = prevValid and not isNone(curOpen) ? curOpen < prevVal : false
+
+participant = 0
+if shapeCode == 1 and curLoc == 4
+    participant = 1
+else if openedAbovePriorValue and returnedInsidePriorValue
+    participant = 2
+else if openedBelowPriorValue and returnedInsidePriorValue
+    participant = 3
+else if upwardValue and pocUp and (aboveIb or close > curVah)
+    participant = 4
+else if downwardValue and pocDown and (belowIb or close < curVal)
+    participant = 5
+
+auctionCode = 0
+if doubleDist
+    auctionCode = 4
+else if openedAbovePriorValue and returnedInsidePriorValue and not pocUp
+    auctionCode = -3
+else if openedBelowPriorValue and returnedInsidePriorValue and not pocDown
+    auctionCode = 3
+else if shapeCode == 5 and upwardValue and pocUp
+    auctionCode = 2
+else if shapeCode == 5 and downwardValue and pocDown
+    auctionCode = -2
+else if upwardValue and pocUp and close >= curPoc
+    auctionCode = 1
+else if downwardValue and pocDown and close <= curPoc
+    auctionCode = -1
+else if shapeCode == 1 and curLoc == 4
+    auctionCode = 5
+else if curValid and close >= curVal and close <= curVah
+    auctionCode = 6
+
+// Tests of the previous profile's levels during the session.
+pocTouched = inRTH and prevValid ? high >= prevPoc and low <= prevPoc : false
+vahTouched = inRTH and prevValid ? high >= prevVah and low <= prevVah : false
+valTouched = inRTH and prevValid ? high >= prevVal and low <= prevVal : false
+
+// Acceptance: the last few closes all beyond a previous level.
+var winPocAbove: array<number> = []
+var winPocBelow: array<number> = []
+var winVahAbove: array<number> = []
+var winValBelow: array<number> = []
+push(winPocAbove, prevValid and close > prevPoc ? 1 : 0)
+push(winPocBelow, prevValid and close < prevPoc ? 1 : 0)
+push(winVahAbove, prevValid and close > prevVah ? 1 : 0)
+push(winValBelow, prevValid and close < prevVal ? 1 : 0)
+while size(winPocAbove) > acceptN
+    shift(winPocAbove)
+    shift(winPocBelow)
+    shift(winVahAbove)
+    shift(winValBelow)
+closesAbovePoc = prevValid and sum(winPocAbove) >= acceptN
+closesBelowPoc = prevValid and sum(winPocBelow) >= acceptN
+closesAboveVah = prevValid and sum(winVahAbove) >= acceptN
+closesBelowVal = prevValid and sum(winValBelow) >= acceptN
+
+if inRTH and prevValid
+    if closesAbovePoc
+        pocState = 1
+    else if closesBelowPoc
+        pocState = -1
+    else if pocTouched
+        pocState = close >= prevPoc ? 2 : -2
+    if closesAboveVah
+        vahState = 1
+    else if vahTouched and close < prevVah
+        vahState = -2
+    if closesBelowVal
+        valState = -1
+    else if valTouched and close > prevVal
+        valState = 2
+
+poorHighRepaired = inRTH and prevValid and prevPoorHigh ? high > prevProfileHigh : false
+poorLowRepaired = inRTH and prevValid and prevPoorLow ? low < prevProfileLow : false
+
+singleOverlap = false
+if inRTH and prevValid and size(zoneStartRows) > 0 and not isNone(prevRowSize)
+    for k = 0 to size(zoneStartRows) - 1
+        zoneLow = element(zoneStartRows, k) * prevRowSize
+        zoneHigh = (element(zoneEndRows, k) + 1) * prevRowSize
+        if high >= zoneLow and low <= zoneHigh
+            singleOverlap = true
+            break
+
+// ---------------------------------------------------------------------------
+// Levels
+// ---------------------------------------------------------------------------
+
+showCur = enabled and showCurrentLevels and curValid
+showIbh = enabled and showInitialBalance and not isNone(curIbHigh)
+showIbl = enabled and showInitialBalance and not isNone(curIbLow)
+showExt = enabled and showIbExtensions and not isNone(ibRange)
+showPrev = enabled and extendPreviousLevels and prevValid
+showVol = enabled and showEstimatedVolume and showEstimatedVolumeLevels and volValid
+rthCloseNow = inRTH ? close : curClose
+
+// A previous level is coloured by how price has treated it: accepted above
+// in green, rejected below in red, tested in amber.
+prevPocColor = pocState == 1 or pocState == 2 ? BULLISH : pocState == -1 or pocState == -2 ? BEARISH : pocTouched ? POOR : PREV_VALUE
+prevVahColor = vahState == 1 ? BULLISH : vahState == -2 ? BEARISH : vahTouched ? POOR : PREV_VALUE
+prevValColor = valState == 2 ? BULLISH : valState == -1 ? BEARISH : valTouched ? POOR : PREV_VALUE
+
+plot(showCur ? curPoc : none, "TPO POC", POC_COLOR, width = 2)
+plot(showCur ? curVah : none, "TPO VAH", DEVELOPING, width = 1)
+plot(showCur ? curVal : none, "TPO VAL", DEVELOPING, width = 1)
+plot(enabled and showProfileMidpoint and curValid ? curProfileMid : none, "TPO MID", ACCENT, width = 1)
+plot(showIbh ? curIbHigh : none, "IBH", SECONDARY, width = 1)
+plot(showIbl ? curIbLow : none, "IBL", SECONDARY, width = 1)
+plot(showExt ? curIbHigh + ibRange * firstExt : none, "IB Ext 1 Up", SECONDARY, width = 1)
+plot(showExt ? curIbLow - ibRange * firstExt : none, "IB Ext 1 Down", SECONDARY, width = 1)
+plot(showExt ? curIbHigh + ibRange * secondExt : none, "IB Ext 2 Up", SECONDARY, width = 1)
+plot(showExt ? curIbLow - ibRange * secondExt : none, "IB Ext 2 Down", SECONDARY, width = 1)
+plot(showPrev ? prevPoc : none, "Prior POC", prevPocColor, width = 1)
+plot(showPrev ? prevVah : none, "Prior VAH", prevVahColor, width = 1)
+plot(showPrev ? prevVal : none, "Prior VAL", prevValColor, width = 1)
+plot(enabled and showPoorHighLow and prevValid and prevPoorHigh ? prevProfileHigh : none, "Poor High", poorHighRepaired ? NEUTRAL : POOR, width = 1)
+plot(enabled and showPoorHighLow and prevValid and prevPoorLow ? prevProfileLow : none, "Poor Low", poorLowRepaired ? NEUTRAL : POOR, width = 1)
+plot(showVol ? element(vs, 3) : none, "Est. VPOC", SECONDARY, width = 1)
+plot(showVol ? element(vs, 4) : none, "Est. VVAH", SECONDARY, width = 1)
+plot(showVol ? element(vs, 5) : none, "Est. VVAL", SECONDARY, width = 1)
+plot(enabled and showSessionOpenClose and not isNone(curOpen) ? curOpen : none, "RTH Open", TEXT_COLOR, width = 1)
+plot(enabled and showSessionOpenClose and not isNone(rthCloseNow) ? rthCloseNow : none, "RTH Close", NEUTRAL, width = 1)
+
+// ---------------------------------------------------------------------------
+// Alerts: each fires on the bar a condition starts
+// ---------------------------------------------------------------------------
+
+fn rose(flag) => bar.index >= 1 and flag and not orElse(flag[1], false)
+
+if enabled and alertPreviousLevels and rose(pocTouched)
+    alert("Futures Profile: price tested the previous completed RTH TPO POC.", id = "prev-poc-test", title = "Previous TPO POC tested")
+if enabled and alertPreviousLevels and rose(vahTouched)
+    alert("Futures Profile: price tested the previous completed RTH TPO VAH.", id = "prev-vah-test", title = "Previous TPO VAH tested")
+if enabled and alertPreviousLevels and rose(valTouched)
+    alert("Futures Profile: price tested the previous completed RTH TPO VAL.", id = "prev-val-test", title = "Previous TPO VAL tested")
+if enabled and alertSinglePrints and rose(singleOverlap)
+    alert("Futures Profile: price entered a previous completed RTH single-print zone.", id = "single-print-test", title = "Previous single-print zone tested")
+if enabled and alertPoorHighLow and rose(poorHighRepaired)
+    alert("Futures Profile: price traded above the previous poor high.", id = "poor-high-repair", title = "Poor high repaired")
+if enabled and alertPoorHighLow and rose(poorLowRepaired)
+    alert("Futures Profile: price traded below the previous poor low.", id = "poor-low-repair", title = "Poor low repaired")
+auctionChanged = bar.index >= 1 and inRTH and auctionCode != orElse(auctionCode[1], auctionCode)
+if enabled and alertAuctionChanges and auctionChanged
+    alert("Futures Profile: the confirmed auction state changed.", id = "auction-state-change", title = "Auction state changed")
+
+// ---------------------------------------------------------------------------
+// Profiles drawn on the newest bar
+// ---------------------------------------------------------------------------
+
+// The typical gap between bars, used to express a width in bars as time.
+var barGaps: array<number> = []
+if bar.index > 0
+    if time - time[1] > 0
+        push(barGaps, time - time[1])
+
+fn drawZoneBox(left, right, top, bottom, base, fillTransparency, borderTransparency) =>
+    fillAlpha = max(0, 1 - fillTransparency / 100)
+    borderAlpha = max(0, 1 - borderTransparency / 100)
+    draw.box(left, top, right, bottom, color = withAlpha(base, borderAlpha), fillColor = base, opacity = fillAlpha)
+
+// One TPO profile, its rows folded into groups so a dense profile stays
+// inside the drawing budget. Each group's box is as wide as its busiest row
+// relative to the busiest group.
+fn drawTpoProfile(segS, segE, segC, minRow, maxRow, pocRow, vahRow, valRow, rowSize, startTime, barMs, isCurrent) =>
+    rows = maxRow - minRow + 1
+    stride = max(1, ceil(rows / maxRenderedRows))
+    groupCount = ceil(rows / stride)
+    groupMax = []
+    groupSingle = []
+    groupedMax = 1
+    for g = 0 to groupCount - 1
+        gLow = minRow + g * stride
+        gHigh = min(gLow + stride - 1, maxRow)
+        biggest = 0
+        single = false
+        for k = 0 to size(segS) - 1
+            s = element(segS, k)
+            e = element(segE, k)
+            if e >= gLow and s <= gHigh
+                c = element(segC, k)
+                biggest = max(biggest, c)
+                if c == 1 and max(max(s, gLow), minRow + 1) <= min(min(e, gHigh), maxRow - 1)
+                    single = true
+        push(groupMax, biggest)
+        push(groupSingle, single)
+        groupedMax = max(groupedMax, biggest)
+    for g = 0 to groupCount - 1
+        gLow = minRow + g * stride
+        gHigh = min(gLow + stride - 1, maxRow)
+        widthBars = max(1, round((element(groupMax, g) / max(groupedMax, 1)) * maxProfileWidth))
+        isValue = not isNone(valRow) and not isNone(vahRow) and gHigh >= valRow and gLow <= vahRow
+        isPoc = not isNone(pocRow) and gHigh >= pocRow and gLow <= pocRow
+        valueTint = isCurrent ? VALUE_AREA : PREV_VALUE
+        outsideTint = isCurrent ? OUTSIDE_VALUE : PREV_OUTSIDE
+        base = isPoc ? POC_COLOR : element(groupSingle, g) ? SINGLE_PRINT : isValue and shadingOn ? valueTint : outsideTint
+        transparency = isCurrent ? (isPoc ? max(profileTransp - 12, 0) : profileTransp) : prevProfileTransp
+        boxRight = startTime + widthBars * barMs
+        boxTop = (gHigh + 1) * rowSize
+        boxBottom = gLow * rowSize
+        drawZoneBox(startTime, boxRight, boxTop, boxBottom, base, transparency, min(transparency + 10, 100))
+        if isCurrent and rowCountsOn
+            draw.label(boxRight + barMs, (boxTop + boxBottom) * 0.5, text(element(groupMax, g), 0), textColor = withAlpha(TEXT_COLOR, 0.88))
+    groupCount
+
+fn drawVolumeProfile(vals, minRow, maxRow, pocRow, vahRow, valRow, rowSize, startTime, barMs) =>
+    rows = maxRow - minRow + 1
+    stride = max(1, ceil(rows / maxRenderedRows))
+    groupCount = ceil(rows / stride)
+    totals = []
+    groupedMax = 1
+    for g = 0 to groupCount - 1
+        gLow = minRow + g * stride
+        gHigh = min(gLow + stride - 1, maxRow)
+        total = 0
+        for r = gLow to gHigh
+            total += element(vals, r - minRow)
+        push(totals, total)
+        groupedMax = max(groupedMax, total)
+    boxLeft = startTime + (maxProfileWidth + 1) * barMs
+    for g = 0 to groupCount - 1
+        gLow = minRow + g * stride
+        gHigh = min(gLow + stride - 1, maxRow)
+        widthBars = max(1, round((element(totals, g) / groupedMax) * volWidthBars))
+        isValue = not isNone(valRow) and not isNone(vahRow) and gHigh >= valRow and gLow <= vahRow
+        isPoc = not isNone(pocRow) and gHigh >= pocRow and gLow <= pocRow
+        base = isPoc ? POC_COLOR : isValue ? SECONDARY : NEUTRAL
+        drawZoneBox(boxLeft, boxLeft + widthBars * barMs, (gHigh + 1) * rowSize, gLow * rowSize, base, isPoc ? 24 : 56, 65)
+    groupCount
+
+if bar.isLast and enabled
+    gapCount = size(barGaps)
+    sortedGaps = copy(barGaps)
+    sort(sortedGaps, "asc")
+    barMs = gapCount > 0 ? element(sortedGaps, floor(gapCount / 2)) : 60000
+    drawCurrent = showCurrentProfile and curValid
+    drawPrevious = showPreviousProfile and prevValid
+    drawVolume = showEstimatedVolume and volValid and curValid
+    if drawCurrent
+        drawTpoProfile(curSegS, curSegE, curSegC, dispMin, dispMax, curPocRow, curVahRow, curValRow, curRowSize, curStartTime, barMs, true)
+    if drawPrevious
+        drawTpoProfile(prevSegS, prevSegE, prevSegC, prevMinRow, prevMaxRow, prevPocRow, prevVahRow, prevValRow, prevRowSize, prevStartTime, barMs, false)
+    if drawVolume
+        drawVolumeProfile(volRows, dispMin, dispMax, volPocRow, volVahRow, volValRow, curRowSize, curStartTime, barMs)
+    if showProfileNames
+        if drawCurrent
+            draw.label(curStartTime, curProfileHigh + curRowSize, "CURRENT TPO", textColor = withAlpha(ACCENT, 0.32))
+        if drawPrevious
+            draw.label(prevStartTime, prevProfileHigh + prevRowSize, "PREVIOUS TPO", textColor = withAlpha(PREV_VALUE, 0.34))
+        if drawVolume
+            draw.label(curStartTime + (maxProfileWidth + 1) * barMs, curProfileHigh + curRowSize, "EST. VOLUME", textColor = withAlpha(SECONDARY, 0.32))
+    // The previous session's single-print zones, from its last bar to now,
+    // tinted by whether this session has touched or filled them.
+    if showSinglePrintZones and prevValid and inRTH and not isNone(prevRowSize)
+        zoneFrom = isNone(prevEndTime) ? (bar.index > 0 ? time[1] : time) : prevEndTime
+        for k = 0 to min(size(zoneStartRows), maxZones) - 1
+            zoneLow = element(zoneStartRows, k) * prevRowSize
+            zoneHigh = (element(zoneEndRows, k) + 1) * prevRowSize
+            touched = curHigh >= zoneLow and curLow <= zoneHigh
+            repaired = curHigh >= zoneHigh and curLow <= zoneLow
+            zoneBase = repaired ? NEUTRAL : touched ? POOR : SINGLE_PRINT
+            drawZoneBox(zoneFrom, time, zoneHigh, zoneLow, zoneBase, repaired ? 92 : touched ? 86 : 78, 42)
+
+// ---------------------------------------------------------------------------
+// Dashboard
+// ---------------------------------------------------------------------------
+
+fn auctionText(code) => code == -3 ? "Failed Upward Auction" : code == -2 ? "Downward Trend Auction" : code == -1 ? "Downward Imbalance" : code == 1 ? "Upward Imbalance" : code == 2 ? "Upward Trend Auction" : code == 3 ? "Failed Downward Auction" : code == 4 ? "Double Distribution" : code == 5 ? "Balanced Auction" : code == 6 ? "Developing Balance" : "Transition"
+fn shapeText(code) => code == 0 ? "Neutral / Mixed" : code == 1 ? "D-shaped" : code == 2 ? "P-shaped" : code == 3 ? "b-shaped" : code == 4 ? "Double Distribution" : code == 5 ? "Trend Profile" : "Developing"
+fn valueRelText(code) => code == 1 ? "Higher Value" : code == 2 ? "Lower Value" : code == 3 ? "Overlapping Higher" : code == 4 ? "Overlapping Lower" : code == 5 ? "Inside Prior Value" : code == 6 ? "Outside Prior Value" : code == 7 ? "Overlapping Value" : "No Comparison"
+fn pocMigText(code) => code == 1 ? "Strongly Higher" : code == 2 ? "Higher" : code == 3 ? "Strongly Lower" : code == 4 ? "Lower" : code == 5 ? "Stable" : "No Comparison"
+fn openLocText(code) => code == 1 ? "Above Prior Range" : code == 2 ? "Above Prior Value" : code == 3 ? "Inside Prior Value" : code == 4 ? "Below Prior Value" : code == 5 ? "Below Prior Range" : "No Prior Profile"
+fn curLocText(code) => code == 1 ? "Above Profile" : code == 2 ? "Above Value" : code == 3 ? "At POC" : code == 4 ? "Inside Value" : code == 5 ? "Below Value" : code == 6 ? "Below Profile" : "No Profile"
+fn participantText(code) => code == 1 ? "Two-sided Trade" : code == 2 ? "Responsive Selling" : code == 3 ? "Responsive Buying" : code == 4 ? "Initiative Buying" : code == 5 ? "Initiative Selling" : "Indeterminate"
+fn ibStateText(code) => code == 1 ? "Above IB" : code == 2 ? "Below IB" : code == 3 ? "Inside IB" : "IB Developing"
+
+ibStateCode = curValid and not isNone(curIbHigh) and not isNone(curIbLow) ? (close > curIbHigh ? 1 : close < curIbLow ? 2 : 3) : 0
+structureCode = not curValid ? 0 : curPoorHigh and curPoorLow ? 1 : curPoorHigh ? 2 : curPoorLow ? 3 : curSingles > 0 ? 4 : 5
+structureText = structureCode == 1 ? "Poor High + Low" : structureCode == 2 ? "Poor High" : structureCode == 3 ? "Poor Low" : structureCode == 4 ? text(curSingles, 0) + " Single Rows" : structureCode == 5 ? "Clean Extremes" : "No Profile"
+rowTicks = isNone(curRowSize) ? none : round(curRowSize / tick)
+warnCode = chartWarning ? 1 : curOverflow or prevOverflow ? 2 : 0
+vaWidth = curValid ? curVah - curVal : none
+
+// Price decimals from the tick.
+priceDp = 0
+tickScaled = tick
+while priceDp < 10 and abs(tickScaled - round(tickScaled)) > 0.000000001
+    tickScaled *= 10
+    priceDp += 1
+fn priceText(v) => isNone(v) ? "-" : text(v, priceDp)
+
+upwardRead = upwardValue or pocUp
+downwardRead = downwardValue or pocDown
+auctionTint = auctionCode == 1 or auctionCode == 2 or auctionCode == 3 ? BULLISH : auctionCode == -1 or auctionCode == -2 or auctionCode == -3 ? BEARISH : auctionCode == 4 ? ACCENT : auctionCode == 5 or auctionCode == 6 ? SECONDARY : NEUTRAL
+valueTint = upwardRead ? BULLISH : downwardRead ? BEARISH : NEUTRAL
+structureTint = curPoorHigh or curPoorLow ? POOR : SINGLE_PRINT
+locationTint = curLoc == 2 ? BULLISH : curLoc == 5 ? BEARISH : NEUTRAL
+layoutTag = dashboardWithFuturesLevels ? "Stacked" : "Standalone"
+footerText = warnCode == 1 ? "Use standard intraday candles with a chart timeframe at or below the TPO block size" : warnCode == 2 ? "Row-density warning - increase ticks per row" : "RTH - " + blockSizeInput + " - " + (isNone(rowTicks) ? "-" : text(rowTicks, 0)) + " ticks/row - " + layoutTag
+
+// One table per corner; only the chosen one is written, so the others stay
+// empty and draw nothing. Each sits on a dark panel (the PANEL colour at 92%
+// opacity) with a one-pixel border, so the light text and the card tints read
+// on a light or a dark chart.
+dashTopRight = table("Futures Profile", 14, 2, position = "topRight", bgColor = withAlpha(#0f172a, 0.92), borderWidth = 1)
+dashTopLeft = table("Futures Profile, top left", 14, 2, position = "topLeft", bgColor = withAlpha(#0f172a, 0.92), borderWidth = 1)
+dashBottomRight = table("Futures Profile, bottom right", 14, 2, position = "bottomRight", bgColor = withAlpha(#0f172a, 0.92), borderWidth = 1)
+dashBottomLeft = table("Futures Profile, bottom left", 14, 2, position = "bottomLeft", bgColor = withAlpha(#0f172a, 0.92), borderWidth = 1)
+corner = dashboardWithFuturesLevels ? "topRight" : dashboardPosition == "Top Left" or dashboardPosition == "Middle Left" ? "topLeft" : dashboardPosition == "Bottom Right" ? "bottomRight" : dashboardPosition == "Bottom Left" ? "bottomLeft" : "topRight"
+
+// Each card is four rows sharing one tint: a title and up to three lines.
+fn card(t, firstRow, col, title, line1, line2, line3, tint) =>
+    bg = withAlpha(tint, 0.22)
+    cell(t, firstRow, col, title, textColor = TEXT_COLOR, bgColor = bg)
+    cell(t, firstRow + 1, col, line1, textColor = TEXT_COLOR, bgColor = bg)
+    cell(t, firstRow + 2, col, line2, textColor = TEXT_COLOR, bgColor = bg)
+    cell(t, firstRow + 3, col, line3, textColor = TEXT_COLOR, bgColor = bg)
+    firstRow
+
+fn writeDashboard(t) =>
+    headerBg = withAlpha(ACCENT, 0.32)
+    footerBg = withAlpha(PANEL, 0.86)
+    cell(t, 0, 0, "FUTURES PROFILE", textColor = TEXT_COLOR, bgColor = headerBg, align = "center")
+    cell(t, 0, 1, "", bgColor = headerBg)
+    card(t, 1, 0, "AUCTION", auctionText(auctionCode), participantText(participant), "", auctionTint)
+    card(t, 5, 0, "PROFILE SHAPE", shapeText(shapeCode), "Skew " + (isNone(curSkew) ? "-" : text(curSkew, 2)) + " - RF " + text(curRotation, 1), "", ACCENT)
+    card(t, 9, 0, "OPEN", openLocText(openLoc), "Open " + priceText(curOpen), "", SECONDARY)
+    card(t, 1, 1, "VALUE", valueRelText(valueRel), pocMigText(pocMig) + " POC", "VA " + priceText(vaWidth), valueTint)
+    card(t, 5, 1, "STRUCTURE", structureText, "Singles " + text(curSingles, 0) + " - TPO " + text(curTotalTpo, 0), "", structureTint)
+    card(t, 9, 1, "LOCATION", curLocText(curLoc), ibStateText(ibStateCode), "Above/Below POC " + text(curTpoAbove, 0) + "/" + text(curTpoBelow, 0), locationTint)
+    cell(t, 13, 0, footerText, textColor = warnCode == 0 ? withAlpha(TEXT_COLOR, 0.75) : POOR, bgColor = footerBg, align = "center")
+    cell(t, 13, 1, "", bgColor = footerBg)
+    0
+
+if bar.isLast and enabled and showDashboard
+    if corner == "topLeft"
+        writeDashboard(dashTopLeft)
+    else if corner == "bottomRight"
+        writeDashboard(dashBottomRight)
+    else if corner == "bottomLeft"
+        writeDashboard(dashBottomLeft)
+    else
+        writeDashboard(dashTopRight)
+
+// Remember this bar's session flag and date for the next bar.
+inPrevBar = inRTH
+prevDateKey = dateKey

@@ -1,0 +1,15 @@
+{
+  "title": "Hamming Moving Average (HAMMA)",
+  "summary": "A moving average weighted by the Hamming window, heaviest in the middle of the lookback and lightest at its two ends.",
+  "description": "The Hamming Moving Average weights the bars of its window with the Hamming taper, 0.54 - 0.46 * cos(2 * pi * k / (N - 1)), where k counts bars back from the newest and N is the window length. The weight is 0.08 at both ends of the window and rises to 1 in the middle, so the central bars dominate. The weighted prices are summed and divided by the sum of the weights.\n\nThe window grows with the chart until it holds `period` bars, with the weights rebuilt for each length. A window of a single bar weights that bar by one, so the line starts on the first bar at the price itself. A missing price is skipped with its weight, and a window with no usable weight falls back to the current price.",
+  "howToRead": "Read the HAMMA as a smooth trend line. Tapering the ends means a large bar entering or leaving the window moves the line gently rather than in a step, so its path is cleaner than a simple average of the same length. Because the weight sits in the middle of the window, the line runs roughly half a window behind price.\n\nUse it for the direction and slope of the trend. It is slow to confirm a reversal, and a cross of price through the line comes after much of the move has happened.",
+  "settings": [
+    { "key": "period", "label": "Period", "description": "Number of bars in the full window. A longer period smooths more and lags more." },
+    { "key": "source", "label": "Source", "description": "The price series the average is taken from, the close by default." }
+  ],
+  "faq": [
+    { "q": "How does it differ from the Hanning average?", "a": "Both use a cosine taper. The Hamming taper keeps a small weight of 0.08 at the ends of the window, while the Hanning taper falls all the way to zero." },
+    { "q": "Why is the line smoother than a simple average?", "a": "Bars enter and leave the window with small weights, so a single large bar shifts the line gradually instead of in one jump." },
+    { "q": "Where does the line start?", "a": "On the first bar. The window grows with the chart, and a one-bar window simply returns the price." }
+  ]
+}

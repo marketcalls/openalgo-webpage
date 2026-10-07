@@ -1,0 +1,39 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © openalgo
+// Original work (c) mihakralj, MIT License
+
+version 1
+study("Continuous Wavelet Transform (CWT)", precision = 4)
+
+source = input(close, "Source")
+scale = input(10, "Scale", min = 0.5, max = 200, step = 0.5, tooltip = "Wavelet scale: higher values capture lower frequencies.")
+omega = input(6, "Omega (Central Frequency)", min = 1, max = 20, step = 0.5, tooltip = "Morlet central frequency. The standard value is 6.0.")
+
+scaleUsed = min(200, max(0.5, scale))
+omegaUsed = min(20, max(1, omega))
+
+// The Morlet wavelet spans three scales on each side of its centre.
+halfWin = max(1, round(3.0 * scaleUsed))
+invScale = 1.0 / scaleUsed
+normFactor = 1.0 / sqrt(scaleUsed)
+taps = 2 * halfWin + 1
+
+// Convolve the last 2 * halfWin + 1 bars with the complex wavelet. Tap j sits
+// at offset k = j - halfWin from the centre and reads the bar 2 * halfWin - j
+// back. History before the first bar reads as zero and adds nothing.
+realSum = 0.0
+imagSum = 0.0
+for j = 0 to taps - 1
+    srcVal = orElse(source[2 * halfWin - j], 0)
+    if srcVal == 0
+        continue
+    k = j - halfWin
+    t = k * invScale
+    gauss = exp(-0.5 * t * t)
+    angle = omegaUsed * t
+    realSum += srcVal * (gauss * math.cos(angle))
+    imagSum += srcVal * (gauss * math.sin(angle))
+
+// The magnitude of the complex response, scaled by one over the square root
+// of the scale.
+plot(sqrt(realSum * realSum + imagSum * imagSum) * normFactor, "CWT", #ffeb3b, width = 2)

@@ -1,0 +1,31 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © openalgo
+// Original work (c) mihakralj, MIT License
+
+version 1
+study("Volatility Ratio (VR)", precision = 4)
+
+atrPeriod = input(14, "ATR Period", min = 1, max = 5000, step = 1, tooltip = "The lookback period for calculating the Average True Range (ATR).")
+
+// True range against the previous close; the first bar, and a bar whose
+// previous close is missing, use high minus low. A missing true range adds 0
+// to the average and gives no ratio on that bar.
+hl = high - low
+tr = bar.index > 0 and not isNone(close[1]) ? max(hl, max(abs(high - close[1]), abs(low - close[1]))) : hl
+trForAtr = orElse(tr, 0)
+
+// A running average with weight 1 / atrPeriod, started from the first true
+// range. e is the weight a zero start would still hold, and dividing by
+// (1 - e) removes it while e is above a tiny threshold.
+var rawAtr = 0.0
+var e = 1.0
+wilderAlpha = 1.0 / atrPeriod
+rawAtr = bar.index == 0 ? trForAtr : (rawAtr * (atrPeriod - 1) + trForAtr) / atrPeriod
+e = (1.0 - wilderAlpha) * e
+denom = 1.0 - e
+atrCurrent = e > 1e-10 and denom != 0 ? rawAtr / denom : rawAtr
+
+// This bar's true range as a multiple of the average.
+vr = atrCurrent != 0 ? tr / atrCurrent : none
+
+plot(vr, "VR", #ffeb3b, width = 2)

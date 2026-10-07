@@ -1,0 +1,15 @@
+{
+  "title": "Mean Squared Logarithmic Error (MSLE)",
+  "summary": "The average squared gap between log(1 + price) and log(1 + its EMA) over a rolling window, a scale-free error measure.",
+  "description": "Mean Squared Logarithmic Error scores an exponential moving average as a forecast of price on a logarithmic scale. The average is taken over `Period` bars and seeded with the simple average of its first `Period` values. On every bar the study takes the natural logarithm of one plus the source and of one plus the average, subtracts the second from the first and squares the result. When either value is at or below minus one the logarithm has no answer and the bar carries no error.\n\nThe squared log gaps are averaged over the last `Period` bars, counting only the bars that carry an error, so the reading starts on the first bar where the average exists and widens its window until it is full. Working with logarithms turns the gap into something close to a relative change, so the reading stays comparable as the price level moves.\n\nThe error is plotted as a shaded area in its own pane, and the reference average is drawn on the price chart.",
+  "howToRead": "For prices well above one, the log gap is close to the percentage distance from the average, so a reading of 0.0004 corresponds to a typical distance of about 2 percent (the square root of 0.0004 is 0.02). A rising reading means price is pulling away from its average; a falling one means it is settling near it.\n\nBecause the gaps are squared, a few wide departures dominate the reading. The values are small, so read the pane with enough decimals, and compare the line with its own history.",
+  "settings": [
+    { "key": "source", "label": "Source", "description": "The price series measured against its own average. The close by default." },
+    { "key": "period", "label": "Period", "description": "The length of the reference EMA and of the averaging window, held to between 1 and 4000 bars." }
+  ],
+  "faq": [
+    { "q": "Why take logarithms?", "a": "The log gap measures relative distance rather than distance in price units, so the reading does not grow just because the instrument became more expensive." },
+    { "q": "Why are the values so small?", "a": "A log gap of 0.02 is roughly a 2 percent distance, and squaring it gives 0.0004. Take the square root of the reading to get back to a rough typical percentage as a fraction." },
+    { "q": "How does it differ from MSE?", "a": "MSE squares the gap in price units, so it depends on the price level. MSLE squares the gap in logarithms, so it is close to a squared percentage and comparable across instruments." }
+  ]
+}

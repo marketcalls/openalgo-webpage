@@ -1,0 +1,61 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © openalgo
+// Original work (c) mihakralj, MIT License
+
+version 1
+study("Stochastic RSI (STOCHRSI)", precision = 2)
+
+rsiLength = input(14, "RSI Length", min = 1, max = 100, step = 1, tooltip = "Period for the RSI calculation.")
+stochLength = input(14, "Stochastic Length", min = 1, max = 100, step = 1, tooltip = "Lookback period for the stochastic calculation on RSI.")
+kSmooth = input(3, "%K Smooth", min = 1, max = 20, step = 1, tooltip = "Smoothing period for the %K line.")
+dSmooth = input(3, "%D Smooth", min = 1, max = 20, step = 1, tooltip = "Smoothing period for the %D line.")
+source = input(close, "Source", tooltip = "Price series to analyse.")
+
+// Up and down moves against the previous value, which reads as 0 before the
+// first bar.
+current = orElse(source, 0)
+previous = orElse(source[1], 0)
+up = max(current - previous, 0)
+down = max(previous - current, 0)
+
+// Smoothing with weight 1 / rsiLength. For the first rsiLength bars the
+// smoothed move is simply this bar's move.
+wilderAlpha = 1 / rsiLength
+var smoothUp = 0.0
+var smoothDown = 0.0
+if bar.index < rsiLength
+    smoothUp = up
+    smoothDown = down
+else
+    smoothUp = smoothUp * (1 - wilderAlpha) + up * wilderAlpha
+    smoothDown = smoothDown * (1 - wilderAlpha) + down * wilderAlpha
+rs = smoothDown == 0 ? 0 : smoothUp / smoothDown
+rsiValue = smoothDown == 0 ? 100 : 100 - 100 / (1 + rs)
+
+// Where the RSI sits inside its own range over the last stochLength bars, or
+// over every bar so far while fewer have been seen. A flat range reads 50.
+highestRsi = rsiValue
+lowestRsi = rsiValue
+for k = 1 to stochLength - 1
+    if k <= bar.index
+        highestRsi = max(highestRsi, rsiValue[k])
+        lowestRsi = min(lowestRsi, rsiValue[k])
+rsiRange = highestRsi - lowestRsi
+kRaw = rsiRange > 0 ? 100 * (rsiValue - lowestRsi) / rsiRange : 50
+
+// %K and %D are simple means over the readings seen so far, up to kSmooth and
+// dSmooth of them, summed oldest first.
+kCount = min(bar.index + 1, kSmooth)
+kTotal = 0.0
+for j = 0 to kCount - 1
+    kTotal += kRaw[kCount - 1 - j]
+kLine = kTotal / kCount
+
+dCount = min(bar.index + 1, dSmooth)
+dTotal = 0.0
+for j = 0 to dCount - 1
+    dTotal += kLine[dCount - 1 - j]
+dLine = dTotal / dCount
+
+plot(kLine, "StochRSI %K", #ffeb3b, width = 2)
+plot(dLine, "StochRSI %D", #2962ff, width = 2)

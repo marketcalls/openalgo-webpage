@@ -1,0 +1,48 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © openalgo
+// Original work (c) mihakralj, MIT License
+
+version 1
+study("Ehlers Roofing Filter (ROOFING)", precision = 4)
+
+hpLength = input(48, "HP Length", min = 1, max = 5000, step = 1, tooltip = "Highpass cutoff period: removes cycles longer than this")
+ssLength = input(10, "SS Length", min = 1, max = 5000, step = 1, tooltip = "Super Smoother cutoff period: removes cycles shorter than this")
+source = input(close, "Source")
+
+hpLen = max(1, floor(hpLength))
+ssLen = max(1, floor(ssLength))
+sqrt2Pi = sqrt(2) * math.pi
+
+// Stage 1: a two-pole Butterworth highpass.
+hpArg = sqrt2Pi / hpLen
+hpExp = exp(-hpArg)
+hpC2 = 2 * hpExp * math.cos(hpArg)
+hpC3 = -hpExp * hpExp
+hpC1 = (1 + hpC2 - hpC3) / 4
+
+// Stage 2: a Super Smoother.
+ssArg = sqrt2Pi / ssLen
+ssExp = exp(-ssArg)
+ssC2 = 2 * ssExp * math.cos(ssArg)
+ssC3 = -ssExp * ssExp
+ssC1 = 1 - ssC2 - ssC3
+
+// Missing prices fold back onto the newest one, so the highpass starts at zero.
+ssrc = orElse(source, orElse(source[1], 0))
+src1 = orElse(source[1], ssrc)
+src2 = orElse(source[2], src1)
+
+var hp1 = none
+var hp2 = none
+var roof1 = none
+var roof2 = none
+hpCur = orElse(hpC1 * (ssrc - 2 * src1 + src2) + hpC2 * orElse(hp1, 0) + hpC3 * orElse(hp2, 0), 0)
+hpPrev1 = orElse(hp1, hpCur)
+roofCur = orElse(ssC1 * hpCur + ssC2 * orElse(roof1, hpPrev1) + ssC3 * orElse(roof2, hpPrev1), 0)
+hp2 = hp1
+hp1 = hpCur
+roof2 = roof1
+roof1 = roofCur
+
+plot(roofCur, "Roofing", #ffeb3b, width = 2)
+level(0, "Zero", #787b86, style = "dashed")

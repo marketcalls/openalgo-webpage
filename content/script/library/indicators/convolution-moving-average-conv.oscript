@@ -1,0 +1,73 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © openalgo
+// Original work (c) mihakralj, MIT License
+
+version 1
+study("Convolution Moving Average (CONV)", overlay = true, precision = 2)
+
+source = input(close, "Source")
+kernel = input("1, 2.5, -3.14, 0, 1", "Kernel Weights", tooltip = "Comma separated weights, newest bar first. Anything unparsable falls back to the default kernel.")
+
+// Read the kernel text. Weights may be separated by commas, semicolons or any
+// whitespace character (spaces, tabs, line breaks and the Unicode spaces). A
+// weight is a decimal number such as 2.5, -3.14 or 1e-2, or an unsigned whole
+// number written in hexadecimal (0x1f), octal (0o17) or binary (0b101). If any
+// piece is not a number, or there are none, the default kernel
+// 1, 2.5, -3.14, 0, 1 is used instead.
+separators = [";", " ", "\t", "\n", "\r", "\u000b", "\u000c", "\u00a0", "\u1680", "\u2000", "\u2001", "\u2002", "\u2003", "\u2004", "\u2005", "\u2006", "\u2007", "\u2008", "\u2009", "\u200a", "\u2028", "\u2029", "\u202f", "\u205f", "\u3000", "\ufeff"]
+cleaned = kernel
+for sep in separators
+    cleaned = str.replaceAll(cleaned, sep, ",")
+digits = "0123456789abcdef"
+weights = [0.0]
+clear(weights)
+parsedOk = true
+for piece in str.split(cleaned, ",")
+    part = str.trim(piece)
+    if str.length(part) > 0
+        v = toNumber(part)
+        lowered = str.lower(part)
+        prefix = str.length(lowered) > 2 ? str.substring(lowered, 0, 2) : ""
+        base = prefix == "0x" ? 16 : prefix == "0o" ? 8 : prefix == "0b" ? 2 : 0
+        if base > 0
+            // A whole number in base 16, 8 or 2, read digit by digit.
+            acc = 0.0
+            for c = 2 to str.length(lowered) - 1
+                d = str.indexOf(digits, str.substring(lowered, c, c + 1))
+                if d < 0 or d >= base
+                    acc = none
+                    break
+                acc = acc * base + d
+            v = acc
+        if isNone(v)
+            parsedOk = false
+        else
+            push(weights, v)
+if not parsedOk or size(weights) == 0
+    weights = [1.0, 2.5, -3.14, 0.0, 1.0]
+
+// Normalise the kernel by its own sum when that sum is not zero.
+kernelSum = 0.0
+for i = 0 to size(weights) - 1
+    kernelSum += element(weights, i)
+if kernelSum != 0
+    inv = 1.0 / kernelSum
+    for i = 0 to size(weights) - 1
+        set(weights, i, element(weights, i) * inv)
+
+// Element 0 weighs this bar, element 1 the bar before, and so on. The window is
+// partial on the opening bars, and the result is normalised again by the
+// weights that landed on real values. If those cancel to zero, the line falls
+// back to this bar's value.
+p = min(bar.index + 1, size(weights))
+total = 0.0
+weightSum = 0.0
+for k = 0 to p - 1
+    price = source[k]
+    if not isNone(price)
+        w = element(weights, k)
+        total += price * w
+        weightSum += w
+conv = weightSum != 0 ? orElse(total / weightSum, source) : source
+
+plot(conv, "CONV", #ffeb3b, width = 2)

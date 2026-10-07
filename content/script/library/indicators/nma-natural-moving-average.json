@@ -1,0 +1,15 @@
+{
+  "title": "NMA - Natural Moving Average",
+  "summary": "An adaptive average whose speed is set by where in the window the movement of log price happened: recent movement makes it fast.",
+  "description": "NMA works on the natural log of price, scaled by 1000. For each of the last `period` steps it takes the size of the move between neighbouring bars, then weights it with a square-root kernel: the newest step gets weight `sqrt(1) - sqrt(0)`, the next `sqrt(2) - sqrt(1)`, and so on, so weight falls off with age. The smoothing ratio is the weighted total divided by the plain total of the same moves.\n\nWhen most of the movement in the window happened in the newest bars, the ratio is high and the line moves quickly toward price. When the movement is spread through the window or sits in older bars, the ratio is low and the line smooths hard. The average starts at the first source value and then steps toward the source by the ratio on each bar. Bars before the start of the chart read as zero, so the first few ratios are dominated by that first large step.",
+  "howToRead": "Read NMA as a trend line that changes speed on its own. During a fresh breakout, when the latest bars carry the movement, it catches up with price quickly; in a market that has gone quiet after earlier swings, it flattens and ignores small moves.\n\nA rising line with price above it describes an uptrend and a falling line with price below it a downtrend. Give it a period's worth of bars before relying on it, because the earliest ratios are shaped by the start of the chart rather than by price behaviour.",
+  "settings": [
+    { "key": "period", "label": "Period", "description": "How many steps of log price are weighed to set the smoothing ratio. A longer period spreads the kernel and slows the line." },
+    { "key": "source", "label": "Source", "description": "The price series that is averaged, the close by default." }
+  ],
+  "faq": [
+    { "q": "Why does it use the log of price?", "a": "Log price turns moves into percentages, so the ratio responds to the relative size of moves and reads the same at any price level." },
+    { "q": "What makes the ratio high?", "a": "Movement concentrated in the newest bars. The square-root kernel gives the newest step the largest weight, so a big recent move against a quiet past pushes the ratio toward one." },
+    { "q": "Why do the first bars look different?", "a": "Bars before the start of the chart read as zero, so the first step is very large and dominates the ratio until enough real bars fill the window." }
+  ]
+}

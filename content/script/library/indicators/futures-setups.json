@@ -1,0 +1,537 @@
+{
+  "title": "Futures Setups",
+  "summary": "Scores Fair Value Gaps and Order Blocks from six timeframes out of 100 and turns the best qualifying touch into a trade plan with a stop and 1R, 1.5R and 2R targets.",
+  "description": "Futures Setups records supply and demand zones on the chart timeframe and on 5, 15, 30, 60 and 240 minute bars that it builds from the chart's own bars, counted from the 18:00 session open in the session timezone. A zone is a **Fair Value Gap** (a three-bar gap between the first bar and the third) or an **Order Block** (the last opposite-colour bar before a displacement bar that closes through the recent high or low). A higher-timeframe zone is only read from closed bars, so it appears when its bar has finished. When price closes through a zone, the gap becomes an Inversion FVG and the block a Breaker Block facing the other way, each with a shorter life of its own.\n\nEvery open zone is scored out of 100 on each bar across six categories: zone authority (its timeframe, type and width, up to 30), multi-timeframe overlap with other open zones on the same side (up to 25), structure (a recent break of structure or market structure shift and a recent displacement bar, up to 20), liquidity (recent sweeps of liquidity pools, the previous day, the previous week, the overnight range and the opening range, and pools or levels near the zone, up to 15), market context (VWAP, the weighted regime, z-score, RSI and relative volume, up to 10) and session behaviour (a power-of-three sweep or an opening-range break, up to 4).\n\nWhen a zone is touched in the signal window and passes every gate (score, number of categories, structure, displacement, touch count, cooldown, stop size and room to the nearest objective), the study opens a trade plan at the close: a stop a few ticks beyond the zone and targets at 1R, 1.5R and 2R. The plan finishes at its stop, at 2R or when its time runs out. A regime panel scores the trend of every timeframe from -100 to 100 using its averages, VWAP, RSI, momentum and volume.",
+  "howToRead": "Start with the regime panel in the bottom-right corner. Each timeframe reads STRONG BULL, BULLISH, BALANCED, BEARISH or STRONG BEAR with its score, and setups that agree with the higher timeframes score more. ENGINE reads READY when the setup engine is running; it only runs on NQ, MNQ, ES and MES one-minute charts unless the two switches in Quick Start are on, and otherwise the panel is all the study shows.\n\nA trade plan is drawn as a BUY or SELL plate with its score at the entry, the zone it came from, a red risk box down to the STOP line and green boxes to the 1R, 1.5R and 2R lines. When the plan finishes, a label shows how: STOP -1R, TARGET +2R or a TIME exit. The score is a checklist of conditions, not a probability, and a plan that reaches 1R and then times out is not a loss or a win in itself. Read it on real, latest market data, and treat the plans as candidates to review rather than orders.",
+  "settings": [
+    {
+      "key": "indicatorEnabled",
+      "label": "Enable indicator",
+      "description": "Master switch for zone registration. Off, no zones are recorded, so no zone is scored and no trade plan is drawn; the regime panel still updates."
+    },
+    {
+      "key": "allowUnsupportedSymbols",
+      "label": "Allow symbols other than NQ/ES",
+      "description": "The engine runs only when the symbol's leading letters are NQ, MNQ, ES or MES (or the chart names no symbol) unless this is on. Turn it on to run the setup engine on any other instrument."
+    },
+    {
+      "key": "allowNonOneMinuteCharts",
+      "label": "Allow chart timeframes above 1 minute",
+      "description": "The engine only runs on a one-minute chart unless this is on. On, it also runs on charts of two to five minutes."
+    },
+    {
+      "key": "sessionTimezone",
+      "label": "Session timezone",
+      "description": "The timezone every session window, the 18:00 trading-day boundary and the 09:30 opening range are read in. It must be a full zone name such as America/New_York; a name the chart does not recognise stops the study."
+    },
+    {
+      "key": "futuresSession",
+      "label": "Futures session",
+      "description": "The futures trading session, written HHMM-HHMM with an optional list of days (1 is Sunday, 7 is Saturday). The session VWAP and the same-time volume slots run inside it."
+    },
+    {
+      "key": "overnightSession",
+      "label": "Overnight session",
+      "description": "The overnight window whose high and low become reference levels for sweeps and objectives."
+    },
+    {
+      "key": "rthSession",
+      "label": "Regular trading hours",
+      "description": "Regular trading hours. Its first bar resets the RTH VWAP and starts the opening range."
+    },
+    {
+      "key": "signalSession",
+      "label": "Signal window",
+      "description": "Trade plans are only opened inside this window. Widen it to allow overnight or evening signals."
+    },
+    {
+      "key": "maximumActiveTrades",
+      "label": "Maximum active trades",
+      "description": "The most trade plans that can be open at the same time. A new plan waits until one of them finishes."
+    },
+    {
+      "key": "showPastTrades",
+      "label": "Show past trades",
+      "description": "Keep finished trade plans on the chart for the retention hours below instead of the short default retention."
+    },
+    {
+      "key": "pastTradeRetentionHours",
+      "label": "Past-trade retention hours",
+      "description": "How long a finished trade plan stays on the chart when past trades are shown."
+    },
+    {
+      "key": "completedRetentionMinutes",
+      "label": "Default completed-trade retention",
+      "description": "How long a finished trade plan stays on the chart when past trades are not shown."
+    },
+    {
+      "key": "useChartZones",
+      "label": "Chart-timeframe zones",
+      "description": "Record Fair Value Gaps and Order Blocks found on the chart timeframe itself."
+    },
+    {
+      "key": "use5m",
+      "label": "5-minute zones",
+      "description": "Record zones from 5-minute bars built out of the chart bars."
+    },
+    {
+      "key": "use15m",
+      "label": "15-minute zones",
+      "description": "Record zones from 15-minute bars built out of the chart bars."
+    },
+    {
+      "key": "use30m",
+      "label": "30-minute zones",
+      "description": "Record zones from 30-minute bars built out of the chart bars."
+    },
+    {
+      "key": "use1h",
+      "label": "1-hour zones",
+      "description": "Record zones from 1-hour bars built out of the chart bars."
+    },
+    {
+      "key": "use4h",
+      "label": "4-hour zones",
+      "description": "Record zones from 4-hour bars built out of the chart bars, counted from the 18:00 session open."
+    },
+    {
+      "key": "chartZoneLifeMinutes",
+      "label": "1m/chart zone maximum life",
+      "description": "How many minutes a chart-timeframe zone stays open before it expires."
+    },
+    {
+      "key": "zoneLife5m",
+      "label": "5m zone maximum life",
+      "description": "How many minutes a 5-minute zone stays open before it expires."
+    },
+    {
+      "key": "zoneLife15m",
+      "label": "15m zone maximum life",
+      "description": "How many minutes a 15-minute zone stays open before it expires."
+    },
+    {
+      "key": "zoneLife30m",
+      "label": "30m zone maximum life",
+      "description": "How many minutes a 30-minute zone stays open before it expires."
+    },
+    {
+      "key": "zoneLife1h",
+      "label": "1H zone maximum life",
+      "description": "How many minutes a 1-hour zone stays open before it expires."
+    },
+    {
+      "key": "fourHourZonesUntilSessionEnd",
+      "label": "4H zones last until futures-session close",
+      "description": "On, a 4-hour zone stays open until the next 17:00 session close (at least two minutes). Off, it uses the fallback life below."
+    },
+    {
+      "key": "zoneLife4h",
+      "label": "4H fallback maximum life",
+      "description": "How many minutes a 4-hour zone stays open when it is not held to the session close."
+    },
+    {
+      "key": "zoneLifetimeMode",
+      "label": "Zone lifetime mode",
+      "description": "Fixed by timeframe gives every zone its full life. Shorten weaker zones cuts the life to three quarters below the full-life score and to half below the three-quarter-life score."
+    },
+    {
+      "key": "transformedZoneLifetimePercent",
+      "label": "IFVG / BB lifetime (% of source zone)",
+      "description": "The life of an Inversion FVG or a Breaker Block, as a percentage of the life its source zone had, counted from the bar that flipped it."
+    },
+    {
+      "key": "strongZoneScore",
+      "label": "Full-life score",
+      "description": "In the shortening mode, a zone scoring at least this keeps its full life."
+    },
+    {
+      "key": "moderateZoneScore",
+      "label": "Three-quarter-life score",
+      "description": "In the shortening mode, a zone scoring at least this keeps three quarters of its life. A new zone's first expiry also assumes at least this score."
+    },
+    {
+      "key": "enableFvg",
+      "label": "Fair Value Gaps",
+      "description": "Record Fair Value Gaps: a three-bar gap between the first bar's high and the third bar's low, or the reverse."
+    },
+    {
+      "key": "enableIfvg",
+      "label": "Inversion FVGs",
+      "description": "When price closes through a Fair Value Gap, record the same range as an Inversion FVG facing the other way."
+    },
+    {
+      "key": "enableOb",
+      "label": "Order Blocks",
+      "description": "Record Order Blocks: the last opposite-colour bar before a displacement bar that closes beyond the recent high or low."
+    },
+    {
+      "key": "enableBb",
+      "label": "Breaker Blocks",
+      "description": "When price closes through an Order Block, record the same range as a Breaker Block facing the other way."
+    },
+    {
+      "key": "minimumZoneTicks",
+      "label": "Minimum zone width (ticks)",
+      "description": "A zone narrower than this many price ticks is ignored. The tick is the instrument's tick size; when the chart states none, a tick of 0.01 is used."
+    },
+    {
+      "key": "minimumZoneAtr",
+      "label": "Minimum zone size / source ATR",
+      "description": "A zone narrower than this fraction of its source timeframe's ATR is ignored."
+    },
+    {
+      "key": "maximumZoneAtr",
+      "label": "Maximum zone size / source ATR",
+      "description": "A zone wider than this multiple of its source timeframe's ATR is ignored."
+    },
+    {
+      "key": "htfDisplacementAtr",
+      "label": "HTF displacement body / ATR",
+      "description": "The body a bar needs, as a multiple of ATR, to count as displacement when finding Order Blocks."
+    },
+    {
+      "key": "htfDisplacementBodyFraction",
+      "label": "HTF displacement body fraction",
+      "description": "The share of the bar's range its body must fill to count as displacement when finding Order Blocks."
+    },
+    {
+      "key": "htfBosLookback",
+      "label": "HTF structure lookback",
+      "description": "How many bars back the high or low is taken from when testing whether a displacement bar broke structure."
+    },
+    {
+      "key": "pivotLeft",
+      "label": "Pivot left",
+      "description": "Bars to the left a swing high or low must stand beyond."
+    },
+    {
+      "key": "pivotRight",
+      "label": "Pivot right",
+      "description": "Bars to the right a swing high or low must stand beyond, which is also how many bars late a swing is confirmed."
+    },
+    {
+      "key": "structureValidityBars",
+      "label": "Immediate structure-event bars",
+      "description": "A break of structure counts as recent for this many bars after it."
+    },
+    {
+      "key": "structureValidityMinutes",
+      "label": "Same-leg structure validity minutes",
+      "description": "A break of structure also counts as recent for this many minutes after it."
+    },
+    {
+      "key": "displacementValidityMinutes",
+      "label": "Displacement validity minutes",
+      "description": "A displacement bar on the chart counts as recent for this many minutes after it."
+    },
+    {
+      "key": "executionDisplacementAtr",
+      "label": "Execution displacement body / ATR",
+      "description": "The body a chart bar needs, as a multiple of ATR, to count as execution displacement."
+    },
+    {
+      "key": "executionBodyFraction",
+      "label": "Execution body fraction",
+      "description": "The share of the range a chart bar's body must fill to count as execution displacement."
+    },
+    {
+      "key": "useLiquidityPools",
+      "label": "Repeated-wick liquidity pools",
+      "description": "Group swing highs and lows at a similar price into liquidity pools, and score their sweeps and their nearness to a zone."
+    },
+    {
+      "key": "liquidityPoolToleranceTicks",
+      "label": "Pool tolerance in ticks",
+      "description": "How close, in ticks, a new swing must be to an existing pool to join it."
+    },
+    {
+      "key": "liquidityPoolMinimumTouches",
+      "label": "Minimum pool touches",
+      "description": "How many swings a pool needs before it counts."
+    },
+    {
+      "key": "liquidityPoolLookbackBars",
+      "label": "Pool lookback bars",
+      "description": "A pool closes when no swing has touched it for this many bars."
+    },
+    {
+      "key": "liquidityPoolBreakTicks",
+      "label": "Pool break confirmation ticks",
+      "description": "A close this many ticks beyond a pool breaks it rather than sweeping it."
+    },
+    {
+      "key": "usePoolsAsObjectives",
+      "label": "Use liquidity pools as trade objectives",
+      "description": "Include the nearest qualified pool beyond the entry when measuring the room to the first objective."
+    },
+    {
+      "key": "liquiditySweepValidityBars",
+      "label": "Liquidity-event validity bars",
+      "description": "A sweep of a pool or of a reference level counts as recent for this many bars."
+    },
+    {
+      "key": "openingRangeMinutes",
+      "label": "Opening Range minutes",
+      "description": "The length of the opening range measured from 09:30 in the session timezone."
+    },
+    {
+      "key": "useVwap",
+      "label": "Session and RTH VWAP",
+      "description": "Score a zone higher when price rejects the session or RTH VWAP in the zone's direction, or the VWAP sits inside the zone."
+    },
+    {
+      "key": "useRsi",
+      "label": "RSI",
+      "description": "Score a zone higher when RSI turns in the zone's direction."
+    },
+    {
+      "key": "rsiLength",
+      "label": "RSI length",
+      "description": "The RSI length, used for the context points and the regime scores."
+    },
+    {
+      "key": "useZScore",
+      "label": "Rolling z-score",
+      "description": "Score a zone higher when a stretched close turns back towards its mean."
+    },
+    {
+      "key": "zScoreLength",
+      "label": "Z-score length",
+      "description": "How many bars the rolling mean and standard deviation of the close cover."
+    },
+    {
+      "key": "zScoreExtreme",
+      "label": "Z-score extreme",
+      "description": "How many standard deviations from the mean counts as stretched."
+    },
+    {
+      "key": "usePowerOfThree",
+      "label": "Power-of-three session proxy",
+      "description": "Score a zone higher when a reference level is swept and price closes back on the session VWAP side the zone favours."
+    },
+    {
+      "key": "useOpeningRange",
+      "label": "Opening Range breakout/retest",
+      "description": "Score a zone higher on a close beyond the completed opening range that retests it."
+    },
+    {
+      "key": "useRvol",
+      "label": "Same-time relative volume",
+      "description": "Score a zone higher when volume is elevated against the same time of day in earlier sessions."
+    },
+    {
+      "key": "rvolBaselineSessions",
+      "label": "RVOL baseline sessions",
+      "description": "How many earlier sessions the same-time volume average covers."
+    },
+    {
+      "key": "rvolMinimumSamples",
+      "label": "RVOL minimum samples",
+      "description": "How many earlier sessions are needed before relative volume is reported."
+    },
+    {
+      "key": "elevatedRvol",
+      "label": "Elevated RVOL",
+      "description": "The relative volume that counts as elevated, for scoring and for the regime."
+    },
+    {
+      "key": "minimumScore",
+      "label": "Signal minimum score",
+      "description": "A zone must score at least this out of 100 before a trade plan can open from it."
+    },
+    {
+      "key": "minimumCategories",
+      "label": "Minimum independent categories",
+      "description": "A zone must score in at least this many of the six categories before a trade plan can open from it."
+    },
+    {
+      "key": "requireStructure",
+      "label": "Require recent BOS/MSS",
+      "description": "Only open a trade plan when a break of structure in the zone's direction is recent."
+    },
+    {
+      "key": "requireDisplacement",
+      "label": "Require recent displacement",
+      "description": "Only open a trade plan when a displacement bar in the zone's direction is recent."
+    },
+    {
+      "key": "maximumEntryTouches",
+      "label": "Maximum zone touches before entry",
+      "description": "A zone touched more times than this can no longer open a trade plan."
+    },
+    {
+      "key": "oneTradePerStructuralLeg",
+      "label": "One trade per structural leg",
+      "description": "Allow only one trade plan per direction for each leg between breaks of structure."
+    },
+    {
+      "key": "sameDirectionCooldownBars",
+      "label": "Same-direction cooldown bars",
+      "description": "Bars to wait after a trade plan before another one in the same direction."
+    },
+    {
+      "key": "minimumObjectiveR",
+      "label": "Minimum space to objective in R",
+      "description": "The nearest objective beyond the entry must be at least this many times the risk away. Zero turns the test off."
+    },
+    {
+      "key": "entryMode",
+      "label": "Entry mode",
+      "description": "What a touch must do to open a trade plan: First touch enters on any touch, Midpoint reclaim needs a close back across the midpoint, Rejection close needs a close beyond the midpoint in a candle of the trade's colour."
+    },
+    {
+      "key": "atrLength",
+      "label": "ATR length",
+      "description": "The ATR length used for zone sizes, displacement, stop limits and the regime."
+    },
+    {
+      "key": "stopBufferTicks",
+      "label": "Invalidation buffer ticks",
+      "description": "The stop sits this many ticks beyond the far edge of the zone."
+    },
+    {
+      "key": "stopLimitMode",
+      "label": "Stop-size limits",
+      "description": "Automatic caps the stop at 12 ticks on ES and MES and 32 ticks elsewhere, Custom uses the cap below, Off removes the caps. With a cap, a stop must also be at least 2 ticks and no wider than the ATR limit below."
+    },
+    {
+      "key": "customMaxStopTicks",
+      "label": "Custom maximum stop ticks",
+      "description": "The largest stop, in ticks, when the stop-size limits are Custom."
+    },
+    {
+      "key": "maximumStopAtr",
+      "label": "Maximum stop / ATR",
+      "description": "The largest stop as a multiple of ATR, when stop-size limits are on."
+    },
+    {
+      "key": "tradeDurationMinutes",
+      "label": "Trade drawing duration",
+      "description": "A trade plan that has not reached its stop or 2R by this many minutes is closed on time."
+    },
+    {
+      "key": "maximumRetainedTrades",
+      "label": "Maximum retained trades",
+      "description": "The most trade plans, open and finished, the chart keeps."
+    },
+    {
+      "key": "showRegimePanel",
+      "label": "Show multi-timeframe regime panel",
+      "description": "Show the regime table with the six timeframe regimes, the engine state, the threshold and the latest candidate."
+    },
+    {
+      "key": "panelPosition",
+      "label": "Regime table position",
+      "description": "Kept for compatibility with saved settings. This version always pins the panel to the bottom-right corner."
+    },
+    {
+      "key": "panelTextSize",
+      "label": "Regime table text size",
+      "description": "Kept for compatibility with saved settings. This version draws the panel at the chart's own table text size."
+    },
+    {
+      "key": "showZoneScores",
+      "label": "Show scores in zone labels",
+      "description": "Add each zone's current score to its label in the research view."
+    },
+    {
+      "key": "zoneLabelPlacement",
+      "label": "Zone label placement",
+      "description": "Inside right puts a zone label at its midpoint near the right edge; Above right puts it just above the zone's top edge."
+    },
+    {
+      "key": "liquidityLabelOffsetTicks",
+      "label": "Liquidity label offset (ticks)",
+      "description": "How far, in ticks, pool labels sit from their line: below a support pool, above a resistance pool."
+    },
+    {
+      "key": "researchBuild",
+      "label": "Research build",
+      "description": "Off by default, which hides every research drawing below. On, the research options take effect."
+    },
+    {
+      "key": "showAllResearchZones",
+      "label": "Show active research zones",
+      "description": "In the research view, draw the open zones (and recently invalidated ones) as boxes with labels."
+    },
+    {
+      "key": "researchZoneFilter",
+      "label": "Research zone filter",
+      "description": "Relevant only draws zones that score at least the research candidate minimum or sit within four ATRs of price; All active draws every open zone."
+    },
+    {
+      "key": "showLiquidityPoolLines",
+      "label": "Show active liquidity-pool lines",
+      "description": "In the research view, draw up to eight qualified pools as dashed lines projected past the latest bar."
+    },
+    {
+      "key": "liquidityPoolForwardMinutes",
+      "label": "Liquidity-line forward projection",
+      "description": "How many minutes past the latest bar the pool lines extend."
+    },
+    {
+      "key": "showInvalidatedZoneHistory",
+      "label": "Show recently invalidated zones",
+      "description": "In the research view, keep a zone that price closed through visible up to the bar that invalidated it."
+    },
+    {
+      "key": "invalidatedZoneRetentionMinutes",
+      "label": "Invalidated-zone history retention",
+      "description": "How long an invalidated zone stays in the research view."
+    },
+    {
+      "key": "maximumResearchZones",
+      "label": "Maximum visible research zones",
+      "description": "The most zones the research view draws, newest first."
+    },
+    {
+      "key": "researchCandidateMinimum",
+      "label": "Research candidate minimum",
+      "description": "The score a touched zone needs to be marked as a candidate in the research view."
+    },
+    {
+      "key": "showRejectedCandidates",
+      "label": "Show rejected touched candidates",
+      "description": "In the research view, label touched candidates that did not qualify, with the reason they failed."
+    },
+    {
+      "key": "enableAlerts",
+      "label": "Enable alerts",
+      "description": "Master switch for the four alerts below."
+    },
+    {
+      "key": "alertSignals",
+      "label": "BUY / SELL signal",
+      "description": "Alert when a BUY or SELL trade plan opens."
+    },
+    {
+      "key": "alertTargets",
+      "label": "Target reached",
+      "description": "Alert when a trade plan reaches its 2R target."
+    },
+    {
+      "key": "alertStops",
+      "label": "Stop reached",
+      "description": "Alert when a trade plan reaches its stop."
+    }
+  ],
+  "faq": [
+    {
+      "q": "Why does the chart only show the regime panel?",
+      "a": "The setup engine runs only on NQ, MNQ, ES and MES symbols on a one-minute chart by default. Turn on \"Allow symbols other than NQ/ES\" for another instrument, and \"Allow chart timeframes above 1 minute\" for a chart of two to five minutes. Above five minutes the engine stays off and only the regime panel updates."
+    },
+    {
+      "q": "Why does a 4-hour zone appear long after the gap formed?",
+      "a": "Higher-timeframe bars are built from the chart's bars and a zone is read only once its bar has closed, so a 4-hour gap is recorded on the first chart bar after its third 4-hour bar finishes. Nothing is read from a bar that is still forming."
+    },
+    {
+      "q": "What do the six categories add up to?",
+      "a": "Zone authority gives up to 30 points, overlap up to 25, structure up to 20, liquidity up to 15, market context up to 10 and session behaviour up to 4, capped at 100. The default threshold needs a score of 80 spread over at least four categories."
+    },
+    {
+      "q": "What are the columns such as Weighted Regime and Latest Candidate Score?",
+      "a": "They are readings the study keeps for the data window and are not drawn: the entry, stop and targets on the bar a plan opens, the weighted and chart-timeframe regime scores on every bar, and the score of the best zone price touched most recently."
+    }
+  ],
+  "deviation": "When the chart states no tick size, the original infers one from the median bar range of the whole chart, later bars included, which a study computed bar by bar cannot see; this version then uses a tick of 0.01, so its tick-based zone widths, pool tolerances, stop buffer and stop caps differ on such a chart."
+}

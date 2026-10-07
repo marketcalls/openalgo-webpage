@@ -1,0 +1,15 @@
+{
+  "title": "Highest Value (HIGHEST)",
+  "summary": "Traces the highest value of the source over a rolling window, starting on the first bar with the highest value seen so far.",
+  "description": "Highest Value draws the running maximum of a price series over a fixed lookback. On each bar it looks at the last `period` values of the source and plots the largest of them, so the line steps up the moment a new high enters the window and steps down only when the old high drops out of the back of it.\n\nWhile fewer than `period` bars exist, the line is the highest value seen since the first bar, so it starts on the very first bar instead of waiting out a warmup. A missing source value is read as zero and still takes its place in the window. Once the window is full, the line is the plain rolling highest of the last `period` bars, the current bar included.",
+  "howToRead": "Read the line as the ceiling of recent trading. A flat stretch means no new high has been made inside the window, and the length of the flat stretch shows how long the last high has held. A step up means price has just set a new high for the window. When the line steps down, the old high has aged out, which often follows a quiet or falling market.\n\nThe window includes the current bar, so the source can never be above the line. To test for a breakout, compare the source with the line one bar earlier. A short period hugs price closely, while a long period marks the major swing highs.",
+  "settings": [
+    { "key": "period", "label": "Period", "description": "How many bars the window covers. A longer window holds old highs for longer and changes less often." },
+    { "key": "source", "label": "Source", "description": "The series whose highest value is tracked, for example the close or the high of each bar." }
+  ],
+  "faq": [
+    { "q": "Why does the line start on the first bar?", "a": "Until the window holds `period` bars, the study reports the highest value seen so far. After that it reports the highest value of the last `period` bars." },
+    { "q": "Can the source ever be above the line?", "a": "No. The window includes the current bar, so the line is always at or above the source. Compare the source with the previous bar's value of the line to spot a new high." },
+    { "q": "Should I use the high or the close as the source?", "a": "Use the high to track the true price ceiling, including wicks. Use the close when only settled prices matter, which gives a lower and steadier line." }
+  ]
+}

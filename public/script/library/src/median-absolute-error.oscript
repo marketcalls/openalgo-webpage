@@ -1,0 +1,31 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © openalgo
+// Original work (c) mihakralj, MIT License
+
+version 1
+study("Median Absolute Error", precision = 2)
+
+length = input(14, "Length", min = 1, max = 5000, step = 1)
+actual = input(close, "Actual")
+predicted = input(open, "Predicted")
+
+// An absent value on either side reads as zero.
+absError = abs(orElse(actual, 0) - orElse(predicted, 0))
+
+// The median is the nearest-rank 50th percentile of the last `length`
+// errors: the middle value for an odd window, the lower of the two middle
+// values for an even one. It has no value until the window fills.
+var errors: array<number> = []
+push(errors, absError)
+if size(errors) > length
+    shift(errors)
+
+mdae = none
+if size(errors) == length
+    sorted = copy(errors)
+    sort(sorted, "asc")
+    rank = max(1, ceil(length / 2))
+    mdae = element(sorted, rank - 1)
+
+plot(mdae, "MdAE", #ffeb3b, width = 2)
+level(0, "Zero", #9598a1, style = "dashed")

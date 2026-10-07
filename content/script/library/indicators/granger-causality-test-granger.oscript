@@ -1,0 +1,140 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © openalgo
+// Original work (c) mihakralj, MIT License
+
+version 1
+study("Granger Causality Test (GRANGER)", precision = 4)
+
+source1 = input(close, "Source 1")
+source2 = input(volume, "Source 2", tooltip = "The series tested as a predictor of Source 1. Both series come from the instrument on the chart.")
+period = input(20, "Period", min = 4, max = 5000, step = 1, tooltip = "Lookback for the regressions. The test needs more than three observations for one lag.")
+
+// Each statistic keeps its own window of the last `len` bars, which expands
+// from the first bar. A missing value occupies a slot without counting.
+
+// The mean of the values present in the window.
+fn rollingMean(values, len) =>
+    var total = 0.0
+    var cnt = 0
+    oldest = values[len]
+    if not isNone(oldest)
+        total -= oldest
+        cnt -= 1
+    if not isNone(values)
+        total += values
+        cnt += 1
+    cnt > 0 ? total / cnt : none
+
+// The variance as the mean squared deviation, where each deviation is taken
+// against the mean as it stood on the bar it entered, not the current mean.
+// Fewer than two deviations reads 0.
+fn rollingVariance(dev, len) =>
+    var sumSqDev = 0.0
+    var cnt = 0
+    oldest = dev[len]
+    if not isNone(oldest)
+        sumSqDev -= oldest * oldest
+        cnt -= 1
+    if not isNone(dev)
+        sumSqDev += dev * dev
+        cnt += 1
+    cnt > 1 ? sumSqDev / cnt : 0
+
+// The covariance of two deviation series on the same terms.
+fn rollingCovariance(dev1, dev2, len) =>
+    var sumProdDev = 0.0
+    var cnt = 0
+    oldest1 = dev1[len]
+    oldest2 = dev2[len]
+    if not isNone(oldest1) and not isNone(oldest2)
+        sumProdDev -= oldest1 * oldest2
+        cnt -= 1
+    if not isNone(dev1) and not isNone(dev2)
+        sumProdDev += dev1 * dev2
+        cnt += 1
+    cnt > 1 ? sumProdDev / cnt : none
+
+y = source1
+x = source2
+yLag1 = y[1]
+xLag1 = x[1]
+
+meanY = rollingMean(y, period)
+meanYLag1 = rollingMean(yLag1, period)
+meanXLag1 = rollingMean(xLag1, period)
+
+// Deviations for the variances read a missing value as zero.
+devVarY = isNone(meanYLag1) ? none : orElse(yLag1, 0) - meanYLag1
+devVarX = isNone(meanXLag1) ? none : orElse(xLag1, 0) - meanXLag1
+varYLag1 = rollingVariance(devVarY, period)
+varXLag1 = rollingVariance(devVarX, period)
+
+// Deviations for the covariances. A bar enters a pair only when both of its
+// deviations are available.
+devY = y - meanY
+devYLag = yLag1 - meanYLag1
+devXLag = xLag1 - meanXLag1
+pairYY = not isNone(devY) and not isNone(devYLag)
+pairYX = not isNone(devY) and not isNone(devXLag)
+pairLL = not isNone(devYLag) and not isNone(devXLag)
+covYYlag1 = rollingCovariance(pairYY ? devY : none, pairYY ? devYLag : none, period)
+covYXlag1 = rollingCovariance(pairYX ? devY : none, pairYX ? devXLag : none, period)
+covYlag1Xlag1 = rollingCovariance(pairLL ? devYLag : none, pairLL ? devXLag : none, period)
+
+// The residual sums of squares are carried from bar to bar rather than reset,
+// so both run as cumulative totals and the F ratio is taken between the two
+// running totals.
+var sumSqResid1 = 0.0
+var countResid1 = 0
+var sumSqResid2 = 0.0
+var countResid2 = 0
+
+// Restricted model: y = c0 + c1 * y[1].
+slopeRestricted = varYLag1 > 1e-10 ? covYYlag1 / varYLag1 : none
+interceptRestricted = meanY - slopeRestricted * meanYLag1
+
+ssr1 = none
+if not isNone(interceptRestricted)
+    for k = 0 to period - 1
+        yVal = y[k]
+        yLagVal = yLag1[k]
+        if isNone(yVal) or isNone(yLagVal)
+            continue
+        resid = yVal - (interceptRestricted + slopeRestricted * yLagVal)
+        sumSqResid1 += resid * resid
+        countResid1 += 1
+    if countResid1 > 1
+        ssr1 = sumSqResid1
+
+// Unrestricted model: y = d0 + d1 * y[1] + d2 * x[1].
+b1 = none
+b2 = none
+interceptUnrestricted = none
+if not isNone(covYlag1Xlag1)
+    denominator = varYLag1 * varXLag1 - covYlag1Xlag1 * covYlag1Xlag1
+    if denominator > 1e-10 and not isNone(covYYlag1) and not isNone(covYXlag1)
+        b1 = (covYYlag1 * varXLag1 - covYXlag1 * covYlag1Xlag1) / denominator
+        b2 = (covYXlag1 * varYLag1 - covYYlag1 * covYlag1Xlag1) / denominator
+        interceptUnrestricted = meanY - b1 * meanYLag1 - b2 * meanXLag1
+
+ssr2 = none
+if not isNone(interceptUnrestricted)
+    for k = 0 to period - 1
+        yVal = y[k]
+        yLagVal = yLag1[k]
+        xLagVal = xLag1[k]
+        if isNone(yVal) or isNone(yLagVal) or isNone(xLagVal)
+            continue
+        resid = yVal - (interceptUnrestricted + b1 * yLagVal + b2 * xLagVal)
+        sumSqResid2 += resid * resid
+        countResid2 += 1
+    if countResid2 > 1
+        ssr2 = sumSqResid2
+
+// One restriction (d2 = 0) against three unrestricted parameters.
+fStat = none
+if not isNone(ssr1) and not isNone(ssr2)
+    if ssr2 > 1e-10
+        fStat = max(0, (ssr1 - ssr2) / (ssr2 / (period - 3)))
+
+plot(fStat, "F-Stat (X Granger-causes Y)", #ffeb3b, width = 2)

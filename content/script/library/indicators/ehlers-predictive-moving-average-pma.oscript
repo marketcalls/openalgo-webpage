@@ -1,0 +1,30 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © openalgo
+// Original work (c) mihakralj, MIT License
+
+version 1
+study("Ehlers Predictive Moving Average (PMA)", overlay = true, precision = 2)
+
+period = input(7, "Period", min = 1, max = 5000, step = 1, tooltip = "Lookback period for WMA smoothing (default: 7)")
+source = input(close, "Source")
+
+// A linearly weighted mean that answers from the first bar. Until the window
+// is full it weights the values seen so far 1, 2 and up, newest heaviest,
+// and divides by the sum of those weights. A missing value counts as zero.
+fn growingWma(src, len) =>
+    filled = min(bar.index + 1, len)
+    weighted = 0.0
+    for k = 0 to filled - 1
+        weighted += orElse(src[k], 0) * (filled - k)
+    weighted / (filled * (filled + 1) * 0.5)
+
+wma1 = growingWma(source, period)
+wma2 = growingWma(wma1, period)
+
+// Twice the mean less the mean of the mean cancels one lag of the smoothing;
+// the trigger leans further toward the newest price.
+pma = isNone(source) ? none : 2 * wma1 - wma2
+trigger = isNone(source) ? none : (4 * wma1 - wma2) / 3
+
+plot(pma, "PMA", #ffeb3b, width = 2)
+plot(trigger, "Trigger", #ff9800, width = 1)

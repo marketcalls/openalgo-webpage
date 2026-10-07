@@ -1,0 +1,245 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © openalgo
+// Original work (c) Arun K Bhaskar, MPL-2.0
+
+version 1
+study("Market Structure Shift (MSS)", overlay = true, precision = 2)
+
+// ---- Zig zag ------------------------------------------------------------------
+bearShow = input(true, "Bearish", group = "Zig Zag")
+bearShiftShow = input(true, "Bearish Shift", group = "Zig Zag")
+bearRetShow = input(true, "Bearish Retracement", group = "Zig Zag")
+bullShow = input(true, "Bullish", group = "Zig Zag")
+bullShiftShow = input(true, "Bullish Shift", group = "Zig Zag")
+bullRetShow = input(true, "Bullish Retracement", group = "Zig Zag")
+zzPeriod = input(4, "Zig Zag Length", min = 2, max = 500, step = 1, group = "Zig Zag")
+zzSource = input("High/Low", "Source", options = ["High/Low", "Open/Close"], group = "Zig Zag")
+zzShow = input(false, "Show Zig Zag", group = "Zig Zag")
+boxTransparency = input(75, "Box Transparency", min = 0, max = 100, step = 1, group = "Zig Zag", tooltip = "Transparency of the swing range box: 0 is solid, 100 is invisible.")
+
+// ---- Additional filters -------------------------------------------------------
+filterChoice = input("Percentage", "Filter Using", options = ["Multiplier", "Percentage"], group = "Additional Filters", tooltip = "Filters out narrow swing displacements. Multiplier rescales with the timeframe, percentage stays constant across all of them. Set Percentage to 0 for no filtering.")
+multiplier = input(2, "Multiplier", min = 1, max = 100, step = 0.1, group = "Additional Filters", tooltip = "A shift only counts when the new swing displacement is this many times the previous one.")
+percentage = input(0.7, "Percentage Above", min = 0, max = 100, step = 0.1, group = "Additional Filters", tooltip = "A shift only counts when the swing displacement exceeds this percentage of the older swing price.")
+
+POS_COLOR = #22AB94
+NEG_COLOR = #F7525F
+BULL_SIGNAL_COLOR = #70CCBD
+BEAR_SIGNAL_COLOR = #FAA1A4
+ZZ_COLOR = #1E53E5
+
+// Each family of drawings keeps at most this many objects, newest first.
+maxDrawings = 500
+
+// ---- Swing points -------------------------------------------------------------
+// Open/Close reads the candle body: its top for the swing highs and its
+// bottom for the swing lows.
+zHigh = zzSource == "Open/Close" ? max(open, close) : high
+zLow = zzSource == "Open/Close" ? min(open, close) : low
+
+// A bar is a swing extreme when it holds the extreme of the last zzPeriod
+// bars; a tie with an older bar still counts for this bar.
+ph = highest(zHigh, zzPeriod) == zHigh ? zHigh : none
+pl = lowest(zLow, zzPeriod) == zLow ? zLow : none
+
+// The direction turns down on a lone swing low and up on a lone swing high;
+// a bar that is both, or neither, keeps the direction it had.
+var dir = 0
+dirBefore = dir
+if not isNone(pl) and isNone(ph)
+    dir = -1
+else if not isNone(ph) and isNone(pl)
+    dir = 1
+dirChanged = not bar.isFirst and dir != dirBefore
+
+// The newest five pivots, newest first: a new pivot on a change of direction,
+// otherwise a further extreme in the same direction moves the newest one.
+var zzValue: array<number> = []
+var zzTime: array<number> = []
+// Every pivot for the zig zag path, oldest first, the newest 500 kept.
+var pathValue: array<number> = []
+var pathTime: array<number> = []
+
+if not isNone(ph) or not isNone(pl)
+    pivotValue = dir == 1 ? ph : pl
+    if not isNone(pivotValue)
+        if dirChanged or size(zzValue) == 0
+            unshift(zzValue, pivotValue)
+            unshift(zzTime, time)
+            if size(zzValue) > 5
+                pop(zzValue)
+                pop(zzTime)
+            push(pathValue, pivotValue)
+            push(pathTime, time)
+            if size(pathValue) > maxDrawings
+                shift(pathValue)
+                shift(pathTime)
+        else if (dir == 1 and pivotValue > element(zzValue, 0)) or (dir == -1 and pivotValue < element(zzValue, 0))
+            set(zzValue, 0, pivotValue)
+            set(zzTime, 0, time)
+            set(pathValue, size(pathValue) - 1, pivotValue)
+            set(pathTime, size(pathTime) - 1, time)
+
+// ---- The three swings the shift reads -------------------------------------------
+// Counted from the oldest pivot held: with five pivots they are the second,
+// third and fourth newest, and while fewer are held they shift toward the
+// newest. zz3 needs two pivots, zz2 three and zz1 four.
+k = size(zzValue)
+zz1 = k >= 4 ? element(zzValue, k - 4) : none
+bi1 = k >= 4 ? element(zzTime, k - 4) : none
+zz2 = k >= 3 ? element(zzValue, k - 3) : none
+bi2 = k >= 3 ? element(zzTime, k - 3) : none
+zz3 = k >= 2 ? element(zzValue, k - 2) : none
+bi3 = k >= 2 ? element(zzTime, k - 2) : none
+
+swingsReady = not isNone(zz1) and not isNone(zz2) and not isNone(zz3)
+
+// The newest swing displacement against the one before it (Multiplier), or
+// as a percentage of the older swing price (Percentage).
+multiplierPass = toBool(abs(zz1 - zz2) > abs(zz3 - zz2) * multiplier)
+percentagePass = toBool(zz3 != 0 and abs((zz3 - zz1) / zz3 * 100) > percentage)
+passFilter = swingsReady and (filterChoice == "Multiplier" ? multiplierPass : percentagePass)
+
+// ---- Shifts ---------------------------------------------------------------------
+// A close crossing back through the middle swing, against the direction that
+// built the three swings, on a closed bar.
+prevClose = close[1]
+prevZz2 = zz2[1]
+crossReady = swingsReady and not isNone(prevClose) and not isNone(prevZz2)
+crossUnderZz2 = crossReady and close < zz2 and prevClose >= prevZz2
+crossOverZz2 = crossReady and close > zz2 and prevClose <= prevZz2
+
+bearishCondition = swingsReady and zz1 > zz2 and zz1 > zz3 and zz2 < zz3 and close < zz1 and close < zz2 and close < zz3 and crossUnderZz2 and passFilter and bar.isConfirmed
+bullishCondition = swingsReady and zz1 < zz2 and zz1 < zz3 and zz2 > zz3 and close > zz1 and close > zz2 and close > zz3 and crossOverZz2 and passFilter and bar.isConfirmed
+
+// ---- Retracements ---------------------------------------------------------------
+// A shift sets the level a third of the way back into the swing range it
+// broke. The level is set before the cross is tested, so the shift bar itself
+// can complete the sequence.
+var bearRetPrice = none
+var bearRetTime = none
+var bullRetPrice = none
+var bullRetTime = none
+if bearishCondition
+    bearRetPrice = zz1 - (zz1 - zz2) / 3
+    bearRetTime = bi1
+if bullishCondition
+    bullRetPrice = zz1 + (zz2 - zz1) / 3
+    bullRetTime = bi1
+
+bearRetCondition = toBool(high > bearRetPrice and high[1] <= bearRetPrice[1]) and bar.isConfirmed
+bullRetCondition = toBool(low < bullRetPrice and low[1] >= bullRetPrice[1]) and bar.isConfirmed
+
+// 0 waiting, 1 a shift seen, 2 the retracement taken. A 2 lasts one bar.
+var bearState = 0
+var bullState = 0
+bearState = bearState == 2 ? 0 : bearState
+if bearishCondition and bearState == 0
+    bearState = 1
+if bearRetCondition and bearState == 1
+    bearState = 2
+bullState = bullState == 2 ? 0 : bullState
+if bullishCondition and bullState == 0
+    bullState = 1
+if bullRetCondition and bullState == 1
+    bullState = 2
+
+bearRet = bearState == 2
+bullRet = bullState == 2
+
+// ---- Markers and candle colours -------------------------------------------------
+bearShiftMark = bearShow and bearShiftShow and bearishCondition
+bullShiftMark = bullShow and bullShiftShow and bullishCondition
+bearRetMark = bearShow and bearRetShow and bearRet
+bullRetMark = bullShow and bullRetShow and bullRet
+
+signal(bearShiftMark ? "" : none, color = #FAA1A4, at = "above", shape = "triangleDown")
+signal(bullShiftMark ? "" : none, color = #70CCBD, at = "below", shape = "triangleUp")
+signal(bearRetMark ? "R" : none, color = #FAA1A4, at = "above", shape = "label")
+signal(bullRetMark ? "R" : none, color = #70CCBD, at = "below", shape = "label")
+
+// A retracement colour wins over a shift colour on the same candle.
+barColor(bearRetMark ? BEAR_SIGNAL_COLOR : bullRetMark ? BULL_SIGNAL_COLOR : bearShiftMark ? BEAR_SIGNAL_COLOR : bullShiftMark ? BULL_SIGNAL_COLOR : none)
+
+// ---- Swing range boxes and shift levels -----------------------------------------
+// Each shown shift draws the box over the swing range it broke and, when its
+// shift is shown, a dashed line along the broken swing to the shift bar.
+// Each object is kept with the bar that drew it.
+var stBoxes: array<box> = []
+var stBoxBar: array<number> = []
+var stLines: array<line> = []
+var stLineBar: array<number> = []
+
+boxOpacity = (100 - boxTransparency) / 100
+
+if bearishCondition and bearShow
+    push(stBoxes, draw.box(bi3, zz3, bi1, zz1, color = none, fillColor = NEG_COLOR, opacity = boxOpacity))
+    push(stBoxBar, bar.index)
+    if bearShiftShow
+        push(stLines, draw.line(bi2, zz2, time, zz2, color = NEG_COLOR, width = 1, style = "dashed"))
+        push(stLineBar, bar.index)
+if bullishCondition and bullShow
+    push(stBoxes, draw.box(bi3, zz3, bi1, zz1, color = none, fillColor = POS_COLOR, opacity = boxOpacity))
+    push(stBoxBar, bar.index)
+    if bullShiftShow
+        push(stLines, draw.line(bi2, zz2, time, zz2, color = POS_COLOR, width = 1, style = "dashed"))
+        push(stLineBar, bar.index)
+
+// The newest bars keep their objects until 500 have been counted; a bar that
+// starts under that budget keeps all of its objects.
+trimming = true
+while trimming
+    held = size(stBoxes) + size(stLines)
+    oldestBox = size(stBoxBar) > 0 ? element(stBoxBar, 0) : none
+    oldestLine = size(stLineBar) > 0 ? element(stLineBar, 0) : none
+    oldest = isNone(oldestBox) ? oldestLine : isNone(oldestLine) ? oldestBox : min(oldestBox, oldestLine)
+    inOldest = 0
+    if not isNone(oldest)
+        for i = 0 to size(stBoxBar) - 1
+            if element(stBoxBar, i) == oldest
+                inOldest += 1
+        for i = 0 to size(stLineBar) - 1
+            if element(stLineBar, i) == oldest
+                inOldest += 1
+    if isNone(oldest) or held - inOldest < maxDrawings
+        trimming = false
+    else
+        while size(stBoxBar) > 0 and element(stBoxBar, 0) == oldest
+            draw.delete(shift(stBoxes))
+            shift(stBoxBar)
+        while size(stLineBar) > 0 and element(stLineBar, 0) == oldest
+            draw.delete(shift(stLines))
+            shift(stLineBar)
+
+// Each shown retracement draws a dotted line at its level, from the swing it
+// was measured off to the bar that took it. These share the budget left over
+// by the structures, up to 1,000 objects in all.
+var retLines: array<line> = []
+var retLineBar: array<number> = []
+if bearRetMark
+    push(retLines, draw.line(bearRetTime, bearRetPrice, time, bearRetPrice, color = NEG_COLOR, width = 1, style = "dotted"))
+    push(retLineBar, bar.index)
+if bullRetMark
+    push(retLines, draw.line(bullRetTime, bullRetPrice, time, bullRetPrice, color = POS_COLOR, width = 1, style = "dotted"))
+    push(retLineBar, bar.index)
+
+trimmingRet = true
+while trimmingRet
+    structures = size(stBoxes) + size(stLines)
+    oldestRet = size(retLineBar) > 0 ? element(retLineBar, 0) : none
+    inOldestRet = 0
+    if not isNone(oldestRet)
+        for i = 0 to size(retLineBar) - 1
+            if element(retLineBar, i) == oldestRet
+                inOldestRet += 1
+    if isNone(oldestRet) or structures + size(retLines) - inOldestRet < maxDrawings * 2
+        trimmingRet = false
+    else
+        while size(retLineBar) > 0 and element(retLineBar, 0) == oldestRet
+            draw.delete(shift(retLines))
+            shift(retLineBar)
+
+// ---- Zig zag path -----------------------------------------------------------------
+// One path through every pivot kept, drawn on the newest bar.
+if zzShow and bar.isLast and size(pathTime) > 1
+    draw.polyline(pathTime, pathValue, color = ZZ_COLOR, width = 2)

@@ -1,0 +1,53 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © openalgo
+// Original work (c) mihakralj, MIT License
+
+version 1
+study("Normal Distribution CDF (NORMDIST)", precision = 4)
+
+source = input(close, "Source")
+period = input(50, "Lookback Period", min = 2, max = 5000, step = 1, tooltip = "Rolling window for z-score normalization")
+mu = input(0.0, "Mu", step = 0.1, tooltip = "Mean shift parameter (0 = standard normal)")
+sigma = input(1.0, "Sigma", min = 0.01, step = 0.1, tooltip = "Scale parameter (1 = standard normal)")
+
+level(0.5, "Midline", #787b86, style = "dashed")
+level(0.975, "Upper 2 sigma", #ef5350, style = "dashed")
+level(0.025, "Lower 2 sigma", #26a69a, style = "dashed")
+level(0.841, "Upper 1 sigma", #ff9800, style = "dashed")
+level(0.159, "Lower 1 sigma", #00897b, style = "dashed")
+
+// The window is rescanned on every bar, newest first, skipping missing
+// values, so rounding never builds up beyond one window.
+total = 0.0
+totalSq = 0.0
+n = 0
+window = floor(period)
+k = 0
+while k < window and k <= bar.index
+    w = source[k]
+    if not isNone(w)
+        total = total + w
+        totalSq = totalSq + w * w
+        n = n + 1
+    k = k + 1
+
+// Fewer than two values read as the middle of the distribution.
+cdf = 0.5
+if n >= 2
+    mean = total / n
+    meanSqGap = totalSq / n - mean * mean
+    deviation = meanSqGap > 0.0 ? sqrt(meanSqGap) : 0.0
+    z = deviation > 0.0 ? (source - mean) / deviation : 0.0
+    zFinal = (z - mu) / sigma
+    // The error function by a three-term rational approximation, with a
+    // maximum error below 1.5e-7.
+    x = zFinal / sqrt(2.0)
+    ax = abs(x)
+    t = 1.0 / (1.0 + 0.47047 * ax)
+    t2 = t * t
+    t3 = t2 * t
+    erfApprox = 1.0 - (0.3480242 * t + -0.0958798 * t2 + 0.7478556 * t3) * exp(0 - ax * ax)
+    erfValue = x >= 0.0 ? erfApprox : 0 - erfApprox
+    cdf = 0.5 * (1.0 + erfValue)
+
+plot(cdf, "NORMDIST", #ffeb3b, width = 2)

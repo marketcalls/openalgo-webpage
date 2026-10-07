@@ -1,0 +1,49 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © openalgo
+// Original work (c) mihakralj, MIT License
+
+version 1
+study("Ehlers Super Passband Filter (SPBF)", precision = 4)
+
+shortPeriod = input(40, "Short Period", min = 1, max = 5000, step = 1, tooltip = "Short EMA period (alpha = 5/period)")
+longPeriod = input(60, "Long Period", min = 1, max = 5000, step = 1, tooltip = "Long EMA period (alpha = 5/period)")
+rmsPeriod = input(50, "RMS Period", min = 1, max = 5000, step = 1, tooltip = "RMS averaging period for trigger envelope")
+source = input(close, "Source")
+
+shortLen = max(1, floor(shortPeriod))
+longLen = max(1, floor(longPeriod))
+rmsLen = max(1, floor(rmsPeriod))
+
+// Two exponential smoothings with a factor of 5 / period, one subtracted from
+// the other and written as a single two-pole recursion.
+a1 = 5.0 / shortLen
+a2 = 5.0 / longLen
+cSrc = a1 - a2
+cSrc1 = a2 * (1.0 - a1) - a1 * (1.0 - a2)
+cPb1 = (1.0 - a1) + (1.0 - a2)
+cPb2 = (1.0 - a1) * (1.0 - a2)
+
+ssrc = orElse(source, source[1])
+src1 = orElse(source[1], ssrc)
+
+var pb1 = none
+var pb2 = none
+pb = cSrc * ssrc + cSrc1 * src1 + cPb1 * orElse(pb1, 0) - cPb2 * orElse(pb2, 0)
+pb2 = pb1
+pb1 = pb
+
+// Root mean square of the passband over the last rmsLen bars. The divisor is
+// always rmsLen, so the envelope grows in from zero over the first window.
+// A missing passband adds zero; a square too large to hold leaves the sum
+// without a value from then on, and the envelope stops.
+sq = isNone(pb) ? 0 : pb * pb
+var running = 0.0
+running = running + sq
+if bar.index >= rmsLen
+    running = running - sq[rmsLen]
+rms = sqrt(max(0, running) / rmsLen)
+
+plot(pb, "SuperPB", #2196f3, width = 2)
+plot(rms, "+RMS", #ff5252, width = 1)
+plot(-rms, "-RMS", #4caf50, width = 1)
+level(0, "Zero", #787b86, style = "dashed")

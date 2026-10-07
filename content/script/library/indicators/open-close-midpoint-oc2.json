@@ -1,0 +1,12 @@
+{
+  "title": "Open-Close Midpoint (OC2)",
+  "summary": "Draws the centre of every candle body, half the sum of its open and its close, ignoring the wicks entirely.",
+  "description": "Open-Close Midpoint (OC2) marks the centre of each candle's body. It is computed as `(open + close) * 0.5` on every bar, with no lookback and no smoothing, so each value belongs to the bar it is drawn on.\n\nThe high and the low play no part in it. A bar with a long wick and a bar with none, if they open and close at the same prices, get the same value. The line therefore follows where trading started and finished on each bar and leaves out the excursions in between, which makes it a body-centred reference price rather than a range-centred one.",
+  "howToRead": "Read the line as the middle of each body. When the line steps up bar after bar, both the opens and the closes are rising; when it steps down, both are falling. Compared with the midprice of the range, it sits closer to where the bar spent its decisive moments and is not pulled by a single spike.\n\nIt has no lookback, so it carries every bar's noise and does not define a trend by itself. Use it as a reference level inside the bar or as the source for an average that should ignore the wicks.",
+  "settings": [],
+  "faq": [
+    { "q": "Why ignore the high and the low?", "a": "A wick can be one brief print. Using only the open and the close keeps the reference on the prices the bar actually started and finished at." },
+    { "q": "How does it compare with the midprice of the range?", "a": "The range midprice is half of high plus low and moves with the wicks. The body midpoint moves only with the open and the close, so the two separate most on bars with long wicks on one side." },
+    { "q": "Does it repaint?", "a": "No. Once a bar has closed its value is fixed. On the newest bar it moves with the close until the bar completes." }
+  ]
+}

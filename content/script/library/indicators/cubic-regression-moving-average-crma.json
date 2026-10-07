@@ -1,0 +1,28 @@
+{
+  "title": "Cubic Regression Moving Average (CRMA)",
+  "summary": "Fits a cubic curve to the lookback window by least squares and plots the fitted value at the newest bar.",
+  "description": "CRMA fits a third-degree polynomial to the prices in the window by least squares, with x counting bars back from the newest (x = 0 is this bar). The fit is found by solving the four normal equations with Gaussian elimination and partial pivoting, and the line is the curve's value at x = 0.\n\nA straight-line fit lags when a trend is speeding up or slowing down. A cubic can bend, so it follows acceleration and deceleration more closely. The window grows from the first bar up to the period; with fewer than four bars a cubic cannot be fitted, and the line is the price itself. If the equations are singular the line also falls back to the price. A missing source value reads as zero.",
+  "howToRead": "Read CRMA as a fast, low-lag moving average. Compared with a linear regression or a simple average of the same length, it usually sits closer to price and turns sooner. The price of that speed is overshoot: at a sharp reversal a cubic can swing past price before settling.\n\nUse a longer period to calm it down. A crossing of price and CRMA comes earlier than with slower averages, so confirm it with the slope of the line.",
+  "settings": [
+    {
+      "key": "period",
+      "label": "Period",
+      "description": "Number of bars in the regression window, at least 4. A longer window gives a steadier fit."
+    },
+    {
+      "key": "source",
+      "label": "Source",
+      "description": "The series being fitted, usually the close."
+    }
+  ],
+  "faq": [
+    {
+      "q": "Why does it overshoot price at turns?",
+      "a": "A cubic can bend sharply, so near a reversal the fitted curve can extend beyond the latest price. A longer period reduces the effect."
+    },
+    {
+      "q": "Why does it need at least four bars?",
+      "a": "A cubic has four coefficients, so it needs at least four points to fit. Before four bars exist the line is the price itself."
+    }
+  ]
+}

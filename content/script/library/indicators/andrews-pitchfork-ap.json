@@ -1,0 +1,37 @@
+{
+  "title": "Andrews' Pitchfork (AP)",
+  "summary": "Three parallel lines projected from three pivot points read a fixed number of bars back, recomputed on every bar.",
+  "description": "A pitchfork is three parallel lines. This study picks its three points by distance rather than by hand: point 1 is the close a set number of bars back, point 2 is the high a set number of bars back, and point 3 is the low a set number of bars back. By default the three distances are 45, 30 and 15 bars. While there is not yet enough history, each point is clamped to the first bar.\n\nThe median line starts at point 1 and passes through the midpoint of points 2 and 3. The upper line starts at point 2 and the lower line at point 3, both with the same slope as the median line. The value plotted on each bar is where those three lines reach on that bar.\n\nBecause the points move forward with every bar, the fork is redrawn each bar, so the plotted lines trace the projected values over time rather than one fixed drawing. A projection that runs far off the price scale is left out.",
+  "howToRead": "The median line is the path price would follow if it kept the slope set by the three points. Price above the median line is running ahead of that slope and price below it is lagging. The upper and lower lines mark the outer edges of the projected channel, and a close beyond either one is a move outside the channel the three points describe.\n\nThe slope changes as the points slide forward, so the lines can bend. Read it as a rolling estimate of trend direction and channel edges, and choose point distances that match the swings you trade.",
+  "settings": [
+    {
+      "key": "p1Back",
+      "label": "Point 1 (Leftmost)",
+      "description": "How many bars back the close for the first point is read. It anchors the start of the median line."
+    },
+    {
+      "key": "p2Back",
+      "label": "Point 2 (Second)",
+      "description": "How many bars back the high for the second point is read. It anchors the upper line."
+    },
+    {
+      "key": "p3Back",
+      "label": "Point 3 (Third)",
+      "description": "How many bars back the low for the third point is read. It anchors the lower line."
+    }
+  ],
+  "faq": [
+    {
+      "q": "Why do the lines bend?",
+      "a": "The three points move forward one bar at a time, so the slope is recomputed on every bar. The plot joins those per-bar values."
+    },
+    {
+      "q": "Does it find swing highs and lows itself?",
+      "a": "No. It reads the close, high and low at fixed distances back. Set the distances to suit the swings you want the fork to follow."
+    },
+    {
+      "q": "Why are the lines flat on the first bars?",
+      "a": "Until there is more history than the shortest point distance, all three points sit on the first bar, the slope is zero and the lines hold that bar's close, high and low. As each point starts to slide forward the slope is measured over a short time base, so the lines can jump before they settle."
+    }
+  ]
+}

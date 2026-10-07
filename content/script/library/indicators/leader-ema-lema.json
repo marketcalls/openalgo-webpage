@@ -1,0 +1,28 @@
+{
+  "title": "Leader EMA (LEMA)",
+  "summary": "An exponential average plus a smoothed copy of its own tracking error, so it leans ahead of a plain EMA of the same period.",
+  "description": "LEMA starts with an exponential average of the source using the weight `2 / (period + 1)`. It then measures that average's tracking error, the source minus the average, and smooths the error with a second exponential average of the same weight. The line is the first average plus the smoothed error.\n\nAdding the error back pulls the line toward price in the direction it has been lagging, so it leans ahead of a plain exponential average without losing its smoothness.\n\nBoth averages start from zero and on the early bars are divided by `1 - beta^n`, where `beta` is one minus the weight. That removes the pull toward zero, so the line follows price from the first bar. An absent source reads as zero.",
+  "howToRead": "Use LEMA as a quicker exponential average. It sits closer to price during a trend and turns earlier when the trend ends, so a cross of price through LEMA or of LEMA through a slower average comes sooner than it would with a plain one.\n\nThe lead comes from adding the smoothed error back, so after a sudden spike LEMA can briefly run ahead of price before settling. On very noisy charts use a longer period.",
+  "settings": [
+    {
+      "key": "source",
+      "label": "Source",
+      "description": "The price series the average follows. Close is the usual choice; hl2 or another blend smooths out closes that jump around."
+    },
+    {
+      "key": "period",
+      "label": "Period",
+      "description": "Length of both exponential averages. A longer period gives a smoother line with a smaller lead."
+    }
+  ],
+  "faq": [
+    {
+      "q": "How is LEMA different from a double exponential average?",
+      "a": "Once the early-bar correction has faded they give the same line. Smoothing the error `source - EMA` with an exponential average equals the EMA of the source minus the EMA of the EMA, so the sum is `2 * EMA - EMA(EMA)`, the double exponential formula. LEMA reaches it by smoothing the tracking error, and only the first bars differ, because each stage is corrected for its zero start separately."
+    },
+    {
+      "q": "Why is the line drawn from the first bar?",
+      "a": "Both averages are scaled by `1 / (1 - beta^n)` while they are young, which removes the bias of starting at zero, so no warmup gap is needed."
+    }
+  ]
+}

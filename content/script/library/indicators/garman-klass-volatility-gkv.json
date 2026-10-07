@@ -1,0 +1,37 @@
+{
+  "title": "Garman-Klass Volatility (GKV)",
+  "summary": "Volatility estimated from each bar's open, high, low and close, smoothed with a bias-corrected average and optionally annualised.",
+  "description": "Garman-Klass Volatility estimates volatility from the whole bar instead of from closes alone. For each bar it takes the log range, the natural logarithm of the high minus that of the low, and the log body, the logarithm of the close minus that of the open. The estimator is half the squared log range minus 0.3862941611 (that is, 2 ln 2 - 1) times the squared log body.\n\nThe estimator is smoothed with an average of weight 1 / `Length`, seeded with the first value, and divided by the weight that average has gathered so far to remove the start-up bias. The square root of the result is the volatility per bar. With `Annualize Volatility` on it is multiplied by the square root of `Annual Periods`.\n\nBecause a bar's body never exceeds its range and 0.5 is larger than 0.386, the estimator is never negative on consistent prices. The study still leaves a bar empty if the smoothed estimate ever falls below zero, which only inconsistent price data can cause.",
+  "howToRead": "A rising line means bars are getting wider relative to their price, a falling line means they are narrowing. Because it uses the range of every bar, it reacts to a market that swings widely inside each bar even when the closes barely move, which a close-to-close measure would miss.\n\nRead it against its own history: readings near its lows mark quiet bars, and spikes mark bursts of wide bars. The default 252 periods suits daily bars; on other timeframes set `Annual Periods` to the bars in a year, or switch annualising off and read it as a per-bar figure. Large overnight gaps are not captured, since only the bar's own prices are used.",
+  "settings": [
+    {
+      "key": "length",
+      "label": "Length",
+      "description": "Sets the smoothing weight 1 / Length. A longer length gives a smoother, slower line."
+    },
+    {
+      "key": "annualize",
+      "label": "Annualize Volatility",
+      "description": "When on, the per-bar volatility is multiplied by the square root of Annual Periods."
+    },
+    {
+      "key": "annualPeriods",
+      "label": "Annual Periods",
+      "description": "Bars in a year used for annualising: 252 for daily bars, 52 for weekly bars."
+    }
+  ],
+  "faq": [
+    {
+      "q": "Why use the open, high, low and close rather than just the close?",
+      "a": "The range of each bar carries much more information about how much price moved than a single close, so the estimate settles with fewer bars."
+    },
+    {
+      "q": "Can the estimate be negative?",
+      "a": "Not on consistent prices. The body of a bar is never wider than its range, and the range term carries a weight of 0.5 against 0.386 for the body, so the estimator stays at zero or above. If bad data ever made the smoothed value negative, the study would leave that bar empty rather than take a square root."
+    },
+    {
+      "q": "Does it include gaps between bars?",
+      "a": "No. It reads only the prices inside each bar, so a jump from one close to the next open is not measured."
+    }
+  ]
+}

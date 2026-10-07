@@ -1,0 +1,42 @@
+{
+  "title": "Kaufman's Adaptive Moving Average (KAMA)",
+  "summary": "An average whose speed follows the efficiency ratio: it tracks a clean trend closely and flattens out when price chops back and forth.",
+  "description": "KAMA adapts its smoothing to how directional price has been. The efficiency ratio divides the net move over the period, the distance from the source `period` bars ago to now, by the total distance travelled bar by bar over the same bars. A straight run gives a ratio near 1; a choppy stretch that goes nowhere gives a ratio near 0.\n\nThe ratio slides the smoothing constant between a slow weight `2 / (slow + 1)` and a fast weight `2 / (fast + 1)`, and the result is squared. Each bar the line moves toward price by that constant times the gap. Until enough bars exist to measure the ratio it reads as 0, so the line starts at the first price and moves at the slow rate.\n\nThe fast period must give a larger weight than the slow period. If it does not, the settings are refused and the line is left empty.",
+  "howToRead": "In a clean trend KAMA follows price closely, and in a sideways market it goes nearly flat. That makes a flat KAMA a sign of a range and a KAMA that starts to slope a sign that a directional move has begun.\n\nPrice can cross a flat KAMA many times inside a range, so a cross means more once the line itself has started to slope. The line can also be slow to react at the very start of a trend, while the efficiency ratio is still low.",
+  "settings": [
+    {
+      "key": "period",
+      "label": "Period",
+      "description": "Number of bars over which the efficiency ratio is measured. A longer period reacts more slowly to changes in directionality."
+    },
+    {
+      "key": "source",
+      "label": "Source",
+      "description": "The price series the average follows. Close is the usual choice; hl2 or another blend smooths out closes that jump around."
+    },
+    {
+      "key": "fastPeriod",
+      "label": "Fast EMA Period",
+      "description": "The length whose weight the line uses in a perfectly efficient trend. Smaller values let it chase price harder."
+    },
+    {
+      "key": "slowPeriod",
+      "label": "Slow EMA Period",
+      "description": "The length whose weight the line uses in pure noise. Larger values make it flatter in a range."
+    }
+  ],
+  "faq": [
+    {
+      "q": "Why does KAMA go flat?",
+      "a": "When price moves back and forth without net progress, the efficiency ratio is near 0 and the smoothing constant falls to the slow weight squared, which is very small, so the line hardly moves."
+    },
+    {
+      "q": "Why is the line empty with some settings?",
+      "a": "The fast period has to produce a larger weight than the slow period. If the fast period is not shorter than the slow period the settings are refused and nothing is drawn."
+    },
+    {
+      "q": "Why is the smoothing constant squared?",
+      "a": "Squaring makes the line react far more to efficiency than a straight blend would. With the default fast and slow periods of 2 and 30, the constant is about 0.004 at an efficiency ratio of 0, about 0.13 at 0.5 and about 0.44 at 1, so the line barely moves in noise."
+    }
+  ]
+}

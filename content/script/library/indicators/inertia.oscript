@@ -1,0 +1,36 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © openalgo
+// Original work (c) mihakralj, MIT License
+
+version 1
+study("Inertia", precision = 2)
+
+length = input(20, "Length", min = 1, max = 500, step = 1, tooltip = "Period for linear regression calculation.")
+source = input(close, "Source", tooltip = "Price series to analyze.")
+
+// A least-squares line through the last n values of the source, where n is
+// the length or the bars available, whichever is fewer. x runs from 0 on the
+// oldest bar of the window to n - 1 on this bar.
+n = min(length, bar.index + 1)
+sumX = 0.0
+sumY = 0.0
+sumXY = 0.0
+sumX2 = 0.0
+for k = 0 to n - 1
+    x = n - 1 - k
+    y = orElse(source[k], 0)
+    sumX = sumX + x
+    sumY = sumY + y
+    sumXY = sumXY + x * y
+    sumX2 = sumX2 + x * x
+
+denominator = n * sumX2 - sumX * sumX
+slopeV = denominator != 0 ? (n * sumXY - sumX * sumY) / denominator : none
+intercept = (sumY - slopeV * sumX) / n
+regressionValue = slopeV * (n - 1) + intercept
+
+// Inertia is the distance from the source to the end of that line. A
+// one-bar window has no slope and reads 0.
+inertiaValue = isNone(source) ? none : denominator == 0 ? 0 : source - regressionValue
+
+plot(inertiaValue, "Inertia", #ffeb3b, width = 2)

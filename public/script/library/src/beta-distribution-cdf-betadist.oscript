@@ -1,0 +1,103 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © openalgo
+// Original work (c) mihakralj, MIT License
+
+version 1
+study("Beta Distribution CDF (BETADIST)", precision = 4)
+
+source = input(close, "Source")
+period = input(50, "Lookback Period", min = 2, max = 5000, step = 1, tooltip = "Min-max normalization window")
+// "alpha" is a library name, so this input carries no name of its own and is
+// keyed by its title instead.
+shapeA = max(0.01, input(2, "alpha", min = 0.01, max = 1000, step = 0.1, tooltip = "Left shape; below 1 weights toward 0, above 1 weights toward the centre"))
+beta = input(2, "Beta", min = 0.01, max = 1000, step = 0.1, tooltip = "Right shape; below 1 weights toward 1, above 1 weights toward the centre")
+
+len = max(2, floor(period))
+shapeB = max(0.01, beta)
+
+// The natural log of the gamma function by the Lanczos approximation, g = 7
+// with nine coefficients.
+fn lnGamma(z) =>
+    coeffs = [0.99999999999980993, 676.5203681218851, -1259.1392167224028, 771.32342877765313, -176.61502916214059, 12.507343278686905, -0.13857109526572012, 9.9843695780195716e-6, 1.5056327351493116e-7]
+    zz = z - 1.0
+    x = element(coeffs, 0)
+    for i = 1 to 8
+        den = zz + i
+        if den == 0
+            continue
+        x += element(coeffs, i) / den
+    t = zz + 7.0 + 0.5
+    0.5 * log(2.0 * math.pi) + (zz + 0.5) * log(t) - t + log(x)
+
+// The regularized incomplete beta function I_x(a, b), evaluated with the
+// modified Lentz continued fraction. Past the mean the symmetry
+// I_x(a, b) = 1 - I_(1-x)(b, a) is used, because the fraction converges faster.
+fn betaReg(x, a, b) =>
+    if isNone(x)
+        return none
+    if x <= 0.0
+        return 0.0
+    if x >= 1.0
+        return 1.0
+    flip = x > (a + 1.0) / (a + b + 2.0)
+    xx = flip ? 1.0 - x : x
+    aa = flip ? b : a
+    bb = flip ? a : b
+    if not (xx > 0.0) or not (1.0 - xx > 0.0)
+        return flip ? 1.0 : 0.0
+    lnPfx = aa * log(xx) + bb * log(1.0 - xx) - log(aa) - lnGamma(aa) - lnGamma(bb) + lnGamma(aa + bb)
+    front = exp(lnPfx)
+    tiny = 1e-30
+    f = tiny
+    c = tiny
+    d = 0.0
+    for m = 0 to 199
+        mm = floor(m / 2)
+        term = 0.0
+        if m == 0
+            term = 1.0
+        else if m % 2 == 0
+            den = (aa + 2.0 * mm - 1.0) * (aa + 2.0 * mm)
+            term = den != 0 ? (mm * (bb - mm) * xx) / den : 0.0
+        else
+            mf = mm + 1.0
+            den = (aa + 2.0 * mf - 2.0) * (aa + 2.0 * mf - 1.0)
+            term = den != 0 ? (-(aa + mf - 1.0) * (aa + bb + mf - 1.0) * xx) / den : 0.0
+        if isNone(term)
+            term = 0.0
+        d = 1.0 + term * d
+        if abs(d) < tiny
+            d = tiny
+        d = 1.0 / d
+        c = 1.0 + term / c
+        if abs(c) < tiny
+            c = tiny
+        delta = c * d
+        f *= delta
+        if abs(delta - 1.0) < 1e-10
+            break
+    result = front * f
+    if isNone(result)
+        return none
+    flip ? 1.0 - result : result
+
+// The extremes of the last len bars, skipping any bar without a value. Near
+// the start of the chart the window is simply shorter, so there is no warmup.
+minVal = source
+maxVal = source
+for j = 1 to len - 1
+    v = source[j]
+    if isNone(v)
+        continue
+    minVal = min(minVal, v)
+    maxVal = max(maxVal, v)
+
+// Where the source sits in its range, 0 at the bottom and 1 at the top, read
+// through the Beta(alpha, beta) cumulative distribution.
+span = maxVal - minVal
+pos01 = span > 0.0 ? (source - minVal) / span : 0.5
+
+plot(betaReg(pos01, shapeA, shapeB), "BETADIST", #ffeb3b, width = 2)
+level(0.95, "Upper", #ef5350, style = "dashed")
+level(0.5, "Midline", #9598a1, style = "dotted")
+level(0.05, "Lower", #26a69a, style = "dashed")

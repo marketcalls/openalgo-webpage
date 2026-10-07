@@ -1,0 +1,20 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © openalgo
+// Original work (c) mihakralj, MIT License
+
+version 1
+study("Accumulation/Distribution Line (ADL)", precision = 0)
+
+// The money flow multiplier places the close inside the bar's range: +1 at the
+// high, -1 at the low, and 0 on a bar with no range at all.
+spreadUp = close - low - (high - close)
+mfm = high != low ? spreadUp / (high - low) : 0
+
+// A bar without volume, or without a high, low or close, adds no flow, so the
+// line stays flat there.
+mfv = isNone(volume) ? 0 : volume * orElse(mfm, 0)
+
+var cumulative = 0.0
+cumulative = cumulative + mfv
+
+plot(cumulative, "ADL", #ffeb3b, width = 2)

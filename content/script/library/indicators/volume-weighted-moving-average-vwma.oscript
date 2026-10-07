@@ -1,0 +1,29 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © openalgo
+// Original work (c) mihakralj, MIT License
+
+version 1
+study("Volume Weighted Moving Average (VWMA)", overlay = true, precision = 2)
+
+period = input(20, "Period", min = 1, max = 5000, step = 1)
+source = input(close, "Source")
+
+// A missing price or volume is read as zero, and only bars with volume add
+// to the sums.
+price = orElse(source, 0)
+vol = orElse(volume, 0)
+addPv = vol > 0 ? price * vol : 0.0
+addVol = vol > 0 ? vol : 0.0
+
+// Running sums over the last period bars: the bar leaving the window is taken
+// out as the new one comes in, so the average answers from the first bar on
+// a partial window.
+var sumPv = 0.0
+var sumVol = 0.0
+sumPv -= orElse(addPv[period], 0)
+sumVol -= orElse(addVol[period], 0)
+sumPv += addPv
+sumVol += addVol
+
+// A window with no volume at all falls back to the source itself.
+plot(sumVol > 0 ? sumPv / sumVol : source, "VWMA", #ffeb3b, width = 2)

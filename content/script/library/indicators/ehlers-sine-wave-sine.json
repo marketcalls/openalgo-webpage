@@ -1,0 +1,16 @@
+{
+  "title": "Ehlers Sine Wave (SINE)",
+  "summary": "The phase of the detrended price cycle as a wave between -1 and +1, from the in-phase value over its length with a quadrature partner.",
+  "description": "The Sine Wave reports where price sits inside its current cycle. First a high-pass filter removes cycles longer than the *High-Pass Filter Length*. A two-pole super smoother, set by the *Super-Smoother Filter Length*, then cleans the two-bar average of that output, leaving the cycle.\n\nA four-tap Hilbert transform of the smoothed cycle, built from its values one, three, five and seven bars back, gives a quadrature component that runs a quarter cycle apart from it. The study divides the smoothed cycle by the length of the pair, the square root of the sum of both squared, and holds the result to the range -1 to +1. That ratio is the sine of the cycle's phase, so the line traces a wave whatever the size of the move.",
+  "howToRead": "Near +1 the cycle is at its crest and near -1 it is at its trough, with zero crossings marking the midpoints. In a market that is cycling the line swings smoothly between the extremes, and turns away from them come close to swing highs and lows.\n\nWhen the market trends, the phase stalls and the line can sit near one extreme or flip abruptly. Treat a line that stops swinging as a sign that there is no clean cycle to trade, rather than as an overbought or oversold reading.",
+  "settings": [
+    { "key": "source", "label": "Source", "description": "The price series the wave is computed from. The default is the close." },
+    { "key": "hpLength", "label": "High-Pass Filter Length", "description": "Detrending period: cycles longer than this many bars are removed. A larger value keeps slower swings." },
+    { "key": "ssfLength", "label": "Super-Smoother Filter Length", "description": "The smoothing applied after detrending. A larger value gives a smoother wave that turns later." }
+  ],
+  "faq": [
+    { "q": "Why does the line jump from one extreme to the other?", "a": "The value is a phase, not a price. When the quadrature component crosses zero while the in-phase value is small, the phase moves quickly and the line can swing across the pane in a bar or two." },
+    { "q": "How is this different from the Even Better Sinewave?", "a": "This study normalises against a Hilbert quadrature partner, so it measures phase. The Even Better Sinewave normalises against the wave's own recent power, so it measures amplitude relative to its recent size." },
+    { "q": "What happens at a high-pass length of 4?", "a": "At that length the filter coefficient is zero over zero. The study uses the limit, which is 0, so the filter still works." }
+  ]
+}

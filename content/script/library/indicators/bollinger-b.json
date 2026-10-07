@@ -1,0 +1,16 @@
+{
+  "title": "Bollinger %B",
+  "summary": "Shows where price sits inside its own Bollinger Bands, with 0 at the lower band, 1 at the upper band and readings beyond them outside the bands.",
+  "description": "Bollinger %B turns the position of price inside its bands into a single number. The bands are a simple average of the source plus and minus a multiple of its standard deviation. %B is the source minus the lower band, divided by the width between the bands, so 0 is the lower band, 0.5 the middle and 1 the upper band.\n\nThe study keeps a running sum and sum of squares over the last Period values and divides by the number of values seen so far, so the bands and %B exist from the first bar rather than after a warmup. The standard deviation is the population form. A window with no spread gives bands of zero width, and %B then reads 0.5.",
+  "howToRead": "A reading above 1 means price closed above the upper band, and a reading below 0 means it closed below the lower band. Readings above 0.8 and below 0.2 mark the upper and lower parts of the band, and 0.5 is the moving average. In a strong uptrend %B can stay above 0.8 for many bars, so a high reading is a description of strength, not automatically a sell signal.\n\nComparing %B highs with price highs is a common use: a new price high with a lower %B high says price is less stretched relative to its volatility than it was before.",
+  "settings": [
+    { "key": "period", "label": "Period", "description": "Number of bars in the average and the standard deviation. Longer periods give smoother bands that react more slowly." },
+    { "key": "source", "label": "Source", "description": "The price series placed within the bands, the close by default." },
+    { "key": "multiplier", "label": "StdDev Multiplier", "description": "How many standard deviations the bands sit from the average. A larger value widens the bands and keeps %B nearer 0.5." }
+  ],
+  "faq": [
+    { "q": "Can %B go above 1 or below 0?", "a": "Yes. Above 1 means price is above the upper band, below 0 means it is below the lower band. The scale is not capped." },
+    { "q": "Why does the line start on the first bar?", "a": "Until the window fills, the average and the deviation use the bars seen so far, so there is a value from the start. The first few bars rest on very little data." },
+    { "q": "What does a reading of exactly 0.5 on a flat market mean?", "a": "When every value in the window is the same, the bands have no width. The study reports the midpoint, 0.5, in that case." }
+  ]
+}

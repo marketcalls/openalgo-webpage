@@ -1,0 +1,66 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © openalgo
+// Original work (c) mihakralj, MIT License
+
+version 1
+study("ADX Variable Moving Average (ADXVMA)", overlay = true, precision = 2)
+
+period = input(14, "Period", min = 1, max = 5000, step = 1)
+source = input(close, "Source")
+
+epsilon = 1e-10
+smoothing = 1.0 / period
+beta = 1.0 - smoothing
+
+// The true range, the two directional moves and the directional index are
+// each smoothed with weight 1 / period. Each smoothed value starts from zero
+// and is divided by 1 - beta^n while beta^n is still large, which removes the
+// zero seed.
+var rawTr = 0.0
+var rawPdm = 0.0
+var rawNdm = 0.0
+var rawDx = 0.0
+var eTr = 1.0
+var ePdm = 1.0
+var eNdm = 1.0
+var eDx = 1.0
+var result = none
+
+if not isNone(source)
+    // The first bar compares against itself.
+    prevClose = orElse(close[1], close)
+    prevHigh = orElse(high[1], high)
+    prevLow = orElse(low[1], low)
+
+    barRange = max(high - low, max(abs(high - prevClose), abs(low - prevClose)))
+    upMove = high - prevHigh
+    downMove = prevLow - low
+    plusDm = upMove > downMove and upMove > 0 ? upMove : 0.0
+    minusDm = downMove > upMove and downMove > 0 ? downMove : 0.0
+
+    rawTr = rawTr * beta + barRange * smoothing
+    rawPdm = rawPdm * beta + plusDm * smoothing
+    rawNdm = rawNdm * beta + minusDm * smoothing
+    eTr = eTr * beta
+    ePdm = ePdm * beta
+    eNdm = eNdm * beta
+
+    compTr = eTr > epsilon and 1 - eTr != 0 ? rawTr / (1 - eTr) : rawTr
+    compPdm = ePdm > epsilon and 1 - ePdm != 0 ? rawPdm / (1 - ePdm) : rawPdm
+    compNdm = eNdm > epsilon and 1 - eNdm != 0 ? rawNdm / (1 - eNdm) : rawNdm
+
+    plusDi = compTr != 0 ? 100.0 * compPdm / compTr : 0.0
+    minusDi = compTr != 0 ? 100.0 * compNdm / compTr : 0.0
+    diSum = plusDi + minusDi
+    dx = diSum != 0 ? 100.0 * abs(plusDi - minusDi) / diSum : 0.0
+
+    rawDx = rawDx * beta + dx * smoothing
+    eDx = eDx * beta
+    adxValue = eDx > epsilon and 1 - eDx != 0 ? rawDx / (1 - eDx) : rawDx
+
+    // The ADX, as a fraction from 0 to 1, is the share of the distance to the
+    // source that the average closes on this bar.
+    sc = max(0.0, min(orElse(adxValue / 100.0, 0), 1.0))
+    result = isNone(result) ? source : result + sc * (source - result)
+
+plot(result, "ADXVMA", #ffeb3b, width = 2)

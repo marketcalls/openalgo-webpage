@@ -1,0 +1,73 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © openalgo
+// Original work (c) mihakralj, MIT License
+
+version 1
+study("Klinger Volume Oscillator (KVO)", precision = 2)
+
+fastPeriod = input(34, "Fast EMA Period", min = 1, max = 5000, step = 1)
+slowPeriod = input(55, "Slow EMA Period", min = 1, max = 5000, step = 1)
+signalPeriod = input(13, "Signal Line Period", min = 1, max = 5000, step = 1)
+
+fastLen = max(1, floor(fastPeriod))
+slowLen = max(1, floor(slowPeriod))
+signalLen = max(1, floor(signalPeriod))
+alphaF = 2 / (fastLen + 1)
+alphaS = 2 / (slowLen + 1)
+alphaSig = 2 / (signalLen + 1)
+
+// The trend flips with the direction of the typical price and holds when it
+// is unchanged. The first bar compares with itself.
+typical = (high + low + close) / 3
+prevTypical = orElse(typical[1], typical)
+var trendDir = 1
+if typical > prevTypical
+    trendDir = 1
+else if typical < prevTypical
+    trendDir = -1
+
+// Volume force: volume signed by the trend and weighted by where the close
+// sits in the bar's range. A bar with no range carries no force.
+hlRange = high - low
+cm = hlRange > 0 ? abs(2 * ((hlRange - (close - low)) / hlRange) - 1) : 0
+dm = trendDir * orElse(volume, 0) * cm
+
+// Exponential means seeded at zero. While the seed still matters each is
+// divided by (1 - e), where e is (1 - weight) raised to the bars seen. The
+// correction ends once the signal's e has fallen to 1e-10.
+var warming = true
+var eF = 1.0
+var eS = 1.0
+var eSig = 1.0
+var emaValF = 0.0
+var emaValS = 0.0
+var emaValSig = 0.0
+
+emaValF = alphaF * (dm - emaValF) + emaValF
+emaValS = alphaS * (dm - emaValS) + emaValS
+fastEma = emaValF
+slowEma = emaValS
+if warming
+    eF = eF * (1 - alphaF)
+    eS = eS * (1 - alphaS)
+    cF = 1 / (1 - eF)
+    cS = 1 / (1 - eS)
+    fastEma = cF * emaValF
+    slowEma = cS * emaValS
+    warming = eSig > 1e-10
+
+kvoLine = fastEma - slowEma
+
+emaValSig = alphaSig * (kvoLine - emaValSig) + emaValSig
+signalLine = emaValSig
+if warming
+    eSig = eSig * (1 - alphaSig)
+    cSig = 1 / (1 - eSig)
+    signalLine = cSig * emaValSig
+
+histogram = kvoLine - signalLine
+
+plot(kvoLine, "KVO", #ffeb3b, width = 2)
+plot(signalLine, "Signal", #2962ff, width = 1)
+plot(histogram, "Histogram", histogram >= 0 ? #26a69a : #ef5350, style = "histogram")
+level(0, "Zero Line", #787b86, style = "dashed")

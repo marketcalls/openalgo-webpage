@@ -1,0 +1,15 @@
+{
+  "title": "Fibonacci Weighted Moving Average (FWMA)",
+  "summary": "A moving average weighted by the Fibonacci sequence, so the newest bars dominate and the line hugs price closely.",
+  "description": "The Fibonacci Weighted Moving Average gives each bar of its window a Fibonacci number as its weight. The oldest bar takes 1, the next 1, then 2, 3, 5, 8 and on, so the newest bar carries the largest number. The weighted prices are summed and divided by the sum of the weights.\n\nFibonacci numbers grow much faster than the straight-line weights of an ordinary weighted average, so the last few bars account for most of the result and the line tracks price closely. The window grows with the chart until it holds `period` bars, with the weights rebuilt for each length, so the line is drawn from the first bar. A missing price is skipped along with its weight.",
+  "howToRead": "Read the FWMA as a fast trend line. Because the newest bars dominate, it turns almost as soon as price does, and the distance between price and the line is usually small. A rising line with price above it describes an advancing market; a falling line with price below it a declining one.\n\nThe same speed is its limit: it smooths less than most averages of the same length, so in a choppy market it whips back and forth with price. A longer period adds bars to the window, but because their weights are small the extra smoothing is modest.",
+  "settings": [
+    { "key": "period", "label": "Period", "description": "Number of Fibonacci weights in the window, one per bar. More weights add older bars with very small weights." },
+    { "key": "source", "label": "Source", "description": "The price series the average is taken from, the close by default." }
+  ],
+  "faq": [
+    { "q": "Why does the FWMA react so quickly?", "a": "Fibonacci weights grow faster than linear ones, so the newest few bars carry most of the weight and older bars contribute very little." },
+    { "q": "Does a longer period make it much smoother?", "a": "Less than you might expect. Each extra bar joins the oldest end of the window with a weight of 1, which is tiny next to the large weights on recent bars." },
+    { "q": "Why does the line start on the first bar?", "a": "The window grows with the chart until it holds the full period, rebuilding the Fibonacci weights for each length, so every bar has a value." }
+  ]
+}

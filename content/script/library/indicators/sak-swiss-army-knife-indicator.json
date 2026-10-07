@@ -1,0 +1,17 @@
+{
+  "title": "SAK: Swiss Army Knife Indicator",
+  "summary": "One second-order recursive filter whose coefficients switch it between nine filters, from smoothers to highpass, bandpass and bandstop.",
+  "description": "This study runs a single filter equation on the close, `out = c0 * (b0 * P + b1 * P[1] + b2 * P[2]) + a1 * out[1] + a2 * out[2]`, and changes only its coefficients to become different filters. The **Filter Type** menu picks the set: an exponential average (EMA), a simple average (SMA), a Gaussian, a Butterworth, a smoother, a one-pole highpass (HP), a two-pole highpass (2PHP), a bandpass (BP) or a bandstop (BS).\n\nThe coefficients come from the **Period**. The one-pole types use `alpha = (cos + sin - 1) / cos` of the angle `2 * pi / Period`; the Gaussian, Butterworth and two-pole highpass use a two-pole factor built from `2.415 * (1 - cos)`; the bandpass and bandstop use the period together with **Delta (BW)**, the bandwidth. The SMA type uses its own running-sum form over **SMA Length (N)**: add the newest close, drop the close N bars back.\n\nEvery read of the past counts a missing bar as zero, so the filter answers from the first bar. The default, the bandpass, swings around zero and is drawn in its own pane with a zero line.",
+  "howToRead": "Read the line according to the filter you picked. The bandpass, the default, isolates swings near the chosen period: peaks and troughs in it are the tops and bottoms of that cycle, and crossings of zero mark its turns. The highpass types show fast movement around zero with the trend removed. The bandstop and the EMA, SMA, Gauss and Butter types keep the price level, so in this pane they trace price rather than oscillate. The Smooth type has no feedback terms and its coefficients scale the level down, so its line sits well below price and is best read by its shape.\n\nThe early bars start from zero, so give each filter time to settle before reading it, longer for the two-pole types. A narrower Delta makes the bandpass more selective and slower to respond.",
+  "settings": [
+    { "key": "filterType", "label": "Filter Type", "description": "Which filter the shared equation becomes: EMA, SMA, Gauss, Butter, Smooth, HP, 2PHP, BP (bandpass) or BS (bandstop)." },
+    { "key": "period", "label": "Period", "description": "The critical period in bars for every type except SMA. For the bandpass and bandstop it is the centre of the band." },
+    { "key": "n", "label": "SMA Length (N)", "description": "The number of closes averaged by the SMA type. It has no effect on the other types." },
+    { "key": "delta", "label": "Delta (BW)", "description": "The relative bandwidth of the bandpass and bandstop types. Smaller values pass a narrower range of cycles." }
+  ],
+  "faq": [
+    { "q": "Why does the default line swing around zero?", "a": "The default type is the bandpass, which keeps only cycles near the chosen period and removes the price level, so it oscillates around zero." },
+    { "q": "Why do the smoothing types look like price in this pane?", "a": "EMA, SMA, Gauss, Butter and the bandstop keep the price level, so their values sit at price, not around zero. Smooth is the exception: its gain on the price level is alpha squared, so its line has the shape of a smoothed price at a fraction of its height." },
+    { "q": "Why does the line start near zero and climb?", "a": "Every past value before the first bar counts as zero, so the recursive types begin from zero and take some bars to reach price or settle into their cycle." }
+  ]
+}

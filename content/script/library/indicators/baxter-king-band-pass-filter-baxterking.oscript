@@ -1,0 +1,38 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © openalgo
+// Original work (c) mihakralj, MIT License
+
+version 1
+study("Baxter-King Band-Pass Filter (BAXTERKING)", precision = 4)
+
+pLow = input(6, "Min Period (pLow)", min = 2, max = 5000, step = 1, tooltip = "Shortest cycle to pass through (bars).")
+pHigh = input(32, "Max Period (pHigh)", min = 3, max = 5000, step = 1, tooltip = "Longest cycle to pass through (bars).")
+k = input(12, "Filter Half-Length (K)", min = 1, max = 100, step = 1, tooltip = "Number of leads and lags. Larger is a better approximation but loses 2K bars. Baxter and King recommend 12 for quarterly data, 36 for monthly.")
+
+// The longest period is kept above the shortest so the band is never empty.
+highPeriod = max(pLow + 1, pHigh)
+
+// Angular frequencies of the edges of the band.
+a = 2 * math.pi / highPeriod
+b = 2 * math.pi / pLow
+
+// Ideal band-pass weights: B0 = (b - a) / pi and Bj = (sin(jb) - sin(ja)) / (pi j).
+// Subtracting theta from each makes the 2K + 1 weights add up to zero, which
+// also removes any straight-line trend.
+ideal0 = (b - a) / math.pi
+sumBj = 0.0
+for j = 1 to k
+    sumBj += (math.sin(j * b) - math.sin(j * a)) / (math.pi * j)
+theta = (ideal0 + 2 * sumBj) / (2 * k + 1)
+
+// The window is centred K bars back, so each value describes the bar K bars
+// ago and needs K bars on either side of it.
+acc = (ideal0 - theta) * orElse(close[k], 0)
+for j = 1 to k
+    wj = (math.sin(j * b) - math.sin(j * a)) / (math.pi * j) - theta
+    acc += wj * (orElse(close[k - j], 0) + orElse(close[k + j], 0))
+
+cycle = bar.index >= 2 * k ? acc : none
+
+plot(cycle, "BK Cycle", #2962ff, width = 2)
+level(0, "Zero", #808080, style = "dashed")

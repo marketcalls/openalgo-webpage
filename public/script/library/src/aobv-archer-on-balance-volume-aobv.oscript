@@ -1,0 +1,51 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © openalgo
+// Original work (c) mihakralj, MIT License
+
+version 1
+study("AOBV - Archer On-Balance Volume (AOBV)", precision = 0)
+
+source = input(close, "Source")
+volumeSource = input(volume, "Volume")
+
+// On-balance volume: the bar's volume is added when the source rises, taken
+// away when it falls and ignored when it is unchanged. A missing volume reads
+// as zero, and a missing source holds the last known one.
+safeVol = orElse(volumeSource, 0)
+var prevSrc = none
+safeSrc = isNone(source) ? orElse(prevSrc, 0) : source
+safePrev = orElse(prevSrc, safeSrc)
+delta = safeSrc > safePrev ? safeVol : safeSrc < safePrev ? -safeVol : 0
+var balance = 0.0
+balance = bar.index == 0 ? delta : balance + delta
+if not isNone(source)
+    prevSrc = source
+
+// An exponential average with weight 2 / period, started from zero. While the
+// zero start still holds weight above a tiny threshold, the average is divided
+// by (1 - that weight). The first bar reads the raw on-balance volume.
+fn compensatedAverage(x, period) =>
+    a = 2 / max(period, 1)
+    var started = false
+    var smoothed = 0.0
+    var decay = 1.0
+    var warming = true
+    out = x
+    if not started
+        started = true
+    else
+        smoothed = a * (x - smoothed) + smoothed
+        if warming
+            decay = decay * (1 - a)
+            out = 1 - decay != 0 ? smoothed / (1 - decay) : smoothed
+            if decay <= 1e-10
+                warming = false
+        else
+            out = smoothed
+    out
+
+fast = compensatedAverage(balance, 4)
+slow = compensatedAverage(balance, 14)
+
+plot(fast, "AOBV Fast", #2196f3, width = 2)
+plot(slow, "AOBV Slow", #ff5252, width = 2)

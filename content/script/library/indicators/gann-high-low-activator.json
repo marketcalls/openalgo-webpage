@@ -1,0 +1,14 @@
+{
+  "title": "Gann High-Low Activator",
+  "summary": "A trailing line built from short averages of the highs and lows that flips sides when price closes beyond it, with BUY and SELL marks on each flip.",
+  "description": "This high-low activator keeps track of a simple trend state using two short simple moving averages: one of the bar highs and one of the bar lows, both over `period` bars (3 by default).\n\nThe trend turns up on a close above the average of the highs and turns down on a close below the average of the lows. A close between the two averages changes nothing, so the state holds until price clearly breaks the other way. On the first bar the state starts as up, unless that close already sits on or below the average of the lows; with any period above 1 the averages have no value yet, so the start is always up.\n\nThe plotted line follows the state. In an uptrend it is the average of the lows, drawn in green under price; in a downtrend it is the average of the highs, drawn in red above price. A BUY mark below the bar and a SELL mark above it show each change of state, and the first bar always carries a mark for the starting state.",
+  "howToRead": "Read the line as a trailing stop that moves with the trend. While price stays on the green line's side, the uptrend is intact; a close below the average of the lows flips the line red and above price, and prints a SELL mark. The reverse sequence prints a BUY mark.\n\nWith the default short period the line hugs price and flips often, which suits short swings but gives many false turns in a sideways market. A longer period gives fewer, later flips. Each mark is drawn on the bar whose close caused the flip, so it does not move once the bar has closed.",
+  "settings": [
+    { "key": "period", "label": "Period", "description": "The number of bars in the averages of the highs and lows. A longer period moves the line further from price and makes it flip less often." }
+  ],
+  "faq": [
+    { "q": "Why does the line jump from below price to above it?", "a": "On a flip the line switches from the average of the lows to the average of the highs, or back. The jump is the distance between the two averages." },
+    { "q": "Why is there a mark on the very first bar?", "a": "The study has no earlier state to compare with, so the first bar's state always counts as a change and is marked." },
+    { "q": "What happens when the close lands between the two averages?", "a": "Nothing changes. The trend keeps its previous state until a close goes above the average of the highs or below the average of the lows." }
+  ]
+}

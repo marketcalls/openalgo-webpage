@@ -1,0 +1,15 @@
+{
+  "title": "Root Mean Squared Logarithmic Error (RMSLE)",
+  "summary": "The typical log distance between price and its own exponential average over a rolling window, a relative gap that does not depend on price level.",
+  "description": "Root Mean Squared Logarithmic Error (RMSLE) measures how far a source series ranges from its own exponential moving average, in relative rather than absolute terms. The average uses `Period` as its length and starts from the simple average of its first `Period` values, so it has no value through that warmup.\n\nOn every bar where the average exists, the study takes the natural logarithm of one plus the source and of one plus the average, and squares the difference. A bar where either value is at or below minus one has no logarithm and is left out. The squared log gaps are averaged over the last `Period` bars, counting only the bars that carry one, and the square root is plotted as a shaded area. The exponential average itself is drawn on the price chart.",
+  "howToRead": "For prices well above one, the reading is close to the typical percentage gap between price and its average, written as a fraction: 0.01 is about one percent. A rising line means price is moving further from its trend in relative terms; a falling line means it is staying close.\n\nBecause it is a relative measure, the reading is comparable across instruments at very different price levels, which the plain squared error is not. Large gaps still count for more than small ones because they are squared. Nothing is drawn until the average has a value, on bar `Period` minus one.",
+  "settings": [
+    { "key": "source", "label": "Source", "description": "The series compared with its own exponential average." },
+    { "key": "period", "label": "Period", "description": "The length of the exponential average and of the window the squared log gaps are averaged over. A longer period gives a slower average and a smoother error line." }
+  ],
+  "faq": [
+    { "q": "Why add one before taking the logarithm?", "a": "It keeps the logarithm defined when a value is zero. For prices in the hundreds or thousands the added one makes almost no difference, and the reading is effectively the log ratio of price to its average." },
+    { "q": "How do I turn the reading into a percentage?", "a": "For small readings, multiply by 100. A value of 0.02 means price has typically been about two percent away from its exponential average over the window." },
+    { "q": "When is a bar left out?", "a": "Only when the source or the average is at or below minus one, where the logarithm does not exist. On ordinary price series no bar is left out after the warmup." }
+  ]
+}

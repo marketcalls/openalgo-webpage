@@ -212,6 +212,9 @@ export default function ScriptLandingPage() {
               <Link href={referenceHref} className={buttonVariants({ variant: "outline", size: "lg", className: "h-11 px-6" })}>
                 Reference manual
               </Link>
+              <Link href="/script/library" prefetch={false} className={buttonVariants({ variant: "outline", size: "lg", className: "h-11 px-6" })}>
+                Indicator library
+              </Link>
               <a
                 href={SCRIPT_REPO}
                 target="_blank"

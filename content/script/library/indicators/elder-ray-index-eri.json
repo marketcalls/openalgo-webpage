@@ -1,0 +1,14 @@
+{
+  "title": "Elder Ray Index (ERI)",
+  "summary": "Bull Power and Bear Power: how far each bar's high and low reached away from an exponential average of the close.",
+  "description": "The study draws two lines around a centerline, an exponential moving average of the close with weight 2 / (period + 1). **Bull Power** is the bar's high minus the centerline, the distance buyers managed to push price above the average. **Bear Power** is the bar's low minus the centerline, the distance sellers pushed it below.\n\nThe centerline starts from the first close and, while it is filling, is still divided by the weight it has gathered so far. That correction is meant for an average that starts from zero, so on these bars it lifts the centerline well above price, and both lines open with a large negative excursion before they settle. On the first bar the centerline is the close divided by the weight, seven times the price at the default period of 13, so treat the first stretch of bars, a few times the period, as warmup.\n\nA missing close enters the average as zero.",
+  "howToRead": "Bull Power above zero means the bar traded above the average, and Bear Power below zero means it traded below it. In a healthy uptrend Bull Power stays positive while Bear Power stays shallow or rises toward zero; in a downtrend the reverse. A common reading is to look for Bear Power climbing while still negative in an uptrend, as sellers tire, or Bull Power falling while still positive in a downtrend.\n\nThe values are in price units, so compare them with their own history. Ignore the opening stretch of bars, where the centerline correction distorts both lines.",
+  "settings": [
+    { "key": "period", "label": "Period", "description": "The length of the exponential average used as the centerline. Longer periods give a slower centerline and wider readings." }
+  ],
+  "faq": [
+    { "q": "Why do both lines start with a big drop?", "a": "The centerline starts from the first close and is still divided by the weight it has gathered while it fills, which lifts it above price on the first bars. Both lines are measured from that centerline, so they open strongly negative until the correction fades." },
+    { "q": "Can Bull Power be negative?", "a": "Yes. If a bar's high stays below the average, as in a firm downtrend, Bull Power is negative. Likewise Bear Power is positive when a bar's low stays above the average." },
+    { "q": "What units are the lines in?", "a": "Price units: each line is a high or a low minus the average. A move of the same size reads larger on a high-priced instrument." }
+  ]
+}

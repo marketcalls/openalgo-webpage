@@ -1,0 +1,15 @@
+{
+  "title": "Wilder's Moving Average (RMA)",
+  "summary": "A slow exponential average with a smoothing factor of one over the period, corrected during warmup so it draws from the first bar.",
+  "description": "The RMA is an exponential moving average whose smoothing factor is one divided by the period, rather than two divided by the period plus one. That makes it noticeably slower than an EMA of the same length: a 10-bar RMA reacts at roughly the pace of a 19-bar EMA. It is the average used inside the classic ATR and RSI calculations.\n\nThis version does not start from a simple average of the first bars. It starts the running average at zero and divides it by one minus `(1 - 1/period)` raised to the number of bars seen. That division removes the pull toward zero that a zero start would leave, so the very first bar equals the source and every later bar is a properly weighted average of the bars so far. Once `(1 - 1/period)` raised to the bars seen falls below 1e-10, the correction is dropped and the line is the plain recursion.",
+  "howToRead": "Read the RMA as a smooth, slow trend line. Price holding above a rising RMA describes an uptrend and price below a falling one a downtrend; the slope changes direction only after a sustained move, so it filters out most single-bar noise.\n\nThe price of that smoothness is lag. Turns in the line come late, and in a sideways market price crosses it often without any trend following. Because the line is corrected from the first bar, the earliest values are averages of only a few bars and move more than the settled line does.",
+  "settings": [
+    { "key": "period", "label": "Period", "description": "Sets the smoothing factor to one over this number. A larger period gives a smoother, slower line." },
+    { "key": "source", "label": "Source", "description": "The price series that is averaged, the close by default." }
+  ],
+  "faq": [
+    { "q": "How is the RMA different from an EMA of the same period?", "a": "The RMA uses a smoothing factor of one over the period, the EMA two over the period plus one. A 10-bar RMA therefore weights the newest bar at 10 percent against roughly 18 percent for a 10-bar EMA, so it is slower and smoother." },
+    { "q": "Why does the line appear on the very first bar?", "a": "The running average is divided by a warmup correction that removes the effect of starting at zero. The first bar equals the source, and the correction fades out as more bars arrive." },
+    { "q": "Will it match an RMA seeded with a simple average?", "a": "Not on the early bars. A simple-average seed waits for a full window and then starts from that mean, while this version weights every bar from the first. After enough bars both settle to the same recursion and the difference shrinks toward zero." }
+  ]
+}

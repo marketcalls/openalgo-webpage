@@ -1,0 +1,34 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © openalgo
+// Original work (c) mihakralj, MIT License
+
+version 1
+study("Force Index (FI)", precision = 0)
+
+period = input(13, "Period", min = 1, max = 500, step = 1)
+
+weight = 2 / (period + 1)
+beta = 1 - weight
+
+// The raw force is the change in close times the volume, zero on the first
+// bar. A missing close or volume reads as zero.
+src = orElse(close, 0)
+vol = orElse(volume, 0)
+rawForce = bar.index > 0 ? (src - src[1]) * vol : 0
+
+// An exponential average seeded with the first raw value. While it is
+// filling, it is divided by the weight gathered so far.
+var emaValue = 0.0
+emaValue = bar.index == 0 ? rawForce : weight * rawForce + beta * emaValue
+
+var warmup = true
+var eWeight = 1.0
+result = emaValue
+if warmup
+    eWeight = eWeight * beta
+    result = emaValue * (eWeight > 1e-10 ? 1 / (1 - eWeight) : 1)
+    if eWeight <= 1e-10
+        warmup = false
+
+plot(result, "Force Index", #ffeb3b, width = 2)
+level(0, "Zero", #787b86, style = "dashed")

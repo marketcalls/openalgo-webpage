@@ -1,0 +1,57 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © openalgo
+// Original work (c) mihakralj, MIT License
+
+version 1
+study("Wavelet Denoising Filter (WAVELET)", overlay = true, precision = 2)
+
+levels = input(4, "Decomposition Levels", min = 1, max = 8, step = 1, tooltip = "Number of wavelet decomposition levels. Each level doubles the effective smoothing window. Lookback = 2^levels bars.")
+threshold = input(1, "Threshold Multiplier", min = 0, max = 5, step = 0.1, tooltip = "Scales the universal noise threshold. 0 = no denoising (passthrough). Higher = more aggressive smoothing.")
+source = input(close, "Source")
+
+depth = min(8, max(1, floor(levels)))
+threshMult = min(5, max(0, threshold))
+
+// Soft thresholding: a detail smaller than the threshold is dropped, a larger
+// one is shrunk toward zero by the threshold.
+fn soft(d, thresh) =>
+    absD = abs(d)
+    absD > thresh ? sign(d) * (absD - thresh) : 0
+
+// A causal undecimated two-tap wavelet transform. Each level averages the previous
+// approximation with its value a doubling distance back (1, 2, 4 ... 128
+// bars), and the detail is what that average removed. A level beyond the
+// setting passes the approximation through with no detail.
+c0 = orElse(source, 0)
+c1 = (c0 + orElse(source[1], c0)) * 0.5
+d1 = c0 - c1
+c2 = depth >= 2 ? (c1 + orElse(c1[2], c1)) * 0.5 : c1
+d2 = depth >= 2 ? c1 - c2 : 0
+c3 = depth >= 3 ? (c2 + orElse(c2[4], c2)) * 0.5 : c2
+d3 = depth >= 3 ? c2 - c3 : 0
+c4 = depth >= 4 ? (c3 + orElse(c3[8], c3)) * 0.5 : c3
+d4 = depth >= 4 ? c3 - c4 : 0
+c5 = depth >= 5 ? (c4 + orElse(c4[16], c4)) * 0.5 : c4
+d5 = depth >= 5 ? c4 - c5 : 0
+c6 = depth >= 6 ? (c5 + orElse(c5[32], c5)) * 0.5 : c5
+d6 = depth >= 6 ? c5 - c6 : 0
+c7 = depth >= 7 ? (c6 + orElse(c6[64], c6)) * 0.5 : c6
+d7 = depth >= 7 ? c6 - c7 : 0
+c8 = depth >= 8 ? (c7 + orElse(c7[128], c7)) * 0.5 : c7
+d8 = depth >= 8 ? c7 - c8 : 0
+
+// The noise estimate: the mean absolute first-level detail over 2^levels
+// bars, with bars before the first reading as zero.
+madLen = pow(2, depth)
+var sumAbsD1 = 0.0
+sumAbsD1 += abs(d1)
+if bar.index - madLen >= 0
+    sumAbsD1 -= abs(d1[madLen])
+mad = sumAbsD1 / madLen
+sigma = mad / 0.6745
+T = sigma * sqrt(2 * log(madLen)) * threshMult
+
+approx = depth == 1 ? c1 : depth == 2 ? c2 : depth == 3 ? c3 : depth == 4 ? c4 : depth == 5 ? c5 : depth == 6 ? c6 : depth == 7 ? c7 : c8
+wavelet = approx + soft(d1, T) + soft(d2, T) + soft(d3, T) + soft(d4, T) + soft(d5, T) + soft(d6, T) + soft(d7, T) + soft(d8, T)
+
+plot(wavelet, "Wavelet", #ffeb3b, width = 2)

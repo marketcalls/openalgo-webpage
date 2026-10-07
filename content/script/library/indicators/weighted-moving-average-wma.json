@@ -1,0 +1,14 @@
+{
+  "title": "Weighted Moving Average (WMA)",
+  "summary": "A linearly weighted average in which the newest bar counts most and each older bar counts one step less.",
+  "description": "The Weighted Moving Average gives the newest value in the window a weight equal to `Period`, the one before it `Period - 1`, and so on down to a weight of 1 for the oldest. The weighted values are added up and divided by the sum of the weights, `Period * (Period + 1) / 2`.\n\nThe study keeps two running sums, the plain sum of the window and the weighted sum, and updates both as each bar arrives, so the cost does not grow with the period. While the window is still filling, the weights run from 1 up to the number of bars seen so far, which lets the line start on the very first bar. A missing value counts as zero.",
+  "howToRead": "Because recent bars carry the most weight, the WMA follows price more closely than a simple average of the same period and turns sooner after a reversal. Price above a rising WMA describes an uptrend; price below a falling one a downtrend. A crossing of price through the line, or of a short WMA through a long one, is a common trigger for a trend change.\n\nThe faster response also means more false turns in a sideways market. During the first `Period` bars the window is still filling, so treat those early values with care.",
+  "settings": [
+    { "key": "period", "label": "Period", "description": "The number of bars in the window and the weight of the newest bar. Longer is smoother and slower." },
+    { "key": "source", "label": "Source", "description": "The price series that is averaged, the close by default." }
+  ],
+  "faq": [
+    { "q": "How does it differ from a simple moving average?", "a": "A simple average weights every bar equally. Here the newest bar counts `Period` times as much as the oldest, so the line reacts faster to recent prices." },
+    { "q": "Why does the line start on the first bar?", "a": "While the window fills, the average uses only the bars seen so far, weighted 1 up to their count, so it never waits for a full window." }
+  ]
+}

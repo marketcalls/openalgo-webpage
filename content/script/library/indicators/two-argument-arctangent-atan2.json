@@ -1,0 +1,15 @@
+{
+  "title": "Two-Argument Arctangent (ATAN2)",
+  "summary": "Plots the angle, in radians from -pi to pi, of the point formed by two chosen bar values, keeping the sign of each in all four quadrants.",
+  "description": "This study treats two values from each bar as the coordinates of a point and plots the angle from the positive x-axis to that point, in radians. By default the y value is the bar's range (high minus low) and the x value is its midpoint (high plus low, over two), but either can be switched to any price series, the range or volume.\n\nUnlike a plain arctangent of y divided by x, the two-argument form keeps both signs, so it can tell a point in one quadrant from the point opposite it and returns a value anywhere from -pi to pi. The study always divides the smaller magnitude by the larger one before taking the arctangent, so the ratio never grows without bound, and then places the angle in its quadrant from the signs of x and y. A bar where both values are zero has no angle and is left blank.",
+  "howToRead": "With the default settings both values are positive, so the angle stays between 0 and pi/2 and works as a smooth, bounded version of the range as a fraction of price: a wider bar relative to its price gives a larger angle. Readings near zero mean the bar was narrow compared with where it traded.\n\nWith other choices the line can move into other quadrants, and the reference lines at plus and minus pi/2 and pi mark the quadrant boundaries. The study is a numeric building block: it describes a relationship between two values and does not give trading signals by itself.",
+  "settings": [
+    { "key": "y", "label": "Y (Numerator)", "description": "The value used as the vertical coordinate: the bar's range, any price series or volume." },
+    { "key": "x", "label": "X (Denominator)", "description": "The value used as the horizontal coordinate: the bar's range, any price series or volume." }
+  ],
+  "faq": [
+    { "q": "Why is the default reading so close to zero?", "a": "The default angle compares the bar's range with its midpoint price. On most instruments the range is a tiny fraction of the price, so the angle is small, and it rises on wide bars." },
+    { "q": "Why are some bars blank?", "a": "When both chosen values are exactly zero the angle is undefined, so the study leaves that bar empty rather than inventing a value." },
+    { "q": "Is the output in degrees?", "a": "No, it is in radians, from -pi to pi. Multiply by 180 and divide by pi to read it in degrees." }
+  ]
+}

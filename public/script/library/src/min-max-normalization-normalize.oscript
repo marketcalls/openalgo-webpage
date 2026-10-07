@@ -1,0 +1,32 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © openalgo
+// Original work (c) mihakralj, MIT License
+
+version 1
+study("Min-Max Normalization (NORMALIZE)", precision = 4)
+
+source = input(close, "Source")
+length = input(200, "Lookback Length", min = 1, max = 5000, step = 1, tooltip = "Lookback period for finding min and max. Must be at least 1.")
+
+// The lowest and highest readings start at this bar's value and then take in
+// every present value of the previous length - 1 bars, so a short history is
+// measured against the bars that exist so far.
+normalized = none
+if not isNone(source)
+    minVal = source
+    maxVal = source
+    window = floor(length)
+    k = 1
+    while k < window
+        prior = source[k]
+        if not isNone(prior)
+            if prior < minVal
+                minVal = prior
+            if prior > maxVal
+                maxVal = prior
+        k = k + 1
+    spread = maxVal - minVal
+    // A flat window reads zero.
+    normalized = spread != 0 ? (source - minVal) / spread : 0
+
+plot(normalized, "Normalized Value [0,1]", #ffeb3b, width = 2)

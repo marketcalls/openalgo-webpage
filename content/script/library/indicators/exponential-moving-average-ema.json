@@ -1,0 +1,14 @@
+{
+  "title": "Exponential Moving Average (EMA)",
+  "summary": "An exponential average with a warmup correction, so it is accurate from the first bar rather than crawling up from a zero start.",
+  "description": "The EMA moves from its previous value toward the source by a fixed share of the distance each bar. The share is `2 / (Period + 1)`, so recent bars count most and the weight of older bars fades away geometrically.\n\nThe average starts from zero. Over the early bars it is divided by `1 - beta^n`, where beta is `1 - 2 / (Period + 1)` and n is the number of bars so far. That correction removes the bias of the zero start exactly, so the first value equals the first source value and the line is unbiased from there on. Once `beta^n` falls below 1e-10 the correction is switched off, because it no longer changes anything.",
+  "howToRead": "The EMA is the standard smooth trend line. Price above a rising EMA describes an uptrend, price below a falling one a downtrend, and the slope shows the direction. Two EMAs of different periods crossing each other is one of the most common trend signals.\n\nIt reacts faster than a simple average of the same period because it weights recent bars more, but it still lags price and gives false crossings in a sideways market. A longer period filters more noise and turns later.",
+  "settings": [
+    { "key": "period", "label": "Period", "description": "Sets the share of the distance the average moves each bar. Longer is smoother and slower." },
+    { "key": "source", "label": "Source", "description": "The price series that is averaged, the close by default." }
+  ],
+  "faq": [
+    { "q": "How does the warmup differ from a usual EMA?", "a": "A usual EMA starts from a simple average or the first value. This one starts from zero and divides by `1 - beta^n`, which makes every early value an exactly weighted average of the bars seen so far." },
+    { "q": "Why is there a value on the first bar?", "a": "With the warmup correction, the first value is the first source value, so nothing needs to be left blank." }
+  ]
+}

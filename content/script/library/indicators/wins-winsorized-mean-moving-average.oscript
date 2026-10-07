@@ -1,0 +1,31 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © openalgo
+// Original work (c) mihakralj, MIT License
+
+version 1
+study("WINS: Winsorized Mean Moving Average", overlay = true, precision = 2)
+
+period = input(20, "Period", min = 3, max = 5000, step = 1)
+winPct = input(10, "Winsorize %", min = 0, max = 49, step = 1, tooltip = "Percentage winsorized from each tail. 0 = SMA")
+
+// How many values at each tail are pulled in to the boundary value.
+winCount = max(floor(period * winPct / 100), 0)
+if winCount >= floor(period / 2)
+    winCount = floor((period - 1) / 2)
+
+// Nothing is drawn until the window holds a full period of closes.
+wins = none
+if bar.index >= period - 1
+    window = [orElse(close, 0)]
+    for j = 1 to period - 1
+        push(window, orElse(close[j], 0))
+    sort(window, "asc")
+    lowerBound = element(window, winCount)
+    upperBound = element(window, period - 1 - winCount)
+    total = 0.0
+    for j = 0 to period - 1
+        v = j < winCount ? lowerBound : j > period - 1 - winCount ? upperBound : element(window, j)
+        total += v
+    wins = total / period
+
+plot(wins, "WINS", #ffeb3b, width = 2)

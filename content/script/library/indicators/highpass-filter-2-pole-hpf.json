@@ -1,0 +1,15 @@
+{
+  "title": "Highpass Filter (2-Pole) (HPF)",
+  "summary": "Strips out price swings shorter than a chosen cycle length with a two-pole highpass filter and draws the smooth trend that is left behind.",
+  "description": "This study separates price into a fast part and a slow part. A two-pole highpass filter picks out every swing shorter than the **Length** setting, the cutoff period, and the study draws what remains once that fast part is subtracted from the source. The line on the chart is therefore a trend component: the slow drift of price with the quick oscillations removed.\n\nThe highpass is a second-order recursive filter. Its coefficients come from the cutoff angle `2 * pi / Length`: a smoothing factor `alpha = (cos + sin - 1) / cos` and a gain `(1 - alpha / 2)^2`. Each bar feeds the second difference of the source (this bar, minus twice the previous one, plus the one before that) into the filter together with its own two previous outputs. On the first two bars the missing inputs repeat the newest one, so the filter starts at rest.\n\nBecause the drawn line is the source minus a highpass rather than a moving average, it follows the price level directly and carries less lag than an average of similar smoothness.",
+  "howToRead": "Read the line as the underlying direction of price once the short cycles are taken away. When it rises, the slow component is rising even if individual bars are noisy; when it flattens or turns, the drift behind the swings has changed. Price crossing the line shows the fast part changing sign, which is often a pullback inside a trend rather than a reversal.\n\nA longer Length removes more of the movement and gives a smoother, slower line. A two-pole filter can overshoot briefly after a sharp jump in price, so a sudden kink in the line after a gap is the filter settling, not a new signal.",
+  "settings": [
+    { "key": "length", "label": "Length", "description": "The cutoff period in bars. Swings shorter than this are removed from the drawn line; a larger value gives a smoother trend." },
+    { "key": "source", "label": "Source", "description": "The price series that is filtered, the close by default." }
+  ],
+  "faq": [
+    { "q": "Why does a highpass filter draw a smooth line?", "a": "The highpass captures the fast oscillations. The study draws the source minus that highpass, so what you see is the slow part of price that the highpass did not take." },
+    { "q": "How is this different from a moving average?", "a": "A moving average smooths by averaging past bars and lags by about half its window. Subtracting a two-pole highpass keeps the current price level in the result, so the trend line lags less for the same smoothness." },
+    { "q": "What does the Length setting mean in practice?", "a": "It is the shortest cycle, in bars, that survives into the line. With the default of 40 on an hourly chart, swings that complete in less than about 40 hours are filtered out." }
+  ]
+}

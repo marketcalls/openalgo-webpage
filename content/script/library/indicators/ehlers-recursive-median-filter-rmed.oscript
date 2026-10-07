@@ -1,0 +1,31 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © openalgo
+// Original work (c) mihakralj, MIT License
+
+version 1
+study("Ehlers Recursive Median Filter (RMED)", overlay = true, precision = 2)
+
+period = input(12, "Period", min = 1, max = 5000, step = 1)
+source = input(close, "Source")
+
+per = max(1, floor(period))
+
+// The smoothing factor is (cos + sin - 1) / cos of one cycle step, held
+// between 0 and 1.
+angle = (360 / per) * math.pi / 180
+cosA = math.cos(angle)
+sinA = math.sin(angle)
+alphaRaw = (cosA + sinA - 1) / cosA
+smooth = isNone(alphaRaw) ? (cosA + sinA - 1 > 0 ? 1 : 0) : max(0, min(1, alphaRaw))
+
+// The median of the last five prices. Before the fifth bar the missing
+// places count as zero, and a missing price reads as zero.
+price = orElse(source, 0)
+window = [price, orElse(source[1], 0), orElse(source[2], 0), orElse(source[3], 0), orElse(source[4], 0)]
+sort(window, "asc")
+med5 = element(window, 2)
+
+var rm = none
+rm = bar.index == 0 ? price : smooth * med5 + (1 - smooth) * rm
+
+plot(rm, "RMED", #ffeb3b, width = 2)

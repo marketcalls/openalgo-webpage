@@ -1,0 +1,36 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © openalgo
+// Original work (c) mihakralj, MIT License
+
+version 1
+study("Theil Index (THEIL)", precision = 4)
+
+source = input(close, "Source (must be positive values)")
+length = input(14, "Lookback Period", min = 1, max = 5000, step = 1)
+
+// The mean of the positive values in the window, newest first. Values that are
+// absent, zero or negative are left out of both the mean and the count.
+total = 0.0
+nValid = 0
+for k = 0 to length - 1
+    v = source[k]
+    if not isNone(v) and v > 0
+        total += v
+        nValid += 1
+
+// Theil's T: the average of ratio * ln(ratio), where ratio is each value over
+// the window mean. It is 0 when every value equals the mean.
+theil = none
+if nValid > 0
+    mean = total / nValid
+    if mean > 0
+        theilSum = 0.0
+        for k = 0 to length - 1
+            v = source[k]
+            if not isNone(v) and v > 0
+                ratio = v / mean
+                if ratio > 0
+                    theilSum += ratio * log(ratio)
+        theil = theilSum / nValid
+
+plot(theil, "Theil T Index", #ffeb3b, width = 2)

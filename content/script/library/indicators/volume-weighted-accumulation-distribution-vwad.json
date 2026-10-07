@@ -1,0 +1,14 @@
+{
+  "title": "Volume Weighted Accumulation/Distribution (VWAD)",
+  "summary": "An accumulation/distribution total weighted twice by volume, once by the bar's volume and again by its share of recent volume, so heavy bars dominate.",
+  "description": "VWAD starts from the money flow multiplier used by the accumulation/distribution line: where the close sits in the bar's range, from -1 at the low to +1 at the high, worked out as `((close - low) - (high - close)) / (high - low)`. A bar whose high equals its low has a multiplier of zero.\n\nThe study then weights that multiplier twice by volume. It multiplies by the bar's own volume, as the classic line does, and again by that volume's share of the total volume over the last period bars. Until the window has filled, the total covers only the bars seen so far. The weighted amount is added to a running total that starts at zero on the first bar.\n\nThe second weighting makes the line far more sensitive to unusually busy bars: a bar that carries a large share of recent volume moves the total much more than a quiet bar with the same close position.",
+  "howToRead": "A rising line means the heavy bars have been closing near their highs, which suggests buying is concentrated where most of the trading happens. A falling line means heavy bars close near their lows. Flat stretches mean either balanced closes or quiet volume.\n\nUse it like the accumulation/distribution line, looking for divergences with price, but expect sharper steps on high-volume bars and less movement on ordinary ones. The level depends on where the chart starts and on the instrument's volume scale, so compare swings rather than values.",
+  "settings": [
+    { "key": "period", "label": "Volume Weight Period", "description": "The number of bars whose total volume each bar's volume is measured against. A shorter period makes a busy bar's share larger." }
+  ],
+  "faq": [
+    { "q": "How is it different from the accumulation/distribution line?", "a": "Both use the same close-in-range multiplier and the bar's volume. VWAD multiplies once more by the bar's share of recent volume, so busy bars count for much more than quiet ones." },
+    { "q": "What is the money flow multiplier?", "a": "It is where the close sits in the bar: +1 when it closes on the high, -1 when it closes on the low, and 0 at the midpoint or when the bar has no range." },
+    { "q": "Does the period change where the line starts?", "a": "No. The line starts on the first bar either way. The period only sets how many bars of volume each bar is compared with." }
+  ]
+}

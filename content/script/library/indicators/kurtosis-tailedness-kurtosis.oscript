@@ -1,0 +1,51 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © openalgo
+// Original work (c) mihakralj, MIT License
+
+version 1
+study("Kurtosis, tailedness (KURTOSIS)", precision = 4)
+
+period = input(14, "Period", min = 4, max = 5000, step = 1, tooltip = "At least four samples are needed before a kurtosis can be formed.")
+source = input(close, "Source")
+
+// Running sums of the first four powers over the last `period` bars: the
+// value entering is added and the value leaving the window is taken out.
+var sumY = 0.0
+var sumY2 = 0.0
+var sumY3 = 0.0
+var sumY4 = 0.0
+var validCount = 0
+
+oldY = source[period]
+if not isNone(oldY)
+    sumY -= oldY
+    sumY2 -= oldY * oldY
+    sumY3 -= oldY * oldY * oldY
+    sumY4 -= oldY * oldY * oldY * oldY
+    validCount -= 1
+
+currentY = source
+if not isNone(currentY)
+    sumY += currentY
+    sumY2 += currentY * currentY
+    sumY3 += currentY * currentY * currentY
+    sumY4 += currentY * currentY * currentY * currentY
+    validCount += 1
+
+// Excess kurtosis: the fourth central moment over the squared variance,
+// less 3. It waits for four samples, and a window with no spread reads 0.
+kurt = none
+if validCount >= 4
+    n = validCount
+    mean = sumY / n
+    m2 = sumY2 / n
+    m3 = sumY3 / n
+    m4 = sumY4 / n
+    varianceValue = max(m2 - mean * mean, 0)
+    if varianceValue > 1e-10
+        moment4 = m4 - 4 * mean * m3 + 6 * mean * mean * m2 - 3 * mean * mean * mean * mean
+        kurt = moment4 / (varianceValue * varianceValue) - 3
+    else
+        kurt = 0
+
+plot(kurt, "Kurtosis", #ffeb3b, width = 2)

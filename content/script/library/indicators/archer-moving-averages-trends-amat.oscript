@@ -1,0 +1,44 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © openalgo
+// Original work (c) mihakralj, MIT License
+
+version 1
+study("Archer Moving Averages Trends (AMAT)", precision = 2)
+
+fast = input(10, "Fast Period", min = 1, max = 5000, step = 1)
+slow = input(50, "Slow Period", min = 2, max = 5000, step = 1)
+source = input(close, "Source")
+
+alphaFast = 2 / (fast + 1)
+alphaSlow = 2 / (slow + 1)
+
+// Two exponential means seeded with the first value. The previous values are
+// seeded there too, so the first bar reports no trend and no spread.
+var emaFast = none
+var emaSlow = none
+var prevFast = none
+var prevSlow = none
+// Absent on a bar whose source is absent.
+trendValue = none
+strengthValue = none
+
+if not isNone(source)
+    if isNone(emaFast)
+        emaFast = source
+        emaSlow = source
+        prevFast = source
+        prevSlow = source
+    emaFast = alphaFast * (source - emaFast) + emaFast
+    emaSlow = alphaSlow * (source - emaSlow) + emaSlow
+    // A trend needs the two means in order and both moving the same way.
+    longTrend = emaFast > emaSlow and emaFast > prevFast and emaSlow > prevSlow ? 1 : 0
+    shortTrend = emaFast < emaSlow and emaFast < prevFast and emaSlow < prevSlow ? -1 : 0
+    prevFast = emaFast
+    prevSlow = emaSlow
+    trendValue = longTrend + shortTrend
+    // The spread as a percentage of the slow mean, absent when that mean is zero.
+    strengthValue = emaSlow == 0 ? none : abs(emaFast - emaSlow) / emaSlow * 100
+
+plot(trendValue, "AMAT Trend", trendValue > 0 ? #4caf50 : trendValue < 0 ? #ff5252 : #787b86, width = 3, style = "column")
+plot(strengthValue, "Trend Strength %", #ffeb3b, width = 2)
+level(0, "Zero", #787b86, style = "dashed")

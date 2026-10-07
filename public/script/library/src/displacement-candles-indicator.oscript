@@ -1,0 +1,275 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © openalgo
+// Original work (c) Arun K Bhaskar, MPL-2.0
+
+version 1
+study("Displacement Candles Indicator", overlay = true, precision = 2)
+
+// ---- Scanner ----------------------------------------------------------------
+scanMethod = input("Displacement", "Scanning Method", options = ["Displacement", "Retracement"], group = "Scanner", tooltip = "Displacement: strong, sudden price move (up or down) with long candles and minimal wicks. Retracement: price pulls back to a Fibonacci level of the displacement, a potential entry for trend continuation.")
+showLong = input(true, "Long Signals", group = "Scanner")
+showShort = input(true, "Short Signals", group = "Scanner")
+
+// ---- Displacement candles ---------------------------------------------------
+minBars = input(3, "Minimum Bars", min = 1, max = 500, step = 1, group = "Displacement Candles", tooltip = "Shows if bars exceed the set value.")
+devPercent = input(60, "Minimal Deviation (%)", min = 1, max = 1000, step = 10, group = "Displacement Candles", tooltip = "Minimal size of a displacement candle, as a percentage of the average high-low range of the last 14 bars.")
+closeFilter = input(true, "Apply Close Above/Below Prev Close", group = "Displacement Candles")
+hlFilter = input(false, "Apply Close Above/Below Prev High/Low", group = "Displacement Candles")
+fibVal = input(0.5, "Fibonacci Value", min = 0, max = 1, step = 0.1, group = "Displacement Candles", tooltip = "0: top of a bullish and bottom of a bearish displacement. 1: bottom of a bullish and top of a bearish displacement. 0.5: the midpoint.")
+
+// ---- Additional filters -----------------------------------------------------
+atrFilter = input(false, "Apply ATR Filter", group = "Additional Filters", tooltip = "Filters out longer or more volatile displacement candles.")
+atrLength = input(14, "ATR Length", min = 1, max = 5000, step = 1, group = "Additional Filters")
+atrMulti = input(1, "ATR Multiplier", min = 1, max = 100, step = 0.1, group = "Additional Filters", tooltip = "Higher values filter longer or more volatile candles.")
+
+timeFilter = input(false, "Apply Time Filter", group = "Additional Filters", tooltip = "Filter retracement signals to a window of the trading day.")
+hour1 = input(9, "Time From (hour)", min = 0, max = 23, step = 1, group = "Additional Filters")
+minute1 = input(15, "Time From (minute)", min = 0, max = 59, step = 1, group = "Additional Filters")
+hour2 = input(10, "Time To (hour)", min = 0, max = 23, step = 1, group = "Additional Filters")
+minute2 = input(15, "Time To (minute)", min = 0, max = 59, step = 1, group = "Additional Filters")
+
+dateFilter = input(false, "Apply Date Filter", group = "Additional Filters", tooltip = "Filter retracement signals to one specified date.")
+day = input(30, "Day", min = 1, max = 31, step = 1, group = "Additional Filters")
+month = input(3, "Month", min = 1, max = 12, step = 1, group = "Additional Filters")
+year = input(2025, "Year", min = 0, max = 9999, step = 1, group = "Additional Filters")
+
+// ---- Performance table ------------------------------------------------------
+showTable = input(true, "Display", group = "Performance Table")
+tablePos = input("bottom-right", "Position", options = ["top-left", "top-center", "top-right", "middle-left", "middle-center", "middle-right", "bottom-left", "bottom-center", "bottom-right"], group = "Performance Table")
+tableSize = input("normal", "Size", options = ["auto", "tiny", "small", "normal", "large", "huge"], group = "Performance Table", tooltip = "Tables in this version draw at the chart's own text size, so every size draws alike.")
+
+POS_COLOR = #089981
+POS_LIGHT_COLOR = #70CCBD
+NEG_LIGHT_COLOR = #FAA1A4
+NEG_COLOR = #F23645
+NEU_DARK_COLOR = #0F0F0F
+HEAD_TEXT_COLOR = #E6E9EF
+
+// The newest objects of each family are kept up to these caps, which hold the
+// study well under the chart's ceiling on objects per script.
+maxLines = 2000
+maxLabels = 5000
+
+// ---- Filters ------------------------------------------------------------------
+barRange = high - low
+// The size threshold is a share of the 14-bar average range. Until that
+// average exists the threshold is zero, so every early candle clears it.
+avgRange = sma(barRange, 14)
+threshold = isNone(avgRange) ? 0 : devPercent / 100 * avgRange
+bigEnough = toBool(barRange >= threshold)
+
+// An ATR still warming up blocks the filter rather than passing it.
+atrLine = atr(atrLength)
+atrOk = not atrFilter or toBool(barRange > atrLine * atrMulti)
+
+barHour = date.hour(time)
+barMinute = date.minute(time)
+timeOk = not timeFilter or ((barHour > hour1 or (barHour == hour1 and barMinute >= minute1)) and (barHour < hour2 or (barHour == hour2 and barMinute < minute2)))
+dateOk = not dateFilter or (date.year(time) == year and date.month(time) == month and date.day(time) == day)
+
+// ---- Displacement runs ------------------------------------------------------------
+prevClose = close[1]
+prevHigh = high[1]
+prevLow = low[1]
+
+bullish = bigEnough and toBool(close > open) and (not closeFilter or toBool(close > prevClose)) and (not hlFilter or toBool(close > prevHigh)) and atrOk
+bearish = bigEnough and toBool(close < open) and (not closeFilter or toBool(close < prevClose)) and (not hlFilter or toBool(close < prevLow)) and atrOk
+
+// The length of the current one-way run on each side, with the run's
+// highest high, lowest low and the time of its first candle.
+var bullCnt = 0
+var bearCnt = 0
+var bullHi = none
+var bullLo = none
+var bearHi = none
+var bearLo = none
+var bullRunTime = none
+var bearRunTime = none
+
+prevBullCnt = bullCnt
+prevBearCnt = bearCnt
+
+if bullish
+    bullCnt += 1
+    bearCnt = 0
+    if bullCnt == 1
+        bullHi = high
+        bullLo = low
+        bullRunTime = time
+    else
+        bullHi = max(bullHi, high)
+        bullLo = min(bullLo, low)
+else if bearish
+    bearCnt += 1
+    bullCnt = 0
+    if bearCnt == 1
+        bearHi = high
+        bearLo = low
+        bearRunTime = time
+    else
+        bearHi = max(bearHi, high)
+        bearLo = min(bearLo, low)
+else
+    bullCnt = 0
+    bearCnt = 0
+
+// The Fibonacci level of the newest run that reached the minimum length,
+// held until the next one. The previous bar's level feeds the cross test.
+var bullFib = none
+var bearFib = none
+prevBullFib = bullFib
+prevBearFib = bearFib
+if bullCnt >= minBars
+    bullFib = bullHi - (bullHi - bullLo) * fibVal
+if bearCnt >= minBars
+    bearFib = bearLo + (bearHi - bearLo) * fibVal
+
+// A run that just ended is labelled on its last candle, the bar before this one.
+bearEnded = not bar.isFirst and prevBearCnt >= minBars and bearCnt == 0 and showShort
+bullEnded = not bar.isFirst and prevBullCnt >= minBars and bullCnt == 0 and showLong
+
+// ---- Retracement tracking ---------------------------------------------------------
+// A run becomes the one to watch on the bar it first reaches the minimum
+// length, and it replaces any run on the other side.
+var bullActive = false
+var bearActive = false
+var bullDone = false
+var bearDone = false
+var bullStart = none
+var bearStart = none
+if not bar.isFirst and bullCnt >= minBars and prevBullCnt < minBars
+    bullActive = true
+    bearActive = false
+    bullDone = false
+    bearDone = false
+    bullStart = bullRunTime
+if not bar.isFirst and bearCnt >= minBars and prevBearCnt < minBars
+    bearActive = true
+    bullActive = false
+    bearDone = false
+    bullDone = false
+    bearStart = bearRunTime
+
+// The high crosses up through a bearish level (the low down through a bullish
+// one), against the level as it stood on the previous bar.
+bearCross = toBool(high > bearFib and prevHigh <= prevBearFib)
+bullCross = toBool(low < bullFib and prevLow >= prevBullFib)
+
+bearRet = bearActive and not bearDone and bearCross and toBool(prevHigh < bearFib) and timeOk and dateOk
+bullRet = bullActive and not bullDone and bullCross and toBool(prevLow > bullFib) and timeOk and dateOk
+
+isRetracement = scanMethod == "Retracement"
+bearSig = bearRet and isRetracement and showShort
+bullSig = bullRet and isRetracement and showLong
+
+// Only a retracement that is shown closes its run.
+var retLines: array<line> = []
+if bearSig
+    bearDone = true
+    if not isNone(bearStart)
+        push(retLines, draw.line(bearStart, bearFib, time, bearFib, color = NEG_LIGHT_COLOR, width = 1, style = "dotted"))
+if bullSig
+    bullDone = true
+    if not isNone(bullStart)
+        push(retLines, draw.line(bullStart, bullFib, time, bullFib, color = POS_LIGHT_COLOR, width = 1, style = "dotted"))
+while size(retLines) > maxLines
+    draw.delete(shift(retLines))
+
+// ---- Run length labels ------------------------------------------------------------
+// A bearish count sits below its candle's low and a bullish count above its
+// high, padded by half the mean bar range, or a sliver of the price, whichever
+// is larger. The pad is measured over the bars so far and settled on the
+// newest bar, where every label is moved to the pad of the whole history.
+meanRange = cum(barRange) / bar.count
+pad = max(meanRange * 0.5, abs(close) * 0.0005)
+
+var countLabels: array<label> = []
+var labelTime: array<number> = []
+var labelEdge: array<number> = []
+var labelSide: array<number> = []
+if bearEnded
+    push(countLabels, draw.label(time[1], low[1] - pad, text(prevBearCnt, 0), color = NEG_LIGHT_COLOR, textColor = NEU_DARK_COLOR))
+    push(labelTime, time[1])
+    push(labelEdge, low[1])
+    push(labelSide, -1)
+if bullEnded
+    push(countLabels, draw.label(time[1], high[1] + pad, text(prevBullCnt, 0), color = POS_LIGHT_COLOR, textColor = NEU_DARK_COLOR))
+    push(labelTime, time[1])
+    push(labelEdge, high[1])
+    push(labelSide, 1)
+while size(countLabels) > maxLabels
+    draw.delete(shift(countLabels))
+    shift(labelTime)
+    shift(labelEdge)
+    shift(labelSide)
+if bar.isLast and size(countLabels) > 0
+    for i = 0 to size(countLabels) - 1
+        draw.setAt(element(countLabels, i), element(labelTime, i), element(labelEdge, i) + element(labelSide, i) * pad)
+
+// ---- Retracement signals and candle colours ---------------------------------------
+signal(bearSig ? "" : none, color = #FAA1A4, at = "above", shape = "triangleDown")
+signal(bullSig ? "" : none, color = #70CCBD, at = "below", shape = "triangleUp")
+barColor(bearSig ? NEG_LIGHT_COLOR : bullSig ? POS_LIGHT_COLOR : none)
+
+// ---- Performance figures ----------------------------------------------------------
+// The day's running percentage change and running volume, both reset on the
+// first bar of each calendar day. The first bar never counts as a new day.
+isNewDay = bar.isFirst ? false : not date.isSameDay(time, time[1])
+dayPchg = isNone(prevClose) or prevClose == 0 ? 0 : (close - prevClose) / prevClose * 100
+
+var cumPchg = none
+cumPchg = isNewDay or isNone(cumPchg) ? dayPchg : cumPchg + dayPchg
+
+// An absent volume counts as zero rather than blanking the running total.
+vol = orElse(volume, 0)
+var currCumVol = none
+var prevCumVol = none
+if isNewDay
+    prevCumVol = currCumVol
+    currCumVol = vol
+else
+    currCumVol = isNone(currCumVol) ? vol : currCumVol + vol
+// The previous day's volume, or today's while there is no previous day.
+prevVolSafe = isNone(prevCumVol) ? currCumVol : prevCumVol
+volPchg = isNone(prevVolSafe) or prevVolSafe == 0 ? 0 : (currCumVol - prevVolSafe) / prevVolSafe * 100
+currVol = orElse(currCumVol, 0)
+prevVol = orElse(prevVolSafe, 0)
+
+// At most two decimals, with trailing zeros dropped.
+fn fmt(v) =>
+    rounded = toNumber(text(v, 2))
+    isNone(rounded) ? "0" : rounded == 0 ? "0" : text(rounded)
+
+fn writePerf(t, pchg, vPchg, cur, prior) =>
+    pchgCol = pchg > 0 ? POS_COLOR : NEG_COLOR
+    volCol = vPchg > 0 ? POS_COLOR : NEG_COLOR
+    priorCol = prior < cur ? NEG_COLOR : POS_COLOR
+    cell(t, 0, 0, "%Chg", textColor = HEAD_TEXT_COLOR, bgColor = NEU_DARK_COLOR, align = "left")
+    cell(t, 0, 1, fmt(pchg) + " %", textColor = pchgCol, bgColor = NEU_DARK_COLOR, align = "right")
+    cell(t, 1, 0, "Vol %Chg", textColor = HEAD_TEXT_COLOR, bgColor = NEU_DARK_COLOR, align = "left")
+    cell(t, 1, 1, fmt(vPchg) + " %", textColor = volCol, bgColor = NEU_DARK_COLOR, align = "right")
+    cell(t, 2, 0, "Vol", textColor = HEAD_TEXT_COLOR, bgColor = NEU_DARK_COLOR, align = "left")
+    cell(t, 2, 1, fmt(cur / 100000) + " L", textColor = volCol, bgColor = NEU_DARK_COLOR, align = "right")
+    cell(t, 3, 0, "PD Vol", textColor = HEAD_TEXT_COLOR, bgColor = NEU_DARK_COLOR, align = "left")
+    cell(t, 3, 1, fmt(prior / 100000) + " L", textColor = priorCol, bgColor = NEU_DARK_COLOR, align = "right")
+    0
+
+// A grid pins to one of four corners, so each of the nine positions is drawn
+// in its nearest corner: a top row at the top, a middle or bottom row at the
+// bottom, a left column on the left, a centre or right column on the right.
+perfBottomRight = table("Performance, bottom right", 4, 2, position = "bottomRight")
+perfBottomLeft = table("Performance, bottom left", 4, 2, position = "bottomLeft")
+perfTopRight = table("Performance, top right", 4, 2, position = "topRight")
+perfTopLeft = table("Performance, top left", 4, 2, position = "topLeft")
+
+if showTable and bar.isLast
+    isLeft = str.endsWith(tablePos, "-left")
+    isTop = str.startsWith(tablePos, "top")
+    if isTop and isLeft
+        writePerf(perfTopLeft, cumPchg, volPchg, currVol, prevVol)
+    else if isTop
+        writePerf(perfTopRight, cumPchg, volPchg, currVol, prevVol)
+    else if isLeft
+        writePerf(perfBottomLeft, cumPchg, volPchg, currVol, prevVol)
+    else
+        writePerf(perfBottomRight, cumPchg, volPchg, currVol, prevVol)

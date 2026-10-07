@@ -1,0 +1,34 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © openalgo
+// Original work (c) mihakralj, MIT License
+
+version 1
+study("Wilder's Moving Average (RMA)", overlay = true, precision = 2)
+
+period = input(10, "Period", min = 1, max = 5000, step = 1)
+source = input(close, "Source")
+
+// The smoothing factor is one over the period.
+a = 1 / period
+beta = 1 - a
+
+// The average starts at zero and is divided by one minus beta to the power of
+// the bars seen, which removes the zero-seed bias so the line answers from the
+// first bar. Once beta to the power of the bars seen is below 1e-10, the
+// correction is dropped.
+var warmup = true
+var e = 1.0
+var smoothed = 0.0
+
+rmaValue = none
+if not isNone(source)
+    smoothed = a * (source - smoothed) + smoothed
+    if warmup
+        e = e * beta
+        denom = 1 - e
+        rmaValue = denom == 0 ? smoothed : smoothed / denom
+        warmup = e > 1e-10
+    else
+        rmaValue = smoothed
+
+plot(rmaValue, "RMA", #ffeb3b, width = 2)

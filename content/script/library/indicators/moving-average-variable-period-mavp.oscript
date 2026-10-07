@@ -1,0 +1,37 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © openalgo
+// Original work (c) mihakralj, MIT License
+
+version 1
+study("Moving Average Variable Period (MAVP)", overlay = true, precision = 2)
+
+period = input(10, "Period", min = 1, step = 1, tooltip = "Base period for the variable-period EMA")
+minPeriod = input(2, "Min Period", min = 1, step = 1, tooltip = "Minimum allowed period")
+maxPeriod = input(30, "Max Period", min = 2, step = 1, tooltip = "Maximum allowed period")
+source = input(close, "Source")
+
+// The period is clamped between the floor and the ceiling. A ceiling set below
+// the floor is lifted to the floor so the line still draws.
+ceiling = max(minPeriod, maxPeriod)
+p = max(minPeriod, min(ceiling, period))
+a = 2 / (p + 1)
+beta = 1 - a
+
+// An exponential average started at zero. During warmup it is divided by one
+// minus beta to the power of the bars seen, which removes the zero-seed bias.
+var state = 0.0
+var e = 1.0
+var warmup = true
+
+// A missing source value is read as zero so the chain never breaks.
+s = orElse(source, 0)
+state = a * (s - state) + state
+
+mavpValue = state
+if warmup
+    e = e * beta
+    denom = 1 - e
+    mavpValue = denom > 0 ? state / denom : state
+    warmup = e > 1e-10
+
+plot(mavpValue, "MAVP", #ffeb3b, width = 2)

@@ -1,0 +1,36 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © openalgo
+// Original work (c) mihakralj, MIT License
+
+version 1
+study("Integral of Linear Regression Slope (ILRS)", overlay = true, precision = 2)
+
+source = input(close, "Source")
+period = input(14, "Period", min = 2, max = 5000, step = 1, tooltip = "Lookback window for the rolling regression slope.")
+
+len = max(2, floor(period))
+price = orElse(source, 0)
+filled = min(bar.index + 1, len)
+
+// The least squares slope of the last filled values, with x running from 0 at
+// the oldest value to filled - 1 at the newest. A missing value counts as
+// zero.
+sumX = 0.5 * (filled - 1) * filled
+sumX2 = (filled - 1) * filled * (2 * filled - 1) / 6
+sumY = 0.0
+sumXY = 0.0
+for k = 0 to filled - 1
+    val = orElse(source[filled - 1 - k], 0)
+    sumY += val
+    sumXY += k * val
+denomX = filled * sumX2 - sumX * sumX
+slopeNow = denomX != 0 ? (filled * sumXY - sumX * sumY) / denomX : 0.0
+
+// The line starts at the first price and adds each bar's slope to itself.
+var integral = none
+if filled < 2
+    integral = price
+else
+    integral = (isNone(integral) ? price : integral) + slopeNow
+
+plot(integral, "ILRS", #ffeb3b, width = 2)

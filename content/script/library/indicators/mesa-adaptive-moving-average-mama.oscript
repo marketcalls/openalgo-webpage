@@ -1,0 +1,94 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © openalgo
+// Original work (c) mihakralj, MIT License
+
+version 1
+study("MESA Adaptive Moving Average (MAMA)", overlay = true, precision = 2)
+
+source = input(close, "Source")
+fastLimit = input(0.5, "Fast Limit", min = 0.01, max = 0.99, step = 0.01, tooltip = "Upper bound on the adaptive smoothing constant.")
+slowLimit = input(0.05, "Slow Limit", min = 0.001, max = 0.5, step = 0.01, tooltip = "Lower bound on the adaptive smoothing constant.")
+
+// The slow limit never exceeds the fast one.
+slowBound = min(slowLimit, fastLimit)
+twoPi = 2 * math.pi
+c1 = 0.0962
+c2 = 0.5769
+
+// A four bar weighted price, using only the bars that exist at the start.
+price = not isNone(source[3]) ? (4 * source + 3 * source[1] + 2 * source[2] + source[3]) / 10 : not isNone(source[2]) ? (4 * source + 3 * source[1] + 2 * source[2]) / 9 : not isNone(source[1]) ? (4 * source + 3 * source[1]) / 7 : source
+
+// Every stage holds its value from bar to bar, and history reads the value
+// each one held at the end of an earlier bar.
+var cyclePeriod = 0.0
+var phaseNow = 0.0
+var inPhase = 0.0
+var quadrature = 0.0
+var i2 = 0.0
+var q2 = 0.0
+var re = 0.0
+var im = 0.0
+var detrender = none
+var smooth = none
+var mama = none
+var fama = none
+
+if isNone(mama)
+    // The first bar, and any bar after the recursion has gone absent, starts
+    // both lines again from price.
+    mama = price
+    fama = price
+    smooth = price
+else
+    prevPeriod = cyclePeriod
+    prevPhase = phaseNow
+    prevI2 = i2
+    prevQ2 = q2
+    prevRe = re
+    prevIm = im
+    prevMama = mama
+    prevFama = fama
+
+    smooth = (4 * price + 3 * price[1] + 2 * price[2] + price[3]) / 10
+    padj = 0.075 * cyclePeriod + 0.54
+
+    // The Hilbert transform: the same four taps on every stage.
+    detrender = (c1 * smooth + c2 * smooth[2] - c2 * smooth[4] - c1 * smooth[6]) * padj
+    inPhase = detrender[3]
+    quadrature = (c1 * detrender + c2 * detrender[2] - c2 * detrender[4] - c1 * detrender[6]) * padj
+    jI = (c1 * inPhase + c2 * inPhase[2] - c2 * inPhase[4] - c1 * inPhase[6]) * padj
+    jQ = (c1 * quadrature + c2 * quadrature[2] - c2 * quadrature[4] - c1 * quadrature[6]) * padj
+
+    // Phasor addition and the homodyne discriminator.
+    i2 = 0.2 * (inPhase - jQ) + 0.8 * prevI2
+    q2 = 0.2 * (quadrature + jI) + 0.8 * prevQ2
+    re = 0.2 * (i2 * prevI2 + q2 * prevQ2) + 0.8 * prevRe
+    im = 0.2 * (i2 * prevQ2 - q2 * prevI2) + 0.8 * prevIm
+
+    // The cycle period from the discriminator's angle, held between 6 and 50
+    // and smoothed. An angle of exactly zero is an unbounded period, held at 50.
+    if not isNone(im) and im != 0 and not isNone(re) and re != 0
+        discAngle = math.atan(im / re)
+        cyclePeriod = discAngle != 0 ? twoPi / discAngle : 50
+    cyclePeriod = 0.2 * max(6, min(50, cyclePeriod)) + 0.8 * prevPeriod
+
+    // The phase of the in-phase component and how far it moved since the
+    // previous bar. A step of one radian or more counts as no movement.
+    if not isNone(inPhase) and inPhase != 0
+        phaseNow = math.atan(quadrature / inPhase)
+    deltaPhase = prevPhase - phaseNow
+    if deltaPhase >= 1
+        deltaPhase = 0
+    if deltaPhase < 0
+        deltaPhase = deltaPhase + twoPi
+
+    // A phase step of half a radian or less gives the fast limit, and a larger
+    // step a smaller constant, down to the slow limit. A step of zero divides
+    // by zero, which the limits turn into the fast limit. FAMA follows MAMA at
+    // half the constant.
+    factor = isNone(deltaPhase) ? none : deltaPhase == 0 ? fastLimit : min(fastLimit, max(slowBound, fastLimit / pow(deltaPhase / 0.5, 2)))
+    mama = factor * price + (1 - factor) * prevMama
+    fama = 0.5 * factor * mama + (1 - 0.5 * factor) * prevFama
+
+plot(mama, "MAMA", #ffeb3b, width = 2)
+plot(fama, "FAMA", #ffeb3b, width = 2)

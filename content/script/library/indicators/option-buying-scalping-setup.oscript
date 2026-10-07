@@ -1,0 +1,389 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © openalgo
+// Original work (c) Arun K Bhaskar, MPL-2.0
+
+version 1
+study("Option Buying Scalping Setup", overlay = true, precision = 2)
+
+signalMode = input("Continuous Signals", "Screening Method", options = ["Continuous Signals", "Flip Signals"], tooltip = "Continuous repeats the signal while the setup holds; Flip marks only the bar the side changes on.", group = "Screener")
+
+stAtrPeriod = input(10, "ATR Length", min = 1, max = 5000, step = 1, group = "Supertrend")
+stFactor = input(3.0, "Factor", min = 0.01, max = 1000, step = 0.01, group = "Supertrend")
+
+maDisplay = input(true, "Display EMA", group = "Exponential Moving Average (EMA)")
+maLen1 = input(20, "Length 1", min = 1, max = 5000, step = 1, group = "Exponential Moving Average (EMA)")
+maLen2 = input(50, "Length 2", min = 1, max = 5000, step = 1, group = "Exponential Moving Average (EMA)")
+maLen3 = input(100, "Length 3", min = 1, max = 5000, step = 1, group = "Exponential Moving Average (EMA)")
+maLen4 = input(200, "Length 4", min = 1, max = 5000, step = 1, group = "Exponential Moving Average (EMA)")
+
+vtwapDisplay = input(true, "Display VWAP / TWAP", group = "VWAP / TWAP")
+vtwapChoice = input("VWAP", "Choose", options = ["VWAP", "TWAP"], tooltip = "Choose TWAP if Volume is not available for the Symbol.", group = "VWAP / TWAP")
+vtwapTimeframe = input("1D", "Timeframe", tooltip = "Anchor period: 1D, 1W, 1M, 3M, 12M, or a bare number of minutes such as 60.", group = "VWAP / TWAP")
+
+macdDisplay = input(true, "Display MACD", group = "MACD")
+macdFast = input(3, "Fast Length", min = 1, max = 5000, step = 1, group = "MACD")
+macdSlow = input(9, "Slow Length", min = 1, max = 5000, step = 1, group = "MACD")
+macdSignal = input(15, "Signal Smoothing", min = 1, max = 5000, step = 1, group = "MACD")
+macdVOffset = input(0.5, "MACD Vertical Offset", min = -100, max = 100, step = 0.1, tooltip = "Where the drawn MACD panel sits below the price range.", group = "MACD")
+macdHeight = input(0.7, "MACD Height", min = 0, max = 100, step = 0.1, group = "MACD")
+
+stocDisplay = input(true, "Display Stochastic", group = "Stochastic")
+stocKLen = input(5, "%K Length", min = 1, max = 5000, step = 1, group = "Stochastic")
+stocKSmooth = input(3, "%K Smoothing", min = 1, max = 5000, step = 1, group = "Stochastic")
+stocDSmooth = input(3, "%D Smoothing", min = 1, max = 5000, step = 1, group = "Stochastic")
+stocOverBought = input(60, "Over Bought", min = 1, max = 100, step = 1, group = "Stochastic")
+stocOverSold = input(40, "Over Sold", min = 1, max = 100, step = 1, group = "Stochastic")
+stocVOffset = input(1.8, "Stochastic Vertical Offset", min = -100, max = 100, step = 0.1, tooltip = "Where the drawn Stochastic panel sits below the price range.", group = "Stochastic")
+stocHeight = input(0.6, "Stochastic Height", min = 0, max = 100, step = 0.1, group = "Stochastic")
+
+volDisplay = input(true, "Display Volume MA", group = "Volume")
+volType = input("Regular Volume", "Type", options = ["Buying/Selling Volume", "Regular Volume", "None"], group = "Volume")
+volVOffset = input(0.5, "Volume Vertical Offset", min = -100, max = 100, step = 0.1, tooltip = "Where the drawn volume panel sits above the price range.", group = "Volume")
+volHeight = input(0.6, "Volume Height", min = 0, max = 100, step = 0.1, group = "Volume")
+
+atrFilter = input(false, "Apply ATR Filter", tooltip = "ATR helps filter out longer or more volatile signal candles.", group = "Additional Filters")
+atrLength = input(14, "Filter ATR Length", min = 1, max = 5000, step = 1, group = "Additional Filters")
+atrMulti = input(1.0, "ATR Multiplier", min = 1, max = 1000, step = 1, tooltip = "A higher multiplier filters out a longer or more volatile signal candle.", group = "Additional Filters")
+bodyFilter = input(false, "Apply Body % Filter", tooltip = "If the input is 80, the body has to cover over 80% of the candle.", group = "Additional Filters")
+bodyPercent = input(80.0, "Body % Above", min = 0, max = 100, step = 1, group = "Additional Filters")
+bodySizeFilter = input(false, "Apply Body Size Filter", tooltip = "2 means the candle is 2 times larger than the previous candle.", group = "Additional Filters")
+bodySizeMultiplier = input(2, "Body Size Multiplier (x)", min = 0, max = 1000, step = 1, group = "Additional Filters")
+volumeFilter = input(false, "Apply Volume Filter", tooltip = "Keep a candle only when its volume is greater than the SMA of the volume.", group = "Additional Filters")
+volSmaLength = input(20, "Volume SMA Length", min = 1, max = 5000, step = 1, group = "Additional Filters")
+relVolFilter = input(false, "Apply Relative Volume Filter", tooltip = "Keep a candle only when its relative volume is greater than its own average.", group = "Additional Filters")
+relVolLen = input(90, "Relative Volume Length", min = 2, max = 5000, step = 1, group = "Additional Filters")
+relVolMulti = input(2.0, "Rel Vol SMA Multiplier", min = 0, max = 1000, step = 1, group = "Additional Filters")
+timeFilter = input(false, "Apply Time Filter", tooltip = "Drop signals outside the given exchange-time window.", group = "Additional Filters")
+hourFrom = input(9, "Time From (hour)", min = 0, max = 23, step = 1, group = "Additional Filters")
+minuteFrom = input(15, "Time From (minute)", min = 0, max = 59, step = 1, group = "Additional Filters")
+hourTo = input(10, "Time To (hour)", min = 0, max = 23, step = 1, group = "Additional Filters")
+minuteTo = input(15, "Time To (minute)", min = 0, max = 59, step = 1, group = "Additional Filters")
+
+displayLen = input(50, "Display Length", min = 1, max = 5000, step = 1, tooltip = "How many recent bars the drawn panels and the signal shading cover.", group = "Chart Settings")
+
+// Calendar fields are read in the chart's timezone, or in India time where the
+// host states none.
+zone = isNone(chart.timezone) or chart.timezone == "" ? "Asia/Kolkata" : chart.timezone
+
+// 1. Four exponential averages, each seeded with the simple average of its
+// first `len` closes.
+ema1 = ema(close, maLen1)
+ema2 = ema(close, maLen2)
+ema3 = ema(close, maLen3)
+ema4 = ema(close, maLen4)
+
+// 2. VWAP or TWAP, restarted at the start of each anchor period. The period
+// text is read as 1D or D by day, 1W or W by week, 1M by month, 3M by
+// quarter, 12M or 1Y by year, a bare number as that many minutes and 15S as
+// seconds, bucketed inside the day. Anything else anchors by day.
+fn validNumber(s) =>
+    ok = true
+    dots = 0
+    for i = 0 to str.length(s) - 1
+        ch = str.substring(s, i, i + 1)
+        if ch == "."
+            dots += 1
+        else if not str.contains("0123456789", ch)
+            ok = false
+    ok and dots <= 1
+
+spec = str.upper(str.trim(vtwapTimeframe))
+specLen = str.length(spec)
+lastCh = specLen > 0 ? str.substring(spec, specLen - 1) : ""
+hasUnit = lastCh == "S" or lastCh == "D" or lastCh == "W" or lastCh == "M" or lastCh == "Y"
+unitCh = hasUnit ? lastCh : ""
+numText = str.trim(hasUnit ? str.substring(spec, 0, specLen - 1) : spec)
+specOk = specLen > 0 and validNumber(numText)
+parsedMult = max(1, floor(orElse(toNumber(numText), 0)))
+mult = specOk ? parsedMult : 1
+unit = specOk ? unitCh : "D"
+// The anchor kind: "day", "week", "month", "quarter", "year" or "intraday".
+anchorKind = unit == "D" ? "day" : unit == "W" ? "week" : unit == "Y" ? "year" : unit == "M" ? (mult == 3 ? "quarter" : mult == 12 ? "year" : "month") : "intraday"
+intradaySeconds = unit == "S" ? mult : mult * 60
+
+// Days since 1 January 1970 on the local calendar, and the Monday week number.
+fn dayIndexOf(t, z) =>
+    isNone(t) ? none : floor(date.from(date.year(t, z), date.month(t, z), date.day(t, z), 0, 0, 0, zone = "UTC") / 86400000)
+
+dayNow = dayIndexOf(time, zone)
+dayPrev = dayIndexOf(time[1], zone)
+weekNow = floor((dayNow + 3) / 7)
+weekPrev = floor((dayPrev + 3) / 7)
+monthNow = date.year(time, zone) * 12 + date.month(time, zone) - 1
+monthPrev = isNone(time[1]) ? none : date.year(time[1], zone) * 12 + date.month(time[1], zone) - 1
+
+dayStartNow = date.startOfDay(time, zone)
+dayStartPrev = isNone(time[1]) ? none : date.startOfDay(time[1], zone)
+slotNow = floor((time - dayStartNow) / (intradaySeconds * 1000))
+slotPrev = isNone(time[1]) ? none : floor((time[1] - dayStartPrev) / (intradaySeconds * 1000))
+
+newIntraday = dayStartNow != dayStartPrev or slotNow != slotPrev
+newDay = mult > 1 ? floor(dayNow / mult) != floor(dayPrev / mult) : dayNow != dayPrev
+newWeek = mult > 1 ? floor(weekNow / mult) != floor(weekPrev / mult) : weekNow != weekPrev
+newMonth = monthNow != monthPrev
+newQuarter = floor(monthNow / 3) != floor(monthPrev / 3)
+newYear = floor(monthNow / 12) != floor(monthPrev / 12)
+anchorRaw = anchorKind == "intraday" ? newIntraday : anchorKind == "day" ? newDay : anchorKind == "week" ? newWeek : anchorKind == "month" ? newMonth : anchorKind == "quarter" ? newQuarter : newYear
+newAnchor = bar.isFirst or orElse(anchorRaw, false)
+
+var sumPV = 0.0
+var sumV = 0.0
+var sumP = 0.0
+var twapCount = 0
+if newAnchor
+    sumPV = 0.0
+    sumV = 0.0
+    sumP = 0.0
+    twapCount = 0
+// A missing volume leaves the volume sums absent until the next anchor, which
+// is why TWAP is offered for symbols without volume.
+sumPV = sumPV + hlc3 * volume
+sumV = sumV + volume
+vwapLine = sumV > 0 ? sumPV / sumV : none
+sumP = sumP + ohlc4
+twapCount += 1
+twapLine = sumP / twapCount
+vtwap = vtwapChoice == "VWAP" ? vwapLine : twapLine
+
+// 3. MACD. The signal line averages the MACD line from its first value.
+macdFastLine = ema(close, macdFast)
+macdSlowLine = ema(close, macdSlow)
+macdLine = macdFastLine - macdSlowLine
+signalLine = ema(macdLine, macdSignal)
+histLine = macdLine - signalLine
+
+// 4. Stochastic: where the close sits in the window's range, smoothed twice.
+stocHigh = highest(high, stocKLen)
+stocLow = lowest(low, stocKLen)
+stocRange = stocHigh - stocLow
+rawK = stocRange == 0 ? none : 100 * (close - stocLow) / stocRange
+stocK = sma(rawK, stocKSmooth)
+stocD = sma(stocK, stocDSmooth)
+
+// 5. Volume averages. The drawn panel reads a missing volume as zero, the
+// filter does not.
+volSma = sma(volume, volSmaLength)
+volMa = sma(orElse(volume, 0), volSmaLength)
+
+// 6. Supertrend: bands of `stFactor` average true ranges around the bar's
+// midpoint that only tighten while price stays inside them.
+stAtr = atr(stAtrPeriod)
+var stStarted = false
+var stPrevUpper = 0.0
+var stPrevLower = 0.0
+var stPrevValue = 0.0
+var stPrevClose = 0.0
+stValue = none
+stDir = 0
+if not isNone(stAtr)
+    mid = (high + low) / 2
+    rawUpper = mid + stFactor * stAtr
+    rawLower = mid - stFactor * stAtr
+    finalUpper = rawUpper
+    finalLower = rawLower
+    if stStarted
+        finalUpper = rawUpper < stPrevUpper or stPrevClose > stPrevUpper ? rawUpper : stPrevUpper
+        finalLower = rawLower > stPrevLower or stPrevClose < stPrevLower ? rawLower : stPrevLower
+    if stStarted and stPrevValue != stPrevUpper
+        stValue = close >= finalLower ? finalLower : finalUpper
+        stDir = close >= finalLower ? -1 : 1
+    else
+        stValue = close <= finalUpper ? finalUpper : finalLower
+        stDir = close <= finalUpper ? 1 : -1
+    stPrevUpper = finalUpper
+    stPrevLower = finalLower
+    stPrevValue = stValue
+    stPrevClose = close
+    stStarted = true
+// The first bar carries no Supertrend value.
+stShown = bar.index > 0 ? stValue : none
+
+// Additional filters.
+atrSeries = atr(atrLength)
+avgVolume = sma(volume, relVolLen)
+prevAvg = avgVolume[1]
+relVol = bar.index > 0 and not isNone(volume) and not isNone(prevAvg) and prevAvg > 0 ? volume / prevAvg : none
+relVolSma = sma(relVol, relVolLen)
+
+barRange = high - low
+bodyRatio = barRange > 0 ? abs(close - open) / barRange : none
+bodyShare = bodyPercent / 100
+prevRange = bar.index > 0 ? high[1] - low[1] : none
+
+atrOk = atrFilter ? (isNone(atrSeries) ? false : barRange > atrSeries * atrMulti) : true
+bodyOk = bodyFilter ? (isNone(bodyRatio) ? false : bodyRatio >= bodyShare) : true
+bodySizeOk = bodySizeFilter ? (isNone(bodyRatio) or isNone(prevRange) ? false : bodyRatio >= bodyShare and barRange >= prevRange * bodySizeMultiplier) : true
+volumeOk = volumeFilter ? (isNone(volume) or isNone(volSma) ? false : volume > volSma) : true
+relVolOk = relVolFilter ? (isNone(relVol) or isNone(relVolSma) ? false : relVol > relVolSma * relVolMulti) : true
+barHour = date.hour(time, zone)
+barMinute = date.minute(time, zone)
+timeOk = timeFilter ? ((barHour > hourFrom or (barHour == hourFrom and barMinute >= minuteFrom)) and (barHour < hourTo or (barHour == hourTo and barMinute < minuteTo))) : true
+// A bar still forming on the right edge cannot signal until it closes.
+confirmed = not bar.isLast or bar.isConfirmed
+filtersOk = atrOk and bodyOk and bodySizeOk and volumeOk and relVolOk and timeOk and confirmed
+
+// Signals. Every input to the setup has to be present.
+coreFinite = not isNone(macdLine) and not isNone(signalLine) and not isNone(histLine) and not isNone(stocK) and not isNone(stocD) and not isNone(stShown) and not isNone(vtwap)
+
+shortCond1 = coreFinite ? macdLine > 0 : false
+longCond1 = coreFinite ? macdLine < 0 : false
+shortCond2 = coreFinite and filtersOk ? (close < stShown and close < vtwap and stocK < stocOverBought and stocK < stocD and macdLine < 0 and macdLine < signalLine and macdLine < histLine) : false
+longCond2 = coreFinite and filtersOk ? (close > stShown and close > vtwap and stocK > stocOverSold and stocK > stocD and macdLine > 0 and macdLine > signalLine and macdLine > histLine) : false
+
+// Continuous: a two step state machine. The MACD reading on the far side arms
+// it, the setup on this side fires it, and it re-arms after firing.
+var bearState = 0
+bearState = bearState == 2 ? 0 : bearState
+if shortCond1 and bearState == 0
+    bearState = 1
+if shortCond2 and bearState == 1
+    bearState = 2
+shortTrigger = bearState == 2
+
+var bullState = 0
+bullState = bullState == 2 ? 0 : bullState
+if longCond1 and bullState == 0
+    bullState = 1
+if longCond2 and bullState == 1
+    bullState = 2
+longTrigger = bullState == 2
+
+// Flip: a signal only on the bar the side changes. The first side ever taken
+// has nothing to change from, so it marks nothing.
+var prevFlip = none
+flipNow = longCond2 ? 1 : shortCond2 ? -1 : prevFlip
+flipEntry = not isNone(flipNow) and not isNone(prevFlip) and flipNow != prevFlip
+longEntry = flipEntry and flipNow == 1
+shortEntry = flipEntry and flipNow == -1
+prevFlip = flipNow
+
+continuous = signalMode == "Continuous Signals"
+shortSignal = continuous ? shortTrigger : shortEntry
+longSignal = continuous ? longTrigger : longEntry
+
+plot(maDisplay ? ema1 : none, "EMA 1", #26A69A, width = 1)
+plot(maDisplay ? ema2 : none, "EMA 2", #2962FF, width = 1)
+plot(maDisplay ? ema3 : none, "EMA 3", #FF6D00, width = 1)
+plot(maDisplay ? ema4 : none, "EMA 4", #FF5252, width = 1)
+plot(vtwapDisplay ? vtwap : none, "VWAP/TWAP", #D1D4DC, width = 2)
+plot(stDir < 0 ? stShown : none, "Supertrend Up", #26A69A, width = 2)
+plot(stDir > 0 ? stShown : none, "Supertrend Down", #FF5252, width = 2)
+
+signal(shortSignal ? "" : none, color = #FCCBCD, at = "above", shape = "triangleDown")
+signal(longSignal ? "" : none, color = #ACE5DC, at = "below", shape = "triangleUp")
+barColor(shortSignal ? #FCCBCD : longSignal ? #ACE5DC : none)
+
+// The shading is meant for the newest `displayLen` bars. A study cannot know
+// in advance which bar will be the newest, so it keeps the bars that opened
+// within `displayLen` chart intervals of the chart's clock, and only the
+// newest bar where the host supplies no clock.
+intervalMs = isNone(chart.intervalMinutes) ? none : chart.intervalMinutes * 60000
+recent = isNone(chart.now()) or isNone(intervalMs) ? bar.isLast : time > chart.now() - displayLen * intervalMs
+background(not recent ? none : shortSignal ? withAlpha(#FCCBCD, 0.1) : longSignal ? withAlpha(#ACE5DC, 0.1) : none)
+
+// The miniature Stochastic, MACD and volume panels drawn over the price pane
+// on the newest bar. Each panel maps its values onto a band above or below
+// the recent price range.
+fn drawRuns(times: array<number>, prices: array<number>, colour: color, lineWidth: number) =>
+    // Each unbroken run of two or more points becomes one path; a missing
+    // value ends the run.
+    start = 0
+    n = size(times)
+    for i = 0 to n
+        gap = i == n ? true : isNone(element(prices, i))
+        if gap
+            if i - start >= 2
+                draw.polyline(slice(times, start, i), slice(prices, start, i), color = colour, width = lineWidth)
+            start = i + 1
+    0
+
+if bar.isLast
+    draw.deleteAll()
+    span = min(displayLen, bar.index)
+    winSpan = min(displayLen - 1, bar.index)
+    priceHighest = none
+    priceLowest = none
+    macdHi = none
+    macdLo = none
+    volumeHighest = none
+    for k = 0 to winSpan
+        if not isNone(high[k])
+            priceHighest = isNone(priceHighest) ? high[k] : max(priceHighest, high[k])
+        if not isNone(low[k])
+            priceLowest = isNone(priceLowest) ? low[k] : min(priceLowest, low[k])
+        if not isNone(macdLine[k])
+            macdHi = isNone(macdHi) ? macdLine[k] : max(macdHi, macdLine[k])
+            macdLo = isNone(macdLo) ? macdLine[k] : min(macdLo, macdLine[k])
+        v = orElse(volume[k], 0)
+        volumeHighest = isNone(volumeHighest) ? v : max(volumeHighest, v)
+
+    if not isNone(priceHighest) and not isNone(priceLowest) and priceHighest != 0
+        rate = (priceHighest - priceLowest) / priceHighest
+        lastTime = time
+
+        // Stochastic panel, scaled from 0 to 100.
+        stocBase = priceLowest * (1 - rate * stocVOffset)
+        if stocDisplay
+            obY = stocBase * (1 + stocOverBought / 100 * rate * stocHeight)
+            midY = stocBase * (1 + 50 / 100 * rate * stocHeight)
+            osY = stocBase * (1 + stocOverSold / 100 * rate * stocHeight)
+            draw.line(time[span], obY, lastTime, obY, color = withAlpha(#FF5252, 0.25), width = 1)
+            draw.line(time[span], midY, lastTime, midY, color = withAlpha(#D1D4DC, 0.25), width = 1)
+            draw.line(time[span], osY, lastTime, osY, color = withAlpha(#26A69A, 0.25), width = 1)
+            kTimes = []
+            kPrices = []
+            dPrices = []
+            for k = span to 0 step -1
+                push(kTimes, time[k])
+                push(kPrices, isNone(stocK[k]) ? none : stocBase * (1 + stocK[k] / 100 * rate * stocHeight))
+                push(dPrices, isNone(stocD[k]) ? none : stocBase * (1 + stocD[k] / 100 * rate * stocHeight))
+            drawRuns(kTimes, kPrices, #2962FF, 1)
+            drawRuns(kTimes, dPrices, #FF6D00, 1)
+            draw.label(lastTime, midY, "STOC", textColor = #787B86, align = "left")
+
+        // MACD panel, scaled by the window's MACD range.
+        macdRange = isNone(macdHi) or isNone(macdLo) ? none : macdHi - macdLo
+        macdBase = priceLowest * (1 - rate * macdVOffset)
+        if macdDisplay
+            if not isNone(macdRange) and macdRange > 0
+                mTimes = []
+                mPrices = []
+                gPrices = []
+                for k = span to 0 step -1
+                    push(mTimes, time[k])
+                    push(mPrices, isNone(macdLine[k]) ? none : macdBase * (1 + macdLine[k] / macdRange * rate * macdHeight))
+                    push(gPrices, isNone(signalLine[k]) ? none : macdBase * (1 + signalLine[k] / macdRange * rate * macdHeight))
+                    h = histLine[k]
+                    if not isNone(h)
+                        hY = macdBase * (1 + h / macdRange * rate * macdHeight)
+                        prevH = histLine[k + 1]
+                        histRising = isNone(prevH) ? false : prevH < h
+                        histColour = h >= 0 ? (histRising ? #26A69A : #ACE5DC) : (histRising ? #FCCBCD : #FF5252)
+                        draw.line(time[k], macdBase, time[k], hY, color = histColour, width = 2)
+                drawRuns(mTimes, mPrices, #2962FF, 1)
+                drawRuns(mTimes, gPrices, #FF6D00, 1)
+            draw.label(lastTime, macdBase * (1 + 0.5 * rate * macdHeight), "MACD", textColor = #787B86, align = "left")
+
+        // Volume panel above the price range. The bars need volume on the
+        // newest bar; the caption only needs a volume type.
+        volBase = priceHighest * (1 + rate * volVOffset)
+        if volType != "None"
+            if orElse(volume, 0) > 0 and volumeHighest > 0
+                vTimes = []
+                vPrices = []
+                for k = span to 0 step -1
+                    v = orElse(volume[k], 0)
+                    totalY = volBase * (1 + v / volumeHighest * rate * volHeight)
+                    barColour = volType == "Buying/Selling Volume" ? #26A69A : close[k] > open[k] ? #26A69A : #FF5252
+                    draw.line(time[k], volBase, time[k], totalY, color = barColour, width = 2)
+                    kRange = high[k] - low[k]
+                    if volType == "Buying/Selling Volume" and kRange > 0
+                        // Selling volume is drawn over the total, leaving the
+                        // buying share showing above it.
+                        sellVol = v * (high[k] - close[k]) / kRange
+                        draw.line(time[k], volBase, time[k], volBase * (1 + sellVol / volumeHighest * rate * volHeight), color = #FF5252, width = 2)
+                    push(vTimes, time[k])
+                    push(vPrices, isNone(volMa[k]) ? none : volBase * (1 + volMa[k] / volumeHighest * rate * volHeight))
+                if volDisplay
+                    drawRuns(vTimes, vPrices, #D1D4DC, 1)
+            draw.label(lastTime, volBase, "VOL", textColor = #787B86, align = "left")

@@ -1,0 +1,44 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © openalgo
+// Original work (c) mihakralj, MIT License
+
+version 1
+study("Kendall Rank Correlation (KENDALL)", precision = 4)
+
+source1 = input(close, "Source 1")
+source2 = input(volume, "Source 2", tooltip = "The second series compared with Source 1. Both series come from the instrument on the chart.")
+period = input(20, "Period", min = 2, max = 60, step = 1, tooltip = "Bars in the window. Every pair in the window is compared, so the work grows with the square of this number.")
+
+// The window, oldest first. A missing value in either series on any bar of
+// the window gives no reading on this bar.
+w1 = []
+w2 = []
+complete = bar.index >= period - 1
+if complete
+    for k = 0 to period - 1
+        a = source1[period - 1 - k]
+        b = source2[period - 1 - k]
+        if isNone(a) or isNone(b)
+            complete = false
+            break
+        push(w1, a)
+        push(w2, b)
+
+// Every pair of bars in the window: concordant when both series moved the
+// same way between them, discordant when they moved opposite ways, and
+// neither when either series did not move. Tau is the net count over the
+// number of pairs.
+tau = none
+if complete
+    concordant = 0
+    discordant = 0
+    for a = 0 to period - 2
+        for b = a + 1 to period - 1
+            product = (element(w1, a) - element(w1, b)) * (element(w2, a) - element(w2, b))
+            if product > 0
+                concordant += 1
+            else if product < 0
+                discordant += 1
+    tau = (concordant - discordant) / (period * (period - 1) / 2)
+
+plot(tau, "Kendall's Tau", #ffeb3b, width = 2)

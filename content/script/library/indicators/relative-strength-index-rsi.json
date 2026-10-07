@@ -1,0 +1,15 @@
+{
+  "title": "Relative Strength Index (RSI)",
+  "summary": "Average up move against average down move over the lookback, mapped onto a scale from 0 to 100.",
+  "description": "The Relative Strength Index compares the size of recent rises with the size of recent falls. Each bar's change in the source is split into an up move (the rise, or zero) and a down move (the fall, or zero). Each is smoothed with a running average whose weight is 1 / `length`, and the reading is 100 - 100 / (1 + average up / average down).\n\nThis version has its own warmup. For the first `length` bars each average simply holds that bar's own move, so the early readings swing between the extremes; from bar `length` on the averages are smoothed. The first bar has no previous bar and so no reading. When the average down move is zero the reading is a full 100.",
+  "howToRead": "The line moves between 0 and 100. Readings near 100 mean the rises in the window have far outweighed the falls, and readings near 0 mean the reverse; 50 is balance. Many traders treat readings above 70 as stretched to the upside and below 30 as stretched to the downside, and watch for the line to turn back from those zones.\n\nIn a strong trend the line can stay in an extreme zone for a long time, so an extreme reading alone is not a reason to trade against the move. Ignore the first `length` bars, where each average is a single bar's move rather than a smoothed figure.",
+  "settings": [
+    { "key": "length", "label": "Length", "description": "The smoothing length for the up and down averages, and the number of warmup bars. Shorter lengths reach the extremes more often." },
+    { "key": "source", "label": "Source", "description": "The price series whose bar-to-bar changes are measured. Close is the default." }
+  ],
+  "faq": [
+    { "q": "Why do the first bars jump between 0 and 100?", "a": "Before bar `length` each average holds only that bar's own move, so a rising bar reads 100 and a falling bar reads 0. Smoothing starts at bar `length`." },
+    { "q": "What does a reading of exactly 100 mean?", "a": "The average down move is zero, so no fall is left in the average. The study reports a full 100 in that case." },
+    { "q": "Are the 70 and 30 lines drawn?", "a": "No. The study draws only the line. The 70 and 30 zones are a common way to read it, and you can judge other thresholds against your own instrument." }
+  ]
+}

@@ -1,0 +1,29 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © openalgo
+// Original work (c) mihakralj, MIT License
+
+version 1
+study("Mean Squared Logarithmic Error (MSLE)", precision = 6)
+
+source = input(close, "Source")
+period = input(100, "Period", min = 1, max = 4000, step = 1)
+
+// The reference and the averaging window both use the period, held to 1 to
+// 4000 bars.
+len = min(max(period, 1), 4000)
+
+// The reference is an exponential mean seeded with the simple average of its
+// first `len` values, so it has no value through the warmup.
+reference = ema(source, len)
+
+// The squared gap between log(1 + price) and log(1 + reference). The
+// logarithm is absent at or below zero, which leaves the error absent there.
+logDiff = log(1 + source) - log(1 + reference)
+logErr = logDiff * logDiff
+
+// Averaged over the last `len` bars, counting only the bars that carry an
+// error.
+msle = avgSkip(logErr, len)
+
+plot(msle, "MSLE", #ef5350, width = 2, style = "area")
+plot(reference, "EMA", #ffeb3b, width = 1, overlay = true)

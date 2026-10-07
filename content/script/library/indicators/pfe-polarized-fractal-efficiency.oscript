@@ -1,0 +1,52 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © openalgo
+// Original work (c) mihakralj, MIT License
+
+version 1
+study("PFE: Polarized Fractal Efficiency", precision = 2)
+
+period = input(10, "Period", min = 2, max = 200, step = 1, tooltip = "Fractal path lookback period (default: 10).")
+smooth = input(5, "Smooth Period", min = 1, max = 100, step = 1, tooltip = "EMA smoothing period applied to the raw efficiency (default: 5).")
+
+// Each bar-to-bar step is the hypotenuse of the close change and one bar of
+// time. The first bar has no step.
+d = close - close[1]
+stepLen = bar.index > 0 ? sqrt(d * d + 1) : 0
+fractalPath = sum(stepLen, period)
+
+// The straight line from the close period bars ago to this close.
+priceDiff = close - close[period]
+straightLine = sqrt(priceDiff * priceDiff + period * period)
+
+// Efficiency is the straight line over the walked path, signed by the
+// direction of the move.
+hasRaw = bar.index >= period and fractalPath > 0
+efficiency = straightLine / fractalPath * 100
+raw = priceDiff >= 0 ? efficiency : -efficiency
+
+// Exponential smoothing seeded with the first reading, then scaled by
+// 1 / (1 - beta^k) until that factor has decayed to one.
+a = 2 / (smooth + 1)
+beta = 1 - a
+var emaValue = none
+var e = 1.0
+var warm = true
+pfe = none
+if hasRaw
+    if isNone(emaValue)
+        emaValue = raw
+        e = beta
+        pfe = raw
+    else
+        emaValue = a * raw + beta * emaValue
+        if warm
+            e *= beta
+            pfe = 1 / (1 - e) * emaValue
+            warm = e > 1e-10
+        else
+            pfe = emaValue
+
+level(50, "Upper Threshold", #ff5252, style = "dashed")
+level(-50, "Lower Threshold", #4caf50, style = "dashed")
+level(0, "Zero Line", #787b86, style = "dashed")
+plot(pfe, "PFE", #ffeb3b, width = 2)

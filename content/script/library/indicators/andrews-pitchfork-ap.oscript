@@ -1,0 +1,42 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © openalgo
+// Original work (c) mihakralj, MIT License
+
+version 1
+study("Andrews' Pitchfork (AP)", overlay = true, precision = 2)
+
+p1Back = input(45, "Point 1 (Leftmost)", min = 1, max = 5000, step = 1)
+p2Back = input(30, "Point 2 (Second)", min = 1, max = 5000, step = 1)
+p3Back = input(15, "Point 3 (Third)", min = 1, max = 5000, step = 1)
+
+// Each pivot is read a fixed number of bars back, clamped to the first bar
+// while there is not yet enough history. Point 1 is a close, point 2 a high
+// and point 3 a low.
+p1b = min(p1Back, bar.index)
+p2b = min(p2Back, bar.index)
+p3b = min(p3Back, bar.index)
+p1Time = bar.index - p1b
+p2Time = bar.index - p2b
+p3Time = bar.index - p3b
+p1Price = close[p1b]
+p2Price = high[p2b]
+p3Price = low[p3b]
+
+// The median line runs from point 1 through the midpoint of points 2 and 3.
+// The two outer lines run parallel to it from points 2 and 3.
+midTime = (p2Time + p3Time) / 2
+midPrice = (p2Price + p3Price) / 2
+timeDiff = midTime - p1Time
+slope = abs(timeDiff) > 1e-10 ? (midPrice - p1Price) / timeDiff : 0
+
+medianValue = p1Price + slope * (bar.index - p1Time)
+upperValue = p2Price + slope * (bar.index - p2Time)
+lowerValue = p3Price + slope * (bar.index - p3Time)
+
+// A projection that runs far off the price scale is left out.
+inRange = abs(medianValue) <= 1e9 and abs(upperValue) <= 1e9 and abs(lowerValue) <= 1e9
+
+plot(inRange ? medianValue : none, "Median", #ffeb3b, width = 2)
+top = plot(inRange ? upperValue : none, "Upper", #2962ff, width = 1)
+bottom = plot(inRange ? lowerValue : none, "Lower", #2962ff, width = 1)
+fill(top, bottom, #2962ff, opacity = 0.1)

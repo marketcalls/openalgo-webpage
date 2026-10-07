@@ -1,0 +1,15 @@
+{
+  "title": "Williams Fractals",
+  "summary": "Marks every five-bar swing high and swing low, the turning points where price stalled and reversed for at least two bars on each side.",
+  "description": "Williams Fractals picks out the simplest kind of swing point on a chart. An up fractal is a bar whose high is higher than the highs of the two bars before it and the two bars after it. A down fractal is the mirror image: a bar whose low is lower than the lows of the two bars on either side.\n\nBecause the test needs two bars after the middle bar, a fractal is only known two bars after it forms. The study runs the test on the bar that confirms it and draws the mark two bars back, on the bar it describes, so nothing on the chart changes once it has been drawn. Up fractals are drawn in red at the high, where a swing topped out, and down fractals in green at the low, where a swing bottomed.",
+  "howToRead": "Read the marks as a map of where the market has recently turned. A cluster of up fractals at a similar price is a ceiling that sellers have defended more than once, and a cluster of down fractals is a floor. Many traders place a stop just beyond the most recent fractal against their position, and treat a close beyond the latest up fractal as a break of the swing structure.\n\nRemember the two-bar delay. The newest two bars can never carry a mark yet, so a fractal is information about the recent past rather than a signal on the bar you are looking at.",
+  "settings": [
+    { "key": "showUp", "label": "Show Up Fractals", "description": "Draw the swing highs, the bars whose high stands above the two bars on each side." },
+    { "key": "showDown", "label": "Show Down Fractals", "description": "Draw the swing lows, the bars whose low sits below the two bars on each side." }
+  ],
+  "faq": [
+    { "q": "Why does the newest fractal appear two bars late?", "a": "A fractal needs two bars after the middle bar to confirm it. The study waits for those two bars and then draws the mark back on the bar that formed the swing, so a mark never appears and then disappears." },
+    { "q": "Can a bar be an up fractal and a down fractal at once?", "a": "Yes. A wide bar whose high is above and whose low is below the two bars on each side carries both marks, which usually means the market swung hard in both directions around it." },
+    { "q": "What timeframe does it work on?", "a": "Any. The test counts bars, not time, so it reads the same way on an hourly chart and a daily one. On a faster chart there are more fractals and each one matters less." }
+  ]
+}

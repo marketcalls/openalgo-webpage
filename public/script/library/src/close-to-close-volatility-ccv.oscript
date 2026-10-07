@@ -1,0 +1,38 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © openalgo
+// Original work (c) mihakralj, MIT License
+
+version 1
+study("Close-to-Close Volatility (CCV)", precision = 4)
+
+length = input(20, "Length", min = 1, max = 500, step = 1, tooltip = "Number of bars for volatility calculation.")
+method = input(1, "Method", min = 1, max = 3, step = 1, tooltip = "1 = SMA, 2 = EMA, 3 = WMA. Method 3 reduces to method 1 in the source formula.")
+
+// The log return from the previous close, absent on the first bar.
+ret = close > 0 and close[1] > 0 ? log(close / close[1]) : none
+
+// The dispersion is measured about zero rather than about the window mean, and
+// it is divided by a count that runs one past the window once the window is
+// full, because the first bar's missing return is counted as a slot.
+squaredSum = 0.0
+for k = 0 to length - 1
+    v = ret[k]
+    if not isNone(v)
+        squaredSum += v * v
+slots = min(bar.index + 1, length + 1)
+annualizedStdDev = sqrt(squaredSum / slots) * sqrt(252)
+
+// Method 2: a running average of the reading with weight 1 / length, started
+// from zero and divided by the weight it has gathered so far, so it answers
+// from the first bar.
+var rawRma = 0.0
+var e = 1.0
+rawRma = (rawRma * (length - 1) + annualizedStdDev) / length
+e = e * (1 - 1 / length)
+smoothed = e > 1e-10 ? rawRma / (1 - e) : rawRma
+
+// Method 3 weights the same value by every weight in turn, so it reduces to
+// method 1.
+result = method == 2 ? smoothed : annualizedStdDev
+
+plot(bar.index > 0 ? result : none, "CCV", #ffeb3b, width = 2)

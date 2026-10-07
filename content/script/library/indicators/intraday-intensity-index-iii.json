@@ -1,0 +1,15 @@
+{
+  "title": "Intraday Intensity Index (III)",
+  "summary": "Signs each bar's volume by where the close sits in the bar's range, then averages it over a window or adds it into a running total.",
+  "description": "The Intraday Intensity Index reads where each bar closed inside its own range. The position multiplier is (2 x close - high - low) / (high - low): +1 when the bar closes on its high, -1 when it closes on its low, and 0 when it closes exactly in the middle. That multiplier is applied to the bar's volume, floored at 1, so every bar contributes a share of its volume with the sign of its close. A bar with no range contributes zero.\n\nIn the default mode the values are summed over the last **Period** bars and divided by the full period from the first bar, so the early readings are damped rather than absent. With **Cumulative Mode** on, the values are instead added into a running total from the first bar, which turns the study into an accumulation line.",
+  "howToRead": "In the default mode, a reading above zero means bars have tended to close in the upper part of their range on their volume, a sign of buying pressure; below zero means closes near the lows. The size of the reading tells you how much volume sat behind that pressure.\n\nIn Cumulative Mode, read the slope rather than the level. A rising line means volume keeps closing near the highs; a line that falls while price rises suggests the advance is not being supported. The first Period bars of the default mode are smaller than they would be later, because the sum is divided by the full period before the window has filled.",
+  "settings": [
+    { "key": "period", "label": "Period", "description": "The number of bars summed and divided in the default mode. A longer period gives a smoother line; it has no effect in Cumulative Mode." },
+    { "key": "cumulative", "label": "Cumulative Mode", "description": "Off: plot the windowed average. On: plot the running total of every bar's signed volume from the first bar." }
+  ],
+  "faq": [
+    { "q": "Why are the first readings smaller than the rest?", "a": "The window sum is always divided by the full period, so until the window has filled it is divided by more bars than it holds and the values are damped." },
+    { "q": "What does a bar that closes mid-range add?", "a": "Nothing. A close exactly halfway between the high and the low has a multiplier of zero, whatever the volume." },
+    { "q": "Why is volume floored at 1?", "a": "So the study still draws on a series that carries no volume: each bar then counts its close position with a weight of one." }
+  ]
+}

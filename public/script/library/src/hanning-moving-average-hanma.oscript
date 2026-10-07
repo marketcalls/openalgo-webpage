@@ -1,0 +1,30 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © openalgo
+// Original work (c) mihakralj, MIT License
+
+version 1
+study("Hanning Moving Average (HANMA)", overlay = true, precision = 2)
+
+period = input(10, "Period", min = 1, max = 5000, step = 1)
+source = input(close, "Source")
+
+// The window grows with the chart until it holds period bars. A window of
+// one bar weights that bar by 1; a longer one uses the raised cosine
+// 0.5 * (1 - cos(2 * pi * k / (len - 1))), zero at both ends and heaviest in
+// the middle.
+len = min(bar.index + 1, period)
+weighted = 0.0
+weightSum = 0.0
+for k = 0 to len - 1
+    price = source[k]
+    if isNone(price)
+        continue
+    w = len == 1 ? 1.0 : 0.5 * (1 - math.cos(2 * math.pi * k / (len - 1)))
+    weighted += price * w
+    weightSum += w
+
+// A window whose weights are all zero (two bars, both at an end of the
+// taper) falls back to the current value.
+hanma = weightSum != 0 ? weighted / weightSum : source
+
+plot(hanma, "HANMA", #ffeb3b, width = 2)

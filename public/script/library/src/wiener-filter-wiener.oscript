@@ -1,0 +1,41 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © openalgo
+// Original work (c) mihakralj, MIT License
+
+version 1
+study("Wiener Filter (WIENER)", overlay = true, precision = 2)
+
+length = input(20, "Length", min = 5, max = 500, step = 1, tooltip = "Window used to estimate the noise variance from successive differences.")
+smooth = input(10, "Smoothing", min = 2, max = 100, step = 1, tooltip = "Window used to estimate the signal power and the mean.")
+source = input(close, "Source")
+
+len = min(500, max(5, floor(length)))
+smoothLen = min(100, max(2, floor(smooth)))
+
+// The noise variance: half the mean squared change over len - 1 successive
+// differences. Early on, differences that reach back before the first bar
+// are left out of the sum while the divisor still counts them.
+numDiffs = len - 1
+sumDiffs = 0.0
+for j = 0 to numDiffs - 1
+    newer = source[j]
+    older = source[j + 1]
+    if isNone(newer) or isNone(older)
+        continue
+    diff = newer - older
+    sumDiffs += diff * diff
+noiseVar = numDiffs <= 0 ? 0 : sumDiffs / (2 * numDiffs)
+
+// The signal plus noise power: the mean squared distance from the mean.
+mean = sma(source, smoothLen)
+squaredError = (source - mean) * (source - mean)
+signalPlusNoise = sma(squaredError, smoothLen)
+
+// The gain is the share of the variance that is signal. A flat window has
+// neither and keeps the mean.
+signalVar = max(signalPlusNoise - noiseVar, 0)
+totalVar = signalVar + noiseVar
+k = totalVar > 0 ? signalVar / totalVar : 0
+wiener = mean + k * (source - mean)
+
+plot(wiener, "Wiener", #ffeb3b, width = 2)

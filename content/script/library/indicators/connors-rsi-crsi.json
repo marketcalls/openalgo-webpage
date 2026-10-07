@@ -1,0 +1,42 @@
+{
+  "title": "Connors RSI (CRSI)",
+  "summary": "A 0 to 100 oscillator that averages a short price RSI, an RSI of the up or down streak, and the percent rank of the one-bar change.",
+  "description": "Connors RSI (CRSI) is the average of three readings, each on a 0 to 100 scale. The first is a short RSI of the source, 3 bars by default. The second counts the current run of consecutive higher or lower closes, positive while rising and negative while falling, and takes a short RSI of that run. The third is the percent rank of this bar's one-bar percentage change against the previous changes in the rank window, 100 bars by default.\n\nBoth RSI readings use averages that start at zero and are scaled up while that starting bias decays, so they give a value from the second bar onward. The final average is held between 0 and 100.",
+  "howToRead": "High readings mean price has risen quickly, has been rising for several bars in a row, and has just made one of its larger one-bar gains of the recent past. Low readings mean the opposite. Many traders use the 70 and 30 lines, or more extreme levels such as 90 and 10, to spot short-term stretches that may snap back.\n\nIt is a short-term measure. In a strong trend it can stay at an extreme for a long time, so a high reading on its own is not a reason to expect a reversal.",
+  "settings": [
+    {
+      "key": "source",
+      "label": "Source",
+      "description": "The price series the calculation reads, such as the close or the bar midpoint."
+    },
+    {
+      "key": "rsiPeriod",
+      "label": "RSI Period",
+      "description": "Length of the RSI taken on price. A shorter length makes this component swing harder."
+    },
+    {
+      "key": "streakPeriod",
+      "label": "Streak RSI Period",
+      "description": "Length of the RSI taken on the run of consecutive up or down closes."
+    },
+    {
+      "key": "rankPeriod",
+      "label": "Percent Rank Period",
+      "description": "How many earlier one-bar changes the current change is ranked against."
+    }
+  ],
+  "faq": [
+    {
+      "q": "What is the streak component?",
+      "a": "It counts consecutive bars in one direction: 3 after three higher closes, -2 after two lower closes, and 0 when the close is unchanged. An RSI of that count rises as a run lengthens."
+    },
+    {
+      "q": "Why does the line start straight away instead of after 100 bars?",
+      "a": "The percent rank uses whatever earlier changes exist while its window fills, and both RSI parts give a value from the second bar, so the average is drawn from the start."
+    },
+    {
+      "q": "Which levels should I watch?",
+      "a": "The pane marks 70 and 30. Readings beyond 90 or below 10 are rarer and point to a sharper short-term stretch."
+    }
+  ]
+}

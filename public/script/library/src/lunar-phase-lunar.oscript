@@ -1,0 +1,55 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © openalgo
+// Original work (c) mihakralj, MIT License
+
+version 1
+study("Lunar Phase (LUNAR)", precision = 4)
+
+deg = math.pi / 180
+
+// Julian centuries since the J2000.0 epoch, from the bar's opening time in UTC.
+jd = time / 1000 / 86400 + 2440587.5
+t1 = (jd - 2451545) / 36525
+t2 = t1 * t1
+t3 = t2 * t1
+t4 = t3 * t1
+
+// Mean longitude of the moon, mean elongation, the sun's and the moon's mean
+// anomaly, and the moon's argument of latitude, all in degrees. The remainder
+// keeps the sign of the dividend.
+lp = (218.3164477 + 481267.88123421 * t1 - 0.0015786 * t2 + t3 / 538841 - t4 / 65194000) % 360
+d = (297.8501921 + 445267.1114034 * t1 - 0.0018819 * t2 + t3 / 545868 - t4 / 113065000) % 360
+m = (357.5291092 + 35999.0502909 * t1 - 0.0001536 * t2 + t3 / 24490000) % 360
+mp = (134.9633964 + 477198.8675055 * t1 + 0.0087414 * t2 + t3 / 69699 - t4 / 14712000) % 360
+f = (93.272095 + 483202.0175233 * t1 - 0.0036539 * t2 - t3 / 3526000 + t4 / 863310000) % 360
+
+dRad = d * deg
+mRad = m * deg
+mpRad = mp * deg
+fRad = f * deg
+
+// The six largest periodic terms of the moon's longitude, in millionths of a
+// degree.
+dL = 6288.016 * math.sin(mpRad) + 1274.242 * math.sin(2 * dRad - mpRad) + 658.314 * math.sin(2 * dRad) + 214.818 * math.sin(2 * mpRad) + 186.986 * math.sin(mRad) + 109.154 * math.sin(2 * fRad)
+
+lMoon = lp + dL / 1000000
+lSun = (280.46646 + 36000.76983 * t1 + 0.0003032 * t2) % 360
+
+// The illuminated fraction: 0 at new moon, 1 at full moon.
+phaseAngle = ((lMoon - lSun) % 360) * deg
+phase = (1 - math.cos(phaseAngle)) / 2
+
+// Turning points of the phase. New and full moon are the bars where the phase
+// turns at its low and high ends; the quarters are where it crosses one half.
+delta = phase - phase[1]
+prevDelta = phase[1] - phase[2]
+newMoon = phase < 0.1 and phase[1] < 0.1 and delta > 0 and prevDelta < 0
+firstQuarter = phase[1] < 0.5 and phase >= 0.5 and delta > 0
+fullMoon = phase > 0.9 and phase[1] > 0.9 and delta < 0 and prevDelta > 0
+lastQuarter = phase[1] > 0.5 and phase <= 0.5 and delta < 0
+
+plot(phase, "Lunar Phase", #ffeb3b, width = 2)
+signal(orElse(newMoon, false) ? "New" : none, color = #ffffff, at = "price", shape = "circle")
+signal(orElse(firstQuarter, false) ? "FQ" : none, color = #ffffff, at = "price", shape = "triangleUp")
+signal(orElse(fullMoon, false) ? "Full" : none, color = #ffffff, at = "price", shape = "diamond")
+signal(orElse(lastQuarter, false) ? "LQ" : none, color = #ffffff, at = "price", shape = "triangleDown")

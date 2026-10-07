@@ -1,0 +1,32 @@
+{
+  "title": "Convolution Moving Average (CONV)",
+  "summary": "Weights the last few prices by a kernel of numbers you type in, so any smoother or filter can be written as a list of weights.",
+  "description": "CONV is a general finite filter. The kernel is a list of weights, newest bar first: the first weight multiplies this bar's price, the second the bar before, and so on. The kernel is first normalised by its own sum when that sum is not zero, and the result on each bar is the weighted sum of the prices divided by the weights that were used.\n\nThe default kernel is 1, 2.5, -3.14, 0, 1. Weights can be separated by commas, semicolons or any whitespace, and each is a decimal number (such as 2.5 or 1e-2) or an unsigned whole number in hexadecimal, octal or binary (0x1f, 0o17, 0b101). If any entry is not a number, or the field is empty, the default kernel is used. On the opening bars, before the kernel fits, only the weights that land on real prices are used. If the weights used add up to zero the line falls back to this bar's price.",
+  "howToRead": "What the line means depends on the kernel. Positive weights that fall off with age make a smoother that lags a little; equal weights make a simple average; a kernel with negative entries, like the default, emphasises some bars against others and can overshoot price. Read the line against price as you would any moving average, and check the shape of your kernel before trusting a crossing.\n\nThe filter is short, as long as the kernel, so it reacts quickly but smooths only a few bars.",
+  "settings": [
+    {
+      "key": "source",
+      "label": "Source",
+      "description": "The series being filtered, usually the close."
+    },
+    {
+      "key": "kernel",
+      "label": "Kernel Weights",
+      "description": "The weights, newest bar first, separated by commas, semicolons or any whitespace. Anything that does not parse falls back to the default kernel."
+    }
+  ],
+  "faq": [
+    {
+      "q": "How do I make a simple average?",
+      "a": "Enter equal weights, for example 1, 1, 1, 1, 1 for a five-bar simple average. The kernel is normalised, so the size of the numbers does not matter, only their ratio."
+    },
+    {
+      "q": "Why can the line move outside the price range?",
+      "a": "A kernel with negative weights, such as the default, is not an average in the usual sense: it can extrapolate beyond recent prices. Use only positive weights for a line that stays among the prices it averages."
+    },
+    {
+      "q": "What happens if I type something invalid?",
+      "a": "If any entry is not a number, the whole kernel falls back to the default 1, 2.5, -3.14, 0, 1."
+    }
+  ]
+}

@@ -1,0 +1,47 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © openalgo
+// Original work (c) mihakralj, MIT License
+
+version 1
+study("Bessel-Weighted Moving Average (BWMA)", overlay = true, precision = 2)
+
+period = input(10, "Period", min = 1, max = 5000, step = 1)
+order = input(0, "Bessel Order", min = 0, max = 3, step = 1, tooltip = "Order of the Bessel function (0-3). Higher orders taper the window more sharply.")
+source = input(close, "Source")
+
+// The window grows from the first bar up to the period. Across the window, x
+// runs from -1 at the newest bar to 1 at the oldest, and each weight is
+// (1 - x^2) raised to order / 2 + 0.5, zero at both ends and heaviest in the
+// middle. The weights are normalised to sum to 1.
+p = min(bar.index + 1, period)
+bwma = source
+if p > 1
+    scale = 2.0 / (p - 1)
+    power = order / 2.0 + 0.5
+    weights = [0.0]
+    clear(weights)
+    wTotal = 0.0
+    for i = 0 to p - 1
+        x = i * scale - 1.0
+        arg = 1.0 - x * x
+        w = 0.0
+        if arg > 0.0
+            w = order == 0 ? arg : order == 1 ? arg * sqrt(arg) : pow(arg, power)
+        push(weights, w)
+        wTotal += w
+    if wTotal > 0.0
+        inv = 1.0 / wTotal
+        for i = 0 to p - 1
+            set(weights, i, element(weights, i) * inv)
+    total = 0.0
+    weightSum = 0.0
+    for j = 0 to p - 1
+        price = source[j]
+        if not isNone(price)
+            w = element(weights, j)
+            total += price * w
+            weightSum += w
+    // A degenerate window falls back to this bar's value.
+    bwma = orElse(total / weightSum, source)
+
+plot(bwma, "BWMA", #ffeb3b, width = 2)

@@ -1,0 +1,37 @@
+{
+  "title": "HOMOD: Homodyne Discriminator Dominant Cycle",
+  "summary": "The dominant cycle length in bars from a homodyne discriminator on a Hilbert transform of price, held to your period range and smoothed.",
+  "description": "The homodyne discriminator measures the market's dominant cycle length by multiplying the cycle by a delayed copy of itself. Price is smoothed with weights 4, 3, 2 and 1 over the last four bars, then a four-tap Hilbert transform splits it into in-phase and quadrature components, each smoothed 0.2 / 0.8 against its previous bar. The width of every Hilbert stage follows the smoothed period from the previous bar, so the transform adapts as it goes.\n\nMultiplying this bar's phasor by the conjugate of the previous one gives the angle the cycle turned through in a bar; a full turn over that angle is the period. The raw period is held between *Min Period* and *Max Period* and blended 0.2 / 0.8 into a running period that starts from 15. That is smoothed again with a weight of 0.33, and while the smoother's starting weight is still large the result is divided by one minus that weight, so the opening bars are not pulled toward the seed.",
+  "howToRead": "Read the line as the current rhythm of the market in bars: 20 means a swing from low to low is taking about 20 bars. Use it to set the length of other tools from the data, or to see whether the market's rhythm is speeding up or slowing down.\n\nThe measurement only means something while the market is cycling. In a strong trend there is little cycle to measure and the reading is less dependable. Each raw period is clamped to the range you set, so a line that sits near either limit means the estimate is being cut off there.",
+  "settings": [
+    {
+      "key": "source",
+      "label": "Source",
+      "description": "The price series the cycle is measured on. The default is the typical price, (high + low + close) / 3."
+    },
+    {
+      "key": "minPeriod",
+      "label": "Min Period",
+      "description": "The shortest cycle, in bars, the discriminator may report. Shorter raw readings are raised to this value."
+    },
+    {
+      "key": "maxPeriod",
+      "label": "Max Period",
+      "description": "The longest cycle, in bars, the discriminator may report. It is kept at least half a bar above the minimum."
+    }
+  ],
+  "faq": [
+    {
+      "q": "Why is it called a homodyne discriminator?",
+      "a": "It multiplies the cycle by a one-bar delayed copy of itself, the way a homodyne receiver mixes a signal with itself, and reads the cycle length from the phase difference that product shows."
+    },
+    {
+      "q": "Why does the line move so smoothly?",
+      "a": "The raw period is smoothed twice, first 0.2 / 0.8 and then with a weight of 0.33, so it follows changes in the market's rhythm over several bars rather than jumping."
+    },
+    {
+      "q": "What range should I set?",
+      "a": "The defaults of 6 to 50 bars suit most charts. Narrow the range if you know the cycles you care about, which also stops the reading from wandering in a trend."
+    }
+  ]
+}

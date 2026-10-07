@@ -1,0 +1,852 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © openalgo
+// Original work (c) sukesan7, MPL-2.0
+
+version 1
+study("Futures Levels", overlay = true, precision = 2)
+
+// A session level map for index futures: opening range, initial balance,
+// overnight extremes, session opens, an anchored VWAP with its own deviation
+// bands, previous day and week references, Fibonacci projections, confluence
+// clustering, and an acceptance and rejection engine over the main levels.
+
+// ---- 01 General
+enabled = input(true, "Enable indicator", group = "01 General")
+timezone = input("America/New_York", "Session time zone", group = "01 General", tooltip = "An IANA time zone name. The default sessions below are written in New York time.")
+showPriceInTags = input(true, "Show prices in horizontal labels", group = "01 General")
+showLiveLevelTags = input(true, "Show horizontal line labels", group = "01 General")
+horizontalLabelMode = input("Compact", "Horizontal-label wording", options = ["Compact", "Descriptive"], group = "01 General")
+horizontalLabelOffsetTicks = input(3, "Horizontal-label height (ticks)", min = 0, max = 40, step = 0.25, group = "01 General")
+
+// ---- 02 Sessions
+futuresSession = input("1800-1700:1234567", "Full futures session", group = "02 Sessions")
+overnightSession = input("1800-0930:1234567", "Overnight session", group = "02 Sessions")
+rthSession = input("0930-1600:23456", "RTH session", group = "02 Sessions")
+rthOpenHour = input(9, "RTH open (hour)", min = 0, max = 23, step = 1, group = "02 Sessions")
+rthOpenMinute = input(30, "RTH open (minute)", min = 0, max = 59, step = 1, group = "02 Sessions")
+showSessionShading = input(false, "Shade sessions", group = "02 Sessions")
+showSessionOpens = input(true, "Show futures / RTH opens", group = "02 Sessions")
+showOvernight = input(true, "Show overnight high / low", group = "02 Sessions")
+showOvernightMid = input(false, "Show overnight midpoint", group = "02 Sessions")
+
+// ---- 03 Opening Range
+showOR = input(true, "Show Opening Range", group = "03 Opening Range")
+openingRangeDuration = input("15 Minutes", "Opening Range duration", options = ["1 Minute", "5 Minutes", "15 Minutes", "30 Minutes"], group = "03 Opening Range")
+showORDeveloping = input(true, "Show while developing", group = "03 Opening Range")
+showORMid = input(true, "Show midpoint", group = "03 Opening Range")
+fillOR = input(true, "Fill range", group = "03 Opening Range")
+
+// ---- 03A Time markers
+showTimeMarkers = input(true, "Show vertical time markers", group = "03A Time Markers")
+showTimeMarkerLabels = input(true, "Show time-marker labels", group = "03A Time Markers")
+timeMarkerLabelLayout = input("Stacked", "Marker-label layout", options = ["Single line", "Stacked"], group = "03A Time Markers")
+timeMarkerTopPaddingAtr = input(0.75, "Marker-label top padding (ATR)", min = 0, max = 5, step = 0.05, group = "03A Time Markers", tooltip = "Places marker text above the current calendar-day high. Increase if labels still overlap candles.")
+maxTimeMarkerEvents = input(48, "Maximum marker events", min = 8, max = 160, step = 1, group = "03A Time Markers")
+timeMarkerTransparency = input(82, "Marker transparency", min = 65, max = 96, step = 1, group = "03A Time Markers")
+
+// ---- 04 Initial Balance
+showIB = input(true, "Show Initial Balance", group = "04 Initial Balance")
+initialBalanceMinutes = input(60, "Initial Balance duration (minutes)", min = 1, max = 240, step = 1, group = "04 Initial Balance")
+showIBDeveloping = input(false, "Show Initial Balance while developing", group = "04 Initial Balance")
+showIBMid = input(true, "Show Initial Balance midpoint", group = "04 Initial Balance")
+fillIB = input(false, "Fill Initial Balance range", group = "04 Initial Balance")
+
+// ---- 05 VWAP and its deviation bands
+showVWAP = input(true, "Show VWAP", group = "05 VWAP")
+// The anchor menu is keyed vwapAnchor, which is also a library name, so the
+// value is read through orElse and the row takes its key from its title.
+anchorMode = orElse(input("RTH", "vwapAnchor", options = ["RTH", "Full Futures Session", "Week"], group = "05 VWAP"), "RTH")
+vwapSource = input(hlc3, "Source", group = "05 VWAP")
+deviationMethod = input("Volume-weighted", "Deviation method", options = ["Volume-weighted", "Unweighted"], group = "05 VWAP", tooltip = "Volume-weighted uses cumulative volume-weighted squared distance. Unweighted treats each chart bar equally.")
+carryVWAP = input(false, "Carry VWAP outside anchor session", group = "05 VWAP")
+showBand1 = input(true, "Band 1", group = "05 VWAP")
+bandMult1 = input(1, "Band 1 multiplier", min = 0.1, max = 20, step = 0.1, group = "05 VWAP")
+showBand2 = input(true, "Band 2", group = "05 VWAP")
+bandMult2 = input(2, "Band 2 multiplier", min = 0.1, max = 20, step = 0.1, group = "05 VWAP")
+showBand3 = input(false, "Band 3", group = "05 VWAP")
+bandMult3 = input(3, "Band 3 multiplier", min = 0.1, max = 20, step = 0.1, group = "05 VWAP")
+
+// ---- 06 Previous day and week
+showPreviousDay = input(true, "Show previous day high / low", group = "06 Day / Week")
+previousDayBasis = input("Exchange daily bar", "Previous-day source", options = ["Exchange daily bar", "Custom RTH session"], group = "06 Day / Week", tooltip = "Exchange daily bar folds the chart bars over the full futures session. Custom RTH uses the RTH session defined above.")
+showPreviousWeek = input(true, "Show previous week high / low", group = "06 Day / Week")
+
+// ---- 07 Fibonacci and range projections
+showFib = input(false, "Show Fibonacci levels", group = "07 Fibonacci")
+fibAnchor = input("Initial Balance", "Anchor range", options = ["Opening Range", "Initial Balance", "Overnight", "Previous Day", "Previous Week"], group = "07 Fibonacci")
+showFibRetracements = input(true, "Show internal retracements", group = "07 Fibonacci")
+showFibExtensions = input(true, "Show symmetric range projections", group = "07 Fibonacci")
+fibRetrace1 = input(0.382, "Retracement 1", min = 0, max = 1, step = 0.001, group = "07 Fibonacci")
+fibRetrace2 = input(0.5, "Retracement 2", min = 0, max = 1, step = 0.001, group = "07 Fibonacci")
+fibRetrace3 = input(0.618, "Retracement 3", min = 0, max = 1, step = 0.001, group = "07 Fibonacci")
+fibProjection1 = input(0.272, "Projection 1", min = 0, max = 5, step = 0.001, group = "07 Fibonacci", tooltip = "0.272 projects the range to the conventional 1.272 and -0.272 levels.")
+fibProjection2 = input(0.618, "Projection 2", min = 0, max = 5, step = 0.001, group = "07 Fibonacci")
+fibProjection3 = input(1, "Projection 3", min = 0, max = 5, step = 0.001, group = "07 Fibonacci")
+
+// ---- 08 Level clustering
+showClusters = input(true, "Show current confluence clusters", group = "08 Clustering")
+clusterReferences = input(true, "Include day / week references", group = "08 Clustering")
+clusterSessions = input(true, "Include OR / IB / overnight", group = "08 Clustering")
+clusterVWAP = input(true, "Include VWAP / bands", group = "08 Clustering")
+clusterFib = input(true, "Include visible Fib levels", group = "08 Clustering")
+clusterToleranceMode = input("Ticks", "Tolerance mode", options = ["Ticks", "ATR"], group = "08 Clustering")
+clusterTicks = input(8, "Tolerance (ticks)", min = 0.25, max = 500, step = 0.25, group = "08 Clustering")
+clusterAtrLength = input(14, "ATR length", min = 2, max = 200, step = 1, group = "08 Clustering")
+clusterAtrFactor = input(0.08, "ATR tolerance factor", min = 0.001, max = 2, step = 0.005, group = "08 Clustering")
+clusterMinimum = input(2, "Minimum contributors", min = 2, max = 10, step = 1, group = "08 Clustering")
+clusterMaximum = input(5, "Maximum displayed clusters", min = 1, max = 10, step = 1, group = "08 Clustering")
+clusterLeftBars = input(18, "Zone width left (bars)", min = 1, max = 300, step = 1, group = "08 Clustering")
+clusterPaddingTicks = input(1, "Zone padding (ticks)", min = 0, max = 20, step = 0.25, group = "08 Clustering")
+showClusterNames = input(true, "Show contributor names", group = "08 Clustering")
+clusterFillOpacity = input(89, "Zone transparency", min = 60, max = 100, step = 1, group = "08 Clustering")
+
+// ---- 09 Acceptance and rejection
+showStates = input(true, "Enable acceptance / rejection engine", group = "09 States")
+stateAwareColors = input(false, "Recolor levels by latest state", group = "09 States")
+stateToleranceMode = input("Ticks", "Touch tolerance mode", options = ["Ticks", "ATR"], group = "09 States")
+stateTouchTicks = input(4, "Touch tolerance (ticks)", min = 0.25, max = 500, step = 0.25, group = "09 States")
+stateAtrLength = input(14, "State ATR length", min = 2, max = 200, step = 1, group = "09 States")
+stateTouchAtr = input(0.04, "Touch tolerance (ATR)", min = 0.001, max = 1, step = 0.005, group = "09 States")
+stateAcceptTicks = input(2, "Acceptance buffer (ticks)", min = 0, max = 500, step = 0.25, group = "09 States")
+stateAcceptCloses = input(2, "Closes required for acceptance", min = 1, max = 10, step = 1, group = "09 States")
+stateMinimumWick = input(0.08, "Minimum rejection wick (ATR)", min = 0, max = 2, step = 0.01, group = "09 States")
+showStateLabels = input(false, "Show acceptance / rejection labels", group = "09 States")
+maximumStateLabels = input(60, "Maximum state labels", min = 5, max = 180, step = 1, group = "09 States")
+stateCooldownBars = input(3, "Per-level rejection cooldown (bars)", min = 0, max = 100, step = 1, group = "09 States")
+
+// ---- 11 HUD
+showHUD = input(true, "Show compact HUD", group = "11 HUD")
+
+// ---- the theme shades
+ACCENT = #a855f7
+SECONDARY = #6366f1
+VWAP_COLOR = #2dd4bf
+DAY_REF = #c4b5fd
+WEEK_REF = #8b5cf6
+OVERNIGHT = #94a3b8
+SUPPORT = #22c55e
+RESISTANCE = #ef4444
+NEUTRAL = #94a3b8
+TEXT_COLOR = #f1f5f9
+MARKER_PINK = #f472b6
+
+// ---- session specs
+// A session is written HHMM-HHMM with an optional list of days after a
+// colon, 1 for Sunday through 7 for Saturday. Spaces are allowed only at the
+// two ends and around the dash and the colon, never inside a time or the day
+// list. A spec that does not follow that form answers none, and the default
+// session is used. A valid spec comes back as HHMM-HHMM or HHMM-HHMM:days.
+fn cleanSpec(spec) =>
+    parts = str.split(str.trim(spec), ":")
+    n = size(parts)
+    ok = n == 1 or n == 2
+    halves = str.split(element(parts, 0), "-")
+    ok = ok and size(halves) == 2
+    a = ""
+    b = ""
+    if ok
+        a = str.trim(element(halves, 0))
+        b = str.trim(element(halves, 1))
+        ok = str.length(a) == 4 and str.length(b) == 4
+    if ok
+        for i = 0 to 3
+            ok = ok and str.contains("0123456789", str.substring(a, i, i + 1)) and str.contains("0123456789", str.substring(b, i, i + 1))
+    if ok
+        ok = toNumber(str.substring(a, 0, 2)) <= 23 and toNumber(str.substring(a, 2, 4)) <= 59 and toNumber(str.substring(b, 0, 2)) <= 23 and toNumber(str.substring(b, 2, 4)) <= 59
+    dayList = ""
+    if ok and n == 2
+        dayList = str.trim(element(parts, 1))
+        ok = str.length(dayList) >= 1
+        if ok
+            for i = 0 to str.length(dayList) - 1
+                ok = ok and str.contains("1234567", str.substring(dayList, i, i + 1))
+    ok ? (n == 2 ? a + "-" + b + ":" + dayList : a + "-" + b) : none
+
+fn specStart(s) => toNumber(str.substring(s, 0, 2)) * 60 + toNumber(str.substring(s, 2, 4))
+fn specEnd(s) => toNumber(str.substring(s, 5, 7)) * 60 + toNumber(str.substring(s, 7, 9))
+fn specDays(s) => str.indexOf(s, ":") < 0 ? "" : str.substring(s, str.indexOf(s, ":") + 1)
+
+// Membership by the bar's opening minute and weekday in the session zone. A
+// window whose end is not after its start crosses midnight, and its day list
+// names the day it opened on.
+fn inWindow(m, day, prevDay, startM, endM, days) =>
+    dayOk = days == "" or str.contains(days, text(day))
+    prevOk = days == "" or str.contains(days, text(prevDay))
+    startM < endM ? (m >= startM and m < endM and dayOk) : ((m >= startM and dayOk) or (m < endM and prevOk))
+
+futSpec = orElse(cleanSpec(futuresSession), "1800-1700:1234567")
+onSpec = orElse(cleanSpec(overnightSession), "1800-0930:1234567")
+rthSpec = orElse(cleanSpec(rthSession), "0930-1600:23456")
+
+// ---- the bar's wall clock in the session zone
+zoneRaw = str.trim(timezone)
+zone = zoneRaw == "" ? "America/New_York" : zoneRaw
+yr = date.year(time, zone)
+mo = date.month(time, zone)
+dy = date.day(time, zone)
+minuteOfDay = date.hour(time, zone) * 60 + date.minute(time, zone)
+isoDay = date.dayOfWeek(time, zone)
+weekDay = isoDay == 7 ? 1 : isoDay + 1
+prevWeekDay = weekDay == 1 ? 7 : weekDay - 1
+// Days since 1 January 1970 on the zone's calendar.
+dayIndex = floor(date.from(yr, mo, dy, 0, 0, 0, "UTC") / 86400000)
+
+// ---- bar length, the stand-in for the bar's closing time
+var minGap = none
+gap = time - time[1]
+if gap > 0 and (isNone(minGap) or gap < minGap)
+    minGap = gap
+spacing = orElse(chart.intervalMinutes * 60000, orElse(minGap, 300000))
+intraday = orElse(chart.isIntraday, spacing < 86400000)
+tClose = time + spacing
+
+// The instrument tick. Where the host states none, a hundred-thousandth of
+// price stands in, which is the right order of magnitude for an index future.
+tick = orElse(chart.tickSize, 0) > 0 ? chart.tickSize : max(abs(close) * 0.00001, 0.00000001)
+
+futStart = specStart(futSpec)
+futEnd = specEnd(futSpec)
+inFutures = inWindow(minuteOfDay, weekDay, prevWeekDay, futStart, futEnd, specDays(futSpec))
+inOvernight = inWindow(minuteOfDay, weekDay, prevWeekDay, specStart(onSpec), specEnd(onSpec), specDays(onSpec))
+inRTH = inWindow(minuteOfDay, weekDay, prevWeekDay, specStart(rthSpec), specEnd(rthSpec), specDays(rthSpec))
+
+orMinutes = openingRangeDuration == "1 Minute" ? 1 : openingRangeDuration == "5 Minutes" ? 5 : openingRangeDuration == "30 Minutes" ? 30 : 15
+ibMinutes = round(initialBalanceMinutes)
+
+// A window is active on a bar that overlaps [open, open + duration).
+windowStart = date.from(yr, mo, dy, round(rthOpenHour), round(rthOpenMinute), 0, zone)
+inOR = inRTH and intraday and time < windowStart + orMinutes * 60000 and tClose > windowStart
+inIB = inRTH and intraday and time < windowStart + ibMinutes * 60000 and tClose > windowStart
+
+newFutures = inFutures and not orElse(inFutures[1], false)
+newOvernight = inOvernight and not orElse(inOvernight[1], false)
+newRTH = inRTH and not orElse(inRTH[1], false)
+endRTH = not inRTH and orElse(inRTH[1], false)
+newOR = inOR and not orElse(inOR[1], false)
+newIB = inIB and not orElse(inIB[1], false)
+
+// ---- the exchange daily bar, rolled on the trading day. A session that
+// crosses midnight puts everything from its open onwards on the next day.
+futWraps = futEnd <= futStart
+tradingDay = dayIndex + (futWraps and minuteOfDay >= futStart ? 1 : 0)
+
+var tradingDayBucket = none
+var futSessHigh = none
+var futSessLow = none
+var prevFutHigh = none
+var prevFutLow = none
+if isNone(tradingDayBucket) or tradingDay != tradingDayBucket
+    if not isNone(futSessHigh) and not isNone(futSessLow)
+        prevFutHigh = futSessHigh
+        prevFutLow = futSessLow
+    futSessHigh = none
+    futSessLow = none
+    tradingDayBucket = tradingDay
+if inFutures
+    futSessHigh = isNone(futSessHigh) ? high : max(futSessHigh, high)
+    futSessLow = isNone(futSessLow) ? low : min(futSessLow, low)
+
+// ---- the weekly bar, built from the same trading days. Day 0 is a
+// Thursday, so adding 3 gives weeks that start on Monday.
+weekKey = floor((tradingDay + 3) / 7)
+var weekBucket = none
+var weekHigh = none
+var weekLow = none
+var prevWeekHigh = none
+var prevWeekLow = none
+newWeek = isNone(weekBucket) or weekKey != weekBucket
+if newWeek
+    if not isNone(weekHigh) and not isNone(weekLow)
+        prevWeekHigh = weekHigh
+        prevWeekLow = weekLow
+    weekHigh = high
+    weekLow = low
+    weekBucket = weekKey
+else
+    weekHigh = max(weekHigh, high)
+    weekLow = min(weekLow, low)
+
+var rthEndTime = none
+if endRTH
+    rthEndTime = bar.index > 0 ? time[1] : time
+
+// ---- session opens
+var futuresOpen = none
+var rthOpenVal = none
+if newFutures or (isNone(futuresOpen) and inFutures)
+    futuresOpen = open
+if newRTH or (isNone(rthOpenVal) and inRTH)
+    rthOpenVal = open
+
+// ---- the regular session's range, for the custom previous day
+var rthHigh = none
+var rthLow = none
+var previousRthHigh = none
+var previousRthLow = none
+if newRTH
+    if not isNone(rthHigh) and not isNone(rthLow)
+        previousRthHigh = rthHigh
+        previousRthLow = rthLow
+    rthHigh = high
+    rthLow = low
+else if inRTH
+    rthHigh = isNone(rthHigh) ? high : max(rthHigh, high)
+    rthLow = isNone(rthLow) ? low : min(rthLow, low)
+
+// ---- overnight extremes
+var overnightHigh = none
+var overnightLow = none
+if newOvernight
+    overnightHigh = high
+    overnightLow = low
+else if inOvernight
+    overnightHigh = isNone(overnightHigh) ? high : max(overnightHigh, high)
+    overnightLow = isNone(overnightLow) ? low : min(overnightLow, low)
+overnightMid = (overnightHigh + overnightLow) * 0.5
+
+// ---- opening range
+var orHigh = none
+var orLow = none
+var orStartTime = none
+if newRTH
+    orHigh = none
+    orLow = none
+    orStartTime = none
+if newOR
+    orHigh = high
+    orLow = low
+    orStartTime = time
+else if inOR
+    orHigh = isNone(orHigh) ? high : max(orHigh, high)
+    orLow = isNone(orLow) ? low : min(orLow, low)
+orMid = (orHigh + orLow) * 0.5
+orPresent = not isNone(orHigh) and not isNone(orLow)
+orReadyForDisplay = orPresent and (showORDeveloping or not inOR)
+orReadyForState = orPresent and not inOR
+
+// ---- initial balance
+var ibHigh = none
+var ibLow = none
+var ibStartTime = none
+if newRTH
+    ibHigh = none
+    ibLow = none
+    ibStartTime = none
+if newIB
+    ibHigh = high
+    ibLow = low
+    ibStartTime = time
+else if inIB
+    ibHigh = isNone(ibHigh) ? high : max(ibHigh, high)
+    ibLow = isNone(ibLow) ? low : min(ibLow, low)
+ibMid = (ibHigh + ibLow) * 0.5
+ibPresent = not isNone(ibHigh) and not isNone(ibLow)
+ibReadyForDisplay = ibPresent and (showIBDeveloping or not inIB)
+ibReadyForState = ibPresent and not inIB
+
+previousDayHigh = previousDayBasis == "Custom RTH session" ? previousRthHigh : prevFutHigh
+previousDayLow = previousDayBasis == "Custom RTH session" ? previousRthLow : prevFutLow
+
+// ---- anchored VWAP with its own deviation band
+vwapInAnchor = anchorMode == "RTH" ? inRTH : anchorMode == "Full Futures Session" ? inFutures : true
+vwapReset = anchorMode == "RTH" ? newRTH : anchorMode == "Full Futures Session" ? newFutures : newWeek
+var cumulativeVolume = 0.0
+var cumulativePV = 0.0
+var cumulativeP2V = 0.0
+var cumulativePrice = 0.0
+var cumulativePrice2 = 0.0
+var cumulativeBars = 0
+if vwapReset
+    cumulativeVolume = 0.0
+    cumulativePV = 0.0
+    cumulativeP2V = 0.0
+    cumulativePrice = 0.0
+    cumulativePrice2 = 0.0
+    cumulativeBars = 0
+srcPrice = orElse(vwapSource, 0)
+// A bar with no volume adds nothing to the weighted sums.
+barVolume = orElse(volume, 0) > 0 ? volume : 0
+if vwapInAnchor
+    cumulativeVolume += barVolume
+    cumulativePV += srcPrice * barVolume
+    cumulativeP2V += srcPrice * srcPrice * barVolume
+    cumulativePrice += srcPrice
+    cumulativePrice2 += srcPrice * srcPrice
+    cumulativeBars += 1
+customVWAP = cumulativeVolume > 0 ? cumulativePV / cumulativeVolume : none
+volumeWeightedVariance = cumulativeVolume > 0 and not isNone(customVWAP) ? max(cumulativeP2V / cumulativeVolume - customVWAP * customVWAP, 0) : none
+unweightedMean = cumulativeBars > 0 ? cumulativePrice / cumulativeBars : none
+unweightedVariance = cumulativeBars > 0 and not isNone(unweightedMean) ? max(cumulativePrice2 / cumulativeBars - unweightedMean * unweightedMean, 0) : none
+customDeviation = deviationMethod == "Volume-weighted" ? sqrt(volumeWeightedVariance) : sqrt(unweightedVariance)
+
+vwapUpper1 = customVWAP + customDeviation * bandMult1
+vwapLower1 = customVWAP - customDeviation * bandMult1
+vwapUpper2 = customVWAP + customDeviation * bandMult2
+vwapLower2 = customVWAP - customDeviation * bandMult2
+vwapUpper3 = customVWAP + customDeviation * bandMult3
+vwapLower3 = customVWAP - customDeviation * bandMult3
+vwapVisible = showVWAP and (vwapInAnchor or carryVWAP or anchorMode == "Week")
+
+// ---- Fibonacci retracements and symmetric range projections
+fibLow = fibAnchor == "Opening Range" ? (orReadyForState ? orLow : none) : fibAnchor == "Initial Balance" ? (ibReadyForState ? ibLow : none) : fibAnchor == "Overnight" ? (not inOvernight ? overnightLow : none) : fibAnchor == "Previous Day" ? previousDayLow : prevWeekLow
+fibHigh = fibAnchor == "Opening Range" ? (orReadyForState ? orHigh : none) : fibAnchor == "Initial Balance" ? (ibReadyForState ? ibHigh : none) : fibAnchor == "Overnight" ? (not inOvernight ? overnightHigh : none) : fibAnchor == "Previous Day" ? previousDayHigh : prevWeekHigh
+fibRange = fibHigh - fibLow
+fibReady = showFib and not isNone(fibLow) and not isNone(fibHigh) and fibRange > tick
+fibR1 = fibReady ? fibLow + fibRange * fibRetrace1 : none
+fibR2 = fibReady ? fibLow + fibRange * fibRetrace2 : none
+fibR3 = fibReady ? fibLow + fibRange * fibRetrace3 : none
+fibUp1 = fibReady ? fibHigh + fibRange * fibProjection1 : none
+fibUp2 = fibReady ? fibHigh + fibRange * fibProjection2 : none
+fibUp3 = fibReady ? fibHigh + fibRange * fibProjection3 : none
+fibDown1 = fibReady ? fibLow - fibRange * fibProjection1 : none
+fibDown2 = fibReady ? fibLow - fibRange * fibProjection2 : none
+fibDown3 = fibReady ? fibLow - fibRange * fibProjection3 : none
+
+// ---- the seventeen tracked levels, in a fixed order:
+// PDH, PDL, PWH, PWL, ORH, ORL, IBH, IBL, ONH, ONL, VWAP, VWAP +1 SD,
+// VWAP -1 SD, Fib Up 1, Fib Down 1, RTH Open, Session Open.
+orTracked = showOR and inRTH and orReadyForState
+ibTracked = showIB and inRTH and ibReadyForState
+onTracked = showOvernight and not inOvernight
+tracked = [showPreviousDay ? previousDayHigh : none, showPreviousDay ? previousDayLow : none, showPreviousWeek ? prevWeekHigh : none, showPreviousWeek ? prevWeekLow : none, orTracked ? orHigh : none, orTracked ? orLow : none, ibTracked ? ibHigh : none, ibTracked ? ibLow : none, onTracked ? overnightHigh : none, onTracked ? overnightLow : none, vwapVisible ? customVWAP : none, vwapVisible and showBand1 ? vwapUpper1 : none, vwapVisible and showBand1 ? vwapLower1 : none, fibReady and showFibExtensions ? fibUp1 : none, fibReady and showFibExtensions ? fibDown1 : none, showSessionOpens and not isNone(rthOpenVal) ? rthOpenVal : none, showSessionOpens and not isNone(futuresOpen) ? futuresOpen : none]
+
+var TRACKED_NAMES: array<string> = ["PDH", "PDL", "PWH", "PWL", "ORH", "ORL", "IBH", "IBL", "ONH", "ONL", "VWAP", "VWAP +1 SD", "VWAP -1 SD", "Fib Up 1", "Fib Down 1", "RTH Open", "Session Open"]
+var TRACKED_WEIGHTS: array<number> = [2.20, 2.20, 2.40, 2.40, 1.70, 1.70, 1.90, 1.90, 1.45, 1.45, 1.35, 1.10, 1.10, 0.80, 0.80, 1.15, 1.15]
+var aboveCounts: array<number> = []
+var belowCounts: array<number> = []
+var levelStates: array<number> = []
+var priorTrackedPrices: array<number> = []
+var lastStateEventBars: array<number> = []
+if size(aboveCounts) == 0
+    for k = 0 to 16
+        push(aboveCounts, 0)
+        push(belowCounts, 0)
+        push(levelStates, 0)
+        push(priorTrackedPrices, none)
+        push(lastStateEventBars, -1000000)
+
+// ---- acceptance and rejection engine, on every confirmed bar
+stateATR = atr(stateAtrLength)
+stateAtrOrZero = orElse(stateATR, 0)
+touchTolerance = stateToleranceMode == "ATR" ? stateAtrOrZero * stateTouchAtr : stateTouchTicks * tick
+stateAcceptBuffer = stateAcceptTicks * tick
+upperWick = high - max(open, close)
+lowerWick = min(open, close) - low
+prevClose = bar.index > 0 ? close[1] : none
+bestEventCode = 0
+bestEventIndex = -1
+bestEventPrice = none
+bestEventScore = -1.0
+
+if showStates
+    for k = 0 to 16
+        levelPrice = element(tracked, k)
+        previousTrackedPrice = element(priorTrackedPrices, k)
+        isDynamicVWAP = k >= 10 and k <= 12
+        levelChanged = not isNone(levelPrice) and not isNone(previousTrackedPrice) and abs(levelPrice - previousTrackedPrice) > max(touchTolerance, tick * 2)
+        if isNone(levelPrice)
+            set(aboveCounts, k, 0)
+            set(belowCounts, k, 0)
+            set(levelStates, k, 0)
+        else
+            if levelChanged and not isDynamicVWAP
+                set(aboveCounts, k, 0)
+                set(belowCounts, k, 0)
+                set(levelStates, k, 0)
+            aboveLevel = close > levelPrice + stateAcceptBuffer
+            belowLevel = close < levelPrice - stateAcceptBuffer
+            nextAboveCount = aboveLevel ? element(aboveCounts, k) + 1 : 0
+            nextBelowCount = belowLevel ? element(belowCounts, k) + 1 : 0
+            set(aboveCounts, k, nextAboveCount)
+            set(belowCounts, k, nextBelowCount)
+            acceptedAbove = nextAboveCount == stateAcceptCloses
+            acceptedBelow = nextBelowCount == stateAcceptCloses
+            priorBelow = not isNone(prevClose) and prevClose < levelPrice
+            priorAbove = not isNone(prevClose) and prevClose > levelPrice
+            bearishRejection = priorBelow and high >= levelPrice - touchTolerance and close < levelPrice - stateAcceptBuffer and upperWick >= stateAtrOrZero * stateMinimumWick
+            bullishRejection = priorAbove and low <= levelPrice + touchTolerance and close > levelPrice + stateAcceptBuffer and lowerWick >= stateAtrOrZero * stateMinimumWick
+            rawEventCode = acceptedAbove ? 1 : acceptedBelow ? -1 : bullishRejection ? 2 : bearishRejection ? -2 : 0
+            cooldownComplete = abs(rawEventCode) == 1 or bar.index - element(lastStateEventBars, k) > stateCooldownBars
+            eventCode = cooldownComplete ? rawEventCode : 0
+            if eventCode != 0
+                set(lastStateEventBars, k, bar.index)
+                eventPriority = (abs(eventCode) == 1 ? 2 : 1) * element(TRACKED_WEIGHTS, k)
+                normalizedDistance = stateAtrOrZero > 0 ? abs(close - levelPrice) / stateATR : abs(close - levelPrice) / tick
+                eventScore = eventPriority / (1 + normalizedDistance)
+                if eventScore > bestEventScore
+                    bestEventCode = eventCode
+                    bestEventIndex = k
+                    bestEventPrice = levelPrice
+                    bestEventScore = eventScore
+            if acceptedAbove
+                set(levelStates, k, 1)
+            else if acceptedBelow
+                set(levelStates, k, -1)
+            else if bullishRejection
+                set(levelStates, k, 2)
+            else if bearishRejection
+                set(levelStates, k, -2)
+        set(priorTrackedPrices, k, levelPrice)
+
+// ---- calendar-day high, which the time-marker labels sit above
+var dayKey = none
+var dayHi = none
+if isNone(dayKey) or dayIndex != dayKey
+    dayKey = dayIndex
+    dayHi = high
+else
+    dayHi = max(isNone(dayHi) ? high : dayHi, high)
+
+// ---- vertical time markers at 08:30, 09:30, 11:00 and 16:00 session time
+var MARKER_HOURS: array<number> = [8, 9, 11, 16]
+var MARKER_MINUTES: array<number> = [30, 30, 0, 0]
+hit = 0
+hitTs = none
+if showTimeMarkers and intraday
+    for m = 0 to 3
+        if hit == 0
+            ts = date.from(yr, mo, dy, element(MARKER_HOURS, m), element(MARKER_MINUTES, m), 0, zone)
+            if time <= ts and tClose > ts
+                hit = m + 1
+                hitTs = ts
+markerAtr14 = atr(14)
+markerAtr = orElse(markerAtr14, high - low)
+clusterAtr = atr(clusterAtrLength)
+
+// ---- the plotted columns
+orVisualReady = enabled and showOR and orReadyForDisplay and inRTH
+ibVisualReady = enabled and showIB and ibReadyForDisplay and inRTH
+onVisible = enabled and showOvernight and (inRTH or inOvernight)
+vwapShown = enabled and vwapVisible
+fibRetraceShown = enabled and fibReady and showFibRetracements
+fibExtendShown = enabled and fibReady and showFibExtensions
+
+pOrHigh = orVisualReady ? orHigh : none
+pOrLow = orVisualReady ? orLow : none
+pOrMid = orVisualReady and showORMid ? orMid : none
+pIbHigh = ibVisualReady ? ibHigh : none
+pIbLow = ibVisualReady ? ibLow : none
+pIbMid = ibVisualReady and showIBMid ? ibMid : none
+pOnHigh = onVisible ? overnightHigh : none
+pOnLow = onVisible ? overnightLow : none
+pOnMid = onVisible and showOvernightMid ? overnightMid : none
+pFutOpen = enabled and showSessionOpens and inFutures ? futuresOpen : none
+pRthOpen = enabled and showSessionOpens and inRTH ? rthOpenVal : none
+pVwap = vwapShown ? customVWAP : none
+pVu1 = vwapShown and showBand1 ? vwapUpper1 : none
+pVl1 = vwapShown and showBand1 ? vwapLower1 : none
+pVu2 = vwapShown and showBand2 ? vwapUpper2 : none
+pVl2 = vwapShown and showBand2 ? vwapLower2 : none
+pVu3 = vwapShown and showBand3 ? vwapUpper3 : none
+pVl3 = vwapShown and showBand3 ? vwapLower3 : none
+pPdh = enabled and showPreviousDay ? previousDayHigh : none
+pPdl = enabled and showPreviousDay ? previousDayLow : none
+pPwh = enabled and showPreviousWeek ? prevWeekHigh : none
+pPwl = enabled and showPreviousWeek ? prevWeekLow : none
+pFibR1 = fibRetraceShown ? fibR1 : none
+pFibR2 = fibRetraceShown ? fibR2 : none
+pFibR3 = fibRetraceShown ? fibR3 : none
+pFibU1 = fibExtendShown ? fibUp1 : none
+pFibU2 = fibExtendShown ? fibUp2 : none
+pFibU3 = fibExtendShown ? fibUp3 : none
+pFibD1 = fibExtendShown ? fibDown1 : none
+pFibD2 = fibExtendShown ? fibDown2 : none
+pFibD3 = fibExtendShown ? fibDown3 : none
+
+// A level turns green while its latest state is bullish and red while it is
+// bearish, when the switch is on.
+// Inputs are passed in rather than read from inside the function body.
+fn stateTint(state, base, recolor) => recolor and state > 0 ? SUPPORT : recolor and state < 0 ? RESISTANCE : base
+
+plot(pOrHigh, "Opening Range High", stateTint(element(levelStates, 4), ACCENT, stateAwareColors), width = 2)
+plot(pOrLow, "Opening Range Low", stateTint(element(levelStates, 5), ACCENT, stateAwareColors), width = 2)
+plot(pOrMid, "Opening Range Mid", ACCENT, width = 1)
+plot(pIbHigh, "Initial Balance High", stateTint(element(levelStates, 6), SECONDARY, stateAwareColors), width = 2)
+plot(pIbLow, "Initial Balance Low", stateTint(element(levelStates, 7), SECONDARY, stateAwareColors), width = 2)
+plot(pIbMid, "Initial Balance Mid", SECONDARY, width = 1)
+plot(pOnHigh, "Overnight High", stateTint(element(levelStates, 8), OVERNIGHT, stateAwareColors), width = 1)
+plot(pOnLow, "Overnight Low", stateTint(element(levelStates, 9), OVERNIGHT, stateAwareColors), width = 1)
+plot(pOnMid, "Overnight Mid", OVERNIGHT, width = 1)
+plot(pFutOpen, "Futures Session Open", NEUTRAL, width = 1)
+plot(pRthOpen, "RTH Open", TEXT_COLOR, width = 1)
+plot(pVwap, "Custom VWAP", stateTint(element(levelStates, 10), VWAP_COLOR, stateAwareColors), width = 2)
+hVu1 = plot(pVu1, "VWAP Upper 1", VWAP_COLOR, width = 1)
+hVl1 = plot(pVl1, "VWAP Lower 1", VWAP_COLOR, width = 1)
+hVu2 = plot(pVu2, "VWAP Upper 2", VWAP_COLOR, width = 1)
+hVl2 = plot(pVl2, "VWAP Lower 2", VWAP_COLOR, width = 1)
+plot(pVu3, "VWAP Upper 3", VWAP_COLOR, width = 1)
+plot(pVl3, "VWAP Lower 3", VWAP_COLOR, width = 1)
+plot(pPdh, "Previous Day High", stateTint(element(levelStates, 0), DAY_REF, stateAwareColors), width = 1)
+plot(pPdl, "Previous Day Low", stateTint(element(levelStates, 1), DAY_REF, stateAwareColors), width = 1)
+plot(pPwh, "Previous Week High", stateTint(element(levelStates, 2), WEEK_REF, stateAwareColors), width = 1)
+plot(pPwl, "Previous Week Low", stateTint(element(levelStates, 3), WEEK_REF, stateAwareColors), width = 1)
+plot(pFibR1, "Fib Retracement 1", ACCENT, width = 1)
+plot(pFibR2, "Fib Retracement 2", ACCENT, width = 1)
+plot(pFibR3, "Fib Retracement 3", ACCENT, width = 1)
+plot(pFibU1, "Fib Projection Up 1", ACCENT, width = 1)
+plot(pFibU2, "Fib Projection Up 2", ACCENT, width = 1)
+plot(pFibU3, "Fib Projection Up 3", ACCENT, width = 1)
+plot(pFibD1, "Fib Projection Down 1", ACCENT, width = 1)
+plot(pFibD2, "Fib Projection Down 2", ACCENT, width = 1)
+plot(pFibD3, "Fib Projection Down 3", ACCENT, width = 1)
+
+fill(hVu1, hVl1, VWAP_COLOR, opacity = 0.08)
+fill(hVu2, hVl2, VWAP_COLOR, opacity = 0.05)
+
+// ---- session shading: the opening range, then the regular session, then
+// the overnight session.
+background(enabled and showSessionShading ? (inOR ? withAlpha(ACCENT, 0.09) : inRTH ? withAlpha(SECONDARY, 0.04) : inOvernight ? withAlpha(OVERNIGHT, 0.03) : none) : none)
+
+// ---- text helpers
+fn fmt(v, decimals) => isNone(v) ? "-" : text(v, decimals)
+
+// Up to three decimals, trailing zeroes dropped.
+fn trimRatio(v) =>
+    s = isNone(v) ? "0" : text(v, 3)
+    for i = 0 to 3
+        if str.contains(s, ".") and str.endsWith(s, "0")
+            s = str.substring(s, 0, str.length(s) - 1)
+    if str.endsWith(s, ".")
+        s = str.substring(s, 0, str.length(s) - 1)
+    s
+
+// The decimals of the tick: 2 for 0.01, 1 for 0.25, 3 for 0.005.
+tickDecimals = 0
+scaledTick = tick
+for i = 0 to 11
+    if scaledTick < 1 - 0.000000001
+        scaledTick = scaledTick * 10
+        tickDecimals += 1
+
+// ---- time-marker lines and labels, the newest maxTimeMarkerEvents kept
+maxEvents = clamp(round(maxTimeMarkerEvents), 8, 160)
+markerTransparency = clamp(round(timeMarkerTransparency), 65, 96)
+var markerLines: array<line> = []
+var markerLabels: array<label> = []
+if enabled and showTimeMarkers and hit != 0 and not isNone(hitTs)
+    span = max(markerAtr * 2.5, tick * 50)
+    markerLine = draw.line(hitTs, high + span, hitTs, low - span, color = withAlpha(MARKER_PINK, (100 - markerTransparency) / 100), width = 1)
+    markerLabel = none
+    if showTimeMarkerLabels
+        single = hit == 1 ? "PRE-MARKET" : hit == 2 ? "MARKET OPEN" : hit == 3 ? "NY KILLZONE END" : "MARKET CLOSE"
+        caption = timeMarkerLabelLayout == "Stacked" ? str.replaceAll(single, " ", "\n") : single
+        labelY = (isNone(dayHi) ? high : dayHi) + markerAtr * timeMarkerTopPaddingAtr
+        markerLabel = draw.label(hitTs, labelY, caption, textColor = MARKER_PINK, align = "center")
+    push(markerLines, markerLine)
+    push(markerLabels, markerLabel)
+    while size(markerLines) > maxEvents
+        draw.delete(shift(markerLines))
+        draw.delete(shift(markerLabels))
+
+// ---- acceptance and rejection labels on the level that won the bar, the
+// newest maximumStateLabels kept
+stateLabelCap = clamp(round(maximumStateLabels), 5, 180)
+var stateLabels: array<label> = []
+if enabled and showStates and showStateLabels and bestEventCode != 0 and not isNone(bestEventPrice)
+    head = bestEventCode == 1 ? "ACCEPT ABOVE" : bestEventCode == -1 ? "ACCEPT BELOW" : bestEventCode == 2 ? "REJECT UP" : "REJECT DOWN"
+    push(stateLabels, draw.label(time, bestEventPrice, head + "\n" + element(TRACKED_NAMES, bestEventIndex), color = bestEventCode > 0 ? SUPPORT : RESISTANCE, textColor = white))
+    while size(stateLabels) > stateLabelCap
+        draw.delete(shift(stateLabels))
+
+// ---- alerts
+if bestEventCode == 1
+    alert("Futures Levels: price accepted above a tracked level.", "level-accepted-above", "Level accepted above")
+if bestEventCode == -1
+    alert("Futures Levels: price accepted below a tracked level.", "level-accepted-below", "Level accepted below")
+if bestEventCode == 2
+    alert("Futures Levels: bullish rejection from a tracked level.", "level-rejected-up", "Bullish level rejection")
+if bestEventCode == -2
+    alert("Futures Levels: bearish rejection from a tracked level.", "level-rejected-down", "Bearish level rejection")
+
+// The most recent state event, for the HUD.
+var lastStateText = "Waiting"
+if bestEventCode != 0
+    what = bestEventCode == 1 ? "Accepted above" : bestEventCode == -1 ? "Accepted below" : bestEventCode == 2 ? "Bullish rejection" : "Bearish rejection"
+    lastStateText = element(TRACKED_NAMES, bestEventIndex) + " / " + what
+
+// ---- on the newest bar: the range boxes, the level tags and the
+// confluence zones
+compact = horizontalLabelMode == "Compact"
+tagLift = horizontalLabelOffsetTicks * tick
+rangeEndT = inRTH ? time : orElse(rthEndTime, time)
+orReady = showOR and orReadyForDisplay
+ibReady = showIB and ibReadyForDisplay
+
+fn tag(price, name, colour, want, anchorT, decimals, lift, withPrice) =>
+    if want and not isNone(price) and not isNone(anchorT)
+        draw.label(anchorT, price + lift, withPrice ? name + "  " + fmt(price, decimals) : name, textColor = colour, align = "right")
+
+if enabled and bar.isLast
+    if fillOR and orReady and not isNone(orStartTime) and orPresent
+        draw.box(min(orStartTime, rangeEndT), orHigh, max(orStartTime, rangeEndT), orLow, color = none, fillColor = ACCENT, opacity = 0.08)
+    if fillIB and ibReady and not isNone(ibStartTime) and ibPresent
+        draw.box(min(ibStartTime, rangeEndT), ibHigh, max(ibStartTime, rangeEndT), ibLow, color = none, fillColor = SECONDARY, opacity = 0.07)
+
+    if showLiveLevelTags
+        seenON = showOvernight and (inOvernight or inRTH)
+        tag(orHigh, compact ? "ORH" : "OPENING RANGE HIGH", ACCENT, orReady, rangeEndT, tickDecimals, tagLift, showPriceInTags)
+        tag(orLow, compact ? "ORL" : "OPENING RANGE LOW", ACCENT, orReady, rangeEndT, tickDecimals, tagLift, showPriceInTags)
+        tag(orMid, compact ? "ORM" : "OPENING RANGE MID", ACCENT, orReady and showORMid, rangeEndT, tickDecimals, tagLift, showPriceInTags)
+        tag(ibHigh, compact ? "IBH" : "INITIAL BALANCE HIGH", SECONDARY, ibReady, rangeEndT, tickDecimals, tagLift, showPriceInTags)
+        tag(ibLow, compact ? "IBL" : "INITIAL BALANCE LOW", SECONDARY, ibReady, rangeEndT, tickDecimals, tagLift, showPriceInTags)
+        tag(ibMid, compact ? "IBM" : "INITIAL BALANCE MID", SECONDARY, ibReady and showIBMid, rangeEndT, tickDecimals, tagLift, showPriceInTags)
+        tag(pOnHigh, compact ? "ONH" : "OVERNIGHT HIGH", OVERNIGHT, seenON, time, tickDecimals, tagLift, showPriceInTags)
+        tag(pOnLow, compact ? "ONL" : "OVERNIGHT LOW", OVERNIGHT, seenON, time, tickDecimals, tagLift, showPriceInTags)
+        tag(pVwap, "VWAP", VWAP_COLOR, vwapVisible, time, tickDecimals, tagLift, showPriceInTags)
+        tag(pRthOpen, "RTH OPEN", TEXT_COLOR, showSessionOpens and inRTH, time, tickDecimals, tagLift, showPriceInTags)
+        tag(pFutOpen, compact ? "SESSION OPEN" : "FUTURES SESSION OPEN", NEUTRAL, showSessionOpens and inFutures, time, tickDecimals, tagLift, showPriceInTags)
+        tag(pPdh, compact ? "PDH" : "PRIOR DAY HIGH", DAY_REF, showPreviousDay, time, tickDecimals, tagLift, showPriceInTags)
+        tag(pPdl, compact ? "PDL" : "PRIOR DAY LOW", DAY_REF, showPreviousDay, time, tickDecimals, tagLift, showPriceInTags)
+        tag(pPwh, compact ? "PWH" : "PRIOR WEEK HIGH", WEEK_REF, showPreviousWeek, time, tickDecimals, tagLift, showPriceInTags)
+        tag(pPwl, compact ? "PWL" : "PRIOR WEEK LOW", WEEK_REF, showPreviousWeek, time, tickDecimals, tagLift, showPriceInTags)
+        if fibReady
+            tag(pFibR1, "FIB " + trimRatio(fibRetrace1), ACCENT, showFibRetracements, time, tickDecimals, tagLift, showPriceInTags)
+            tag(pFibR2, "FIB " + trimRatio(fibRetrace2), ACCENT, showFibRetracements, time, tickDecimals, tagLift, showPriceInTags)
+            tag(pFibR3, "FIB " + trimRatio(fibRetrace3), ACCENT, showFibRetracements, time, tickDecimals, tagLift, showPriceInTags)
+            tag(pFibU1, "FIB " + trimRatio(1 + fibProjection1), ACCENT, showFibExtensions, time, tickDecimals, tagLift, showPriceInTags)
+            tag(pFibU2, "FIB " + trimRatio(1 + fibProjection2), ACCENT, showFibExtensions, time, tickDecimals, tagLift, showPriceInTags)
+            tag(pFibU3, "FIB " + trimRatio(1 + fibProjection3), ACCENT, showFibExtensions, time, tickDecimals, tagLift, showPriceInTags)
+            tag(pFibD1, "FIB " + trimRatio(-fibProjection1), ACCENT, showFibExtensions, time, tickDecimals, tagLift, showPriceInTags)
+            tag(pFibD2, "FIB " + trimRatio(-fibProjection2), ACCENT, showFibExtensions, time, tickDecimals, tagLift, showPriceInTags)
+            tag(pFibD3, "FIB " + trimRatio(-fibProjection3), ACCENT, showFibExtensions, time, tickDecimals, tagLift, showPriceInTags)
+
+    // Confluence: every visible level sorted by price, swept into groups that
+    // sit within one tolerance of the group's running weighted centre, then
+    // ranked by total weight plus a quarter point per contributor.
+    if showClusters
+        cPrices = []
+        cNames = []
+        cWeights = []
+        candPrices = [pPdh, pPdl, pPwh, pPwl, orHigh, orLow, ibHigh, ibLow, overnightHigh, overnightLow, rthOpenVal, futuresOpen, pVwap, pVu1, pVl1, pVu2, pVl2, pVu3, pVl3, pFibR1, pFibR2, pFibR3, pFibU1, pFibU2, pFibU3, pFibD1, pFibD2, pFibD3]
+        candNames = ["PDH", "PDL", "PWH", "PWL", "ORH", "ORL", "IBH", "IBL", "ONH", "ONL", "RTH Open", "Session Open", "VWAP", "VWAP +1", "VWAP -1", "VWAP +2", "VWAP -2", "VWAP +3", "VWAP -3", "Fib " + trimRatio(fibRetrace1), "Fib " + trimRatio(fibRetrace2), "Fib " + trimRatio(fibRetrace3), "Fib " + trimRatio(1 + fibProjection1), "Fib " + trimRatio(1 + fibProjection2), "Fib " + trimRatio(1 + fibProjection3), "Fib " + trimRatio(-fibProjection1), "Fib " + trimRatio(-fibProjection2), "Fib " + trimRatio(-fibProjection3)]
+        candWeights = [2.2, 2.2, 2.4, 2.4, 1.7, 1.7, 1.9, 1.9, 1.45, 1.45, 1.15, 1.15, 1.35, 1.1, 1.1, 0.95, 0.95, 0.8, 0.8, 0.7, 0.75, 0.7, 0.75, 0.75, 0.75, 0.75, 0.75, 0.75]
+        refsOn = clusterReferences and showPreviousDay
+        weekOn = clusterReferences and showPreviousWeek
+        orOn = clusterSessions and showOR and inRTH and orReadyForState
+        ibOn = clusterSessions and showIB and inRTH and ibReadyForState
+        onOn = clusterSessions and showOvernight and not inOvernight
+        opensOn = clusterSessions and showSessionOpens
+        vwapOn = clusterVWAP and vwapVisible
+        fibOn = clusterFib and fibReady
+        candWant = [refsOn, refsOn, weekOn, weekOn, orOn, orOn, ibOn, ibOn, onOn, onOn, opensOn, opensOn, vwapOn, vwapOn, vwapOn, vwapOn, vwapOn, vwapOn, vwapOn, fibOn and showFibRetracements, fibOn and showFibRetracements, fibOn and showFibRetracements, fibOn and showFibExtensions, fibOn and showFibExtensions, fibOn and showFibExtensions, fibOn and showFibExtensions, fibOn and showFibExtensions, fibOn and showFibExtensions]
+        for j = 0 to size(candPrices) - 1
+            if element(candWant, j) and not isNone(element(candPrices, j))
+                push(cPrices, element(candPrices, j))
+                push(cNames, element(candNames, j))
+                push(cWeights, element(candWeights, j))
+
+        minimum = clamp(round(clusterMinimum), 2, 10)
+        np = size(cPrices)
+        if np >= minimum
+            rawTolerance = clusterToleranceMode == "ATR" ? orElse(clusterAtr, 0) * clusterAtrFactor : clusterTicks * tick
+            tolerance = max(rawTolerance, tick)
+
+            // Indices sorted by price, ties kept in the order they were added.
+            sortedIdx = []
+            for j = 0 to np - 1
+                at = size(sortedIdx)
+                for q = 0 to size(sortedIdx) - 1
+                    if at == size(sortedIdx) and element(cPrices, element(sortedIdx, q)) > element(cPrices, j)
+                        at = q
+                insert(sortedIdx, at, j)
+
+            gCenter = []
+            gLow = []
+            gHigh = []
+            gScore = []
+            gCount = []
+            gNames = []
+            runSum = 0.0
+            runWeight = 0.0
+            runLow = 0.0
+            runHigh = 0.0
+            runCount = 0
+            runNames = ""
+            // One pass more than there are prices, so the last group is
+            // flushed on the extra pass.
+            for j = 0 to np
+                isEnd = j == np
+                idx = isEnd ? 0 : element(sortedIdx, j)
+                p = element(cPrices, idx)
+                w = element(cWeights, idx)
+                nm = element(cNames, idx)
+                runCenter = runWeight > 0 ? runSum / runWeight : p
+                joins = not isEnd and runCount > 0 and abs(p - runCenter) <= tolerance
+                if not isEnd and runCount == 0
+                    runSum = p * w
+                    runWeight = w
+                    runLow = p
+                    runHigh = p
+                    runCount = 1
+                    runNames = nm
+                else if joins
+                    runSum += p * w
+                    runWeight += w
+                    runLow = min(runLow, p)
+                    runHigh = max(runHigh, p)
+                    runCount += 1
+                    // Names stop being appended past six contributors.
+                    if runCount <= 6
+                        runNames = str.length(runNames) == 0 ? nm : runNames + " + " + nm
+                else
+                    if runCount >= minimum and runWeight > 0
+                        push(gCenter, runSum / runWeight)
+                        push(gLow, runLow)
+                        push(gHigh, runHigh)
+                        push(gScore, runWeight + runCount * 0.25)
+                        push(gCount, runCount)
+                        push(gNames, runNames)
+                    if not isEnd
+                        runSum = p * w
+                        runWeight = w
+                        runLow = p
+                        runHigh = p
+                        runCount = 1
+                        runNames = nm
+
+            ng = size(gCenter)
+            if ng > 0
+                // Groups ranked by score, highest first, ties in price order.
+                ranked = []
+                for j = 0 to ng - 1
+                    at = size(ranked)
+                    for q = 0 to size(ranked) - 1
+                        if at == size(ranked) and element(gScore, element(ranked, q)) < element(gScore, j)
+                            at = q
+                    insert(ranked, at, j)
+                maximum = clamp(round(clusterMaximum), 1, 10)
+                leftBars = clamp(round(clusterLeftBars), 1, 300)
+                padding = clusterPaddingTicks * tick
+                zoneOpacity = (100 - clamp(round(clusterFillOpacity), 60, 100)) / 100
+                leftT = time[min(leftBars, bar.index)]
+                for j = 0 to min(maximum, ng) - 1
+                    g = element(ranked, j)
+                    center = element(gCenter, g)
+                    zoneLow = element(gLow, g) - padding
+                    zoneHigh = element(gHigh, g) + padding
+                    directional = center > close + tolerance ? RESISTANCE : center < close - tolerance ? SUPPORT : ACCENT
+                    draw.box(leftT, zoneHigh, time, zoneLow, color = withAlpha(directional, 0.82), fillColor = ACCENT, opacity = zoneOpacity, width = 1)
+                    caption = "CONFLUENCE x" + text(element(gCount, g)) + "  " + fmt(center, tickDecimals) + "\nScore " + text(element(gScore, g), 2)
+                    if showClusterNames and element(gNames, g) != ""
+                        caption = caption + "\n" + element(gNames, g)
+                    draw.label(time, center, caption, color = withAlpha(directional, 0.3), textColor = TEXT_COLOR, align = "right")
+
+// ---- compact HUD
+hud = table("Futures Levels", 7, 2, position = "topRight")
+if enabled and showHUD and bar.isLast
+    sessionName = inOR ? "Opening Range" : inIB ? "Initial Balance" : inRTH ? "RTH" : inOvernight ? "Overnight" : inFutures ? "Futures session" : "Closed"
+    tfWarn = not intraday or spacing > 1800000
+    cell(hud, 0, 0, "FUTURES LEVELS")
+    cell(hud, 0, 1, "")
+    cell(hud, 1, 0, "Session")
+    cell(hud, 1, 1, sessionName)
+    cell(hud, 2, 0, "OR range")
+    cell(hud, 2, 1, orPresent ? fmt(orHigh - orLow, tickDecimals) : "-")
+    cell(hud, 3, 0, "IB range")
+    cell(hud, 3, 1, ibPresent ? fmt(ibHigh - ibLow, tickDecimals) : "-")
+    cell(hud, 4, 0, "VWAP")
+    cell(hud, 4, 1, fmt(pVwap, tickDecimals))
+    cell(hud, 5, 0, "Last state")
+    cell(hud, 5, 1, lastStateText)
+    cell(hud, 6, 0, tfWarn ? "Timeframe" : "Mode")
+    cell(hud, 6, 1, tfWarn ? "Use 30m or finer; 15m preferred" : "Confirmed states")

@@ -1,0 +1,38 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © openalgo
+// Original work (c) mihakralj, MIT License
+
+version 1
+study("Time Weighted Average Price (TWAP)", overlay = true, precision = 2)
+
+source = input(ohlc4, "Source")
+sessionType = input("1D", "Session Reset", options = ["1m", "2m", "3m", "5m", "10m", "15m", "30m", "45m", "1H", "2H", "3H", "4H", "1D", "1W", "1M", "3M", "6M", "12M", "Never"])
+
+// The first bar of each trading session, or of each calendar day where the
+// host states no session hours.
+newSession = orElse(session.isFirstBar, bar.isFirst or not date.isSameDay(time, time[1]))
+var sessionOpen = time
+if newSession
+    sessionOpen = time
+
+// Intraday resets split each session into buckets of the chosen length,
+// counted from the session's first bar, and also start again with each new
+// session. Longer resets follow the calendar in the chart's own timezone:
+// weeks start on Monday, and "Never" accumulates from the first bar.
+minutes = sessionType == "1m" ? 1 : sessionType == "2m" ? 2 : sessionType == "3m" ? 3 : sessionType == "5m" ? 5 : sessionType == "10m" ? 10 : sessionType == "15m" ? 15 : sessionType == "30m" ? 30 : sessionType == "45m" ? 45 : sessionType == "1H" ? 60 : sessionType == "2H" ? 120 : sessionType == "3H" ? 180 : sessionType == "4H" ? 240 : 0
+bucket = minutes > 0 ? floor((time - sessionOpen) / (minutes * 60000)) : 0
+dayIndex = round(date.startOfDay(time) / 86400000)
+periodKey = sessionType == "1D" ? dayIndex : sessionType == "1W" ? floor((dayIndex + 3) / 7) : sessionType == "1M" ? date.year(time) * 12 + date.month(time) : sessionType == "3M" ? date.year(time) * 4 + floor((date.month(time) - 1) / 3) : sessionType == "6M" ? date.year(time) * 2 + (date.month(time) > 6 ? 1 : 0) : sessionType == "12M" ? date.year(time) : 0
+reset = bar.index == 0 or (minutes > 0 ? newSession or bucket != bucket[1] : periodKey != periodKey[1])
+
+// The plain mean of the source since the period began: every bar counts
+// once, whatever traded in it. A missing source value counts as zero.
+var total = 0.0
+var barsCounted = 0
+if reset
+    total = 0.0
+    barsCounted = 0
+total += orElse(source, 0)
+barsCounted += 1
+
+plot(total / barsCounted, "TWAP", #ffeb3b, width = 2)

@@ -1,0 +1,73 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © openalgo
+// Original work (c) mihakralj, MIT License
+
+version 1
+study("SAM: Smoothed Adaptive Momentum", precision = 2)
+
+// The library already uses the word alpha for a colour function, so the input
+// sits inside clamp, which keeps it between 0.01 and 1, and is filed under its
+// title.
+smoothing = clamp(input(0.07, "alpha", min = 0.01, max = 1, step = 0.01, tooltip = "Smoothing factor applied to the cycle measurement stage."), 0.01, 1)
+cutoff = input(8, "Cutoff", min = 2, max = 500, step = 1, tooltip = "Super Smoother cutoff period applied to the adaptive momentum.")
+
+// Every read of an earlier bar treats a bar before the start of the chart as
+// zero, so each stage answers from the first bar.
+src = orElse(close, 0)
+
+// Two-pole smoothing filter coefficients for the final stage.
+root2pi = sqrt(2) * math.pi
+a1 = exp(-root2pi / cutoff)
+b1 = 2 * a1 * math.cos(root2pi / cutoff)
+c2 = b1
+c3 = -a1 * a1
+c1 = 1 - c2 - c3
+
+// Four-bar weighted smoothing of the close.
+smooth = (src + 2 * orElse(src[1], 0) + 2 * orElse(src[2], 0) + orElse(src[3], 0)) / 6
+
+// Hilbert transform: the detrender, then the quadrature component.
+detrend = 0.0
+detrend = (0.0962 * smooth + 0.5769 * orElse(smooth[2], 0) - 0.5769 * orElse(smooth[4], 0) - 0.0962 * orElse(smooth[6], 0)) * (0.075 * orElse(detrend[1], 0) + 0.54)
+q1 = 0.0
+q1 = (0.0962 * detrend + 0.5769 * orElse(detrend[2], 0) - 0.5769 * orElse(detrend[4], 0) - 0.0962 * orElse(detrend[6], 0)) * (0.075 * orElse(q1[1], 0) + 0.54)
+i1 = orElse(detrend[3], 0)
+
+// Advance the phase of both components by 90 degrees.
+ji = 0.0
+ji = (0.0962 * i1 + 0.5769 * orElse(i1[2], 0) - 0.5769 * orElse(i1[4], 0) - 0.0962 * orElse(i1[6], 0)) * (0.075 * orElse(ji[1], 0) + 0.54)
+jq = 0.0
+jq = (0.0962 * q1 + 0.5769 * orElse(q1[2], 0) - 0.5769 * orElse(q1[4], 0) - 0.0962 * orElse(q1[6], 0)) * (0.075 * orElse(jq[1], 0) + 0.54)
+
+// Add the phasors, then smooth the homodyne products.
+i2 = 0.0
+i2 = smoothing * (i1 - jq) + (1 - smoothing) * orElse(i2[1], 0)
+q2 = 0.0
+q2 = smoothing * (q1 + ji) + (1 - smoothing) * orElse(q2[1], 0)
+rawRe = i2 * orElse(i2[1], 0) + q2 * orElse(q2[1], 0)
+rawIm = i2 * orElse(q2[1], 0) - q2 * orElse(i2[1], 0)
+re = 0.0
+re = smoothing * rawRe + (1 - smoothing) * orElse(re[1], 0)
+im = 0.0
+im = smoothing * rawIm + (1 - smoothing) * orElse(im[1], 0)
+
+// The dominant cycle period from the phase angle, held between 6 and 50 bars
+// and smoothed twice. The products above can grow past the largest number and
+// become absent; an absent or zero component gives no angle, and no angle
+// gives the 6-bar floor.
+angle = isNone(im) or isNone(re) or im == 0 or re == 0 ? 0 : math.atan(im / re)
+rawPeriod = isNone(angle) or angle == 0 ? 0 : 2 * math.pi / angle
+period = max(min(rawPeriod, 50), 6)
+instPeriod = 0.0
+instPeriod = 0.33 * period + 0.67 * orElse(instPeriod[1], 0)
+dcPeriod = 0.0
+dcPeriod = 0.15 * instPeriod + 0.85 * orElse(dcPeriod[1], 0)
+
+// Momentum over one dominant cycle, then the two-pole smoothing filter.
+dcLen = max(trunc(dcPeriod), 1)
+momentum = src - orElse(src[dcLen], 0)
+filt = 0.0
+filt = c1 * (momentum + orElse(momentum[1], 0)) / 2 + c2 * orElse(filt[1], 0) + c3 * orElse(filt[2], 0)
+
+plot(filt, "SAM", #ffeb3b, width = 2)
+level(0, "Zero", #787b86, style = "dashed")

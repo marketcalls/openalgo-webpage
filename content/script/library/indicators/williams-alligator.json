@@ -1,0 +1,57 @@
+{
+  "title": "Williams Alligator",
+  "summary": "Three smoothed averages of different lengths, each shifted forward by its own number of bars, whose spacing shows trend or rest.",
+  "description": "The Alligator draws three smoothed averages of the source, the typical price by default. The Jaw is the slowest, the Teeth sit in the middle and the Lips are the fastest. Each is a Wilder average, which weights the newest value by one over its period, and each is displaced to the right by its own offset: the value drawn on a bar is the one computed that many bars earlier.\n\nThe averages start from zero and are scaled up by the factor that zero start leaves out, until that factor has decayed away. That way each line reads as the source from the very first bar rather than climbing up from zero, and only the offsets delay where the lines begin.\n\nWith the defaults the Jaw uses 13 bars shifted 8, the Teeth 8 bars shifted 5 and the Lips 5 bars shifted 3.",
+  "howToRead": "When the three lines are tangled together, the averages agree and price has no clear direction. When they spread apart in order, Lips above Teeth above Jaw, the market is trending up; Lips below Teeth below Jaw is a downtrend. The wider the spacing, the stronger the move.\n\nA trend is often read as ending when the Lips cross back through the Teeth and the lines start to close up again. Because every line is smoothed and then shifted forward, the picture lags price, so it describes trends after they are under way rather than calling turns.",
+  "settings": [
+    {
+      "key": "source",
+      "label": "Source",
+      "description": "The price series all three averages are computed from."
+    },
+    {
+      "key": "jawPeriod",
+      "label": "Jaw Period",
+      "description": "The smoothing length of the slowest line. A longer period makes it steadier and slower to turn."
+    },
+    {
+      "key": "jawOffset",
+      "label": "Jaw Offset",
+      "description": "How many bars the Jaw is shifted to the right. Zero draws it on the bar it was computed."
+    },
+    {
+      "key": "teethPeriod",
+      "label": "Teeth Period",
+      "description": "The smoothing length of the middle line."
+    },
+    {
+      "key": "teethOffset",
+      "label": "Teeth Offset",
+      "description": "How many bars the Teeth are shifted to the right."
+    },
+    {
+      "key": "lipsPeriod",
+      "label": "Lips Period",
+      "description": "The smoothing length of the fastest line, the one that reacts first to price."
+    },
+    {
+      "key": "lipsOffset",
+      "label": "Lips Offset",
+      "description": "How many bars the Lips are shifted to the right."
+    }
+  ],
+  "faq": [
+    {
+      "q": "Why are the lines shifted forward?",
+      "a": "Each line is drawn its offset number of bars after the bar it was computed on, so the value under a bar reflects price from that many bars earlier. The offsets differ, so in a trend the three lines spread apart by their shift as well as by their smoothing."
+    },
+    {
+      "q": "Why do the lines start a few bars into the chart?",
+      "a": "The averages answer from the first bar, but each is drawn its offset number of bars later, so the Jaw starts eight bars in by default."
+    },
+    {
+      "q": "Which average does it use?",
+      "a": "A Wilder average, which is an exponential average with a weight of one over the period, started from zero and scaled so the early values are not pulled toward zero."
+    }
+  ]
+}

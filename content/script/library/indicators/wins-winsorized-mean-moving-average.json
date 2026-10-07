@@ -1,0 +1,28 @@
+{
+  "title": "WINS: Winsorized Mean Moving Average",
+  "summary": "Averages the last N closes after pulling each tail in to its boundary value, so outliers lose their pull without shrinking the sample.",
+  "description": "The winsorized mean sorts the closes in the lookback window and replaces the most extreme values at each end with the value at the cut point. The number replaced at each end is the period times the winsorize percentage, rounded down. With a period of 20 and 10 percent, the two lowest closes are set equal to the third lowest and the two highest to the third highest, and then all twenty values are averaged.\n\nUnlike a trimmed mean, nothing is thrown away: every slot still counts, but an extreme value can pull the average no further than the boundary. A setting of 0 replaces nothing and gives a simple average. The line is drawn once the window holds a full period of closes.",
+  "howToRead": "Read the line as a moving average that is hard to knock off course with one spike. A single extreme close is pulled in to the boundary value, so its effect on the line is capped. Price crossings and turns read the same way as with any moving average.\n\nBecause the extremes are capped rather than removed, every close in the window still counts toward the average. A real breakout still moves it, but its first bars count only as much as the boundary value allows.",
+  "settings": [
+    {
+      "key": "period",
+      "label": "Period",
+      "description": "How many closes the window holds. A longer period gives a smoother, slower line."
+    },
+    {
+      "key": "winPct",
+      "label": "Winsorize %",
+      "description": "The share of values at each end of the sorted window that are pulled in to the boundary. 0 gives a simple average."
+    }
+  ],
+  "faq": [
+    {
+      "q": "What is the difference from the trimmed mean?",
+      "a": "The trimmed mean drops the extreme values and averages fewer of them. The winsorized mean keeps every value but replaces the extremes with the boundary value, so the window size stays the same."
+    },
+    {
+      "q": "Why does the line start late?",
+      "a": "It waits until the window holds a full period of closes, so the first bars of the chart carry no value."
+    }
+  ]
+}

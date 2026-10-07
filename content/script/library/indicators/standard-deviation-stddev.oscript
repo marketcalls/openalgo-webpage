@@ -1,0 +1,31 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © openalgo
+// Original work (c) mihakralj, MIT License
+
+version 1
+study("Standard Deviation (STDDEV)", precision = 2)
+
+period = input(14, "Period", min = 1, max = 5000, step = 1)
+source = input(close, "Source")
+
+// Running sum and sum of squares over the last `period` values, the oldest
+// taken out before this bar's value goes in. An absent value counts as zero.
+var held = 0
+var total = 0.0
+var totalSq = 0.0
+if bar.index >= period
+    oldest = orElse(source[period], 0)
+    total -= oldest
+    totalSq -= oldest * oldest
+    held -= 1
+
+val = orElse(source, 0)
+total += val
+totalSq += val * val
+held += 1
+
+// Population standard deviation of the values held, with no warmup gap: a
+// single value has a deviation of 0.
+sd = held > 1 ? sqrt(max(0, totalSq / held - pow(total / held, 2))) : 0
+
+plot(sd, "StdDev", #ffeb3b, width = 2)

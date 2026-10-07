@@ -1,0 +1,76 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © openalgo
+// Original work (c) mihakralj, MIT License
+
+version 1
+study("Ehlers Adaptive Laguerre Filter (ALAGUERRE)", overlay = true, precision = 2)
+
+source = input(close, "Source")
+length = input(20, "Length", min = 1, max = 200, step = 1, tooltip = "Lookback for the highest/lowest normalisation of the tracking error.")
+medianLength = input(5, "Median Length", min = 1, max = 50, step = 1, tooltip = "Lookback for the median smoothing of the adaptive alpha.")
+
+len = min(200, max(1, floor(length)))
+medLen = min(50, max(1, floor(medianLength)))
+
+// A missing price falls back to the previous bar's price.
+ssrc = orElse(source, source[1])
+
+// The last len tracking errors and the last medLen normalised errors. The
+// seed entries of the first bar stay in both windows until they age out.
+var diffs: array<number> = []
+var coeffs: array<number> = []
+var l0 = none
+var l1 = none
+var l2 = none
+var l3 = none
+var lastResult = none
+
+alaguerre = none
+if not isNone(ssrc)
+    if isNone(lastResult)
+        l0 = ssrc
+        l1 = ssrc
+        l2 = ssrc
+        l3 = ssrc
+        push(diffs, 0)
+        push(coeffs, 0.5)
+    else
+        // Tracking error of the filter against the source.
+        diff = abs(ssrc - lastResult)
+        push(diffs, diff)
+        if size(diffs) > len
+            shift(diffs)
+        hh = element(diffs, 0)
+        ll = element(diffs, 0)
+        for k = 1 to size(diffs) - 1
+            d = element(diffs, k)
+            if d > hh
+                hh = d
+            if d < ll
+                ll = d
+
+        // Where this error sits in its recent range; a flat range holds 0.5.
+        coeff = hh - ll > 0.000000000000001 ? (diff - ll) / (hh - ll) : 0.5
+        push(coeffs, coeff)
+        if size(coeffs) > medLen
+            shift(coeffs)
+
+        // The adaptive factor is the median of the recent positions.
+        sorted = copy(coeffs)
+        sort(sorted, "asc")
+        sz = size(sorted)
+        smooth = sz % 2 == 1 ? element(sorted, floor(sz / 2)) : (element(sorted, sz / 2 - 1) + element(sorted, sz / 2)) / 2
+
+        p0 = l0
+        p1 = l1
+        p2 = l2
+        gam = 1 - smooth
+        l0 = smooth * ssrc + gam * p0
+        l1 = -gam * l0 + p0 + gam * p1
+        l2 = -gam * l1 + p1 + gam * p2
+        l3 = -gam * l2 + p2 + gam * l3
+
+    alaguerre = (l0 + 2 * l1 + 2 * l2 + l3) / 6
+    lastResult = alaguerre
+
+plot(alaguerre, "ALaguerre", #ff9800, width = 2)

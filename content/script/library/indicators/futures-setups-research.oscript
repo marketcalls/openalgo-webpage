@@ -1,0 +1,1655 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © openalgo
+// Original work (c) sukesan7, MPL-2.0
+
+version 1
+study("Futures Setups Research", overlay = true, precision = 2)
+
+// A multi-timeframe setup engine for index futures. It collects Fair Value
+// Gaps and Order Blocks from 5, 15, 30, 60 and 240 minute buckets folded from
+// the chart's own bars, flips them into Inversion FVGs and Breaker Blocks when
+// price closes through them, scores every active zone on structure, liquidity,
+// market context and timeframe overlap, and turns the best qualifying touch
+// into a drawn trade with a stop and 1R, 1.5R and 2R objectives. The engine is
+// built for the 1-minute chart; on other charts it computes the regime panel
+// only. A second-instrument divergence is not available to a single-symbol
+// study, so the intermarket category can reach 4 of its 5 points.
+
+// ---------------------------------------------------------------- settings
+
+indicatorEnabled = input(true, "Enable indicator", group = "01 Quick Start")
+allowUnsupportedSymbols = input(false, "Allow symbols other than NQ/ES", group = "01 Quick Start", tooltip = "The engine is tuned for NQ and ES futures. A symbol the chart never names is allowed through either way.")
+allowNonOneMinuteCharts = input(false, "Allow chart timeframes above 1 minute", group = "01 Quick Start", tooltip = "The execution engine is optimized for the 1-minute chart. Higher chart timeframes are diagnostic only unless this option is enabled.")
+sessionTimezone = input("America/New_York", "Session timezone", group = "01 Quick Start")
+futuresSession = input("1800-1700:1234567", "Futures session", group = "01 Quick Start")
+overnightSession = input("1800-0930:1234567", "Overnight session", group = "01 Quick Start")
+rthSession = input("0930-1600:23456", "Regular trading hours", group = "01 Quick Start")
+signalSession = input("0800-1600:23456", "Signal window", group = "01 Quick Start", tooltip = "Default covers the primary New York intraday window. Expand it when you intentionally want overnight or evening signals.")
+maximumActiveTrades = input(3, "Maximum active trades", min = 1, max = 3, step = 1, group = "01 Quick Start")
+showPastTrades = input(false, "Show past trades", group = "01 Quick Start")
+pastTradeRetentionHours = input(22, "Past-trade retention hours", min = 1, max = 72, step = 1, group = "01 Quick Start")
+completedRetentionMinutes = input(5, "Default completed-trade retention", min = 0, max = 120, step = 1, group = "01 Quick Start")
+maxEngineBars = input(5000, "Engine history bars", min = 500, max = 20000, step = 500, group = "01 Quick Start", tooltip = "How many of the newest bars the zone and trade engine walks. This study runs bar by bar and cannot know the newest bar in advance, so it walks every bar; context series and the regime score are computed over every bar either way.")
+
+useChartZones = input(true, "Chart-timeframe zones", group = "02 Zone Timeframes and Lifetimes")
+use5m = input(true, "5-minute", group = "02 Zone Timeframes and Lifetimes")
+use15m = input(true, "15-minute", group = "02 Zone Timeframes and Lifetimes")
+use30m = input(true, "30-minute", group = "02 Zone Timeframes and Lifetimes")
+use1h = input(true, "1-hour", group = "02 Zone Timeframes and Lifetimes")
+use4h = input(true, "4-hour", group = "02 Zone Timeframes and Lifetimes")
+chartZoneLifeMinutes = input(10, "1m/chart zone maximum life", min = 2, max = 60, step = 1, group = "02 Zone Timeframes and Lifetimes")
+zoneLife5m = input(30, "5m zone maximum life", min = 5, max = 240, step = 1, group = "02 Zone Timeframes and Lifetimes")
+zoneLife15m = input(60, "15m zone maximum life", min = 15, max = 720, step = 1, group = "02 Zone Timeframes and Lifetimes")
+zoneLife30m = input(90, "30m zone maximum life", min = 30, max = 1440, step = 1, group = "02 Zone Timeframes and Lifetimes")
+zoneLife1h = input(120, "1H zone maximum life", min = 60, max = 2880, step = 1, group = "02 Zone Timeframes and Lifetimes")
+fourHourZonesUntilSessionEnd = input(true, "4H zones last until futures-session close", group = "02 Zone Timeframes and Lifetimes")
+zoneLife4h = input(1380, "4H fallback maximum life", min = 120, max = 2880, step = 1, group = "02 Zone Timeframes and Lifetimes")
+zoneLifetimeMode = input("Fixed by timeframe", "Zone lifetime mode", options = ["Fixed by timeframe", "Shorten weaker zones"], group = "02 Zone Timeframes and Lifetimes", tooltip = "Fixed mode uses the complete timeframe-specific lifetime. Score-adjusted mode shortens moderate and weak zones but never extends them beyond the configured maximum.")
+transformedZoneLifetimePercent = input(50, "IFVG / BB lifetime (% of source zone)", min = 10, max = 100, step = 1, group = "02 Zone Timeframes and Lifetimes", tooltip = "When an FVG flips into an IFVG, or an Order Block flips into a Breaker Block, the transformed zone receives a new timer from the transformation candle.")
+strongZoneScore = input(80, "Full-life score", min = 50, max = 100, step = 1, group = "02 Zone Timeframes and Lifetimes")
+moderateZoneScore = input(65, "Three-quarter-life score", min = 30, max = 95, step = 1, group = "02 Zone Timeframes and Lifetimes")
+
+enableFvg = input(true, "Fair Value Gaps", group = "03 Zone Concepts and Size Filters")
+enableIfvg = input(true, "Inversion FVGs", group = "03 Zone Concepts and Size Filters")
+enableOb = input(true, "Order Blocks", group = "03 Zone Concepts and Size Filters")
+enableBb = input(true, "Breaker Blocks", group = "03 Zone Concepts and Size Filters")
+minimumZoneTicks = input(5, "Minimum zone width (ticks)", min = 1, max = 100, step = 1, group = "03 Zone Concepts and Size Filters", tooltip = "A zone must be at least this many minimum price ticks wide. The tick comes from the price scale, not from an input.")
+minimumZoneAtr = input(0.03, "Minimum zone size / source ATR", min = 0, max = 2, step = 0.01, group = "03 Zone Concepts and Size Filters")
+maximumZoneAtr = input(1.5, "Maximum zone size / source ATR", min = 0.1, max = 10, step = 0.05, group = "03 Zone Concepts and Size Filters")
+htfDisplacementAtr = input(0.75, "HTF displacement body / ATR", min = 0.2, max = 3, step = 0.05, group = "03 Zone Concepts and Size Filters")
+htfDisplacementBodyFraction = input(0.55, "HTF displacement body fraction", min = 0.2, max = 1, step = 0.05, group = "03 Zone Concepts and Size Filters")
+htfBosLookback = input(5, "HTF structure lookback", min = 2, max = 20, step = 1, group = "03 Zone Concepts and Size Filters")
+
+pivotLeft = input(2, "Pivot left", min = 1, max = 10, step = 1, group = "04 Structure and Liquidity")
+pivotRight = input(2, "Pivot right", min = 1, max = 10, step = 1, group = "04 Structure and Liquidity")
+structureValidityBars = input(5, "Immediate structure-event bars", min = 1, max = 20, step = 1, group = "04 Structure and Liquidity")
+structureValidityMinutes = input(30, "Same-leg structure validity minutes", min = 5, max = 180, step = 1, group = "04 Structure and Liquidity")
+displacementValidityMinutes = input(20, "Displacement validity minutes", min = 3, max = 120, step = 1, group = "04 Structure and Liquidity")
+executionDisplacementAtr = input(0.65, "Execution displacement body / ATR", min = 0.1, max = 3, step = 0.05, group = "04 Structure and Liquidity")
+executionBodyFraction = input(0.52, "Execution body fraction", min = 0.1, max = 1, step = 0.05, group = "04 Structure and Liquidity")
+useLiquidityPools = input(true, "Repeated-wick liquidity pools", group = "04 Structure and Liquidity")
+liquidityPoolToleranceTicks = input(10, "Pool tolerance in ticks", min = 2, max = 100, step = 1, group = "04 Structure and Liquidity")
+liquidityPoolMinimumTouches = input(3, "Minimum pool touches", min = 2, max = 8, step = 1, group = "04 Structure and Liquidity")
+liquidityPoolLookbackBars = input(360, "Pool lookback bars", min = 30, max = 2000, step = 1, group = "04 Structure and Liquidity")
+liquidityPoolBreakTicks = input(3, "Pool break confirmation ticks", min = 1, max = 50, step = 1, group = "04 Structure and Liquidity")
+usePoolsAsObjectives = input(true, "Use liquidity pools as trade objectives", group = "04 Structure and Liquidity")
+liquiditySweepValidityBars = input(12, "Liquidity-event validity bars", min = 1, max = 60, step = 1, group = "04 Structure and Liquidity")
+openingRangeMinutes = input("15", "Opening Range minutes", options = ["5", "15", "30"], group = "04 Structure and Liquidity")
+
+useVwap = input(true, "Session and RTH VWAP", group = "05 Market Context")
+useRsi = input(true, "RSI", group = "05 Market Context")
+rsiLength = input(14, "RSI length", min = 2, max = 50, step = 1, group = "05 Market Context")
+useZScore = input(true, "Rolling z-score", group = "05 Market Context")
+zScoreLength = input(50, "Z-score length", min = 10, max = 300, step = 1, group = "05 Market Context")
+zScoreExtreme = input(1.5, "Z-score extreme", min = 0.5, max = 4, step = 0.1, group = "05 Market Context")
+usePowerOfThree = input(true, "Power-of-three session proxy", group = "05 Market Context")
+useOpeningRange = input(true, "Opening Range breakout/retest", group = "05 Market Context")
+useRvol = input(true, "Same-time relative volume", group = "05 Market Context")
+rvolBaselineSessions = input(30, "RVOL baseline sessions", min = 5, max = 60, step = 1, group = "05 Market Context")
+rvolMinimumSamples = input(5, "RVOL minimum samples", min = 2, max = 30, step = 1, group = "05 Market Context")
+elevatedRvol = input(1.25, "Elevated RVOL", min = 0.5, max = 5, step = 0.05, group = "05 Market Context")
+
+minimumScore = input(80, "Signal minimum score", min = 50, max = 100, step = 1, group = "06 Signal Qualification")
+minimumCategories = input(4, "Minimum independent categories", min = 2, max = 6, step = 1, group = "06 Signal Qualification", tooltip = "Second-instrument divergence is not available in a single-symbol chart study, so the intermarket category can reach 4 of its 5 points rather than 5.")
+requireStructure = input(true, "Require recent BOS/MSS", group = "06 Signal Qualification")
+requireDisplacement = input(true, "Require recent displacement", group = "06 Signal Qualification")
+maximumEntryTouches = input(2, "Maximum zone touches before entry", min = 1, max = 6, step = 1, group = "06 Signal Qualification")
+oneTradePerStructuralLeg = input(true, "One trade per structural leg", group = "06 Signal Qualification")
+sameDirectionCooldownBars = input(5, "Same-direction cooldown bars", min = 0, max = 60, step = 1, group = "06 Signal Qualification")
+minimumObjectiveR = input(0.8, "Minimum space to objective in R", min = 0, max = 3, step = 0.1, group = "06 Signal Qualification")
+
+entryMode = input("Rejection close", "Entry mode", options = ["First touch", "Midpoint reclaim", "Rejection close"], group = "07 Trade Execution and Risk")
+atrLength = input(14, "ATR length", min = 5, max = 100, step = 1, group = "07 Trade Execution and Risk")
+stopBufferTicks = input(2, "Invalidation buffer ticks", min = 0, max = 100, step = 1, group = "07 Trade Execution and Risk")
+stopLimitMode = input("Automatic", "Stop-size limits", options = ["Automatic", "Custom", "Off"], group = "07 Trade Execution and Risk")
+customMaxStopTicks = input(40, "Custom maximum stop ticks", min = 2, max = 400, step = 1, group = "07 Trade Execution and Risk")
+maximumStopAtr = input(0.8, "Maximum stop / ATR", min = 0.1, max = 5, step = 0.05, group = "07 Trade Execution and Risk")
+tradeDurationMinutes = input(30, "Trade drawing duration", min = 5, max = 240, step = 1, group = "07 Trade Execution and Risk")
+maximumRetainedTrades = input(20, "Maximum retained trades", min = 3, max = 20, step = 1, group = "07 Trade Execution and Risk")
+
+setupZoneTransparency = input(90, "Setup-zone transparency", min = 70, max = 98, step = 1, group = "08 Chart and Regime Table")
+riskTransparency = input(90, "Risk transparency", min = 70, max = 98, step = 1, group = "08 Chart and Regime Table")
+reward1Transparency = input(87, "Entry-to-1R transparency", min = 70, max = 98, step = 1, group = "08 Chart and Regime Table")
+reward15Transparency = input(92, "1R-to-1.5R transparency", min = 70, max = 99, step = 1, group = "08 Chart and Regime Table")
+reward2Transparency = input(95, "1.5R-to-2R transparency", min = 70, max = 99, step = 1, group = "08 Chart and Regime Table")
+historicalTransparency = input(96, "Historical-trade transparency", min = 85, max = 99, step = 1, group = "08 Chart and Regime Table")
+lineWidth = input(2, "Stop/target line width", min = 1, max = 4, step = 1, group = "08 Chart and Regime Table")
+showRegimePanel = input(true, "Show multi-timeframe regime panel", group = "08 Chart and Regime Table")
+panelPosition = input("bottom-right", "Regime table position", options = ["top-left", "top-center", "top-right", "middle-left", "middle-center", "middle-right", "bottom-left", "bottom-center", "bottom-right"], group = "08 Chart and Regime Table", tooltip = "Kept for the settings it belongs to. A table corner is fixed before the first bar, so the panel sits in the bottom-right corner.")
+panelTextSize = input("Tiny", "Regime table text size", options = ["Tiny", "Small", "Normal", "Large"], group = "08 Chart and Regime Table", tooltip = "Kept for the settings it belongs to. A table has no text size of its own, so the panel uses the chart text size.")
+showZoneScores = input(false, "Show scores in zone labels", group = "08 Chart and Regime Table", tooltip = "When disabled, zone labels use only the timeframe and concept name. Score details remain in the research table.")
+zoneLabelPlacement = input("Inside right", "Zone label placement", options = ["Inside right", "Above right"], group = "08 Chart and Regime Table")
+liquidityLabelOffsetTicks = input(2, "Liquidity label offset (ticks)", min = 0, max = 20, step = 1, group = "08 Chart and Regime Table", tooltip = "Support labels are placed below the pool line. Resistance labels are placed above it.")
+
+showAllResearchZones = input(true, "Show active research zones", group = "09 Research Diagnostics")
+researchZoneFilter = input("Relevant only", "Research zone filter", options = ["Relevant only", "All active"], group = "09 Research Diagnostics")
+showLiquidityPoolLines = input(true, "Show active liquidity-pool lines", group = "09 Research Diagnostics")
+liquidityPoolForwardMinutes = input(10, "Liquidity-line forward projection", min = 1, max = 120, step = 1, group = "09 Research Diagnostics")
+showInvalidatedZoneHistory = input(true, "Show recently invalidated zones", group = "09 Research Diagnostics", tooltip = "Keeps the original FVG or Order Block visible up to its invalidation candle, so an FVG-to-IFVG or OB-to-BB transition stays auditable.")
+invalidatedZoneRetentionMinutes = input(120, "Invalidated-zone history retention", min = 5, max = 1440, step = 1, group = "09 Research Diagnostics")
+maximumResearchZones = input(20, "Maximum visible research zones", min = 5, max = 60, step = 1, group = "09 Research Diagnostics")
+researchCandidateMinimum = input(35, "Research candidate minimum", min = 0, max = 100, step = 1, group = "09 Research Diagnostics")
+showRejectedCandidates = input(false, "Show rejected touched candidates", group = "09 Research Diagnostics")
+
+enableAlerts = input(true, "Enable alerts", group = "10 Alerts")
+alertSignals = input(true, "BUY / SELL signal", group = "10 Alerts")
+alertTargets = input(true, "Target reached", group = "10 Alerts")
+alertStops = input(true, "Stop reached", group = "10 Alerts")
+
+// Inside a function body an input's own name reads as absent, so every
+// setting a function uses is copied into a plain name here and the functions
+// read the copy.
+indicatorEnabledSetting = indicatorEnabled
+chartZoneLifeMinutesSetting = chartZoneLifeMinutes
+zoneLife5mSetting = zoneLife5m
+zoneLife15mSetting = zoneLife15m
+zoneLife30mSetting = zoneLife30m
+zoneLife1hSetting = zoneLife1h
+fourHourZonesUntilSessionEndSetting = fourHourZonesUntilSessionEnd
+zoneLife4hSetting = zoneLife4h
+zoneLifetimeModeSetting = zoneLifetimeMode
+strongZoneScoreSetting = strongZoneScore
+moderateZoneScoreSetting = moderateZoneScore
+enableFvgSetting = enableFvg
+enableIfvgSetting = enableIfvg
+enableObSetting = enableOb
+enableBbSetting = enableBb
+minimumZoneTicksSetting = minimumZoneTicks
+minimumZoneAtrSetting = minimumZoneAtr
+maximumZoneAtrSetting = maximumZoneAtr
+structureValidityBarsSetting = structureValidityBars
+structureValidityMinutesSetting = structureValidityMinutes
+displacementValidityMinutesSetting = displacementValidityMinutes
+useLiquidityPoolsSetting = useLiquidityPools
+liquidityPoolMinimumTouchesSetting = liquidityPoolMinimumTouches
+liquidityPoolLookbackBarsSetting = liquidityPoolLookbackBars
+liquiditySweepValidityBarsSetting = liquiditySweepValidityBars
+useRvolSetting = useRvol
+elevatedRvolSetting = elevatedRvol
+entryModeSetting = entryMode
+stopLimitModeSetting = stopLimitMode
+customMaxStopTicksSetting = customMaxStopTicks
+maximumStopAtrSetting = maximumStopAtr
+
+// --------------------------------------------------------------- constants
+
+DIR_BULL = 1
+DIR_BEAR = -1
+
+Z_ACTIVE = 0
+Z_TRIGGERED = 1
+Z_INVALID = 2
+Z_EXPIRED = 3
+
+T_ACTIVE = 0
+T_COMPLETED = 1
+T_STOPPED = 2
+T_EXPIRED = 3
+
+MAX_ZONES = 140
+MAX_SESSION_SLOTS = 1500
+MAX_RVOL_SESSIONS = 60
+MAX_LIQUIDITY_POOLS = 24
+POOL_SUPPORT = 1
+POOL_RESISTANCE = -1
+MAX_CANDIDATE_LABELS = 80
+MAX_POOL_LINES = 8
+
+C_BULL_SIGNAL = #21ff99
+C_BEAR_SIGNAL = #ff3a63
+C_BULL_ZONE = #55cdb0
+C_BEAR_ZONE = #e06782
+C_RISK = #ff385b
+C_REWARD = #2def8f
+C_STOP = #ff3760
+C_TARGET = #40ff9b
+C_ACCENT = #9b5de5
+C_NEUTRAL = #878b97
+
+DEFAULT_ZONE = "America/New_York"
+DEFAULT_FUTURES = "1800-1700:1234567"
+DEFAULT_OVERNIGHT = "1800-0930:1234567"
+DEFAULT_RTH = "0930-1600:23456"
+DEFAULT_SIGNAL = "0800-1600:23456"
+
+// ------------------------------------------------------------ small helpers
+
+fn fin(x) => not isNone(x)
+
+// Halves round up, toward positive infinity.
+fn roundHalfUp(x) => floor(x + 0.5)
+
+fn clampN(v, lo, hi) => max(lo, min(hi, v))
+
+// A condition that may be absent, read as false when it is.
+fn truth(b) => b ? true : false
+
+fn strOr(v, d) =>
+    s = str.trim(v)
+    s == "" ? d : s
+
+fn isDigits(s) =>
+    ok = str.length(s) > 0
+    for k = 0 to str.length(s) - 1
+        if str.indexOf("0123456789", str.substring(s, k, k + 1)) < 0
+            ok = false
+    ok
+
+// A session window written HHMM-HHMM with an optional list of days, where the
+// day digits run 1 for Sunday to 7 for Saturday. Answers the window with its
+// whitespace removed, or "" when it cannot be read.
+fn specClean(raw) =>
+    s = str.replaceAll(str.replaceAll(str.trim(raw), " ", ""), "\t", "")
+    n = str.length(s)
+    good = n >= 9 and str.substring(s, 4, 5) == "-" and isDigits(str.substring(s, 0, 4)) and isDigits(str.substring(s, 5, 9))
+    if good and n > 9
+        days = n > 10 ? str.substring(s, 10, n) : ""
+        good = str.substring(s, 9, 10) == ":" and str.length(days) > 0
+        if good
+            for k = 0 to str.length(days) - 1
+                if str.indexOf("1234567", str.substring(days, k, k + 1)) < 0
+                    good = false
+    if good
+        h1 = toNumber(str.substring(s, 0, 2))
+        m1 = toNumber(str.substring(s, 2, 4))
+        h2 = toNumber(str.substring(s, 5, 7))
+        m2 = toNumber(str.substring(s, 7, 9))
+        good = h1 <= 23 and m1 <= 59 and h2 <= 23 and m2 <= 59
+    good ? s : ""
+
+fn specOf(value, fallback) =>
+    s = specClean(strOr(value, fallback))
+    s == "" ? specClean(fallback) : s
+
+fn specStart(s) => toNumber(str.substring(s, 0, 2)) * 60 + toNumber(str.substring(s, 2, 4))
+fn specEnd(s) => toNumber(str.substring(s, 5, 7)) * 60 + toNumber(str.substring(s, 7, 9))
+fn specDays(s) => str.length(s) > 10 ? str.substring(s, 10, str.length(s)) : ""
+
+// w is the weekday with 0 for Sunday.
+fn dayOk(days, w) => days == "" or str.contains(days, text(w + 1))
+
+// Membership in a window. An end at or before the start wraps midnight, and a
+// wrapped window belongs to the day it opened on.
+fn inSession(minute, weekday, st, en, days) =>
+    r = false
+    if st < en
+        r = minute >= st and minute < en and dayOk(days, weekday)
+    else if minute >= st
+        r = dayOk(days, weekday)
+    else if minute < en
+        r = dayOk(days, (weekday + 6) % 7)
+    r
+
+// The leading letters of the ticker, so NQ1! reads as NQ.
+fn symbolRoot(sym) =>
+    s = str.trim(sym)
+    out = ""
+    for k = 0 to str.length(s) - 1
+        ch = str.substring(s, k, k + 1)
+        if str.indexOf("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz", ch) < 0
+            break
+        out += ch
+    str.upper(out)
+
+// ------------------------------------------- higher timeframes, folded here
+
+// Folds the chart's bars into tfMin-minute buckets anchored at the futures
+// session open and answers, on every chart bar, the payload of the bucket the
+// bar belongs to. A payload reads only completed buckets ([1] and older), so
+// it is known at the first chart bar of its bucket. The averages below run on
+// the completed buckets only, each written out so it advances once per
+// bucket. Answers [opened, regime, bullFvg, bullFvgTop, bullFvgBottom,
+// fvgTime, bearFvg, bearFvgTop, bearFvgBottom, bullOb, bearOb, obTop,
+// obBottom, obTime, sourceAtr], with the flags as 1 or 0.
+fn htfStep(tfMin, tDay, minsIn, openTime, vol, atrLen, rsiLen, bosLen, dispAtr, dispFrac) =>
+    var curKey = none
+    var done = 0
+    var fT = 0.0
+    var fO = 0.0
+    var fH = 0.0
+    var fL = 0.0
+    var fC = 0.0
+    var fV = 0.0
+    var fDay = 0.0
+    var cT: array<number> = []
+    var cO: array<number> = []
+    var cH: array<number> = []
+    var cL: array<number> = []
+    var cC: array<number> = []
+    var cV: array<number> = []
+    var cAtr: array<number> = []
+    var cE20: array<number> = []
+    var cE50: array<number> = []
+    var cRsi: array<number> = []
+    var cVolAvg: array<number> = []
+    var cVwap: array<number> = []
+    var trWin: array<number> = []
+    var closeWin: array<number> = []
+    var volWin: array<number> = []
+    var atrNow = none
+    var e20Now = none
+    var e50Now = none
+    var gainAvg = none
+    var lossAvg = none
+    var diffCount = 0
+    var vwPv = 0.0
+    var vwV = 0.0
+    var vwDay = none
+    var pay: array<number> = [0.0, none, 0.0, none, none, none, 0.0, none, none, 0.0, 0.0, none, none, none, none]
+
+    key = tDay * 1440 + floor(minsIn / tfMin) * tfMin
+    opened = 0
+    if isNone(curKey) or key != curKey
+        if not isNone(curKey)
+            // The forming bucket is complete: fold it into every series.
+            prevC = size(cC) > 0 ? element(cC, size(cC) - 1) : none
+            tr = isNone(prevC) ? fH - fL : max(max(fH - fL, abs(fH - prevC)), abs(fL - prevC))
+            push(trWin, tr)
+            if size(trWin) > atrLen
+                shift(trWin)
+            if isNone(atrNow)
+                if size(trWin) >= atrLen
+                    trSum = 0.0
+                    for q = 0 to atrLen - 1
+                        trSum += element(trWin, q)
+                    atrNow = trSum / atrLen
+            else
+                atrNow = (atrNow * (atrLen - 1) + tr) / atrLen
+
+            push(closeWin, fC)
+            if size(closeWin) > 51
+                shift(closeWin)
+            nWin = size(closeWin)
+            nDone = done + 1
+            // Exponential means seeded with the simple mean of their first values.
+            if isNone(e20Now)
+                if nDone >= 20
+                    s20 = 0.0
+                    for q = nWin - 20 to nWin - 1
+                        s20 += element(closeWin, q)
+                    e20Now = s20 / 20
+            else
+                e20Now = fC * (2 / 21) + e20Now * (1 - 2 / 21)
+            if isNone(e50Now)
+                if nDone >= 50
+                    s50 = 0.0
+                    for q = nWin - 50 to nWin - 1
+                        s50 += element(closeWin, q)
+                    e50Now = s50 / 50
+            else
+                e50Now = fC * (2 / 51) + e50Now * (1 - 2 / 51)
+
+            // The relative strength index with Wilder smoothing, seeded with the
+            // simple means of the first rsiLen changes.
+            rsiNow = none
+            if not isNone(prevC)
+                d = fC - prevC
+                diffCount += 1
+                seeded = not isNone(gainAvg)
+                if seeded
+                    gainAvg = (gainAvg * (rsiLen - 1) + (d > 0 ? d : 0)) / rsiLen
+                    lossAvg = (lossAvg * (rsiLen - 1) + (d < 0 ? 0 - d : 0)) / rsiLen
+                if not seeded and diffCount >= rsiLen
+                    gSum = 0.0
+                    lSum = 0.0
+                    for q = nWin - rsiLen to nWin - 1
+                        dq = element(closeWin, q) - element(closeWin, q - 1)
+                        if dq >= 0
+                            gSum += dq
+                        else
+                            lSum -= dq
+                    gainAvg = gSum / rsiLen
+                    lossAvg = lSum / rsiLen
+                if not isNone(gainAvg)
+                    rsiNow = lossAvg == 0 ? 100 : 100 - 100 / (1 + gainAvg / lossAvg)
+
+            push(volWin, fV)
+            if size(volWin) > 20
+                shift(volWin)
+            volAvgNow = none
+            if size(volWin) == 20
+                vSum = 0.0
+                for q = 0 to 19
+                    vSum += element(volWin, q)
+                volAvgNow = vSum / 20
+
+            // Volume weighted average price of the buckets, restarted each
+            // trading day.
+            if isNone(vwDay) or fDay != vwDay
+                vwDay = fDay
+                vwPv = 0.0
+                vwV = 0.0
+            vwPv += (fH + fL + fC) / 3 * fV
+            vwV += fV
+            vwapNow = vwV > 0 ? vwPv / vwV : none
+
+            push(cT, fT)
+            push(cO, fO)
+            push(cH, fH)
+            push(cL, fL)
+            push(cC, fC)
+            push(cV, fV)
+            push(cAtr, atrNow)
+            push(cE20, e20Now)
+            push(cE50, e50Now)
+            push(cRsi, rsiNow)
+            push(cVolAvg, volAvgNow)
+            push(cVwap, vwapNow)
+            if size(cT) > 30
+                shift(cT)
+                shift(cO)
+                shift(cH)
+                shift(cL)
+                shift(cC)
+                shift(cV)
+                shift(cAtr)
+                shift(cE20)
+                shift(cE50)
+                shift(cRsi)
+                shift(cVolAvg)
+                shift(cVwap)
+            done += 1
+
+            // The payload of the bucket that opens on this bar.
+            m = size(cT)
+            c1 = element(cC, m - 1)
+            o1 = element(cO, m - 1)
+            h1 = element(cH, m - 1)
+            l1 = element(cL, m - 1)
+            a1 = element(cAtr, m - 1)
+            bucketRange = h1 - l1
+            bucketBody = abs(c1 - o1)
+            frac = bucketRange > 0 ? bucketBody / bucketRange : 0
+            bullDisp = c1 > o1 and bucketBody >= a1 * dispAtr and frac >= dispFrac
+            bearDisp = c1 < o1 and bucketBody >= a1 * dispAtr and frac >= dispFrac
+            // The extremes of the bosLen buckets that end two buckets back.
+            priorHigh = none
+            priorLow = none
+            if done - 1 - bosLen >= 0
+                priorHigh = element(cH, m - 2)
+                priorLow = element(cL, m - 2)
+                for q = m - 1 - bosLen to m - 2
+                    priorHigh = max(priorHigh, element(cH, q))
+                    priorLow = min(priorLow, element(cL, q))
+            h3 = m >= 3 ? element(cH, m - 3) : none
+            l3 = m >= 3 ? element(cL, m - 3) : none
+            t3 = m >= 3 ? element(cT, m - 3) : none
+            h2 = m >= 2 ? element(cH, m - 2) : none
+            l2 = m >= 2 ? element(cL, m - 2) : none
+            t2 = m >= 2 ? element(cT, m - 2) : none
+            c2 = m >= 2 ? element(cC, m - 2) : none
+            o2 = m >= 2 ? element(cO, m - 2) : none
+            e201 = element(cE20, m - 1)
+            e204 = m >= 4 ? element(cE20, m - 4) : none
+            e501 = element(cE50, m - 1)
+            vw1 = element(cVwap, m - 1)
+            rs1 = element(cRsi, m - 1)
+            c4 = m >= 4 ? element(cC, m - 4) : none
+            va1 = element(cVolAvg, m - 1)
+            vol1 = element(cV, m - 1)
+
+            // The bucket's regime score, -100 to 100.
+            score = 0
+            score += c1 > e201 and e201 > e501 ? 28 : c1 < e201 and e201 < e501 ? -28 : 0
+            score += e201 > e204 ? 14 : e201 < e204 ? -14 : 0
+            score += c1 > vw1 ? 16 : c1 < vw1 ? -16 : 0
+            score += rs1 >= 60 ? 16 : rs1 >= 53 ? 8 : rs1 <= 40 ? -16 : rs1 <= 47 ? -8 : 0
+            momentum = a1 > 0 ? (c1 - c4) / a1 : 0
+            score += momentum >= 1 ? 16 : momentum >= 0.35 ? 8 : momentum <= -1 ? -16 : momentum <= -0.35 ? -8 : 0
+            volRatio = va1 > 0 ? vol1 / va1 : 1
+            if volRatio >= 1.2
+                score += score > 0 ? 10 : score < 0 ? -10 : 0
+            score = roundHalfUp(clampN(score, -100, 100))
+
+            set(pay, 1, score)
+            set(pay, 2, l1 > h3 ? 1 : 0)
+            set(pay, 3, l1)
+            set(pay, 4, h3)
+            set(pay, 5, t3)
+            set(pay, 6, h1 < l3 ? 1 : 0)
+            set(pay, 7, l3)
+            set(pay, 8, h1)
+            set(pay, 9, bullDisp and c1 > priorHigh and c2 < o2 ? 1 : 0)
+            set(pay, 10, bearDisp and c1 < priorLow and c2 > o2 ? 1 : 0)
+            set(pay, 11, h2)
+            set(pay, 12, l2)
+            set(pay, 13, t2)
+            set(pay, 14, a1)
+            opened = 1
+        curKey = key
+        fT = openTime
+        fO = open
+        fH = high
+        fL = low
+        fC = close
+        fV = vol
+        fDay = tDay
+    else
+        if high > fH
+            fH = high
+        if low < fL
+            fL = low
+        fC = close
+        fV += vol
+    out = copy(pay)
+    set(out, 0, opened)
+    out
+
+// ------------------------------------------------- the chart and its clock
+
+var zone = strOr(sessionTimezone, DEFAULT_ZONE)
+var futSpec = specOf(futuresSession, DEFAULT_FUTURES)
+var ovnSpec = specOf(overnightSession, DEFAULT_OVERNIGHT)
+var rthSpec = specOf(rthSession, DEFAULT_RTH)
+var sigSpec = specOf(signalSession, DEFAULT_SIGNAL)
+var futStart = specStart(futSpec)
+var futEnd = specEnd(futSpec)
+var futDays = specDays(futSpec)
+var ovnStart = specStart(ovnSpec)
+var ovnEnd = specEnd(ovnSpec)
+var ovnDays = specDays(ovnSpec)
+var rthStart = specStart(rthSpec)
+var rthEnd = specEnd(rthSpec)
+var rthDays = specDays(rthSpec)
+var sigStart = specStart(sigSpec)
+var sigEnd = specEnd(sigSpec)
+var sigDays = specDays(sigSpec)
+
+// A wrapping futures session rolls the trading day at its own open; one that
+// does not wrap rolls at midnight in the session zone.
+var sessionWraps = futEnd <= futStart
+var anchorMinute = sessionWraps ? futStart : 0
+
+var chartSeconds = isNone(chart.intervalMinutes) ? 60 : chart.intervalMinutes * 60
+var chartIsIntraday = chartSeconds < 86400
+var chartMinutes = chartIsIntraday ? roundHalfUp(chartSeconds / 60) : 0
+var chartTf = text(chartMinutes)
+
+// The instrument tick from the price scale. When the chart states none, a
+// plausible decimal step is picked from the size of the latest closes.
+var tickWin: array<number> = []
+push(tickWin, close)
+if size(tickWin) > 50
+    shift(tickWin)
+tickRef = avg(tickWin)
+fallbackTick = tickRef > 0 ? clampN(pow(10, floor(log10(tickRef)) - 4), 0.00000001, tickRef * 0.001) : 0.01
+tick = fin(chart.tickSize) and chart.tickSize > 0 ? chart.tickSize : fallbackTick
+
+var root = symbolRoot(chart.symbol)
+var symbolKnown = root != ""
+var chartIsNq = root == "NQ" or root == "MNQ"
+var chartIsEs = root == "ES" or root == "MES"
+var supportedSymbol = chartIsNq or chartIsEs
+// A chart that never names its instrument cannot have named an unsupported one.
+var symbolGate = supportedSymbol or allowUnsupportedSymbols or not symbolKnown
+var supportedTimeframe = chartIsIntraday and (chartMinutes == 1 or (allowNonOneMinuteCharts and chartMinutes >= 1 and chartMinutes <= 5))
+var engineSupported = symbolGate and supportedTimeframe
+var autoMaxStopTicks = chartIsNq ? 32 : chartIsEs ? 12 : 32
+
+// The bar's wall clock in the session zone. Weekdays run 0 for Sunday.
+zYear = date.year(time, zone)
+zMonth = date.month(time, zone)
+zDay = date.day(time, zone)
+zWeekday = date.dayOfWeek(time, zone) % 7
+minuteOfDay = date.hour(time, zone) * 60 + date.minute(time, zone)
+dateKey = zYear * 10000 + zMonth * 100 + zDay
+dayIndex = floor(date.from(zYear, zMonth, zDay, 0, 0, 0, "UTC") / 86400000)
+tradingDay = dayIndex + (sessionWraps and minuteOfDay >= anchorMinute ? 1 : 0)
+minsSinceAnchor = mod(minuteOfDay - anchorMinute, 1440)
+weekIndex = floor((tradingDay + 3) / 7)
+inFutures = inSession(minuteOfDay, zWeekday, futStart, futEnd, futDays)
+inOvernight = inSession(minuteOfDay, zWeekday, ovnStart, ovnEnd, ovnDays)
+inRth = inSession(minuteOfDay, zWeekday, rthStart, rthEnd, rthDays)
+inSignalWindow = inSession(minuteOfDay, zWeekday, sigStart, sigEnd, sigDays)
+
+// Times in the engine are in seconds; a bar closes one interval after it opens.
+barTime = time / 1000
+barClose = barTime + chartSeconds
+vols = orElse(volume, 0)
+barNo = bar.index
+
+// --------------------------------------------------------- per-bar series
+
+atrValue = atr(atrLength)
+rsiValue = rsi(close, rsiLength)
+zMean = sma(close, zScoreLength)
+zStd = stdev(close, zScoreLength)
+zScore = fin(zStd) and zStd > 0 and fin(zMean) ? (close - zMean) / zStd : none
+ema20 = ema(close, 20)
+ema50 = ema(close, 50)
+pivHigh = pivotHigh(high, pivotLeft, pivotRight)
+pivLow = pivotLow(low, pivotLeft, pivotRight)
+bosHigh = highest(high, htfBosLookback)
+bosLow = lowest(low, htfBosLookback)
+
+h5 = htfStep(5, tradingDay, minsSinceAnchor, barTime, vols, atrLength, rsiLength, htfBosLookback, htfDisplacementAtr, htfDisplacementBodyFraction)
+h15 = htfStep(15, tradingDay, minsSinceAnchor, barTime, vols, atrLength, rsiLength, htfBosLookback, htfDisplacementAtr, htfDisplacementBodyFraction)
+h30 = htfStep(30, tradingDay, minsSinceAnchor, barTime, vols, atrLength, rsiLength, htfBosLookback, htfDisplacementAtr, htfDisplacementBodyFraction)
+h60 = htfStep(60, tradingDay, minsSinceAnchor, barTime, vols, atrLength, rsiLength, htfBosLookback, htfDisplacementAtr, htfDisplacementBodyFraction)
+h240 = htfStep(240, tradingDay, minsSinceAnchor, barTime, vols, atrLength, rsiLength, htfBosLookback, htfDisplacementAtr, htfDisplacementBodyFraction)
+
+// ------------------------------------------------------------ carried state
+
+// Zones, one array per field, index for index.
+var zId: array<string> = []
+var zType: array<string> = []
+var zTf: array<string> = []
+var zDir: array<number> = []
+var zTop: array<number> = []
+var zBot: array<number> = []
+var zMid: array<number> = []
+var zAtr: array<number> = []
+var zOrigin: array<number> = []
+var zDetTime: array<number> = []
+var zDetBar: array<number> = []
+var zSessClose: array<number> = []
+var zExpiry: array<number> = []
+var zLife: array<number> = []
+var zState: array<number> = []
+var zTerm: array<number> = []
+var zTouch: array<number> = []
+var zWasInt: array<number> = []
+var zScoreNow: array<number> = []
+var zCand: array<number> = []
+var zLeg: array<number> = []
+
+// Liquidity pools.
+var pSide: array<number> = []
+var pPrice: array<number> = []
+var pTouches: array<number> = []
+var pLastBar: array<number> = []
+var pFirstTime: array<number> = []
+var pActive: array<number> = []
+
+// Trades.
+var tDir: array<number> = []
+var tState: array<number> = []
+var tScore: array<number> = []
+var tEntryTime: array<number> = []
+var tEntryBar: array<number> = []
+var tPlannedEnd: array<number> = []
+var tTerm: array<number> = []
+var tEntry: array<number> = []
+var tStop: array<number> = []
+var tT1: array<number> = []
+var tT15: array<number> = []
+var tT2: array<number> = []
+var tT1Hit: array<number> = []
+var tT15Hit: array<number> = []
+var tOutText: array<string> = []
+var tOutPrice: array<number> = []
+var tOutTime: array<number> = []
+var tZoneTop: array<number> = []
+var tZoneBot: array<number> = []
+
+// Rejected-candidate labels.
+var cdTime: array<number> = []
+var cdPrice: array<number> = []
+var cdText: array<string> = []
+
+// Same-time relative volume: one slot per bar position in the futures session,
+// each holding the volumes of the latest sessions in a ring.
+var slotOf: array<number> = []
+var slotSum: array<number> = []
+var slotCount: array<number> = []
+var slotWrite: array<number> = []
+var slotHist: array<number> = []
+if bar.isFirst
+    for q = 0 to MAX_SESSION_SLOTS - 1
+        push(slotOf, -1)
+
+var futuresPv = 0.0
+var futuresVolume = 0.0
+var rthPv = 0.0
+var rthVolume = 0.0
+
+var overnightHigh = none
+var overnightLow = none
+var openingRangeHigh = none
+var openingRangeLow = none
+var openingRangeComplete = false
+
+var dayHigh = none
+var dayLow = none
+var pdh = none
+var pdl = none
+var weekHigh = none
+var weekLow = none
+var pwh = none
+var pwl = none
+
+var latestSwingHigh = none
+var latestSwingLow = none
+
+var lastBullStructureBar = none
+var lastBearStructureBar = none
+var lastBullStructureTime = none
+var lastBearStructureTime = none
+var lastBullStructureType = ""
+var lastBearStructureType = ""
+var structuralLegId = 0
+var trendDirection = 0
+
+var lastBullDisplacementTime = none
+var lastBearDisplacementTime = none
+
+var lastBullPoolSweepPrice = none
+var lastBearPoolSweepPrice = none
+var lastBullPoolSweepTouches = 0
+var lastBearPoolSweepTouches = 0
+var lastBullLiquidityBar = none
+var lastBearLiquidityBar = none
+
+var lastBullTradeBar = none
+var lastBearTradeBar = none
+var lastBullTradeLeg = none
+var lastBearTradeLeg = none
+
+var latestCandidateScore = none
+var latestCandidateReason = ""
+var latestCandidateZone = ""
+
+var localRegimeScore = 0
+var weightedRegimeScore = 0
+var activeVwap = none
+var rvol = none
+var poolTolerance = 0.0
+
+// ----------------------------------------------------------- zone helpers
+
+fn timeframeRank(tf) => tf == "240" ? 6 : tf == "60" ? 5 : tf == "30" ? 4 : tf == "15" ? 3 : tf == "5" ? 2 : 1
+
+fn timeframeLabel(tf) => tf == "240" ? "4H" : tf == "60" ? "1H" : tf == "30" ? "30M" : tf == "15" ? "15M" : tf == "5" ? "5M" : (tf == "1" or chartTf == "1") ? "1M" : tf
+
+fn zoneMaxLifeMinutes(tf) => tf == "240" ? zoneLife4hSetting : tf == "60" ? zoneLife1hSetting : tf == "30" ? zoneLife30mSetting : tf == "15" ? zoneLife15mSetting : tf == "5" ? zoneLife5mSetting : chartZoneLifeMinutesSetting
+
+fn zoneLifeMinutes(tf, score) =>
+    maximumLife = zoneMaxLifeMinutes(tf)
+    multiplier = zoneLifetimeModeSetting == "Fixed by timeframe" ? 1 : score >= strongZoneScoreSetting ? 1 : score >= moderateZoneScoreSetting ? 0.75 : 0.5
+    max(2, roundHalfUp(maximumLife * multiplier))
+
+// 17:00 in the session zone on the day of t, or on the next day once spent.
+fn futuresSessionCloseAfter(t) =>
+    ms = t * 1000
+    y = date.year(ms, zone)
+    mo = date.month(ms, zone)
+    dd = date.day(ms, zone)
+    closeToday = date.from(y, mo, dd, 17, 0, 0, zone) / 1000
+    t < closeToday ? closeToday : date.from(y, mo, dd + 1, 17, 0, 0, zone) / 1000
+
+fn zoneExpiryTime(detectedTime, tf, score, lifetimeFactor, sessionClose) =>
+    safeFactor = clampN(lifetimeFactor, 0.1, 1)
+    r = 0.0
+    if tf == "240" and fourHourZonesUntilSessionEndSetting and fin(sessionClose)
+        remaining = max(120, sessionClose - detectedTime)
+        r = detectedTime + roundHalfUp(remaining * safeFactor)
+    else
+        baseMinutes = zoneLifeMinutes(tf, score)
+        r = detectedTime + max(2, roundHalfUp(baseMinutes * safeFactor)) * 60
+    r
+
+fn zoneAuthorityRaw(tf, zt, top, bottom, srcAtr) =>
+    tfPoints = tf == "240" ? 22 : tf == "60" ? 18 : tf == "30" ? 15 : tf == "15" ? 12 : tf == "5" ? 8 : 5
+    typePoints = zt == "BB" ? 4 : zt == "IFVG" ? 3 : zt == "OB" ? 2 : 0
+    sizeAtr = srcAtr > 0 ? abs(top - bottom) / srcAtr : 0
+    widthPoints = roundHalfUp(clampN(sizeAtr / 0.6, 0, 1) * 4)
+    min(tfPoints + typePoints + widthPoints, 30)
+
+fn shiftZone() =>
+    shift(zId)
+    shift(zType)
+    shift(zTf)
+    shift(zDir)
+    shift(zTop)
+    shift(zBot)
+    shift(zMid)
+    shift(zAtr)
+    shift(zOrigin)
+    shift(zDetTime)
+    shift(zDetBar)
+    shift(zSessClose)
+    shift(zExpiry)
+    shift(zLife)
+    shift(zState)
+    shift(zTerm)
+    shift(zTouch)
+    shift(zWasInt)
+    shift(zScoreNow)
+    shift(zCand)
+    shift(zLeg)
+    true
+
+// Adds a zone when its kind is enabled, it is new, and its width passes the
+// tick and ATR filters; keeps the newest MAX_ZONES either way.
+fn registerZone(zt, direction, tf, top, bottom, sourceTime, sourceAtr, lifetimeFactor) =>
+    nTop = max(top, bottom)
+    nBottom = min(top, bottom)
+    safeAtr = isNone(sourceAtr) or sourceAtr <= 0 ? atrValue : sourceAtr
+    zoneWidth = nTop - nBottom
+    sizeAtr = fin(safeAtr) and safeAtr > 0 ? zoneWidth / safeAtr : none
+    sizeTicks = zoneWidth / tick
+    newId = zt + "|" + text(direction) + "|" + tf + "|" + text(sourceTime)
+    typeEnabled = zt == "FVG" ? enableFvgSetting : zt == "IFVG" ? enableIfvgSetting : zt == "OB" ? enableObSetting : enableBbSetting
+    if indicatorEnabledSetting and typeEnabled and indexOf(zId, newId) < 0 and fin(sizeAtr) and sizeTicks >= minimumZoneTicksSetting and sizeAtr >= minimumZoneAtrSetting and sizeAtr <= maximumZoneAtrSetting
+        initialAuthority = zoneAuthorityRaw(tf, zt, nTop, nBottom, safeAtr)
+        detectedTime = barClose
+        sessionClose = tf == "240" and fourHourZonesUntilSessionEndSetting ? futuresSessionCloseAfter(detectedTime) : none
+        push(zId, newId)
+        push(zType, zt)
+        push(zTf, tf)
+        push(zDir, direction)
+        push(zTop, nTop)
+        push(zBot, nBottom)
+        push(zMid, (nTop + nBottom) * 0.5)
+        push(zAtr, safeAtr)
+        push(zOrigin, sourceTime)
+        push(zDetTime, detectedTime)
+        push(zDetBar, barNo)
+        push(zSessClose, sessionClose)
+        push(zExpiry, zoneExpiryTime(detectedTime, tf, max(initialAuthority, moderateZoneScoreSetting), lifetimeFactor, sessionClose))
+        push(zLife, lifetimeFactor)
+        push(zState, Z_ACTIVE)
+        push(zTerm, none)
+        push(zTouch, 0)
+        push(zWasInt, 0)
+        push(zScoreNow, 0)
+        push(zCand, 0)
+        push(zLeg, 0)
+    while size(zId) > MAX_ZONES
+        shiftZone()
+    true
+
+fn activeTradeCount() =>
+    n = 0
+    for k = 0 to size(tState) - 1
+        if element(tState, k) == T_ACTIVE
+            n += 1
+    n
+
+// Points for every other active zone of the same direction that overlaps
+// this one, more for a higher timeframe and for a zone nested inside it.
+fn overlapPoints(zi) =>
+    points = 0
+    tTop = element(zTop, zi)
+    tBot = element(zBot, zi)
+    for k = 0 to size(zId) - 1
+        if k == zi or element(zState, k) != Z_ACTIVE or element(zDir, k) != element(zDir, zi)
+            continue
+        oTop = element(zTop, k)
+        oBot = element(zBot, k)
+        if not (max(tBot, oBot) < min(tTop, oTop))
+            continue
+        tf = element(zTf, k)
+        rankPoints = tf == "240" ? 15 : tf == "60" ? 12 : tf == "30" ? 9 : tf == "15" ? 7 : tf == "5" ? 4 : 2
+        nested = tBot >= oBot and tTop <= oTop
+        points += rankPoints + (nested ? 3 : 0)
+    min(points, 25)
+
+fn nearPrice(a, b, tolerance) => truth(fin(a) and fin(b) and abs(a - b) <= tolerance)
+
+fn shiftPool() =>
+    shift(pSide)
+    shift(pPrice)
+    shift(pTouches)
+    shift(pLastBar)
+    shift(pFirstTime)
+    shift(pActive)
+    true
+
+// A pivot joins the nearest active pool of its side within the tolerance, or
+// starts a new one. A pool that gains a more extreme pivot moves to it.
+fn registerLiquidityPool(side, pivotPrice, originBar, originTime) =>
+    matched = -1
+    nearestDistance = 0.0
+    for p = 0 to size(pSide) - 1
+        distance = abs(element(pPrice, p) - pivotPrice)
+        eligible = element(pActive, p) == 1 and element(pSide, p) == side and originBar - element(pLastBar, p) <= liquidityPoolLookbackBarsSetting and distance <= poolTolerance
+        if eligible and (matched < 0 or distance < nearestDistance)
+            matched = p
+            nearestDistance = distance
+    if matched < 0
+        push(pSide, side)
+        push(pPrice, pivotPrice)
+        push(pTouches, 1)
+        push(pLastBar, originBar)
+        push(pFirstTime, originTime)
+        push(pActive, 1)
+    else
+        newBoundaryExtreme = side == POOL_SUPPORT ? pivotPrice < element(pPrice, matched) : pivotPrice > element(pPrice, matched)
+        if newBoundaryExtreme
+            set(pPrice, matched, pivotPrice)
+            set(pFirstTime, matched, originTime)
+        set(pTouches, matched, element(pTouches, matched) + 1)
+        set(pLastBar, matched, originBar)
+    while size(pSide) > MAX_LIQUIDITY_POOLS
+        shiftPool()
+    true
+
+// [price, touches] of the most touched qualified pool on the zone's side.
+fn poolNearZone(zi) =>
+    requiredSide = element(zDir, zi) == DIR_BULL ? POOL_SUPPORT : POOL_RESISTANCE
+    bestTouches = 0
+    bestPrice = none
+    for p = 0 to size(pSide) - 1
+        price = element(pPrice, p)
+        touches = element(pTouches, p)
+        inRange = price >= element(zBot, zi) - poolTolerance and price <= element(zTop, zi) + poolTolerance
+        if element(pActive, p) == 1 and element(pSide, p) == requiredSide and touches >= liquidityPoolMinimumTouchesSetting and inRange and touches > bestTouches
+            bestTouches = touches
+            bestPrice = price
+    [bestPrice, bestTouches]
+
+fn nearestPoolObjective(direction, entryPrice) =>
+    requiredSide = direction == DIR_BULL ? POOL_RESISTANCE : POOL_SUPPORT
+    bestPrice = none
+    bestDistance = 0.0
+    for p = 0 to size(pSide) - 1
+        price = element(pPrice, p)
+        validDirection = direction == DIR_BULL ? price > entryPrice : price < entryPrice
+        if element(pActive, p) == 1 and element(pSide, p) == requiredSide and element(pTouches, p) >= liquidityPoolMinimumTouchesSetting and validDirection
+            distance = abs(price - entryPrice)
+            if isNone(bestPrice) or distance < bestDistance
+                bestDistance = distance
+                bestPrice = price
+    bestPrice
+
+fn objectiveDistanceOf(direction, entryPrice, references) =>
+    result = none
+    for k = 0 to size(references) - 1
+        lvl = element(references, k)
+        if isNone(lvl)
+            continue
+        valid = direction == DIR_BULL ? lvl > entryPrice : lvl < entryPrice
+        distance = abs(lvl - entryPrice)
+        if valid and (isNone(result) or distance < result)
+            result = distance
+    result
+
+fn stopValid(direction, entryPrice, stopPrice, atrNow) =>
+    risk = abs(entryPrice - stopPrice)
+    riskTicks = risk / tick
+    riskAtr = fin(atrNow) and atrNow > 0 ? risk / atrNow : none
+    maxTicks = stopLimitModeSetting == "Automatic" ? autoMaxStopTicks : customMaxStopTicksSetting
+    sideValid = direction == DIR_BULL ? stopPrice < entryPrice : stopPrice > entryPrice
+    limitsValid = stopLimitModeSetting == "Off" or (riskTicks >= 2 and riskTicks <= maxTicks and (isNone(riskAtr) or riskAtr <= maximumStopAtrSetting))
+    truth(sideValid and risk > tick and limitsValid)
+
+fn entryTrigger(zi) =>
+    top = element(zTop, zi)
+    bottom = element(zBot, zi)
+    mid = element(zMid, zi)
+    bull = element(zDir, zi) == DIR_BULL
+    intersects = low <= top and high >= bottom
+    r = false
+    if entryModeSetting == "First touch"
+        r = intersects
+    else if entryModeSetting == "Midpoint reclaim"
+        r = bull ? intersects and low <= mid and close > mid : intersects and high >= mid and close < mid
+    else
+        r = bull ? intersects and close > mid and close > open : intersects and close < mid and close < open
+    truth(r)
+
+// --------------------------------------------------------------- the bar
+
+prevIn = barNo > 0
+wasFutures = prevIn ? truth(inFutures[1]) : false
+wasOvernight = prevIn ? truth(inOvernight[1]) : false
+wasRth = prevIn ? truth(inRth[1]) : false
+newTradingDay = not prevIn or tradingDay != tradingDay[1]
+newWeek = not prevIn or weekIndex != weekIndex[1]
+newFuturesSession = inFutures and (not wasFutures or newTradingDay)
+newOvernight = inOvernight and (not wasOvernight or newTradingDay)
+newRth = inRth and (not wasRth or not prevIn or dateKey != dateKey[1])
+
+zScorePrev = prevIn ? zScore[1] : none
+rsiPrev = prevIn ? rsiValue[1] : none
+
+// Session and regular-hours volume weighted average prices.
+typical = (high + low + close) / 3
+if newFuturesSession
+    futuresPv = typical * vols
+    futuresVolume = vols
+else if inFutures
+    futuresPv += typical * vols
+    futuresVolume += vols
+if newRth
+    rthPv = typical * vols
+    rthVolume = vols
+else if inRth
+    rthPv += typical * vols
+    rthVolume += vols
+futuresVwap = futuresVolume > 0 ? futuresPv / futuresVolume : none
+rthVwap = rthVolume > 0 ? rthPv / rthVolume : none
+activeVwap = inRth and fin(rthVwap) ? rthVwap : futuresVwap
+
+// Same-time relative volume: this bar's volume over the mean volume of the
+// same bar position in the latest sessions, counted from 18:00 in the zone.
+minutesSinceFuturesOpen = minuteOfDay >= 1080 ? minuteOfDay - 1080 : minuteOfDay + 360
+sessionSlot = chartMinutes > 0 ? floor(minutesSinceFuturesOpen / chartMinutes) : -1
+validSessionSlot = inFutures and sessionSlot >= 0 and sessionSlot < MAX_SESSION_SLOTS
+slotNo = -1
+if validSessionSlot
+    slotNo = element(slotOf, sessionSlot)
+    if slotNo < 0
+        slotNo = size(slotSum)
+        push(slotSum, 0)
+        push(slotCount, 0)
+        push(slotWrite, 0)
+        for q = 0 to MAX_RVOL_SESSIONS - 1
+            push(slotHist, none)
+        set(slotOf, sessionSlot, slotNo)
+rvolAverage = slotNo >= 0 and element(slotCount, slotNo) >= rvolMinimumSamples ? element(slotSum, slotNo) / element(slotCount, slotNo) : none
+rvol = validSessionSlot and fin(rvolAverage) and rvolAverage > 0 ? vols / rvolAverage : none
+if slotNo >= 0
+    at = slotNo * MAX_RVOL_SESSIONS + element(slotWrite, slotNo)
+    oldVolume = element(slotHist, at)
+    set(slotSum, slotNo, element(slotSum, slotNo) - orElse(oldVolume, 0) + vols)
+    newCount = element(slotCount, slotNo) + (fin(oldVolume) ? 0 : 1)
+    set(slotHist, at, vols)
+    set(slotCount, slotNo, min(newCount, rvolBaselineSessions))
+    set(slotWrite, slotNo, (element(slotWrite, slotNo) + 1) % rvolBaselineSessions)
+
+// Overnight range and opening range.
+if newOvernight
+    overnightHigh = high
+    overnightLow = low
+else if inOvernight
+    overnightHigh = fin(overnightHigh) ? max(overnightHigh, high) : high
+    overnightLow = fin(overnightLow) ? min(overnightLow, low) : low
+
+orStart = date.from(zYear, zMonth, zDay, 9, 30, 0, zone) / 1000
+orEnd = orStart + toNumber(openingRangeMinutes) * 60
+inOpeningRange = inRth and chartIsIntraday and barTime < orEnd and barClose > orStart
+if newRth
+    openingRangeHigh = high
+    openingRangeLow = low
+    openingRangeComplete = false
+else if inOpeningRange
+    openingRangeHigh = max(orElse(openingRangeHigh, high), high)
+    openingRangeLow = min(orElse(openingRangeLow, low), low)
+else if inRth and not openingRangeComplete and fin(openingRangeHigh)
+    openingRangeComplete = true
+
+// Previous trading day and previous week extremes.
+if newTradingDay
+    pdh = dayHigh
+    pdl = dayLow
+    dayHigh = high
+    dayLow = low
+else
+    dayHigh = fin(dayHigh) ? max(dayHigh, high) : high
+    dayLow = fin(dayLow) ? min(dayLow, low) : low
+if newWeek
+    pwh = weekHigh
+    pwl = weekLow
+    weekHigh = high
+    weekLow = low
+else
+    weekHigh = fin(weekHigh) ? max(weekHigh, high) : high
+    weekLow = fin(weekLow) ? min(weekLow, low) : low
+
+// Higher-timeframe zones, registered on the first chart bar of each bucket.
+engineOn = engineSupported
+fn registerHtf(p, tf, enabled) =>
+    if engineOn and enabled and element(p, 0) == 1
+        if element(p, 2) == 1
+            registerZone("FVG", DIR_BULL, tf, element(p, 3), element(p, 4), element(p, 5), element(p, 14), 1)
+        if element(p, 6) == 1
+            registerZone("FVG", DIR_BEAR, tf, element(p, 7), element(p, 8), element(p, 5), element(p, 14), 1)
+        if element(p, 9) == 1
+            registerZone("OB", DIR_BULL, tf, element(p, 11), element(p, 12), element(p, 13), element(p, 14), 1)
+        if element(p, 10) == 1
+            registerZone("OB", DIR_BEAR, tf, element(p, 11), element(p, 12), element(p, 13), element(p, 14), 1)
+    true
+
+registerHtf(h5, "5", use5m)
+registerHtf(h15, "15", use15m)
+registerHtf(h30, "30", use30m)
+registerHtf(h60, "60", use1h)
+registerHtf(h240, "240", use4h)
+
+// Chart-timeframe zones.
+chartRange = high - low
+chartBody = abs(close - open)
+chartBodyFraction = chartRange > 0 ? chartBody / chartRange : 0
+chartBullDisp = close > open and chartBody >= atrValue * htfDisplacementAtr and chartBodyFraction >= htfDisplacementBodyFraction
+chartBearDisp = close < open and chartBody >= atrValue * htfDisplacementAtr and chartBodyFraction >= htfDisplacementBodyFraction
+priorBosHigh = prevIn ? bosHigh[1] : none
+priorBosLow = prevIn ? bosLow[1] : none
+chartBullFvg = barNo >= 2 and low > high[2]
+chartBearFvg = barNo >= 2 and high < low[2]
+chartBullOb = prevIn and chartBullDisp and close > priorBosHigh and close[1] < open[1]
+chartBearOb = prevIn and chartBearDisp and close < priorBosLow and close[1] > open[1]
+if engineOn and useChartZones
+    if truth(chartBullFvg)
+        registerZone("FVG", DIR_BULL, chartTf, low, high[2], barTime[2], atrValue, 1)
+    if truth(chartBearFvg)
+        registerZone("FVG", DIR_BEAR, chartTf, low[2], high, barTime[2], atrValue, 1)
+    if truth(chartBullOb)
+        registerZone("OB", DIR_BULL, chartTf, high[1], low[1], barTime[1], atrValue, 1)
+    if truth(chartBearOb)
+        registerZone("OB", DIR_BEAR, chartTf, high[1], low[1], barTime[1], atrValue, 1)
+
+// Pivots, swing structure and liquidity pools.
+pivotOriginTime = barNo - pivotRight >= 0 ? barTime[pivotRight] : barTime[barNo]
+if fin(pivHigh)
+    latestSwingHigh = pivHigh
+    if useLiquidityPools
+        registerLiquidityPool(POOL_RESISTANCE, pivHigh, barNo - pivotRight, pivotOriginTime)
+if fin(pivLow)
+    latestSwingLow = pivLow
+    if useLiquidityPools
+        registerLiquidityPool(POOL_SUPPORT, pivLow, barNo - pivotRight, pivotOriginTime)
+
+prevClose = prevIn ? close[1] : none
+bullStructureEvent = truth(fin(latestSwingHigh) and close > latestSwingHigh and prevClose <= latestSwingHigh)
+bearStructureEvent = truth(fin(latestSwingLow) and close < latestSwingLow and prevClose >= latestSwingLow)
+if bullStructureEvent
+    lastBullStructureType = trendDirection == DIR_BEAR ? "MSS" : "BOS"
+    lastBullStructureBar = barNo
+    lastBullStructureTime = barClose
+    trendDirection = DIR_BULL
+    structuralLegId += 1
+if bearStructureEvent
+    lastBearStructureType = trendDirection == DIR_BULL ? "MSS" : "BOS"
+    lastBearStructureBar = barNo
+    lastBearStructureTime = barClose
+    trendDirection = DIR_BEAR
+    structuralLegId += 1
+
+// Displacement on the execution timeframe.
+bullDisplacement = truth(close > open and chartBody >= atrValue * executionDisplacementAtr and chartBodyFraction >= executionBodyFraction)
+bearDisplacement = truth(close < open and chartBody >= atrValue * executionDisplacementAtr and chartBodyFraction >= executionBodyFraction)
+if bullDisplacement
+    lastBullDisplacementTime = barClose
+if bearDisplacement
+    lastBearDisplacementTime = barClose
+
+// Pool sweeps and breaks, newest pool first.
+poolTolerance = liquidityPoolToleranceTicks * tick
+bullPoolSweep = false
+bearPoolSweep = false
+if useLiquidityPools and size(pSide) > 0
+    breakDistance = liquidityPoolBreakTicks * tick
+    for p = size(pSide) - 1 to 0 step -1
+        if element(pActive, p) != 1
+            continue
+        price = element(pPrice, p)
+        side = element(pSide, p)
+        qualified = element(pTouches, p) >= liquidityPoolMinimumTouches
+        tooOld = barNo - element(pLastBar, p) > liquidityPoolLookbackBars
+        supportSweep = side == POOL_SUPPORT and qualified and low < price - tick and close > price
+        resistanceSweep = side == POOL_RESISTANCE and qualified and high > price + tick and close < price
+        supportBroken = side == POOL_SUPPORT and close < price - breakDistance
+        resistanceBroken = side == POOL_RESISTANCE and close > price + breakDistance
+        if supportSweep
+            bullPoolSweep = true
+            lastBullPoolSweepPrice = price
+            lastBullPoolSweepTouches = element(pTouches, p)
+            set(pActive, p, 0)
+        else if resistanceSweep
+            bearPoolSweep = true
+            lastBearPoolSweepPrice = price
+            lastBearPoolSweepTouches = element(pTouches, p)
+            set(pActive, p, 0)
+        else if supportBroken or resistanceBroken or tooOld
+            set(pActive, p, 0)
+
+// Sweeps of the fixed levels: overnight, previous day, previous week and the
+// completed opening range.
+bullStaticSweep = truth((fin(overnightLow) and low < overnightLow and close > overnightLow) or (fin(pdl) and low < pdl and close > pdl) or (fin(pwl) and low < pwl and close > pwl) or (openingRangeComplete and low < openingRangeLow and close > openingRangeLow))
+bearStaticSweep = truth((fin(overnightHigh) and high > overnightHigh and close < overnightHigh) or (fin(pdh) and high > pdh and close < pdh) or (fin(pwh) and high > pwh and close < pwh) or (openingRangeComplete and high > openingRangeHigh and close < openingRangeHigh))
+if bullPoolSweep or bullStaticSweep
+    lastBullLiquidityBar = barNo
+if bearPoolSweep or bearStaticSweep
+    lastBearLiquidityBar = barNo
+
+// Market context.
+bullVwapReject = truth(useVwap and fin(activeVwap) and low <= activeVwap and close > activeVwap and close > open)
+bearVwapReject = truth(useVwap and fin(activeVwap) and high >= activeVwap and close < activeVwap and close < open)
+bullZReversal = truth(useZScore and fin(zScore) and zScorePrev <= 0 - zScoreExtreme and zScore > zScorePrev)
+bearZReversal = truth(useZScore and fin(zScore) and zScorePrev >= zScoreExtreme and zScore < zScorePrev)
+bullRsiContext = truth(useRsi and ((rsiPrev < 35 and rsiValue > rsiPrev) or (rsiValue > 50 and rsiValue > rsiPrev)))
+bearRsiContext = truth(useRsi and ((rsiPrev > 65 and rsiValue < rsiPrev) or (rsiValue < 50 and rsiValue < rsiPrev)))
+bullPo3 = truth(usePowerOfThree and bullStaticSweep and close > futuresVwap)
+bearPo3 = truth(usePowerOfThree and bearStaticSweep and close < futuresVwap)
+bullOrb = truth(useOpeningRange and openingRangeComplete and close > openingRangeHigh and low <= openingRangeHigh)
+bearOrb = truth(useOpeningRange and openingRangeComplete and close < openingRangeLow and high >= openingRangeLow)
+
+// Regime scores: the chart's own, then the weighted blend with the buckets.
+closeBack3 = barNo >= 3 ? close[3] : none
+ema20Back = barNo >= 3 ? ema20[3] : none
+localScore = 0
+localScore += close > ema20 and ema20 > ema50 ? 28 : close < ema20 and ema20 < ema50 ? -28 : 0
+localScore += ema20 > ema20Back ? 14 : ema20 < ema20Back ? -14 : 0
+localScore += close > activeVwap ? 16 : close < activeVwap ? -16 : 0
+localScore += rsiValue >= 60 ? 16 : rsiValue >= 53 ? 8 : rsiValue <= 40 ? -16 : rsiValue <= 47 ? -8 : 0
+localMomentum = atrValue > 0 ? (close - closeBack3) / atrValue : 0
+localScore += localMomentum >= 1 ? 16 : localMomentum >= 0.35 ? 8 : localMomentum <= -1 ? -16 : localMomentum <= -0.35 ? -8 : 0
+if orElse(rvol, 1) >= elevatedRvol
+    localScore += localScore > 0 ? 10 : localScore < 0 ? -10 : 0
+localRegimeScore = roundHalfUp(clampN(localScore, -100, 100))
+r5 = element(h5, 1)
+r15 = element(h15, 1)
+r30 = element(h30, 1)
+r60 = element(h60, 1)
+r240 = element(h240, 1)
+weightedRegimeScore = roundHalfUp((orElse(r240, 0) * 25 + orElse(r60, 0) * 20 + orElse(r30, 0) * 15 + orElse(r15, 0) * 15 + orElse(r5, 0) * 15 + localRegimeScore * 10) / 100)
+
+// ---------------------------------------------------------- zone scoring
+
+// [total, categories, structureRecent, displacementRecent] for zone zi on
+// this bar. Zone authority up to 30, overlap up to 25, structure up to 20,
+// liquidity up to 15, context up to 10 and intermarket up to 5.
+fn scoreZone(zi) =>
+    bull = element(zDir, zi) == DIR_BULL
+    mid = element(zMid, zi)
+    top = element(zTop, zi)
+    bottom = element(zBot, zi)
+    zonePoints = zoneAuthorityRaw(element(zTf, zi), element(zType, zi), top, bottom, element(zAtr, zi))
+    overlap = overlapPoints(zi)
+
+    structureTimeValue = bull ? lastBullStructureTime : lastBearStructureTime
+    structureBarValue = bull ? lastBullStructureBar : lastBearStructureBar
+    structureTypeValue = bull ? lastBullStructureType : lastBearStructureType
+    immediateStructure = truth(fin(structureBarValue) and barNo - structureBarValue <= structureValidityBarsSetting)
+    timedStructure = truth(fin(structureTimeValue) and barClose - structureTimeValue <= structureValidityMinutesSetting * 60)
+    sameLegStructure = element(zLeg, zi) > 0 and element(zLeg, zi) == structuralLegId and trendDirection == element(zDir, zi)
+    structureRecent = immediateStructure or timedStructure or sameLegStructure
+    mssRecent = structureRecent and structureTypeValue == "MSS"
+
+    displacementTimeValue = bull ? lastBullDisplacementTime : lastBearDisplacementTime
+    displacementRecent = truth(fin(displacementTimeValue) and barClose - displacementTimeValue <= displacementValidityMinutesSetting * 60)
+    structurePoints = (mssRecent ? 14 : structureRecent ? 10 : trendDirection == element(zDir, zi) ? 6 : 0) + (displacementRecent ? 6 : 0)
+    structurePoints = min(structurePoints, 20)
+
+    liquidityBar = bull ? lastBullLiquidityBar : lastBearLiquidityBar
+    liquidityRecent = truth(fin(liquidityBar) and barNo - liquidityBar <= liquiditySweepValidityBarsSetting)
+    nearPool = poolNearZone(zi)
+    poolPriceNear = element(nearPool, 0)
+    poolTouchesNear = element(nearPool, 1)
+    poolNear = useLiquidityPoolsSetting and poolTouchesNear >= liquidityPoolMinimumTouchesSetting and fin(poolPriceNear)
+    sweptPoolPrice = bull ? lastBullPoolSweepPrice : lastBearPoolSweepPrice
+    sweptPoolTouches = bull ? lastBullPoolSweepTouches : lastBearPoolSweepTouches
+    sweptPoolNearZone = truth(liquidityRecent and sweptPoolTouches >= liquidityPoolMinimumTouchesSetting and fin(sweptPoolPrice) and sweptPoolPrice >= bottom - poolTolerance and sweptPoolPrice <= top + poolTolerance)
+    wide = atrValue * 0.2
+    tight = atrValue * 0.15
+    staticNearZone = nearPrice(mid, pdh, wide) or nearPrice(mid, pdl, wide) or nearPrice(mid, pwh, wide) or nearPrice(mid, pwl, wide) or nearPrice(mid, overnightHigh, wide) or nearPrice(mid, overnightLow, wide) or nearPrice(mid, openingRangeHigh, wide) or nearPrice(mid, openingRangeLow, wide) or nearPrice(mid, latestSwingHigh, tight) or nearPrice(mid, latestSwingLow, tight)
+    poolStrengthPoints = poolNear ? min(7, 4 + max(0, poolTouchesNear - liquidityPoolMinimumTouchesSetting)) : 0
+    liquidityPoints = (liquidityRecent ? 6 : 0) + (sweptPoolNearZone ? 3 : 0) + poolStrengthPoints + (staticNearZone ? 3 : 0) + (element(zTouch, zi) <= 1 ? 1 : 0)
+    liquidityPoints = min(liquidityPoints, 15)
+
+    vwapAligned = bull ? bullVwapReject or (nearPrice(mid, activeVwap, tight) and close >= activeVwap) : bearVwapReject or (nearPrice(mid, activeVwap, tight) and close <= activeVwap)
+    zAligned = bull ? bullZReversal : bearZReversal
+    rsiAligned = bull ? bullRsiContext : bearRsiContext
+    directionalRegime = bull ? weightedRegimeScore : 0 - weightedRegimeScore
+    regimePoints = directionalRegime >= 55 ? 5 : directionalRegime >= 25 ? 3 : directionalRegime <= -25 ? -2 : 0
+    contextPoints = (truth(vwapAligned) ? 4 : 0) + regimePoints + (zAligned ? 1 : 0) + (rsiAligned ? 1 : 0) + (useRvolSetting and orElse(rvol, 0) >= elevatedRvolSetting ? 1 : 0)
+    contextPoints = trunc(clampN(contextPoints, 0, 10))
+
+    // A divergence against a second instrument is not available here, so its
+    // three points are never awarded.
+    po3Aligned = bull ? bullPo3 : bearPo3
+    orbAligned = bull ? bullOrb : bearOrb
+    intermarketPoints = min((po3Aligned ? 2 : 0) + (orbAligned ? 2 : 0), 5)
+
+    totalScore = min(zonePoints + overlap + structurePoints + liquidityPoints + contextPoints + intermarketPoints, 100)
+    categories = 1 + (overlap > 0 ? 1 : 0) + (structurePoints >= 10 ? 1 : 0) + (liquidityPoints > 0 ? 1 : 0) + (contextPoints > 0 ? 1 : 0) + (intermarketPoints > 0 ? 1 : 0)
+    [totalScore, categories, structureRecent ? 1 : 0, displacementRecent ? 1 : 0]
+
+// ------------------------------------------------- zone and trade engine
+
+// The best zone is held by its id, because a zone added later in the pass
+// can shift the arrays under a stored index.
+bestZone = ""
+bestDir = 0
+bestTop = 0.0
+bestBot = 0.0
+bestScore = -1
+researchBestScore = -1
+bestStop = 0.0
+bestRisk = 0.0
+researchCandidateEvent = false
+buyNow = false
+sellNow = false
+targetNow = false
+stopNow = false
+
+for zi = size(zId) - 1 to 0 step -1
+    if zi >= size(zId) or element(zState, zi) != Z_ACTIVE
+        continue
+    bull = element(zDir, zi) == DIR_BULL
+    top = element(zTop, zi)
+    bottom = element(zBot, zi)
+
+    closeInvalid = bull ? close < bottom : close > top
+    if closeInvalid
+        zt = element(zType, zi)
+        transformedType = zt == "FVG" and enableIfvg ? "IFVG" : zt == "OB" and enableBb ? "BB" : ""
+        set(zState, zi, Z_INVALID)
+        set(zTerm, zi, barClose)
+        if transformedType != ""
+            registerZone(transformedType, 0 - element(zDir, zi), element(zTf, zi), top, bottom, barTime, element(zAtr, zi), transformedZoneLifetimePercent * 0.01)
+        continue
+
+    intersects = low <= top and high >= bottom
+    firstInteractionNow = intersects and element(zWasInt, zi) == 0 and barNo > element(zDetBar, zi)
+    if firstInteractionNow
+        set(zTouch, zi, element(zTouch, zi) + 1)
+    set(zWasInt, zi, intersects ? 1 : 0)
+
+    scored = scoreZone(zi)
+    totalScore = element(scored, 0)
+    categories = element(scored, 1)
+    structureRecent = element(scored, 2) == 1
+    displacementRecent = element(scored, 3) == 1
+    set(zScoreNow, zi, totalScore)
+    if element(zLeg, zi) == 0 and structureRecent and trendDirection == element(zDir, zi)
+        set(zLeg, zi, structuralLegId)
+    set(zExpiry, zi, zoneExpiryTime(element(zDetTime, zi), element(zTf, zi), totalScore, element(zLife, zi), element(zSessClose, zi)))
+
+    if barClose > element(zExpiry, zi)
+        set(zState, zi, Z_EXPIRED)
+        set(zTerm, zi, element(zExpiry, zi))
+        continue
+
+    trigger = barNo > element(zDetBar, zi) and entryTrigger(zi)
+    touchGate = element(zTouch, zi) > 0 and element(zTouch, zi) <= maximumEntryTouches
+    structureGate = not requireStructure or structureRecent
+    displacementGate = not requireDisplacement or displacementRecent
+    cooldownGate = bull ? (isNone(lastBullTradeBar) or barNo - lastBullTradeBar > sameDirectionCooldownBars) : (isNone(lastBearTradeBar) or barNo - lastBearTradeBar > sameDirectionCooldownBars)
+    legGate = not oneTradePerStructuralLeg or (bull ? (isNone(lastBullTradeLeg) or lastBullTradeLeg != structuralLegId) : (isNone(lastBearTradeLeg) or lastBearTradeLeg != structuralLegId))
+    stopPrice = bull ? bottom - stopBufferTicks * tick : top + stopBufferTicks * tick
+    stopGate = stopValid(element(zDir, zi), close, stopPrice, atrValue)
+    riskValue = abs(close - stopPrice)
+    poolObjective = usePoolsAsObjectives ? nearestPoolObjective(element(zDir, zi), close) : none
+    objectiveDistance = objectiveDistanceOf(element(zDir, zi), close, [pdh, pdl, pwh, pwl, overnightHigh, overnightLow, openingRangeHigh, openingRangeLow, poolObjective])
+    objectiveGate = minimumObjectiveR <= 0 or isNone(objectiveDistance) or riskValue <= 0 or objectiveDistance / riskValue >= minimumObjectiveR
+    scoreGate = totalScore >= minimumScore and categories >= minimumCategories
+    qualifiedNow = engineSupported and inSignalWindow and trigger and touchGate and structureGate and displacementGate and cooldownGate and legGate and stopGate and objectiveGate and scoreGate and activeTradeCount() < maximumActiveTrades
+
+    if intersects and totalScore > researchBestScore
+        researchBestScore = totalScore
+        latestCandidateScore = totalScore
+        latestCandidateZone = timeframeLabel(element(zTf, zi)) + " " + element(zType, zi)
+        latestCandidateReason = qualifiedNow ? "QUALIFIED" : not scoreGate ? "Score/categories" : not structureGate ? "No structure" : not displacementGate ? "No displacement" : not touchGate ? "Touch limit" : not stopGate ? "Stop invalid" : not objectiveGate ? "Objective too close" : not inSignalWindow ? "Outside signal window" : "Lifecycle gate"
+
+    if intersects and totalScore >= researchCandidateMinimum and element(zCand, zi) == 0
+        researchCandidateEvent = true
+        set(zCand, zi, 1)
+
+    if qualifiedNow and totalScore > bestScore
+        bestZone = element(zId, zi)
+        bestDir = element(zDir, zi)
+        bestTop = top
+        bestBot = bottom
+        bestScore = totalScore
+        bestStop = stopPrice
+        bestRisk = riskValue
+
+// A new trade from the best qualifying zone.
+if bestZone != "" and activeTradeCount() < maximumActiveTrades
+    entryTime = barClose
+    entryPrice = close
+    direction = bestDir
+    up = direction == DIR_BULL
+    push(tDir, direction)
+    push(tState, T_ACTIVE)
+    push(tScore, bestScore)
+    push(tEntryTime, entryTime)
+    push(tEntryBar, barNo)
+    push(tPlannedEnd, entryTime + tradeDurationMinutes * 60)
+    push(tTerm, none)
+    push(tEntry, entryPrice)
+    push(tStop, bestStop)
+    push(tT1, up ? entryPrice + bestRisk : entryPrice - bestRisk)
+    push(tT15, up ? entryPrice + bestRisk * 1.5 : entryPrice - bestRisk * 1.5)
+    push(tT2, up ? entryPrice + bestRisk * 2 : entryPrice - bestRisk * 2)
+    push(tT1Hit, 0)
+    push(tT15Hit, 0)
+    push(tOutText, "")
+    push(tOutPrice, none)
+    push(tOutTime, none)
+    push(tZoneTop, bestTop)
+    push(tZoneBot, bestBot)
+    bestAt = indexOf(zId, bestZone)
+    if bestAt >= 0
+        set(zState, bestAt, Z_TRIGGERED)
+        set(zTerm, bestAt, entryTime)
+        set(zLeg, bestAt, structuralLegId)
+    if up
+        lastBullTradeBar = barNo
+        lastBullTradeLeg = structuralLegId
+        buyNow = true
+    else
+        lastBearTradeBar = barNo
+        lastBearTradeLeg = structuralLegId
+        sellNow = true
+
+// Trade management: stop first, then 2R, then the partial objectives and
+// the time limit. Finished trades are kept for the retention period.
+retention = (showPastTrades ? pastTradeRetentionHours * 60 : completedRetentionMinutes) * 60
+for ti = size(tDir) - 1 to 0 step -1
+    if element(tState, ti) == T_ACTIVE and barNo > element(tEntryBar, ti)
+        up = element(tDir, ti) == DIR_BULL
+        stopHit = up ? low <= element(tStop, ti) : high >= element(tStop, ti)
+        target2Hit = up ? high >= element(tT2, ti) : low <= element(tT2, ti)
+        target15Hit = up ? high >= element(tT15, ti) : low <= element(tT15, ti)
+        target1Hit = up ? high >= element(tT1, ti) : low <= element(tT1, ti)
+        if stopHit
+            set(tState, ti, T_STOPPED)
+            set(tTerm, ti, barClose)
+            set(tOutText, ti, "STOP -1R")
+            set(tOutPrice, ti, element(tStop, ti))
+            set(tOutTime, ti, barClose)
+            stopNow = true
+        else if target2Hit
+            set(tT1Hit, ti, 1)
+            set(tT15Hit, ti, 1)
+            set(tState, ti, T_COMPLETED)
+            set(tTerm, ti, barClose)
+            set(tOutText, ti, "WIN +2R")
+            set(tOutPrice, ti, element(tT2, ti))
+            set(tOutTime, ti, barClose)
+            targetNow = true
+        else
+            if target15Hit
+                set(tT15Hit, ti, 1)
+                set(tT1Hit, ti, 1)
+            else if target1Hit
+                set(tT1Hit, ti, 1)
+            if barClose >= element(tPlannedEnd, ti)
+                hit15 = element(tT15Hit, ti) == 1
+                hit1 = element(tT1Hit, ti) == 1
+                set(tState, ti, T_EXPIRED)
+                set(tTerm, ti, element(tPlannedEnd, ti))
+                set(tOutText, ti, hit15 ? "TIME +1.5R" : hit1 ? "TIME +1R" : "TIME")
+                set(tOutPrice, ti, hit15 ? element(tT15, ti) : hit1 ? element(tT1, ti) : element(tEntry, ti))
+                set(tOutTime, ti, element(tPlannedEnd, ti))
+    if element(tState, ti) != T_ACTIVE
+        if fin(element(tTerm, ti)) and barTime > element(tTerm, ti) + retention
+            remove(tDir, ti)
+            remove(tState, ti)
+            remove(tScore, ti)
+            remove(tEntryTime, ti)
+            remove(tEntryBar, ti)
+            remove(tPlannedEnd, ti)
+            remove(tTerm, ti)
+            remove(tEntry, ti)
+            remove(tStop, ti)
+            remove(tT1, ti)
+            remove(tT15, ti)
+            remove(tT2, ti)
+            remove(tT1Hit, ti)
+            remove(tT15Hit, ti)
+            remove(tOutText, ti)
+            remove(tOutPrice, ti)
+            remove(tOutTime, ti)
+            remove(tZoneTop, ti)
+            remove(tZoneBot, ti)
+while size(tDir) > maximumRetainedTrades
+    shift(tDir)
+    shift(tState)
+    shift(tScore)
+    shift(tEntryTime)
+    shift(tEntryBar)
+    shift(tPlannedEnd)
+    shift(tTerm)
+    shift(tEntry)
+    shift(tStop)
+    shift(tT1)
+    shift(tT15)
+    shift(tT2)
+    shift(tT1Hit)
+    shift(tT15Hit)
+    shift(tOutText)
+    shift(tOutPrice)
+    shift(tOutTime)
+    shift(tZoneTop)
+    shift(tZoneBot)
+
+// A label for a touched candidate that did not qualify.
+if showRejectedCandidates and researchCandidateEvent and fin(latestCandidateScore) and latestCandidateScore >= researchCandidateMinimum and latestCandidateReason != "QUALIFIED"
+    push(cdTime, barClose)
+    push(cdPrice, close)
+    push(cdText, "CANDIDATE " + text(latestCandidateScore) + "\n" + latestCandidateReason)
+    while size(cdTime) > MAX_CANDIDATE_LABELS
+        shift(cdTime)
+        shift(cdPrice)
+        shift(cdText)
+
+// ------------------------------------------------------------- the picture
+
+// Drawn from the state at the newest bar: the research zones newest first,
+// the qualified liquidity pools, every retained trade, and the candidates.
+fn opacityOf(transparency) => (100 - transparency) / 100
+
+if bar.isLast
+    draw.deleteAll()
+    lastCloseTime = barClose
+    if showAllResearchZones
+        shownZones = 0
+        for zi = size(zId) - 1 to 0 step -1
+            if shownZones >= maximumResearchZones
+                break
+            top = element(zTop, zi)
+            bottom = element(zBot, zi)
+            zoneDistance = close > top ? close - top : close < bottom ? bottom - close : 0
+            relevantZone = researchZoneFilter == "All active" or element(zScoreNow, zi) >= researchCandidateMinimum or truth(zoneDistance <= atrValue * 4)
+            activeVisible = element(zState, zi) == Z_ACTIVE
+            invalidHistoryVisible = showInvalidatedZoneHistory and element(zState, zi) == Z_INVALID and fin(element(zTerm, zi)) and lastCloseTime <= element(zTerm, zi) + invalidatedZoneRetentionMinutes * 60
+            if not (relevantZone and (activeVisible or truth(invalidHistoryVisible)))
+                continue
+            rightTime = activeVisible ? element(zExpiry, zi) : element(zTerm, zi)
+            originTime = element(zOrigin, zi)
+            if isNone(rightTime) or isNone(originTime)
+                continue
+            zoneColor = element(zDir, zi) == DIR_BULL ? C_BULL_ZONE : C_BEAR_ZONE
+            draw.box(originTime * 1000, top, rightTime * 1000, bottom, color = withAlpha(zoneColor, activeVisible ? 0.28 : 0.16), fillColor = zoneColor, opacity = activeVisible ? 0.06 : 0.03)
+            terminalSuffix = activeVisible ? "" : " invalid"
+            scoreSuffix = showZoneScores ? " " + text(element(zScoreNow, zi)) : ""
+            durationSec = max(rightTime - originTime, 60)
+            labelInset = min(30, max(10, roundHalfUp(durationSec * 0.05)))
+            inside = zoneLabelPlacement == "Inside right"
+            labelX = inside ? rightTime - roundHalfUp(labelInset * 0.55) : rightTime
+            labelY = inside ? element(zMid, zi) : top + max(tick * 4, (top - bottom) * 0.1)
+            if fin(labelX) and fin(labelY)
+                draw.label(labelX * 1000, labelY, timeframeLabel(element(zTf, zi)) + " " + element(zType, zi) + terminalSuffix + scoreSuffix, textColor = activeVisible ? zoneColor : withAlpha(zoneColor, 0.65), align = inside ? "center" : "right")
+            shownZones += 1
+
+    if showLiquidityPoolLines
+        shownPools = 0
+        for p = size(pSide) - 1 to 0 step -1
+            if shownPools >= MAX_POOL_LINES
+                break
+            if element(pActive, p) != 1 or element(pTouches, p) < liquidityPoolMinimumTouches
+                continue
+            price = element(pPrice, p)
+            support = element(pSide, p) == POOL_SUPPORT
+            poolRight = lastCloseTime + liquidityPoolForwardMinutes * 60
+            poolColor = support ? C_BULL_ZONE : C_BEAR_ZONE
+            draw.line(element(pFirstTime, p) * 1000, price, poolRight * 1000, price, color = withAlpha(poolColor, 0.68), width = 1, style = "dashed")
+            labelOffset = liquidityLabelOffsetTicks * tick
+            draw.label(poolRight * 1000, support ? price - labelOffset : price + labelOffset, support ? "SUPPORT ZONE" : "RESISTANCE ZONE", textColor = withAlpha(poolColor, 0.26), align = "left")
+            shownPools += 1
+
+    for ti = 0 to size(tDir) - 1
+        terminal = element(tState, ti) != T_ACTIVE
+        rightTime = terminal and fin(element(tTerm, ti)) ? element(tTerm, ti) : element(tPlannedEnd, ti)
+        entryTime = element(tEntryTime, ti)
+        if isNone(rightTime) or isNone(entryTime)
+            continue
+        up = element(tDir, ti) == DIR_BULL
+        signalColor = up ? C_BULL_SIGNAL : C_BEAR_SIGNAL
+        setupColor = terminal ? C_NEUTRAL : up ? C_BULL_ZONE : C_BEAR_ZONE
+        entryPrice = element(tEntry, ti)
+        t1 = element(tT1, ti)
+        t15 = element(tT15, ti)
+        t2 = element(tT2, ti)
+        stopAt = element(tStop, ti)
+        // The setup zone, the risk band and the three reward bands.
+        bandTops = [element(tZoneTop, ti), entryPrice, entryPrice, t1, t15]
+        bandBottoms = [element(tZoneBot, ti), stopAt, t1, t15, t2]
+        bandColors = [setupColor, C_RISK, C_REWARD, C_REWARD, C_REWARD]
+        bandClear = [setupZoneTransparency, riskTransparency, reward1Transparency, reward15Transparency, reward2Transparency]
+        for b = 0 to 4
+            bTop = element(bandTops, b)
+            bBot = element(bandBottoms, b)
+            if fin(bTop) and fin(bBot)
+                draw.box(entryTime * 1000, max(bTop, bBot), rightTime * 1000, min(bTop, bBot), color = withAlpha(element(bandColors, b), 0), fillColor = element(bandColors, b), opacity = opacityOf(terminal ? historicalTransparency : element(bandClear, b)))
+        // The stop and the three objectives, each a line with its caption.
+        levelPrices = [stopAt, t1, t15, t2]
+        levelColors = [C_STOP, C_TARGET, C_TARGET, C_TARGET]
+        levelFades = [0.4, 0.4, 0.32, 0.26]
+        levelTexts = ["STOP", "1R", "1.5R", "2R"]
+        for v = 0 to 3
+            lp = element(levelPrices, v)
+            if fin(lp)
+                lc = element(levelColors, v)
+                draw.line(entryTime * 1000, lp, rightTime * 1000, lp, color = terminal ? withAlpha(lc, element(levelFades, v)) : lc, width = lineWidth)
+                draw.label(rightTime * 1000, lp, element(levelTexts, v), textColor = lc, align = "left")
+        if fin(entryPrice)
+            draw.label(entryTime * 1000, entryPrice, (up ? "BUY " : "SELL ") + text(element(tScore, ti)), textColor = terminal ? withAlpha(signalColor, 0.28) : signalColor, align = "center")
+        outText = element(tOutText, ti)
+        if outText != "" and fin(element(tOutPrice, ti)) and fin(element(tOutTime, ti))
+            st = element(tState, ti)
+            draw.label(element(tOutTime, ti) * 1000, element(tOutPrice, ti), outText, textColor = st == T_STOPPED ? C_STOP : st == T_COMPLETED ? C_TARGET : C_NEUTRAL, align = "left")
+
+    for k = 0 to size(cdTime) - 1
+        draw.label(element(cdTime, k) * 1000, element(cdPrice, k), element(cdText, k), textColor = withAlpha(C_NEUTRAL, 0.28), align = "left")
+
+// ------------------------------------------------------------ regime panel
+
+fn regimeText(score) => isNone(score) ? "WAITING" : score >= 60 ? "STRONG BULL" : score >= 25 ? "BULLISH" : score <= -60 ? "STRONG BEAR" : score <= -25 ? "BEARISH" : "BALANCED"
+fn regimeColor(score) => isNone(score) ? C_NEUTRAL : score >= 25 ? C_BULL_SIGNAL : score <= -25 ? C_BEAR_SIGNAL : C_NEUTRAL
+fn regimeLine(name, score) => name + " " + regimeText(score) + " " + (isNone(score) ? "-" : text(abs(score)))
+
+panel = table("Regime detection", 4, 3, position = "bottomRight", bgColor = #0d111ff2, borderWidth = 1)
+
+if bar.isLast and showRegimePanel
+    headBg = withAlpha(C_ACCENT, 0.88)
+    cell(panel, 0, 0, "REGIME DETECTION", textColor = white, bgColor = headBg, align = "center")
+    cell(panel, 0, 1, "", bgColor = headBg)
+    cell(panel, 0, 2, "", bgColor = headBg)
+    cell(panel, 1, 0, regimeLine("4H", r240), textColor = white, bgColor = withAlpha(regimeColor(r240), 0.18), align = "center")
+    cell(panel, 1, 1, regimeLine("1H", r60), textColor = white, bgColor = withAlpha(regimeColor(r60), 0.18), align = "center")
+    cell(panel, 1, 2, regimeLine("30M", r30), textColor = white, bgColor = withAlpha(regimeColor(r30), 0.18), align = "center")
+    cell(panel, 2, 0, regimeLine("15M", r15), textColor = white, bgColor = withAlpha(regimeColor(r15), 0.18), align = "center")
+    cell(panel, 2, 1, regimeLine("5M", r5), textColor = white, bgColor = withAlpha(regimeColor(r5), 0.18), align = "center")
+    executionLabel = chartMinutes == 1 ? "1M" : text(chartMinutes) + "M"
+    cell(panel, 2, 2, regimeLine(executionLabel, localRegimeScore), textColor = white, bgColor = withAlpha(regimeColor(localRegimeScore), 0.18), align = "center")
+    engineText = engineSupported ? "READY" : (supportedSymbol or not symbolKnown) ? "USE 1M" : "CHECK SYMBOL"
+    cell(panel, 3, 0, "ENGINE " + engineText, textColor = white, bgColor = withAlpha(engineSupported ? C_BULL_SIGNAL : C_BEAR_SIGNAL, 0.18), align = "center")
+    cell(panel, 3, 1, "THRESHOLD " + text(minimumScore) + " / " + text(minimumCategories) + " categories", textColor = white, bgColor = withAlpha(C_NEUTRAL, 0.18), align = "center")
+    cell(panel, 3, 2, "LATEST " + (fin(latestCandidateScore) ? text(latestCandidateScore) + " " + latestCandidateZone : "-"), textColor = white, bgColor = withAlpha(C_NEUTRAL, 0.18), align = "center")
+
+// ------------------------------------------------------------------ alerts
+
+if enableAlerts and alertSignals and buyNow
+    alert("Futures Setups Research produced a confirmed BUY signal.", "futures-setups-buy", "Futures setups BUY")
+if enableAlerts and alertSignals and sellNow
+    alert("Futures Setups Research produced a confirmed SELL signal.", "futures-setups-sell", "Futures setups SELL")
+if enableAlerts and alertTargets and targetNow
+    alert("A Futures Setups Research trade reached 2R.", "futures-setups-target", "Futures setups target")
+if enableAlerts and alertStops and stopNow
+    alert("A Futures Setups Research trade reached its stop.", "futures-setups-stop", "Futures setups stop")

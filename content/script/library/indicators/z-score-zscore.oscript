@@ -1,0 +1,35 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © openalgo
+// Original work (c) mihakralj, MIT License
+
+version 1
+study("Z-Score (ZSCORE)", precision = 2)
+
+source = input(close, "Source")
+period = input(14, "Period", min = 2, max = 5000, step = 1)
+
+// Running sums over the last period values. The window is partial until it
+// fills, and absent values are left out of the sums and the count.
+var sumY = 0.0
+var sumY2 = 0.0
+var validCount = 0
+if bar.index >= period
+    oldest = source[period]
+    if not isNone(oldest)
+        sumY -= oldest
+        sumY2 -= oldest * oldest
+        validCount -= 1
+if not isNone(source)
+    sumY += source
+    sumY2 += source * source
+    validCount += 1
+
+// Distance from the window mean in population standard deviations. A flat
+// window has no spread to measure, so it reports 0.
+zscore = none
+if validCount >= 2 and not isNone(source)
+    mean = sumY / validCount
+    sd = sqrt(max(sumY2 / validCount - mean * mean, 0))
+    zscore = sd > 1e-10 ? (source - mean) / sd : 0
+
+plot(zscore, "Z-Score", #ffeb3b, width = 2)

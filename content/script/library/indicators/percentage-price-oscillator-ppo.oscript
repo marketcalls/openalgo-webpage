@@ -1,0 +1,49 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © openalgo
+// Original work (c) mihakralj, MIT License
+
+version 1
+study("Percentage Price Oscillator (PPO)", precision = 2)
+
+source = input(close, "Source")
+fastLength = input(12, "Fast Length", min = 1, max = 5000, step = 1)
+slowLength = input(26, "Slow Length", min = 1, max = 5000, step = 1)
+signalLength = input(9, "Signal Length", min = 1, max = 5000, step = 1)
+
+// An exponential mean with weight 2 / length whose accumulator starts at zero.
+// The first value is returned as it is; after that the accumulator is divided
+// by (1 - e), where e is (1 - weight) raised to the number of updates, until e
+// falls below 1e-10. A bar with no value keeps the last result.
+fn compensatedEma(value, len) =>
+    w = 2 / max(len, 1)
+    var acc = none
+    var result = none
+    var e = 1.0
+    var warming = true
+    if not isNone(value)
+        if isNone(acc)
+            acc = 0.0
+            result = value
+        else
+            acc = w * (value - acc) + acc
+            if warming
+                e = e * (1 - w)
+                denom = 1 - e
+                result = abs(denom) > 1e-12 ? acc / denom : acc
+                if e <= 1e-10
+                    warming = false
+            else
+                result = acc
+    result
+
+fast = compensatedEma(source, fastLength)
+slow = compensatedEma(source, slowLength)
+
+// The gap between the two means as a percentage of the slow one.
+ppoLine = isNone(fast) or isNone(slow) or slow == 0 ? none : 100 * (fast - slow) / slow
+signalLine = compensatedEma(ppoLine, signalLength)
+histogram = ppoLine - signalLine
+
+plot(ppoLine, "PPO", #2962ff, width = 2)
+plot(signalLine, "Signal", #ff5252, width = 2)
+plot(histogram, "Histogram", #787b86, style = "histogram")

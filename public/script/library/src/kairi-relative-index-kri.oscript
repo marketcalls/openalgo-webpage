@@ -1,0 +1,27 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © openalgo
+// Original work (c) mihakralj, MIT License
+
+version 1
+study("Kairi Relative Index (KRI)", precision = 4)
+
+source = input(close, "Source")
+period = input(14, "Period", min = 1, max = 5000, step = 1, tooltip = "SMA lookback period.")
+
+// A missing value enters the average as zero.
+current = orElse(source, 0)
+
+// A simple average over the last period values, or over every value so far
+// while fewer than period have arrived, kept as a running total.
+var total = 0.0
+if bar.index >= period
+    total = total - current[period]
+total = total + current
+filled = min(bar.index + 1, period)
+mean = total / max(1, filled)
+
+// The percentage distance of the source from that average.
+kri = mean != 0 ? 100 * (current - mean) / mean : 0
+
+plot(kri, "KRI", #ffeb3b, width = 2)
+level(0, "Zero", #787b86, style = "dashed")

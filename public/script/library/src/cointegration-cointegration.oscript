@@ -1,0 +1,126 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © openalgo
+// Original work (c) mihakralj, MIT License
+
+version 1
+study("Cointegration (COINTEGRATION)", precision = 4)
+
+source1 = input(close, "Source 1")
+source2 = input(open, "Source 2", tooltip = "Series B of the pair, a second price series read from the same instrument.")
+period = input(20, "Period", min = 2, max = 5000, step = 1)
+
+// The regression of the residual runs over one bar fewer than the pair.
+p = max(2, floor(period))
+window = p - 1
+
+// The rolling statistics below answer from the first bar over however many
+// values the window holds so far, instead of waiting for it to fill.
+
+// Mean of the values present in the last `len` bars. With none present it
+// answers the raw value.
+fn rollingMean(src, len) =>
+    var total = 0.0
+    var valid = 0
+    oldest = src[len]
+    if not isNone(oldest)
+        total = total - oldest
+        valid = valid - 1
+    if not isNone(src)
+        total = total + src
+        valid = valid + 1
+    m = valid > 0 ? total / valid : none
+    isNone(m) ? src : m
+
+// Population standard deviation over the last `len` bars, reading an absent
+// value as zero, and zero until two values are in.
+fn rollingStdev(src, len) =>
+    var total = 0.0
+    var totalSq = 0.0
+    var n = 0
+    oldest = orElse(src[len], 0)
+    if bar.index >= len
+        total = total - oldest
+        totalSq = totalSq - oldest * oldest
+        n = n - 1
+    v = orElse(src, 0)
+    total = total + v
+    totalSq = totalSq + v * v
+    n = n + 1
+    m = total / n
+    n > 1 ? sqrt(max(0, totalSq / n - m * m)) : 0
+
+// Population correlation over the last `len` bars, counting only bars where
+// both series have a value, and absent until two such bars are in.
+fn rollingCorrelation(a, b, len) =>
+    var sumA = 0.0
+    var sumB = 0.0
+    var sumSqA = 0.0
+    var sumSqB = 0.0
+    var sumProd = 0.0
+    var n = 0
+    oldA = a[len]
+    oldB = b[len]
+    if not isNone(oldA) and not isNone(oldB)
+        sumA = sumA - oldA
+        sumB = sumB - oldB
+        sumSqA = sumSqA - oldA * oldA
+        sumSqB = sumSqB - oldB * oldB
+        sumProd = sumProd - oldA * oldB
+        n = n - 1
+    if not isNone(a) and not isNone(b)
+        sumA = sumA + a
+        sumB = sumB + b
+        sumSqA = sumSqA + a * a
+        sumSqB = sumSqB + b * b
+        sumProd = sumProd + a * b
+        n = n + 1
+    meanA = sumA / n
+    meanB = sumB / n
+    covAB = sumProd / n - meanA * meanB
+    sdA = sqrt(max(0, sumSqA / n - meanA * meanA))
+    sdB = sqrt(max(0, sumSqB / n - meanB * meanB))
+    den = sdA * sdB
+    n > 1 and den != 0 ? covAB / den : none
+
+seriesA = source1
+seriesB = source2
+
+correlationAB = rollingCorrelation(seriesA, seriesB, p)
+sdA = rollingStdev(seriesA, p)
+sdB = rollingStdev(seriesB, p)
+meanA = rollingMean(seriesA, p)
+meanB = rollingMean(seriesB, p)
+
+// The spread left after regressing A on B over the window. A flat series B
+// leaves the hedge ratio undefined.
+validFit = not isNone(correlationAB) and not isNone(sdA) and not isNone(sdB) and sdB != 0 and not isNone(meanA) and not isNone(meanB)
+beta = validFit ? correlationAB * (sdA / sdB) : none
+intercept = validFit ? meanA - beta * meanB : none
+residual = validFit ? seriesA - (intercept + beta * seriesB) : none
+
+// The test regresses the change of the spread on its previous value, reading
+// an absent previous value as zero.
+lagged = orElse(residual[1], 0)
+delta = isNone(residual) ? none : residual - lagged
+
+meanDeltaLagged = rollingMean(delta * lagged, window)
+meanDelta = rollingMean(delta, window)
+meanLagged = rollingMean(lagged, window)
+meanLaggedSquared = rollingMean(lagged * lagged, window)
+
+numerator = meanDeltaLagged - meanDelta * meanLagged
+gammaDenominator = meanLaggedSquared - meanLagged * meanLagged
+validGamma = not isNone(numerator) and not isNone(gammaDenominator) and gammaDenominator != 0
+gamma = validGamma ? numerator / gammaDenominator : none
+regressionError = validGamma ? delta - gamma * lagged : none
+
+meanSquaredError = rollingMean(regressionError * regressionError, window)
+
+// The statistic is the slope over its standard error. It is absent wherever
+// the error variance is absent or not positive.
+validSe = not isNone(meanSquaredError) and not isNone(gammaDenominator) and gammaDenominator != 0
+seGammaSquared = validSe ? meanSquaredError / gammaDenominator : none
+seGamma = not isNone(seGammaSquared) and seGammaSquared > 0 ? sqrt(seGammaSquared) : none
+stat = not isNone(seGamma) and seGamma != 0 and not isNone(gamma) ? gamma / seGamma : none
+
+plot(stat, "Cointegration ADF Stat", #ffeb3b, width = 2)

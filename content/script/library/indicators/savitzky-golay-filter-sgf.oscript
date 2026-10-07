@@ -1,0 +1,55 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © openalgo
+// Original work (c) mihakralj, MIT License
+
+version 1
+study("Savitzky-Golay Filter (SGF)", overlay = true, precision = 2)
+
+window = input(21, "Window Size", min = 1, max = 1000, step = 2, tooltip = "Rounded down to the nearest odd number.")
+order = input(2, "Polynomial Order", min = 2, max = 4, step = 2)
+source = input(close, "Source")
+
+windowSize = min(1000, max(1, floor(window)))
+polyOrder = min(4, max(2, floor(order)))
+
+// The kernel always has an odd number of taps, centred on its middle tap.
+adjSize = max(1, windowSize % 2 == 0 ? windowSize - 1 : windowSize)
+halfWindow = trunc(adjSize / 2)
+
+// The weight of the tap k places from the centre. Order 2 and order 4 use
+// their closed forms; any other order falls back to a triangle.
+fn tapWeight(k, taps, half, ord) =>
+    w = 0.0
+    if ord == 2
+        w = 3 * (3 * taps * taps - 7 - 20 * k * k)
+    else if ord == 4
+        k2 = k * k
+        w = 15 + k2 * (-20 + k2 * 6)
+    else
+        w = half != 0 ? 1 - abs(k) / half : 1
+    w
+
+// The weights are normalised to sum to one before use.
+sumDenom = 0.0
+for i = 0 to adjSize - 1
+    sumDenom += tapWeight(i - halfWindow, adjSize, halfWindow, polyOrder)
+
+// Tap i reads the source i bars back. Taps before the first bar are skipped
+// and the kernel is renormalised over the taps that exist, so the filter
+// answers from the first bar.
+total = 0.0
+weightSum = 0.0
+for i = 0 to adjSize - 1
+    price = source[i]
+    if isNone(price)
+        continue
+    w = tapWeight(i - halfWindow, adjSize, halfWindow, polyOrder)
+    if sumDenom != 0
+        w = w / sumDenom
+    total += price * w
+    weightSum += w
+
+value = weightSum != 0 ? total / weightSum : none
+sgf = polyOrder >= adjSize ? none : orElse(value, source)
+
+plot(sgf, "SGF", #ffeb3b, width = 2)

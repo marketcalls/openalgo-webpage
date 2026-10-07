@@ -1,0 +1,37 @@
+{
+  "title": "MESA Adaptive Moving Average (MAMA)",
+  "summary": "Two adaptive averages whose smoothing is set by how far the measured cycle phase steps each bar; FAMA follows MAMA at half the rate.",
+  "description": "MAMA begins with a four-bar weighted price and smooths it again. A Hilbert transform then splits the smoothed price into an in-phase and a quadrature component, and from those the study measures the phase of the dominant cycle and estimates its period, which in turn scales the filters.\n\nThe key quantity is the phase step: the previous bar's phase minus this bar's. A step of one radian or more is treated as zero, and a negative step has a full turn of `2 * pi` added. The smoothing constant is `fastLimit / (deltaPhase / 0.5) ^ 2`, held between the slow and fast limits, so a step of half a radian or less gives the fast limit, a larger step gives a smaller constant, and a step that ran backwards and was wrapped gives a very small constant, the slow limit itself at the default settings. MAMA moves toward price by that constant each bar. FAMA, the following average, moves toward MAMA at half the constant.\n\nThe first bar starts both lines at the price, and if the calculation ever loses its value they restart from price on the next bar. The slow limit is never allowed above the fast limit.",
+  "howToRead": "Read the two lines together. In a move MAMA pulls away from FAMA in the direction of price, and when the move turns MAMA crosses FAMA. That cross is the usual signal, and the gap between the lines shows how far MAMA has run ahead of its follower.\n\nWhen the measured phase steps are large or run backwards, the smoothing constant falls toward the slow limit and both lines flatten and sit close together, so crosses become rare. A higher fast limit makes MAMA react sooner; a lower slow limit makes both lines flatter while the constant sits at that floor.",
+  "settings": [
+    {
+      "key": "source",
+      "label": "Source",
+      "description": "The price series the average follows. Close is the usual choice; hl2 or another blend smooths out closes that jump around."
+    },
+    {
+      "key": "fastLimit",
+      "label": "Fast Limit",
+      "description": "The largest smoothing constant allowed. Higher values let MAMA follow price more closely during fast moves."
+    },
+    {
+      "key": "slowLimit",
+      "label": "Slow Limit",
+      "description": "The smallest smoothing constant allowed. Lower values make the lines flatter in quiet markets."
+    }
+  ],
+  "faq": [
+    {
+      "q": "What is FAMA?",
+      "a": "The following average. It moves toward MAMA with half of MAMA's smoothing constant each bar, so it trails MAMA and the two cross when the trend turns."
+    },
+    {
+      "q": "Why do the lines go flat at times?",
+      "a": "When the phase step is between half a radian and one radian, or runs backwards, the smoothing constant drops, down to the slow limit, and both lines barely move until the phase steps shrink again."
+    },
+    {
+      "q": "What happens if the slow limit is set above the fast limit?",
+      "a": "It is held at the fast limit, so the smoothing constant is fixed at that value and the line stops adapting."
+    }
+  ]
+}

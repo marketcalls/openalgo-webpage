@@ -1,0 +1,33 @@
+{
+  "title": "KDJ",
+  "summary": "A stochastic oscillator with three lines: K smooths the raw stochastic, D smooths K, and J leads both by extrapolating their gap.",
+  "description": "KDJ starts from the raw stochastic value: where the close sits between the lowest low and the highest high of the last length bars, scaled from 0 to 100. On the opening bars the window holds every bar so far, so the lines start on the first bar. When the window has no range, the raw value reads 50.\n\n**K** is a running average of the raw value with weight 1 / signal, and **D** is the same running average applied to that K average before its correction. Both averages start from zero, and while each is filling it is divided by the weight it has gathered so far. For K that removes the bias of the zero start. D, however, smooths the uncorrected K, which is itself still biased toward zero, so on the opening bars D sits well below K (at the default settings D opens at a third of K). Both plotted lines are held inside 0 to 100.\n\n**J** is three times K minus twice D. It moves further and faster than either, and it can travel outside 0 to 100. Because D starts low, J opens far above 100 and only settles once D has caught up, after a few multiples of the signal setting.",
+  "howToRead": "K above D is the bullish order and K below D the bearish one, and their crossings are the usual signal. The dashed lines at 80 and 20 mark the overbought and oversold zones for K, and 70 and 30 those for D. J reaching above 100 or below 0 shows a stretched move, and because it extends the gap between K and D it is the first of the three lines to turn.\n\nLike any stochastic, KDJ can stay overbought through a strong uptrend and oversold through a strong downtrend, so read its extremes together with the trend. Ignore the opening bars, where D is still catching up with K.",
+  "settings": [
+    {
+      "key": "length",
+      "label": "Length",
+      "description": "The number of bars for the highest high and lowest low. A shorter length makes the raw stochastic swing more."
+    },
+    {
+      "key": "signal",
+      "label": "signal",
+      "description": "The smoothing for K and D: each uses a running average with weight one divided by this number. Larger values give smoother, slower lines."
+    }
+  ],
+  "faq": [
+    {
+      "q": "Why can J go above 100 or below 0?",
+      "a": "J is three times K minus twice D. When K moves away from D, J extends the gap, so it can leave the range that K and D are held inside."
+    },
+    {
+      "q": "Why does D start so far below K, and J so far above 100?",
+      "a": "D is a running average of the uncorrected K, and that K is still pulled toward its zero start on the opening bars. The correction applied to D removes only D's own start-up bias, not the one it inherits, so D opens low and J, which subtracts twice D, opens high. Both settle after a few multiples of the signal setting."
+    },
+    {
+      "q": "How is K different from a plain stochastic %K?",
+      "a": "K is the raw stochastic smoothed by a running average with weight one divided by the signal setting, so each new raw value moves it by that fraction of the gap. With the default of 3 it moves a third of the way toward each new raw value."
+    }
+  ],
+  "deviation": "The smoothing setting is labelled signal in lower case rather than Signal, because signal is a built-in name in OpenScript, so the setting cannot be assigned to a name of its own and is keyed by its label instead."
+}

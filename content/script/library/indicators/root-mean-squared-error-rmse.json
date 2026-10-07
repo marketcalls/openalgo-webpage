@@ -1,0 +1,15 @@
+{
+  "title": "Root Mean Squared Error (RMSE)",
+  "summary": "The typical distance between price and its own exponential average over a rolling window, in price units, with the average drawn on the chart.",
+  "description": "Root Mean Squared Error (RMSE) here measures how far a source series ranges from its own exponential moving average. The average uses `Period` as its length and starts from the simple average of its first `Period` values, so it has no value through that warmup. On every bar where it exists, the gap between the source and the average is squared.\n\nThe squared gaps are averaged over the last `Period` bars, counting only the bars that carry one, and the square root of that mean is plotted as a shaded area in its own pane. Squaring before averaging gives large gaps more weight than small ones, and the square root brings the result back to price units. The exponential average itself is drawn on the price chart.",
+  "howToRead": "Read the pane as the typical size of the gap between price and its trend line. A rising RMSE means price is swinging further from the average than it has been, which usually comes with a stronger trend or a more volatile market. A falling RMSE means price is hugging the average, often a quiet or ranging spell.\n\nThe value is in price units, so compare it with its own history on the same instrument rather than across instruments. Because the gaps are squared, one sharp bar raises it more than several small ones. Nothing is drawn until the average has a value, on bar `Period` minus one.",
+  "settings": [
+    { "key": "source", "label": "Source", "description": "The series compared with its own exponential average." },
+    { "key": "period", "label": "Period", "description": "The length of the exponential average and of the window the squared gaps are averaged over. A longer period gives a slower average and a smoother error line." }
+  ],
+  "faq": [
+    { "q": "What is the forecast being scored here?", "a": "The exponential moving average of the source, with the same length as the error window. The study treats the average as a forecast of price and reports how far price has strayed from it." },
+    { "q": "Why does the line appear only after a while?", "a": "The exponential average starts from the simple average of its first Period values, so it has no value until that many bars have passed, and there is no gap to measure before then." },
+    { "q": "How is it different from the mean absolute error?", "a": "Squaring each gap before averaging makes large gaps count for much more, so RMSE rises faster than the mean absolute error when price makes a sudden move away from the average." }
+  ]
+}

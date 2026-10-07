@@ -1,0 +1,67 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © openalgo
+// Original work (c) mihakralj, MIT License
+
+version 1
+study("Quadruple EMA (QEMA)", overlay = true, precision = 2)
+
+source = input(close, "Source")
+period = input(20, "Period", min = 1, max = 5000, step = 1)
+
+// Each stage smooths faster than the one before it by the cube root of one
+// over the first factor, so the fourth factor lands on one.
+a1 = 2 / (period + 1)
+r = pow(1 / a1, 1 / 3)
+a2 = a1 * r
+a3 = a2 * r
+a4 = a3 * r
+beta1 = 1 - a1
+beta2 = 1 - a2
+beta3 = 1 - a3
+beta4 = 1 - a4
+
+// Every stage starts at zero; during warmup each is divided by one minus its
+// beta to the power of the bars seen, which removes the zero-seed bias.
+var e1 = 1.0
+var e2 = 1.0
+var e3 = 1.0
+var e4 = 1.0
+var warmup = true
+var rema1 = 0.0
+var rema2 = 0.0
+var rema3 = 0.0
+var rema4 = 0.0
+
+fn compensator(e) =>
+    1 - e > 0 ? 1 / (1 - e) : 1
+
+qemaValue = none
+if not isNone(source)
+    rema1 = a1 * (source - rema1) + rema1
+    ema1 = rema1
+    ema2 = 0.0
+    ema3 = 0.0
+    ema4 = 0.0
+    if warmup
+        e1 = e1 * beta1
+        e2 = e2 * beta2
+        e3 = e3 * beta3
+        e4 = e4 * beta4
+        ema1 = rema1 * compensator(e1)
+        rema2 = a2 * (ema1 - rema2) + rema2
+        ema2 = rema2 * compensator(e2)
+        rema3 = a3 * (ema2 - rema3) + rema3
+        ema3 = rema3 * compensator(e3)
+        rema4 = a4 * (ema3 - rema4) + rema4
+        ema4 = rema4 * compensator(e4)
+        warmup = e1 > 1e-10
+    else
+        rema2 = a2 * (ema1 - rema2) + rema2
+        ema2 = rema2
+        rema3 = a3 * (ema2 - rema3) + rema3
+        ema3 = rema3
+        rema4 = a4 * (ema3 - rema4) + rema4
+        ema4 = rema4
+    qemaValue = 4 * ema1 - 6 * ema2 + 4 * ema3 - ema4
+
+plot(qemaValue, "QEMA", #ffeb3b, width = 2)

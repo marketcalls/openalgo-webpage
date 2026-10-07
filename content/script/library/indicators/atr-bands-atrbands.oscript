@@ -1,0 +1,41 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © openalgo
+// Original work (c) mihakralj, MIT License
+
+version 1
+study("ATR Bands (ATRBANDS)", overlay = true, precision = 2)
+
+source = input(close, "Source")
+length = input(20, "Length", min = 1, max = 5000, step = 1)
+multiplier = input(2.0, "ATR Multiplier", min = 0.001, max = 100, step = 0.1, tooltip = "Band distance as a multiple of the Average True Range.")
+
+// The middle line is the mean of the source over the last `length` bars.
+// Until the window is full it averages every bar so far, so it is drawn from
+// the first bar.
+var sumSource = 0.0
+if bar.index >= length
+    sumSource = sumSource - orElse(source[length], 0)
+sumSource = sumSource + orElse(source, 0)
+windowCount = min(bar.index + 1, length)
+middleBand = sumSource / windowCount
+
+// True range against the previous close. The first bar compares against its
+// own close, so its range is high minus low.
+prevClose = bar.index > 0 ? close[1] : close
+trueRangeValue = max(max(high - low, abs(high - prevClose)), abs(low - prevClose))
+
+// A running average with weight 1 / length, started from zero. Dividing by (1 - e), where e is the
+// weight still held by the zero start, removes that bias from the first bar.
+var rawRma = 0.0
+var e = 1.0
+weight = 1 / length
+rawRma = (rawRma * (length - 1) + trueRangeValue) / length
+e = (1 - weight) * e
+atrValue = e > 1e-10 ? rawRma / (1 - e) : rawRma
+
+bandWidth = orElse(atrValue * multiplier, 0)
+
+plot(middleBand, "Middle", #ffeb3b, width = 2)
+top = plot(middleBand + bandWidth, "Upper", #ffeb3b, width = 2)
+bottom = plot(middleBand - bandWidth, "Lower", #ffeb3b, width = 2)
+fill(top, bottom, #2962ff, opacity = 0.1)

@@ -1,0 +1,29 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © openalgo
+// Original work (c) mihakralj, MIT License
+
+version 1
+study("Fisher04 - Ehlers 2004 Cybernetic Analysis", precision = 4)
+
+length = input(10, "Length", min = 1, max = 5000, step = 1)
+
+// The price is the bar midpoint.
+price = hl2
+maxH = highest(price, length)
+minL = lowest(price, length)
+span = maxH - minL
+
+// The midpoint's place in its range, centred on zero and half-smoothed with
+// its own last value. While the range is filling, or is flat, it resets to 0.
+var value1 = 0.0
+value1 = not isNone(span) and span != 0 and not isNone(price) ? (price - minL) / span - 0.5 + 0.5 * value1 : 0
+value1 = max(min(value1, 0.9999), -0.9999)
+
+// The signal line is the previous bar's Fisher value.
+var fisherValue = 0.0
+prevFisherValue = fisherValue
+fisherValue = 0.25 * log((1 + value1) / (1 - value1)) + 0.5 * fisherValue
+
+plot(fisherValue, "Fisher04", #ffeb3b, width = 2)
+plot(prevFisherValue, "Signal", #ff9800, width = 1)
+level(0, "Zero", #787b86, style = "dotted")

@@ -1,0 +1,12 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © openalgo
+// Original work (c) mihakralj, MIT License
+
+version 1
+study("MEDPRICE: Median Price", overlay = true, precision = 2)
+
+// The middle of the bar's range: halfway between its high and its low. One
+// value per bar, with no warmup and no smoothing.
+medPrice = (high + low) * 0.5
+
+plot(medPrice, "MedPrice", #ff9800, width = 2)

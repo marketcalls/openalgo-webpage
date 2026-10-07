@@ -1,0 +1,27 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © openalgo
+// Original work (c) mihakralj, MIT License
+
+version 1
+study("Sine-weighted Moving Average (SINEMA)", overlay = true, precision = 2)
+
+period = input(10, "Period", min = 1, max = 5000, step = 1)
+source = input(close, "Source")
+
+// The window grows with the data until it reaches the period, so the line
+// starts on the first bar. The bar k bars back weighs sin(pi * (k + 1) / p),
+// half a sine wave laid across the window.
+p = min(bar.index + 1, period)
+weighted = 0.0
+weightTotal = 0.0
+for k = 0 to p - 1
+    price = source[k]
+    if not isNone(price)
+        w = math.sin(math.pi * (k + 1) / p)
+        weighted += price * w
+        weightTotal += w
+
+// A window whose weights add to zero shows the source itself.
+sinema = orElse(weightTotal != 0 ? weighted / weightTotal : none, source)
+
+plot(sinema, "SINEMA", #ffeb3b, width = 2)

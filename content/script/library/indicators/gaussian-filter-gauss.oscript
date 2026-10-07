@@ -1,0 +1,42 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © openalgo
+// Original work (c) mihakralj, MIT License
+
+version 1
+study("Gaussian Filter (GAUSS)", overlay = true, precision = 2)
+
+sigma = input(1, "Sigma", min = 0.1, max = 10, step = 0.1, tooltip = "Standard deviation of the Gaussian kernel. The kernel spans 2 * ceil(3 * sigma) + 1 bars, so a larger sigma smooths harder and lags more.")
+source = input(close, "Source")
+
+sg = min(10, max(0.1, sigma))
+
+// A Gaussian kernel of 2 * ceil(3 * sigma) + 1 taps, normalised to sum to one.
+kernelSize = 2 * ceil(3 * sg) + 1
+center = floor(kernelSize / 2)
+var kernel: array<number> = []
+if size(kernel) == 0
+    kernelSum = 0.0
+    for i = 0 to kernelSize - 1
+        x = i - center
+        weight = exp(-(x * x) / (2 * sg * sg))
+        push(kernel, weight)
+        kernelSum = kernelSum + weight
+    if kernelSum != 0
+        invSum = 1 / kernelSum
+        for i = 0 to kernelSize - 1
+            set(kernel, i, element(kernel, i) * invSum)
+
+// Convolve with the bars that exist: early bars use a truncated kernel,
+// renormalised by the weight actually used.
+taps = min(bar.index + 1, kernelSize)
+total = 0.0
+weightSum = 0.0
+for i = 0 to taps - 1
+    price = source[i]
+    if not isNone(price)
+        total = total + price * element(kernel, i)
+        weightSum = weightSum + element(kernel, i)
+value = weightSum != 0 ? total / weightSum : none
+gauss = orElse(value, source)
+
+plot(gauss, "Gaussian", #ffeb3b, width = 2)

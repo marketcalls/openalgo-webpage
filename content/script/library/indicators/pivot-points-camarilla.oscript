@@ -1,0 +1,60 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © openalgo
+// Original work (c) mihakralj, MIT License
+
+version 1
+study("Pivot Points (Camarilla)", overlay = true, precision = 2)
+
+timeframe = input("D", "Pivot Timeframe", options = ["D", "W", "M"])
+showPp = input(true, "Show Pivot Point")
+showR1 = input(true, "Show R1")
+showR2 = input(true, "Show R2")
+showR3 = input(true, "Show R3")
+showR4 = input(true, "Show R4")
+showS1 = input(true, "Show S1")
+showS2 = input(true, "Show S2")
+showS3 = input(true, "Show S3")
+showS4 = input(true, "Show S4")
+
+// The period each bar belongs to: its day, its Monday-start week or its month,
+// on the chart's calendar.
+periodKey = timeframe == "W" ? date.startOfWeek(time) : timeframe == "M" ? date.startOfMonth(time) : date.startOfDay(time)
+
+// The period being built, and the last completed one. The levels of every bar
+// come from the completed period, so nothing on a bar changes as it forms.
+var curKey = none
+var curHi = none
+var curLo = none
+var curCl = none
+var prevHi = none
+var prevLo = none
+var prevCl = none
+
+if isNone(curKey) or periodKey != curKey
+    if not isNone(curKey)
+        prevHi = curHi
+        prevLo = curLo
+        prevCl = curCl
+    curKey = periodKey
+    curHi = high
+    curLo = low
+    curCl = close
+else
+    curHi = max(curHi, high)
+    curLo = min(curLo, low)
+    curCl = close
+
+// Every level sits around the previous close, a fixed fraction of the
+// previous period's range away from it.
+pivot = (prevHi + prevLo + prevCl) / 3.0
+span = prevHi - prevLo
+
+plot(showPp ? pivot : none, "PP", #ffeb3b, width = 2, style = "step")
+plot(showR1 ? prevCl + (span * 1.0833) / 12.0 : none, "R1", #ef5350, width = 1, style = "step")
+plot(showR2 ? prevCl + (span * 1.1666) / 12.0 : none, "R2", #ef5350, width = 1, style = "step")
+plot(showR3 ? prevCl + (span * 1.25) / 12.0 : none, "R3", #ef5350, width = 1, style = "step")
+plot(showR4 ? prevCl + (span * 1.5) / 12.0 : none, "R4", #ef5350, width = 1, style = "step")
+plot(showS1 ? prevCl - (span * 1.0833) / 12.0 : none, "S1", #4caf50, width = 1, style = "step")
+plot(showS2 ? prevCl - (span * 1.1666) / 12.0 : none, "S2", #4caf50, width = 1, style = "step")
+plot(showS3 ? prevCl - (span * 1.25) / 12.0 : none, "S3", #4caf50, width = 1, style = "step")
+plot(showS4 ? prevCl - (span * 1.5) / 12.0 : none, "S4", #4caf50, width = 1, style = "step")

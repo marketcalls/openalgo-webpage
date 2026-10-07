@@ -1,0 +1,405 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © openalgo
+// Original work (c) Arun K Bhaskar, MPL-2.0
+
+version 1
+study("Option Buying Scalping Setup Scanner", overlay = true, precision = 2)
+
+// A directional scalping setup: four exponential averages, an anchored VWAP or
+// TWAP and a Supertrend on the price, with MACD, Stochastic and Volume drawn as
+// scaled mini panels over the most recent bars of the price pane. A signal
+// needs price on the correct side of both the Supertrend and the VWAP, MACD and
+// Stochastic agreeing, and every enabled candle, volume or time filter passing.
+
+sigMethod = input("Continuous Signals", "Signal Method", options = ["Continuous Signals", "Flip Signals"], tooltip = "Continuous arms on an opposing MACD sign and fires on the full entry condition. Flip reports only the bar where the long and short states change hands.", group = "Signals")
+
+stAtrPeriod = input(10, "Supertrend ATR Length", min = 1, max = 1000, step = 1, group = "Supertrend")
+stFactor = input(3.0, "Factor", min = 0.01, max = 100, step = 0.01, group = "Supertrend")
+
+maDisplay = input(true, "EMA Display", group = "Exponential Moving Average")
+maLen1 = input(20, "Length 1", min = 1, max = 5000, step = 1, group = "Exponential Moving Average")
+maLen2 = input(50, "Length 2", min = 1, max = 5000, step = 1, group = "Exponential Moving Average")
+maLen3 = input(100, "Length 3", min = 1, max = 5000, step = 1, group = "Exponential Moving Average")
+maLen4 = input(200, "Length 4", min = 1, max = 5000, step = 1, group = "Exponential Moving Average")
+
+vtwapDisplay = input(true, "VWAP / TWAP Display", group = "VWAP / TWAP")
+vtwapChoice = input("VWAP", "Choose", options = ["VWAP", "TWAP"], tooltip = "Choose TWAP if volume is not available for the symbol.", group = "VWAP / TWAP")
+vtwapTimeframe = input("1D", "Anchor Timeframe", tooltip = "Anchor period: a bare number is minutes, 1D is daily, 1W weekly, 1M monthly, 3M quarterly, 12M yearly.", group = "VWAP / TWAP")
+
+macdDisplay = input(true, "MACD Display", group = "MACD")
+macdFast = input(3, "Fast Length", min = 1, max = 5000, step = 1, group = "MACD")
+macdSlow = input(9, "Slow Length", min = 1, max = 5000, step = 1, group = "MACD")
+macdSignalLen = input(15, "Signal Smoothing", min = 1, max = 5000, step = 1, group = "MACD")
+macdVOffset = input(0.5, "MACD Vertical Offset", min = -20, max = 20, step = 0.1, group = "MACD")
+macdHeight = input(0.7, "MACD Height", min = -20, max = 20, step = 0.1, group = "MACD")
+
+stocDisplay = input(true, "Stochastic Display", group = "Stochastic")
+stocKLen = input(5, "%K Length", min = 1, max = 5000, step = 1, group = "Stochastic")
+stocKSmooth = input(3, "%K Smoothing", min = 1, max = 5000, step = 1, group = "Stochastic")
+stocDSmooth = input(3, "%D Smoothing", min = 1, max = 5000, step = 1, group = "Stochastic")
+stocOverBought = input(60, "Over Bought", min = 1, max = 100, step = 1, group = "Stochastic")
+stocOverSold = input(40, "Over Sold", min = 1, max = 100, step = 1, group = "Stochastic")
+stocVOffset = input(1.8, "Stochastic Vertical Offset", min = -20, max = 20, step = 0.1, group = "Stochastic")
+stocHeight = input(0.6, "Stochastic Height", min = -20, max = 20, step = 0.1, group = "Stochastic")
+
+volDisplay = input(true, "Display Volume Average", group = "Volume")
+volType = input("Regular Volume", "Type", options = ["Buying/Selling Volume", "Regular Volume", "None"], group = "Volume")
+volVOffset = input(0.5, "Volume Vertical Offset", min = -20, max = 20, step = 0.1, group = "Volume")
+volHeight = input(0.6, "Volume Height", min = -20, max = 20, step = 0.1, group = "Volume")
+
+atrFilter = input(false, "Apply ATR Filter", tooltip = "ATR helps filter out longer or more volatile signal candles.", group = "Additional Filters")
+atrLength = input(14, "ATR Length", min = 1, max = 5000, step = 1, group = "Additional Filters")
+atrMulti = input(1.0, "ATR Multiplier", min = 1, max = 100, step = 0.1, tooltip = "A higher multiplier filters out a longer or more volatile signal candle.", group = "Additional Filters")
+bodyFilter = input(false, "Apply Body % Filter", tooltip = "If the input is 80, the body must cover over 80 percent of the candle.", group = "Additional Filters")
+bodyPercent = input(80, "Body % Above", min = 0, max = 100, step = 1, group = "Additional Filters")
+bodySizeFilter = input(false, "Apply Body Size Filter", tooltip = "2 means the candle is 2 times larger than the previous candle.", group = "Additional Filters")
+bodySizeMultiplier = input(2, "Body Size Multiplier (x)", min = 0, max = 1000, step = 1, group = "Additional Filters")
+volumeFilter = input(false, "Apply Volume Filter", tooltip = "Keep a candle only when its volume is greater than the SMA of volume.", group = "Additional Filters")
+volSmaLength = input(20, "Volume SMA Length", min = 1, max = 5000, step = 1, group = "Additional Filters")
+relVolFilter = input(false, "Apply Relative Volume Filter", tooltip = "Keep a candle only when its relative volume is greater than the multiplied average.", group = "Additional Filters")
+relVolLen = input(90, "Relative Volume Length", min = 2, max = 5000, step = 1, group = "Additional Filters")
+relVolMulti = input(2.0, "Rel Vol SMA Multiplier", min = 0, max = 100, step = 0.1, group = "Additional Filters")
+timeFilter = input(false, "Apply Time Filter", tooltip = "Keep signals only between the two exchange times below.", group = "Additional Filters")
+hourFrom = input(9, "Time From (hour)", min = 0, max = 23, step = 1, group = "Additional Filters")
+minuteFrom = input(15, "Time From (minute)", min = 0, max = 59, step = 1, group = "Additional Filters")
+hourTo = input(10, "Time To (hour)", min = 0, max = 23, step = 1, group = "Additional Filters")
+minuteTo = input(15, "Time To (minute)", min = 0, max = 59, step = 1, group = "Additional Filters")
+
+displayLen = input(50, "Display Length", min = 1, max = 500, step = 1, tooltip = "How many recent bars the MACD, Stochastic and Volume mini panels cover.", group = "Chart Settings")
+
+// The palette.
+POS = #26A69A
+POS_LIGHT = #ACE5DC
+NEU = #D1D4DC
+NEG_LIGHT = #FCCBCD
+NEG = #FF5252
+IND = #2962FF
+SIG = #FF6D00
+
+// A comparison that answers false, never absent, when either side is missing.
+fn gtF(a, b) => isNone(a) or isNone(b) ? false : a > b
+fn ltF(a, b) => isNone(a) or isNone(b) ? false : a < b
+
+// An exponential mean seeded with the simple mean of its first full window of
+// values. It starts on the first bar with `len` values behind it and holds its
+// level across a bar with no value.
+fn seededEma(src, len) =>
+    var e = none
+    seed = sma(src, len)
+    a = 2 / (len + 1)
+    if isNone(e)
+        e = seed
+    else if not isNone(src)
+        e = a * src + (1 - a) * e
+    e
+
+vol = orElse(volume, 0)
+
+// 1. Four exponential averages, each seeded with the simple mean of its first
+// window.
+ema1 = ema(close, maLen1)
+ema2 = ema(close, maLen2)
+ema3 = ema(close, maLen3)
+ema4 = ema(close, maLen4)
+
+// 2. VWAP or TWAP, restarted at the start of each anchor period. The anchor is
+// read from the text setting: a bare number is minutes, S seconds, D days,
+// W weeks, M months (3M a quarter, 12M a year). A multiple of days or weeks
+// anchors on a single day or week.
+spec = str.upper(str.trim(vtwapTimeframe))
+spec = spec == "" ? "1D" : spec
+specLen = str.length(spec)
+lastChar = str.substring(spec, specLen - 1)
+hasUnit = lastChar == "S" or lastChar == "D" or lastChar == "W" or lastChar == "M"
+unit = hasUnit ? lastChar : ""
+digits = hasUnit ? str.substring(spec, 0, specLen - 1) : spec
+digitsOk = true
+for c = 0 to str.length(digits) - 1
+    if str.indexOf("0123456789", str.substring(digits, c, c + 1)) < 0
+        digitsOk = false
+mult = digits == "" ? 1 : max(1, floor(toNumber(digits)))
+anchorKind = not digitsOk ? "day" : unit == "D" ? "day" : unit == "W" ? "week" : unit == "M" ? (mult == 3 ? "quarter" : mult == 12 ? "year" : "month") : "seconds"
+anchorSecs = unit == "S" ? mult : mult * 60
+
+// The bar's wall clock time in the chart's timezone, in seconds.
+localMs = date.from(date.year(time), date.month(time), date.day(time), date.hour(time), date.minute(time), date.second(time), "UTC")
+localSec = localMs / 1000
+bucket = floor(localSec / max(1, floor(anchorSecs)))
+dayIdx = floor(localMs / 86400000)
+weekIdx = floor((dayIdx + 3) / 7)
+monthIdx = date.year(time) * 12 + date.month(time)
+quarterIdx = date.year(time) * 4 + floor((date.month(time) - 1) / 3)
+yearIdx = date.year(time)
+periodKey = anchorKind == "seconds" ? bucket : anchorKind == "week" ? weekIdx : anchorKind == "month" ? monthIdx : anchorKind == "quarter" ? quarterIdx : anchorKind == "year" ? yearIdx : dayIdx
+newPeriod = bar.index == 0 or periodKey != periodKey[1]
+
+var pv = 0.0
+var vv = 0.0
+var psum = 0.0
+var pcount = 0
+if newPeriod
+    pv = 0.0
+    vv = 0.0
+    psum = 0.0
+    pcount = 0
+pv = pv + hlc3 * vol
+vv = vv + vol
+psum = psum + ohlc4
+pcount = pcount + 1
+twapV = pcount > 0 ? psum / pcount : none
+vwapV = vv > 0 ? pv / vv : none
+vtwapV = vtwapChoice == "TWAP" ? twapV : vwapV
+
+// 3. MACD: the difference of two exponential means, a signal line of that
+// difference, and the histogram between them.
+macdLineV = ema(close, macdFast) - ema(close, macdSlow)
+signalLineV = seededEma(macdLineV, macdSignalLen)
+histLineV = macdLineV - signalLineV
+
+// 4. Stochastic: where the close sits in the window's range, smoothed into %K
+// and again into %D. A window with no range has no reading.
+hh = highest(high, stocKLen)
+ll = lowest(low, stocKLen)
+rawK = hh - ll == 0 ? none : 100 * (close - ll) / (hh - ll)
+stocK = sma(rawK, stocKSmooth)
+stocD = sma(stocK, stocDSmooth)
+
+// 5. The volume average, and the selling share of each bar's volume.
+volMa = sma(vol, volSmaLength)
+barRange = high - low
+sellVol = barRange > 0 ? vol * (high - close) / barRange : none
+
+// 6. Supertrend: a band of `stFactor` average true ranges around the bar's
+// midpoint that only tightens while the trend holds.
+stAtr = atr(stAtrPeriod)
+var upperPrev = none
+var lowerPrev = none
+var stPrev = none
+var closePrev = none
+var stStarted = false
+stLine = none
+stDir = 1
+if not isNone(stAtr)
+    mid = (high + low) / 2
+    upBand = mid + stFactor * stAtr
+    dnBand = mid - stFactor * stAtr
+    finalUpper = stStarted ? (upBand < upperPrev or closePrev > upperPrev ? upBand : upperPrev) : upBand
+    finalLower = stStarted ? (dnBand > lowerPrev or closePrev < lowerPrev ? dnBand : lowerPrev) : dnBand
+    if stStarted and stPrev != upperPrev
+        if close >= finalLower
+            stLine = finalLower
+            stDir = -1
+        else
+            stLine = finalUpper
+            stDir = 1
+    else
+        if close <= finalUpper
+            stLine = finalUpper
+            stDir = 1
+        else
+            stLine = finalLower
+            stDir = -1
+    upperPrev = finalUpper
+    lowerPrev = finalLower
+    stPrev = stLine
+    closePrev = close
+    stStarted = true
+// The first bar never carries a Supertrend value.
+stVal = bar.index == 0 ? none : stLine
+
+// Additional filters.
+atrCol = atr(atrLength)
+volSmaFilter = sma(vol, volSmaLength)
+avgVol = sma(vol, relVolLen)
+prevAvgVol = avgVol[1]
+relVol = isNone(prevAvgVol) or prevAvgVol == 0 ? none : vol / prevAvgVol
+relVolSma = sma(relVol, relVolLen)
+
+bodySize = abs(close - open)
+atrPass = atrFilter ? gtF(barRange, atrCol * atrMulti) : true
+// A bar with no range has no body ratio, so it fails the body test.
+bodyRatioPass = barRange > 0 and bodySize / barRange >= bodyPercent / 100
+bodyPass = bodyFilter ? bodyRatioPass : true
+prevRange = high[1] - low[1]
+bodySizePass = bodySizeFilter ? bodyRatioPass and not isNone(prevRange) and barRange >= prevRange * bodySizeMultiplier : true
+volPass = volumeFilter ? gtF(vol, volSmaFilter) : true
+relVolPass = relVolFilter ? gtF(relVol, relVolSma * relVolMulti) : true
+hh24 = date.hour(time)
+mm60 = date.minute(time)
+inWindow = (hh24 > hourFrom or (hh24 == hourFrom and mm60 >= minuteFrom)) and (hh24 < hourTo or (hh24 == hourTo and mm60 < minuteTo))
+timePass = timeFilter ? inWindow : true
+// Only a bar still forming under a real time feed is unconfirmed.
+confirmed = not (bar.isRealtime and not bar.isConfirmed)
+filtersPass = atrPass and bodyPass and bodySizePass and volPass and relVolPass and timePass and confirmed
+
+shortCont1 = gtF(macdLineV, 0)
+shortCont2 = ltF(close, stVal) and ltF(close, vtwapV) and ltF(stocK, stocOverBought) and ltF(stocK, stocD) and ltF(macdLineV, 0) and ltF(macdLineV, signalLineV) and ltF(macdLineV, histLineV) and filtersPass
+longCont1 = ltF(macdLineV, 0)
+longCont2 = gtF(close, stVal) and gtF(close, vtwapV) and gtF(stocK, stocOverSold) and gtF(stocK, stocD) and gtF(macdLineV, 0) and gtF(macdLineV, signalLineV) and gtF(macdLineV, histLineV) and filtersPass
+
+// Continuous: arm on the opposing MACD sign, fire on the full entry, then fall
+// back to unarmed on the next bar.
+var bearState = 0
+var bullState = 0
+bear = bearState == 2 ? 0 : bearState
+if shortCont1 and bear == 0
+    bear = 1
+if shortCont2 and bear == 1
+    bear = 2
+bearState = bear
+bull = bullState == 2 ? 0 : bullState
+if longCont1 and bull == 0
+    bull = 1
+if longCont2 and bull == 1
+    bull = 2
+bullState = bull
+
+// Flip: one signal each time the entry side changes hands.
+var entrySignal = 0
+prevEntry = entrySignal
+nextEntry = longCont2 ? 1 : shortCont2 ? -1 : prevEntry
+changed = bar.index > 0 and nextEntry != prevEntry
+entrySignal = nextEntry
+
+useFlip = sigMethod == "Flip Signals"
+longSignal = useFlip ? changed and nextEntry == 1 : bull == 2
+shortSignal = useFlip ? changed and nextEntry == -1 : bear == 2
+
+// Plots.
+plot(maDisplay ? ema1 : none, "EMA 1", POS, width = 1)
+plot(maDisplay ? ema2 : none, "EMA 2", IND, width = 1)
+plot(maDisplay ? ema3 : none, "EMA 3", SIG, width = 1)
+plot(maDisplay ? ema4 : none, "EMA 4", NEG, width = 1)
+plot(vtwapDisplay ? vtwapV : none, "VWAP/TWAP", NEU, width = 2)
+plot(stDir < 0 ? stVal : none, "Supertrend Up", POS, width = 2)
+plot(stDir < 0 ? none : stVal, "Supertrend Down", NEG, width = 2)
+
+// Markers above the bar for a short signal and below it for a long one.
+if shortSignal
+    signal("", color = #FCCBCD, at = "above", shape = "triangleDown")
+if longSignal
+    signal("", color = #ACE5DC, at = "below", shape = "triangleUp")
+
+// Candle colours on every signal bar.
+barColor(shortSignal ? NEG_LIGHT : longSignal ? POS_LIGHT : none)
+
+// The background is shaded only over the most recent `displayLen` bars,
+// counted back from the chart's clock in whole intervals. The count is exact
+// when no interval is missing; a closed session counts as bars, and with no
+// clock nothing is shaded.
+intervalMs = chart.intervalMinutes * 60000
+barsFromEnd = floor((chart.now() - time) / intervalMs)
+recent = not isNone(barsFromEnd) and barsFromEnd < displayLen
+background(recent ? (shortSignal ? withAlpha(NEG_LIGHT, 0.1) : longSignal ? withAlpha(POS_LIGHT, 0.1) : none) : none)
+
+// The mini panels: Stochastic, MACD and Volume redrawn across the last
+// `displayLen` bars of the price pane, scaled into the range of those bars.
+// The curves run from `displayLen` bars back to the newest bar; the per-bar
+// strokes start one bar later.
+len = displayLen
+if bar.isLast and bar.index >= len
+    priceHighest = none
+    priceLowest = none
+    volumeHighest = 0.0
+    macdHi = none
+    macdLo = none
+    for k = 0 to len - 1
+        if isNone(priceHighest) or high[k] > priceHighest
+            priceHighest = high[k]
+        if isNone(priceLowest) or low[k] < priceLowest
+            priceLowest = low[k]
+        if not isNone(volume[k]) and volume[k] > volumeHighest
+            volumeHighest = volume[k]
+        m = macdLineV[k]
+        if not isNone(m)
+            if isNone(macdHi) or m > macdHi
+                macdHi = m
+            if isNone(macdLo) or m < macdLo
+                macdLo = m
+    if not isNone(priceHighest) and not isNone(priceLowest) and priceHighest != 0
+        priceChangeRate = (priceHighest - priceLowest) / priceHighest
+        macdRange = isNone(macdHi) or isNone(macdLo) ? none : macdHi - macdLo
+        tFirst = time[len]
+        tLast = time
+
+        // Stochastic panel.
+        stocBase = priceLowest * (1 - priceChangeRate * stocVOffset)
+        if stocDisplay
+            midLine = 50
+            yOb = stocBase * (1 + (stocOverBought / 100) * priceChangeRate * stocHeight)
+            yMid = stocBase * (1 + (midLine / 100) * priceChangeRate * stocHeight)
+            yOs = stocBase * (1 + (stocOverSold / 100) * priceChangeRate * stocHeight)
+            draw.line(tFirst, yOb, tLast, yOb, color = withAlpha(NEG, 0.25), width = 1)
+            draw.line(tFirst, yMid, tLast, yMid, color = withAlpha(NEU, 0.25), width = 1)
+            draw.line(tFirst, yOs, tLast, yOs, color = withAlpha(POS, 0.25), width = 1)
+            kTimes = []
+            kPrices = []
+            dTimes = []
+            dPrices = []
+            for k = len to 0 step -1
+                kv = stocK[k]
+                dv = stocD[k]
+                if not isNone(kv)
+                    push(kTimes, time[k])
+                    push(kPrices, stocBase * (1 + (kv / 100) * priceChangeRate * stocHeight))
+                if not isNone(dv)
+                    push(dTimes, time[k])
+                    push(dPrices, stocBase * (1 + (dv / 100) * priceChangeRate * stocHeight))
+            if size(kTimes) >= 2
+                draw.polyline(kTimes, kPrices, color = IND, width = 1)
+            if size(dTimes) >= 2
+                draw.polyline(dTimes, dPrices, color = SIG, width = 1)
+            draw.label(tLast, yMid, "STOC", textColor = IND, align = "left")
+
+        // MACD panel.
+        macdBase = priceLowest * (1 - priceChangeRate * macdVOffset)
+        macdScaled = not isNone(macdRange) and macdRange != 0
+        if macdDisplay
+            mTimes = []
+            mPrices = []
+            sTimes = []
+            sPrices = []
+            for k = len to 0 step -1
+                mv = macdLineV[k]
+                sv = signalLineV[k]
+                if macdScaled and not isNone(mv)
+                    push(mTimes, time[k])
+                    push(mPrices, macdBase * (1 + (mv / macdRange) * priceChangeRate * macdHeight))
+                if macdScaled and not isNone(sv)
+                    push(sTimes, time[k])
+                    push(sPrices, macdBase * (1 + (sv / macdRange) * priceChangeRate * macdHeight))
+                h = histLineV[k]
+                hPrev = histLineV[k + 1]
+                if k <= len - 1 and not isNone(h) and macdScaled
+                    histRising = not isNone(hPrev) and hPrev < h
+                    histColour = h >= 0 ? (histRising ? POS : POS_LIGHT) : (histRising ? NEG_LIGHT : NEG)
+                    draw.line(time[k], macdBase, time[k], macdBase * (1 + (h / macdRange) * priceChangeRate * macdHeight), color = histColour, width = 2)
+            if size(mTimes) >= 2
+                draw.polyline(mTimes, mPrices, color = IND, width = 1)
+            if size(sTimes) >= 2
+                draw.polyline(sTimes, sPrices, color = SIG, width = 1)
+            draw.label(tLast, macdBase * (1 + 0.5 * priceChangeRate * macdHeight), "MACD", textColor = IND, align = "left")
+
+        // Volume panel.
+        volBase = priceHighest * (1 + priceChangeRate * volVOffset)
+        if volType != "None"
+            draw.label(tLast, volBase, "VOL", textColor = NEU, align = "left")
+        if not isNone(volume) and volume != 0 and volType != "None"
+            buySell = volType == "Buying/Selling Volume"
+            maTimes = []
+            maPrices = []
+            for k = len to 0 step -1
+                v = volume[k]
+                barColour = buySell or close[k] > open[k] ? POS : NEG
+                if k <= len - 1 and not isNone(v) and volumeHighest > 0
+                    draw.line(time[k], volBase, time[k], volBase * (1 + (v / volumeHighest) * priceChangeRate * volHeight), color = barColour, width = 2)
+                if k <= len - 1 and buySell and not isNone(sellVol[k]) and volumeHighest > 0
+                    draw.line(time[k], volBase, time[k], volBase * (1 + (sellVol[k] / volumeHighest) * priceChangeRate * volHeight), color = NEG, width = 2)
+                if volDisplay
+                    maV = volMa[k]
+                    rate = not isNone(v) and not isNone(maV) and maV != 0 ? v / maV : none
+                    if not isNone(rate) and rate != 0 and volumeHighest > 0
+                        push(maTimes, time[k])
+                        push(maPrices, volBase * (1 + ((v / volumeHighest) * priceChangeRate * volHeight) / rate))
+            if size(maTimes) >= 2
+                draw.polyline(maTimes, maPrices, color = NEU, width = 1)

@@ -1,0 +1,362 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © openalgo
+// Original work (c) Arun K Bhaskar, MPL-2.0
+
+version 1
+study("Mitigation Block Scanner", overlay = true, precision = 2)
+
+// ---- Signals ----------------------------------------------------------------
+method = input("Mitigation Block", "Screening Method", options = ["Mitigation Block", "Retracement"], group = "Signals", tooltip = "Mitigation Block marks the shift bar itself. Retracement waits for price to come back to the level that shift left behind.")
+showLong = input(true, "Long Signals", group = "Signals")
+showShort = input(true, "Short Signals", group = "Signals")
+
+// ---- Zig zag ----------------------------------------------------------------
+zzDisplay = input(true, "Display Zig Zag", group = "Zig Zag")
+zzPeriod = input(3, "Zig Zag Length", min = 2, max = 500, step = 1, group = "Zig Zag")
+zzSource = input("High/Low", "Source", options = ["High/Low", "Open/Close", "Close"], group = "Zig Zag")
+zzBoxTransp = input(85, "Box Transparency", min = 0, max = 100, step = 1, group = "Zig Zag", tooltip = "Transparency of the structure box: 0 is solid and 100 is invisible.")
+
+// ---- Additional filters -----------------------------------------------------
+pchgFilter = input(false, "Apply % Change Filter", group = "Additional Filters", tooltip = "The test requires the day's change to be both above +N and below -N at once, which nothing satisfies, so switching this on suppresses every signal.")
+pchgAboveBelow = input(2.0, "% Change Above/Below +/-", min = 0, max = 1000, step = 0.1, group = "Additional Filters")
+volFilter = input(false, "Apply Volume Filter", group = "Additional Filters")
+volAbove = input(500000, "Volume Above", min = 0, max = 1000000000000, step = 1000, group = "Additional Filters")
+volPchgFilter = input(false, "Apply Volume % Change Filter", group = "Additional Filters")
+volPchgAbove = input(0, "Volume % Change Above", min = 0, max = 100000, step = 1, group = "Additional Filters")
+atrFilter = input(false, "Apply ATR Filter", group = "Additional Filters")
+atrLength = input(14, "ATR Length", min = 1, max = 1000, step = 1, group = "Additional Filters")
+atrMulti = input(1.0, "ATR Multiplier", min = 1, max = 100, step = 0.1, group = "Additional Filters")
+bodyFilter = input(false, "Apply Body % Filter", group = "Additional Filters")
+bodyPercent = input(60, "Body % Above", min = 0, max = 100, step = 1, group = "Additional Filters")
+bodySizeFilter = input(false, "Apply Body Size Filter", group = "Additional Filters")
+bodySizeMultiplier = input(2, "Body Size Multiplier (x)", min = 0, max = 100, step = 1, group = "Additional Filters")
+volumeFilter = input(false, "Apply Volume SMA Filter", group = "Additional Filters")
+volSmaLength = input(20, "Volume SMA Length", min = 1, max = 1000, step = 1, group = "Additional Filters")
+relVolFilter = input(false, "Apply Relative Volume Filter", group = "Additional Filters")
+relVolLength = input(90, "Relative Volume Length", min = 2, max = 2000, step = 1, group = "Additional Filters")
+relVolMulti = input(5.0, "Rel Vol SMA Multiplier", min = 0, max = 100, step = 0.1, group = "Additional Filters")
+timeFilter = input(false, "Apply Time Filter", group = "Additional Filters")
+hourFrom = input(9, "Time From (hour)", min = 0, max = 23, step = 1, group = "Additional Filters")
+minuteFrom = input(15, "Time From (minute)", min = 0, max = 59, step = 1, group = "Additional Filters")
+hourTo = input(10, "Time To (hour)", min = 0, max = 23, step = 1, group = "Additional Filters")
+minuteTo = input(15, "Time To (minute)", min = 0, max = 59, step = 1, group = "Additional Filters")
+dateFilter = input(false, "Apply Date Filter", group = "Additional Filters")
+day = input(25, "Day", min = 1, max = 31, step = 1, group = "Additional Filters")
+month = input(10, "Month", min = 1, max = 12, step = 1, group = "Additional Filters")
+year = input(2024, "Year", min = 0, max = 9999, step = 1, group = "Additional Filters")
+
+// ---- Data table -------------------------------------------------------------
+showDataTable = input(true, "Display Table", group = "Data Table")
+tablePosition = input("bottom-right", "Position", options = ["top-left", "top-center", "top-right", "middle-left", "middle-center", "middle-right", "bottom-left", "bottom-center", "bottom-right"], group = "Data Table")
+tableFontSize = input(12, "Size", min = 8, max = 20, step = 1, group = "Data Table", tooltip = "Text size of the panel. Tables in this version draw at the chart's own text size.")
+
+// The palette.
+posColor = #26A69A
+posLight = #ACE5DC
+negColor = #FF5252
+negLight = #FCCBCD
+
+// Each drawing family keeps at most this many objects, newest first.
+maxShapes = 500
+
+// ---- Zig zag source -----------------------------------------------------------
+// The Open/Close choice uses the larger of open and close for both the swing
+// high and the swing low.
+ocTop = max(open, close)
+zHigh = zzSource == "Open/Close" ? ocTop : zzSource == "Close" ? close : high
+zLow = zzSource == "Open/Close" ? ocTop : zzSource == "Close" ? close : low
+
+// A bar is a swing extreme when it is the extreme of the last zzPeriod bars;
+// a tie with an older bar still counts for this bar.
+windowHigh = highest(zHigh, zzPeriod)
+windowLow = lowest(zLow, zzPeriod)
+ph = windowHigh == zHigh ? zHigh : none
+pl = windowLow == zLow ? zLow : none
+
+// ---- Series the filters read ----------------------------------------------------
+atrValue = atr(atrLength)
+volSma = sma(volume, volSmaLength)
+
+// Relative volume is this bar's volume over the previous bar's average, then
+// compared with its own average.
+avgVol = sma(volume, relVolLength)
+prevAvgVol = avgVol[1]
+relVol = isNone(prevAvgVol) or prevAvgVol == 0 or isNone(volume) ? none : volume / prevAvgVol
+relVolSma = sma(relVol, relVolLength)
+
+// A new calendar day in the chart's timezone. The first bar is never one.
+newDay = bar.isFirst ? false : not date.isSameDay(time, time[1])
+
+// The day's running percentage change: each bar's change from the previous
+// close, summed since the day began.
+prevClose = close[1]
+dailyChange = isNone(prevClose) or prevClose == 0 ? 0 : (close - prevClose) / prevClose * 100
+var cumPchg = none
+cumPchg = newDay ? dailyChange : isNone(cumPchg) ? dailyChange : cumPchg + dailyChange
+
+// The day's running volume and the previous day's total. The running total
+// starts absent, so it stays absent until the first new day begins.
+var dayVol = none
+var prevDayVol = none
+if newDay
+    prevDayVol = dayVol
+    dayVol = volume
+else
+    dayVol = dayVol + volume
+
+volBase = isNone(prevDayVol) ? dayVol : prevDayVol
+cumVolPchg = isNone(volBase) or volBase == 0 or isNone(dayVol) ? none : (dayVol - volBase) / volBase * 100
+
+// ---- Filters, each passing when switched off ----------------------------------
+pchgAbovePass = pchgFilter ? not isNone(cumPchg) and cumPchg > pchgAboveBelow : true
+pchgBelowPass = pchgFilter ? not isNone(cumPchg) and cumPchg < -pchgAboveBelow : true
+volPass = volFilter ? not isNone(dayVol) and dayVol >= volAbove : true
+volPchgPass = volPchgFilter ? not isNone(cumVolPchg) and cumVolPchg >= volPchgAbove : true
+
+barRange = high - low
+atrPass = atrFilter ? not isNone(atrValue) and barRange > atrValue * atrMulti : true
+// A bar with no range has no measurable body, so it fails the body tests.
+bodyRatio = barRange > 0 ? abs(close - open) / barRange : none
+bodyLimit = bodyPercent / 100
+bodyPass = bodyFilter ? not isNone(bodyRatio) and bodyRatio >= bodyLimit : true
+prevRange = high[1] - low[1]
+bodySizePass = bodySizeFilter ? not isNone(bodyRatio) and bodyRatio >= bodyLimit and not isNone(prevRange) and barRange >= prevRange * bodySizeMultiplier : true
+volumeSmaPass = volumeFilter ? not isNone(volume) and not isNone(volSma) and volume > volSma : true
+relVolPass = relVolFilter ? not isNone(relVol) and not isNone(relVolSma) and relVol > relVolSma * relVolMulti : true
+
+barHour = date.hour(time)
+barMinute = date.minute(time)
+afterFrom = barHour > hourFrom or (barHour == hourFrom and barMinute >= minuteFrom)
+beforeTo = barHour < hourTo or (barHour == hourTo and barMinute < minuteTo)
+timePass = timeFilter ? afterFrom and beforeTo : true
+datePass = dateFilter ? date.year(time) == year and date.month(time) == month and date.day(time) == day : true
+
+filtersPass = pchgAbovePass and pchgBelowPass and volPass and volPchgPass and atrPass and bodyPass and bodySizePass and volumeSmaPass and relVolPass and timePass and datePass and bar.isConfirmed
+
+// ---- Zig zag ------------------------------------------------------------------
+// Every pivot so far, newest first: its price, its bar time and the direction
+// of the leg it ends.
+var pvValue: array<number> = []
+var pvTime: array<number> = []
+var pvDir: array<number> = []
+var dir = 0
+
+dirBefore = dir
+if not isNone(pl) and isNone(ph)
+    dir = -1
+else if not isNone(ph) and isNone(pl)
+    dir = 1
+dirChanged = not bar.isFirst and dir != dirBefore
+
+pivotAdded = false
+pivotMoved = false
+if not isNone(ph) or not isNone(pl)
+    pivotValue = dir == 1 ? ph : pl
+    if not isNone(pivotValue)
+        if dirChanged or size(pvValue) == 0
+            unshift(pvValue, pivotValue)
+            unshift(pvTime, time)
+            unshift(pvDir, dir)
+            pivotAdded = true
+        else if (dir == 1 and pivotValue > element(pvValue, 0)) or (dir == -1 and pivotValue < element(pvValue, 0))
+            // A further extreme in the same direction moves the newest pivot.
+            set(pvValue, 0, pivotValue)
+            set(pvTime, 0, time)
+            pivotMoved = true
+
+pivotCount = size(pvValue)
+
+// The zig zag is drawn from the fifth pivot on: one segment per pivot, coloured
+// by the direction of its newer end, and the newest segment follows its pivot.
+var zzLines: array<line> = []
+var zzNewest = none
+if zzDisplay
+    if pivotAdded
+        if pivotCount >= 5
+            zzNewest = draw.line(element(pvTime, 1), element(pvValue, 1), element(pvTime, 0), element(pvValue, 0), color = element(pvDir, 0) == 1 ? posColor : negColor, width = 1)
+            push(zzLines, zzNewest)
+            if size(zzLines) > maxShapes
+                draw.delete(shift(zzLines))
+        else
+            zzNewest = none
+    else if pivotMoved and not isNone(zzNewest)
+        draw.setTo(zzNewest, element(pvTime, 0), element(pvValue, 0))
+
+// ---- The nine pivots the pattern reads ---------------------------------------------
+// The pattern reads the newest nine pivots. While fewer than nine exist, the
+// reads count from the oldest one, so zz8 is always the oldest pivot read.
+fn pivotAt(arr, i) => i >= 0 ? element(arr, i) : none
+
+readCount = min(pivotCount, 9)
+readBase = readCount - 9
+bi0 = pivotAt(pvTime, readBase)
+zz1 = pivotAt(pvValue, readBase + 1)
+zz2 = pivotAt(pvValue, readBase + 2)
+bi2 = pivotAt(pvTime, readBase + 2)
+zz3 = pivotAt(pvValue, readBase + 3)
+zz4 = pivotAt(pvValue, readBase + 4)
+zz5 = pivotAt(pvValue, readBase + 5)
+zz6 = pivotAt(pvValue, readBase + 6)
+zz7 = pivotAt(pvValue, readBase + 7)
+zz8 = pivotAt(pvValue, readBase + 8)
+bi8 = pivotAt(pvTime, readBase + 8)
+
+haveStructure = not isNone(zz1) and not isNone(zz2) and not isNone(zz3) and not isNone(zz4) and not isNone(zz5) and not isNone(zz6) and not isNone(zz7) and not isNone(zz8)
+
+// The close crossing zz2, the pattern's last swing low (short) or high (long).
+prevZz2 = zz2[1]
+crossReady = not isNone(zz2) and not isNone(prevClose) and not isNone(prevZz2)
+crossUnderClose = crossReady and close < zz2 and prevClose >= prevZz2
+crossOverClose = crossReady and close > zz2 and prevClose <= prevZz2
+
+shortCont1 = haveStructure and zz1 > zz2 and zz1 < zz3 and zz2 < zz1 and zz2 < zz3 and zz3 > zz2 and zz3 > zz1 and zz3 > zz4 and zz3 < zz5 and zz4 < zz3 and zz4 > zz2 and zz4 < zz5 and zz5 > zz3 and zz5 > zz4 and zz5 > zz6 and zz5 > zz7 and zz6 < zz5 and zz6 < zz7 and zz7 > zz6 and zz7 < zz5 and zz7 > zz8 and crossUnderClose and filtersPass
+longCont1 = haveStructure and zz1 < zz2 and zz1 > zz3 and zz2 > zz1 and zz2 > zz3 and zz3 < zz2 and zz3 < zz1 and zz3 < zz4 and zz3 > zz5 and zz4 > zz3 and zz4 < zz2 and zz4 > zz5 and zz5 < zz3 and zz5 < zz4 and zz5 < zz6 and zz5 < zz7 and zz6 > zz5 and zz6 > zz7 and zz7 < zz6 and zz7 > zz5 and zz7 < zz8 and crossOverClose and filtersPass
+
+// ---- Retracement --------------------------------------------------------------------
+// A shift records the level it broke; a later return to that level is the
+// retracement. The level is written before the return is tested.
+var shortBreakPrice = none
+var shortBreakTime = none
+var longBreakPrice = none
+var longBreakTime = none
+if shortCont1
+    shortBreakPrice = zz2
+    shortBreakTime = bi2
+if longCont1
+    longBreakPrice = zz2
+    longBreakTime = bi2
+
+prevShortBreakPrice = shortBreakPrice[1]
+prevLongBreakPrice = longBreakPrice[1]
+prevHigh = high[1]
+prevLow = low[1]
+shortCont2 = not isNone(shortBreakPrice) and not isNone(prevShortBreakPrice) and not isNone(prevHigh) and high > shortBreakPrice and prevHigh <= prevShortBreakPrice and prevHigh < shortBreakPrice and filtersPass
+longCont2 = not isNone(longBreakPrice) and not isNone(prevLongBreakPrice) and not isNone(prevLow) and low < longBreakPrice and prevLow >= prevLongBreakPrice and prevLow > longBreakPrice and filtersPass
+
+// 0 waiting, 1 armed by a shift, 2 triggered. A trigger lasts one bar.
+var shortState = 0
+var longState = 0
+shortState = shortState == 2 ? 0 : shortState
+if shortCont1 and shortState == 0
+    shortState = 1
+if shortCont2 and shortState == 1
+    shortState = 2
+longState = longState == 2 ? 0 : longState
+if longCont1 and longState == 0
+    longState = 1
+if longCont2 and longState == 1
+    longState = 2
+
+shortRet = shortState == 2
+longRet = longState == 2
+
+// ---- Markers and candle colours ------------------------------------------------------
+isMitigation = method == "Mitigation Block"
+
+if isMitigation and showShort and shortCont1
+    signal("Short", color = #FCCBCD, at = "above", shape = "triangleDown")
+if isMitigation and showLong and longCont1
+    signal("Long", color = #ACE5DC, at = "below", shape = "triangleUp")
+if not isMitigation and showShort and shortRet
+    signal("Short", color = #FCCBCD, at = "above", shape = "arrowDown")
+if not isMitigation and showLong and longRet
+    signal("Long", color = #ACE5DC, at = "below", shape = "arrowUp")
+
+mitigationPaint = showShort and shortCont1 ? negLight : showLong and longCont1 ? posLight : none
+retracementPaint = showShort and shortRet ? negLight : showLong and longRet ? posLight : none
+barColor(isMitigation ? mitigationPaint : retracementPaint)
+
+// ---- Structure boxes and levels ------------------------------------------------------
+// Every object a shift or a retracement draws is kept with the bar that drew
+// it. The newest bars' objects are kept until 500 have been counted, and a bar
+// that starts under that budget keeps all of its objects.
+var stBoxes: array<box> = []
+var stBoxBar: array<number> = []
+var stLines: array<line> = []
+var stLineBar: array<number> = []
+
+boxOpacity = (100 - zzBoxTransp) / 100
+
+if showShort and shortCont1
+    if not isNone(bi8) and not isNone(bi0)
+        boxTop = min(min(zz8, zz6), min(zz4, zz2))
+        push(stBoxes, draw.box(min(bi8, bi0), max(boxTop, zz5), max(bi8, bi0), min(boxTop, zz5), color = fade(negColor, zzBoxTransp), fillColor = negColor, opacity = boxOpacity))
+        push(stBoxBar, bar.index)
+    if isMitigation and not isNone(bi2)
+        push(stLines, draw.line(bi2, zz2, time, zz2, color = negColor, width = 1, style = "dashed"))
+        push(stLineBar, bar.index)
+
+if showLong and longCont1
+    if not isNone(bi8) and not isNone(bi0)
+        boxTop = max(max(zz8, zz6), max(zz4, zz2))
+        push(stBoxes, draw.box(min(bi8, bi0), max(boxTop, zz5), max(bi8, bi0), min(boxTop, zz5), color = fade(posColor, zzBoxTransp), fillColor = posColor, opacity = boxOpacity))
+        push(stBoxBar, bar.index)
+    if isMitigation and not isNone(bi2)
+        push(stLines, draw.line(bi2, zz2, time, zz2, color = posColor, width = 1, style = "dashed"))
+        push(stLineBar, bar.index)
+
+if not isMitigation and showShort and shortRet and not isNone(shortBreakTime) and not isNone(shortBreakPrice)
+    push(stLines, draw.line(shortBreakTime, shortBreakPrice, time, shortBreakPrice, color = negColor, width = 1, style = "dotted"))
+    push(stLineBar, bar.index)
+
+if not isMitigation and showLong and longRet and not isNone(longBreakTime) and not isNone(longBreakPrice)
+    push(stLines, draw.line(longBreakTime, longBreakPrice, time, longBreakPrice, color = posColor, width = 1, style = "dotted"))
+    push(stLineBar, bar.index)
+
+// Drop the oldest bar's objects while the newer ones already fill the budget.
+trimming = true
+while trimming
+    held = size(stBoxes) + size(stLines)
+    oldestBox = size(stBoxBar) > 0 ? element(stBoxBar, 0) : none
+    oldestLine = size(stLineBar) > 0 ? element(stLineBar, 0) : none
+    oldest = isNone(oldestBox) ? oldestLine : isNone(oldestLine) ? oldestBox : min(oldestBox, oldestLine)
+    inOldest = 0
+    if not isNone(oldest)
+        for i = 0 to size(stBoxBar) - 1
+            if element(stBoxBar, i) == oldest
+                inOldest += 1
+        for i = 0 to size(stLineBar) - 1
+            if element(stLineBar, i) == oldest
+                inOldest += 1
+    if isNone(oldest) or held - inOldest < maxShapes
+        trimming = false
+    else
+        while size(stBoxBar) > 0 and element(stBoxBar, 0) == oldest
+            draw.delete(shift(stBoxes))
+            shift(stBoxBar)
+        while size(stLineBar) > 0 and element(stLineBar, 0) == oldest
+            draw.delete(shift(stLines))
+            shift(stLineBar)
+
+// ---- Data table -----------------------------------------------------------------------
+// Grids pin to the four corners, so each position is drawn in its nearest
+// corner: a top row at the top, a middle or bottom row at the bottom, a left
+// column on the left, a centre or right column on the right.
+gridBottomRight = table("Day readings, bottom right", 4, 2, position = "bottomRight")
+gridBottomLeft = table("Day readings, bottom left", 4, 2, position = "bottomLeft")
+gridTopRight = table("Day readings, top right", 4, 2, position = "topRight")
+gridTopLeft = table("Day readings, top left", 4, 2, position = "topLeft")
+
+fn pct(v) => isNone(v) ? "-" : text(v, 2) + " %"
+// Volume is reported in lakhs.
+fn lakh(v) => isNone(v) ? "-" : text(v / 100000, 2) + " L"
+fn upDown(v) => not isNone(v) and v > 0 ? #26A69A : #FF5252
+
+fn writePanel(g, pchg, volPchg, vol, pvol) =>
+    prevTone = not isNone(pvol) and not isNone(vol) and pvol < vol ? #FF5252 : #26A69A
+    cell(g, 0, 0, "%Chg", textColor = #D1D4DC, bgColor = #141516, align = "left")
+    cell(g, 0, 1, pct(pchg), textColor = upDown(pchg), bgColor = #141516, align = "right")
+    cell(g, 1, 0, "Vol %Chg", textColor = #D1D4DC, bgColor = #2A2E39, align = "left")
+    cell(g, 1, 1, pct(volPchg), textColor = upDown(volPchg), bgColor = #2A2E39, align = "right")
+    cell(g, 2, 0, "Vol", textColor = #D1D4DC, bgColor = #141516, align = "left")
+    cell(g, 2, 1, lakh(vol), textColor = upDown(volPchg), bgColor = #141516, align = "right")
+    cell(g, 3, 0, "PD Vol", textColor = #D1D4DC, bgColor = #2A2E39, align = "left")
+    cell(g, 3, 1, lakh(pvol), textColor = prevTone, bgColor = #2A2E39, align = "right")
+    true
+
+atTop = tablePosition == "top-left" or tablePosition == "top-center" or tablePosition == "top-right"
+atLeft = tablePosition == "top-left" or tablePosition == "middle-left" or tablePosition == "bottom-left"
+
+if bar.isLast and showDataTable
+    target = atTop ? (atLeft ? gridTopLeft : gridTopRight) : (atLeft ? gridBottomLeft : gridBottomRight)
+    writePanel(target, cumPchg, cumVolPchg, dayVol, prevDayVol)

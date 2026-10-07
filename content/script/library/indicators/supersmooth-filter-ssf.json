@@ -1,0 +1,15 @@
+{
+  "title": "Supersmooth Filter (SSF)",
+  "summary": "A two-pole recursive lowpass filter that removes short-term chop from price with much less lag than a moving average of the same length.",
+  "description": "The Supersmooth Filter is a two-pole recursive lowpass filter. Each new value is a weighted blend of this bar's price and the filter's own two previous values. The weights come from the length setting: with `arg = sqrt(2) * pi / length`, the filter uses `c2 = 2 * exp(-arg) * cos(arg)`, `c3 = -exp(-2 * arg)` and `c1 = 1 - c2 - c3`, and computes `SSF = c1 * price + c2 * SSF[1] + c3 * SSF[2]`.\n\nBecause the three weights add up to one, a flat price passes through unchanged. Before the filter has two values of its own it reads the price in their place, so the first bar equals the price exactly and the line answers from the first bar.\n\nThe length sets the cutoff: cycles shorter than roughly the length are suppressed, and slower movements pass through. The two-pole design cuts short cycles much harder than a single exponential average, which is why the line looks so much smoother for the lag it carries.",
+  "howToRead": "Use the SSF as a smooth trend line on the price chart. When it turns up, the slower part of the move has turned up; when it turns down, it has turned down. Price crossing the line, or two SSF lines of different lengths crossing each other, are common ways to time a change in direction.\n\nThe filter can overshoot slightly after a sharp move, and like every smoother it still lags. It removes noise; it does not predict the next bar.",
+  "settings": [
+    { "key": "source", "label": "Source", "description": "The price series the filter smooths, the close by default." },
+    { "key": "length", "label": "Length", "description": "The cutoff period in bars. A longer length removes slower swings and makes the line smoother but later to turn." }
+  ],
+  "faq": [
+    { "q": "How is this different from an exponential moving average?", "a": "An exponential average has one pole and lets a fair amount of short-term chop through. This filter has two poles, so it suppresses short cycles much more strongly for a similar amount of lag." },
+    { "q": "Why does the line start on the first bar?", "a": "Until the filter has two earlier values of its own, it uses the price in their place. The weights sum to one, so the first value equals the price." },
+    { "q": "Why does it sometimes run past price after a jump?", "a": "A two-pole filter carries a little momentum. After a sudden move it can overshoot by a small amount before it settles." }
+  ]
+}

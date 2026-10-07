@@ -1,0 +1,41 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © openalgo
+// Original work (c) mihakralj, MIT License
+
+version 1
+study("Absolute Price Oscillator (APO)", precision = 2)
+
+source = input(close, "Source")
+fastLength = input(12, "Fast Length", min = 1, max = 5000, step = 1)
+slowLength = input(26, "Slow Length", min = 1, max = 5000, step = 1)
+
+alphaFast = 2 / (fastLength + 1)
+alphaSlow = 2 / (slowLength + 1)
+
+// Both averages start from the first value. While the slow one is still
+// filling, both are divided by 1 - (1 - alphaSlow)^n so the gap is not pulled
+// towards the starting value; once that factor is below 1e-10 the plain
+// difference is used.
+var emaFast = none
+var emaSlow = none
+var e = 1.0
+var warmup = true
+var result = none
+if not isNone(source)
+    if isNone(emaFast)
+        emaFast = source
+        emaSlow = source
+        result = 0
+    else
+        emaFast = alphaFast * (source - emaFast) + emaFast
+        emaSlow = alphaSlow * (source - emaSlow) + emaSlow
+        if warmup
+            e = e * (1 - alphaSlow)
+            c = e > 1e-10 ? 1 / (1 - e) : 1
+            result = emaFast * c - emaSlow * c
+            if e <= 1e-10
+                warmup = false
+        else
+            result = emaFast - emaSlow
+
+plot(result, "APO", #ffeb3b, width = 2)

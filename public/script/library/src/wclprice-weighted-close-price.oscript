@@ -1,0 +1,12 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © openalgo
+// Original work (c) mihakralj, MIT License
+
+version 1
+study("WCLPRICE: Weighted Close Price", overlay = true, precision = 2)
+
+// The close is counted twice, so it carries half the weight and the high and
+// the low a quarter each. One value per bar, with no warmup.
+wclPrice = (high + low + 2 * close) * 0.25
+
+plot(wclPrice, "WclPrice", #ff5252, width = 2)

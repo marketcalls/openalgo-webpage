@@ -1,0 +1,49 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © openalgo
+// Original work (c) mihakralj, MIT License
+
+version 1
+study("Triple Exponential Moving Average (TEMA)", overlay = true, precision = 2)
+
+period = input(10, "Period", min = 1, max = 5000, step = 1)
+source = input(close, "Source")
+
+// All three stages share one smoothing factor.
+a = 2 / (period + 1)
+beta = 1 - a
+
+// Each stage starts at zero. During warmup every stage is divided by its own
+// compensator, one minus beta to the power of the bars seen, so the line
+// starts at the source on the first bar.
+var e1 = 1.0
+var e2 = 1.0
+var e3 = 1.0
+var warmup = true
+var rema1 = 0.0
+var rema2 = 0.0
+var rema3 = 0.0
+
+temaValue = none
+if not isNone(source)
+    rema1 = a * (source - rema1) + rema1
+    if warmup
+        e1 = e1 * beta
+        e2 = e2 * beta
+        e3 = e3 * beta
+        d1 = 1 - e1
+        d2 = 1 - e2
+        d3 = 1 - e3
+        if d1 != 0 and d2 != 0 and d3 != 0
+            ema1 = rema1 / d1
+            rema2 = a * (ema1 - rema2) + rema2
+            ema2 = rema2 / d2
+            rema3 = a * (ema2 - rema3) + rema3
+            ema3 = rema3 / d3
+            warmup = e1 > 1e-10
+            temaValue = 3 * ema1 - 3 * ema2 + ema3
+    else
+        rema2 = a * (rema1 - rema2) + rema2
+        rema3 = a * (rema2 - rema3) + rema3
+        temaValue = 3 * rema1 - 3 * rema2 + rema3
+
+plot(temaValue, "TEMA", #ffeb3b, width = 2)

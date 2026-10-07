@@ -1,0 +1,45 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © openalgo
+// Original work (c) mihakralj, MIT License
+
+version 1
+study(" Ehlers Trendflex Indicator (TRENDFLEX)", precision = 4)
+
+period = input(20, "Period", min = 1, max = 5000, step = 1, tooltip = "Lookback period for trend measurement.")
+source = input(close, "Source")
+
+// Two-pole smoothing filter coefficients at half the period.
+halfPeriod = period * 0.5
+a1 = exp(-1.414 * math.pi / halfPeriod)
+b1 = 2 * a1 * math.cos(1.414 * math.pi / halfPeriod)
+c2 = b1
+c3 = -(a1 * a1)
+c1 = 1 - c2 - c3
+
+// A missing price enters the filter as zero; only the plotted value is
+// blanked on that bar.
+src = orElse(source, 0)
+prevSrc = bar.index > 0 ? orElse(source[1], 0) : 0
+
+// The filter passes the price straight through on the first two bars.
+var filtPrev = 0.0
+var filtPrev2 = 0.0
+filt = bar.index < 2 ? src : c1 * (src + prevSrc) * 0.5 + c2 * filtPrev + c3 * filtPrev2
+filtPrev2 = filtPrev
+filtPrev = filt
+
+// The summed distance from the filtered value now to each of its last n
+// values (n grows to the period), kept as a running total of those values.
+var runningSum = 0.0
+n = min(bar.index, period)
+slopeSum = n > 0 ? (n * filt - runningSum) / period : 0
+runningSum = runningSum - (bar.index >= period ? filt[period] : 0)
+runningSum = runningSum + filt
+
+// Normalised by an exponential mean square of the slope sum.
+var ms = 0.0
+ms = 0.04 * slopeSum * slopeSum + 0.96 * ms
+result = ms > 0 ? slopeSum / sqrt(ms) : 0
+
+plot(isNone(source) ? none : result, "TRENDFLEX", #ffeb3b, width = 2)
+level(0, "Zero", #787b86, style = "dashed")

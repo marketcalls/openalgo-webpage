@@ -1,0 +1,109 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © openalgo
+// Original work (c) mihakralj, MIT License
+
+version 1
+study("Polynomial Fitting (POLYFIT)", overlay = true, precision = 2)
+
+period = input(20, "Period", min = 2, max = 1000, step = 1, tooltip = "Number of data points in the fitting window")
+degree = input(2, "Degree", min = 1, max = 6, step = 1, tooltip = "Polynomial degree: 1=linear, 2=quadratic, 3=cubic")
+source = input(close, "Source")
+
+// The degree can be no higher than the window allows, and m is the number of
+// coefficients to solve for.
+d = min(degree, period - 1)
+m = d + 1
+
+// The fitting window, oldest first. An absent source value repeats the last
+// value that was present.
+var buf: array<number> = []
+var lastValid = none
+curr = source
+if isNone(curr) and not isNone(lastValid)
+    curr = lastValid
+if not isNone(curr)
+    lastValid = curr
+    push(buf, curr)
+    if size(buf) > period
+        shift(buf)
+
+n = size(buf)
+fitted = none
+if n >= m + 1
+    // The window is spread over x from 0 to 1, oldest to newest.
+    invN = 1.0 / (n - 1.0)
+
+    // The normal equations: the matrix of summed powers of x, held as one flat
+    // m by m array, and the right-hand side of summed powers of x times y.
+    mat = []
+    rhs = []
+    for k = 0 to m * m - 1
+        push(mat, 0.0)
+    for k = 0 to m - 1
+        push(rhs, 0.0)
+    for i = 0 to n - 1
+        x = i * invN
+        xp = 1.0
+        for r = 0 to d
+            xq = xp
+            for c = r to d
+                add = xp * xq
+                set(mat, r * m + c, element(mat, r * m + c) + add)
+                if c != r
+                    set(mat, c * m + r, element(mat, c * m + r) + add)
+                xq *= x
+            xp *= x
+    for i = 0 to n - 1
+        y = element(buf, i)
+        x = i * invN
+        xp = 1.0
+        for r = 0 to d
+            set(rhs, r, element(rhs, r) + xp * y)
+            xp *= x
+
+    // Gauss-Jordan elimination with partial pivoting. A singular window leaves
+    // the remaining coefficients unsolved rather than dividing by a near-zero
+    // pivot.
+    for col = 0 to d
+        pivRow = col
+        pivMax = abs(element(mat, col * m + col))
+        for row = col + 1 to d
+            absVal = abs(element(mat, row * m + col))
+            if absVal > pivMax
+                pivMax = absVal
+                pivRow = row
+        if pivRow != col
+            for k = 0 to d
+                p1 = col * m + k
+                p2 = pivRow * m + k
+                tmp = element(mat, p1)
+                set(mat, p1, element(mat, p2))
+                set(mat, p2, tmp)
+            tmpR = element(rhs, col)
+            set(rhs, col, element(rhs, pivRow))
+            set(rhs, pivRow, tmpR)
+
+        piv = element(mat, col * m + col)
+        if not (abs(piv) >= 1e-30)
+            break
+
+        invPiv = 1.0 / piv
+        for k = col to d
+            set(mat, col * m + k, element(mat, col * m + k) * invPiv)
+        set(rhs, col, element(rhs, col) * invPiv)
+
+        for row = 0 to d
+            if row != col
+                factor = element(mat, row * m + col)
+                for k = col to d
+                    set(mat, row * m + k, element(mat, row * m + k) - factor * element(mat, col * m + k))
+                set(rhs, row, element(rhs, row) - factor * element(rhs, col))
+
+    // The newest bar sits at x = 1, so the fitted value there is the sum of
+    // the coefficients.
+    result = 0.0
+    for r = 0 to d
+        result += element(rhs, r)
+    fitted = result
+
+plot(fitted, "POLYFIT", #ffeb3b, width = 2)

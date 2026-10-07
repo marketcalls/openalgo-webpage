@@ -1,0 +1,30 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © openalgo
+// Original work (c) mihakralj, MIT License
+
+version 1
+study("Ulcer Index (UI)", precision = 4)
+
+source = input(close, "Source")
+period = input(14, "Period", min = 1, max = 5000, step = 1, tooltip = "Lookback period for calculating the Ulcer Index.")
+
+// The running high is the highest source value of the last period bars, or of
+// every bar so far while fewer than period bars exist. A missing value counts
+// as zero there.
+values = orElse(source, 0)
+var allTimeHigh = none
+allTimeHigh = isNone(allTimeHigh) ? values : max(allTimeHigh, values)
+windowHigh = highest(values, period)
+highestClose = bar.index >= period - 1 ? windowHigh : allTimeHigh
+
+// The percentage drawdown from that high, 0 where the high is zero.
+drawdown = not isNone(source) and highestClose != 0 ? (source - highestClose) / highestClose * 100 : 0
+squared = drawdown * drawdown
+
+// The root of the mean squared drawdown, only once a full window of period
+// bars exists (the sum alone would also answer over a shorter window).
+sumSquared = sum(squared, period)
+meanSquared = sumSquared / period
+ui = bar.index >= period - 1 ? sqrt(meanSquared > 0 ? meanSquared : 0) : none
+
+plot(ui, "UI", #ffeb3b, width = 2)

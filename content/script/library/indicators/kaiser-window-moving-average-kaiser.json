@@ -1,0 +1,16 @@
+{
+  "title": "Kaiser Window Moving Average (KAISER)",
+  "summary": "A symmetric moving average weighted by the Kaiser window, with a beta setting that shapes how fast the weights taper.",
+  "description": "The Kaiser Window Moving Average weights the bars of its window with the Kaiser window, a symmetric bell built from the modified Bessel function of order zero. Each weight is I0(beta * sqrt(1 - t^2)) / I0(beta), where t runs from -1 on the oldest bar to 1 on the newest, and I0 is summed as a 25-term power series. The weights are computed once and scaled to sum to one.\n\nThe beta setting shapes the window. At 0 every weight is equal and the line is a simple moving average; as beta rises the weights concentrate on the centre of the window and the edges fade, so bars entering or leaving the window move the line less. Until the window holds `period` bars the line sits on the price, and a missing price counts as zero.",
+  "howToRead": "Read the KAISER line as a smooth trend line whose character you choose with beta. A low beta behaves like a simple average, with a step in the line whenever a large bar leaves the window. A higher beta fades the edges so those steps disappear, and puts more of the weight on fewer central bars. Whatever the beta, the weights are symmetric, so the line describes the middle of its window and runs about half a window behind price.\n\nUse it for the direction and slope of the trend. The first bars, where the line equals price, carry no smoothing.",
+  "settings": [
+    { "key": "source", "label": "Source", "description": "The price series the average is taken from, the close by default." },
+    { "key": "period", "label": "Period", "description": "Number of bars in the window. A longer window smooths more and lags more." },
+    { "key": "beta", "label": "Beta (shape)", "description": "How sharply the weights taper from the centre. 0 gives equal weights; higher values concentrate weight on the middle bars." }
+  ],
+  "faq": [
+    { "q": "What does beta 0 give?", "a": "Equal weights on every bar of the window, which is a simple moving average." },
+    { "q": "Which beta should I use?", "a": "The default of 3 is a general setting. Around 5.65 the taper resembles a Blackman window and around 8.6 a Hamming-like shape. Higher values concentrate the weight on the middle bars; the delay stays about half a window at every setting." },
+    { "q": "Why does the line equal price at the start?", "a": "Until the window holds the full period the weights cannot be applied, so the line returns the price itself." }
+  ]
+}

@@ -1,0 +1,19 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © openalgo
+// Original work (c) mihakralj, MIT License
+
+version 1
+study("Volume Rate of Change (VROC)", precision = 2)
+
+period = input(12, "Period", min = 1, max = 5000, step = 1, tooltip = "Number of periods for comparison")
+calcType = input("Point", "Calculation Type", options = ["Point", "Percent"], tooltip = "Point or Percent calculation")
+
+// This bar's volume against the volume period bars ago, as a difference or
+// as a percentage of the older volume. Nothing is drawn where the older
+// volume is zero in percent mode.
+current = volume
+historical = volume[period]
+pointChange = current - historical
+percentChange = historical != 0 ? (current - historical) / historical * 100 : none
+
+plot(calcType == "Percent" ? percentChange : pointChange, "VROC", #ffeb3b, width = 2)

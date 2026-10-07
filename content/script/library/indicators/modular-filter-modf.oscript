@@ -1,0 +1,43 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © openalgo
+// Original work (c) mihakralj, MIT License
+
+version 1
+study("Modular Filter (MODF)", overlay = true, precision = 2)
+
+period = input(14, "Period", min = 2, max = 5000, step = 1)
+beta = input(0.8, "Beta", min = 0, max = 1, step = 0.1, tooltip = "Blend weight: 1.0 is a smooth filter, 0.0 is a trailing stop.")
+feedback = input(false, "Feedback")
+fbWeight = input(0.5, "Feedback Weight", min = 0.01, max = 1, step = 0.05, tooltip = "Only used when Feedback is on. Lower is smoother.")
+source = input(close, "Source")
+
+smoothing = 2 / (period + 1)
+
+// Every band starts at zero. The upper band snaps to price on the first bar;
+// the lower band smooths up from zero over the bars that follow.
+var bandUp = 0.0
+var bandDown = 0.0
+var side = 0
+var filtered = 0.0
+
+// A missing source leaves every band where it was and draws nothing.
+out = none
+if not isNone(source)
+    // With feedback on, the input is blended with the previous output.
+    a = feedback ? fbWeight * source + (1 - fbWeight) * filtered : source
+
+    // One exponential band snaps up to the input, the other snaps down to it.
+    emaUp = smoothing * a + (1 - smoothing) * bandUp
+    bandUp = a > emaUp ? a : emaUp
+    emaDown = smoothing * a + (1 - smoothing) * bandDown
+    bandDown = a < emaDown ? a : emaDown
+
+    // The side latches: it changes only on a bar where the input touches a band.
+    side = a == bandUp ? 1 : a == bandDown ? 0 : side
+
+    upperMix = beta * bandUp + (1 - beta) * bandDown
+    lowerMix = beta * bandDown + (1 - beta) * bandUp
+    filtered = side * upperMix + (1 - side) * lowerMix
+    out = filtered
+
+plot(out, "MODF", #ffeb3b, width = 2)

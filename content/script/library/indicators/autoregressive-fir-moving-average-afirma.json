@@ -1,0 +1,42 @@
+{
+  "title": "Autoregressive FIR Moving Average (AFIRMA)",
+  "summary": "A cosine-windowed moving average of recent prices; with the least squares option on, it becomes a plain simple average of the window.",
+  "description": "AFIRMA is a finite impulse response average: a weighted mean of the last `Period` prices whose weights come from a cosine window. The weight of the price `k` bars back is `a0 + a1 * cos(x) + a2 * cos(2x) + a3 * cos(3x)`, where `x = 2 * pi * k / p` and `p` is the window length. The Window Function setting chooses the leading terms: 1 (Hanning) uses 0.5 and -0.5, 2 (Hamming) uses 0.54 and -0.46, 3 (Blackman) uses 0.42, -0.5 and 0.08, and 4 (Blackman-Harris) uses 0.35875, -0.48829 and 0.14128. The two higher terms keep the Blackman-Harris values for every choice, exactly as the calculation is defined, so windows 1 to 3 are not the textbook shapes. Every window gives its largest weight to the middle of the window and small weights to the newest and oldest prices.\n\nThe window grows with the chart: on bar `i` it spans `min(i + 1, Period)` bars, so the line answers from the first bar.\n\nWith Least Squares Method switched on, a straight line is fitted by least squares through the newest `n` prices, where `n` is `floor((p - 1) / 2)` (at most 50). Those newest prices are replaced by their fitted values, the older prices are kept, and the result is the plain, unweighted average of that blended window. A least squares line always has the same total as the prices it fits, so the replacement changes nothing and the result equals the simple moving average of the last `p` prices; the cosine weights are not used at all in this mode.",
+  "howToRead": "Read AFIRMA as a smooth trend line on the price chart. Its slope gives the direction, and price crossing it marks a change in the short-term balance. Because the weights peak in the middle of the window and the newest price gets very little weight, the line lags price by about half the Period.\n\nWith the least squares option on, the line is the simple moving average of the window, which is a little less smooth than the cosine-weighted version and has about the same lag. Either way the line is built from bars that have closed; it smooths the past rather than forecasting the next bar.",
+  "settings": [
+    {
+      "key": "period",
+      "label": "Period",
+      "description": "How many bars the window spans once the chart is long enough. Larger values smooth more and lag more."
+    },
+    {
+      "key": "source",
+      "label": "Source",
+      "description": "The price series the average is taken over, the close by default."
+    },
+    {
+      "key": "windowType",
+      "label": "Window Function",
+      "description": "Which cosine window shapes the weights: 1 Hanning, 2 Hamming, 3 Blackman, 4 Blackman-Harris. Each sets the leading terms of the weight formula."
+    },
+    {
+      "key": "leastSquares",
+      "label": "Least Squares Method",
+      "description": "Replaces the newest part of the window with a fitted straight line and takes a plain average. Since the fitted values sum to the prices they replace, this gives the simple moving average of the window."
+    }
+  ],
+  "faq": [
+    {
+      "q": "Why does the line start on the first bar?",
+      "a": "The window grows from one bar up to the Period setting, so an average exists from the start. The earliest values use only a few bars and move more."
+    },
+    {
+      "q": "Which window function should I use?",
+      "a": "All four put the most weight on the middle of the window and differ only in how the weights taper toward the ends, so the lines are close to each other. The default, window 4, tapers the newest and oldest prices almost to zero weight."
+    },
+    {
+      "q": "What does the least squares option change?",
+      "a": "It fits a straight line through the newest prices of the window, uses the fitted values in place of those prices, and takes a plain average. A least squares line has the same total as the points it fits, so the result is exactly the simple moving average of the window."
+    }
+  ]
+}

@@ -1,0 +1,31 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © openalgo
+// Original work (c) mihakralj, MIT License
+
+version 1
+study("Hodrick-Prescott Filter (HP)", precision = 2)
+
+source = input(close, "Source")
+lambda = input(677, "Lambda (Smoothing)", min = 0.1, max = 1000000, step = 10, tooltip = "Higher lambda gives a stiffer trend and pushes more of the move into the cycle.")
+
+// A one-pass approximation of the trend: lambda becomes a smoothing factor
+// held between 0.0001 and 0.9999.
+root = sqrt(lambda) * 0.5
+hpAlpha = min(max((root - 1) / (root + 1), 0.0001), 0.9999)
+
+price = orElse(source, 0)
+
+// The trend of the two previous bars. On the second bar the older one does
+// not exist yet and repeats the newer, so the momentum term is zero.
+var prevTrend1 = none
+var prevTrend2 = none
+pt1 = orElse(prevTrend1, price)
+pt2 = orElse(prevTrend2, pt1)
+hpTrend = bar.index == 0 ? price : (1 - hpAlpha) * price + hpAlpha * pt1 + 0.5 * hpAlpha * (pt1 - pt2)
+prevTrend2 = prevTrend1
+prevTrend1 = hpTrend
+
+// The trend goes on the price pane; the cycle, what is left of the source,
+// stays in the study's own pane.
+plot(hpTrend, "HP Trend", #ffeb3b, width = 2, overlay = true)
+plot(source - hpTrend, "HP Cycle", #2962ff, width = 2)

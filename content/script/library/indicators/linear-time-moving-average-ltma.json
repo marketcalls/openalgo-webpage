@@ -1,0 +1,28 @@
+{
+  "title": "Linear Time Moving Average (LTMA)",
+  "summary": "A linearly weighted average over the period: the newest bar counts the full period, the oldest counts one, and older bars fade out evenly.",
+  "description": "LTMA weights each bar in the window by how recent it is. The newest bar gets a weight equal to the period, the bar before it one less, and so on down to a weight of one for the oldest bar. The line is the weighted sum divided by the sum of the weights.\n\nThe weighted sum is rolled forward each bar: the new bar is added at the full weight, and the previous window's plain sum is subtracted, which lowers every older bar by exactly one step. That gives the same result as summing the window from scratch.\n\nBefore the window fills, the same weights apply to the bars that exist, starting from the period for the newest bar, and the divisor is the sum of those weights. So the line is drawn from the first bar.",
+  "howToRead": "Read LTMA like a weighted moving average. It responds faster than a simple average of the same length because recent bars count more, but it still uses the whole window, so it is smoother than a short average.\n\nPrice above a rising LTMA is an uptrend, below a falling one a downtrend. Its first bars use a partial window, so treat the early part of the line as rough.",
+  "settings": [
+    {
+      "key": "period",
+      "label": "Period",
+      "description": "Number of bars in the window and the weight given to the newest bar. A longer period gives a smoother, slower line."
+    },
+    {
+      "key": "source",
+      "label": "Source",
+      "description": "The price series the average follows. Close is the usual choice; hl2 or another blend smooths out closes that jump around."
+    }
+  ],
+  "faq": [
+    {
+      "q": "Is this the same as a weighted moving average?",
+      "a": "Once the window is full it gives the same linear weights, newest bar weighted by the period. It differs on the first bars, where it averages the bars that exist rather than waiting for a full window."
+    },
+    {
+      "q": "Why does the line start on the first bar?",
+      "a": "Before the window fills, the weights run from the period downward over the bars there are, and the divisor uses only those weights, so there is always a value."
+    }
+  ]
+}

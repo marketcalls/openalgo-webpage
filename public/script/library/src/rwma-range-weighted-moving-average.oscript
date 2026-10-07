@@ -1,0 +1,20 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © openalgo
+// Original work (c) mihakralj, MIT License
+
+version 1
+study("RWMA: Range Weighted Moving Average", overlay = true, precision = 2)
+
+period = input(14, "Period", min = 1, max = 2000, step = 1)
+
+// Each bar weighs its own range, never less than zero, so a wide bar pulls
+// the average toward its close and a narrow bar barely moves it.
+barRange = max(high - low, 0)
+weightSum = sum(barRange, period)
+weightedSum = sum(close * barRange, period)
+
+// Until the window is full, and over a run of bars with no range at all, the
+// line shows the close itself.
+rwma = bar.index < period - 1 ? close : weightSum > 0 ? weightedSum / weightSum : close
+
+plot(rwma, "RWMA", #ffeb3b, width = 2)

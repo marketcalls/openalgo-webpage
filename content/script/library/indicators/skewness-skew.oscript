@@ -1,0 +1,49 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © openalgo
+// Original work (c) mihakralj, MIT License
+
+version 1
+study("Skewness (SKEW)", precision = 3)
+
+source = input(close, "Source")
+length = input(20, "Length", min = 3, max = 5000, step = 1)
+
+len = max(3, length)
+
+// Rolling mean: an expanding mean until the window is full, then the mean of
+// the last `len` values. An absent value counts as zero.
+currentSrc = orElse(source, 0)
+var sumM = 0.0
+if bar.index >= len
+    sumM -= orElse(source[len], 0)
+sumM += currentSrc
+mean = bar.index >= len - 1 ? sumM / len : sumM / (bar.index + 1)
+
+// Each bar's deviation is measured against that bar's own mean, and its
+// square and cube enter rolling sums of their own. The window is never
+// re-centred, which keeps the update to a fixed amount of work per bar.
+dev = source - mean
+
+devSq = orElse(pow(dev, 2), 0)
+var sumV = 0.0
+if bar.index >= len
+    sumV -= devSq[len]
+sumV += devSq
+m2 = bar.index >= len - 1 ? sumV / len : sumV / (bar.index + 1)
+sd = m2 > 1e-9 ? sqrt(m2) : 0
+
+devCubed = orElse(pow(dev, 3), 0)
+var sumS3 = 0.0
+if bar.index >= len
+    sumS3 -= devCubed[len]
+sumS3 += devCubed
+m3 = bar.index >= len - 1 ? sumS3 / len : sumS3 / (bar.index + 1)
+
+// The third moment over the cube of the standard deviation, 0 when the
+// window is flat.
+skewVal = 0.0
+if not isNone(m3) and sd > 1e-9
+    sdCubed = pow(sd, 3)
+    skewVal = sdCubed != 0 ? m3 / sdCubed : 0
+
+plot(skewVal, "Skewness", #ffeb3b, width = 2)

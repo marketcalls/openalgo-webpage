@@ -1,0 +1,37 @@
+{
+  "title": "Adaptive Price Zone",
+  "summary": "A double smoothed average of price with a zone around it sized by the double smoothed bar range.",
+  "description": "The Adaptive Price Zone is a centre line with a band on each side. The centre line is price passed through two exponential averages in a row. The band width is the bar range, high minus low, passed through the same two averages and multiplied by the band multiplier.\n\nThe smoothing length is the square root of the period, so a period of 20 smooths with a length of about 4.5. That keeps the zone close to price while the double pass smooths out much of the bar to bar noise.\n\nAll four averages start at zero. During the opening bars every value is scaled up by a compensator, one divided by one minus the square of the decay factor raised to the bar count, and the compensator switches off once that remainder falls below one in ten billion. This compensator is sized for a single average, so it does not fully undo the zero start of two averages in a row: on the first bar the centre line sits at roughly a fifth of price at the default period, and it climbs to the price scale over the next fifteen or so bars.",
+  "howToRead": "Price inside the zone is trading in its normal range. A close beyond the upper or lower edge is a move larger than the recent bar ranges would suggest. In a sideways market some traders treat the edges as the limits of the range; in a trend price often stays near one edge.\n\nThe zone widens as bars grow and narrows as they shrink, which makes a tightening zone a sign of quieter trade. Because the smoothing is short, the zone turns quickly and gives more signals than a slower channel. Ignore the opening bars of the chart, where the zone is still rising from zero toward price.",
+  "settings": [
+    {
+      "key": "period",
+      "label": "Period",
+      "description": "The smoothing length is the square root of this period. A longer period gives a smoother, slower zone."
+    },
+    {
+      "key": "bandPct",
+      "label": "Band Multiplier",
+      "description": "How many double smoothed bar ranges the edges sit from the centre line. Larger values widen the zone."
+    },
+    {
+      "key": "source",
+      "label": "Source",
+      "description": "The price series the centre line smooths, the close by default."
+    }
+  ],
+  "faq": [
+    {
+      "q": "Why does the zone start far below price?",
+      "a": "The averages start at zero. A compensator scales the opening values up, but it only allows for one level of smoothing, so the double smoothed line still starts well below price and reaches it after roughly fifteen bars at the default period. Read the zone only after that stretch."
+    },
+    {
+      "q": "Why the square root of the period?",
+      "a": "It keeps the two smoothing passes short enough to follow price closely. Two passes at the full period would lag far behind."
+    },
+    {
+      "q": "What does a narrowing zone mean?",
+      "a": "The bar ranges are shrinking, so trade is getting quieter. It says nothing about direction."
+    }
+  ]
+}

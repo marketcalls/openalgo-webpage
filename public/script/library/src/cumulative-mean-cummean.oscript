@@ -1,0 +1,20 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © openalgo
+// Original work (c) mihakralj, MIT License
+
+version 1
+study("Cumulative Mean (CUMMEAN)", precision = 8)
+
+source = input(close, "Source")
+
+// A running total and a count of the bars that had a value. A bar with no
+// value is skipped rather than read as zero.
+var cumulativeSum = 0.0
+var validCount = 0
+
+if not isNone(source)
+    cumulativeSum = cumulativeSum + source
+    validCount = validCount + 1
+
+// The mean of every value seen so far, from the first bar that had one.
+plot(validCount > 0 ? cumulativeSum / validCount : none, "CumMean", #ffeb3b, width = 2)

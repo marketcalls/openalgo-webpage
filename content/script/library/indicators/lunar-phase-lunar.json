@@ -1,0 +1,12 @@
+{
+  "title": "Lunar Phase (LUNAR)",
+  "summary": "The illuminated fraction of the moon at each bar's opening time, from 0 at new moon to 1 at full moon, with markers at the four main phases.",
+  "description": "This study computes the moon's phase from the calendar alone; it reads no price at all. From each bar's opening time in UTC it works out the Julian date and the centuries since the J2000.0 epoch, then the mean longitude of the moon, the mean elongation, the sun's and the moon's mean anomaly and the moon's argument of latitude, each as a polynomial in time.\n\nThe six largest periodic terms correct the moon's longitude, and the sun's mean longitude is subtracted to give the phase angle between them. The plotted value is one minus the cosine of that angle, halved: 0 at new moon, 0.5 at the quarters and 1 at full moon. Markers label new moon (New) and full moon (Full) where the phase turns at its low and high ends, and the first quarter (FQ) and last quarter (LQ) where it crosses one half rising and falling.",
+  "howToRead": "The line rises from new moon to full moon over about two weeks and falls back over the next two. The markers show where each phase begins, so you can line up price behaviour against the lunar calendar and judge for yourself whether any pattern holds on your instrument.\n\nThe value depends only on time, so it is the same on every instrument and the newest bar is never revised. It is an approximation good to a fraction of a day, which is plenty at hourly and daily resolution. Nothing in the calculation looks at the market.",
+  "settings": [],
+  "faq": [
+    { "q": "Does it use price at all?", "a": "No. The phase comes only from the bar's opening time, so every instrument on the same timeframe shows the same line and the same markers." },
+    { "q": "Why might a marker be a bar away from a published new moon time?", "a": "The study uses the six largest correction terms of the moon's longitude, not the full theory, and it samples once per bar. The phase is accurate to a fraction of a day, and the marker lands on the bar where the turn is first visible." },
+    { "q": "What time zone does it use?", "a": "UTC. The phase is computed from the bar's opening instant, which does not depend on the chart's time zone." }
+  ]
+}

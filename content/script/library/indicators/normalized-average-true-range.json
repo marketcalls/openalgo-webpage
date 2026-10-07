@@ -1,0 +1,27 @@
+{
+  "title": "Normalized Average True Range",
+  "summary": "The average true range expressed as a percentage of the close, so volatility compares across instruments and price levels.",
+  "description": "Normalized Average True Range takes the average true range and divides it by the close, then multiplies by 100. The true range of a bar is the largest of three distances: the high minus the low, the high against the previous close, and the low against the previous close. The first bar measures against its own close.\n\nThe true range is smoothed with an average of weight 1 / `Length`. That average starts from zero and is divided by the weight it has gathered so far, so the first bar already reads its own true range and the line has no empty stretch at the start. Expressing the result as a percentage of the close means a reading of 1 says the instrument typically moves about 1 percent per bar, whatever its price.",
+  "howToRead": "Higher readings mean bigger typical bar-to-bar moves relative to price, lower readings mean a quieter market. Because it is a percentage, you can compare a high priced and a low priced instrument directly, or compare the same instrument years apart when its price was very different.\n\nIt can be used to size stops: a stop set at a multiple of the reading is the same distance in percentage terms on any instrument. It does not show direction, and a single large gap raises it for several bars as the average works through it.",
+  "settings": [
+    {
+      "key": "length",
+      "label": "Length",
+      "description": "Sets the smoothing weight 1 / Length for the true range. A longer length gives a steadier, slower line."
+    }
+  ],
+  "faq": [
+    {
+      "q": "Why divide by the close?",
+      "a": "The raw average true range is in price units, so it is larger for expensive instruments. Dividing by the close turns it into a percentage that compares across instruments."
+    },
+    {
+      "q": "Why does it answer from the first bar?",
+      "a": "The average starts from zero and is divided by the weight it has gathered, which removes the start-up bias without waiting for a full window."
+    },
+    {
+      "q": "Does it include gaps?",
+      "a": "Yes. The true range measures the high and low against the previous close, so a gap between bars counts towards the reading."
+    }
+  ]
+}

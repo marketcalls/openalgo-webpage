@@ -1,0 +1,30 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © openalgo
+// Original work (c) mihakralj, MIT License
+
+version 1
+study("Garman-Klass Volatility (GKV)", precision = 4)
+
+length = input(20, "Length", min = 1, max = 5000, step = 1, tooltip = "Period for smoothing the Garman-Klass estimator.")
+annualize = input(true, "Annualize Volatility", tooltip = "Annualize the volatility output.")
+annualPeriods = input(252, "Annual Periods", min = 1, max = 100000, step = 1, tooltip = "Number of periods in a year for annualization (252 for daily, 52 for weekly).")
+
+// Half the squared log range, less 2 ln 2 - 1 times the squared log body.
+rangeTerm = log(high) - log(low)
+bodyTerm = log(close) - log(open)
+gkEstimator = 0.5 * rangeTerm * rangeTerm - 0.3862941611 * bodyTerm * bodyTerm
+
+// A running average of the estimator with weight 1 / length, seeded with the
+// first value, and the weight that seed still carries.
+rmaAlpha = 1 / length
+var rawRma = 0.0
+var eRma = 0.0
+rawRma = bar.index == 0 ? gkEstimator : (rawRma * (length - 1) + gkEstimator) / length
+eRma = bar.index == 0 ? 1 - rmaAlpha : (1 - rmaAlpha) * eRma
+
+// Divide out the start-up bias. A negative average has no square root, and
+// that bar is left empty.
+smoothed = eRma > 1e-10 ? rawRma / (1 - eRma) : rawRma
+volatility = smoothed >= 0 ? sqrt(smoothed) : none
+
+plot(annualize ? volatility * sqrt(annualPeriods) : volatility, "GKV", #ffeb3b, width = 2)

@@ -1,0 +1,17 @@
+{
+  "title": "One Euro Filter (ONEEURO)",
+  "summary": "An adaptive smoother that filters heavily while price is quiet and lifts its cutoff when price moves fast, trading jitter against lag.",
+  "description": "This study is an adaptive low-pass filter. Its smoothing changes from bar to bar with the speed of price: when price barely moves it smooths hard to remove jitter, and when price moves quickly it smooths less so the line keeps up.\n\nEach bar it first measures speed. The raw change from the previous price is smoothed with a fixed factor `rD / (rD + 1)`, where `rD = 2 * pi * Derivative Cutoff`. That smoothed speed sets the cutoff of the main filter: `fc = Min Cutoff + beta * |speed|`. The cutoff becomes a smoothing factor `rC / (rC + 1)` with `rC = 2 * pi * fc`, and the line moves that share of the way from its previous value toward the new price.\n\nThe filter starts on the first price with a speed of zero. If a price reading is ever missing, the state is cleared and the next price seeds it again.",
+  "howToRead": "In a quiet market the line is smooth and sits steadily through small wiggles; in a fast move it tightens onto price. That makes the distance between price and the line a rough measure of how decisive a move is: a move fast enough to drag the line with it is more than noise.\n\nWith the default Min Cutoff of 1 the line still moves about 86 percent of the way to each new price on a still bar, so it hugs price closely; lower the Min Cutoff well below 1 for a smoother line when price is calm, and raise the speed coefficient to cut lag in fast moves. The speed term works in price units, so on a high-priced instrument a small beta already has a large effect; tune it on the instrument you trade.",
+  "settings": [
+    { "key": "source", "label": "Source", "description": "The price series that is filtered, the close by default." },
+    { "key": "minCutoff", "label": "Min Cutoff Frequency", "description": "The cutoff used when price is still. Lower values smooth more when the market is quiet." },
+    { "key": "beta", "label": "Speed Coefficient (beta)", "description": "How much the cutoff rises with speed. Higher values reduce lag during rapid moves." },
+    { "key": "dCutoff", "label": "Derivative Cutoff", "description": "The cutoff of the speed estimate itself. Lower values give a steadier speed reading and a more gradual change in smoothing." }
+  ],
+  "faq": [
+    { "q": "Why does the smoothing change from bar to bar?", "a": "The cutoff of the filter is tied to the smoothed speed of price. Slow price gives a low cutoff and heavy smoothing; fast price gives a high cutoff and light smoothing." },
+    { "q": "Why does a tiny beta have a big effect?", "a": "Beta multiplies the speed in price units. On an instrument that moves hundreds of points per bar, even 0.007 lifts the cutoff a lot, so the line follows price closely." },
+    { "q": "Where does the line start?", "a": "On the first bar it equals that bar's price, with the speed set to zero, and adapts from there." }
+  ]
+}

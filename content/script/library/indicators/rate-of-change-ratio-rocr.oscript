@@ -1,0 +1,20 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © openalgo
+// Original work (c) mihakralj, MIT License
+
+version 1
+study("Rate of Change Ratio (ROCR)", precision = 4)
+
+source = input(close, "Source")
+length = input(9, "Length", min = 1, max = 5000, step = 1)
+
+// The lookback grows by one bar on every usable bar until it reaches length,
+// so the early bars compare against the first bar instead of staying blank.
+var lookback = 0
+reference = source[lookback]
+ratio = none
+if not isNone(reference) and reference != 0
+    ratio = source / reference
+    lookback = min(lookback + 1, length)
+
+plot(ratio, "ROCR", #ffeb3b, width = 2)

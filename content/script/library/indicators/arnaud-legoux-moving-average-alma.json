@@ -1,0 +1,42 @@
+{
+  "title": "Arnaud Legoux Moving Average (ALMA)",
+  "summary": "A Gaussian-weighted moving average whose peak weight can slide from the middle of the window toward the newest bar.",
+  "description": "ALMA weights the bars in its window with a Gaussian bell curve. Counting bars back from the current one, the peak of the curve sits at `(1 - offset) * (p - 1)` bars back, and its width is the window length divided by sigma. Each price is multiplied by its weight, and the sum is divided by the total weight.\n\nThe offset moves the peak: at 0.85, the default, most of the weight sits on recent bars and the line follows price closely; at 0.5 the peak is in the middle and the line is smoother but lags more; at 1 the newest bar carries the most weight. Sigma sets how sharp the bell is: a larger sigma concentrates the weight near the peak, a smaller one spreads it across the window. The window grows from the first bar up to the period, so the line is drawn from the start of the chart.",
+  "howToRead": "Read ALMA as a moving average whose balance between smoothness and lag is set by the offset and sigma. Price above a rising ALMA points to an uptrend and price below a falling one to a downtrend; the slope and its turns carry the signal. With the default offset most of the weight sits on recent bars, so the line stays close to price and turns early.\n\nTune the offset first: raise it for a faster line, lower it for a smoother one. The first bars use a short window and simply follow price.",
+  "settings": [
+    {
+      "key": "period",
+      "label": "Period",
+      "description": "Number of bars in the window. A longer period gives a smoother, slower line."
+    },
+    {
+      "key": "offset",
+      "label": "Offset",
+      "description": "Where the peak of the Gaussian weights sits, from 0 (the oldest bar) to 1 (the newest bar). Higher values respond faster."
+    },
+    {
+      "key": "sigma",
+      "label": "Sigma",
+      "description": "Sharpness of the bell curve. A larger sigma narrows the weights around the peak; a smaller one spreads them over the window."
+    },
+    {
+      "key": "source",
+      "label": "Source",
+      "description": "The series being averaged, usually the close."
+    }
+  ],
+  "faq": [
+    {
+      "q": "What does the offset do?",
+      "a": "It slides the heaviest weight along the window. At 0.85 the weight is mostly on recent bars and the line reacts quickly; at 0.5 it is centred and the line is smoother but later."
+    },
+    {
+      "q": "How does sigma change the line?",
+      "a": "Sigma controls the width of the bell. A high sigma puts nearly all the weight on a few bars around the peak; a low sigma spreads it out, which makes the average closer to a simple one."
+    },
+    {
+      "q": "Why does it draw from the first bar?",
+      "a": "The window grows from one bar up to the period, and the weights are recomputed for each shorter window, so there is no warmup gap."
+    }
+  ]
+}

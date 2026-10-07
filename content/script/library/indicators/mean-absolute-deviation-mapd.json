@@ -1,0 +1,15 @@
+{
+  "title": "Mean Absolute %Deviation (MAPD)",
+  "summary": "The average distance between price and its own EMA, as a percentage of the EMA, over a rolling window of bars.",
+  "description": "Mean Absolute %Deviation measures how far price typically strays from its own trend, in percent. The trend is an exponential moving average of the source over `Period` bars, seeded with the simple average of its first `Period` values. On every bar the study takes the absolute gap between the source and that average and divides it by the average, then multiplies by 100.\n\nThose percentage deviations are averaged over the last `Period` bars, with the window held to at most 4000 bars, and only bars that carry a deviation are counted. The reading therefore starts on the first bar where the average exists and widens its window until it is full. A bar where the average is exactly zero carries no deviation.\n\nThe study plots the deviation as a shaded area in its own pane and draws the reference average on the price chart, so you can see the trend line the deviation is measured from.",
+  "howToRead": "A low reading means price has been hugging its average; a high one means it has been swinging well away from it. Because the deviation is a percentage of the average, the reading can be compared across instruments and across long stretches of history where the price level changed a lot.\n\nThe reading has no sign, so it says how wide the departures have been, not whether price is above or below the average. Use the EMA on the price chart for direction. A long period makes both the average and the window slow, so the reading responds late to a change in behaviour.",
+  "settings": [
+    { "key": "source", "label": "Source", "description": "The price series measured against its own average. The close by default." },
+    { "key": "period", "label": "Period", "description": "The length of the reference EMA and of the averaging window. The averaging window is held to at most 4000 bars." }
+  ],
+  "faq": [
+    { "q": "How is this different from MAPE?", "a": "Both average an absolute percentage gap between price and its EMA. This study divides by the average, while MAPE divides by price, so the two differ slightly when price is far from its average." },
+    { "q": "Why does the line start so late?", "a": "The reference EMA needs Period bars before it has a value, and the deviation cannot be measured before then. With the default of 100 the first reading is on the hundredth bar of the chart." },
+    { "q": "Does a high reading mean price is about to revert?", "a": "No. It says price has recently been far from its average. Trends can keep price away from its average for a long time." }
+  ]
+}

@@ -1,0 +1,32 @@
+{
+  "title": "Detrended Price Oscillator (DPO)",
+  "summary": "Price minus a simple moving average taken from about half a period earlier, so the trend drops out and shorter cycles stand out.",
+  "description": "The Detrended Price Oscillator (DPO) compares the current price with a simple moving average of the source that is shifted back in time. The average covers N bars (20 by default) and is read as it stood half the period plus one bars ago. Subtracting it from price removes the longer trend and leaves the shorter swings.\n\nWhere the average's window reaches back before the first bar, the missing slots are filled with the bar's own value, so the average exists from the first bar. The oscillator itself starts once the shift has bars to read.",
+  "howToRead": "Peaks and troughs in the oscillator show the timing of price swings that are shorter than the period. Measuring the bars between successive peaks, or between successive troughs, gives a rough length for the cycle the market has been moving in. Readings above zero mean price is above its displaced average and readings below zero mean it is below.\n\nBecause the average is displaced, the oscillator is not meant to signal the current trend. It is a tool for spotting cycle length and overbought or oversold swings relative to recent history.",
+  "settings": [
+    {
+      "key": "source",
+      "label": "Source",
+      "description": "The price series the calculation reads, such as the close or the bar midpoint."
+    },
+    {
+      "key": "period",
+      "label": "Period",
+      "description": "Length of the moving average. It also sets the shift, which is half the period plus one bar."
+    }
+  ],
+  "faq": [
+    {
+      "q": "Which average is subtracted?",
+      "a": "The simple average of the last N values as it stood half the period plus one bars ago (11 bars ago at the default 20). Price is compared with that older baseline, not with the current average."
+    },
+    {
+      "q": "Can I use it to follow the trend?",
+      "a": "Not well. It deliberately removes the trend, so it is better suited to timing swings inside a range or measuring cycle length."
+    },
+    {
+      "q": "Why is the first part empty?",
+      "a": "The value is price minus the average from half the period plus one bars earlier, so it needs that many bars before it can be drawn."
+    }
+  ]
+}

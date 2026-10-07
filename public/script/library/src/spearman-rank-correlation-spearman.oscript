@@ -1,0 +1,80 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © openalgo
+// Original work (c) mihakralj, MIT License
+
+version 1
+study("Spearman Rank Correlation (SPEARMAN)", precision = 3)
+
+source1 = input(close, "Source 1")
+source2 = input(open, "Source 2", tooltip = "Second series of this symbol. Comparing a series with itself always reads +1, so it defaults to the open.")
+length = input(20, "Lookback Period", min = 2, max = 60, step = 1, tooltip = "Number of bars for calculation. Max 60, as ranking is quadratic in the window.")
+
+len = min(60, max(2, length))
+
+// The window, oldest first. A single absent value in either series leaves
+// this bar without a reading rather than shortening the window.
+w1 = []
+w2 = []
+complete = bar.index >= len - 1
+if complete
+    for k = 0 to len - 1
+        a = source1[len - 1 - k]
+        b = source2[len - 1 - k]
+        if isNone(a) or isNone(b)
+            complete = false
+            break
+        push(w1, a)
+        push(w2, b)
+
+rho = none
+if complete
+    // One-based ranks with ties averaged: the count of smaller values, plus
+    // half the other values equal to it, plus one.
+    r1 = []
+    r2 = []
+    for i = 0 to len - 1
+        smaller1 = 0
+        equal1 = 0
+        smaller2 = 0
+        equal2 = 0
+        for j = 0 to len - 1
+            if element(w1, j) < element(w1, i)
+                smaller1 += 1
+            else if element(w1, j) == element(w1, i)
+                equal1 += 1
+            if element(w2, j) < element(w2, i)
+                smaller2 += 1
+            else if element(w2, j) == element(w2, i)
+                equal2 += 1
+        push(r1, smaller1 + (equal1 - 1) / 2 + 1)
+        push(r2, smaller2 + (equal2 - 1) / 2 + 1)
+
+    // Pearson correlation of the two rank series, 0 where either is flat.
+    sumX = 0.0
+    sumY = 0.0
+    for i = 0 to len - 1
+        sumX += element(r1, i)
+        sumY += element(r2, i)
+    meanX = sumX / len
+    meanY = sumY / len
+    sumXY = 0.0
+    sumXX = 0.0
+    sumYY = 0.0
+    for i = 0 to len - 1
+        dx = element(r1, i) - meanX
+        dy = element(r2, i) - meanY
+        sumXY += dx * dy
+        sumXX += dx * dx
+        sumYY += dy * dy
+    if sumXX == 0 or sumYY == 0
+        rho = 0
+    else
+        denom = sqrt(sumXX * sumYY)
+        rho = denom > 0 ? sumXY / denom : 0
+
+plot(rho, "Spearman's Rho", #ffeb3b, width = 2)
+level(1, "Max Positive Correlation", #26a69a, style = "solid")
+level(0.5, "Moderate Positive Correlation", #26a69a, style = "dashed")
+level(0, "Zero Line", #8892a6, style = "dashed")
+level(-0.5, "Moderate Negative Correlation", #ef5350, style = "dashed")
+level(-1, "Max Negative Correlation", #ef5350, style = "solid")

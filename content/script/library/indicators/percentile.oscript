@@ -1,0 +1,39 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © openalgo
+// Original work (c) mihakralj, MIT License
+
+version 1
+study("Percentile", overlay = true, precision = 2)
+
+source = input(close, "Source")
+length = input(14, "Period", min = 1, max = 5000, step = 1)
+pct = clamp(input(25, "percentile", min = 0, max = 100, step = 0.1, tooltip = "50 gives the median, 0 the window low, 100 the window high."), 0, 100)
+
+// The last `length` values of the source that are present, sorted.
+win = []
+for k = 0 to length - 1
+    v = source[k]
+    if not isNone(v)
+        push(win, v)
+sort(win, "asc")
+nValid = size(win)
+
+// The value at the chosen rank, interpolated linearly between the two
+// neighbouring ranks.
+result = none
+if nValid == 1 or (nValid > 1 and pct == 0)
+    result = element(win, 0)
+else if nValid > 1 and pct == 100
+    result = element(win, nValid - 1)
+else if nValid > 1
+    rank = (pct / 100.0) * (nValid - 1)
+    floorIdx = floor(rank)
+    ceilIdx = ceil(rank)
+    if floorIdx == ceilIdx
+        result = element(win, floorIdx)
+    else
+        valFloor = element(win, floorIdx)
+        valCeil = element(win, ceilIdx)
+        result = valFloor + (rank - floorIdx) * (valCeil - valFloor)
+
+plot(result, "Percentile", #ffeb3b, width = 2)

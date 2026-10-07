@@ -1,0 +1,37 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © openalgo
+// Original work (c) mihakralj, MIT License
+
+version 1
+study("Two-Argument Arctangent (ATAN2)", precision = 4)
+
+y = input("range", "Y (Numerator)", options = ["range", "open", "high", "low", "close", "hl2", "hlc3", "ohlc4", "volume"])
+x = input("hl2", "X (Denominator)", options = ["range", "open", "high", "low", "close", "hl2", "hlc3", "ohlc4", "volume"])
+
+// One operand read from the menu: the bar's range or one of the price series.
+fn operand(choice) =>
+    choice == "range" ? high - low : choice == "open" ? open : choice == "high" ? high : choice == "low" ? low : choice == "close" ? close : choice == "hl2" ? hl2 : choice == "hlc3" ? hlc3 : choice == "ohlc4" ? ohlc4 : volume
+
+// The angle from the positive x-axis to the point (x, y), in radians from
+// -pi to pi. The larger magnitude is always the divisor, so neither ratio can
+// grow without bound, and the signs of x and y place it in its quadrant.
+fn angleOf(yv, xv) =>
+    if isNone(yv) or isNone(xv) or (yv == 0 and xv == 0)
+        return none
+    ay = abs(yv)
+    ax = abs(xv)
+    a = ax > ay ? math.atan(ay / ax) : math.pi / 2 - math.atan(ax / ay)
+    if xv < 0
+        a = math.pi - a
+    if yv < 0
+        a = 0 - a
+    a
+
+angle = angleOf(operand(y), operand(x))
+
+plot(angle, "ATAN2", #ffeb3b, width = 2)
+level(0, "Zero", #787b86, style = "solid")
+level(1.5708, "pi/2", withAlpha(#787b86, 0.3), style = "solid")
+level(-1.5708, "-pi/2", withAlpha(#787b86, 0.3), style = "solid")
+level(3.1416, "pi", withAlpha(#787b86, 0.3), style = "solid")
+level(-3.1416, "-pi", withAlpha(#787b86, 0.3), style = "solid")

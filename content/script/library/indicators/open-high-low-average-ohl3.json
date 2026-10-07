@@ -1,0 +1,12 @@
+{
+  "title": "Open-High-Low Average (OHL3)",
+  "summary": "Draws the average of each bar's open, high and low, a reference price that leaves out where the bar closed.",
+  "description": "Open-High-Low Average (OHL3) takes the open, the high and the low of each bar, adds them and multiplies the sum by the constant `0.333333`. That is the average of the three prices to within a millionth of its value, and the study keeps the fixed constant rather than dividing by three so that its values are exactly reproducible.\n\nLeaving out the close is the point of the calculation. The line describes where the bar started and how far it traded in each direction, not where it settled, so it tracks the bar's traded range and opening level rather than its outcome. Each value uses only its own bar, with no lookback and no smoothing.",
+  "howToRead": "Compare the close with the line. A close above the open, high and low average means the bar finished above the centre of what it opened at and traded through, which leans bullish for that bar; a close below it leans bearish. A run of closes on one side shows persistent pressure in that direction.\n\nThe line has no memory and is as noisy as the bars. It is most useful as a per-bar reference or as an input for other studies that should not be driven by the close.",
+  "settings": [],
+  "faq": [
+    { "q": "Why multiply by 0.333333 instead of dividing by three?", "a": "The calculation is defined with that constant, and the study keeps it so the numbers match the definition exactly. The difference from a true third is one part in a million, too small to see on a chart." },
+    { "q": "Why leave out the close?", "a": "So the line does not depend on where the bar settled. It then serves as a yardstick to judge the close against, which an average that includes the close cannot do as cleanly." },
+    { "q": "Does it repaint?", "a": "No. A completed bar's value never changes. On the newest bar it moves only when the high or the low extends." }
+  ]
+}

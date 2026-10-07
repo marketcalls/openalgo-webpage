@@ -1,0 +1,41 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © openalgo
+// Original work (c) mihakralj, MIT License
+
+version 1
+study("Ehlers Cyber Cycle (CCYC)", precision = 4)
+
+// The setting is keyed "alpha", a name the library already holds, so it is
+// read through its title and held inside the range the filter accepts.
+damping = clamp(input(0.07, "alpha", min = 0.01, max = 0.99, step = 0.01, tooltip = "High-pass cutoff. Lower damping gives a smoother, slower cycle; 0.07 is the classic value."), 0.01, 0.99)
+source = input(hl2, "Source")
+
+// Coefficients of the two-pole high-pass filter.
+cHp = pow(1 - 0.5 * damping, 2)
+cFb1 = 2 * (1 - damping)
+cFb2 = -pow(1 - damping, 2)
+
+// A missing price reads as zero, and a price before the first bar reads as
+// this bar's price, so the smoother is defined from bar 0.
+price = orElse(source, 0)
+p1 = orElse(source[1], price)
+p2 = orElse(source[2], price)
+p3 = orElse(source[3], price)
+
+// Four-tap smoother that removes two-bar and three-bar noise.
+smooth = (price + 2 * p1 + 2 * p2 + p3) / 6
+
+// For the first six bars the cycle is the second difference of raw price,
+// which gives the recursion something to converge from.
+cycle = 0.0
+if bar.index < 6
+    cycle = (price - 2 * p1 + p2) / 4
+else
+    cycle = cHp * (smooth - 2 * smooth[1] + smooth[2]) + cFb1 * orElse(cycle[1], 0) + cFb2 * orElse(cycle[2], 0)
+
+// The trigger is the cycle one bar later, zero on the first bar.
+trigger = orElse(cycle[1], 0)
+
+plot(cycle, "Cycle", #ffeb3b, width = 2)
+plot(trigger, "Trigger", #ef5350, width = 1)
+level(0, "Zero", #8892a6, style = "dashed")

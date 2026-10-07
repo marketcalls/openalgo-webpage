@@ -1,0 +1,37 @@
+{
+  "title": "Donchian Channels (DCHANNEL)",
+  "summary": "The highest high and lowest low of the last period bars, with the midpoint between them, drawn from the first bar.",
+  "description": "This channel marks the outright range of recent trade. The upper line is the highest value of the high source over the last `period` bars, the lower line is the lowest value of the low source over the same bars, and the basis is the midpoint between them.\n\nWhile fewer than `period` bars exist, the lines use the extremes of every bar so far, so the channel is drawn from the first bar. Both sources can be changed, for example to read the channel off closes or off the bar midpoint instead of the highs and lows.\n\nThere is no smoothing. The upper line only moves up when a new high enters the window and only moves down when the old high leaves it, which gives the channel its flat, stepped look.",
+  "howToRead": "A bar that pushes the upper line higher is making a new high for the period, the classic breakout condition, and a bar that pushes the lower line lower is making a new low. A flat line means no new extreme on that side for a while. The basis line shows the middle of the range and is often used as a trailing reference.\n\nThe channel includes the current bar, so a high equal to the upper line is the new high itself. To test for a break of the previous range, compare against the line from one bar earlier.",
+  "settings": [
+    {
+      "key": "period",
+      "label": "Period",
+      "description": "The number of bars the highest and lowest values are taken over. Longer periods give a wider, slower channel."
+    },
+    {
+      "key": "highSource",
+      "label": "High Source",
+      "description": "The series the upper line takes its highest value from, the bar high by default."
+    },
+    {
+      "key": "lowSource",
+      "label": "Low Source",
+      "description": "The series the lower line takes its lowest value from, the bar low by default."
+    }
+  ],
+  "faq": [
+    {
+      "q": "Why does the channel move in steps?",
+      "a": "Each line is an outright extreme, not an average. It changes only when a new extreme enters the window or the old one drops out."
+    },
+    {
+      "q": "Does the channel include the current bar?",
+      "a": "Yes. A new high on this bar lifts the upper line on this bar, so compare with the previous bar's line to test a breakout."
+    },
+    {
+      "q": "What is the basis line?",
+      "a": "The midpoint of the upper and lower lines, halfway between the highest high and the lowest low of the window."
+    }
+  ]
+}

@@ -1,0 +1,387 @@
+{
+  "title": "Options Levels",
+  "summary": "Scores session, swing, gap, round-number and VWAP levels into clusters and keeps one support and one resistance reaction zone, tracking how price behaves at each.",
+  "description": "Options Levels gathers the reference prices intraday traders watch and turns them into two zones. The candidates are the previous day's high, low and close, the previous week's high and low, the premarket high and low, the finished opening range, the regular-session open, an unfilled opening gap, the session VWAP and, when switched on, its first deviation bands, an optional anchored VWAP from an event you name, optional ATR projections from the session open and the previous close, the nearest round numbers, and confirmed swing pivots. Every level farther from the close than the set number of daily ATRs is dropped.\n\nEach remaining level gets a score from 0 to 100. The score blends a base weight for its kind of level (a swing pivot weighs more when the swing was larger), how recent it is, and, for most kinds, what happened on the earlier bars that touched it: how many touches there were, how far price moved away in the favourable direction compared with the adverse one, how many closes held on the right side, how large the move was in daily ATR, and how heavy volume was against its 20-bar average. The daily ATR is the average true range of finished calendar days in the session timezone, so it is known from the first bar of each day without reading ahead. Until enough finished days exist, the ATR of the chart's own bars stands in.\n\nLevels sorted by price are merged into clusters when they sit within the cluster tolerance. A cluster's width comes from the weighted spread of its members, held between a minimum and a maximum half-width, and its strength rises with the scores of its members and with how many different kinds of level agree. The most actionable strong cluster below the close becomes the support zone and the one above becomes the resistance zone. A zone is replaced only when a clearly better cluster appears, it is dropped when it breaks or when the rebuilt clusters stop matching it, and its state moves through approaching, inside, rejecting, accepting, broken and flipped as the bars arrive.",
+  "howToRead": "The two boxes on the right of the chart are the active zones: teal for support below price and red for resistance above it, each labelled with its state. A thinner shaded band at the outer edge of a zone, marked BUY or SELL, appears when the zone's actionability reaches the edge setting. A zone turns gray on the bar it breaks and is dropped on the next bar, and a broken zone that price retests from the other side within the flip watch can come back as a flipped zone of the opposite kind. The amber box marks the opening-range window, and the purple line is the regular-session VWAP.\n\nRead a zone as an area where earlier reactions suggest price may pause or turn, not as a promise that it will. Rejection means the bar entered the zone and closed clearly away from it, acceptance means closes are holding inside or through it, and a break needs either a close well beyond it or the set number of closes in a row beyond it. The zones are built from intraday sessions, so on a daily chart, or on an instrument whose hours do not match the session settings, the levels say much less. The dashboard repeats the zone prices, the nearest zone's state and the daily ATR.",
+  "settings": [
+    {
+      "key": "sessionTimezone",
+      "label": "Session timezone",
+      "description": "The IANA zone the session windows, calendar days and weeks are read in, written as a full Area/Location name such as America/New_York, or UTC."
+    },
+    {
+      "key": "rthInput",
+      "label": "Regular session",
+      "description": "The regular-session window as HHMM-HHMM; its first bar resets the VWAP, the session open and the opening range."
+    },
+    {
+      "key": "premarketInput",
+      "label": "Premarket session",
+      "description": "The premarket window as HHMM-HHMM; its high and low become candidate levels."
+    },
+    {
+      "key": "weekdaysOnly",
+      "label": "Monday-Friday only",
+      "description": "Count only Monday to Friday as session days; switch it off for an instrument that also trades at the weekend."
+    },
+    {
+      "key": "openingRangeMinutes",
+      "label": "Opening-range minutes",
+      "description": "How long the opening range keeps forming after the regular-session open before it is finished."
+    },
+    {
+      "key": "displayMode",
+      "label": "Display mode",
+      "description": "Reaction Zones shows the zones only, Zones + Key References adds the reference lines, and Legacy / Debug also adds the gap lines, the EMAs when switched on, the event VWAP and scoring rows."
+    },
+    {
+      "key": "showZoneText",
+      "label": "Show zone text",
+      "description": "Write the side and state inside each zone box and BUY or SELL on the edge boxes."
+    },
+    {
+      "key": "showDashboard",
+      "label": "Show compact dashboard",
+      "description": "Show the table with the zone prices, the nearest zone's state and the daily ATR."
+    },
+    {
+      "key": "zoneBackBars",
+      "label": "Zone history bars",
+      "description": "The most bars back a zone box starts, even when its zone was chosen earlier."
+    },
+    {
+      "key": "zoneForwardBars",
+      "label": "Zone projection bars",
+      "description": "How many bars to the right of the newest bar the zone boxes extend."
+    },
+    {
+      "key": "showEdgeSignals",
+      "label": "Show buy / sell edge zones",
+      "description": "Draw the thinner BUY band at the bottom of the support zone and SELL band at the top of the resistance zone."
+    },
+    {
+      "key": "edgeSignalMinimumActionability",
+      "label": "Edge zone minimum actionability",
+      "description": "The actionability a zone needs before its edge band is drawn."
+    },
+    {
+      "key": "edgeSignalHeightPct",
+      "label": "Edge zone height (% of parent zone)",
+      "description": "The edge band's height as a fraction of its zone's height."
+    },
+    {
+      "key": "showOpeningRangeBox",
+      "label": "Highlight opening-range window",
+      "description": "Draw a box over the latest opening range from its first bar to the bar it finished."
+    },
+    {
+      "key": "atrLength",
+      "label": "Confirmed daily ATR length",
+      "description": "Number of finished days in the daily ATR that scales every distance and width."
+    },
+    {
+      "key": "maxDistanceAtr",
+      "label": "Maximum candidate distance (daily ATR)",
+      "description": "Levels farther than this many daily ATRs from the close are not considered."
+    },
+    {
+      "key": "clusterAtrFraction",
+      "label": "Cluster tolerance (daily ATR)",
+      "description": "Levels closer than this fraction of the daily ATR are merged into one cluster."
+    },
+    {
+      "key": "clusterMinimumTicks",
+      "label": "Minimum cluster tolerance (ticks)",
+      "description": "The smallest cluster tolerance, in price ticks."
+    },
+    {
+      "key": "clusterMinimumPct",
+      "label": "Minimum cluster tolerance (% as decimal)",
+      "description": "The smallest cluster tolerance as a fraction of the close."
+    },
+    {
+      "key": "minZoneAtr",
+      "label": "Minimum zone half-width (daily ATR)",
+      "description": "The narrowest a zone can be on each side of its centre, in daily ATR."
+    },
+    {
+      "key": "maxZoneAtr",
+      "label": "Maximum zone half-width (daily ATR)",
+      "description": "The widest a zone can be on each side of its centre, in daily ATR."
+    },
+    {
+      "key": "minZoneTicks",
+      "label": "Minimum zone half-width (ticks)",
+      "description": "The narrowest half-width in price ticks, used when it is wider than the ATR minimum."
+    },
+    {
+      "key": "dispersionMultiplier",
+      "label": "Cluster dispersion multiplier",
+      "description": "Multiplies the weighted spread of a cluster's levels to set its zone half-width."
+    },
+    {
+      "key": "actionabilityDecay",
+      "label": "Distance decay",
+      "description": "How quickly a cluster's actionability falls as it sits farther from the close."
+    },
+    {
+      "key": "switchMargin",
+      "label": "Zone switch margin",
+      "description": "How many points stronger or more actionable a new cluster must be to replace the current zone."
+    },
+    {
+      "key": "minimumZoneStrength",
+      "label": "Minimum zone strength",
+      "description": "Clusters weaker than this are never chosen as a zone."
+    },
+    {
+      "key": "refreshBars",
+      "label": "Cluster refresh bars",
+      "description": "Rebuild the clusters every this many bars, besides the rebuilds that sessions, pivots and breaks trigger."
+    },
+    {
+      "key": "approachingAtr",
+      "label": "Approaching distance (daily ATR)",
+      "description": "A zone this close to the close, in daily ATR, is marked approaching."
+    },
+    {
+      "key": "rejectionDisplacementAtr",
+      "label": "Rejection displacement (daily ATR)",
+      "description": "How far beyond a zone the close must land, after touching it, to count as a rejection."
+    },
+    {
+      "key": "breakDisplacementAtr",
+      "label": "Break displacement (daily ATR)",
+      "description": "A close this far through a zone breaks it at once."
+    },
+    {
+      "key": "breakClosesRequired",
+      "label": "Closes beyond zone for break",
+      "description": "Consecutive closes beyond a zone that also break it."
+    },
+    {
+      "key": "acceptanceClosesRequired",
+      "label": "Closes in / through zone for acceptance",
+      "description": "Consecutive closes inside a zone before it is marked accepting."
+    },
+    {
+      "key": "stateHoldBars",
+      "label": "Event-state hold bars",
+      "description": "How long a rejecting, accepting or flipped state is kept once price has left the zone."
+    },
+    {
+      "key": "flipWatchMinutes",
+      "label": "Broken-zone flip watch (minutes)",
+      "description": "How long a broken zone is watched for a retest from the other side."
+    },
+    {
+      "key": "flipRetestAtr",
+      "label": "Flip retest tolerance (daily ATR)",
+      "description": "How close to a broken zone price must come to count as a retest."
+    },
+    {
+      "key": "usePriorDay",
+      "label": "Previous day / close",
+      "description": "Use the previous session's high, low and close as candidate levels."
+    },
+    {
+      "key": "usePriorWeek",
+      "label": "Previous week",
+      "description": "Use the previous week's regular-session high and low as candidate levels."
+    },
+    {
+      "key": "usePremarket",
+      "label": "Premarket high / low",
+      "description": "Use today's premarket high and low as candidate levels."
+    },
+    {
+      "key": "useOpeningRange",
+      "label": "Finalized opening range",
+      "description": "Use the high and low of the finished opening range as candidate levels."
+    },
+    {
+      "key": "useRthOpen",
+      "label": "RTH open",
+      "description": "Use the regular-session open as a candidate level."
+    },
+    {
+      "key": "usePivots",
+      "label": "Confirmed swing pivots",
+      "description": "Use confirmed swing highs and lows as candidate levels."
+    },
+    {
+      "key": "pivotLeftBars",
+      "label": "Pivot left bars",
+      "description": "Bars on the left a swing high or low must stand above or below."
+    },
+    {
+      "key": "pivotRightBars",
+      "label": "Pivot right bars",
+      "description": "Bars on the right needed to confirm a swing, which is also how late it is known."
+    },
+    {
+      "key": "maxPivotRecords",
+      "label": "Maximum pivot records",
+      "description": "How many swing levels are kept; the oldest goes first."
+    },
+    {
+      "key": "pivotMaxAgeBars",
+      "label": "Pivot maximum age (bars)",
+      "description": "Swing levels older than this many bars are dropped."
+    },
+    {
+      "key": "pivotDecayBars",
+      "label": "Pivot recency decay (bars)",
+      "description": "Sets how fast a level's recency score fades with the age of its swing or last touch."
+    },
+    {
+      "key": "useRoundNumbers",
+      "label": "Adaptive round numbers",
+      "description": "Use the round numbers just below and above the close, with a step that grows with price."
+    },
+    {
+      "key": "useAtrProjections",
+      "label": "ATR projections",
+      "description": "Add levels half and one daily ATR from the session open, and one daily ATR from the previous close."
+    },
+    {
+      "key": "useGapStructure",
+      "label": "Gap structure",
+      "description": "Track an opening gap and use its midpoint and unfilled edge as candidate levels until it fills."
+    },
+    {
+      "key": "gapMinimumAtr",
+      "label": "Minimum gap (daily ATR)",
+      "description": "The smallest gap from the previous close to the open that counts, in daily ATR."
+    },
+    {
+      "key": "useVwapCandidate",
+      "label": "RTH VWAP as candidate",
+      "description": "Use the regular-session VWAP as a candidate level during the session."
+    },
+    {
+      "key": "useVwapBandCandidates",
+      "label": "VWAP bands as candidates",
+      "description": "Also use the first VWAP deviation bands as candidate levels."
+    },
+    {
+      "key": "reactionLookback",
+      "label": "Reaction lookback bars",
+      "description": "How many bars back the touches of a level are searched."
+    },
+    {
+      "key": "reactionWindow",
+      "label": "Reaction observation bars",
+      "description": "How many bars after a touch are measured to score the reaction."
+    },
+    {
+      "key": "touchCooldownBars",
+      "label": "Touch cooldown bars",
+      "description": "Touches closer together than this count as one."
+    },
+    {
+      "key": "maxReactionTouches",
+      "label": "Maximum historical touches scored",
+      "description": "The most recent touches of a level that are scored."
+    },
+    {
+      "key": "touchMinimumTicks",
+      "label": "Touch tolerance (ticks)",
+      "description": "The smallest distance, in ticks, at which a bar counts as touching a level."
+    },
+    {
+      "key": "touchAtrFraction",
+      "label": "Touch tolerance (daily ATR)",
+      "description": "The touch distance as a fraction of the daily ATR, used when it is wider than the tick minimum."
+    },
+    {
+      "key": "eventAnchorMode",
+      "label": "Event AVWAP anchor",
+      "description": "How the event VWAP is anchored: the automatic mode has no event calendar and never anchors, Manual timestamp anchors at the time you enter, and Disabled turns it off."
+    },
+    {
+      "key": "manualEventTime",
+      "label": "Manual event timestamp",
+      "description": "The event time as YYYY-MM-DD or YYYY-MM-DD HH:MM in the session timezone; outside the session it anchors at the next open."
+    },
+    {
+      "key": "eventMaxAgeDays",
+      "label": "Maximum event age (days)",
+      "description": "The event VWAP stops counting as a level after this many days."
+    },
+    {
+      "key": "eventMinBars",
+      "label": "Minimum bars before AVWAP contributes",
+      "description": "Bars the event VWAP must cover before it becomes a candidate level."
+    },
+    {
+      "key": "eventMaxDistanceAtr",
+      "label": "Maximum AVWAP distance (daily ATR)",
+      "description": "The event VWAP is used only while it is within this many daily ATRs of the close."
+    },
+    {
+      "key": "showVwap",
+      "label": "Show regular-session VWAP",
+      "description": "Plot the VWAP of the regular session during session hours."
+    },
+    {
+      "key": "vwapSource",
+      "label": "VWAP source",
+      "description": "The price averaged by the session VWAP and its bands."
+    },
+    {
+      "key": "showVwapBand1",
+      "label": "Show +/-1 stdev band",
+      "description": "Plot the first pair of volume-weighted deviation bands around the VWAP."
+    },
+    {
+      "key": "showVwapBand2",
+      "label": "Show +/-2 stdev band",
+      "description": "Plot the second pair of volume-weighted deviation bands around the VWAP."
+    },
+    {
+      "key": "vwapBand1Multiplier",
+      "label": "Band 1 multiplier",
+      "description": "Volume-weighted standard deviations from the VWAP to the first band."
+    },
+    {
+      "key": "vwapBand2Multiplier",
+      "label": "Band 2 multiplier",
+      "description": "Volume-weighted standard deviations from the VWAP to the second band."
+    },
+    {
+      "key": "showEmas",
+      "label": "Show 9 / 21 EMA in Legacy / Debug",
+      "description": "Plot the 9 and 21 bar exponential averages of the close when the display mode is Legacy / Debug."
+    },
+    {
+      "key": "enableAlerts",
+      "label": "Enable transition alerts",
+      "description": "Raise alerts when price enters, rejects, accepts or breaks a zone, when a zone flips, and when a stronger zone is chosen."
+    },
+    {
+      "key": "showResearchValues",
+      "label": "Show research values in the dashboard",
+      "description": "Add the zone prices, strengths, actionability, nearest state and gap levels as extra dashboard rows."
+    }
+  ],
+  "faq": [
+    {
+      "q": "Why do I only see the VWAP line and a few boxes?",
+      "a": "The default display mode, Reaction Zones, draws the two zones, their edge bands and the opening-range box. Switch the display mode to Zones + Key References to plot the previous day, week, premarket, opening range and session open lines as well."
+    },
+    {
+      "q": "What is the difference between strength and actionability?",
+      "a": "Strength rates the cluster itself from the scores and variety of its levels. Actionability is that strength discounted by how far the zone sits from the close, so a strong zone a long way off can rank below a slightly weaker one next to price."
+    },
+    {
+      "q": "Which session times should I use?",
+      "a": "Set the timezone and the regular and premarket windows to the hours of the instrument you trade, for example Asia/Kolkata with a 0915-1530 regular session for Indian equities. The previous day, opening range, gap and session VWAP all follow these windows."
+    },
+    {
+      "q": "Does the automatic event anchor do anything?",
+      "a": "No. There is no event calendar to read, so the automatic mode never anchors. Choose Manual timestamp and enter a date and time to anchor the event VWAP yourself."
+    }
+  ],
+  "deviation": "A timezone that OpenScript does not recognise, such as an abbreviation like EST or a misspelt name, stops the study with an unknown-timezone error instead of falling back to another zone, because this version of OpenScript cannot test a zone name before using it."
+}

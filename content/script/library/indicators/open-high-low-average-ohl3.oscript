@@ -1,0 +1,12 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © openalgo
+// Original work (c) mihakralj, MIT License
+
+version 1
+study("Open-High-Low Average (OHL3)", overlay = true, precision = 2)
+
+// The average of the open, high and low. The sum is multiplied by the fixed
+// constant 0.333333 rather than divided by three.
+ohl3 = (open + high + low) * 0.333333
+
+plot(ohl3, "OHL3", #ffeb3b, width = 2)

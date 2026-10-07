@@ -1,0 +1,29 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © openalgo
+// Original work (c) mihakralj, MIT License
+
+version 1
+study("VHF: Vertical Horizontal Filter", precision = 4)
+
+period = input(28, "Period", min = 2, max = 200, step = 1, tooltip = "Lookback period (default: 28)")
+trendThreshold = input(0.4, "Trend Threshold", min = 0, max = 2, step = 0.05, tooltip = "Above this level = trending market")
+rangeThreshold = input(0.25, "Range Threshold", min = 0, max = 2, step = 0.05, tooltip = "Below this level = ranging market")
+
+// The size of each bar-to-bar change in the close; the first bar has none.
+absDiff = abs(close - close[1])
+
+// The total path: a running sum of the last period changes.
+var diffSum = 0.0
+diffSum += orElse(absDiff, 0)
+if bar.index >= period
+    diffSum -= orElse(absDiff[period], 0)
+
+// The vertical distance: the range of the last period + 1 closes.
+hi = highest(close, period + 1)
+lo = lowest(close, period + 1)
+
+vhf = bar.index >= period and diffSum > 1e-10 ? (hi - lo) / diffSum : none
+
+level(trendThreshold, "Trend Threshold", #26a69a, style = "dashed")
+level(rangeThreshold, "Range Threshold", #ef5350, style = "dashed")
+plot(vhf, "VHF", #ffeb3b, width = 2)

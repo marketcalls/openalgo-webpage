@@ -1,0 +1,41 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © openalgo
+// Original work (c) mihakralj, MIT License
+
+version 1
+study("Coral Filter (CORAL)", overlay = true, precision = 2)
+
+period = input(21, "Smoothing Period", min = 1, max = 5000, step = 1)
+cd = input(0.4, "Constant D", min = 0, max = 1, step = 0.01, tooltip = "Weighting of the cascaded stages. Higher values follow price more closely at the cost of smoothness.")
+source = input(close, "Source")
+
+di = (period - 1.0) / 2.0 + 1.0
+c1 = 2.0 / (di + 1.0)
+c2 = 1.0 - c1
+
+cd2 = cd * cd
+cd3 = cd2 * cd
+c3 = 3.0 * (cd2 + cd3)
+c4 = -3.0 * (2.0 * cd2 + cd + cd3)
+c5 = 3.0 * cd + 1.0 + cd3 + 3.0 * cd2
+
+// Six exponential stages in a chain, each smoothing the one before it. Every
+// stage starts at zero, so the line answers from the first bar and settles
+// onto price over the first few periods.
+var i1 = 0.0
+var i2 = 0.0
+var i3 = 0.0
+var i4 = 0.0
+var i5 = 0.0
+var i6 = 0.0
+coral = none
+if not isNone(source)
+    i1 = c1 * source + c2 * i1
+    i2 = c1 * i1 + c2 * i2
+    i3 = c1 * i2 + c2 * i3
+    i4 = c1 * i3 + c2 * i4
+    i5 = c1 * i4 + c2 * i5
+    i6 = c1 * i5 + c2 * i6
+    coral = -cd3 * i6 + c3 * i5 + c4 * i4 + c5 * i3
+
+plot(coral, "CORAL", #ffeb3b, width = 2)

@@ -1,0 +1,33 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © openalgo
+// Original work (c) mihakralj, MIT License
+
+version 1
+study("Highpass Filter (2-Pole) (HPF)", overlay = true, precision = 2)
+
+length = input(40, "Length", min = 1, max = 5000, step = 1, tooltip = "Cutoff period: cycles faster than this are removed from the drawn line.")
+source = input(close, "Source")
+
+// Coefficients of a two-pole highpass with its cutoff at the chosen period.
+omega = 2 * math.pi / length
+cosOmega = math.cos(omega)
+hpAlpha = cosOmega != 0 ? (cosOmega + math.sin(omega) - 1) / cosOmega : 0
+gain = (1 - hpAlpha / 2) * (1 - hpAlpha / 2)
+oneMinusAlpha = 1 - hpAlpha
+
+// Before the second and third bars exist, the missing inputs repeat the
+// newest one, so the second difference starts at zero.
+s0 = source
+s1 = orElse(source[1], s0)
+s2 = orElse(source[2], s1)
+
+// The highpass output of the two previous bars, zero before they exist.
+var hp1 = 0.0
+var hp2 = 0.0
+hp = gain * (s0 - 2 * s1 + s2) + 2 * oneMinusAlpha * hp1 - oneMinusAlpha * oneMinusAlpha * hp2
+hp2 = hp1
+hp1 = hp
+
+// What is drawn is the source with the highpass part taken out: the slow
+// trend component.
+plot(source - hp, "Trend Component", #ffeb3b, width = 2)

@@ -1,0 +1,37 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © openalgo
+// Original work (c) mihakralj, MIT License
+
+version 1
+study("Least Squares Moving Average (LSMA)", overlay = true, precision = 2)
+
+period = input(10, "Period", min = 1, max = 2000, step = 1)
+source = input(close, "Source")
+
+// The window grows with the chart until it holds period bars. A straight
+// line is fitted by least squares with x counting back from this bar (x = 0
+// here), so the fitted value on this bar is the intercept of that line. The
+// first bar of the chart never enters the window.
+len = min(bar.index + 1, period)
+sumX = 0.0
+sumY = 0.0
+sumXY = 0.0
+sumX2 = 0.0
+used = 0
+for j = 0 to len - 1
+    val = bar.index - j >= 1 ? source[j] : none
+    if isNone(val)
+        continue
+    sumX += j
+    sumY += val
+    sumXY += j * val
+    sumX2 += j * j
+    used += 1
+denom = used * sumX2 - sumX * sumX
+fitSlope = denom != 0 ? (used * sumXY - sumX * sumY) / denom : 0.0
+fitted = used > 0 ? (sumY - fitSlope * sumX) / used : none
+
+// Where no line can be fitted yet, the value is the source itself.
+lsma = period <= 1 or len <= 1 or used <= 1 or denom == 0 ? source : fitted
+
+plot(lsma, "LSMA", #ffeb3b, width = 2)

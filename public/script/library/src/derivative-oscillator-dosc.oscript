@@ -1,0 +1,54 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © openalgo
+// Original work (c) mihakralj, MIT License
+
+version 1
+study("Derivative Oscillator (DOSC)", precision = 2)
+
+source = input(close, "Source")
+rsiPeriod = input(14, "RSI Period", min = 1, max = 500, step = 1)
+ema1Period = input(5, "EMA1 Period", min = 1, max = 500, step = 1, tooltip = "First EMA smoothing of RSI")
+ema2Period = input(3, "EMA2 Period", min = 1, max = 500, step = 1, tooltip = "Second EMA smoothing (double smooth)")
+sigPeriod = input(9, "Signal Period", min = 1, max = 500, step = 1, tooltip = "SMA signal line period")
+
+rsiAlpha = 1 / rsiPeriod
+alpha1 = 2 / (ema1Period + 1)
+alpha2 = 2 / (ema2Period + 1)
+
+// Stage 1: an RSI. The bar before the first counts as a price of zero, and
+// until `rsiPeriod` bars have passed the averages are simply this bar's gain
+// and loss; after that they are smoothed with weight 1 / rsiPeriod.
+var avgGain = 0.0
+var avgLoss = 0.0
+prev = bar.index > 0 ? orElse(source[1], 0) : 0
+changeUp = max(source - prev, 0)
+changeDown = max(prev - source, 0)
+if bar.index < rsiPeriod
+    avgGain = changeUp
+    avgLoss = changeDown
+else
+    avgGain = avgGain * (1 - rsiAlpha) + changeUp * rsiAlpha
+    avgLoss = avgLoss * (1 - rsiAlpha) + changeDown * rsiAlpha
+rsiVal = avgLoss == 0 ? 100 : 100 - 100 / (1 + avgGain / avgLoss)
+
+// Stages 2 and 3: two exponential smoothings, each starting from its own
+// first input.
+var ema1 = none
+var ema2 = none
+ema1 = isNone(ema1) ? rsiVal : ema1 * (1 - alpha1) + rsiVal * alpha1
+ema2 = isNone(ema2) ? ema1 : ema2 * (1 - alpha2) + ema1 * alpha2
+
+// Stage 4: the signal is the mean of the double-smoothed RSI over the last
+// `sigPeriod` bars, averaging the bars there are while the window fills.
+var sigSum = 0.0
+var sigCount = 0
+if bar.index >= sigPeriod
+    sigSum -= ema2[sigPeriod]
+    sigSum += ema2
+else
+    sigCount += 1
+    sigSum += ema2
+signalLine = sigCount > 0 ? sigSum / sigCount : 0
+
+level(0, "Zero", #787b86, style = "dotted")
+plot(ema2 - signalLine, "DOSC", #ffeb3b, width = 2)

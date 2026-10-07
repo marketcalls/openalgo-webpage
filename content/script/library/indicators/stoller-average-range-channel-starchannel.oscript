@@ -1,0 +1,44 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © openalgo
+// Original work (c) mihakralj, MIT License
+
+version 1
+study("Stoller Average Range Channel (STARCHANNEL)", overlay = true, precision = 2)
+
+source = input(close, "Source")
+length = input(20, "Length", min = 1, max = 5000, step = 1)
+multiplier = input(2, "ATR Multiplier", min = 0.001, max = 100, step = 0.1, tooltip = "Half-width of the channel as a multiple of the average true range.")
+
+// True range against the previous close. On the first bar the previous close
+// is that bar's own close, so the first true range is high minus low.
+prevClose = bar.index == 0 ? close : close[1]
+tr = max(high - low, max(abs(high - prevClose), abs(low - prevClose)))
+
+// Recursive smoothing that keeps (Length - 1) / Length of the previous average
+// and adds 1 / Length of the new true range. It starts from zero, and the seed
+// weight that remains is divided back out so the average is unbiased from the
+// first bar.
+smoothing = 1 / length
+var rawRma = 0.0
+var seedWeight = 1.0
+// A bar without a true range leaves the average untouched and draws the bands
+// on the centre line.
+atrValue = none
+if not isNone(tr)
+    rawRma = (rawRma * (length - 1) + tr) / length
+    seedWeight = (1 - smoothing) * seedWeight
+    atrValue = seedWeight > 1e-10 ? rawRma / (1 - seedWeight) : rawRma
+
+// The centre line is the simple mean of the source over however many bars
+// exist, up to Length, with a missing value read as zero.
+price = orElse(source, 0)
+partialMean = cum(price) / (bar.index + 1)
+fullMean = sma(price, length)
+middle = bar.index < length - 1 ? partialMean : fullMean
+
+halfWidth = orElse(atrValue * multiplier, 0)
+
+plot(middle, "Middle", #ffeb3b, width = 2)
+top = plot(middle + halfWidth, "Upper", #ffeb3b, width = 2)
+bottom = plot(middle - halfWidth, "Lower", #ffeb3b, width = 2)
+fill(top, bottom, #2962ff, opacity = 0.1)

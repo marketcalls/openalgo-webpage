@@ -1,0 +1,26 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © openalgo
+// Original work (c) mihakralj, MIT License
+
+version 1
+study("Linear Time Moving Average (LTMA)", overlay = true, precision = 2)
+
+period = input(10, "Period", min = 1, max = 5000, step = 1)
+source = input(close, "Source")
+
+// The newest bar is weighted by the full period and each older bar by one
+// less, down to one. The weighted sum is rolled forward: adding the newest bar
+// at weight period and subtracting the previous window's plain sum demotes
+// every older bar by one weight. Before the window fills, the weights run
+// period, period - 1, and so on over the bars there are.
+var weighted = 0.0
+var windowSum = 0.0
+prevWindowSum = windowSum
+weighted = period * source + weighted - prevWindowSum
+windowSum = prevWindowSum + source - (bar.index >= period ? source[period] : 0)
+
+filled = bar.index + 1
+weightSum = filled >= period ? period * (period + 1) / 2 : filled * period - bar.index * filled / 2
+ltma = weighted / weightSum
+
+plot(ltma, "LTMA", #ffeb3b, width = 2)

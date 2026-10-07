@@ -1,0 +1,15 @@
+{
+  "title": "Hann FIR Filter (HANN)",
+  "summary": "A finite-window weighted average of price with raised-cosine weights, smoother and less ringing than a flat moving average of the same length.",
+  "description": "The Hann FIR Filter averages the last `Length` prices with weights from a Hann window: tap `i` weighs `0.5 * (1 - cos(2 * pi * i / (Length - 1)))`. The weights rise from zero at the oldest bar to a peak in the middle of the window and fall back to zero at the newest bar. The weighted sum is divided by the total weight, so a flat price passes through unchanged.\n\nTapering both ends of the window means a bar fades in and out of the average gradually instead of jumping in and dropping out, which removes most of the ringing and the sudden steps of a simple moving average.\n\nBefore `Length` bars exist the filter uses the first few taps only, over the bars that are there. On the first bar the single tap weighs zero, so the line starts at the price itself. A `Length` of 1 has no defined weight and plots the price.",
+  "howToRead": "Read the line as a smooth trend line. Its slope gives the direction and its turns mark swings at the scale of `Length`. Because the weights peak in the middle of the window, the line lags by about half of `Length` bars, more than a weighted average that favours recent bars.\n\nThe smoothness makes crossings of price and the line fewer and more deliberate, but they come late. Use a shorter `Length` to follow price more closely, or compare it with a faster average to judge momentum.",
+  "settings": [
+    { "key": "length", "label": "Length", "description": "The number of bars in the window. Larger values smooth more and lag more." },
+    { "key": "source", "label": "Source", "description": "The price series the filter averages, the close by default." }
+  ],
+  "faq": [
+    { "q": "Why do the newest and oldest bars count for almost nothing?", "a": "The Hann window tapers to zero at both ends, so bars enter and leave the average smoothly. The middle of the window carries the most weight." },
+    { "q": "How does it compare with a simple moving average?", "a": "It is smoother and does not jump when a large bar enters or leaves the window, but it lags about the same, half the length." },
+    { "q": "What happens at a Length of 1?", "a": "The single weight is undefined, so the line simply plots the price." }
+  ]
+}

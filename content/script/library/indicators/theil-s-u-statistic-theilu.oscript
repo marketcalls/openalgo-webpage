@@ -1,0 +1,31 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © openalgo
+// Original work (c) mihakralj, MIT License
+
+version 1
+study("Theil's U Statistic (TheilU)", precision = 4)
+
+length = input(14, "Length", min = 1, max = 5000, step = 1)
+actual = input(close, "Actual")
+predicted = input(open, "Predicted")
+
+// An absent value on either side counts as zero.
+a = orElse(actual, 0)
+p = orElse(predicted, 0)
+
+// Squared forecast error and the squared size of each series, totalled over
+// the window.
+err = p - a
+sumSqError = sum(err * err, length)
+sumSqActual = sum(a * a, length)
+sumSqPred = sum(p * p, length)
+
+// The root of the error total scaled by the root of the combined size of the
+// two series. A window with no size at all reads as zero.
+epsilon = 1e-10
+denom = sqrt(sumSqActual + sumSqPred)
+theilU = isNone(denom) ? none : denom > epsilon ? sqrt(sumSqError) / denom : 0
+
+plot(theilU, "Theil's U", #ffeb3b, width = 2)
+level(1, "Naive", #ef5350, style = "dashed")
+level(0, "Perfect", #26a69a, style = "dashed")

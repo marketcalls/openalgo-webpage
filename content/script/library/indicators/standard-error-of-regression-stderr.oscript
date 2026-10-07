@@ -1,0 +1,44 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © openalgo
+// Original work (c) mihakralj, MIT License
+
+version 1
+study("Standard Error of Regression (STDERR)", precision = 2)
+
+period = input(14, "Period", min = 3, max = 1000, step = 1)
+source = input(close, "Source")
+
+len = max(3, min(1000, period))
+
+// The window holds up to `len` values, and the regression runs over whatever
+// it holds once there are at least three. An absent value counts as zero.
+n = min(bar.index + 1, len)
+result = none
+if n >= 3
+    // Least-squares line through the window, oldest value at x = 0.
+    sumX = 0.0
+    sumY = 0.0
+    sumXY = 0.0
+    sumX2 = 0.0
+    for j = 0 to n - 1
+        y = orElse(source[n - 1 - j], 0)
+        sumX += j
+        sumY += y
+        sumXY += j * y
+        sumX2 += j * j
+    denom = n * sumX2 - sumX * sumX
+    if denom == 0
+        result = 0
+    else
+        slopeVal = (n * sumXY - sumX * sumY) / denom
+        intercept = (sumY - slopeVal * sumX) / n
+
+        // Root of the summed squared residuals over n - 2 degrees of freedom.
+        ssr = 0.0
+        for j = 0 to n - 1
+            residual = orElse(source[n - 1 - j], 0) - (intercept + slopeVal * j)
+            ssr += residual * residual
+        resVar = ssr / (n - 2)
+        result = resVar > 0 ? sqrt(resVar) : 0
+
+plot(result, "Stderr", #ffeb3b, width = 2)

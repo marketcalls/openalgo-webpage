@@ -1,0 +1,15 @@
+{
+  "title": "Parzen Window Moving Average (PARZEN)",
+  "summary": "A moving average weighted by a smooth piecewise cubic bell that falls to zero at both ends of the window, for a quiet line with little ripple.",
+  "description": "The Parzen Window Moving Average weights each bar of its window by a piecewise cubic curve. Each position in the window is mapped to `u`, running from -1 at the oldest bar to 1 at the newest. In the middle half the weight is `1 - 6u^2 + 6|u|^3`, and toward the edges it is `2(1 - |u|)^3`, which reaches zero smoothly at both ends. The weights are scaled to sum to one and multiplied into the source.\n\nBecause the weights fade to zero without a step at either edge, a bar entering or leaving the window barely moves the line. That keeps the average free of the small jumps a plain average shows. Until `period` bars exist the line shows the price itself, and a missing price counts as zero.",
+  "howToRead": "Read it as a smooth trend line. The weights are concentrated in the middle of the window, so the effective smoothing is narrower than the period and the line lags price by about half the window. A rising line with price above it describes an uptrend, and a falling line with price below it a downtrend.\n\nIts strength is how cleanly it turns: short ripples are suppressed hard, so a change in slope is seldom noise. On the first bars, before a full window exists, it simply follows price.",
+  "settings": [
+    { "key": "source", "label": "Source", "description": "The price series that is averaged, the close by default." },
+    { "key": "period", "label": "Period", "description": "How many bars the cubic window spans. A longer period gives a smoother, slower line." }
+  ],
+  "faq": [
+    { "q": "Why does the window fade to zero at the edges?", "a": "A weight that drops to zero smoothly means a bar enters and leaves the average gradually. That removes the small steps a plain average makes when an old price drops out." },
+    { "q": "What does it show before the window is full?", "a": "The price itself. The weighted average begins once `period` bars exist." },
+    { "q": "How does it compare with a triangular average?", "a": "Both are symmetric and peak in the middle. The cubic shape here is rounder and fades out more gently, so it suppresses short ripples more strongly." }
+  ]
+}

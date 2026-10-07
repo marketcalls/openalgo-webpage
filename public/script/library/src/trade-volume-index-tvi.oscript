@@ -1,0 +1,30 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © openalgo
+// Original work (c) mihakralj, MIT License
+
+version 1
+study("Trade Volume Index (TVI)", precision = 2)
+
+source = input(close, "Price Field", tooltip = "Open, High, Low or Closing price")
+minTick = input(0.125, "Min. Move", min = 0.0001, step = 0.0001, tooltip = "Minimum price change to register direction")
+
+// A missing price falls back to the close. The first bar compares the price
+// with itself, so the starting direction (up) carries.
+price = orElse(source, close)
+prevPrice = bar.index > 0 ? orElse(source[1], close[1]) : price
+priceChange = price - prevPrice
+
+// The direction changes only on a move larger than the minimum, and holds
+// through smaller ones.
+var direction = 1
+if priceChange > minTick
+    direction = 1
+else if priceChange < -minTick
+    direction = 0
+
+// Volume is added while the direction is up and subtracted while it is down.
+vol = orElse(volume, 0)
+var tviSum = 0.0
+tviSum += direction == 1 ? vol : -vol
+
+plot(tviSum, "TVI", #ffeb3b, width = 2)

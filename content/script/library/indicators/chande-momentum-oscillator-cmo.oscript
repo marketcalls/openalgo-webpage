@@ -1,0 +1,32 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © openalgo
+// Original work (c) mihakralj, MIT License
+
+version 1
+study("Chande Momentum Oscillator (CMO)", precision = 2)
+
+length = input(14, "Length", min = 1, max = 5000, step = 1)
+source = input(close, "Source")
+
+len = max(1, floor(length))
+
+// Each bar's change split into an up part and a down part. The first bar has
+// no change and adds nothing to either side.
+diff = source - source[1]
+up = orElse(diff > 0 ? diff : 0.0, 0.0)
+down = orElse(diff < 0 ? -diff : 0.0, 0.0)
+
+// Running sums over the last len bars: the bar leaving the window comes out
+// before the new bar goes in.
+var sumUp = 0.0
+var sumDown = 0.0
+if bar.index >= len
+    sumUp -= up[len]
+    sumDown -= down[len]
+sumUp += up
+sumDown += down
+
+denom = sumUp + sumDown
+cmoValue = denom != 0.0 ? 100 * (sumUp - sumDown) / denom : 0.0
+
+plot(cmoValue, "CMO", #ffeb3b, width = 2)

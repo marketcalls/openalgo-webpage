@@ -1,0 +1,38 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © openalgo
+// Original work (c) mihakralj, MIT License
+
+version 1
+study("Average True Range Normalized (ATRN)", precision = 3)
+
+length = input(14, "Length", min = 1, max = 2000, step = 1, tooltip = "Number of bars used for the ATR calculation")
+
+// True range against the previous close. The first bar compares against its
+// own close, so its range is high minus low.
+prevClose = bar.index > 0 ? close[1] : close
+tr = max(max(high - low, abs(high - prevClose)), abs(low - prevClose))
+
+// A running average with weight 1 / length, started from zero and divided by
+// (1 - e) to remove the bias of the zero start, so it answers from bar 0.
+var rawRma = 0.0
+var e = 1.0
+beta = 1 - 1 / length
+rawRma = (rawRma * (length - 1) + tr) / length
+e = e * beta
+atrValue = e > 1e-10 ? rawRma / (1 - e) : rawRma
+
+// The average is placed inside its own range over the last 10 * length bars,
+// or every bar so far while fewer than that exist: 0 at the lowest, 1 at the
+// highest, and 0.5 when the window is flat.
+window = min(10 * length, bar.index + 1)
+maxAtr = atrValue
+minAtr = atrValue
+for k = 1 to window - 1
+    v = atrValue[k]
+    if v > maxAtr
+        maxAtr = v
+    if v < minAtr
+        minAtr = v
+atrn = minAtr < maxAtr ? (atrValue - minAtr) / (maxAtr - minAtr) : 0.5
+
+plot(atrn, "ATRN", #ffeb3b, width = 2)

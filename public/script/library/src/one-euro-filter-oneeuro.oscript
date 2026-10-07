@@ -1,0 +1,46 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © openalgo
+// Original work (c) mihakralj, MIT License
+
+version 1
+study("One Euro Filter (ONEEURO)", overlay = true, precision = 2)
+
+source = input(close, "Source")
+minCutoff = input(1, "Min Cutoff Frequency", min = 0.001, max = 1000, step = 0.1, tooltip = "Controls jitter at low speed. Lower = smoother when price is stable.")
+beta = input(0.007, "Speed Coefficient (beta)", min = 0, max = 1000, step = 0.001, tooltip = "Controls lag at high speed. Higher = faster response to rapid moves.")
+dCutoff = input(1, "Derivative Cutoff", min = 0.001, max = 1000, step = 0.1, tooltip = "Cutoff frequency for the derivative (speed) estimator.")
+
+// The smoothing factor of the speed estimate depends only on its cutoff.
+rD = 2 * math.pi * dCutoff
+alphaD = rD / (rD + 1)
+
+var xHat = none
+var dxHat = 0.0
+var xPrev = none
+
+out = none
+if isNone(xHat)
+    // Seed on the first bar with a value: the line starts at that value.
+    if not isNone(source)
+        xHat = source
+        xPrev = source
+        dxHat = 0.0
+        out = xHat
+else if isNone(source)
+    // A missing value clears the state, and the next value seeds it again.
+    xHat = none
+    xPrev = none
+else
+    // Smooth the bar-to-bar change of the raw input into a speed.
+    dx = source - xPrev
+    dxHat = alphaD * dx + (1 - alphaD) * dxHat
+
+    // The faster the move, the higher the cutoff and the less the lag.
+    fc = minCutoff + beta * abs(dxHat)
+    rC = 2 * math.pi * fc
+    a = rC / (rC + 1)
+    xHat = a * source + (1 - a) * xHat
+    xPrev = source
+    out = xHat
+
+plot(out, "OneEuro", #ffeb3b, width = 2)

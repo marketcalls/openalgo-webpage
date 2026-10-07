@@ -1,0 +1,28 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © openalgo
+// Original work (c) mihakralj, MIT License
+
+version 1
+study("Endpoint Moving Average (EPMA)", overlay = true, precision = 2)
+
+period = input(10, "Period", min = 1, max = 1000, step = 1)
+source = input(close, "Source")
+
+// The window grows with the chart until it holds period bars, so the line
+// answers from the first bar.
+len = max(1, min(bar.index + 1, period))
+
+// Weights fall in a straight line from len on the newest bar to 1 on the
+// oldest. A missing value adds neither price nor weight.
+weightedSum = 0.0
+totalWeight = 0.0
+for k = 0 to len - 1
+    price = source[k]
+    if isNone(price)
+        continue
+    w = len - k
+    weightedSum += price * w
+    totalWeight += w
+epma = len <= 1 ? source : totalWeight > 0 ? weightedSum / totalWeight : none
+
+plot(epma, "EPMA", #ffeb3b, width = 2)

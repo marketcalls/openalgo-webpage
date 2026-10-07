@@ -1,0 +1,23 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © openalgo
+// Original work (c) mihakralj, MIT License
+
+version 1
+study("Log-Cosh Loss", precision = 4)
+
+length = input(14, "Length", min = 1, max = 5000, step = 1)
+actual = input(close, "Actual")
+predicted = input(open, "Predicted")
+
+// log(cosh(x)) behaves like x * x / 2 for a small miss and like |x| - log(2)
+// for a large one. Beyond 20 the asymptote is used, so exp() cannot overflow.
+fn logCosh(x) =>
+    ax = abs(x)
+    ax > 20 ? ax - 0.6931471805599453 : log((exp(x) + exp(-x)) / 2)
+
+// An absent value on either side reads as zero.
+loss = logCosh(orElse(actual, 0) - orElse(predicted, 0))
+lossAvg = sma(loss, length)
+
+plot(lossAvg, "Log-Cosh Loss", #ffeb3b, width = 2)
+level(0, "Zero", #787b86, style = "dashed")

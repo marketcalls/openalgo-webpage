@@ -1,0 +1,14 @@
+{
+  "title": "Directional Movement Index (DX)",
+  "summary": "Plots DX, the gap between +DI and -DI as a share of their sum, beside both directional lines, to show how one-sided the movement is.",
+  "description": "DX is the raw reading behind ADX. Each bar contributes its true range (the bar's range, stretched to include any gap from the previous close) and its plus and minus directional movement: how far the high rose above the previous high or the low fell below the previous low, counted on one side only and only when that side's move is the larger and positive.\n\nThe three are smoothed with Wilder's weight of `1 / period`, starting from zero. Early on, a zero start pulls the values down, so while its weight is still visible each smoothed value is divided by `1 - e`, where `e` is `(1 - 1 / period)` raised to the number of bars seen. That correction lets the lines carry usable values from the first bar.\n\n**+DI** and **-DI** are the smoothed plus and minus movement as a percentage of the smoothed true range. **DX** is `100 * |+DI - -DI| / (+DI + -DI)`: 0 when the two sides are balanced and 100 when only one side is moving. A dashed line at 25 marks a common threshold for a strong trend.",
+  "howToRead": "Read DX for how one-sided the movement is and the DI lines for which side it favours. DX above 25 suggests a trending market; DX below it suggests the two sides are roughly balanced. When +DI (green) is above -DI (red), upward movement dominates, and the reverse for downward movement.\n\nDX is not smoothed a second time, so it jumps around more than ADX. It can give an earlier hint that a trend is gaining or losing strength, while ADX, its smoothed form, is steadier. A spike in DX on its own can come from a single large bar.",
+  "settings": [
+    { "key": "period", "label": "Period", "description": "The Wilder smoothing length for true range and directional movement. Longer gives steadier lines; shorter reacts faster." }
+  ],
+  "faq": [
+    { "q": "How is DX different from ADX?", "a": "ADX is a smoothed average of DX. DX itself is the unsmoothed reading on each bar, so it is faster and noisier." },
+    { "q": "Why does the line have values from the first bar?", "a": "The smoothing starts from zero and each value is divided by a correction factor that removes the weight of that zero start, so the early values are already on the right scale." },
+    { "q": "What does a DX of 0 mean?", "a": "The smoothed plus and minus directional movement are equal, so neither buyers nor sellers are pushing the range further than the other." }
+  ]
+}

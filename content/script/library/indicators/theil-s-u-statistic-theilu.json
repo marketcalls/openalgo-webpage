@@ -1,0 +1,16 @@
+{
+  "title": "Theil's U Statistic (TheilU)",
+  "summary": "Scores a predicted series against an actual one on a scale from 0 for a perfect match to about 1 for a forecast that adds nothing.",
+  "description": "Theil's U Statistic compares a predicted series with an actual series over a rolling window and scales the error so the reading does not depend on the price level. On every bar it squares the forecast error (predicted minus actual), squares the actual value and squares the predicted value. Each of the three is totalled over the last `Length` bars.\n\nThe statistic is the square root of the error total divided by the square root of the actual total plus the predicted total. A window where both series are effectively zero has nothing to scale by and reads 0. An absent value on either side is read as zero before squaring.",
+  "howToRead": "Zero means the predicted series matched the actual one on every bar of the window. The further the reading climbs toward 1, the larger the misses are compared with the size of the series themselves. The dashed line at 1 marks a forecast that is no better than a naive one, and the line at 0 marks a perfect forecast.\n\nOn price series the two values are large and close together, so readings sit very near zero and the useful information is in the changes: a rising line means the predicted series is drifting further from the actual one. The line has no value until `Length` bars have passed.",
+  "settings": [
+    { "key": "length", "label": "Length", "description": "How many bars the squared values are totalled over. A longer window gives a smoother, slower line." },
+    { "key": "actual", "label": "Actual", "description": "The series treated as the truth." },
+    { "key": "predicted", "label": "Predicted", "description": "The series treated as the forecast that is scored against the actual one." }
+  ],
+  "faq": [
+    { "q": "Why are the readings so close to zero on a price chart?", "a": "The denominator is the size of the two series themselves. On an instrument trading in the thousands, a miss of a few points is tiny by comparison, so the ratio is small. Compare readings over time rather than against 1." },
+    { "q": "Does the price level change the reading?", "a": "No. Both the error and the scale are in the same units, so doubling every price leaves the statistic unchanged." },
+    { "q": "What are the two dashed lines?", "a": "The line at 0 is a perfect forecast and the line at 1 is the level of a naive forecast that adds no information." }
+  ]
+}

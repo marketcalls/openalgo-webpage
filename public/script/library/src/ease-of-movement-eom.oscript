@@ -1,0 +1,36 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © openalgo
+// Original work (c) mihakralj, MIT License
+
+version 1
+study("Ease of Movement (EOM)", precision = 4)
+
+period = input(14, "Period", min = 1, max = 5000, step = 1)
+smoothing = input(14, "Smoothing", min = 1, max = 5000, step = 1)
+
+// "Period" is the averaging window and "Smoothing" divides the volume, so a
+// larger Smoothing makes each bar's box ratio smaller and the readings larger.
+window = max(1, floor(period))
+volScale = max(1, floor(smoothing))
+
+// The change in the bar's midpoint. The first bar compares with itself, so its
+// change is zero rather than a spike.
+midPoint = (high + low) * 0.5
+midPointChange = midPoint - orElse(midPoint[1], midPoint)
+
+// Volume per unit of range. A bar with no range or no volume contributes zero.
+priceRange = high - low
+hasBox = priceRange > 0 and volume > 0
+boxRatio = hasBox ? (volume / volScale) / priceRange : none
+rawEom = not isNone(boxRatio) and boxRatio != 0 ? midPointChange / boxRatio : 0
+current = orElse(rawEom, 0)
+
+// A running sum over the window. The early bars average however many values
+// they have, so the line answers from the first bar.
+var total = 0.0
+if bar.index >= window
+    total -= current[window]
+total += current
+eomValue = bar.index < window ? total / (bar.index + 1) : total / window
+
+plot(eomValue, "EOM", #ffeb3b, width = 2)

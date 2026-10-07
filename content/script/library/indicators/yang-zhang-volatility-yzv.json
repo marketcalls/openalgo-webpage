@@ -1,0 +1,14 @@
+{
+  "title": "Yang-Zhang Volatility (YZV)",
+  "summary": "A volatility estimate combining the gap from the previous close, the open-to-close move and the intrabar range of every bar.",
+  "description": "Yang-Zhang volatility combines three views of a bar's movement into one variance estimate. The first is the gap: the log of the open over the previous close. The second is the body: the log of the close over the open. The third is the Rogers-Satchell term built from the high and low relative to the open and close, which measures movement inside the bar.\n\nThe squared gap is added to a weighted mix of the squared body and the Rogers-Satchell term, with a weight that depends on the length. That per-bar variance is smoothed with a Wilder average that is set to the first bar's estimate. While a compensating weight, which starts at 1 and shrinks by the factor one minus 1 divided by the length on every valid bar, is above a tiny threshold, the average is divided by one minus that weight. The square root of the result is the volatility. On the first bar the open stands in for the previous close, and a bar with a non-positive price gives no value and leaves the average unchanged.\n\nBecause the average starts from a real estimate and is still divided by a small number at first, the early values are too high: on the first bar the line is that bar's volatility times the square root of the length. The effect fades as the compensating weight shrinks.",
+  "howToRead": "The value is a volatility per bar as a fraction of price: 0.01 means bars typically move about 1 percent. A rising line means the market is becoming more volatile, counting both gaps between bars and movement within them; a falling line means it is calming.\n\nBecause it includes gaps, it reacts to markets that open away from the previous close, which range-only measures miss. It carries no direction, and it is a per-bar figure, not an annual one. The first bars read high because of the start-up correction, so judge the line once a few multiples of the length have passed.",
+  "settings": [
+    { "key": "length", "label": "Length", "description": "How many bars the Wilder average of the per-bar variance spans. It also sets the weight between the body and the intrabar term." }
+  ],
+  "faq": [
+    { "q": "Why combine three parts?", "a": "Each misses something on its own. The gap catches moves between bars, the body catches the bar's net move, and the intrabar term catches swings within the bar." },
+    { "q": "Is the value annualised?", "a": "No. It is the volatility of a single bar. Multiply by the square root of the bars in a year if you need a yearly figure." },
+    { "q": "What happens on the first bar?", "a": "There is no previous close, so the open is used in its place and the gap term is zero." }
+  ]
+}

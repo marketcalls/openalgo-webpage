@@ -1,0 +1,16 @@
+{
+  "title": "Regularized EMA (REMA)",
+  "summary": "An exponential average blended with a regularization term by a lambda setting, which in this form slows the step by alpha times lambda.",
+  "description": "REMA mixes two candidates for the next value. The first is an ordinary exponential step toward the source, with a smoothing factor of two over the period plus one. The second is a regularization term meant to continue the average's own recent movement. The lambda setting blends them: one is the plain exponential average and lower values lean on the regularization term.\n\nIn the calculation as written, the previous value is updated to the current value before the regularization term reads it, so that term equals the current value. Each bar therefore moves the average toward the source by the smoothing factor times lambda: lambda acts as a multiplier that slows the average down, and at zero the line stays flat at its first value. The line is seeded with the first source value, and a missing source value carries the previous value forward.",
+  "howToRead": "Read REMA as an exponential average whose speed is set by both the period and lambda. At lambda one it is a standard EMA of the period. At 0.5 it moves half as far each bar, which is close to an EMA of about twice the period, and smaller values make it slower still.\n\nPrice above a rising line describes an uptrend and price below a falling line a downtrend. Keep lambda above zero: at zero the line never leaves its first value and says nothing about price.",
+  "settings": [
+    { "key": "source", "label": "Source", "description": "The price series that is averaged, the close by default." },
+    { "key": "period", "label": "Period", "description": "Sets the smoothing factor, two over the period plus one. A larger period gives a slower line." },
+    { "key": "lambda", "label": "Lambda", "description": "Blends the exponential step with the regularization term, from 0 to 1. Lower values make the line slower; 1 is a standard EMA." }
+  ],
+  "faq": [
+    { "q": "Why does a lower lambda only slow the line down?", "a": "The regularization term reads the previous value after it has been set to the current one, so it equals the current value. Blending toward it shortens each step to the smoothing factor times lambda." },
+    { "q": "What happens at lambda zero?", "a": "Every step has zero length, so the line stays at the first source value for the whole chart." },
+    { "q": "What does lambda one give?", "a": "A standard exponential moving average of the period, seeded with the first source value." }
+  ]
+}

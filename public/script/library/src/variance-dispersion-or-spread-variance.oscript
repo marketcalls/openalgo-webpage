@@ -1,0 +1,33 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © openalgo
+// Original work (c) mihakralj, MIT License
+
+version 1
+study("Variance, Dispersion or Spread (VARIANCE)", precision = 2)
+
+period = input(14, "Period", min = 1, max = 5000, step = 1)
+source = input(close, "Source")
+
+// A missing source value counts as zero and still takes a slot in the window.
+value = orElse(source, 0)
+
+// Running sum and sum of squares over the last period values. Until the window
+// fills, the average is taken over however many values have arrived.
+var runSum = 0.0
+var runSumSq = 0.0
+var filled = 0
+if bar.index >= period
+    oldest = value[period]
+    runSum -= oldest
+    runSumSq -= oldest * oldest
+    filled -= 1
+runSum += value
+runSumSq += value * value
+filled += 1
+
+// Population variance, E[x^2] - E[x]^2, clamped at zero because the subtraction
+// can dip just below zero on a flat window. A single value reports 0.
+mean = runSum / filled
+spreadVar = filled > 1 ? max(0, runSumSq / filled - mean * mean) : 0
+
+plot(spreadVar, "Var", #ffeb3b, width = 2)

@@ -1,0 +1,52 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © openalgo
+// Original work (c) mihakralj, MIT License
+
+version 1
+study("Relative Volatility Index (RVI)", precision = 2)
+
+source = input(close, "Source")
+stdevLength = input(10, "StdDev Length", min = 2, max = 5000, step = 1, tooltip = "Lookback period for calculating the Standard Deviation of source prices.")
+rmaLength = input(14, "RMA Length (Wilder's Smoothing)", min = 1, max = 5000, step = 1, tooltip = "Lookback period for smoothing Upward and Downward Standard Deviations.")
+
+// A population standard deviation over a window that grows to stdevLength
+// values, kept as a running sum and sum of squares. A missing value counts as
+// zero, and a window holding a single value reads 0.
+value = orElse(source, 0)
+var total = 0.0
+var totalSq = 0.0
+oldest = bar.index >= stdevLength ? value[stdevLength] : none
+if not isNone(oldest)
+    total = total - oldest
+    totalSq = totalSq - oldest * oldest
+total = total + value
+totalSq = totalSq + value * value
+n = min(bar.index + 1, stdevLength)
+mean = total / n
+stdDev = n > 1 ? sqrt(max(0, totalSq / n - mean * mean)) : 0
+
+// The deviation is credited to the up side on a rising bar and to the down
+// side on a falling one. An unchanged bar, and the first bar, credit neither.
+priceChange = source - source[1]
+upStd = priceChange > 0 ? stdDev : 0
+downStd = priceChange < 0 ? stdDev : 0
+
+// Wilder averages started from zero. e is the weight the zero start still
+// holds, and dividing by (1 - e) removes it while e is above a tiny threshold.
+wilderAlpha = 1 / rmaLength
+var rawUp = 0.0
+var eUp = 1.0
+var rawDown = 0.0
+var eDown = 1.0
+rawUp = (rawUp * (rmaLength - 1) + upStd) / rmaLength
+eUp = (1 - wilderAlpha) * eUp
+avgUp = eUp > 1e-10 ? rawUp / (1 - eUp) : rawUp
+rawDown = (rawDown * (rmaLength - 1) + downStd) / rmaLength
+eDown = (1 - wilderAlpha) * eDown
+avgDown = eDown > 1e-10 ? rawDown / (1 - eDown) : rawDown
+
+// The up share of the total on a 0 to 100 scale, 50 when there is no total.
+both = avgUp + avgDown
+rviValue = both != 0 and not isNone(both) ? 100 * avgUp / both : 50
+
+plot(rviValue, "RVI", #ffeb3b, width = 2)

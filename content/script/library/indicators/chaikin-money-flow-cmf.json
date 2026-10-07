@@ -1,0 +1,14 @@
+{
+  "title": "Chaikin Money Flow (CMF)",
+  "summary": "The share of recent volume that traded on the buying side, from money flow volume summed over a window and divided by total volume.",
+  "description": "Chaikin Money Flow measures whether volume over a recent window has been arriving on closes near the bars' highs or near their lows. Each bar gets a money flow multiplier from where it closed inside its range: +1 at the high, -1 at the low, 0 in the middle and 0 on a bar with no range. The multiplier times the bar's volume is that bar's money flow volume.\n\nThe study sums the money flow volume over the last `length` bars and divides by the total volume of the same bars. The result runs between -1 and +1. While fewer than `length` bars exist, the window covers every bar so far, so the line reads from the first bar. A window with no volume at all reads 0.",
+  "howToRead": "Above zero, recent volume has traded mostly on closes in the upper part of each bar, which is read as buying pressure; below zero, the lower part, read as selling pressure. Readings far from zero show a one-sided market, and a cross of the zero line marks a change in which side is in control.\n\nWatch for disagreement with price, such as price rising while the line slips below zero. The reading looks only inside each bar, so a gap between bars does not count, and the first few bars rest on a short window.",
+  "settings": [
+    { "key": "length", "label": "Length", "description": "How many bars the money flow and the volume are summed over. A longer window gives a smoother, slower line." }
+  ],
+  "faq": [
+    { "q": "What range can the value take?", "a": "Between -1 and +1. It reaches +1 only if every bar with volume in the window closed at its high, and -1 only if every such bar closed at its low." },
+    { "q": "Why is there a value on the very first bar?", "a": "The sums start from the first bar and cover every bar so far until the window is full, so the line reads from the start on a shorter window." },
+    { "q": "What happens when the window has no volume?", "a": "The division has no meaning, so the study reads 0 for that bar." }
+  ]
+}

@@ -1,0 +1,15 @@
+{
+  "title": "Hanning Moving Average (HANMA)",
+  "summary": "A moving average weighted by a raised cosine window, zero at both ends of the lookback and heaviest in the middle.",
+  "description": "The Hanning Moving Average weights the bars of its window with a raised cosine, 0.5 * (1 - cos(2 * pi * k / (N - 1))), where k counts bars back from the newest and N is the window length. The weight is zero on the newest and oldest bars and rises to one in the middle, so the centre of the window carries the most. The weighted prices are summed and divided by the sum of the weights.\n\nThe window grows with the chart until it holds `period` bars, with the weights rebuilt for each length. A one-bar window weights that bar by one, and a two-bar window, whose two weights are both zero, falls back to the current price. A missing price is skipped with its weight.",
+  "howToRead": "Read the HANMA as a very smooth trend line. Because both ends of the window carry no weight, bars slide in and out without any step in the line, and it filters out short swings well. The cost is lag: with the weight in the middle of the window, the line runs about half a window behind price.\n\nNote that the newest bar has zero weight, so the latest close does not move the line until the next bar. Use the line for the direction of the trend, not to time entries.",
+  "settings": [
+    { "key": "period", "label": "Period", "description": "Number of bars in the full window. A longer period smooths more and lags more." },
+    { "key": "source", "label": "Source", "description": "The price series the average is taken from, the close by default." }
+  ],
+  "faq": [
+    { "q": "Why does the latest close not move the line?", "a": "The raised cosine gives zero weight to both ends of the window, including the newest bar. That bar starts to count once the next bar arrives." },
+    { "q": "How does it differ from the Hamming average?", "a": "The Hamming taper keeps a small weight of 0.08 at the ends, while the Hanning taper falls to zero, which smooths a little more." },
+    { "q": "What happens on the second bar of the chart?", "a": "A two-bar window has zero weight on both bars, so the line falls back to the current price there." }
+  ]
+}

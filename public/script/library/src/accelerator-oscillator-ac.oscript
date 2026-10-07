@@ -1,0 +1,28 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © openalgo
+// Original work (c) mihakralj, MIT License
+
+version 1
+study("Accelerator Oscillator (AC)", precision = 2)
+
+fastLength = input(5, "Fast Length", min = 1, max = 5000, step = 1)
+slowLength = input(34, "Slow Length", min = 2, max = 5000, step = 1)
+
+// The slow window is always at least one bar longer than the fast one.
+slowLen = max(fastLength + 1, slowLength)
+
+// The mean of the values seen so far, up to len of them, so the line starts
+// on the first bar instead of after a warmup gap.
+fn runningMean(x, len) =>
+    var s = 0.0
+    if bar.index >= len
+        s = s - x[len]
+    s = s + x
+    s / min(bar.index + 1, len)
+
+midpoint = (high + low) / 2
+ao = runningMean(midpoint, fastLength) - runningMean(midpoint, slowLen)
+// The oscillator less its own five-bar mean.
+ac = ao - runningMean(ao, 5)
+
+plot(ac, "AC", ac >= 0 ? #26a69a : #ef5350, width = 2)

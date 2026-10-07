@@ -1,0 +1,45 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © openalgo
+// Original work (c) mihakralj, MIT License
+
+version 1
+study("Coppock Curve (COPPOCK)", precision = 2)
+
+source = input(close, "Source")
+longRoc = input(14, "Long ROC Period", min = 1, max = 500, step = 1)
+shortRoc = input(11, "Short ROC Period", min = 1, max = 500, step = 1)
+wmaPeriod = input(10, "WMA Period", min = 1, max = 500, step = 1)
+
+// A missing source value reads as zero.
+price = orElse(source, 0)
+
+// Each rate of change is a percentage over its own lookback, and counts as
+// zero until that lookback exists (or when the older price is zero).
+longThen = price[longRoc]
+shortThen = price[shortRoc]
+longLeg = bar.index >= longRoc and longThen != 0 ? (price - longThen) / longThen * 100 : 0
+shortLeg = bar.index >= shortRoc and shortThen != 0 ? (price - shortThen) / shortThen * 100 : 0
+combinedRoc = longLeg + shortLeg
+
+// Linearly weighted mean of the combined rate of change, newest value weighted
+// most. While fewer than `wmaPeriod` values exist it weights the ones there
+// are, 1 for the oldest up to the count for the newest, so the curve starts on
+// the first bar. Once full, the weights slide by one bar each bar.
+var wSum = 0.0
+var wWeighted = 0.0
+var wNorm = 0.0
+var wCount = 0
+
+if bar.index >= wmaPeriod
+    oldSum = wSum
+    wSum -= combinedRoc[wmaPeriod]
+    wSum += combinedRoc
+    wWeighted = wWeighted - oldSum + wmaPeriod * combinedRoc
+else
+    wCount += 1
+    wSum += combinedRoc
+    wWeighted = wWeighted + wCount * combinedRoc
+    wNorm = wCount * (wCount + 1) * 0.5
+
+level(0, "Zero", #787b86, style = "dashed")
+plot(wNorm != 0 ? wWeighted / wNorm : 0, "Coppock", #ffeb3b, width = 2)

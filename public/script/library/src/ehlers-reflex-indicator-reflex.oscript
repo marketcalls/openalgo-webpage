@@ -1,0 +1,49 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © openalgo
+// Original work (c) mihakralj, MIT License
+
+version 1
+study("Ehlers Reflex Indicator (REFLEX)", precision = 4)
+
+period = input(20, "Period", min = 2, max = 5000, step = 1)
+source = input(close, "Source")
+
+// Two-pole smoothing filter coefficients at half the cycle period.
+halfPeriod = period * 0.5
+a1 = exp(-1.414 * math.pi / halfPeriod)
+b1 = 2 * a1 * math.cos(1.414 * math.pi / halfPeriod)
+c2 = b1
+c3 = -(a1 * a1)
+c1 = 1 - c2 - c3
+
+// A missing price, this bar or the last, enters the filter as zero.
+price = orElse(source, 0)
+prevPrice = orElse(source[1], 0)
+
+var filt1 = 0.0
+var filt2 = 0.0
+filt = c1 * (price + prevPrice) * 0.5 + c2 * filt1 + c3 * filt2
+filt2 = filt1
+filt1 = filt
+
+// A straight line from the filtered value one period ago to the filtered
+// value now. Bars before the first read as zero.
+slope = (orElse(filt[period], 0) - filt) / period
+
+// The average gap between that line and the filtered series over the period.
+theSum = 0.0
+if bar.index + 1 >= period
+    for k = 1 to period
+        theSum = theSum + (filt + k * slope - orElse(filt[k], 0))
+    theSum = theSum / period
+
+// Normalised by an exponential mean square, so the result reads in units of
+// its own recent spread.
+var ms = 0.0
+ms = 0.04 * theSum * theSum + 0.96 * ms
+reflex = ms > 0 ? theSum / sqrt(ms) : 0
+
+plot(reflex, "REFLEX", #ffeb3b, width = 2)
+level(0, "Zero", #9598a1, style = "dashed")
+level(1, "+1 Sigma", withAlpha(#ff5252, 0.4), style = "dashed")
+level(-1, "-1 Sigma", withAlpha(#4caf50, 0.4), style = "dashed")

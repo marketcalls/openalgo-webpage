@@ -1,0 +1,33 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © openalgo
+// Original work (c) mihakralj, MIT License
+
+version 1
+study("Holt-Winters Moving Average (HWMA)", overlay = true, precision = 2)
+
+period = input(10, "Period", min = 1, max = 5000, step = 1)
+source = input(close, "Source")
+
+// All three smoothing factors come from the period.
+a = 2 / (period + 1)
+b = 1 / period
+g = 1 / period
+
+// Level, velocity and acceleration, carried from bar to bar. The first bar
+// seeds the level and shows it unadjusted.
+var levelTerm = none
+var velocity = 0.0
+var accel = 0.0
+hwma = source
+if isNone(levelTerm)
+    levelTerm = source
+else
+    prevLevelTerm = levelTerm
+    prevVelocity = velocity
+    prevAccel = accel
+    levelTerm = a * source + (1 - a) * (prevLevelTerm + prevVelocity + 0.5 * prevAccel)
+    velocity = b * (levelTerm - prevLevelTerm) + (1 - b) * (prevVelocity + prevAccel)
+    accel = g * (velocity - prevVelocity) + (1 - g) * prevAccel
+    hwma = levelTerm + velocity + 0.5 * accel
+
+plot(hwma, "HWMA", #ffeb3b, width = 2)

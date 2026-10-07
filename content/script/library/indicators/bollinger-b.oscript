@@ -1,0 +1,41 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © openalgo
+// Original work (c) mihakralj, MIT License
+
+version 1
+study("Bollinger %B", precision = 3)
+
+period = input(20, "Period", min = 1, max = 5000, step = 1)
+source = input(close, "Source")
+multiplier = input(2.0, "StdDev Multiplier", min = 0.001, max = 100, step = 0.1, tooltip = "Band half-width as a multiple of the standard deviation of the source.")
+
+// Running sum and sum of squares over the last period values, divided by the
+// count seen so far, so the band exists from the first bar.
+var sum1 = 0.0
+var sumSq = 0.0
+var filled = 0
+if bar.index >= period
+    old = source[period]
+    sum1 = sum1 - old
+    sumSq = sumSq - old * old
+else
+    filled = filled + 1
+sum1 = sum1 + source
+sumSq = sumSq + source * source
+
+k = max(1, filled)
+basis = sum1 / k
+dev = multiplier * sqrt(max(0, sumSq / k - basis * basis))
+upper = basis + dev
+lower = basis - dev
+bandWidth = upper - lower
+
+// 0 at the lower band and 1 at the upper; a flat window reads as the middle.
+pctB = bandWidth > 0 ? (source - lower) / bandWidth : 0.5
+
+plot(pctB, "Bollinger %B", #ffeb3b, width = 2)
+level(1, "Upper Band Level", #787b86, style = "dashed")
+level(0.8, "Overbought", #ef5350, style = "dashed")
+level(0.5, "Midline", #787b86, style = "solid")
+level(0.2, "Oversold", #26a69a, style = "dashed")
+level(0, "Lower Band Level", #787b86, style = "dashed")

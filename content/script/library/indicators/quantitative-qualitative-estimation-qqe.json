@@ -1,0 +1,17 @@
+{
+  "title": "Quantitative Qualitative Estimation (QQE)",
+  "summary": "A smoothed RSI with a trailing band set by the RSI's own volatility; when the line crosses the trailing level, momentum has shifted.",
+  "description": "QQE starts with an RSI of the source, its gains and losses smoothed with weight `1 / RSI Period`, and smooths it with an exponential mean of length `Smooth Factor`. That smoothed RSI is the yellow QQE line.\n\nThe study then measures how much the QQE line moves from bar to bar. It takes the absolute change of the line and smooths it twice with an exponential mean of length `2 x Smooth Factor - 1`, which gives a dynamic average range. Multiplying that range by the `QQE Factor` sets a band above and below the line.\n\nThe trailing level follows the band like a stop. While the line and its previous reading are both above the trailing level, the level can only rise toward the lower band; while both are below, it can only fall toward the upper band. When the line crosses it, the trailing level jumps to the band on the other side. Every smoothing stage starts at zero and is divided by the weight still owed to that start, so both lines answer from the first bar.",
+  "howToRead": "Watch the QQE line against the trailing line. A cross of the QQE line above the trailing line says momentum has turned up by more than its usual noise; a cross below says it has turned down. The levels at 70, 50 and 30 give the usual RSI context: a cross up from below 30, or a cross down from above 70, comes from a stretched reading.\n\nThe band width adapts to how much the RSI has been moving, so in choppy conditions the trailing line sits further away and crosses are rarer. A larger QQE Factor widens the band and gives fewer, later crosses.",
+  "settings": [
+    { "key": "source", "label": "Source", "description": "The price series the RSI is computed from, the close by default." },
+    { "key": "rsiPeriod", "label": "RSI Period", "description": "The length of the RSI. A shorter period makes the RSI and everything built on it faster and noisier." },
+    { "key": "smoothFactor", "label": "Smooth Factor", "description": "The length of the exponential mean applied to the RSI; the range smoothing uses twice this minus one. Higher values give smoother lines." },
+    { "key": "qqeFactor", "label": "QQE Factor", "description": "The multiple of the dynamic average range used to place the trailing band. Larger values keep the trailing line further away and give fewer crosses." }
+  ],
+  "faq": [
+    { "q": "What is the trailing line?", "a": "A level that follows the QQE line at a distance set by the line's own recent volatility. It only moves toward the line while the line stays on one side, and jumps to the other side when the line crosses it, much like a trailing stop." },
+    { "q": "Why does the trailing line jump?", "a": "When the QQE line crosses it, the trailing level flips from the band below the line to the band above it, or the reverse. The jump marks the bar where momentum changed side." },
+    { "q": "Is the QQE line the same as an RSI?", "a": "It is an RSI smoothed with an exponential mean, so it follows the same 0 to 100 scale with less noise and a little more lag." }
+  ]
+}

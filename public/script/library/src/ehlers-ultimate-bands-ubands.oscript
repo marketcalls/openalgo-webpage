@@ -1,0 +1,49 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © openalgo
+// Original work (c) mihakralj, MIT License
+
+version 1
+study("Ehlers Ultimate Bands (UBANDS)", overlay = true, precision = 2)
+
+source = input(close, "Source")
+length = input(20, "Length", min = 1, max = 5000, step = 1, tooltip = "Lookback period for smoothing and RMS calculation.")
+mult = input(1.0, "RMS Multiplier", min = 0.01, max = 100, step = 0.1, tooltip = "Band width as multiple of RMS value.")
+
+// Coefficients of the ultrasmooth filter for this length.
+arg = sqrt(2) * math.pi / max(1, length)
+expArg = exp(-arg)
+c2 = 2 * expArg * math.cos(arg)
+c3 = -expArg * expArg
+c1 = (1 + c2 - c3) / 4
+
+// The current and two previous source values, each falling back to the
+// newer one when it is missing.
+s = orElse(source, source[1])
+s1 = orElse(source[1], s)
+s2 = orElse(source[2], s1)
+
+// The filter needs two earlier outputs. Until it has them it passes the
+// source straight through.
+var smooth1 = none
+var smooth2 = none
+smooth = isNone(smooth1) or isNone(smooth2) ? s : (1 - c1) * s + (2 * c1 - c2) * s1 - (c1 + c3) * s2 + c2 * smooth1 + c3 * smooth2
+smooth2 = smooth1
+smooth1 = smooth
+
+// The bands sit a multiple of the root mean square of the residual (source
+// minus filter) away from the filter, over the last `length` bars or every
+// bar so far while the window fills.
+residual = source - smooth
+sumSq = 0.0
+windowCount = 0
+for k = 0 to min(bar.index, length - 1)
+    r = residual[k]
+    if not isNone(r)
+        sumSq = sumSq + r * r
+        windowCount = windowCount + 1
+rms = windowCount > 0 ? sqrt(sumSq / windowCount) : 0
+
+plot(smooth, "Middle Band", #ffeb3b, width = 2)
+top = plot(smooth + mult * rms, "Upper Band", #ffeb3b, width = 2)
+bottom = plot(smooth - mult * rms, "Lower Band", #ffeb3b, width = 2)
+fill(top, bottom, #2962ff, opacity = 0.1)

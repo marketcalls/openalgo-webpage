@@ -1,0 +1,20 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © openalgo
+// Original work (c) mihakralj, MIT License
+
+version 1
+study("Positive Volume Index (PVI)", precision = 2)
+
+source = input(close, "Price Source")
+
+// The index starts at 100 and compounds the price return only on bars whose
+// volume rose against the previous bar. Every other bar holds it flat.
+prevPrice = source[1]
+prevVol = volume[1]
+usable = bar.index > 0 and not isNone(source) and not isNone(volume) and orElse(prevPrice, 0) != 0 and orElse(prevVol, 0) > 0
+
+var pviValue = 100.0
+if usable and volume > prevVol
+    pviValue = pviValue * source / prevPrice
+
+plot(pviValue, "PVI", #ffeb3b, width = 2)

@@ -1,0 +1,16 @@
+{
+  "title": "Recursive Least Squares Adaptive Filter (RLS)",
+  "summary": "An adaptive filter that re-estimates its weights every bar by recursive least squares, with a forgetting factor setting how much history still counts.",
+  "description": "This study predicts each bar from the previous **Filter Order** bars with a set of weights that it re-estimates on every bar. The line on the chart is the prediction made before the current bar updates the weights.\n\nThe update is recursive least squares. The filter keeps an inverse correlation matrix `P`, which starts at 100 times the identity, and the weights, which start at zero. Each bar it forms the gain vector `k = P x / (lambda + x' P x)` from the input vector `x` of past prices, moves the weights by `k` times the prediction error, and updates `P` to `(P - k (P x)') / lambda`. Dividing by the **Forgetting Factor** lambda each bar makes older bars count for less, so the filter can follow a change in behaviour.\n\nHistory before the first bar reads as zero. While every weight is still zero the prediction is a flat zero, so the line is drawn from the first bar after a weight has moved.",
+  "howToRead": "Read the line as a fast adaptive estimate of price. Because recursive least squares solves for the best weights over all the history it remembers, it converges far faster than a simple gradient method and usually sits very close to price. Gaps between price and the line show moves the recent pattern did not predict.\n\nA forgetting factor near 1 remembers a long history and gives a steadier line; a lower value adapts quickly to a new regime but reacts more to noise. More taps model a longer memory of past bars. The prediction is an estimate of the current bar from earlier bars, not a forecast of the next one.",
+  "settings": [
+    { "key": "order", "label": "Filter Order (taps)", "description": "How many previous bars the filter weighs. More taps model longer structure and cost more to compute." },
+    { "key": "lambda", "label": "Forgetting Factor (Lambda)", "description": "How much history is kept. Values close to 1 remember more bars; lower values let the filter adapt faster to a change." },
+    { "key": "source", "label": "Source", "description": "The price series the filter predicts and learns from, the close by default." }
+  ],
+  "faq": [
+    { "q": "How is this different from the least mean squares filter?", "a": "Both predict price from past bars with adaptive weights. Least mean squares nudges the weights a small step along the error, while recursive least squares solves for the best weights over its remembered history each bar, so it adapts much faster." },
+    { "q": "Why is the first bar or two blank?", "a": "The weights start at zero, so the very first predictions are an exact zero. Those bars are left empty and the line starts once a weight has moved." },
+    { "q": "What does the forgetting factor do in practice?", "a": "It sets an effective memory of about 1 / (1 - lambda) bars. At 0.99 that is roughly 100 bars; at 0.95 it is about 20, which reacts faster but is noisier." }
+  ]
+}

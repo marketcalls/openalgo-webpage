@@ -1,0 +1,39 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © openalgo
+// Original work (c) mihakralj, MIT License
+
+version 1
+study("Bilateral Filter (BILATERAL)", overlay = true, precision = 2)
+
+length = input(20, "Length", min = 2, max = 1000, step = 1)
+sigmaSRatio = input(0.5, "Spatial Sigma Ratio", min = 0.01, max = 100, step = 0.05, tooltip = "Spatial standard deviation as a fraction of the length: larger means bars further back keep more weight.")
+sigmaRMult = input(1.0, "Range Sigma Multiplier", min = 0.01, max = 100, step = 0.1, tooltip = "Range standard deviation as a multiple of the rolling standard deviation: larger means a move has to be bigger before it is treated as an edge.")
+source = input(close, "Source")
+
+// Population standard deviation of the window sets the range scale.
+dev = stdev(source, length)
+
+sigmaS = max(length * sigmaSRatio, 1e-10)
+twoSigmaSSq = 2 * sigmaS * sigmaS
+sigmaR = isNone(dev) ? none : max(dev * sigmaRMult, 1e-10)
+twoSigmaRSq = 2 * sigmaR * sigmaR
+
+// The current value, or the previous one when it is missing.
+centerVal = orElse(source, source[1])
+
+// Each bar in the window is weighted by how far back it sits (spatial) and by
+// how far its value is from the current one (range).
+sumWeights = 0.0
+sumWeightedSrc = 0.0
+for i = 0 to length - 1
+    val = orElse(source[i], centerVal)
+    diffRange = centerVal - val
+    weightSpatial = exp(-(i * i) / twoSigmaSSq)
+    weightRange = exp(-(diffRange * diffRange) / twoSigmaRSq)
+    w = weightSpatial * weightRange
+    sumWeights += w
+    sumWeightedSrc += w * val
+
+bilateral = isNone(dev) or isNone(centerVal) ? none : sumWeights == 0 ? centerVal : sumWeightedSrc / sumWeights
+
+plot(bilateral, "Bilateral", #ffeb3b, width = 2)

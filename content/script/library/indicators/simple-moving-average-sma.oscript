@@ -1,0 +1,21 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © openalgo
+// Original work (c) mihakralj, MIT License
+
+version 1
+study("Simple Moving Average (SMA)", overlay = true, precision = 2)
+
+period = input(10, "Period", min = 1, max = 5000, step = 1)
+source = input(close, "Source")
+
+// An absent price counts as zero, as a gap in the data would.
+price = orElse(source, 0)
+
+// Until the window is full the average covers every bar seen so far, so the
+// line starts on the first bar. From then on it is the plain windowed mean.
+runningTotal = cum(price)
+windowMean = sma(price, period)
+barsSeen = bar.index + 1
+smaValue = barsSeen < period ? runningTotal / barsSeen : windowMean
+
+plot(smaValue, "SMA", #ffeb3b, width = 2)

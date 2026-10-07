@@ -1,0 +1,14 @@
+{
+  "title": "Ehlers 2-Pole Butterworth Filter (BUTTER2)",
+  "summary": "A second order Butterworth lowpass that smooths price with a maximally flat passband, damping cycles shorter than the length.",
+  "description": "This filter is a two-pole recursive lowpass with a maximally flat passband. Price movement slower than the cutoff period passes almost unchanged, and faster cycles are damped without the ripple a simple average leaves behind.\n\nFrom the length it sets omega = 2 pi / length and alpha = sin(omega) / sqrt(2), giving a0 = 1 + alpha, a1 = -2 cos(omega), a2 = 1 - alpha and b0 = b2 = (1 - cos(omega)) / 2, b1 = 1 - cos(omega). Each bar's value is (b0 times the price + b1 times the previous price + b2 times the price two bars back - a1 times the previous output - a2 times the output before that) divided by a0. The first two bars take the price itself, and a missing price falls back to the previous one, or to zero when both are missing.",
+  "howToRead": "Read it as a smooth trend line with modest lag. Price above a rising line shows upward short-term direction and below a falling line downward direction; a turn in the line marks a change in the smoothed direction.\n\nA longer length smooths more and turns later, a shorter one follows price more closely but lets more noise through. Like every lowpass filter it reports a move after it has begun.",
+  "settings": [
+    { "key": "length", "label": "Length", "description": "The cutoff period in bars. Cycles shorter than this are damped; a longer length smooths more." },
+    { "key": "source", "label": "Source", "description": "The price series the filter smooths. The close by default." }
+  ],
+  "faq": [
+    { "q": "Why use this instead of a simple moving average?", "a": "A simple average weighs every bar in its window equally, and its response to fast cycles rises and falls in ripples, so some short swings leak through. This filter's response falls off smoothly past the cutoff, so faster swings are damped more the faster they are." },
+    { "q": "Is there a warmup gap?", "a": "No. The first two bars are seeded with the price, so the line starts at once and settles over the next few lengths of bars." }
+  ]
+}

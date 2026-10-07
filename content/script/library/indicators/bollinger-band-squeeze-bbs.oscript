@@ -1,0 +1,81 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © openalgo
+// Original work (c) mihakralj, MIT License
+
+version 1
+study("Bollinger Band Squeeze (BBS)", overlay = true, precision = 2)
+
+bbPeriod = input(20, "Bollinger Band Period", min = 1, max = 500, step = 1)
+bbMult = input(2.0, "BB StdDev Multiplier", min = 0.1, max = 5.0, step = 0.1)
+kcPeriod = input(20, "Keltner Channel Period", min = 1, max = 500, step = 1)
+kcMult = input(1.5, "KC ATR Multiplier", min = 0.1, max = 5.0, step = 0.1)
+source = input(close, "Source")
+showBands = input(true, "Show Bands", group = "Display Options")
+showChannels = input(true, "Show Channels", group = "Display Options")
+
+// A missing value counts as zero throughout.
+val = orElse(source, 0)
+h = orElse(high, 0)
+l = orElse(low, 0)
+prevClose = bar.index >= 1 ? orElse(close[1], 0) : 0
+
+// True range against the previous close, which is 0 on the first bar, so
+// that bar's range is the whole price level.
+tr = max(h - l, max(abs(h - prevClose), abs(l - prevClose)))
+
+// An exponential average of the true range, seeded at zero and divided by
+// 1 - beta^n until that correction falls below 1e-10.
+kAlpha = 2.0 / (kcPeriod + 1)
+beta = 1.0 - kAlpha
+var e = 1.0
+var atrState = 0.0
+var warmup = true
+atrState = kAlpha * tr + beta * atrState
+atrVal = atrState
+if warmup
+    e = e * beta
+    denom = 1.0 - e
+    atrVal = denom > 0 ? atrState / denom : atrState
+    warmup = e > 1e-10
+
+// Bollinger side: running sum and sum of squares over the window, divided by
+// the bars seen so far until the window fills.
+var bbSum = 0.0
+var bbSumSq = 0.0
+bbSum = bbSum + val
+bbSumSq = bbSumSq + val * val
+if bar.index >= bbPeriod
+    bbSum = bbSum - val[bbPeriod]
+    bbSumSq = bbSumSq - val[bbPeriod] * val[bbPeriod]
+bbCount = max(1, min(bar.index + 1, bbPeriod))
+basis = bbSum / bbCount
+variance0 = bbCount > 1 ? max(0.0, bbSumSq / bbCount - basis * basis) : 0.0
+dev = sqrt(variance0)
+bbUp = basis + bbMult * dev
+bbDn = basis - bbMult * dev
+
+// Keltner side: the same expanding mean, offset by the true range average.
+var kcSum = 0.0
+kcSum = kcSum + val
+if bar.index >= kcPeriod
+    kcSum = kcSum - val[kcPeriod]
+kcCount = max(1, min(bar.index + 1, kcPeriod))
+middle = kcSum / kcCount
+offsetKc = kcMult * atrVal
+kcUp = middle + offsetKc
+kcDn = middle - offsetKc
+
+// A squeeze is a bar whose Bollinger Bands sit entirely inside the channel.
+squeeze = bbUp < kcUp and bbDn > kcDn
+
+plot(showBands ? bbUp : none, "BB Upper", #2962ff80, width = 1)
+plot(showBands ? basis : none, "BB Middle", #2962ff80, width = 1)
+plot(showBands ? bbDn : none, "BB Lower", #2962ff80, width = 1)
+plot(showChannels ? kcUp : none, "KC Upper", #ff980080, width = 1)
+plot(showChannels ? middle : none, "KC Middle", #ff980080, width = 1)
+plot(showChannels ? kcDn : none, "KC Lower", #ff980080, width = 1)
+
+// A dot under every bar: red in a squeeze, green otherwise.
+signal(squeeze ? "" : none, color = #ff5252, at = "below", shape = "circle")
+signal(squeeze ? none : "", color = #4caf50, at = "below", shape = "circle")
+background(squeeze ? #ff52520d : none)

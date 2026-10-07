@@ -1,0 +1,16 @@
+{
+  "title": "VWAP with Standard Deviation Bands",
+  "summary": "A volume weighted average price anchored to a chosen reset period, with bands a number of volume weighted standard deviations away.",
+  "description": "This study builds the volume weighted average price from three running sums that restart at the beginning of each reset period: price times volume, volume, and price squared times volume. The VWAP is the first sum divided by the second. The variance is the third sum divided by the volume total minus the VWAP squared, floored at zero, and its square root is the volume weighted standard deviation of price around the VWAP.\n\nThe upper band is drawn in red and the lower band in green, each the chosen number of standard deviations from the VWAP, with the space between them shaded. The reset period is chosen in the menu: from one minute up to four hours counted from midnight, or a day, a week starting Monday, a month, a quarter, a half year or a year in the chart's timezone, or never. Bars with no volume add nothing to the sums.",
+  "howToRead": "The VWAP shows the average price at which trade has actually been done since the period began, so it is a fair-value reference for the session. The bands show how far price has moved from it in units of its own volume weighted spread. A close near an outer band is a stretched price for the period, and a return to the VWAP after such a stretch is common in a range; in a strong trend price can hold near one band.\n\nAt the start of a period the sums hold few bars and the bands are narrow. A reset period equal to or shorter than the chart interval restarts on every bar and collapses the bands.",
+  "settings": [
+    { "key": "source", "label": "Source", "description": "The price averaged by volume. The typical price, (high + low + close) / 3, by default." },
+    { "key": "sessionType", "label": "Session Reset", "description": "When the running sums restart: an intraday period counted from midnight, a day, week, month, quarter, half year or year, or never." },
+    { "key": "numDevs", "label": "Standard Deviations", "description": "Number of volume weighted standard deviations between the VWAP and each band. A larger value widens the channel." }
+  ],
+  "faq": [
+    { "q": "How is the standard deviation weighted?", "a": "By volume. Each bar's squared price counts in proportion to its volume, so the bands reflect where trade was done rather than every price equally." },
+    { "q": "What if the instrument has no volume?", "a": "Bars with no volume add nothing. With no volume in the period the VWAP falls back to the source value and the bands collapse onto it." },
+    { "q": "When does a weekly reset happen?", "a": "At the first bar of each week, with weeks starting at midnight on Monday in the chart's timezone." }
+  ]
+}

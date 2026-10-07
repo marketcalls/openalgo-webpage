@@ -1,0 +1,16 @@
+{
+  "title": "Ehlers Adaptive Laguerre Filter (ALAGUERRE)",
+  "summary": "A four-stage Laguerre smoother whose speed adapts bar by bar to how far it has fallen behind price, speeding up in moves and slowing in ranges.",
+  "description": "The Adaptive Laguerre Filter is a cascade of four Laguerre stages, each one a short recursive filter fed by the stage before it. The output is a weighted mix of the four stages, `(L0 + 2 * L1 + 2 * L2 + L3) / 6`. What makes it adaptive is the smoothing factor: instead of a fixed value it is recomputed on every bar.\n\nOn each bar the study measures the tracking error, the distance between the price and the filter's previous value. It finds where that error sits between the highest and lowest errors of the last `Length` bars, as a number from 0 to 1, and takes the median of that position over the last `Median Length` bars. That median is the smoothing factor. A large error relative to recent ones gives a factor near 1 and a fast filter; a small one gives a factor near 0 and a slow, smooth filter. When the error range is flat the position is 0.5.\n\nThe first bar seeds all four stages with the price, with an error of 0 and a position of 0.5, and those seed values stay in the windows until they age out.",
+  "howToRead": "Read the line as an adaptive trend line. In a strong move the filter falls behind, the error grows, and the line speeds up to catch price; in a quiet range the error is small and the line flattens out and ignores noise. A turn in the line after a long flat stretch is therefore more meaningful than a wiggle during a fast move.\n\nThe adaptation is relative: the error is judged only against the last `Length` bars, so after a long quiet spell even a modest move can make the filter fast. The median step keeps one outlier bar from jerking the speed around, at the cost of reacting a few bars later.",
+  "settings": [
+    { "key": "source", "label": "Source", "description": "The price series the filter smooths, the close by default." },
+    { "key": "length", "label": "Length", "description": "How many bars of tracking error set the high and low that the current error is compared against." },
+    { "key": "medianLength", "label": "Median Length", "description": "How many bars of the normalised error the median is taken over. Larger values make the speed change more slowly." }
+  ],
+  "faq": [
+    { "q": "What does the filter adapt to?", "a": "Its own tracking error: how far price is from the filter's previous value, compared with the errors of recent bars. Large errors make it faster, small ones make it slower." },
+    { "q": "Why take a median of the factor?", "a": "A single wild bar would otherwise swing the smoothing factor to an extreme. The median over a few bars keeps the speed stable while still following real changes." },
+    { "q": "How does it differ from the fixed Laguerre filter?", "a": "The fixed version uses one damping factor on every bar. This one recomputes the factor on each bar from the tracking error." }
+  ]
+}

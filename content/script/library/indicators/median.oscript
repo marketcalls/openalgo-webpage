@@ -1,0 +1,29 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © openalgo
+// Original work (c) mihakralj, MIT License
+
+version 1
+study("Median", precision = 2)
+
+source = input(close, "Source")
+length = input(14, "Period", min = 1, max = 5000, step = 1)
+
+// The last `length` values of the source, skipping any that are absent. A
+// window that reaches past the first bar holds fewer values and still gives a
+// median.
+vals = []
+for k = 0 to length - 1
+    v = source[k]
+    if not isNone(v)
+        push(vals, v)
+
+// The middle value of the sorted window, or the mean of the two middle values
+// when the window holds an even count.
+mid = none
+n = size(vals)
+if n > 0
+    sort(vals, "asc")
+    half = floor(n / 2)
+    mid = mod(n, 2) == 1 ? element(vals, half) : (element(vals, half - 1) + element(vals, half)) / 2.0
+
+plot(mid, "Median", #ff9800, width = 2)

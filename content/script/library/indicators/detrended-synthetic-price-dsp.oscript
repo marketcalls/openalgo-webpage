@@ -1,0 +1,44 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © openalgo
+// Original work (c) mihakralj, MIT License
+
+version 1
+study("Detrended Synthetic Price (DSP)", precision = 2)
+
+source = input(hlc3, "Source")
+period = input(40, "Dominant Cycle Period", min = 4, max = 200, step = 1, tooltip = "Dominant cycle period. Quarter-cycle and half-cycle EMAs calculated from this value.")
+
+// A quarter-cycle and a half-cycle exponential mean of the source.
+cycle = min(200, max(4, period))
+fastPeriod = max(2, round(cycle / 4))
+slowPeriod = max(3, round(cycle / 2))
+alphaFast = 2 / (fastPeriod + 1)
+alphaSlow = 2 / (slowPeriod + 1)
+
+// A missing value is read as zero.
+current = orElse(source, 0)
+
+// Both means start at zero. Until the starting weight has decayed away, each
+// is divided by the weight it has gathered so far, which removes the pull
+// toward zero from the early bars.
+var emaFastRaw = 0.0
+var emaSlowRaw = 0.0
+var warming = true
+var decayFast = 1.0
+var decaySlow = 1.0
+emaFastRaw = emaFastRaw + alphaFast * (current - emaFastRaw)
+emaSlowRaw = emaSlowRaw + alphaSlow * (current - emaSlowRaw)
+emaFast = emaFastRaw
+emaSlow = emaSlowRaw
+if warming
+    decayFast = decayFast * (1 - alphaFast)
+    decaySlow = decaySlow * (1 - alphaSlow)
+    correctFast = 1 - decayFast != 0 ? 1 / (1 - decayFast) : 1
+    correctSlow = 1 - decaySlow != 0 ? 1 / (1 - decaySlow) : 1
+    emaFast = correctFast * emaFastRaw
+    emaSlow = correctSlow * emaSlowRaw
+    warming = decayFast > 1e-10 or decaySlow > 1e-10
+
+// The gap between the two means: the trend cancels and the cycle remains.
+plot(emaFast - emaSlow, "DSP", #ffeb3b, width = 2)
+level(0, "Zero Line", #9598a1)

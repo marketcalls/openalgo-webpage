@@ -1,0 +1,40 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © openalgo
+// Original work (c) mihakralj, MIT License
+
+version 1
+study("Elder's Force Index (EFI)", precision = 2)
+
+length = input(13, "Length", min = 1, max = 5000, step = 1)
+
+len = min(5000, max(1, floor(length)))
+weight = 2 / (len + 1)
+beta = 1 - weight
+
+// Raw force: the change in close times the bar's volume. The first bar
+// compares with itself, so its force is zero.
+prevClose = bar.index > 0 ? close[1] : close
+rawForce = (orElse(close, 0) - orElse(prevClose, 0)) * orElse(volume, 0)
+
+// An exponential mean that starts from zero and, while the zero seed still
+// matters, is divided by (1 - e), where e is beta raised to the bars seen.
+// The correction stops once e falls to 1e-10.
+var emaVal = none
+var e = 1.0
+var warming = true
+result = none
+if isNone(emaVal)
+    emaVal = 0.0
+    result = rawForce
+else
+    emaVal = weight * (rawForce - emaVal) + emaVal
+    if warming
+        e = e * beta
+        denom = 1 - e
+        result = denom != 0 ? emaVal / denom : none
+        if e <= 1e-10
+            warming = false
+    else
+        result = emaVal
+
+plot(result, "EFI", #ffeb3b, width = 2)

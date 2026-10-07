@@ -1,0 +1,16 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © openalgo
+// Original work (c) mihakralj, MIT License
+
+version 1
+study("Percentage Change (CHANGE)", precision = 4)
+
+source = input(close, "Source")
+length = input(1, "Length", min = 1, max = 5000, step = 1)
+
+// The ratio of the source to its value length bars back, minus one. A zero or
+// missing earlier value leaves a gap.
+past = source[floor(length)]
+pctChange = past == 0 ? none : source / past - 1
+
+plot(pctChange, "Change %", #ffeb3b, width = 2)

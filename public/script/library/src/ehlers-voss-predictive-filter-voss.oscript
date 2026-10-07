@@ -1,0 +1,50 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © openalgo
+// Original work (c) mihakralj, MIT License
+
+version 1
+study("Ehlers Voss Predictive Filter (VOSS)", precision = 4)
+
+period = input(20, "Period", min = 2, max = 5000, step = 1, tooltip = "Primary cycle period in bars")
+predict = input(3, "Predict", min = 1, max = 100, step = 1, tooltip = "Prediction bars (negative delay)")
+bandwidth = input(0.25, "Bandwidth", min = 0.01, max = 0.99, step = 0.05, tooltip = "Bandpass tolerance as fraction of period")
+source = input(close, "Source")
+
+per = min(5000, max(2, floor(period)))
+pred = min(100, max(1, floor(predict)))
+bw = bandwidth > 0 ? min(0.99, max(0.01, bandwidth)) : 0.25
+
+// Two-pole bandpass coefficients centred on the cycle period.
+order = 3 * pred
+f1 = math.cos(2 * math.pi / per)
+g1 = math.cos(bw * 2 * math.pi / per)
+invG1 = g1 != 0 ? 1 / g1 : none
+s1 = invG1 - sqrt(invG1 * invG1 - 1)
+
+ssrc = orElse(source, source[1])
+src2 = orElse(source[2], ssrc)
+
+// The bandpass is held at zero for the first six bars so the recursion is
+// not primed by a start-up transient.
+var filt1 = none
+var filt2 = none
+bp = bar.index <= 5 ? 0 : 0.5 * (1 - s1) * (ssrc - src2) + f1 * (1 + s1) * orElse(filt1, 0) - s1 * orElse(filt2, 0)
+filt2 = filt1
+filt1 = bp
+
+// The predictor subtracts a weighted sum of its own last order values,
+// oldest first, each missing one read as zero.
+var past: array<number> = []
+if size(past) == 0
+    for k = 1 to order
+        push(past, none)
+sumC = 0.0
+for cnt = 0 to order - 1
+    sumC = sumC + ((cnt + 1) / order) * orElse(element(past, cnt), 0)
+voss = ((3 + order) / 2) * bp - sumC
+push(past, voss)
+shift(past)
+
+plot(isNone(s1) ? none : bp, "Bandpass", #ff5252, width = 1)
+plot(isNone(s1) ? none : voss, "Voss", #2196f3, width = 2)
+level(0, "Zero", #787b86, style = "dashed")

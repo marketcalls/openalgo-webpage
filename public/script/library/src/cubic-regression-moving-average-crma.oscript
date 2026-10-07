@@ -1,0 +1,232 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © openalgo
+// Original work (c) mihakralj, MIT License
+
+version 1
+study("Cubic Regression Moving Average (CRMA)", overlay = true, precision = 2)
+
+period = input(14, "Period", min = 4, max = 1000, step = 1, tooltip = "Lookback window for the cubic regression. At least 4 bars are needed to fit a cubic.")
+source = input(close, "Source")
+
+// Solves the 4x4 normal equations of a least squares cubic by Gaussian
+// elimination with partial pivoting, and returns c0, the fit at x = 0 (the
+// newest bar). A pivot below 1e-12 means the system is singular, and the
+// answer is none.
+fn solveCubic(s0, s1, s2, s3, s4, s5, s6, r0, r1, r2, r3) =>
+    a00 = s0
+    a01 = s1
+    a02 = s2
+    a03 = s3
+    b0 = r0
+    a10 = s1
+    a11 = s2
+    a12 = s3
+    a13 = s4
+    b1 = r1
+    a20 = s2
+    a21 = s3
+    a22 = s4
+    a23 = s5
+    b2 = r2
+    a30 = s3
+    a31 = s4
+    a32 = s5
+    a33 = s6
+    b3 = r3
+
+    // Column 0: the row with the largest entry becomes the pivot row.
+    best0 = abs(a00)
+    piv0 = 0
+    if abs(a10) > best0
+        best0 = abs(a10)
+        piv0 = 1
+    if abs(a20) > best0
+        best0 = abs(a20)
+        piv0 = 2
+    if abs(a30) > best0
+        best0 = abs(a30)
+        piv0 = 3
+    if piv0 == 1
+        t0 = a00
+        t1 = a01
+        t2 = a02
+        t3 = a03
+        t4 = b0
+        a00 = a10
+        a01 = a11
+        a02 = a12
+        a03 = a13
+        b0 = b1
+        a10 = t0
+        a11 = t1
+        a12 = t2
+        a13 = t3
+        b1 = t4
+    else if piv0 == 2
+        t0 = a00
+        t1 = a01
+        t2 = a02
+        t3 = a03
+        t4 = b0
+        a00 = a20
+        a01 = a21
+        a02 = a22
+        a03 = a23
+        b0 = b2
+        a20 = t0
+        a21 = t1
+        a22 = t2
+        a23 = t3
+        b2 = t4
+    else if piv0 == 3
+        t0 = a00
+        t1 = a01
+        t2 = a02
+        t3 = a03
+        t4 = b0
+        a00 = a30
+        a01 = a31
+        a02 = a32
+        a03 = a33
+        b0 = b3
+        a30 = t0
+        a31 = t1
+        a32 = t2
+        a33 = t3
+        b3 = t4
+
+    singular = best0 < 1e-12
+    if not singular
+        // Eliminate column 0 from rows 1, 2 and 3.
+        f1 = a10 / a00
+        a11 -= f1 * a01
+        a12 -= f1 * a02
+        a13 -= f1 * a03
+        b1 -= f1 * b0
+        f2 = a20 / a00
+        a21 -= f2 * a01
+        a22 -= f2 * a02
+        a23 -= f2 * a03
+        b2 -= f2 * b0
+        f3 = a30 / a00
+        a31 -= f3 * a01
+        a32 -= f3 * a02
+        a33 -= f3 * a03
+        b3 -= f3 * b0
+
+        // Column 1: pivot among rows 1 to 3.
+        best1 = abs(a11)
+        piv1 = 1
+        if abs(a21) > best1
+            best1 = abs(a21)
+            piv1 = 2
+        if abs(a31) > best1
+            best1 = abs(a31)
+            piv1 = 3
+        if piv1 == 2
+            t1 = a11
+            t2 = a12
+            t3 = a13
+            t4 = b1
+            a11 = a21
+            a12 = a22
+            a13 = a23
+            b1 = b2
+            a21 = t1
+            a22 = t2
+            a23 = t3
+            b2 = t4
+        else if piv1 == 3
+            t1 = a11
+            t2 = a12
+            t3 = a13
+            t4 = b1
+            a11 = a31
+            a12 = a32
+            a13 = a33
+            b1 = b3
+            a31 = t1
+            a32 = t2
+            a33 = t3
+            b3 = t4
+        singular = best1 < 1e-12
+
+    if not singular
+        // Eliminate column 1 from rows 2 and 3.
+        g2 = a21 / a11
+        a22 -= g2 * a12
+        a23 -= g2 * a13
+        b2 -= g2 * b1
+        g3 = a31 / a11
+        a32 -= g3 * a12
+        a33 -= g3 * a13
+        b3 -= g3 * b1
+
+        // Column 2: pivot between rows 2 and 3.
+        if abs(a32) > abs(a22)
+            t2 = a22
+            t3 = a23
+            t4 = b2
+            a22 = a32
+            a23 = a33
+            b2 = b3
+            a32 = t2
+            a33 = t3
+            b3 = t4
+        singular = abs(a22) < 1e-12
+
+    if not singular
+        // Eliminate column 2 from row 3.
+        h3 = a32 / a22
+        a33 -= h3 * a23
+        b3 -= h3 * b2
+        singular = abs(a33) < 1e-12
+
+    if singular
+        return none
+
+    // Back-substitution.
+    c3 = b3 / a33
+    c2 = (b2 - a23 * c3) / a22
+    c1 = (b1 - a12 * c2 - a13 * c3) / a11
+    (b0 - a01 * c1 - a02 * c2 - a03 * c3) / a00
+
+// A missing source value reads as zero.
+price = orElse(source, 0)
+
+// The window grows with the chart until it reaches the period. With fewer than
+// four values a cubic cannot be fitted, and the line is the price itself.
+p = min(bar.index + 1, period)
+crma = price
+if p >= 4
+    s0 = 0.0
+    s1 = 0.0
+    s2 = 0.0
+    s3 = 0.0
+    s4 = 0.0
+    s5 = 0.0
+    s6 = 0.0
+    r0 = 0.0
+    r1 = 0.0
+    r2 = 0.0
+    r3 = 0.0
+    for j = 0 to p - 1
+        v = price[j]
+        x = j
+        x2 = x * x
+        x3 = x2 * x
+        s0 += 1
+        s1 += x
+        s2 += x2
+        s3 += x3
+        s4 += x2 * x2
+        s5 += x2 * x3
+        s6 += x3 * x3
+        r0 += v
+        r1 += x * v
+        r2 += x2 * v
+        r3 += x3 * v
+    // A singular system falls back to the price.
+    crma = orElse(solveCubic(s0, s1, s2, s3, s4, s5, s6, r0, r1, r2, r3), price)
+
+plot(crma, "CRMA", #ffeb3b, width = 2)

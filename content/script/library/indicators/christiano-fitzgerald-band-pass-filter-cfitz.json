@@ -1,0 +1,16 @@
+{
+  "title": "Christiano-Fitzgerald Band-Pass Filter (CFITZ)",
+  "summary": "An asymmetric band-pass filter on the close that weights past bars so the weights sum to zero, giving a cycle line that swings around zero.",
+  "description": "The Christiano-Fitzgerald Band-Pass Filter extracts the part of the close whose cycles fall between *Min Period* and *Max Period*. Unlike a centred filter it looks only backwards from the current bar, so it gives a value on every bar.\n\nThe newest close gets half the centre weight B0 = (wh - wl) / pi, where wl and wh are the angular frequencies of the longest and shortest periods. Each earlier close j bars back gets the ideal band-pass weight Bj = (sin(j wh) - sin(j wl)) / (pi j), going back as far as the *Max Lookback* or the start of the chart. The oldest close used then takes whatever weight makes the total exactly zero. That endpoint correction removes any constant level, so the output oscillates around zero. On the first bar the value is zero, and on the second it is half of B0 times the change in the close.",
+  "howToRead": "Above zero, the close sits in the upper half of a cycle within the band; below zero, in the lower half. Peaks and troughs of the line mark the turns of those cycles, and the size of the swings shows how strong the cycle is.\n\nBecause it uses only past bars, the latest value is available on the current bar, unlike a centred filter, but it rests on a one-sided window and can be noisier than a centred filter. A longer lookback sharpens the band at the cost of more calculation per bar.",
+  "settings": [
+    { "key": "pLow", "label": "Min Period (pLow)", "description": "The shortest cycle, in bars, that passes through. Faster swings are filtered out." },
+    { "key": "pHigh", "label": "Max Period (pHigh)", "description": "The longest cycle, in bars, that passes through. Slower swings and the trend are filtered out. It is kept at least one bar above the minimum." },
+    { "key": "maxLookback", "label": "Max Lookback", "description": "The most bars of history used for each value. Larger gives a sharper band but costs more work per bar." }
+  ],
+  "faq": [
+    { "q": "How is it different from the Baxter-King filter?", "a": "Baxter-King uses a symmetric window centred K bars back, so its newest value is K bars old. This filter uses only past bars with an endpoint correction, so it has a value on the current bar." },
+    { "q": "Why does it oscillate around zero?", "a": "The weight on the oldest bar is set so all the weights add up to zero. A constant price level then contributes nothing, leaving only the cycles." },
+    { "q": "Does a longer lookback change early bars?", "a": "No. Early in the chart the filter can only reach back to the first bar, so the lookback only matters once there is more history than it allows." }
+  ]
+}

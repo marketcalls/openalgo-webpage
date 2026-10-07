@@ -1,0 +1,28 @@
+{
+  "title": "Blackman Moving Average (BLMA)",
+  "summary": "A moving average weighted by the Blackman window, a three-term cosine taper that falls to zero at both ends of the lookback.",
+  "description": "BLMA weights the bars in its window with the Blackman window. For bar k of a window of p bars, with r = k / (p - 1), the weight is `0.42 - 0.5 cos(2 pi r) + 0.08 cos(4 pi r)`. The weight is zero at the newest and the oldest bar and peaks in the middle. The weights are normalised to sum to 1, and the average is the weighted sum of the prices.\n\nThe smooth taper removes the ringing a flat-weighted average leaves when a large price leaves the window. The window grows from the first bar up to the period, so the line is drawn from the start of the chart. On the first bar, where the window holds one price, the line is that price.",
+  "howToRead": "Read BLMA as a very smooth moving average. Because the bars at both ends of the window carry almost no weight, a single bar entering or leaving barely moves the line, and it changes direction cleanly. The heaviest weight is in the middle of the window, so the line lags price by about half the period.\n\nUse it to judge the direction and turns of the trend. For a faster line, shorten the period.",
+  "settings": [
+    {
+      "key": "period",
+      "label": "Period",
+      "description": "Number of bars in the window. A longer period gives a smoother, slower line."
+    },
+    {
+      "key": "source",
+      "label": "Source",
+      "description": "The series being averaged, usually the close."
+    }
+  ],
+  "faq": [
+    {
+      "q": "How does it compare with a simple moving average?",
+      "a": "A simple average weighs every bar equally, so a big bar leaving the window makes the line jump. The Blackman weights fade to zero at the ends, so the line moves smoothly instead."
+    },
+    {
+      "q": "Why does it lag more than an exponential average?",
+      "a": "Its heaviest weight is in the middle of the window, not on the newest bar, so it follows price about half a period behind."
+    }
+  ]
+}

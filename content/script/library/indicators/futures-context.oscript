@@ -1,0 +1,537 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © openalgo
+// Original work (c) sukesan7, MPL-2.0
+
+version 1
+study("Futures Context", precision = 2)
+
+indicatorEnabled = input(true, "Enable indicator", group = "01 - General")
+sessionTimezone = input("America/New_York", "Analysis time zone", group = "01 - General", tooltip = "Use an IANA time zone name, such as America/New_York or Asia/Kolkata.")
+classifyOutsideRTH = input(false, "Classify outside RTH", group = "01 - General", tooltip = "When disabled, the dashboard reports Outside RTH while participation metrics pause. Technical metrics continue calculating.")
+
+rthSession = input("0930-1600:23456", "RTH session", group = "02 - Session and Baselines", tooltip = "Session spec as HHMM-HHMM:days, with 1 for Sunday through 7 for Saturday.")
+rthOpenHour = input(9, "RTH open hour", min = 0, max = 23, step = 1, group = "02 - Session and Baselines")
+rthOpenMinute = input(30, "RTH open minute", min = 0, max = 59, step = 1, group = "02 - Session and Baselines")
+baselineSessions = input(40, "Historical sessions", min = 5, max = 60, step = 1, group = "02 - Session and Baselines", tooltip = "Number of prior sessions retained for each same-time chart slot.")
+minimumBaselineSamples = input(10, "Minimum samples before display", min = 3, max = 40, step = 1, group = "02 - Session and Baselines")
+maximumSupportedMinutes = input(30, "Maximum supported chart timeframe", min = 1, max = 60, step = 1, group = "02 - Session and Baselines", tooltip = "Same-time RVOL is intended for minute-based intraday charts. 1m, 5m and 15m are recommended.")
+
+elevatedRvolThreshold = input(1.25, "Elevated bar RVOL", min = 1, max = 5, step = 0.05, group = "03 - Participation and RVOL")
+extremeRvolThreshold = input(1.75, "Extreme bar RVOL", min = 1, max = 10, step = 0.05, group = "03 - Participation and RVOL")
+elevatedCumulativeRvol = input(1.15, "Elevated cumulative RVOL", min = 1, max = 5, step = 0.05, group = "03 - Participation and RVOL")
+quietRvolThreshold = input(0.75, "Quiet RVOL", min = 0.1, max = 1, step = 0.05, group = "03 - Participation and RVOL")
+
+realizedVolLength = input(30, "Rolling return window", min = 5, max = 300, step = 1, group = "04 - Realized Volatility")
+realizedVolBaselineLength = input(150, "Volatility baseline length", min = 20, max = 1000, step = 1, group = "04 - Realized Volatility")
+realizedVolZLength = input(150, "Volatility z-score length", min = 20, max = 1000, step = 1, group = "04 - Realized Volatility")
+volatilityExpansionRatio = input(1.2, "Expansion ratio", min = 1.01, max = 5, step = 0.05, group = "04 - Realized Volatility")
+volatilityContractionRatio = input(0.8, "Contraction ratio", min = 0.1, max = 0.99, step = 0.05, group = "04 - Realized Volatility")
+
+vwapSource = input(hlc3, "VWAP source", group = "05 - VWAP Context")
+vwapSlopeLookback = input(5, "VWAP slope lookback", min = 1, max = 100, step = 1, group = "05 - VWAP Context")
+vwapCrossLookback = input(20, "VWAP crossing lookback", min = 5, max = 200, step = 1, group = "05 - VWAP Context")
+strongVwapSlopeAtr = input(0.12, "Strong VWAP slope (ATR)", min = 0.01, max = 2, step = 0.01, group = "05 - VWAP Context")
+vwapRotationZ = input(0.55, "Rotation distance (sigma)", min = 0.1, max = 3, step = 0.05, group = "05 - VWAP Context")
+rotationCrossTarget = input(3, "Crosses indicating rotation", min = 1, max = 20, step = 1, group = "05 - VWAP Context")
+
+emaSource = input(close, "EMA source", group = "06 - EMA Structure")
+emaFastLength = input(9, "Fast EMA", min = 1, max = 200, step = 1, group = "06 - EMA Structure")
+emaMidLength = input(20, "Mid EMA", min = 2, max = 300, step = 1, group = "06 - EMA Structure")
+emaSlowLength = input(50, "Slow EMA", min = 3, max = 500, step = 1, group = "06 - EMA Structure")
+emaSlopeLookback = input(5, "Slope lookback", min = 1, max = 100, step = 1, group = "06 - EMA Structure")
+emaCompressionAtr = input(0.18, "Compression spread (ATR)", min = 0.01, max = 3, step = 0.01, group = "06 - EMA Structure")
+emaExpansionAtr = input(0.65, "Expansion spread (ATR)", min = 0.05, max = 5, step = 0.05, group = "06 - EMA Structure")
+
+atrLength = input(14, "ATR length", min = 2, max = 200, step = 1, group = "07 - Trend Quality")
+diLength = input(14, "DI length", min = 2, max = 100, step = 1, group = "07 - Trend Quality")
+adxSmoothing = input(14, "ADX smoothing", min = 2, max = 100, step = 1, group = "07 - Trend Quality")
+weakAdx = input(17, "Weak ADX", min = 1, max = 50, step = 0.5, group = "07 - Trend Quality")
+strongAdx = input(28, "Strong ADX", min = 5, max = 80, step = 0.5, group = "07 - Trend Quality")
+efficiencyLength = input(20, "Directional efficiency length", min = 2, max = 300, step = 1, group = "07 - Trend Quality")
+weakEfficiency = input(0.22, "Weak efficiency", min = 0.01, max = 0.9, step = 0.01, group = "07 - Trend Quality")
+strongEfficiency = input(0.55, "Strong efficiency", min = 0.05, max = 1, step = 0.01, group = "07 - Trend Quality")
+
+directionThreshold = input(0.34, "Directional threshold", min = 0.05, max = 0.9, step = 0.01, group = "09 - Regime Engine")
+trendThreshold = input(0.54, "Trend-quality threshold", min = 0.05, max = 0.95, step = 0.01, group = "09 - Regime Engine")
+expansionThreshold = input(0.56, "Expansion threshold", min = 0.05, max = 0.95, step = 0.01, group = "09 - Regime Engine")
+compressionThreshold = input(0.62, "Compression threshold", min = 0.05, max = 0.95, step = 0.01, group = "09 - Regime Engine")
+balanceThreshold = input(0.58, "Balance threshold", min = 0.05, max = 0.95, step = 0.01, group = "09 - Regime Engine")
+rangeExpansionRatio = input(1.18, "Range expansion ratio", min = 1.01, max = 5, step = 0.05, group = "09 - Regime Engine")
+rangeCompressionRatio = input(0.78, "Range compression ratio", min = 0.1, max = 0.99, step = 0.05, group = "09 - Regime Engine")
+
+showBarRvol = input(true, "Show bar RVOL histogram", group = "10 - Supporting Plots")
+showCumulativeRvol = input(true, "Show cumulative RVOL", group = "10 - Supporting Plots")
+showRealizedVolRatio = input(true, "Show realized-volatility ratio", group = "10 - Supporting Plots")
+showRangeRatio = input(false, "Show developing-range ratio", group = "10 - Supporting Plots")
+plotCap = input(4, "Visual plot cap", min = 1.5, max = 20, step = 0.5, group = "10 - Supporting Plots", tooltip = "Caps extreme values visually without changing dashboard calculations or alerts.")
+
+showDashboard = input(true, "Show context dashboard", group = "12 - Dashboard and Alerts")
+alertRvolThreshold = input(2, "RVOL alert threshold", min = 1, max = 20, step = 0.1, group = "12 - Dashboard and Alerts")
+alertVolatilityRatio = input(1.4, "Volatility alert threshold", min = 1, max = 10, step = 0.05, group = "12 - Dashboard and Alerts")
+
+COLOR_HISTOGRAM_BULL = #15803d
+COLOR_HISTOGRAM_BEAR = #b91c1c
+COLOR_NEUTRAL = #94a3b8
+MAX_RTH_SLOTS = 500
+DIRECTION_MAXIMUM = 4.2
+
+// Whole-number settings are rounded, as the calculation counts bars with them.
+baselineCount = round(baselineSessions)
+minimumSamples = round(minimumBaselineSamples)
+maximumMinutes = round(maximumSupportedMinutes)
+openHour = round(rthOpenHour)
+openMinute = round(rthOpenMinute)
+rvLen = round(realizedVolLength)
+crossLen = round(vwapCrossLookback)
+crossTarget = round(rotationCrossTarget)
+effLen = round(efficiencyLength)
+
+// ---- small helpers ----
+
+// Clamp that keeps an absent value absent, so a warmup gap carries through
+// every score that depends on it.
+fn clampOrNone(value, lower, upper) =>
+    isNone(value) ? none : max(lower, min(upper, value))
+
+// A ratio that is absent when either side is absent or the denominator is zero.
+fn safeRatio(numerator, denominator) =>
+    isNone(numerator) ? none : isNone(denominator) ? none : abs(denominator) <= 0.000000000001 ? none : numerator / denominator
+
+// The larger of two, absent when either is absent.
+fn maxOrNone(a, b) =>
+    isNone(a) ? none : isNone(b) ? none : max(a, b)
+
+fn yes(condition) =>
+    orElse(condition, false)
+
+// Wilder smoothing, seeded with the simple average of the first full window of
+// present values and restarted whenever the input goes absent.
+fn wilder(x, len) =>
+    var prev = none
+    seed = sma(x, len)
+    result = none
+    if not isNone(prev)
+        if isNone(x)
+            prev = none
+        else
+            prev = x / len + (1 - 1 / len) * prev
+            result = prev
+    else if not isNone(seed)
+        prev = seed
+        result = prev
+    result
+
+// Drop trailing zeros after a decimal point, and the point itself when bare.
+fn trimZeros(s) =>
+    out = s
+    if str.contains(out, ".")
+        while str.endsWith(out, "0")
+            out = str.substring(out, 0, str.length(out) - 1)
+        if str.endsWith(out, ".")
+            out = str.substring(out, 0, str.length(out) - 1)
+    out
+
+fn numberText(value, decimals) =>
+    isNone(value) ? "n/a" : trimZeros(text(value, decimals))
+
+fn signedText(value, decimals) =>
+    isNone(value) ? "n/a" : (value > 0 ? "+" : "") + trimZeros(text(value, decimals))
+
+fn ratioText(value) =>
+    isNone(value) ? "n/a" : trimZeros(text(value, 2)) + "x"
+
+// ---- the session window ----
+//
+// The RTH session is written HHMM-HHMM, optionally followed by a colon and a
+// list of days numbered 1 for Sunday through 7 for Saturday. Spaces are allowed
+// around the dash and the colon. An hour above 23 or a minute above 59 makes
+// the text invalid, and invalid text puts no bar in the session.
+
+fn isSpace(ch) =>
+    str.trim(ch) == ""
+
+fn isDigit(ch) =>
+    str.length(ch) == 1 and str.contains("0123456789", ch)
+
+// The first position at or after k that is not a space.
+fn skipSpaces(s, k) =>
+    j = k
+    while j < str.length(s) and isSpace(str.substring(s, j, j + 1))
+        j += 1
+    j
+
+// The four digits at position k as minutes after midnight, or -1.
+fn clockMinutes(s, k) =>
+    out = -1
+    if isDigit(str.substring(s, k, k + 1)) and isDigit(str.substring(s, k + 1, k + 2)) and isDigit(str.substring(s, k + 2, k + 3)) and isDigit(str.substring(s, k + 3, k + 4))
+        hh = toNumber(str.substring(s, k, k + 2))
+        mm = toNumber(str.substring(s, k + 2, k + 4))
+        out = hh > 23 or mm > 59 ? -1 : hh * 60 + mm
+    out
+
+// Reads the session text into ten numbers: the start minute (-1 when the text
+// is invalid), the end minute, 1 when a day list is given, then a 1 or a 0 for
+// each day from 1 (Sunday) to 7 (Saturday). With no day list every day counts.
+fn parseSession(spec) =>
+    n = str.length(spec)
+    k = skipSpaces(spec, 0)
+    startMinute = clockMinutes(spec, k)
+    k = skipSpaces(spec, k + 4)
+    valid = startMinute >= 0 and str.substring(spec, k, k + 1) == "-"
+    k = skipSpaces(spec, k + 1)
+    endMinute = clockMinutes(spec, k)
+    valid = valid and endMinute >= 0
+    k = skipSpaces(spec, k + 4)
+    result = [-1, -1, 0, 0, 0, 0, 0, 0, 0, 0]
+    if valid and k < n
+        if str.substring(spec, k, k + 1) != ":"
+            valid = false
+        else
+            k = skipSpaces(spec, k + 1)
+            set(result, 2, 1)
+            listed = 0
+            while k < n and str.contains("1234567", str.substring(spec, k, k + 1))
+                set(result, toNumber(str.substring(spec, k, k + 1)) + 2, 1)
+                listed += 1
+                k += 1
+            k = skipSpaces(spec, k)
+            if listed == 0 or k < n
+                valid = false
+    if valid
+        set(result, 0, startMinute)
+        set(result, 1, endMinute)
+    result
+
+// ---- price studies that do not need the session ----
+
+zoneText = str.trim(sessionTimezone)
+zone = zoneText != "" ? zoneText : "America/New_York"
+specText = str.trim(rthSession)
+sessionSpec = specText != "" ? specText : "0930-1600:23456"
+
+vol = orElse(volume, 0)
+minTick = orElse(chart.tickSize, 0)
+
+atrSeries = atr(atrLength)
+emaFast = ema(emaSource, emaFastLength)
+emaMid = ema(emaSource, emaMidLength)
+emaSlow = ema(emaSource, emaSlowLength)
+
+atrUsable = yes(atrSeries > 0)
+emaSpreadAtr = atrUsable and not isNone(emaFast) and not isNone(emaMid) and not isNone(emaSlow) ? (max(emaFast, max(emaMid, emaSlow)) - min(emaFast, min(emaMid, emaSlow))) / atrSeries : none
+emaFastBack = emaFast[emaSlopeLookback]
+emaFastSlopeAtr = atrUsable and not isNone(emaFast) and not isNone(emaFastBack) ? (emaFast - emaFastBack) / atrSeries : none
+
+// Directional movement and its Wilder smoothing, with the last present DI
+// value carried over any gap.
+tr = trueRange()
+upMove = high - high[1]
+downMove = -(low - low[1])
+plusDM = bar.index >= 1 ? (upMove > downMove and upMove > 0 ? upMove : 0) : none
+minusDM = bar.index >= 1 ? (downMove > upMove and downMove > 0 ? downMove : 0) : none
+trur = wilder(tr, diLength)
+smoothPlus = wilder(plusDM, diLength)
+smoothMinus = wilder(minusDM, diLength)
+trurUsable = not isNone(trur) and yes(abs(trur) > 0.000000000001)
+plusRaw = trurUsable and not isNone(smoothPlus) ? 100 * smoothPlus / trur : none
+minusRaw = trurUsable and not isNone(smoothMinus) ? 100 * smoothMinus / trur : none
+var plusDI = none
+var minusDI = none
+if not isNone(plusRaw)
+    plusDI = plusRaw
+if not isNone(minusRaw)
+    minusDI = minusRaw
+diTotal = plusDI + minusDI
+dx = isNone(plusDI) or isNone(minusDI) ? none : abs(plusDI - minusDI) / (diTotal == 0 ? 1 : diTotal)
+adxSmoothed = wilder(dx, adxSmoothing)
+adxValue = isNone(adxSmoothed) ? none : 100 * adxSmoothed
+
+// Directional efficiency: net move over the path travelled.
+pathMean = sma(abs(close - close[1]), effLen)
+totalPath = isNone(pathMean) ? none : pathMean * effLen
+closeBack = close[effLen]
+efficiency = isNone(totalPath) ? none : totalPath <= 0 ? none : isNone(closeBack) ? none : abs(close - closeBack) / totalPath
+
+// Realized volatility from squared log returns over a rolling window.
+logReturn = close > 0 and close[1] > 0 ? log(close / close[1]) : 0
+logReturnSquared = logReturn * logReturn
+varianceMean = sma(logReturnSquared, rvLen)
+realizedVariance = isNone(varianceMean) ? 0 : varianceMean * rvLen
+realizedVolatility = sqrt(max(realizedVariance, 0))
+realizedVolBaseline = ema(realizedVolatility, realizedVolBaselineLength)
+volRatio = safeRatio(realizedVolatility, realizedVolBaseline)
+rvMean = sma(realizedVolatility, realizedVolZLength)
+rvDeviation = stdev(realizedVolatility, realizedVolZLength)
+realizedVolZ = isNone(rvDeviation) ? none : rvDeviation <= 0.000000000001 ? none : isNone(rvMean) ? none : (realizedVolatility - rvMean) / rvDeviation
+
+// ---- the session pass: RTH state, same-time baselines, session VWAP ----
+
+tfSeconds = orElse(chart.intervalMinutes, 0) * 60
+isIntraday = tfSeconds > 0 and tfSeconds < 86400
+tfMinutes = isIntraday ? round(tfSeconds / 60) : 0
+supported = isIntraday and tfSeconds >= 60 and tfMinutes <= maximumMinutes
+
+// A bar is in the session when its opening minute is inside the window. An
+// end at or before the start crosses midnight (an equal end is a full 24
+// hours), and the part after midnight belongs to the day the window opened.
+sessionParts = parseSession(sessionSpec)
+sessionStart = element(sessionParts, 0)
+sessionEnd = element(sessionParts, 1)
+barMinute = date.hour(time, zone) * 60 + date.minute(time, zone)
+crossesMidnight = sessionEnd <= sessionStart
+beforeEnd = barMinute < sessionEnd
+inWindow = crossesMidnight ? (barMinute >= sessionStart or beforeEnd) : (barMinute >= sessionStart and beforeEnd)
+// Day numbers here run 0 for Sunday to 6 for Saturday.
+weekday = date.dayOfWeek(time, zone) % 7
+sessionDay = crossesMidnight and beforeEnd ? (weekday + 6) % 7 : weekday
+cur = sessionStart >= 0 and inWindow and (element(sessionParts, 2) == 0 or element(sessionParts, sessionDay + 3) == 1)
+zYear = date.year(time, zone)
+zMonth = date.month(time, zone)
+zDay = date.day(time, zone)
+phaseMinutes = date.hour(time, zone) * 60 + date.minute(time, zone)
+dateKey = zYear * 10000 + zMonth * 100 + zDay
+
+var previousInRth = false
+var previousDateKey = none
+newRth = cur and (not previousInRth or isNone(previousDateKey) or dateKey != previousDateKey)
+
+rthStart = date.from(zYear, zMonth, zDay, openHour, openMinute, 0, zone)
+slot = cur and supported and tfSeconds > 0 ? floor((time - rthStart) / (tfSeconds * 1000)) : -1
+validSlot = slot >= 0 and slot < MAX_RTH_SLOTS
+slotIndex = validSlot ? slot : -1
+
+// One ring of past sessions per same-time slot, kept in flat arrays and
+// grown as slots are first reached.
+var slotVolumeHistory: array<number> = []
+var slotRangeHistory: array<number> = []
+var slotVolumeSums: array<number> = []
+var slotRangeSums: array<number> = []
+var slotSampleCounts: array<number> = []
+var slotWriteIndices: array<number> = []
+if validSlot
+    while size(slotSampleCounts) <= slot
+        push(slotVolumeSums, 0)
+        push(slotRangeSums, 0)
+        push(slotSampleCounts, 0)
+        push(slotWriteIndices, 0)
+    while size(slotVolumeHistory) < (slot + 1) * baselineCount
+        push(slotVolumeHistory, 0)
+        push(slotRangeHistory, 0)
+
+samples = validSlot ? element(slotSampleCounts, slot) : 0
+slotVolumeAverage = validSlot and samples > 0 ? element(slotVolumeSums, slot) / samples : none
+slotRangeAverage = validSlot and samples > 0 ? element(slotRangeSums, slot) / samples : none
+baselineReady = validSlot and samples >= minimumSamples
+
+var rthOpenPrice = none
+var rthHigh = none
+var rthLow = none
+var sessionCumulativeVolume = 0.0
+var expectedCumulativeVolume = 0.0
+if newRth
+    rthOpenPrice = open
+    rthHigh = high
+    rthLow = low
+    sessionCumulativeVolume = vol
+    expectedCumulativeVolume = orElse(slotVolumeAverage, 0)
+else if cur
+    rthHigh = isNone(rthHigh) ? high : max(rthHigh, high)
+    rthLow = isNone(rthLow) ? low : min(rthLow, low)
+    sessionCumulativeVolume += vol
+    expectedCumulativeVolume += orElse(slotVolumeAverage, 0)
+
+developingRange = cur and not isNone(rthHigh) and not isNone(rthLow) ? rthHigh - rthLow : none
+barRvol = cur and baselineReady ? safeRatio(vol, slotVolumeAverage) : none
+rangeRatio = cur and baselineReady ? safeRatio(developingRange, slotRangeAverage) : none
+cumRvol = cur and baselineReady and expectedCumulativeVolume > 0 ? sessionCumulativeVolume / expectedCumulativeVolume : none
+
+// The slot ring is written after this bar's readings, so a bar never counts
+// towards its own baseline.
+if cur and validSlot
+    writeIndex = element(slotWriteIndices, slot)
+    historyIndex = slot * baselineCount + writeIndex
+    existingCount = element(slotSampleCounts, slot)
+    oldVolume = element(slotVolumeHistory, historyIndex)
+    oldRange = element(slotRangeHistory, historyIndex)
+    currentRange = orElse(developingRange, 0)
+    set(slotVolumeHistory, historyIndex, vol)
+    set(slotRangeHistory, historyIndex, currentRange)
+    if existingCount < baselineCount
+        set(slotVolumeSums, slot, element(slotVolumeSums, slot) + vol)
+        set(slotRangeSums, slot, element(slotRangeSums, slot) + currentRange)
+        set(slotSampleCounts, slot, existingCount + 1)
+    else
+        set(slotVolumeSums, slot, element(slotVolumeSums, slot) + vol - oldVolume)
+        set(slotRangeSums, slot, element(slotRangeSums, slot) + currentRange - oldRange)
+    set(slotWriteIndices, slot, (writeIndex + 1) % baselineCount)
+
+// Session VWAP and its volume-weighted dispersion.
+var vwapCumulativeVolume = 0.0
+var vwapCumulativePV = 0.0
+var vwapCumulativeP2V = 0.0
+if newRth
+    vwapCumulativeVolume = 0
+    vwapCumulativePV = 0
+    vwapCumulativeP2V = 0
+if cur
+    price = orElse(vwapSource, 0)
+    vwapCumulativeVolume += vol
+    vwapCumulativePV += price * vol
+    vwapCumulativeP2V += price * price * vol
+vwapLine = vwapCumulativeVolume > 0 ? vwapCumulativePV / vwapCumulativeVolume : none
+vwapDeviation = isNone(vwapLine) ? none : sqrt(max(vwapCumulativeP2V / vwapCumulativeVolume - vwapLine * vwapLine, 0))
+vwapZ = cur and not isNone(vwapDeviation) and yes(vwapDeviation > minTick) ? (close - vwapLine) / vwapDeviation : none
+
+previousInRth = cur
+previousDateKey = dateKey
+
+// ---- VWAP slope, crossings and the regime engine ----
+
+vwapBack = vwapLine[vwapSlopeLookback]
+vwapSlopeAtr = cur and slotIndex >= vwapSlopeLookback and atrUsable and not isNone(vwapLine) and not isNone(vwapBack) ? (vwapLine - vwapBack) / atrSeries : none
+prevClose = close[1]
+prevVwap = vwapLine[1]
+crossedVwap = bar.index > 0 and cur and not isNone(prevClose) and not isNone(prevVwap) and not isNone(vwapLine) and ((prevClose <= prevVwap and close > vwapLine) or (prevClose >= prevVwap and close < vwapLine))
+crossMean = sma(crossedVwap ? 1 : 0, crossLen)
+crossCount = isNone(crossMean) ? none : crossMean * crossLen
+
+slope = orElse(vwapSlopeAtr, 0)
+spread = orElse(emaSpreadAtr, 0)
+eff = orElse(efficiency, 0)
+
+bullStack = yes(emaFast > emaMid and emaMid > emaSlow)
+bearStack = yes(emaFast < emaMid and emaMid < emaSlow)
+compressed = not isNone(emaSpreadAtr) and yes(emaSpreadAtr <= emaCompressionAtr)
+expanded = not isNone(emaSpreadAtr) and yes(emaSpreadAtr >= emaExpansionAtr)
+
+emaStateCode = compressed ? 0 : bullStack and expanded and yes(emaFastSlopeAtr > 0) ? 1 : bearStack and expanded and yes(emaFastSlopeAtr < 0) ? 2 : bullStack and yes(close < emaFast and close >= emaMid) ? 3 : bearStack and yes(close > emaFast and close <= emaMid) ? 4 : bullStack ? 5 : bearStack ? 6 : 7
+
+rotating = cur and not isNone(vwapZ) and abs(vwapZ) <= vwapRotationZ and yes(crossCount >= crossTarget)
+vwapStateCode = not cur or isNone(vwapLine) ? 0 : rotating ? 1 : close > vwapLine and slope > 0 ? 2 : close < vwapLine and slope < 0 ? 3 : close > vwapLine ? 4 : 5
+
+emaDirection = bullStack ? 1 : bearStack ? -1 : yes(close >= emaMid) ? 0.25 : -0.25
+vwapDirection = cur and not isNone(vwapLine) ? (close >= vwapLine ? 0.6 : -0.6) + (slope > 0.02 ? 0.4 : slope < -0.02 ? -0.4 : 0) : 0
+diDirection = yes(plusDI > minusDI) ? 0.7 : yes(plusDI < minusDI) ? -0.7 : 0
+efficiencyDirection = isNone(efficiency) ? 0 : efficiency * (yes(close >= closeBack) ? 0.7 : -0.7)
+// Relative strength needs a second instrument, which this study does not
+// read, so its contribution is the not-ready value, zero.
+relativeDirection = 0
+openDirection = cur and not isNone(rthOpenPrice) ? (close >= rthOpenPrice ? 0.35 : -0.35) : 0
+directionRaw = emaDirection + vwapDirection + diDirection + efficiencyDirection + relativeDirection + openDirection
+direction = clampOrNone(directionRaw / DIRECTION_MAXIMUM, -1, 1)
+
+adxScore = clampOrNone((adxValue - weakAdx) / max(strongAdx - weakAdx, 0.1), 0, 1)
+efficiencyScore = clampOrNone((eff - weakEfficiency) / max(strongEfficiency - weakEfficiency, 0.01), 0, 1)
+emaSeparationScore = clampOrNone(spread / max(emaExpansionAtr, 0.01), 0, 1)
+vwapSlopeScore = clampOrNone(abs(slope) / max(strongVwapSlopeAtr, 0.01), 0, 1)
+trendQuality = adxScore * 0.35 + efficiencyScore * 0.3 + emaSeparationScore * 0.2 + vwapSlopeScore * 0.15
+
+volatilityExpansionScore = clampOrNone((orElse(volRatio, 0) - 1) / max(volatilityExpansionRatio - 1, 0.01), 0, 1)
+rangeExpansionScore = clampOrNone((orElse(rangeRatio, 0) - 1) / max(rangeExpansionRatio - 1, 0.01), 0, 1)
+cumulativeParticipationScore = clampOrNone((orElse(cumRvol, 0) - 1) / max(elevatedCumulativeRvol - 1, 0.01), 0, 1)
+barParticipationScore = clampOrNone((orElse(barRvol, 0) - 1) / max(elevatedRvolThreshold - 1, 0.01), 0, 1)
+expansionNumerator = volatilityExpansionScore * 0.35 + (isNone(rangeRatio) ? 0 : rangeExpansionScore * 0.3) + (isNone(cumRvol) ? 0 : cumulativeParticipationScore * 0.2) + (isNone(barRvol) ? 0 : barParticipationScore * 0.15)
+expansionDenominator = 0.35 + (isNone(rangeRatio) ? 0 : 0.3) + (isNone(cumRvol) ? 0 : 0.2) + (isNone(barRvol) ? 0 : 0.15)
+expansionScore = expansionDenominator > 0 ? expansionNumerator / expansionDenominator : 0
+
+emaCompressionScore = 1 - clampOrNone(spread / max(emaCompressionAtr, 0.01), 0, 1)
+adxCompressionScore = 1 - clampOrNone(adxValue / max(weakAdx, 0.1), 0, 1)
+volatilityCompressionScore = 1 - clampOrNone((orElse(volRatio, 0) - 0.55) / max(1 - 0.55, 0.01), 0, 1)
+rangeCompressionScore = isNone(rangeRatio) ? 0 : 1 - clampOrNone((rangeRatio - 0.45) / max(rangeCompressionRatio - 0.45, 0.01), 0, 1)
+efficiencyCompressionScore = 1 - clampOrNone(eff / max(weakEfficiency, 0.01), 0, 1)
+compressionScore = emaCompressionScore * 0.3 + adxCompressionScore * 0.2 + volatilityCompressionScore * 0.2 + rangeCompressionScore * 0.15 + efficiencyCompressionScore * 0.15
+
+crossRotationScore = clampOrNone(crossCount / max(crossTarget, 1), 0, 1)
+vwapNearScore = 1 - clampOrNone(abs(orElse(vwapZ, 0)) / 1.5, 0, 1)
+lowEfficiencyScore = 1 - clampOrNone(eff / max(strongEfficiency, 0.01), 0, 1)
+lowDirectionScore = 1 - abs(direction)
+balanceScore = crossRotationScore * 0.3 + vwapNearScore * 0.25 + lowEfficiencyScore * 0.25 + lowDirectionScore * 0.2
+
+directional = abs(direction) >= directionThreshold
+trending = yes(trendQuality >= trendThreshold) and directional
+expanding = expansionScore >= expansionThreshold
+compressing = yes(compressionScore >= compressionThreshold)
+balanced = yes(balanceScore >= balanceThreshold)
+
+regimeCode = not cur and not classifyOutsideRTH ? 9 : compressing and not expanding ? 4 : expanding and directional ? (direction > 0 ? 2 : -2) : trending ? (direction > 0 ? 1 : -1) : balanced ? 3 : expanding ? 5 : 0
+
+maximumCompeting = maxOrNone(trendQuality, maxOrNone(expansionScore, maxOrNone(compressionScore, balanceScore)))
+agreement = regimeCode == 2 or regimeCode == -2 ? (expansionScore + trendQuality + abs(direction)) / 3 : regimeCode == 1 or regimeCode == -1 ? (trendQuality + abs(direction) + (1 - balanceScore)) / 3 : regimeCode == 3 ? balanceScore : regimeCode == 4 ? compressionScore : regimeCode == 5 ? expansionScore : regimeCode == 9 ? 1 : clampOrNone(1.2 - maximumCompeting, 0.35, 0.72)
+confidenceRaw = clampOrNone(agreement, 0, 1)
+regimeConfidence = isNone(confidenceRaw) ? none : round(confidenceRaw * 100)
+
+participationCode = not cur ? 0 : not baselineReady ? 1 : orElse(barRvol, 0) >= extremeRvolThreshold ? 2 : orElse(barRvol, 0) >= elevatedRvolThreshold or orElse(cumRvol, 0) >= elevatedCumulativeRvol ? 3 : orElse(barRvol, 0) <= quietRvolThreshold and orElse(cumRvol, 0) <= quietRvolThreshold ? 4 : 5
+volatilityCode = isNone(volRatio) ? 0 : volRatio >= volatilityExpansionRatio ? 1 : volRatio <= volatilityContractionRatio ? 2 : 3
+trendStrengthCode = yes(adxValue >= strongAdx) ? 0 : yes(adxValue <= weakAdx) ? 1 : 2
+rangeStateCode = not cur ? 0 : not baselineReady ? 1 : orElse(rangeRatio, 0) >= rangeExpansionRatio ? 2 : orElse(rangeRatio, 0) <= rangeCompressionRatio ? 3 : 4
+sessionPhaseCode = not cur ? 0 : phaseMinutes < 600 ? 1 : phaseMinutes < 660 ? 2 : phaseMinutes < 840 ? 3 : phaseMinutes < 900 ? 4 : 5
+
+// ---- plots ----
+
+// Settings reach a function as arguments rather than being read from inside it.
+fn capped(value, show, enabled, cap) =>
+    enabled and show and not isNone(value) ? min(value, cap) : none
+
+// The column shades with how far the bar's RVOL sits from the baseline of 1.
+fn rvolColor(raw, extreme, quiet) =>
+    isNone(raw) ? withAlpha(COLOR_NEUTRAL, 0.3) : raw >= 1 ? withAlpha(COLOR_HISTOGRAM_BULL, 0.28 + 0.67 * clampOrNone((raw - 1) / max(extreme - 1, 0.01), 0, 1)) : withAlpha(COLOR_HISTOGRAM_BEAR, 0.28 + 0.64 * clampOrNone((1 - raw) / max(1 - quiet, 0.01), 0, 1))
+
+level(1, "Normal Baseline", fade(#94a3b8, 55), style = "dashed")
+plot(capped(barRvol, showBarRvol, indicatorEnabled, plotCap), "Same-time Bar RVOL", rvolColor(barRvol, extremeRvolThreshold, quietRvolThreshold), width = 1, style = "column")
+plot(capped(cumRvol, showCumulativeRvol, indicatorEnabled, plotCap), "Cumulative RVOL", #2dd4bf, width = 2)
+plot(capped(volRatio, showRealizedVolRatio, indicatorEnabled, plotCap), "Realized Volatility Ratio", #f472b6, width = 2)
+plot(capped(rangeRatio, showRangeRatio, indicatorEnabled, plotCap), "Developing Range Ratio", #6366f1, width = 1)
+
+// ---- alerts ----
+
+if bar.index >= 1 and cur and regimeCode != regimeCode[1]
+    alert("Futures Context: the confirmed RTH regime changed.", id = "regime-change", title = "Futures regime changed")
+if cur and not isNone(barRvol) and barRvol >= alertRvolThreshold and orElse(barRvol[1], 0) < alertRvolThreshold
+    alert("Futures Context: same-time bar RVOL crossed the configured alert threshold.", id = "rvol-spike", title = "Same-time RVOL spike")
+if not isNone(volRatio) and volRatio >= alertVolatilityRatio and orElse(volRatio[1], 0) < alertVolatilityRatio
+    alert("Futures Context: rolling realized volatility crossed the configured expansion alert threshold.", id = "volatility-expansion", title = "Realized volatility expansion")
+
+// ---- dashboard ----
+
+fn regimeText(code) =>
+    code == 2 ? "Bull Expansion" : code == 1 ? "Bull Trend" : code == -1 ? "Bear Trend" : code == -2 ? "Bear Expansion" : code == 3 ? "Balanced Rotation" : code == 4 ? "Compression" : code == 5 ? "Volatility Expansion" : code == 9 ? "Outside RTH" : "Transition"
+
+EMA_TEXT = ["Compressed", "Bull Expansion", "Bear Expansion", "Bull Pullback", "Bear Pullback", "Bull Stack", "Bear Stack", "Tangled"]
+VWAP_TEXT = ["Inactive", "Rotating", "Above and rising", "Below and falling", "Above VWAP", "Below VWAP"]
+PARTICIPATION_TEXT = ["Inactive", "Warming Up", "Extreme", "Elevated", "Quiet", "Normal"]
+VOLATILITY_TEXT = ["Warming Up", "Expanding", "Contracting", "Normal"]
+TREND_TEXT = ["Strong", "Weak", "Moderate"]
+RANGE_TEXT = ["Inactive", "Warming Up", "Expanded", "Compressed", "Normal"]
+PHASE_TEXT = ["Outside RTH", "Opening Drive", "Price Discovery", "Midday", "Late Session", "Power Hour"]
+
+dashboard = table("Futures Context", 14, 2, position = "topRight")
+
+if bar.isLast and indicatorEnabled and showDashboard
+    cell(dashboard, 0, 0, "Regime")
+    cell(dashboard, 0, 1, regimeText(regimeCode) + " (" + (isNone(regimeConfidence) ? "n/a" : text(regimeConfidence, 0) + "%") + ")")
+    cell(dashboard, 1, 0, "Bias")
+    cell(dashboard, 1, 1, signedText(direction * 100, 1))
+    cell(dashboard, 2, 0, "Participation")
+    cell(dashboard, 2, 1, element(PARTICIPATION_TEXT, participationCode))
+    cell(dashboard, 3, 0, "RVOL bar / cum")
+    cell(dashboard, 3, 1, ratioText(barRvol) + "   " + ratioText(cumRvol))
+    cell(dashboard, 4, 0, "Trend structure")
+    cell(dashboard, 4, 1, element(EMA_TEXT, emaStateCode) + "   " + element(TREND_TEXT, trendStrengthCode))
+    cell(dashboard, 5, 0, "ADX / efficiency")
+    cell(dashboard, 5, 1, numberText(adxValue, 1) + "   " + numberText(efficiency, 2))
+    cell(dashboard, 6, 0, "Volatility")
+    cell(dashboard, 6, 1, element(VOLATILITY_TEXT, volatilityCode))
+    cell(dashboard, 7, 0, "RV ratio / z")
+    cell(dashboard, 7, 1, ratioText(volRatio) + "   " + signedText(realizedVolZ, 2))
+    cell(dashboard, 8, 0, "Location / range")
+    cell(dashboard, 8, 1, element(VWAP_TEXT, vwapStateCode) + "   " + element(RANGE_TEXT, rangeStateCode))
+    cell(dashboard, 9, 0, "VWAP z / range")
+    cell(dashboard, 9, 1, signedText(vwapZ, 2) + "   " + ratioText(rangeRatio))
+    cell(dashboard, 10, 0, "EMA spread / ATR")
+    cell(dashboard, 10, 1, numberText(emaSpreadAtr, 2))
+    cell(dashboard, 11, 0, "Scores T/E/C/B")
+    cell(dashboard, 11, 1, numberText(trendQuality, 2) + "  " + numberText(expansionScore, 2) + "  " + numberText(compressionScore, 2) + "  " + numberText(balanceScore, 2))
+    cell(dashboard, 12, 0, "Relative strength")
+    cell(dashboard, 12, 1, "Not available on a single-symbol study")
+    cell(dashboard, 13, 0, "Session")
+    cell(dashboard, 13, 1, supported ? element(PHASE_TEXT, sessionPhaseCode) + "   samples " + text(samples, 0) + "/" + text(baselineCount, 0) : "Unsupported timeframe for same-time RVOL. Use 1m, 5m or 15m.")

@@ -1,0 +1,16 @@
+{
+  "title": "Wiener Filter (WIENER)",
+  "summary": "Blends price toward its own mean in proportion to how much of its recent variance looks like noise, smoothing quiet markets hard and trending ones lightly.",
+  "description": "This filter estimates how much of recent price movement is signal and how much is noise, then pulls price toward its mean by the noise share. The noise variance comes from successive differences: the sum of the squared bar-to-bar changes over the last `Length - 1` differences, divided by twice that count.\n\nThe total power comes from the Smoothing window. The mean is a simple average of the source over `Smoothing` bars, and the signal plus noise power is a simple average of the squared distance from that mean over the same number of bars. The signal variance is that power minus the noise variance, floored at zero.\n\nThe gain is the signal variance divided by the total of signal and noise variance, and the output is `mean + gain * (price - mean)`. A gain near 1 leaves price almost untouched; a gain near 0 replaces it with the mean. When both variances are zero the gain is 0.",
+  "howToRead": "When the line sits on top of price, the filter judges the recent movement to be mostly signal, which usually happens in a clean trend. When the line flattens toward the mean and price wanders around it, the filter judges the movement to be mostly noise, which usually happens in a range.\n\nThe distance between price and the line is therefore a rough gauge of how noisy the market is. The line starts once both averages are filled, after about twice the Smoothing length, and it describes recent behaviour rather than predicting the next move.",
+  "settings": [
+    { "key": "length", "label": "Length", "description": "How many bar-to-bar changes the noise estimate uses. A longer window gives a steadier noise estimate that adapts more slowly." },
+    { "key": "smooth", "label": "Smoothing", "description": "The window for the mean and for the total power. Larger values give a smoother mean and a slower start to the line." },
+    { "key": "source", "label": "Source", "description": "The price series the filter works on, the close by default." }
+  ],
+  "faq": [
+    { "q": "Why does the line hug price in a trend and flatten in a range?", "a": "In a trend, price moves far from its mean compared with its bar-to-bar noise, so the gain is high. In a range, those two are similar, so the gain falls and the line moves toward the mean." },
+    { "q": "When does the line start?", "a": "The mean needs Smoothing bars and the power average needs another Smoothing bars on top, so the first value appears after about twice the Smoothing length." },
+    { "q": "Can the gain go above 1?", "a": "No. The signal variance is floored at zero and divided by itself plus the noise variance, so the gain stays between 0 and 1." }
+  ]
+}

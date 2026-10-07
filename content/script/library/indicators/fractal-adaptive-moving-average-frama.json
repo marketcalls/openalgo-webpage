@@ -1,0 +1,15 @@
+{
+  "title": "Fractal Adaptive Moving Average (FRAMA)",
+  "summary": "An adaptive average whose smoothing follows the fractal dimension of price: fast in a clean trend, nearly still in a choppy range.",
+  "description": "The FRAMA is an exponential-style average whose smoothing factor comes from the shape of recent price. The window is `Period` bars, rounded up to an even number, and split into a newer half and an older half. The study takes the price range of each half and of the whole window, each divided by its length.\n\nFrom those three ranges it estimates the fractal dimension: `(log(N1 + N2) - log(N3)) / log(2)`. A clean trend has a dimension near 1, because the two half ranges add up to the full range; a choppy market has a dimension near 2. The smoothing factor is `exp(-4.6 * (dimension - 1))`, held between 0.01 and 1, and the average moves that share of the way toward the source each bar. The line is drawn once a full window exists.",
+  "howToRead": "In a trend the dimension is low, the smoothing factor is high, and the FRAMA follows price closely. In a sideways, overlapping market the dimension is high and the factor falls toward 0.01, so the line goes almost flat. A flat FRAMA therefore marks congestion, and a line that starts to move again marks price beginning to trend.\n\nRead price against the line as with any trend average. Because the factor can jump from small to large in a few bars, the line can move abruptly at a breakout; that is the design, not an error. A flat window, where the range is zero, uses a factor of 1 and the line equals the source.",
+  "settings": [
+    { "key": "period", "label": "Period", "description": "The window used to measure the fractal dimension, rounded up to an even number. Longer is steadier but slower to adapt." },
+    { "key": "source", "label": "Source", "description": "The price series that is averaged and measured, the close by default." }
+  ],
+  "faq": [
+    { "q": "Why is an odd period rounded up?", "a": "The window is split into two equal halves, so it must have an even length. An odd period gains one bar." },
+    { "q": "Why does the line sometimes jump?", "a": "When price changes from choppy to trending the smoothing factor can rise sharply within a few bars, so the line catches up with price quickly." },
+    { "q": "Why are the first bars blank?", "a": "The fractal dimension needs a full window of prices, so the line waits until that many bars exist." }
+  ]
+}

@@ -1,0 +1,50 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © openalgo
+// Original work (c) mihakralj, MIT License
+
+version 1
+study("Ultimate Oscillator (ULTOSC)", precision = 2)
+
+fastPeriod = input(7, "Fast Period", min = 1, max = 50, step = 1, tooltip = "Short-term period for momentum calculation")
+mediumPeriod = input(14, "Medium Period", min = 1, max = 100, step = 1, tooltip = "Medium-term period for momentum calculation")
+slowPeriod = input(28, "Slow Period", min = 1, max = 200, step = 1, tooltip = "Long-term period for momentum calculation")
+fastWeight = input(4.0, "Fast Weight", min = 0.1, max = 10, step = 0.1, tooltip = "Weight applied to fast period calculation")
+mediumWeight = input(2.0, "Medium Weight", min = 0.1, max = 10, step = 0.1, tooltip = "Weight applied to medium period calculation")
+slowWeight = input(1.0, "Slow Weight", min = 0.1, max = 10, step = 0.1, tooltip = "Weight applied to slow period calculation")
+
+// Buying pressure is the close above the true low, and the true range runs
+// from the true low to the true high. The first bar has no previous close
+// and uses its own.
+prevClose = orElse(close[1], close)
+trueLow = min(low, prevClose)
+trueHigh = max(high, prevClose)
+buying = close - trueLow
+rangeTrue = trueHigh - trueLow
+
+// A running total over the window: each bar adds its own value and, once the
+// window has filled, takes away the value that has just left it.
+fn windowSum(x, len) =>
+    var total = 0.0
+    total += x
+    if bar.index >= len
+        total -= x[len]
+    total
+
+bpFast = windowSum(buying, fastPeriod)
+trFast = windowSum(rangeTrue, fastPeriod)
+bpMedium = windowSum(buying, mediumPeriod)
+trMedium = windowSum(rangeTrue, mediumPeriod)
+bpSlow = windowSum(buying, slowPeriod)
+trSlow = windowSum(rangeTrue, slowPeriod)
+
+// Each window's ratio counts only once that window is full and its range is
+// positive; otherwise it contributes zero to the blend.
+rawFast = trFast > 0 and bar.index >= fastPeriod - 1 ? 100 * bpFast / trFast : 0
+rawMedium = trMedium > 0 and bar.index >= mediumPeriod - 1 ? 100 * bpMedium / trMedium : 0
+rawSlow = trSlow > 0 and bar.index >= slowPeriod - 1 ? 100 * bpSlow / trSlow : 0
+
+totalWeight = fastWeight + mediumWeight + slowWeight
+ultosc = (rawFast * fastWeight + rawMedium * mediumWeight + rawSlow * slowWeight) / totalWeight
+
+// Nothing is drawn until the slow window is full.
+plot(bar.index >= slowPeriod - 1 ? ultosc : none, "Ultimate Oscillator", #ffeb3b, width = 2)

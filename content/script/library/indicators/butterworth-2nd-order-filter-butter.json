@@ -1,0 +1,14 @@
+{
+  "title": "Butterworth 2nd Order Filter (BUTTER)",
+  "summary": "A two-pole recursive lowpass with a maximally flat passband that smooths away price swings shorter than the length.",
+  "description": "The Butterworth 2nd Order Filter is a recursive biquad lowpass. It keeps price movement slower than its cutoff period almost untouched and damps faster wiggles, without the ripple that sharper filters add near the cutoff.\n\nFrom the length it sets omega = 2 pi / length and alpha = sin(omega) / sqrt(2), then builds the coefficients a0 = 1 + alpha, a1 = -2 cos(omega), a2 = 1 - alpha and b0 = b2 = (1 - cos(omega)) / 2, b1 = 1 - cos(omega). Each bar's output is (b0 times the price + b1 times the previous price + b2 times the price two bars back - a1 times the previous output - a2 times the output before that) divided by a0. The first two bars take the price itself as the seed.",
+  "howToRead": "Read it as a smooth moving average. Price above a rising line shows an upward short-term direction, and below a falling line a downward one. Turns in the line mark where the smoothed direction changes.\n\nA longer length removes more noise and turns later. Because it is recursive, a large spike keeps a small influence for a while after it passes. It confirms direction rather than forecasting it.",
+  "settings": [
+    { "key": "length", "label": "Length", "description": "The cutoff period in bars. Swings shorter than this are damped; a longer length smooths more." },
+    { "key": "source", "label": "Source", "description": "The price series the filter smooths. The close by default." }
+  ],
+  "faq": [
+    { "q": "What does maximally flat passband mean for a trader?", "a": "Moves slower than the cutoff come through at almost their full size, with no bumps or dips added by the filter itself, so the line does not invent small swings of its own." },
+    { "q": "Why does the line start on the first bar?", "a": "The first two bars are seeded with the price, so the recursion has something to build on immediately. It settles over the next few lengths of bars." }
+  ]
+}

@@ -1,0 +1,26 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © openalgo
+// Original work (c) mihakralj, MIT License
+
+version 1
+study("Chaikin Money Flow (CMF)", precision = 4)
+
+length = input(20, "Length", min = 1, max = 5000, step = 1)
+
+// The money flow multiplier places the close inside the bar's range, and is 0
+// on a bar with no range or with a missing high, low or close.
+mult = orElse(high != low ? ((close - low) - (high - close)) / (high - low) : 0, 0)
+vol = orElse(volume, 0)
+mfv = mult * vol
+
+// Two running sums over the window. While fewer than length bars exist the
+// window covers every bar so far, so the line reads from the first bar.
+var sumMfv = 0.0
+var sumVol = 0.0
+sumMfv = sumMfv + (mfv - (bar.index >= length ? mfv[length] : 0))
+sumVol = sumVol + (vol - (bar.index >= length ? vol[length] : 0))
+
+// A window with no volume reads 0.
+cmfValue = sumVol != 0 ? sumMfv / sumVol : 0
+
+plot(cmfValue, "CMF", #ffeb3b, width = 2)

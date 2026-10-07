@@ -1,0 +1,14 @@
+{
+  "title": "SWMA: Symmetric Weighted Moving Average",
+  "summary": "A moving average of the close with triangular weights, so the bars in the middle of the window count most and the ends count least.",
+  "description": "The Symmetric Weighted Moving Average averages the close over the last `period` bars with weights shaped like a triangle. With `half = (period - 1) / 2`, the bar `k` bars back weighs `half + 1 - |k - half|`: the middle bar weighs most, and the weights fall off evenly toward the newest and the oldest bar. The weighted sum is divided by the total of the weights.\n\nA triangle of weights is what you get by smoothing with a simple average twice, so it removes more short-term noise than a single simple average of the same length. The line starts once `period` bars exist and always uses the close.",
+  "howToRead": "Read it as a smooth trend line. It is calmer than a simple average of the same length, so a turn in the line is less likely to be a single noisy bar. Price holding above a rising line describes an uptrend, and below a falling line a downtrend.\n\nThe weights peak in the middle of the window, so the line describes prices centred about `half` bars ago and lags by that much. Shorter periods follow price closely; longer ones show only the broad swing.",
+  "settings": [
+    { "key": "period", "label": "Period", "description": "How many bars the triangle spans. A longer period smooths more and lags more." }
+  ],
+  "faq": [
+    { "q": "Why are the middle bars weighted most?", "a": "The triangle puts its peak at the centre of the window. That shape filters short noise better than equal weights, at the cost of a lag of about half the window." },
+    { "q": "Can I choose a different price than the close?", "a": "No. The calculation is fixed to the close, so there is no source setting." },
+    { "q": "When does the line appear?", "a": "Once `period` bars exist. Before that the oldest tap has no bar to read, so nothing is drawn." }
+  ]
+}

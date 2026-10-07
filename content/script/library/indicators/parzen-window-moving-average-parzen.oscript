@@ -1,0 +1,35 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © openalgo
+// Original work (c) mihakralj, MIT License
+
+version 1
+study("Parzen Window Moving Average (PARZEN)", overlay = true, precision = 2)
+
+source = input(close, "Source")
+period = input(14, "Period", min = 2, max = 5000, step = 1)
+
+// The Parzen window: a piecewise cubic over u from -1 to 1 across the window,
+// 1 - 6u^2 + 6|u|^3 in the middle half and 2(1 - |u|)^3 toward the edges.
+fn parzenWeight(pos, half) =>
+    u = half > 0 ? (pos - half) / half : 0
+    absU = abs(u)
+    t = 1 - absU
+    absU <= 0.5 ? 1 - 6 * absU * absU + 6 * absU * absU * absU : absU <= 1 ? 2 * t * t * t : 0
+
+halfN = (period - 1) / 2
+weightTotal = 0.0
+for k = 0 to period - 1
+    weightTotal += parzenWeight(k, halfN)
+
+// Weight k = 0 is the oldest bar of the window and k = period - 1 the newest.
+// An absent price counts as zero.
+filtered = 0.0
+for k = 0 to period - 1
+    w = parzenWeight(k, halfN)
+    nw = weightTotal > 0 ? w / weightTotal : w
+    filtered += orElse(source[period - 1 - k], 0) * nw
+
+// Until the window is full the line shows the price itself.
+parzen = bar.index + 1 < period ? orElse(source, 0) : filtered
+
+plot(parzen, "PARZEN", #ffeb3b, width = 2)

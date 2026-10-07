@@ -1,0 +1,31 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © openalgo
+// Original work (c) mihakralj, MIT License
+
+version 1
+study("Aroon (AROON)", precision = 2)
+
+period = input(25, "Period", min = 1, max = 5000, step = 1, tooltip = "Number of bars used in the calculation")
+
+// How many bars back the window's high and low were set, 0 for this bar.
+barsSinceHigh = highestBars(high, period)
+barsSinceLow = lowestBars(low, period)
+
+// 100 when the extreme is on this bar, falling toward 0 as it ages.
+aroonUp = 100 * (period - barsSinceHigh) / period
+aroonDown = 100 * (period - barsSinceLow) / period
+
+plot(aroonUp, "Aroon Up", #ffeb3b, width = 2)
+plot(aroonDown, "Aroon Down", #ffeb3b, width = 2)
+level(70, "Upper Level", #787b86, style = "dashed")
+level(50, "Mid Level", #787b86, style = "dashed")
+level(30, "Lower Level", #787b86, style = "dashed")
+
+if crossUp(aroonUp, aroonDown)
+    alert("Bullish crossover", id = "aroon-cross-up", title = "Aroon Up crosses above Down")
+if crossUp(aroonDown, aroonUp)
+    alert("Bearish crossover", id = "aroon-cross-down", title = "Aroon Down crosses above Up")
+if aroonUp > 70 and aroonDown < 30
+    alert("Strong uptrend detected", id = "aroon-strong-uptrend", title = "Strong uptrend")
+if aroonDown > 70 and aroonUp < 30
+    alert("Strong downtrend detected", id = "aroon-strong-downtrend", title = "Strong downtrend")

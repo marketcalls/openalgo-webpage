@@ -1,0 +1,19 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © openalgo
+// Original work (c) mihakralj, MIT License
+
+version 1
+study("Time Series Forecast", overlay = true, precision = 2)
+
+period = input(14, "Period", min = 1, max = 5000, step = 1)
+forecast = input(1, "Forecast Periods", min = 1, max = 100, step = 1)
+source = input(close, "Source")
+
+// A least squares line through the last period values, read forecast - 1
+// bars past the newest point of the window, so a forecast of 1 is the
+// regression value at the newest bar. A negative offset reads the line
+// forward rather than back.
+tsf = linreg(source, period, 1 - forecast)
+
+plot(tsf, "TSF", #ffeb3b, width = 2)
+plot(source, "Source", #787b86, width = 1)

@@ -1,0 +1,17 @@
+{
+  "title": "Bilateral Filter (BILATERAL)",
+  "summary": "An edge-preserving smoother that weights each recent bar by how far back it is and how close its price is to the current one.",
+  "description": "The Bilateral Filter smooths price inside a range while keeping the edge of a sharp move. It averages the last `length` prices, but each one gets a weight made of two parts multiplied together.\n\nThe spatial weight falls off with distance in bars: exp(-i squared / (2 sigmaS squared)), where sigmaS is the length times the *Spatial Sigma Ratio*. The range weight falls off with distance in price: exp(-d squared / (2 sigmaR squared)), where d is the gap between that bar's price and the current price and sigmaR is the rolling population standard deviation over the same length times the *Range Sigma Multiplier*. Bars that are both recent and close in price dominate the average; bars far away in price barely count, which is what stops the filter from smearing a breakout. The line starts once the standard deviation has a full window.",
+  "howToRead": "In a quiet range the line behaves like an ordinary smooth average. When price jumps, the bars from before the jump sit far from the new price and lose their weight, so the line moves with price instead of trailing behind it. That makes it useful for spotting a real change in level without the slow catch-up of a plain average.\n\nThe trade-off is that it is less smooth on large single-bar moves, which it treats as edges rather than noise. Raising the range multiplier makes it act more like a normal average; lowering it makes it hug price more tightly.",
+  "settings": [
+    { "key": "length", "label": "Length", "description": "How many bars are averaged and the window for the standard deviation. Longer smooths more." },
+    { "key": "sigmaSRatio", "label": "Spatial Sigma Ratio", "description": "The spread of the distance-in-bars weight as a fraction of the length. Larger keeps more weight on older bars." },
+    { "key": "sigmaRMult", "label": "Range Sigma Multiplier", "description": "The spread of the distance-in-price weight as a multiple of the rolling standard deviation. Larger means a move must be bigger before it is treated as an edge." },
+    { "key": "source", "label": "Source", "description": "The price series the filter smooths. The close by default." }
+  ],
+  "faq": [
+    { "q": "Why does it react faster to a breakout than a moving average?", "a": "Bars whose price is far from the current price get very little weight, so after a jump the old prices hardly pull the line back. A simple moving average weights them the same as every other bar in its window." },
+    { "q": "Why is the start of the chart blank?", "a": "The range weight depends on the rolling standard deviation, which needs a full window of `length` bars. Until then there is no value." },
+    { "q": "What happens in a perfectly flat window?", "a": "The standard deviation is floored at a tiny positive number, so the weights stay defined and the line equals the flat price." }
+  ]
+}

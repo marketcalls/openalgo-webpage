@@ -1,0 +1,44 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © openalgo
+// Original work (c) mihakralj, MIT License
+
+version 1
+study("TTM Trend", overlay = true, precision = 2)
+
+period = input(6, "Period", min = 1, max = 5000, step = 1)
+source = input(hlc3, "Source")
+showStrength = input(true, "Show Trend Strength %")
+
+// An exponential mean seeded with the first bar's source, so the first bar
+// has no slope. A missing source holds the running state.
+k = 2 / (period + 1)
+var avgLine = none
+var avgPrev = none
+trend = none
+ttm = none
+half = none
+if not isNone(source)
+    if isNone(avgLine)
+        avgLine = source
+        avgPrev = source
+    avgLine = k * (source - avgLine) + avgLine
+    slopeValue = avgLine - avgPrev
+    trend = sign(slopeValue)
+    // The strength is the slope as a percentage of the previous value; the
+    // divisor is floored so it can never be zero.
+    strength = abs(slopeValue) / max(avgPrev, 1e-10) * 100
+    avgPrev = avgLine
+    ttm = avgLine
+    half = avgLine * strength * 0.01
+
+trendColor = isNone(trend) or trend == 0 ? #787b86 : trend > 0 ? #4caf50 : #ff5252
+plot(ttm, "TTM Trend", trendColor, width = 3)
+upperBand = plot(showStrength ? ttm + half : none, "Upper Strength", #2962ff, width = 1)
+lowerBand = plot(showStrength ? ttm - half : none, "Lower Strength", #2962ff, width = 1)
+fill(upperBand, lowerBand, #2962ff, opacity = 0.1)
+
+// A mark on every bar where the direction of the slope changes, compared
+// with the previous bar's direction read as zero when it had none.
+changed = bar.index > 0 and not isNone(trend) and trend != orElse(trend[1], 0)
+signal(changed and trend > 0 ? "" : none, color = #4caf50, at = "below", shape = "triangleUp")
+signal(changed and trend < 0 ? "" : none, color = #ff5252, at = "above", shape = "triangleDown")

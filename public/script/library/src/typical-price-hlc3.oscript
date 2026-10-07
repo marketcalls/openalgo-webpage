@@ -1,0 +1,12 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © openalgo
+// Original work (c) mihakralj, MIT License
+
+version 1
+study("Typical Price (HLC3)", overlay = true, precision = 2)
+
+// The typical price of a bar: high, low and close added and scaled by
+// 0.333333, the constant this calculation uses in place of a division by 3.
+typical = (high + low + close) * 0.333333
+
+plot(typical, "HLC3", #ffeb3b, width = 2)

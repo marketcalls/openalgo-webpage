@@ -1,0 +1,16 @@
+{
+  "title": "Chebyshev Type I Filter (CHEBY1)",
+  "summary": "A second order Chebyshev Type I lowpass that trades a controlled bump near the cutoff period for a steeper cut of faster price swings.",
+  "description": "The Chebyshev Type I Filter is a recursive second order lowpass. Compared with a maximally flat design it allows a ripple in the passband, and in return its response falls away more steeply past the cutoff.\n\nThe cutoff is wc = 2 pi / length, pre-warped with tan(wc / 2). The ripple in decibels sets epsilon = sqrt(10 ^ (ripple / 10) - 1), and from it the analogue pole is placed using the hyperbolic sine and cosine of half of asinh(1 / epsilon). The pole is mapped to a digital biquad with the bilinear transform, and each bar's output combines the current and two previous prices with the two previous outputs. The coefficients add up so that a flat price passes unchanged. The first two bars are seeded with the price, and a missing price borrows the previous one.\n\nIn this design the ripple shows up as a single bump: swings with a period equal to the length are passed at 10 ^ (ripple / 20) times their size (about 12 percent larger at the default 1 dB), and below that period the response drops quickly. At the defaults, half of a swing's power is gone at a period of about 11 bars.",
+  "howToRead": "Use it as a smoothing line. Price above a rising line points to an upward short-term direction, and below a falling line to a downward one. Turns in the line mark changes in the smoothed direction.\n\nThe ripple setting changes both the shape and the reach of the filter. A larger ripple enlarges swings near the length period and makes the line overshoot after a sudden jump (by about 15 percent of the jump at 1 dB, and more at higher values). A very small ripple removes the bump but moves the cutoff to much shorter periods, so the line smooths far less: at 0.01 dB and the default length of 20 it passes most swings down to about 6 bars.",
+  "settings": [
+    { "key": "source", "label": "Source", "description": "The price series the filter smooths. The close by default." },
+    { "key": "length", "label": "Length", "description": "The cutoff period in bars. Swings at this period are passed with the ripple bump; much shorter swings are cut." },
+    { "key": "ripple", "label": "Passband Ripple (dB)", "description": "The size of the bump near the cutoff, in decibels. More ripple gives a steeper cut and more overshoot; less ripple gives a flatter but much weaker filter." }
+  ],
+  "faq": [
+    { "q": "What does the ripple setting change?", "a": "It sets how much swings near the length period are enlarged, 10 ^ (ripple / 20) times at that period. A larger ripple buys a steeper drop for faster swings; a smaller one flattens the response but shifts the cutoff toward much shorter periods." },
+    { "q": "Why can the line overshoot after a sharp move?", "a": "The bump in the response comes with ringing. After a sudden jump the line goes past the new level before settling: about 15 percent of the jump at 1 dB, and more as the ripple grows." },
+    { "q": "Is there a warmup gap?", "a": "No. The first two bars are seeded with the price, so the line starts on the first bar and settles over the next few lengths." }
+  ]
+}

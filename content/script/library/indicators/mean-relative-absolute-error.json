@@ -1,0 +1,16 @@
+{
+  "title": "Mean Relative Absolute Error",
+  "summary": "A rolling average of the absolute gap between two series as a fraction of the actual value, where 0 is a perfect match.",
+  "description": "Mean Relative Absolute Error compares an actual series (the close by default) with a predicted series (the open by default). On every bar it divides the absolute gap between them by the absolute actual value, giving the error as a fraction of the level. The study plots the simple average of those fractions over the last `Length` bars.\n\nWhen the actual value is effectively zero the bar contributes zero rather than an infinite ratio. An absent actual value reads as 1 in the denominator and as 0 in the gap, and an absent predicted value reads as 0.\n\nThe pane shows a dotted line at 0, labelled Perfect, and a dotted line at 1, an error as large as the level itself.",
+  "howToRead": "A reading of 0.003 means the predicted series was typically 0.3 percent away from the actual one over the window. Zero would mean a perfect match on every bar, and 1 would mean the typical miss was as large as the actual value. With the default inputs the reading is the average bar body as a fraction of the close, a scale-free measure of how much price moves inside each bar.\n\nBecause it is a ratio, the reading can be compared between instruments at different price levels. The line has no value until Length bars have passed.",
+  "settings": [
+    { "key": "length", "label": "Length", "description": "How many bars the relative errors are averaged over. A longer window gives a smoother line." },
+    { "key": "actual", "label": "Actual", "description": "The series treated as the outcome and used as the base of each ratio. The close by default." },
+    { "key": "predicted", "label": "Predicted", "description": "The series treated as the forecast of the actual series. The open by default." }
+  ],
+  "faq": [
+    { "q": "What do the two dotted lines mean?", "a": "The line at 0 marks a perfect forecast. The line at 1 marks an average error as large as the actual value itself, which on a price chart would be an enormous miss." },
+    { "q": "Is this a percentage?", "a": "It is a fraction. Multiply by 100 to read it as a percentage, so 0.01 is a one percent average error." },
+    { "q": "Why does a zero actual value add nothing?", "a": "Dividing by zero has no answer, so a bar whose actual value is effectively zero contributes an error of zero instead." }
+  ]
+}

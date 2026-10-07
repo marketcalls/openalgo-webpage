@@ -1,0 +1,16 @@
+{
+  "title": "TTM Trend",
+  "summary": "A short exponential average coloured by its slope, wrapped in a band as wide as that slope, with a mark where the slope turns.",
+  "description": "TTM Trend draws a short exponential moving average of the source, the typical price by default, and colours it by the direction of its own slope: green while it rises, red while it falls and gray when it is flat. The average is seeded with the first bar's source, so it answers from the first bar, and that first bar has no slope.\n\nAround the average sits an optional band. Its half width is the average multiplied by the strength, where the strength is the size of this bar's change in the average as a percentage of the previous value. A fast move therefore shows as a wide band and a quiet drift as a band that almost closes.\n\nA small triangle marks each bar where the slope changes direction: an up triangle below the bar when it turns up, a down triangle above when it turns down.",
+  "howToRead": "Green says the short-term drift is up and red says it is down. The triangles mark the turns, and a run of bars with no new triangle is a run of bars moving one way. A widening band means the move is accelerating; a band that pinches in says it is slowing, which often comes before a turn.\n\nThe average is short, six bars by default, so it flips often in sideways markets and each flip on its own is a weak signal. Use it to time entries in the direction of a trend read from a slower tool rather than as a trend filter by itself.",
+  "settings": [
+    { "key": "period", "label": "Period", "description": "The length of the exponential average. A longer period turns less often and lags price more." },
+    { "key": "source", "label": "Source", "description": "The price series the average is computed from." },
+    { "key": "showStrength", "label": "Show Trend Strength %", "description": "Draws or hides the band whose width follows the size of the slope. It does not change the line or the marks." }
+  ],
+  "faq": [
+    { "q": "How is the band width calculated?", "a": "The change in the average on this bar, as a percentage of the previous value, is applied to the current average and drawn on both sides of it. A bigger step makes a wider band." },
+    { "q": "Why is the first bar gray?", "a": "The average is seeded with the first bar's own source, so it has no slope on that bar, and a flat slope is coloured gray." },
+    { "q": "When does a triangle appear?", "a": "On every bar where the direction of the slope differs from the previous bar's direction, as long as the new direction is up or down rather than flat." }
+  ]
+}

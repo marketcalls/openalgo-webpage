@@ -1,0 +1,259 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © openalgo
+// Original work (c) Arun K Bhaskar, MPL-2.0
+
+version 1
+study("Liquidity Void Multi-timeframe", overlay = true, precision = 2)
+
+timeframe = input("", "Timeframe", tooltip = "Timeframe the voids are measured on. Leave empty for the chart timeframe. Accepts 15, 60, 1h, D, W or M.")
+showLast = input(2, "Show Last", min = 0, max = 500, step = 1)
+lineMode = input("High/Low", "Source", options = ["High/Low", "OTE 0.79%", "50%"])
+showBearish = input(true, "Bearish")
+showBullish = input(true, "Bullish")
+hideCrossed = input(false, "Hide Crossed")
+filterMode = input("ATR", "Filter Using", options = ["ATR", "Percentage"], tooltip = "Filters remove narrow liquidity voids. ATR filtering adjusts automatically when the timeframe changes, while the percentage filter stays constant across timeframes. For no filtering at all, choose Percentage and set it to 0.")
+atrLength = input(14, "ATR Period", min = 1, max = 5000, step = 1, tooltip = "Applies only when Filter Using is ATR.")
+atrMultiplier = input(4, "ATR Multiplier", min = 1, max = 100, step = 0.1, tooltip = "The higher the number, the taller a void has to be to survive the filter.")
+percentage = input(2.5, "Percentage Above", min = 0, max = 100, step = 0.1, tooltip = "Keeps only liquidity voids taller than this percentage of the anchor price.")
+
+bearColor = #f7525f
+bullColor = #22ab94
+
+// ---------------------------------------------------------------------------
+// The timeframe code. A bare number is minutes; a suffix of s, m or min, h,
+// D or W names seconds, minutes, hours, days or weeks in any case, and an
+// upper-case M names months. An empty or unreadable code is the chart's own
+// timeframe, one bucket per bar. Units: 0 bar, 1 seconds, 2 days, 3 weeks,
+// 4 months.
+// ---------------------------------------------------------------------------
+var tfUnit = 0
+var tfMult = 1
+if bar.isFirst
+    tfCode = str.trim(timeframe)
+    digits = ""
+    suffix = ""
+    stage = 0
+    readable = true
+    for i = 0 to str.length(tfCode) - 1
+        ch = str.substring(tfCode, i, i + 1)
+        isDigit = str.indexOf("0123456789", ch) >= 0
+        isLetter = str.indexOf("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz", ch) >= 0
+        isSpace = ch == " "
+        if stage == 0 and isDigit
+            digits = digits + ch
+        else if stage <= 1 and isSpace
+            stage = 1
+        else if isLetter
+            stage = 2
+            suffix = suffix + ch
+        else
+            readable = false
+    if str.length(tfCode) > 0 and readable
+        n = floor(orElse(toNumber(digits), 0))
+        mult = n >= 1 ? n : 1
+        unitName = str.lower(suffix)
+        if suffix == ""
+            tfUnit = 1
+            tfMult = mult * 60
+        else if suffix == "M"
+            tfUnit = 4
+            tfMult = mult
+        else if unitName == "s"
+            tfUnit = 1
+            tfMult = mult
+        else if unitName == "m" or unitName == "min"
+            tfUnit = 1
+            tfMult = mult * 60
+        else if unitName == "h"
+            tfUnit = 1
+            tfMult = mult * 3600
+        else if unitName == "d"
+            tfUnit = 2
+            tfMult = mult
+        else if unitName == "w"
+            tfUnit = 3
+            tfMult = mult
+
+// Calendar days, weeks and months are counted in Indian time. The day number
+// is the count of days since 1 January 1970 on that calendar, and a week
+// starts on Monday.
+zone = "Asia/Kolkata"
+yr = date.year(time, zone)
+mo = date.month(time, zone)
+dy = date.day(time, zone)
+yAdj = mo <= 2 ? yr - 1 : yr
+era = floor(yAdj / 400)
+yoe = yAdj - era * 400
+doy = floor((153 * (mo > 2 ? mo - 3 : mo + 9) + 2) / 5) + dy - 1
+doe = yoe * 365 + floor(yoe / 4) - floor(yoe / 100) + doy
+dayIndex = era * 146097 + doe - 719468
+
+bucketKey = tfUnit == 1 ? floor(time / 1000 / tfMult) : tfUnit == 2 ? floor(dayIndex / tfMult) : tfUnit == 3 ? floor(floor((dayIndex + 3) / 7) / tfMult) : tfUnit == 4 ? floor((yr * 12 + mo) / tfMult) : bar.index
+
+// ---------------------------------------------------------------------------
+// The chart's bars folded into buckets of the chosen timeframe. A bucket is
+// complete when the first bar of the next one arrives; the bucket that holds
+// the newest bar is still forming.
+// ---------------------------------------------------------------------------
+var curKey = none
+var bOpen = none
+var bHigh = none
+var bLow = none
+var bClose = none
+var bTime = none
+
+newBucket = isNone(curKey) or bucketKey != curKey
+hasDone = newBucket and not isNone(curKey)
+doneOpen = hasDone ? bOpen : none
+doneHigh = hasDone ? bHigh : none
+doneLow = hasDone ? bLow : none
+doneClose = hasDone ? bClose : none
+doneTime = hasDone ? bTime : none
+
+if newBucket
+    curKey = bucketKey
+    bOpen = open
+    bHigh = high
+    bLow = low
+    bClose = close
+    bTime = time
+else
+    bHigh = max(bHigh, high)
+    bLow = min(bLow, low)
+    bClose = close
+
+// The average true range of the buckets: the first value is the simple mean
+// of the first atrLength true ranges, then each bucket is blended in with a
+// weight of 1 / atrLength. The first bucket's true range is its own range.
+var prevBucketClose = none
+var trWindow: array<number> = []
+var htfAtr = none
+if hasDone
+    tr = isNone(prevBucketClose) ? doneHigh - doneLow : max(doneHigh - doneLow, max(abs(doneHigh - prevBucketClose), abs(doneLow - prevBucketClose)))
+    prevBucketClose = doneClose
+    if isNone(htfAtr)
+        push(trWindow, tr)
+        if size(trWindow) > atrLength
+            shift(trWindow)
+        if size(trWindow) >= atrLength
+            total = 0.0
+            for j = 0 to size(trWindow) - 1
+                total = total + trWindow[j]
+            htfAtr = total / atrLength
+    else
+        htfAtr = (htfAtr * (atrLength - 1) + tr) / atrLength
+
+// ---------------------------------------------------------------------------
+// Each side keeps the anchor of its last trending bucket and its drawings.
+// Side 0 is bearish: a rising bucket whose high stays at or below the low of
+// the previous rising bucket. Side 1 is bullish, the mirror image.
+// ---------------------------------------------------------------------------
+var anchorPrice: array<number> = [none, none]
+var anchorTime: array<number> = [none, none]
+var bearLines: array<line> = []
+var bearLinePrice: array<number> = []
+var bearLineKept: array<bool> = []
+var bearBoxes: array<box> = []
+var bearBoxTop: array<number> = []
+var bearBoxBottom: array<number> = []
+var bearBoxKept: array<bool> = []
+var bullLines: array<line> = []
+var bullLinePrice: array<number> = []
+var bullLineKept: array<bool> = []
+var bullBoxes: array<box> = []
+var bullBoxTop: array<number> = []
+var bullBoxBottom: array<number> = []
+var bullBoxKept: array<bool> = []
+
+filterAtr = filterMode == "ATR"
+// Pass 0 processes a bucket that has just completed. Pass 1, on the newest
+// bar only, runs the forming bucket: it moves and clears drawings but creates
+// none, because that bucket is not finished.
+for pass = 0 to 1
+    if (pass == 0 and hasDone) or (pass == 1 and bar.isLast)
+        confirmed = pass == 0
+        o = pass == 0 ? doneOpen : bOpen
+        h = pass == 0 ? doneHigh : bHigh
+        l = pass == 0 ? doneLow : bLow
+        c = pass == 0 ? doneClose : bClose
+        t = pass == 0 ? doneTime : bTime
+        for side = 0 to 1
+            if (side == 0 and showBearish) or (side == 1 and showBullish)
+                up = side == 0
+                lines = up ? bearLines : bullLines
+                linePrice = up ? bearLinePrice : bullLinePrice
+                lineKept = up ? bearLineKept : bullLineKept
+                boxes = up ? bearBoxes : bullBoxes
+                boxTop = up ? bearBoxTop : bullBoxTop
+                boxBottom = up ? bearBoxBottom : bullBoxBottom
+                boxKept = up ? bearBoxKept : bullBoxKept
+                colour = up ? bearColor : bullColor
+
+                trending = up ? c > o : c < o
+                if confirmed and trending
+                    other = up ? h : l
+                    nextAnchor = up ? l : h
+                    anchor = anchorPrice[side]
+                    gapped = isNone(anchor) or (up ? other <= anchor : other >= anchor)
+                    // Where the level sits: the far edge, the 0.79 retracement
+                    // from the near edge, or the midpoint.
+                    voidLevel = lineMode == "High/Low" ? anchor : lineMode == "OTE 0.79%" ? other + (anchor - other) * 0.79 : (anchor + other) / 2
+                    passes = false
+                    if not isNone(anchor)
+                        if filterAtr
+                            passes = not isNone(htfAtr) and abs(anchor - other) > htfAtr * atrMultiplier
+                        else if anchor != 0
+                            passes = abs((anchor - other) / anchor * 100) > percentage
+                    if gapped and passes and not isNone(anchorTime[side]) and not isNone(voidLevel)
+                        push(lines, draw.line(anchorTime[side], voidLevel, t, voidLevel, color = colour, width = 2, style = "solid"))
+                        push(linePrice, voidLevel)
+                        push(lineKept, false)
+                        push(boxes, draw.box(anchorTime[side], max(other, anchor), t, min(other, anchor), color = withAlpha(colour, 0.25), fillColor = colour, opacity = 0.25))
+                        push(boxTop, other)
+                        push(boxBottom, anchor)
+                        push(boxKept, false)
+                        // Only the newest Show Last of each kind are kept.
+                        if size(lines) > showLast
+                            draw.delete(shift(lines))
+                            shift(linePrice)
+                            shift(lineKept)
+                        if size(boxes) > showLast
+                            draw.delete(shift(boxes))
+                            shift(boxTop)
+                            shift(boxBottom)
+                            shift(boxKept)
+                    set(anchorPrice, side, nextAnchor)
+                    set(anchorTime, side, t)
+
+                // A drawing stretches right until a bucket's range reaches it,
+                // and is then frozen: the level for a line, the near edge for
+                // a box.
+                for i = 0 to size(lines) - 1
+                    if not lineKept[i]
+                        p = linePrice[i]
+                        draw.setTo(lines[i], t, p)
+                        if h >= p and l <= p
+                            set(lineKept, i, true)
+                for i = 0 to size(boxes) - 1
+                    if not boxKept[i]
+                        draw.setTo(boxes[i], t, min(boxTop[i], boxBottom[i]))
+                        p = boxTop[i]
+                        if h >= p and l <= p
+                            set(boxKept, i, true)
+
+                // Hide Crossed removes a frozen drawing once price reaches it
+                // again: the level for a line, the far edge for a box.
+                if hideCrossed
+                    for i = size(lines) - 1 to 0 step -1
+                        p = linePrice[i]
+                        if lineKept[i] and h >= p and l <= p
+                            draw.delete(remove(lines, i))
+                            remove(linePrice, i)
+                            remove(lineKept, i)
+                    for i = size(boxes) - 1 to 0 step -1
+                        p = boxBottom[i]
+                        if boxKept[i] and h >= p and l <= p
+                            draw.delete(remove(boxes, i))
+                            remove(boxTop, i)
+                            remove(boxBottom, i)
+                            remove(boxKept, i)

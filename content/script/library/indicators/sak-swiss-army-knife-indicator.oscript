@@ -1,0 +1,92 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © openalgo
+// Original work (c) mihakralj, MIT License
+
+version 1
+study("SAK: Swiss Army Knife Indicator", precision = 4)
+
+filterType = input("BP", "Filter Type", options = ["EMA", "SMA", "Gauss", "Butter", "Smooth", "HP", "2PHP", "BP", "BS"])
+period = input(20, "Period", min = 2, max = 5000, step = 1)
+n = input(10, "SMA Length (N)", min = 1, max = 5000, step = 1, tooltip = "Only used for SMA mode")
+delta = input(0.1, "Delta (BW)", min = 0.01, max = 10, step = 0.01, tooltip = "Bandwidth for BP/BS modes")
+
+// One second-order recursion, whose coefficient set picks the filter:
+//   out = c0 * (b0 * P + b1 * P[1] + b2 * P[2]) + a1 * out[1] + a2 * out[2]
+// with the simple average written as its own running-sum form. It filters
+// the close.
+twoPi = 2 * math.pi
+isBand = filterType == "BP" or filterType == "BS"
+isTwoPole = filterType == "Gauss" or filterType == "Butter" or filterType == "2PHP"
+
+// The shape factor for each family. A division by a value too close to zero
+// leaves the coefficients without a value, and then nothing is drawn.
+cosBand = math.cos(twoPi * delta / period)
+gamma1 = abs(cosBand) > 0.000000000001 ? 1 / cosBand : none
+cosPeriod = math.cos(twoPi / period)
+beta1 = isBand ? cosPeriod : isTwoPole ? 2.415 * (1 - cosPeriod) : 0
+alphaBand = gamma1 - sqrt(max(0, gamma1 * gamma1 - 1))
+alphaTwoPole = -beta1 + sqrt(max(0, beta1 * beta1 + 2 * beta1))
+alphaOnePole = abs(cosPeriod) > 0.000000000001 ? (cosPeriod + math.sin(twoPi / period) - 1) / cosPeriod : none
+k = isBand ? alphaBand : isTwoPole ? alphaTwoPole : alphaOnePole
+
+c0 = 1.0
+c1 = 0.0
+b0 = 1.0
+b1 = 0.0
+b2 = 0.0
+a1 = 0.0
+a2 = 0.0
+if filterType == "EMA"
+    b0 = k
+    a1 = 1 - k
+else if filterType == "SMA"
+    c1 = 1 / n
+    b0 = 1 / n
+    a1 = 1.0
+else if filterType == "Gauss"
+    c0 = k * k
+    a1 = 2 * (1 - k)
+    a2 = -(1 - k) * (1 - k)
+else if filterType == "Butter"
+    c0 = k * k / 4
+    b1 = 2.0
+    b2 = 1.0
+    a1 = 2 * (1 - k)
+    a2 = -(1 - k) * (1 - k)
+else if filterType == "Smooth"
+    c0 = k * k / 4
+    b1 = 2.0
+    b2 = 1.0
+else if filterType == "HP"
+    c0 = 1 - k / 2
+    b1 = -1.0
+    a1 = 1 - k
+else if filterType == "2PHP"
+    c0 = (1 - k / 2) * (1 - k / 2)
+    b1 = -2.0
+    b2 = 1.0
+    a1 = 2 * (1 - k)
+    a2 = -(1 - k) * (1 - k)
+else if filterType == "BP"
+    c0 = (1 - k) / 2
+    b2 = -1.0
+    a1 = beta1 * (1 + k)
+    a2 = -k
+else if filterType == "BS"
+    c0 = (1 + k) / 2
+    b1 = -2 * beta1
+    b2 = 1.0
+    a1 = beta1 * (1 + k)
+    a2 = -k
+
+// Every read of the past counts a missing bar as zero, so the recursion
+// answers from the first bar.
+var r1 = 0.0
+var r2 = 0.0
+p0 = orElse(close, 0)
+sak = filterType == "SMA" ? c1 * p0 + a1 * r1 - c1 * orElse(close[n], 0) : c0 * (b0 * p0 + b1 * orElse(close[1], 0) + b2 * orElse(close[2], 0)) + a1 * r1 + a2 * r2
+r2 = r1
+r1 = orElse(sak, 0)
+
+plot(sak, "SAK", #ffeb3b, width = 2)
+level(0, "Zero", #787b86, style = "dashed")

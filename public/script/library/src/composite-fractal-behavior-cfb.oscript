@@ -1,0 +1,146 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © openalgo
+// Original work (c) mihakralj, MIT License
+
+version 1
+study("Composite Fractal Behavior (CFB)", precision = 0)
+
+source = input("hlcc4", "Source", options = ["hlcc4", "close", "open", "high", "low", "hl2", "hlc3", "ohlc4"], tooltip = "The price each bar contributes. hlcc4 is the average of high, low and the close counted twice.")
+depth = input(10, "CFB Depth", min = 1, max = 10, step = 1)
+length = input(8, "Smooth Length", min = 1, max = 5000, step = 1)
+jmaPeriod = input(5, "JMA Period", min = 1, max = 5000, step = 1)
+jmaPhase = input(0, "JMA Phase", min = -100, max = 100, step = 1)
+
+price = source == "close" ? close : source == "open" ? open : source == "high" ? high : source == "low" ? low : source == "hl2" ? hl2 : source == "hlc3" ? hlc3 : source == "ohlc4" ? ohlc4 : hlcc4
+// A missing price is counted as zero.
+s = orElse(price, 0)
+
+depthUsed = min(10, max(1, floor(depth)))
+phaseUsed = min(100, max(-100, floor(jmaPhase)))
+numDepths = depthUsed * 2
+// The deepest bar the measurement ever reaches back to.
+maxSize = trunc(2 + pow(2, depthUsed - 1) * depthUsed * 2)
+smoothWeight = 2 / (length + 1)
+
+// The ladder of lookbacks: 2, 3, 4, 6, 8, 12, 16, 24 and so on, each pair of
+// steps doubling the spacing. Each rung carries its own smoothed reading.
+var periods: array<number> = []
+var smoothedRungs: array<number> = []
+var weightedRungs: array<number> = []
+if size(periods) == 0
+    cumSum = 2
+    for d = 0 to numDepths - 1
+        push(periods, cumSum)
+        push(smoothedRungs, 0.0)
+        push(weightedRungs, 0.0)
+        cumSum += pow(2, floor(d / 2))
+
+pushed = bar.index + 1
+filled = min(pushed, maxSize)
+
+// For every rung, set how far the current value sits from the earlier values in
+// the window against the path between them: each step's absolute change is
+// weighted by its distance from the newest bar, so the older steps weigh more.
+// A straight run scores higher than a window price chops back and forth across.
+for d = 0 to numDepths - 1
+    rung = element(periods, d)
+    span = min(rung, filled - 1)
+    aux = 0.0
+    if span > 0
+        sumWeighted = 0.0
+        sumLevel = 0.0
+        for i = 0 to span - 1
+            val1 = s[span - 1 - i]
+            // The last pair joins the current value with the value maxSize - 1
+            // bars back, the oldest one kept, or with zero until the chart has
+            // maxSize bars. Paired with zero, the whole price level enters both
+            // sums, which holds every rung's score close to its length factor.
+            val2 = i < span - 1 ? s[span - 2 - i] : pushed >= maxSize ? s[maxSize - 1] : 0
+            sumWeighted += abs(val1 - val2) * (span - i)
+            sumLevel += val2
+        levelCompare = abs(span * s - sumLevel)
+        ratio = sumWeighted > 0 ? levelCompare / sumWeighted : 0
+        aux = ratio * ((span + 1) / (rung + 1))
+    set(smoothedRungs, d, smoothWeight * aux + (1 - smoothWeight) * element(smoothedRungs, d))
+
+// Each rung's share is what the shorter rungs on the same side left over.
+factorA = 1.0
+factorB = 1.0
+for d = 0 to numDepths - 1
+    smoothVal = element(smoothedRungs, d)
+    if d % 2 == 0
+        set(weightedRungs, d, factorB * smoothVal)
+        factorB = factorB * (1 - smoothVal)
+    else
+        set(weightedRungs, d, factorA * smoothVal)
+        factorA = factorA * (1 - smoothVal)
+
+// The blended cycle length is the rung lengths averaged with squared weights.
+sumSq = 0.0
+sumWeightedSq = 0.0
+for d = 0 to numDepths - 1
+    wv = element(weightedRungs, d)
+    sumSq += wv * wv
+    sumWeightedSq += wv * wv * element(periods, d)
+blended = sumSq > 0 ? sumWeightedSq / sumSq : 0
+rawCfb = max(1, blended)
+
+// An adaptive moving average with a phase setting. It tracks how far the input
+// jumps outside a pair of trailing bands, compares that jump with its own
+// recent average, and uses the ratio to set how quickly a two-stage filter
+// follows the input. A bar with no input answers the last value.
+fn jma(x, period, phase) =>
+    power = 0.45
+    phaseRatio = min(max(phase * 0.01 + 1.5, 0.5), 2.5)
+    betaK = power * (period - 1) / (power * (period - 1) + 2)
+    rootHalf = sqrt(0.5 * (period - 1))
+    // A period of 1 makes the square root zero, whose logarithm is minus
+    // infinity, so the band length clamps to zero.
+    len1 = rootHalf > 0 ? max(log(rootHalf) / log(2) + 2, 0) : 0
+    pow1 = max(len1 - 2, 0.5)
+    len2 = rootHalf * len1
+    voltyWeight = 2 / (max(4 * period, 65) + 1)
+    voltyDiv = 1 / (10 + 10 * min(max(period - 10, 0), 100) / 100)
+    rvoltyCap = pow(len1, 1 / pow1)
+    var upperBand = none
+    var lowerBand = none
+    var ma1 = none
+    var jmaValue = none
+    var vSum = 0.0
+    var det0 = 0.0
+    var det1 = 0.0
+    var avgVolty = none
+    var ring: array<number> = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+    if not isNone(x)
+        del1 = x - orElse(upperBand, x)
+        del2 = x - orElse(lowerBand, x)
+        volty = abs(del1) == abs(del2) ? 0 : max(abs(del1), abs(del2))
+        // The ring holds the last eleven jumps, newest first.
+        unshift(ring, volty)
+        pop(ring)
+        vSum = vSum + (volty - element(ring, 10)) * voltyDiv
+        avgVolty = isNone(avgVolty) ? vSum : avgVolty + voltyWeight * (vSum - avgVolty)
+        jumpRatio = avgVolty > 0 ? volty / avgVolty : 1
+        rvolty = min(max(jumpRatio, 1), rvoltyCap)
+        pow2 = pow(rvolty, pow1)
+        kv = pow(len2 / (len2 + 1), sqrt(pow2))
+        upperBand = del1 > 0 ? x : x - kv * del1
+        lowerBand = del2 < 0 ? x : x - kv * del2
+        a = pow(betaK, pow2)
+        prevMa1 = orElse(ma1, x)
+        ma1 = x + a * (prevMa1 - x)
+        det0 = (x - ma1) * (1 - betaK) + betaK * det0
+        ma2 = ma1 + phaseRatio * det0
+        prevJma = orElse(jmaValue, x)
+        det1 = (ma2 - prevJma) * (1 - a) * (1 - a) + a * a * det1
+        jmaValue = prevJma + det1
+    jmaValue
+
+periodUsed = max(1, floor(jmaPeriod))
+smoothedOnce = jma(rawCfb, periodUsed, phaseUsed)
+smoothedTwice = jma(smoothedOnce, periodUsed, phaseUsed)
+
+// The reading is a whole number of bars, never below one.
+cfbValue = isNone(smoothedTwice) ? none : max(1, ceil(smoothedTwice))
+
+plot(cfbValue, "CFB", #ffeb3b, width = 2)

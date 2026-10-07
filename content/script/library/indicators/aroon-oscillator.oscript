@@ -1,0 +1,33 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © openalgo
+// Original work (c) mihakralj, MIT License
+
+version 1
+study("Aroon Oscillator", precision = 2)
+
+period = input(25, "Period", min = 1, max = 5000, step = 1, tooltip = "Number of bars used in the calculation")
+
+// How many bars back the window's high and low were set, 0 for this bar.
+barsSinceHigh = highestBars(high, period)
+barsSinceLow = lowestBars(low, period)
+aroonUp = 100 * (period - barsSinceHigh) / period
+aroonDown = 100 * (period - barsSinceLow) / period
+oscillator = aroonUp - aroonDown
+
+plot(oscillator, "Aroon Oscillator", #ffeb3b, width = 2)
+level(0, "Zero Line", #787b86, style = "dashed")
+level(50, "Upper Level", #787b86, style = "dashed")
+level(-50, "Lower Level", #787b86, style = "dashed")
+
+// Green behind the bars while the oscillator is above zero, red otherwise.
+// Warmup bars are left unshaded.
+background(isNone(oscillator) ? none : oscillator > 0 ? fade(#4caf50, 90) : fade(#ff5252, 90))
+
+if crossUp(oscillator, 0)
+    alert("Aroon Oscillator crossed above zero", id = "bullish-crossover", title = "Bullish Crossover")
+if crossDown(oscillator, 0)
+    alert("Aroon Oscillator crossed below zero", id = "bearish-crossover", title = "Bearish Crossover")
+if oscillator > 70
+    alert("Strong uptrend detected (Oscillator > 70)", id = "strong-uptrend", title = "Strong Uptrend")
+if oscillator < -70
+    alert("Strong downtrend detected (Oscillator < -70)", id = "strong-downtrend", title = "Strong Downtrend")

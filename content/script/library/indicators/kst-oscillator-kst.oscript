@@ -1,0 +1,51 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © openalgo
+// Original work (c) mihakralj, MIT License
+
+version 1
+study("KST Oscillator (KST)", precision = 2)
+
+source = input(close, "Source")
+r1 = input(10, "ROC Period 1", min = 1, max = 500, step = 1, tooltip = "Shortest ROC lookback.")
+r2 = input(15, "ROC Period 2", min = 1, max = 500, step = 1)
+r3 = input(20, "ROC Period 3", min = 1, max = 500, step = 1)
+r4 = input(30, "ROC Period 4", min = 1, max = 500, step = 1, tooltip = "Longest ROC lookback.")
+s1 = input(10, "SMA Smooth 1", min = 1, max = 500, step = 1)
+s2 = input(10, "SMA Smooth 2", min = 1, max = 500, step = 1)
+s3 = input(10, "SMA Smooth 3", min = 1, max = 500, step = 1)
+s4 = input(15, "SMA Smooth 4", min = 1, max = 500, step = 1)
+signalPeriod = input(9, "Signal Period", min = 1, max = 500, step = 1, tooltip = "SMA period for the signal line.")
+
+// Percentage rate of change. A missing value reads as zero, and so the rate
+// reads zero until the lookback exists.
+fn rocOf(src, len) =>
+    cur = orElse(src, 0)
+    prev = orElse(src[len], 0)
+    prev != 0 ? 100 * (cur - prev) / prev : 0
+
+// A simple average that starts on the first bar: until len values have
+// arrived it averages every value so far.
+fn growingMean(x, len) =>
+    var total = 0.0
+    cur = orElse(x, 0)
+    if bar.index >= len
+        total = total - orElse(x[len], 0)
+    total = total + cur
+    total / max(1, min(bar.index + 1, len))
+
+roc1 = rocOf(source, r1)
+roc2 = rocOf(source, r2)
+roc3 = rocOf(source, r3)
+roc4 = rocOf(source, r4)
+sm1 = growingMean(roc1, s1)
+sm2 = growingMean(roc2, s2)
+sm3 = growingMean(roc3, s3)
+sm4 = growingMean(roc4, s4)
+
+// Four smoothed rates, weighted 1, 2, 3 and 4 from the shortest lookback.
+kst = 1 * sm1 + 2 * sm2 + 3 * sm3 + 4 * sm4
+signalLine = growingMean(kst, signalPeriod)
+
+plot(kst, "KST", #ffeb3b, width = 2)
+plot(signalLine, "Signal", #00bcd4, width = 1)
+level(0, "Zero", #787b86, style = "dashed")

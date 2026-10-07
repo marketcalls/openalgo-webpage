@@ -1,0 +1,67 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © openalgo
+// Original work (c) mihakralj, MIT License
+
+version 1
+study("Entropy (ENTROPY)", precision = 4)
+
+source = input(close, "Source")
+length = input(14, "Length", min = 1, max = 1000, step = 1)
+
+// The range and the count are carried from bar to bar rather than reset for
+// each window: the extremes become the range of every value seen so far, and
+// the count grows with every value scanned, which takes the number of bins
+// to its ceiling of 100 within the first few dozen bars. The reading is the
+// spread of the recent window measured against that whole range.
+var validMin = none
+var validMax = none
+var validCount = 0
+var normalizedEntropy = none
+
+for k = 0 to length - 1
+    v = source[k]
+    if not isNone(v)
+        if isNone(validMin)
+            validMin = v
+            validMax = v
+        else
+            validMin = min(validMin, v)
+            validMax = max(validMax, v)
+        validCount += 1
+
+if validCount < 2
+    normalizedEntropy = none
+else
+    valueRange = validMax - validMin
+    if valueRange <= 1e-10
+        normalizedEntropy = 0
+    else
+        // Drop each value of the window into one of `bins` equal slices of the
+        // range and count the slices.
+        bins = min(max(validCount, 2), 100)
+        freq = []
+        for i = 0 to bins - 1
+            push(freq, 0)
+        points = 0
+        for k = 0 to length - 1
+            v = source[k]
+            if not isNone(v)
+                normalised = (v - validMin) / valueRange
+                bucket = floor(min(max(normalised, 0), 1 - 1e-10) * bins)
+                slot = max(0, min(bucket, bins - 1))
+                set(freq, slot, element(freq, slot) + 1)
+                points += 1
+        // Shannon entropy of the slice counts over the entropy of a flat
+        // spread across every slice, so the reading runs from 0 to 1. A window
+        // with no values keeps the previous reading.
+        if points > 0
+            entropySum = 0.0
+            for i = 0 to bins - 1
+                c = element(freq, i)
+                if c > 0
+                    p = c / points
+                    entropySum += -p * log(p)
+            maxEntropy = log(bins)
+            normalizedEntropy = maxEntropy > 1e-10 ? entropySum / maxEntropy : 0
+
+plot(normalizedEntropy, "Entropy", #ffeb3b, width = 2)

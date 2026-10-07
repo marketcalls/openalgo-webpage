@@ -1,0 +1,42 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © openalgo
+// Original work (c) mihakralj, MIT License
+
+version 1
+study("Linear Regression (LINREG)", precision = 2)
+
+period = input(14, "Period", min = 2, max = 5000, step = 1)
+source = input(close, "Source")
+
+// The last `period` values, oldest first. A missing value is replaced by the
+// last value that was present.
+var window: array<number> = []
+var lastValid = none
+current = isNone(source) ? lastValid : source
+if not isNone(current)
+    lastValid = current
+    push(window, current)
+    if size(window) > period
+        shift(window)
+
+// Fit a least squares line through the window, with x running 0, 1, 2 and so
+// on from the oldest value, and read it at the newest point. The window
+// expands from two values, so the first reading lands on the second bar.
+n = size(window)
+linregValue = none
+if n >= 2
+    sumY = 0.0
+    sumXY = 0.0
+    for k = 0 to n - 1
+        y = element(window, k)
+        sumY += y
+        sumXY += k * y
+    sumX = 0.5 * (n - 1) * n
+    sumX2 = (n - 1) * n * (2 * n - 1) / 6
+    denom = n * sumX2 - sumX * sumX
+    if denom != 0
+        slopeValue = (n * sumXY - sumX * sumY) / denom
+        intercept = sumY / n - slopeValue * ((n - 1) / 2)
+        linregValue = intercept + slopeValue * (n - 1)
+
+plot(linregValue, "LinReg", #ffeb3b, width = 2)

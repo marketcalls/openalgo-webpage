@@ -1,0 +1,28 @@
+{
+  "title": "Hull Exponential Moving Average (HEMA)",
+  "summary": "A low-lag average that combines a fast and a slow exponential average with logarithmic weights and smooths the result once more.",
+  "description": "HEMA applies the lag-cancelling idea of the Hull average to exponential averages instead of weighted windows. A slow average uses the weight `3 / (2 * period - 1)`, and a fast average gets a weight derived from the slow one through a logarithmic ratio, `ln(2) / (1 + ln(2))`.\n\nThe two are blended so that the slow average's lag is subtracted from the fast one, which gives a de-lagged series. That series is then smoothed by a third exponential average whose weight comes from half the square root of the period, which removes most of the noise the blend introduced.\n\nAll three averages start from zero and are scaled by `1 / (1 - decay)` on the early bars, so the line follows price from the first bar. A period of 1 makes the slow weight 3, whose logarithm does not exist, so nothing is drawn at that setting.",
+  "howToRead": "HEMA is a fast trend line: it turns close to where price turns, with smooth curves rather than the stepped turns of a windowed Hull average. Price holding above a rising HEMA reads as an uptrend, and the line turning down is an early warning that the move is fading.\n\nThe lag cancellation that makes it fast also makes it overshoot after sharp moves, so a single bar crossing the line is weak evidence. Raise the period on noisy charts.",
+  "settings": [
+    {
+      "key": "period",
+      "label": "Period",
+      "description": "Sets the slow, fast and final smoothing weights. A longer period gives a smoother line that turns later."
+    },
+    {
+      "key": "source",
+      "label": "Source",
+      "description": "The price series the average follows. Close is the usual choice; hl2 or another blend smooths out closes that jump around."
+    }
+  ],
+  "faq": [
+    {
+      "q": "Why is nothing drawn with a period of 1?",
+      "a": "The slow weight becomes 3, and the logarithm of `1 - 3` does not exist, so the whole calculation has no value. Use a period of 2 or more."
+    },
+    {
+      "q": "How does it differ from the Hull Moving Average?",
+      "a": "The Hull average uses weighted moving windows. HEMA uses exponential averages throughout, so it responds from the first bar and turns without the small steps a windowed average shows."
+    }
+  ]
+}

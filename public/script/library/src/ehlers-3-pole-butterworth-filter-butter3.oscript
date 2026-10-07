@@ -1,0 +1,43 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © openalgo
+// Original work (c) mihakralj, MIT License
+
+version 1
+study("Ehlers 3-Pole Butterworth Filter (BUTTER3)", overlay = true, precision = 2)
+
+length = input(20, "Length", min = 2, max = 5000, step = 1)
+source = input(close, "Source")
+
+// Coefficients of a third-order Butterworth lowpass for this cutoff period.
+p = max(2, floor(length))
+a1 = exp(-math.pi / p)
+b1 = 2 * a1 * math.cos(sqrt(3) * math.pi / p)
+c1 = a1 * a1
+coef2 = b1 + c1
+coef3 = -(c1 + b1 * c1)
+coef4 = c1 * c1
+coef1 = ((1 - b1 + c1) * (1 - c1)) / 8
+
+// A missing price falls back to the newer one beside it.
+ssrc = orElse(source, source[1])
+src1 = orElse(source[1], ssrc)
+src2 = orElse(source[2], src1)
+src3 = orElse(source[3], src2)
+
+// The last three outputs, carried by hand.
+var out1 = none
+var out2 = none
+var out3 = none
+filt1 = orElse(out1, src1)
+filt2 = orElse(out2, src2)
+filt3 = orElse(out3, src3)
+
+// The first four bars seed the recursion with the price itself.
+butter = isNone(ssrc) ? none : bar.index < 4 ? ssrc : coef1 * (ssrc + 3 * src1 + 3 * src2 + src3) + coef2 * filt1 + coef3 * filt2 + coef4 * filt3
+
+// The outputs move along every bar, a missing one included.
+out3 = out2
+out2 = out1
+out1 = butter
+
+plot(butter, "Butterworth 3-Pole", #ffeb3b, width = 2)

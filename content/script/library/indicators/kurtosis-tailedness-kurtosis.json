@@ -1,0 +1,15 @@
+{
+  "title": "Kurtosis, tailedness (KURTOSIS)",
+  "summary": "Excess kurtosis of the last N values: above zero when the window has fatter tails and a sharper peak than a normal distribution.",
+  "description": "Kurtosis measures how much of a window's spread comes from a few values far from the mean rather than from many values near it. This study reports excess kurtosis, which is the fourth central moment divided by the squared variance, minus 3. A normal distribution reads 0, a window with fatter tails reads above 0, and a flatter, more even window reads below 0.\n\nThe study keeps running sums of the values and of their squares, cubes and fourth powers over the last `period` bars, adding the value entering and removing the value leaving. From those sums it forms the mean, the variance and the fourth central moment. It waits until the window holds at least four values, and a window with no spread at all reads 0.\n\nMissing values are left out of the sums, so the window holds fewer points rather than breaking.",
+  "howToRead": "A reading well above zero means the window has had a few unusually large moves relative to its typical spread, which is what traders call fat tails. A reading near or below zero means the values are spread more evenly, with no outliers standing out. A spike often marks the bar where a sudden jump entered the window, and it drops again when that bar leaves.\n\nThe measure is noisy on short windows, because a single value can dominate the fourth power. It describes the shape of the window, not the direction of the trend.",
+  "settings": [
+    { "key": "period", "label": "Period", "description": "How many bars the window covers. At least four are needed. A longer window gives a steadier reading." },
+    { "key": "source", "label": "Source", "description": "The series whose distribution is measured, such as the close." }
+  ],
+  "faq": [
+    { "q": "Why can the value be negative?", "a": "This is excess kurtosis, with 3 subtracted so that a normal distribution reads 0. A window flatter than normal, with no outliers, reads below 0." },
+    { "q": "Why does it jump and then fall back?", "a": "A single large value raises the fourth moment sharply while it is in the window. Once it slides out of the window, the reading drops." },
+    { "q": "Why are the first few bars empty?", "a": "A kurtosis needs at least four values. The study waits for four before it draws." }
+  ]
+}

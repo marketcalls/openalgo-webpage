@@ -1,0 +1,15 @@
+{
+  "title": "Elliptic 2nd Order Filter (ELLIPTIC)",
+  "summary": "A two-pole, two-zero elliptic lowpass on price with a notch just past the cutoff, removing fast noise sharply for a second-order filter.",
+  "description": "The Elliptic 2nd Order Filter is a biquad lowpass: each value combines the current and two previous prices with the filter's own two previous values. Its design allows 1 dB of ripple in the passband and requires 40 dB of rejection in the stopband. In exchange for that small ripple, its two zeros put a notch just above the cutoff frequency, so the line drops fast noise more steeply than a Butterworth filter of the same order.\n\nThe cutoff is set by `Length`. The study pre-warps the cutoff with `tan(pi / Length)`, scales a fixed normalised prototype to it and converts the result into the five coefficients of the difference equation. The input coefficients are normalised so a flat price passes through unchanged.\n\nThe first two bars plot the price itself and seed the recursion.",
+  "howToRead": "Read the line as a smoothed price. Its slope shows the direction of the trend at the scale of `Length`, and a turn in the line marks a turn in the swing. The notch removes most of the short wiggles just past the cutoff, so the line shows fewer small false turns than a simple average of similar lag.\n\nThe price of the sharp cutoff is a little passband ripple: after a sudden move the line can wobble slightly or overshoot before settling. Like any lowpass filter it lags; a larger `Length` smooths more and turns later.",
+  "settings": [
+    { "key": "length", "label": "Length", "description": "The cutoff period in bars. Swings shorter than this are removed; larger values smooth more and lag more." },
+    { "key": "source", "label": "Source", "description": "The price series the filter smooths, the close by default." }
+  ],
+  "faq": [
+    { "q": "What do Rp=1 and Rs=40 in the line title mean?", "a": "The design allows 1 dB of ripple in the passband and gives at least 40 dB of rejection in the stopband." },
+    { "q": "Why choose an elliptic filter over a Butterworth?", "a": "For the same order it cuts off more steeply, thanks to the notch past the cutoff. The trade-off is slight ripple and overshoot." },
+    { "q": "Why does the line equal price on the first two bars?", "a": "The recursion needs two previous outputs. The first two bars use the price as those seeds." }
+  ]
+}

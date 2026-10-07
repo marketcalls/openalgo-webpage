@@ -1,0 +1,80 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © openalgo
+// Original work (c) mihakralj, MIT License
+
+version 1
+study("Schaff Trend Cycle (STC)", precision = 2)
+
+source = input(close, "Source")
+cycleLength = input(12, "Cycle Length", min = 2, max = 5000, step = 1)
+fastLength = input(26, "Fast Length", min = 2, max = 5000, step = 1)
+slowLength = input(50, "Slow Length", min = 2, max = 5000, step = 1)
+smoothingType = input(2, "Smoothing", min = 0, max = 3, step = 1, tooltip = "0: none, 1: ema, 2: sigmoid, 3: digital")
+
+// An exponential mean with weight 2 / len. The first value is passed through
+// and the accumulator starts at zero; from then on it is divided by the weight
+// still owed to that zero seed until the correction stops mattering. An absent
+// value leaves the mean where it was.
+fn biasCorrectedEma(src, len) =>
+    a = 2 / max(len, 1)
+    var rawEma = none
+    var emaValue = none
+    var e = 1.0
+    var warmup = true
+    if not isNone(src)
+        if isNone(rawEma)
+            rawEma = 0.0
+            emaValue = src
+        else
+            rawEma = a * (src - rawEma) + rawEma
+            if warmup
+                e *= 1 - a
+                emaValue = rawEma / (1 - e)
+                if e <= 1e-10
+                    warmup = false
+            else
+                emaValue = rawEma
+    emaValue
+
+// The highest or lowest value over the last len bars, skipping any bar with
+// no value. It has no value until len bars exist, or while every bar in the
+// window is empty.
+fn windowExtreme(src, len, wantHigh) =>
+    result = none
+    if bar.index >= len - 1
+        for k = 0 to len - 1
+            v = src[k]
+            if not isNone(v)
+                if isNone(result)
+                    result = v
+                else if wantHigh ? v > result : v < result
+                    result = v
+    result
+
+fastEma = biasCorrectedEma(source, fastLength)
+slowEma = biasCorrectedEma(source, slowLength)
+macdLine = fastEma - slowEma
+
+// First stochastic, of the MACD line over the cycle. It reads 0 until the
+// window is full and wherever the window is flat.
+h1 = windowExtreme(macdLine, cycleLength, true)
+l1 = windowExtreme(macdLine, cycleLength, false)
+span1 = h1 - l1
+stoch1Raw = not isNone(span1) and not isNone(macdLine) and span1 > 0 ? 100 * (macdLine - l1) / span1 : 0
+stoch1 = biasCorrectedEma(stoch1Raw, 3)
+
+// Second stochastic, of the smoothed first one.
+h2 = windowExtreme(stoch1, cycleLength, true)
+l2 = windowExtreme(stoch1, cycleLength, false)
+span2 = h2 - l2
+stoch2 = not isNone(span2) and not isNone(stoch1) and span2 > 0 ? 100 * (stoch1 - l2) / span2 : 0
+
+// The four finishing choices, each computed on every bar.
+emaFinish = biasCorrectedEma(stoch2, 3)
+sigmoidFinish = 100 / (1 + exp(-0.1 * (stoch2 - 50)))
+var digitalFinish = none
+digitalFinish = stoch2 > 75 ? 100 : stoch2 < 25 ? 0 : digitalFinish
+
+stc = smoothingType == 1 ? emaFinish : smoothingType == 2 ? sigmoidFinish : smoothingType == 3 ? digitalFinish : stoch2
+
+plot(stc, "STC", #ffeb3b, width = 2)

@@ -1,0 +1,17 @@
+{
+  "title": "Qstick Indicator",
+  "summary": "A moving average of the candle body, close minus open, that reads whether bars have been closing above or below where they opened.",
+  "description": "Qstick averages the body of each candle: the close minus the open. A positive body means the bar closed above its open, a negative body that it closed below. Averaging those bodies shows whether buying or selling has dominated within the bars over the recent past.\n\nTwo averages are offered. The simple form starts on the first bar as a mean of every body seen so far and becomes a rolling mean of the last length bars once that many have arrived. The exponential form starts its recursion at zero on the first bar, so its earliest readings are pulled toward zero before they settle.\n\nThe pane is shaded green behind bars where the reading is above zero and red where it is at or below zero, and a dashed line marks zero.",
+  "howToRead": "Above zero, candles have on balance been closing higher than they opened, which points to buying pressure inside the bars. Below zero, the reverse. A cross of the zero line, which flips the background colour, marks a change in which side has controlled the bars.\n\nQstick looks only at the body of each bar and ignores gaps between bars, so a market that gaps up and then drifts lower within each bar can read negative while price rises. A longer length smooths out single large candles; the exponential form reacts faster than the simple one.",
+  "settings": [
+    { "key": "length", "label": "Length", "description": "How many bars the average covers. A longer length gives a smoother line that crosses zero less often." },
+    { "key": "maType", "label": "MA Type", "description": "Chooses a simple mean of the bodies or an exponential one. The exponential form weights recent bars more and starts from zero." },
+    { "key": "sourceClose", "label": "Close Source", "description": "The series used as the close of each body. Changing it measures a different part of the bar." },
+    { "key": "sourceOpen", "label": "Open Source", "description": "The series used as the open of each body, subtracted from the close source on every bar." }
+  ],
+  "faq": [
+    { "q": "Why does the line start on the first bar?", "a": "The simple form averages however many bodies it has until it holds a full window, and the exponential form starts from zero, so both answer from the first bar." },
+    { "q": "What does the background colour show?", "a": "Green behind bars where the reading is above zero and red where it is zero or below, so the side in control is visible without reading the scale." },
+    { "q": "Why does Qstick disagree with the price trend sometimes?", "a": "It measures only close minus open inside each bar. Gaps between bars are left out, so a rising market built on opening gaps can still show a negative reading." }
+  ]
+}

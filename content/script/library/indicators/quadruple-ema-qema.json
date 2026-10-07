@@ -1,0 +1,15 @@
+{
+  "title": "Quadruple EMA (QEMA)",
+  "summary": "Four chained exponential stages with rising smoothing factors, combined 4, -6, 4, -1 to cancel most of the lag of an ordinary EMA.",
+  "description": "QEMA chains four exponential averages and combines them to remove lag. The first stage uses the usual smoothing factor, two over the period plus one. Each later stage is faster than the one before it by the cube root of one over the first factor, so the fourth factor lands on one and that stage follows its input. The output is four times the first stage, minus six times the second, plus four times the third, minus the fourth.\n\nEvery stage starts at zero. During warmup each one is divided by its own correction, one minus its beta raised to the number of bars seen, which removes the pull toward zero and puts the first value on the source. Once the first stage's beta raised to the bars seen falls below 1e-10, all corrections are dropped and the stages run as plain recursions. Bars with a missing source leave a gap and do not move the stages.",
+  "howToRead": "QEMA is a fast trend line: it follows price more tightly than an EMA of the same period and turns sooner after a reversal. Price above a rising QEMA describes an uptrend and price below a falling one a downtrend.\n\nBecause the combination extrapolates, QEMA can overshoot price after a sharp move and can whip back and forth in a sideways market. Use a longer period when the line is too nervous for the timeframe, and treat a single turn as a hint rather than a confirmed change of trend.",
+  "settings": [
+    { "key": "source", "label": "Source", "description": "The price series that is averaged, the close by default." },
+    { "key": "period", "label": "Period", "description": "Sets the first stage's smoothing factor, from which the other three are derived. A larger period gives a smoother line." }
+  ],
+  "faq": [
+    { "q": "Why are the four smoothing factors different?", "a": "Each stage is faster than the one before by the same ratio, the cube root of one over the first factor. That spacing lets the 4, -6, 4, -1 combination cancel most of the lag." },
+    { "q": "How does it compare with TEMA?", "a": "TEMA combines three stages that share one factor. QEMA adds a fourth stage and spaces the factors, which removes more lag but makes the line more prone to overshoot." },
+    { "q": "Why does the line start on the first bar?", "a": "Each stage is divided by a warmup correction that removes the effect of starting at zero, so the first value equals the source." }
+  ]
+}

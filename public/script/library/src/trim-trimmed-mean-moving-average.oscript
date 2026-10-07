@@ -1,0 +1,30 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © openalgo
+// Original work (c) mihakralj, MIT License
+
+version 1
+study("TRIM: Trimmed Mean Moving Average", overlay = true, precision = 2)
+
+period = input(20, "Period", min = 3, max = 5000, step = 1)
+trimPct = input(10, "Trim %", min = 0, max = 49, step = 1, tooltip = "Percentage trimmed from each tail. 0=SMA, 50=Median")
+
+// How many values are dropped from each end of the sorted window, and how many
+// of the middle values are averaged.
+trimCount = max(floor(period * trimPct / 100), 0)
+keepCount = period - 2 * trimCount
+if keepCount < 1
+    keepCount = 1
+    trimCount = floor((period - 1) / 2)
+
+// The window reads closes before the start of history as zero, so the line
+// answers from the first bar.
+window = [orElse(close, 0)]
+for k = 1 to period - 1
+    push(window, orElse(close[k], 0))
+sort(window, "asc")
+
+total = 0.0
+for k = trimCount to trimCount + keepCount - 1
+    total += element(window, k)
+
+plot(total / keepCount, "TRIM", #ffeb3b, width = 2)

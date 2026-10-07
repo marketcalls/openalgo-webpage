@@ -1,0 +1,32 @@
+{
+  "title": "TRIM: Trimmed Mean Moving Average",
+  "summary": "Sorts the last N closes, drops a set percentage from each end and averages the middle, so single spikes cannot drag the line.",
+  "description": "The trimmed mean takes the closes in the lookback window, sorts them from lowest to highest, discards the lowest and highest trim percent, and averages what is left. The number dropped from each end is the period times the trim percentage, rounded down, so with a period of 20 and a trim of 10 percent the two lowest and two highest closes are thrown away and the middle sixteen are averaged.\n\nA trim of 0 keeps every value and gives a plain simple average. As the trim grows toward 49 percent, fewer middle values remain and the line moves toward the median. Closes before the start of the chart are read as zero, so the line is drawn from the first bar and climbs to price over the first period of bars; read it from the point where a full window of real closes is available.",
+  "howToRead": "Read the line like a moving average that ignores outliers. A single wick or one wild close moves a simple average, but here it lands in the trimmed tail and is discarded, so the line holds its course. Price crossing the line, or the line turning, carries the same meaning as with any moving average, with fewer false turns caused by one bar.\n\nThe cost is that a genuine sharp move takes longer to register, because its first bars are treated as outliers. Ignore the first period of bars, where the zero padding pulls the line below price.",
+  "settings": [
+    {
+      "key": "period",
+      "label": "Period",
+      "description": "How many closes the window holds. A longer period gives a smoother, slower line."
+    },
+    {
+      "key": "trimPct",
+      "label": "Trim %",
+      "description": "The share of values dropped from each end of the sorted window. 0 gives a simple average; higher values move the line toward the median."
+    }
+  ],
+  "faq": [
+    {
+      "q": "Why does the line start near zero?",
+      "a": "Before a full window of closes exists, the missing values are read as zero and sorted into the low end of the window. Once no more zeros remain than the number trimmed from each end, they are all discarded and the line averages real closes only; with the defaults (period 20, trim 10) that is from the 18th bar."
+    },
+    {
+      "q": "What trim makes it a median?",
+      "a": "As the trim approaches 49 percent only the central one or two values remain, which is close to the median of the window. The setting stops at 49 so at least one value is always kept."
+    },
+    {
+      "q": "How is this different from the winsorized mean?",
+      "a": "The trimmed mean throws the extreme values away and averages fewer values. The winsorized mean keeps every slot but replaces the extremes with the boundary value, so it still averages the full window."
+    }
+  ]
+}

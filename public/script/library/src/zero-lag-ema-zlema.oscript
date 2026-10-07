@@ -1,0 +1,35 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © openalgo
+// Original work (c) mihakralj, MIT License
+
+version 1
+study("Zero-Lag EMA (ZLEMA)", overlay = true, precision = 2)
+
+period = input(10, "Period", min = 1, max = 5000, step = 1)
+source = input(close, "Source")
+
+emaWeight = 2 / (period + 1)
+beta = 1 - emaWeight
+// (period - 1) / 2 rounded down, and never less than one bar: 4 at period 10.
+lag = max(1, trunc((period - 1) / 2))
+
+// The de-lagged price: this price plus its change over `lag` bars. Before
+// `lag` bars exist the older price reads as 0, so the first few values start
+// near twice the price and settle within `lag` bars.
+laggedPrice = bar.index >= lag ? source[lag] : 0
+deLagged = 2 * source - laggedPrice
+
+// An exponential average of the de-lagged price started from zero. While its
+// starting weight e still matters, the average is divided by (1 - e) so the
+// first bars are not dragged toward zero.
+var zl = 0.0
+var e = 1.0
+var warmup = true
+zl = emaWeight * (deLagged - zl) + zl
+result = zl
+if warmup
+    e = e * beta
+    result = 1 - e > 0 ? zl / (1 - e) : zl
+    warmup = e > 1e-10
+
+plot(result, "ZLEMA", #ffeb3b, width = 2)

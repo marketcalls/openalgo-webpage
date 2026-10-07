@@ -1,0 +1,52 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © openalgo
+// Original work (c) mihakralj, MIT License
+
+version 1
+study("Pivot Points (DeMark)", overlay = true, precision = 2)
+
+timeframe = input("D", "Pivot Timeframe", options = ["D", "W", "M"])
+showPp = input(true, "Show Pivot Point")
+showR1 = input(true, "Show R1")
+showS1 = input(true, "Show S1")
+
+// The period each bar belongs to: its day, its Monday-start week or its month,
+// on the chart's calendar.
+periodKey = timeframe == "W" ? date.startOfWeek(time) : timeframe == "M" ? date.startOfMonth(time) : date.startOfDay(time)
+
+// The period being built, and the last completed one. The levels of every bar
+// come from the completed period, so nothing on a bar changes as it forms.
+var curKey = none
+var curOp = none
+var curHi = none
+var curLo = none
+var curCl = none
+var prevOp = none
+var prevHi = none
+var prevLo = none
+var prevCl = none
+
+if isNone(curKey) or periodKey != curKey
+    if not isNone(curKey)
+        prevOp = curOp
+        prevHi = curHi
+        prevLo = curLo
+        prevCl = curCl
+    curKey = periodKey
+    curOp = open
+    curHi = high
+    curLo = low
+    curCl = close
+else
+    curHi = max(curHi, high)
+    curLo = min(curLo, low)
+    curCl = close
+
+// The weighting follows how the previous period closed against its open: a
+// down period leans on its low, an up period on its high, a flat one on its
+// close.
+x = prevCl < prevOp ? prevHi + 2 * prevLo + prevCl : prevCl > prevOp ? 2 * prevHi + prevLo + prevCl : prevHi + prevLo + 2 * prevCl
+
+plot(showPp ? x / 4 : none, "PP", #ffeb3b, width = 2, style = "step")
+plot(showR1 ? x / 2 - prevLo : none, "R1", #ff5252, width = 1, style = "step")
+plot(showS1 ? x / 2 - prevHi : none, "S1", #4caf50, width = 1, style = "step")

@@ -1,0 +1,15 @@
+{
+  "title": "Volume Rate of Change (VROC)",
+  "summary": "How much this bar's volume differs from the volume a fixed number of bars ago, shown as a raw difference or as a percentage.",
+  "description": "Volume Rate of Change compares each bar's volume with the volume of the bar a set number of bars earlier. In Point mode it shows the plain difference, this volume minus that volume. In Percent mode it shows the difference as a percentage of the older volume, so +100 means this bar traded twice as much as the bar it is compared with.\n\nThe first bars of the chart have no bar that far back, so nothing is drawn until the period has passed. In Percent mode a bar whose comparison volume is zero is also left blank, because the percentage would be undefined.\n\nNo smoothing is applied: each value depends on exactly two bars, which makes the line responsive and also jumpy.",
+  "howToRead": "Positive values mean volume is higher than it was a period ago and negative values mean it is lower. A run of large positive readings while price breaks out shows that the break is attracting fresh activity; a breakout on negative VROC is happening on less volume than before.\n\nBecause each reading compares only two single bars, one unusual bar at either end can produce a spike. Percent mode is easier to compare across instruments and over long histories, while Point mode shows the change in the instrument's own volume units.",
+  "settings": [
+    { "key": "period", "label": "Period", "description": "How many bars back the comparison bar is. A longer period compares against volume further in the past." },
+    { "key": "calcType", "label": "Calculation Type", "description": "Point shows the plain difference in volume; Percent shows it as a percentage of the older volume." }
+  ],
+  "faq": [
+    { "q": "Why are some bars blank in Percent mode?", "a": "When the comparison bar traded no volume, the percentage cannot be computed, so that bar is left empty." },
+    { "q": "Why does the line not start on the first bar?", "a": "Each value needs the volume a full period earlier, which does not exist for the first period of bars." },
+    { "q": "Which mode should I use?", "a": "Percent mode makes readings comparable across instruments and over time. Point mode is useful when the absolute change in shares or contracts matters to you." }
+  ]
+}

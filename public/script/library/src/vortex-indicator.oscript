@@ -1,0 +1,36 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © openalgo
+// Original work (c) mihakralj, MIT License
+
+version 1
+study("Vortex Indicator", precision = 4)
+
+period = input(14, "Period", min = 1, max = 5000, step = 1)
+
+// The first bar has no previous bar: its true range is its own range, and
+// both vortex movements take that range.
+first = bar.index == 0
+tr = first ? high - low : max(high - low, max(abs(high - close[1]), abs(low - close[1])))
+vmPlus = first ? tr : abs(high - low[1])
+vmMinus = first ? tr : abs(low - high[1])
+
+// Running sums that grow over the first period bars and then drop the
+// oldest bar as each new one arrives.
+var sumVMPlus = 0.0
+var sumVMMinus = 0.0
+var sumTR = 0.0
+if bar.index >= period
+    sumVMPlus -= vmPlus[period]
+    sumVMMinus -= vmMinus[period]
+    sumTR -= tr[period]
+sumVMPlus += vmPlus
+sumVMMinus += vmMinus
+sumTR += tr
+
+// A flat window has no range to divide by, and reads zero.
+viPlus = sumTR > 0 ? sumVMPlus / sumTR : 0
+viMinus = sumTR > 0 ? sumVMMinus / sumTR : 0
+
+level(1, "Reference", #787b86, style = "dashed")
+plot(viPlus, "VI+", #4caf50, width = 2)
+plot(viMinus, "VI-", #ff5252, width = 2)

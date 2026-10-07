@@ -1,0 +1,45 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © openalgo
+// Original work (c) mihakralj, MIT License
+
+version 1
+study("Zero-Lag Double EMA (ZLDEMA)", overlay = true, precision = 2)
+
+period = input(10, "Period", min = 1, max = 5000, step = 1)
+source = input(close, "Source")
+
+emaWeight = 2 / (period + 1)
+beta = 1 - emaWeight
+// (period - 1) / 2 rounded down, and never less than one bar: 4 at period 10.
+lag = max(1, trunc((period - 1) / 2))
+
+// The de-lagged price: twice this price minus the price `lag` bars ago. Until
+// that older price exists, this price stands in for it.
+laggedPrice = bar.index >= lag ? source[lag] : source
+deLagged = 2 * source - laggedPrice
+
+// Two exponential averages in a chain, both started from zero. While the
+// starting weight e still matters, each stage is multiplied by 1 / (1 - e)
+// so the line starts on price instead of rising from zero.
+var ema1Raw = 0.0
+var ema2Raw = 0.0
+var e = 1.0
+var warmup = true
+ema1Raw = emaWeight * (deLagged - ema1Raw) + ema1Raw
+ema1 = ema1Raw
+ema2 = 0.0
+if warmup
+    e = e * beta
+    c = 1 / (1 - e)
+    ema1 = c * ema1Raw
+    ema2Raw = emaWeight * (ema1 - ema2Raw) + ema2Raw
+    ema2 = c * ema2Raw
+    warmup = e > 1e-10
+else
+    ema2Raw = emaWeight * (ema1 - ema2Raw) + ema2Raw
+    ema2 = ema2Raw
+
+// The double average with its own lag subtracted once.
+zldema = 2 * ema1 - ema2
+
+plot(zldema, "ZLDEMA", #ffeb3b, width = 2)

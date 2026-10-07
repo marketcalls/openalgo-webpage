@@ -1,0 +1,15 @@
+{
+  "title": "Ehlers 3-Pole Super Smoother Filter (SSF3)",
+  "summary": "A three-pole recursive smoother on price that removes short swings with little lag and almost no overshoot, answering from the first bar.",
+  "description": "The 3-Pole Super Smoother is a recursive lowpass filter. Each value is the current price times one coefficient plus the filter's own last three values times three more, so it needs no long window of past prices. The coefficients come from a pole radius of `exp(-pi / Length)` and an angle of `sqrt(3) * pi / Length`, and the price coefficient is chosen so all four add up to one, which keeps the line on top of a flat price.\n\nUnlike the Butterworth design it feeds only the current price into the filter, not a weighted window of recent prices. The poles are placed so the filter's own ringing cancels out, which is why the line follows price smoothly without the wiggles a simple fast average shows.\n\nWhere a previous value does not exist yet, at the start of the chart, the newest available price stands in for it, so the line begins exactly at the first price and has no warm-up gap.",
+  "howToRead": "Treat the line as the trend of price at the scale set by `Length`. A rising line means the smoothed price is going up, a falling line means it is going down, and a change in slope marks a change in the swing. Because the filter adds very little overshoot, a turn in the line is usually a real turn rather than ringing.\n\nThe line still lags price; a larger `Length` smooths more and lags more. On a sideways market it flattens out and its slope carries little information, so pair it with something that measures whether a trend is present.",
+  "settings": [
+    { "key": "length", "label": "Length", "description": "The cutoff period in bars. Larger values remove longer swings and make the line smoother and slower." },
+    { "key": "source", "label": "Source", "description": "The price series the filter smooths, the close by default." }
+  ],
+  "faq": [
+    { "q": "Why does it start on the very first bar?", "a": "Missing earlier values are filled with the newest price that exists, so the recursion can start at once. The first bar's value equals the first price." },
+    { "q": "How does it compare with a moving average of the same length?", "a": "It lags less and is smoother, because it is a recursive filter tuned to cut short cycles rather than an equal-weight average of a window." },
+    { "q": "What is the difference from the two-pole Super Smoother?", "a": "The extra pole removes short swings more steeply. The line is a little smoother and a little slower for the same length." }
+  ]
+}

@@ -1,0 +1,28 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © openalgo
+// Original work (c) mihakralj, MIT License
+
+version 1
+study("Triangular Moving Average (TRIMA)", overlay = true, precision = 2)
+
+period = input(10, "Period", min = 1, max = 5000, step = 1)
+source = input(close, "Source")
+
+// The window grows from one bar up to period bars, so the line starts on the
+// first bar. Weights rise by one from each edge toward the middle of the
+// window. A missing price is skipped, and its weight leaves the divisor too.
+p = min(bar.index + 1, period)
+mid = p - 1
+weightedTotal = 0.0
+weightTotal = 0.0
+for j = 0 to p - 1
+    price = source[j]
+    if not isNone(price)
+        w = min(j, mid - j) + 1
+        weightedTotal += price * w
+        weightTotal += w
+
+// With no price in the window the raw source stands in.
+trima = weightTotal > 0 ? weightedTotal / weightTotal : source
+
+plot(trima, "TRIMA", #ffeb3b, width = 2)

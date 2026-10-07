@@ -1,0 +1,31 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © openalgo
+// Original work (c) mihakralj, MIT License
+
+version 1
+study("Holt Exponential Moving Average (HOLT)", overlay = true, precision = 2)
+
+period = input(10, "Period", min = 1, max = 5000, step = 1)
+gamma = input(0.0, "Gamma (0 = auto)", min = 0, max = 1, step = 0.01, tooltip = "Trend smoothing factor. Left at 0 it matches alpha, which is 2 / (period + 1).")
+source = input(close, "Source")
+
+weightA = 2 / (period + 1)
+trendWeight = gamma > 0 ? gamma : weightA
+
+// The level is seeded from the first source value with a zero trend, and that
+// first bar shows the source unchanged. After that the level is smoothed
+// toward the source from the previous level carried forward by the trend,
+// and the trend is smoothed from the change in the level.
+var levelTerm = none
+var trendTerm = 0.0
+holt = source
+if isNone(levelTerm)
+    levelTerm = source
+    trendTerm = 0.0
+else
+    prevLevelTerm = levelTerm
+    levelTerm = weightA * source + (1 - weightA) * (prevLevelTerm + trendTerm)
+    trendTerm = trendWeight * (levelTerm - prevLevelTerm) + (1 - trendWeight) * trendTerm
+    holt = levelTerm + trendTerm
+
+plot(holt, "HOLT", #ffeb3b, width = 2)

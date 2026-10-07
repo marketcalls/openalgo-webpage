@@ -1,0 +1,44 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © openalgo
+// Original work (c) mihakralj, MIT License
+
+version 1
+study("LOESS Filter", overlay = true, precision = 2)
+
+length = input(7, "Length", min = 3, max = 1000, step = 1, tooltip = "Window size, rounded down to the nearest odd number.")
+source = input(close, "Source")
+
+// The window is odd so it has a centre tap.
+adjLength = max(3, length % 2 == 0 ? length - 1 : length)
+halfWindow = trunc(adjLength / 2)
+
+// A weighted least-squares line through the window. Tap i is the value i
+// bars back, placed at x = i - halfWindow, and weighted by the tricube
+// kernel (1 - |x / halfWindow|^3)^3, which is zero at both edges. Taps
+// before the first bar are skipped.
+xSum = 0.0
+xySum = 0.0
+x2Sum = 0.0
+ySum = 0.0
+weightSum = 0.0
+for i = 0 to adjLength - 1
+    price = source[i]
+    if not isNone(price)
+        x = i - halfWindow
+        w = pow(1 - pow(abs(x) / halfWindow, 3), 3)
+        xSum += x * w
+        xySum += x * price * w
+        x2Sum += x * x * w
+        ySum += price * w
+        weightSum += w
+
+// The fit read at x = 0, the centre bar of the window. Once the window is
+// full the weights are symmetric, xSum is zero and this is the weighted mean.
+// With no weight at all the bar keeps its own value, and with too few
+// weighted taps the line has no value.
+xMean = weightSum == 0 ? none : xSum / weightSum
+yMean = weightSum == 0 ? none : ySum / weightSum
+denom = weightSum == 0 ? none : x2Sum - xMean * xSum
+loess = weightSum == 0 ? source : denom == 0 ? none : (yMean * x2Sum - xMean * xySum) / denom
+
+plot(loess, "LOESS", #ffeb3b, width = 2)

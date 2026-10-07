@@ -1,0 +1,14 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © openalgo
+// Original work (c) mihakralj, MIT License
+
+version 1
+study("MARKETFI: Market Facilitation Index", precision = 8)
+
+// The bar's range per unit of volume. A bar with no volume, or none reported,
+// reads 0, the result for no market activity.
+noVolume = isNone(volume) or volume == 0
+facilitation = noVolume ? 0 : orElse(high - low, 0) / volume
+
+plot(facilitation, "MARKETFI", #2962ff, width = 2)
+level(0, "Zero", #787b86, style = "dashed")

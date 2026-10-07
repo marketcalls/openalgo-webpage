@@ -1,0 +1,15 @@
+{
+  "title": "Geometric Mean (GEOMEAN)",
+  "summary": "The geometric mean of the last N positive prices: the exponential of their average logarithm, a centre line that compounds rather than adds.",
+  "description": "The Geometric Mean takes the positive source values in the lookback window, averages their natural logarithms, and turns that average back into a price with the exponential function. Averaging logarithms treats equal percentage moves as equal steps, so a doubling and a halving cancel out, which suits a series that grows and shrinks in percentage terms.\n\nThe study keeps a running sum of logarithms and a count of the values in the window. Each bar adds the new value and takes out the value that has just left the window. A value that is missing, zero or negative is left out and does not count, so the window simply holds fewer points. The window grows from the first bar, so the line starts on bar 0 with a mean of one value and becomes a full `length` bar mean once enough bars have passed.\n\nFor any set of positive numbers the geometric mean is at or below the arithmetic mean, and a single large spike pulls it up less than it pulls a simple average.",
+  "howToRead": "Read it like a slow, steady moving average drawn on the price chart. Price above the line means the latest bars are trading above the compounded centre of the window, and price below it means the opposite. Because it gives large values less pull, it sits slightly under a simple moving average of the same length, and the gap between the two widens when the window holds a wide spread of prices.\n\nIt lags like any average over a window, and the first `length` bars are drawn from fewer values than the full window, so the start of the line is noisier.",
+  "settings": [
+    { "key": "source", "label": "Source (must be positive values)", "description": "The price series that is averaged. Bars whose value is zero or negative are left out of the window." },
+    { "key": "length", "label": "Lookback Period", "description": "How many bars the window covers. A longer window gives a smoother line that reacts more slowly." }
+  ],
+  "faq": [
+    { "q": "Why is the line below a simple moving average of the same length?", "a": "The geometric mean of positive numbers is never larger than their arithmetic mean, and the gap grows with the spread of the values. On a quiet window the two lines almost touch." },
+    { "q": "What happens to a zero or negative value?", "a": "It is skipped. The window keeps its length in bars, but that bar adds nothing to the sum of logarithms and is not counted, so the mean is taken over the remaining values." },
+    { "q": "Why does the line start on the first bar?", "a": "The window grows from the first bar, so the first reading is the value itself and each later bar adds one more value until the window is full." }
+  ]
+}

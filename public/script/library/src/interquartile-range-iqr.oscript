@@ -1,0 +1,42 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © openalgo
+// Original work (c) mihakralj, MIT License
+
+version 1
+study("Interquartile Range (IQR)", precision = 2)
+
+source = input(close, "Source")
+length = input(20, "Lookback Period", min = 2, max = 500, step = 1)
+
+// The value at percentile p of an ascending array, interpolated linearly
+// between the two neighbouring ranks.
+fn percentileOf(sorted: array<number>, p) =>
+    n = size(sorted)
+    result = none
+    if n == 1
+        result = element(sorted, 0)
+    else if n > 1
+        rank = p / 100 * (n - 1)
+        kFloor = floor(rank)
+        kCeil = ceil(rank)
+        lo = max(0, min(n - 1, kFloor))
+        hi = max(0, min(n - 1, kCeil))
+        valFloor = element(sorted, lo)
+        valCeil = element(sorted, hi)
+        result = lo == hi or valFloor == valCeil ? valFloor : valFloor + (rank - kFloor) * (valCeil - valFloor)
+    result
+
+// The values present in the last `length` bars. Early bars and missing values
+// simply leave fewer points in the window.
+vals = []
+for k = 0 to length - 1
+    v = source[k]
+    if not isNone(v)
+        push(vals, v)
+sort(vals, "asc")
+
+// The spread between the 75th and the 25th percentile.
+q1 = percentileOf(vals, 25)
+q3 = percentileOf(vals, 75)
+
+plot(q3 - q1, "IQR", #ffeb3b, width = 2)

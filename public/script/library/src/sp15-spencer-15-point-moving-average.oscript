@@ -1,0 +1,17 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © openalgo
+// Original work (c) mihakralj, MIT License
+
+version 1
+study("SP15: Spencer 15-Point Moving Average", overlay = true, precision = 2)
+
+// The fixed 15 weights, indexed by how many bars back they reach. They are
+// symmetric and sum to 320, and the filter is drawn on the current bar.
+weights = [-3, -6, -5, 3, 21, 46, 67, 74, 67, 46, 21, 3, -5, -6, -3]
+
+total = 0.0
+for k = 0 to 14
+    total += element(weights, k) * close[k]
+
+// The oldest tap is 14 bars back, so the line starts on the fifteenth bar.
+plot(total / 320, "SP15", #ffeb3b, width = 2)

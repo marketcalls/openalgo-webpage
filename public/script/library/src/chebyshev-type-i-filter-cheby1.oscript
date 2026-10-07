@@ -1,0 +1,51 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © openalgo
+// Original work (c) mihakralj, MIT License
+
+version 1
+study("Chebyshev Type I Filter (CHEBY1)", overlay = true, precision = 2)
+
+source = input(close, "Source")
+length = input(20, "Length", min = 2, max = 5000, step = 1, tooltip = "Cutoff period: the filter passes cycles longer than this.")
+ripple = input(1.0, "Passband Ripple (dB)", min = 0.01, max = 20, step = 0.1)
+
+// The analogue prototype pole, pre-warped to the cutoff and mapped to a
+// biquad by the bilinear transform.
+wc = 2 * math.pi / length
+wcTan = math.tan(wc / 2)
+epsilon = sqrt(pow(10, ripple / 10) - 1)
+asinhInvEps = log(1 / epsilon + sqrt(1 / (epsilon * epsilon) + 1))
+mu = asinhInvEps / 2
+sinhMu = (exp(mu) - exp(-mu)) / 2
+coshMu = (exp(mu) + exp(-mu)) / 2
+sigma = -sinhMu * wcTan
+omegaD = coshMu * wcTan
+kk = sigma * sigma + omegaD * omegaD
+a0z = 1 - 2 * sigma + kk
+a1z = 2 * kk - 2
+a2z = 1 + 2 * sigma + kk
+
+b0 = kk / a0z
+b1 = 2 * kk / a0z
+b2 = kk / a0z
+a1 = a1z / a0z
+a2 = a2z / a0z
+
+// The last two outputs, carried by hand.
+var f1 = none
+var f2 = none
+
+// Each missing term falls back to the nearest value already resolved.
+ssrc = orElse(source, orElse(source[1], 0))
+src1 = orElse(source[1], ssrc)
+src2 = orElse(source[2], src1)
+filt1 = orElse(f1, ssrc)
+filt2 = orElse(f2, filt1)
+
+// The first two bars seed the recursion with the price itself.
+filt = bar.index < 2 ? orElse(source, 0) : b0 * ssrc + b1 * src1 + b2 * src2 - a1 * filt1 - a2 * filt2
+
+f2 = f1
+f1 = filt
+
+plot(filt, "Cheby1", #ffeb3b, width = 2)

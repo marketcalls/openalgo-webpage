@@ -1,0 +1,26 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © openalgo
+// Original work (c) mihakralj, MIT License
+
+version 1
+study("HA: Heikin-Ashi", overlay = true, precision = 2)
+
+// The synthetic close is the mean of the bar's four prices. The synthetic
+// open is the midpoint of the previous synthetic candle's open and close; on
+// the first bar there is no previous candle and it is the midpoint of the
+// bar's own open and close.
+var haOpen = none
+var haClose = none
+prevOpen = haOpen
+prevClose = haClose
+haClose = (open + high + low + close) * 0.25
+haOpen = isNone(prevOpen) or isNone(prevClose) ? (open + close) * 0.5 : (prevOpen + prevClose) * 0.5
+
+// The wicks stretch to cover the synthetic open and close as well as the
+// bar's own high and low.
+haHigh = max(high, max(haOpen, haClose))
+haLow = min(low, min(haOpen, haClose))
+
+// Body, border and wick take one colour: green where the synthetic close is
+// at or above the synthetic open, red otherwise.
+plotCandles(haOpen, haHigh, haLow, haClose, "HA", colorUp = #4caf50, colorDown = #ff5252)

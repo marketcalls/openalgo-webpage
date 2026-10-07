@@ -101,6 +101,35 @@ under `/fundamentals`, `/python`, `/quant`, etc., indexed by `/learn`.
   openalgo-script 0.8.0 docs, the two product roadmaps (/charts/roadmap and
   /script/roadmap, rendered from lib/roadmaps/*.json) and the section layouts.
 
+- Measured 2026-10-07: ~6.87 MiB gzipped (wrangler: 6,999 KiB) after the
+  OpenScript library (/script/library, 440 static study routes plus their page
+  text). The sources, thumbnails and chart bars are static assets, not Worker.
+
+## /script/library (OpenScript indicator library)
+
+- 440 OpenScript studies, each a port of one indicator from
+  `openalgo-js-indicator-library` (MIT and MPL-2.0 originals only). The 57
+  GPL-3.0 originals are deliberately NOT published (copyleft combined-work
+  risk); their ports are kept outside the repo in
+  `D:\OpenAlgo-Voice\openscript-library-gpl`.
+- Pipeline: `content/script/library/catalog.json` (from
+  `scripts/script-library/catalog.mjs`) + `indicators/<slug>.oscript` and
+  `<slug>.json` (page text) -> `scripts/script-library/gen-library.mjs`
+  (part of `npm run gen`) -> `lib/scriptLibraryIndex.json`,
+  `lib/script-library/<slug>.json`, static `app/script/library/<slug>/page.jsx`,
+  and `public/script/library/` (sources, SVG thumbnails, the fixed
+  `btcusd-1h.json` bars). The chart never refreshes: it draws the fixed bars.
+- Gate: `npm run check:library -- --strict` runs every port against its
+  original JavaScript on the fixed bars under up to 24 settings variants
+  (plots, markers, drawings, bar colours, background) and enforces the header,
+  the banned words and complete page text. Rules for writing a port:
+  `content/script/library/PORTING.md`; one slug: `node
+  scripts/script-library/compare.mjs <slug>`.
+- Every file starts with the MPL-2.0 header, `// © openalgo`, then
+  `// Original work (c) <author>, <licence>` (required by MIT/MPL). Never name
+  any brand but openalgo, and never say a script was ported from anything or
+  mention Pine Script.
+
 ## /script documentation (OpenScript)
 
 - Pipeline: `content/script/nav.json` (table of contents) + one markdown page per

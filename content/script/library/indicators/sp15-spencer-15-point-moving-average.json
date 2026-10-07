@@ -1,0 +1,12 @@
+{
+  "title": "SP15: Spencer 15-Point Moving Average",
+  "summary": "A fixed 15-bar weighted average of the close, with weights chosen so that cycles four and five bars long are removed rather than only damped.",
+  "description": "The 15-point average is a fixed weighted filter on the close. It multiplies the last 15 closes by the weights -3, -6, -5, 3, 21, 46, 67, 74, 67, 46, 21, 3, -5, -6, -3 (from the newest bar to the bar 14 bars back), adds them up and divides by 320, the sum of the weights.\n\nThe weights are symmetric around the bar seven bars back and include small negative values at both ends. That shape passes the slower trend almost unchanged while cancelling swings that repeat every four or five bars. The filter is drawn on the current bar with no offset, so it describes prices centred seven bars ago.",
+  "howToRead": "Use it as a smooth trend line that ignores short repeating wiggles. Its direction shows the trend over the last 15 bars, and a change in slope marks a change in that trend. Because the negative end weights give a little overshoot, the line can briefly move past a sharp turn before settling.\n\nIt has no settings: the window is always 15 bars and the series is always the close. The line starts on the fifteenth bar and lags price by about seven bars.",
+  "settings": [],
+  "faq": [
+    { "q": "Why are some weights negative?", "a": "They let the filter pass a curving trend unchanged: any straight, quadratic or cubic run of prices comes out exactly as it went in, measured at the centre of the window, while cycles of four and five bars are cancelled. A filter with only positive weights always flattens a curve." },
+    { "q": "Why is there nothing to configure?", "a": "The weights are a fixed set built for a 15-bar window. Changing the length would need a different set of weights." },
+    { "q": "How much does it lag?", "a": "The weights are centred seven bars back, so the line reflects the price of about seven bars ago." }
+  ]
+}

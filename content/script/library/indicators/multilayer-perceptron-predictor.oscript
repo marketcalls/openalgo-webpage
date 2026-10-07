@@ -1,0 +1,207 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © openalgo
+// Original work (c) mihakralj, MIT License
+
+version 1
+study("Multilayer Perceptron Predictor", overlay = true, precision = 2)
+
+// A 6-8-4-1 network trained bar by bar. Every setting is a fixed constant.
+OFFSET = 5
+LEARNING_RATE = 0.0025
+LEARNING_RATE_DECAY = 0.000015
+MAX_GRADIENT = 5.0
+ERROR_K = 0.7
+SEED = 42
+HUBER_DELTA = 0.7
+
+// Squeezes an unbounded value into -1 to 1: a hyperbolic tangent for the
+// features, a rescaled logistic curve inside the network.
+fn compress(x, useTanh) =>
+    if isNone(x)
+        return none
+    if x >= 20
+        return 1.0
+    if x <= -20
+        return -1.0
+    result = 0.0
+    if useTanh
+        ex = exp(x)
+        emx = exp(-x)
+        result = (ex - emx) / (ex + emx)
+    else
+        result = 2 * (1 / (1 + exp(-x))) - 1
+    result
+
+// The inverse of the tangent squeeze, held just inside its range.
+fn expand(y) =>
+    safe = max(-0.9999, min(0.9999, y))
+    0.5 * log((1 + safe) / (1 - safe))
+
+// The log return from a reference price, and back again.
+fn toReturn(referencePrice, newPrice) =>
+    referencePrice <= 0 ? none : log(newPrice / referencePrice)
+
+fn fromReturn(referencePrice, priceReturn) =>
+    referencePrice <= 0 ? none : referencePrice * exp(max(-5, min(5, priceReturn)))
+
+fn ratio(a, b) =>
+    isNone(a) or isNone(b) or b == 0 ? none : a / b
+
+fn clampGrad(g) =>
+    max(-MAX_GRADIENT, min(g, MAX_GRADIENT))
+
+// Six features, each squeezed into -1 to 1: the trend of a fast weighted
+// mean against its own slow average, the RSI, volatility against its
+// average, price against its mean, ten-bar momentum, and two exponential
+// means against each other.
+hma20 = hma(close, 20)
+hma20Sma100 = sma(hma20, 100)
+rsi14 = rsi(close, 14)
+atr14 = atr(14)
+atr14Sma14 = sma(atr14, 14)
+close20Sma = sma(close, 20)
+ema5 = ema(close, 5)
+ema20 = ema(close, 20)
+momentum = close - close[10]
+
+f0 = compress(ratio(hma20, hma20Sma100) - 1, true)
+f1 = compress(ratio(rsi14, 100), true)
+f2 = compress(ratio(atr14, atr14Sma14), true)
+f3 = compress(ratio(close, close20Sma), true)
+f4 = compress(ratio(momentum, close), true)
+f5 = compress(ratio(ema5, ema20) - 1, true)
+
+// Layer weights are flat arrays, row r and column c at r * columns + c.
+var w0: array<number> = []
+var b0: array<number> = []
+var w1: array<number> = []
+var b1: array<number> = []
+var w2: array<number> = []
+var b2: array<number> = []
+
+// The activations of the last forward pass, kept for training.
+var act0: array<number> = []
+var act1: array<number> = []
+var act2: array<number> = []
+
+// Deterministic starting weights from a sine of the position and the seed,
+// scaled by the layer's size.
+fn initLayer(w, b, inSize, outSize) =>
+    limit = sqrt(1 / (inSize + outSize))
+    for idx = 0 to inSize * outSize - 1
+        r = floor(idx / outSize)
+        c = idx % outSize
+        scale = c == outSize - 1 ? 0.1 : 1
+        push(w, scale * limit * math.sin((r + 1) * 13.37 + (c + 1) * 42.42 + SEED))
+    for c = 0 to outSize - 1
+        push(b, c == outSize - 1 ? 0.01 : limit * math.sin((c + 1) * 42.42 + SEED))
+    size(w)
+
+// One dense layer: weighted sum plus bias, squeezed. Writes into outA.
+fn dense(inA, w, b, inSize, outSize, outA) =>
+    for c = 0 to outSize - 1
+        total = 0.0
+        for r = 0 to inSize - 1
+            total += element(inA, r) * element(w, r * outSize + c)
+        set(outA, c, compress(total + element(b, c), false))
+    element(outA, 0)
+
+// A full forward pass; the hidden activations land in h1 and h2.
+fn forward(inA, h1, h2, out) =>
+    dense(inA, w0, b0, 6, 8, h1)
+    dense(h1, w1, b1, 8, 4, h2)
+    dense(h2, w2, b2, 4, 1, out)
+
+// Gradient step on one layer, against the activations that fed it.
+fn stepLayer(w, b, a, d, inSize, outSize, lr) =>
+    for r = 0 to inSize - 1
+        aVal = element(a, r)
+        for c = 0 to outSize - 1
+            grad = clampGrad(aVal * element(d, c))
+            set(w, r * outSize + c, element(w, r * outSize + c) - lr * grad)
+    for j = 0 to outSize - 1
+        set(b, j, element(b, j) - lr * clampGrad(element(d, j)))
+    size(w)
+
+var predictedReturn = none
+var actualReturn = none
+var smoothErrorDeriv = 0.0
+var outBuf: array<number> = [0.0]
+var delta0: array<number> = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+var delta1: array<number> = [0.0, 0.0, 0.0, 0.0]
+var delta2: array<number> = [0.0]
+
+// The features as they stood OFFSET bars ago, the bar the target is
+// measured from.
+lagged = not (isNone(f0[OFFSET]) or isNone(f1[OFFSET]) or isNone(f2[OFFSET]) or isNone(f3[OFFSET]) or isNone(f4[OFFSET]) or isNone(f5[OFFSET]))
+lagInputs = lagged ? [f0[OFFSET], f1[OFFSET], f2[OFFSET], f3[OFFSET], f4[OFFSET], f5[OFFSET]] : [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+
+// A pass over incomplete features answers nothing and leaves the stored
+// activations as they were: nothing trains on it.
+fn runPass(ok, inA) =>
+    result = none
+    if ok
+        result = forward(inA, act1, act2, outBuf)
+        clear(act0)
+        for i = 0 to 5
+            push(act0, element(inA, i))
+    result
+
+predictedPrice = none
+if bar.index == OFFSET + 1
+    initLayer(w0, b0, 6, 8)
+    initLayer(w1, b1, 8, 4)
+    initLayer(w2, b2, 4, 1)
+    for i = 0 to 7
+        push(act1, 0.0)
+    for i = 0 to 3
+        push(act2, 0.0)
+    predictedReturn = runPass(lagged, lagInputs)
+    // The training target is the squeezed log return over the first window
+    // and is set once, on this bar.
+    actualReturn = compress(toReturn(close[OFFSET], close), true)
+
+if bar.index > OFFSET
+    if not isNone(predictedReturn) and not isNone(actualReturn)
+        lr = LEARNING_RATE / (1 + LEARNING_RATE_DECAY * bar.index)
+        err = predictedReturn - actualReturn
+        errorDerivative = abs(err) <= HUBER_DELTA ? err : HUBER_DELTA * sign(err)
+        smoothErrorDeriv = ERROR_K * errorDerivative + (1 - ERROR_K) * smoothErrorDeriv
+
+        // Each hidden delta reads the first weight column of the next layer
+        // times the sum of that layer's deltas.
+        set(delta2, 0, smoothErrorDeriv)
+        sum2 = 0.0 + smoothErrorDeriv
+        for i = 0 to 3
+            aVal = element(act2, i)
+            set(delta1, i, element(w2, i) * sum2 * (1 - aVal * aVal))
+        sum1 = 0.0
+        for i = 0 to 3
+            sum1 += element(delta1, i)
+        for i = 0 to 7
+            aVal = element(act1, i)
+            set(delta0, i, element(w1, i * 4) * sum1 * (1 - aVal * aVal))
+
+        stepLayer(w0, b0, act0, delta0, 6, 8, lr)
+        stepLayer(w1, b1, act1, delta1, 8, 4, lr)
+        stepLayer(w2, b2, act2, delta2, 4, 1, lr)
+
+    predictedReturn = runPass(lagged, lagInputs)
+    predictedPrice = isNone(predictedReturn) ? none : fromReturn(close[OFFSET], expand(predictedReturn))
+
+// Each prediction is drawn back on the bar it was made from, so it lines up
+// with the price that later arrived.
+plot(predictedPrice, "Historical Prediction", #ffeb3b, width = 2, offset = -5)
+
+// On the newest bar, the trained network is run on today's features to
+// project OFFSET bars ahead.
+var scratch1: array<number> = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+var scratch2: array<number> = [0.0, 0.0, 0.0, 0.0]
+var scratchOut: array<number> = [0.0]
+if bar.isLast and bar.index > OFFSET
+    current = not (isNone(f0) or isNone(f1) or isNone(f2) or isNone(f3) or isNone(f4) or isNone(f5))
+    if current
+        future = forward([f0, f1, f2, f3, f4, f5], scratch1, scratch2, scratchOut)
+        futurePrice = isNone(future) ? none : fromReturn(close, expand(future))
+        if not isNone(futurePrice)
+            draw.label(time, high, "Predicted in " + text(OFFSET) + " bars: " + text(futurePrice, 2), color = #4caf50)

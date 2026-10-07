@@ -1,0 +1,43 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © openalgo
+// Original work (c) mihakralj, MIT License
+
+version 1
+study("Rolling Sum", precision = 2)
+
+length = input(14, "Length", min = 1, max = 5000, step = 1)
+source = input(close, "Source")
+
+// A running total with second-order compensation: c and cc carry the rounding
+// error of every addition and subtraction, so the total does not drift over a
+// long history. An absent value counts as zero.
+var total = 0.0
+var c = 0.0
+var cc = 0.0
+
+val = orElse(source, 0)
+
+if bar.index >= length
+    // Take out the value leaving the window.
+    oldVal = orElse(source[length], 0)
+    yS = -oldVal - c
+    tS = total + yS
+    c = tS - total - yS
+    total = tS
+    zS = c - cc
+    ttS = total + zS
+    cc = ttS - total - zS
+    total = ttS
+
+// Add the value entering the window.
+yA = val - c
+tA = total + yA
+c = tA - total - yA
+total = tA
+zA = c - cc
+ttA = total + zA
+cc = ttA - total - zA
+total = ttA
+
+// Before the window is full this is the total of the values seen so far.
+plot(total, "Sum", #ffeb3b, width = 2)

@@ -1,0 +1,31 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © openalgo
+// Original work (c) mihakralj, MIT License
+
+version 1
+study("Volume Oscillator (VO)", precision = 2)
+
+shortPeriod = input(5, "Short Period", min = 1, max = 50, step = 1, tooltip = "Period for short-term volume moving average")
+longPeriod = input(10, "Long Period", min = 2, max = 100, step = 1, tooltip = "Period for long-term volume moving average")
+signalPeriod = input(10, "Signal Period", min = 1, max = 50, step = 1, tooltip = "Period for signal line moving average")
+
+// A mean over the last len bars that answers from the first bar, averaging
+// however many bars there are until the window fills.
+fn expandingMean(src, len) =>
+    var total = 0.0
+    total += src
+    if bar.index >= len
+        total -= src[len]
+    total / min(bar.index + 1, len)
+
+// Volume is read as at least 1, so a bar without volume never divides by zero.
+volumeVal = max(orElse(volume, 0), 1)
+shortMa = expandingMean(volumeVal, shortPeriod)
+longMa = expandingMean(volumeVal, longPeriod)
+
+// The fast average's distance from the slow one, as a percentage of the slow.
+vo = longMa > 0 ? (shortMa - longMa) / longMa * 100 : 0.0
+voSignal = expandingMean(vo, signalPeriod)
+
+plot(vo, "Volume Oscillator", #ffeb3b, width = 2)
+plot(voSignal, "Signal Line", #2196f3, width = 2)

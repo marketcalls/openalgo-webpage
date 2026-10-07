@@ -1,0 +1,27 @@
+{
+  "title": "HT_DCPERIOD: Hilbert Transform Dominant Cycle Period",
+  "summary": "The length in bars of the market's dominant cycle, measured by a Hilbert transform of smoothed price, held to 6 to 50 bars and smoothed.",
+  "description": "This study estimates how many bars one full cycle of the market currently takes. Price is smoothed with weights 4, 3, 2 and 1 over the last four bars, then a four-tap Hilbert transform splits it into an in-phase component and a quadrature component a quarter cycle apart. The width of every Hilbert stage follows the smoothed period from the previous bar, so the filter adapts to the cycle it is measuring.\n\nThe in-phase and quadrature parts form a phasor, each leg smoothed 0.2 / 0.8 against its previous bar. Multiplying this bar's phasor by the conjugate of the previous one, and smoothing that product the same way, gives the angle the cycle turned through in one bar. A full turn over that angle is the period. It is held between 6 and 50 bars, starts from 15, and is smoothed 0.33 / 0.67 into the plotted value.",
+  "howToRead": "Read the line as the current rhythm of the market in bars. A value of 20 means swings are taking about 20 bars from low to low. Many cycle tools take a length setting, and this reading is a way to set it from the data instead of guessing; the dashed levels at 15 and 30 bars mark short and long cycles.\n\nThe estimate is only meaningful while the market is actually cycling. In a strong trend there is little cycle to measure, and the period wanders or presses against the 6 and 50 bar limits.",
+  "settings": [
+    {
+      "key": "source",
+      "label": "Source",
+      "description": "The price series the cycle is measured on. The default is the typical price, (high + low + close) / 3."
+    }
+  ],
+  "faq": [
+    {
+      "q": "Why is the period never below 6 or above 50?",
+      "a": "Each bar's raw period is clamped to 6 to 50 bars before it is smoothed, so the smoothed line also stays inside that range."
+    },
+    {
+      "q": "Why does the line start at 15?",
+      "a": "Both the raw and the smoothed period start at 15 bars, and the first bars of data move them away from that seed gradually."
+    },
+    {
+      "q": "Can I use the reading as a length for another indicator?",
+      "a": "Yes. Read the current value and set an oscillator or average to about that length, so its length follows the market's measured rhythm instead of a fixed guess."
+    }
+  ]
+}

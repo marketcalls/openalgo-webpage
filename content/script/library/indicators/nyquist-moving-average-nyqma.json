@@ -1,0 +1,16 @@
+{
+  "title": "Nyquist Moving Average (NYQMA)",
+  "summary": "A weighted average pushed forward by its distance from a second, smoother average of itself, which takes back most of its lag.",
+  "description": "The Nyquist Moving Average starts from two linearly weighted averages. The first, MA1, weights the source over `period` bars with the newest bar weighing most. The second, MA2, applies the same weighting to MA1 over a shorter `n2` bars. The second period is held at or below half the first, which is what keeps the second smoothing from folding short cycles back into the result.\n\nThe line is `(1 + alpha) * MA1 - alpha * MA2`, with `alpha = n2 / (period - n2)`. Since MA2 lags MA1, adding back a fraction of their gap moves the line forward and cancels much of MA1's lag. While their windows fill, both averages cover every bar seen so far, so the line starts on the first bar, and a missing price counts as zero.",
+  "howToRead": "Read it as a smooth trend line that keeps up with price better than a weighted average of the same period. Price above a rising line describes an uptrend, and below a falling line a downtrend; the slope of the line is the main signal.\n\nThe lag correction comes from extrapolation, so after a sharp turn the line can overshoot for a few bars. A larger second period corrects more lag and overshoots more; a smaller one is closer to a plain weighted average.",
+  "settings": [
+    { "key": "period", "label": "Period (N1)", "description": "The window of the main weighted average. A longer period gives a smoother line." },
+    { "key": "nyquistPeriod", "label": "Nyquist Period (N2)", "description": "The window of the second average, held at no more than half of Period (N1). A larger value corrects more lag." },
+    { "key": "source", "label": "Source", "description": "The price series that is averaged, the close by default." }
+  ],
+  "faq": [
+    { "q": "Why is the second period capped at half the first?", "a": "A second smoothing longer than half the first would fold short cycles back into the result. Holding it at or below half keeps the correction clean." },
+    { "q": "Why can the line move past price?", "a": "It extrapolates the gap between two averages. After a sharp reversal that gap still points the old way for a few bars, so the line overshoots before it turns." },
+    { "q": "What happens if I set N2 above half of N1?", "a": "It is clamped to half of N1, rounded down, so the line does not change beyond that point." }
+  ]
+}

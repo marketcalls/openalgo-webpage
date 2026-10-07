@@ -1,0 +1,47 @@
+{
+  "title": "Swing High/Low Detection",
+  "summary": "Finds bars whose high or low is the extreme of the bars on both sides and holds the latest swing high and swing low as two horizontal lines.",
+  "description": "A swing high is a bar whose value is not exceeded by any bar within **Lookback Period** bars on either side of it, and a swing low is a bar whose value is not undercut by any bar within that distance. A tie with a neighbour does not disqualify a bar. The high test reads **Source High** and the low test reads **Source Low**, which default to each bar's high and low.\n\nA swing can only be confirmed once the bars after it have printed, so on each bar the study tests the bar that many bars back. When it qualifies, its value becomes the latest swing high or swing low. The two lines hold that value until a newer swing is confirmed, so they step to a new level on the bar that confirms it, not on the swing bar itself.",
+  "howToRead": "The red line is the most recent confirmed swing high and the green line the most recent confirmed swing low. Together they frame the current swing structure: a close above the red line breaks the last swing high and a close below the green line breaks the last swing low, which many traders read as a change in the short-term trend.\n\nEvery swing is confirmed Lookback Period bars late, so the lines show where the market turned, not where it is turning. A larger lookback finds fewer, more significant swings and confirms them later.",
+  "settings": [
+    {
+      "key": "lookback",
+      "label": "Lookback Period",
+      "description": "How many bars on each side a swing must stand above or below. A larger value finds fewer, bigger swings and confirms them later."
+    },
+    {
+      "key": "sourceHigh",
+      "label": "Source High",
+      "description": "The price series tested for swing highs, normally the bar's high. Choose the close to find swings in closing prices only."
+    },
+    {
+      "key": "sourceLow",
+      "label": "Source Low",
+      "description": "The price series tested for swing lows, normally the bar's low. Choose the close to find swings in closing prices only."
+    },
+    {
+      "key": "showHigh",
+      "label": "Show Swing High Lines",
+      "description": "Draw the line holding the latest confirmed swing high."
+    },
+    {
+      "key": "showLow",
+      "label": "Show Swing Low Lines",
+      "description": "Draw the line holding the latest confirmed swing low."
+    }
+  ],
+  "faq": [
+    {
+      "q": "Why does the line change several bars after the swing?",
+      "a": "A swing is only known once Lookback Period bars have printed after it. The study changes the line on the bar that confirms the swing, so nothing drawn earlier is ever revised."
+    },
+    {
+      "q": "Why is there no line at the start of the chart?",
+      "a": "The first bar tested is the one Lookback Period bars after the start, and it can only be judged once the same number of bars have printed after it, so nothing is confirmed before bar number twice the lookback (counting from zero). The line then stays empty until the first swing is found."
+    },
+    {
+      "q": "Can two bars at the same price both be swings?",
+      "a": "Yes. A neighbour equal to the candidate does not disqualify it, so two equal highs within the lookback can both count, and the later one sets the line."
+    }
+  ]
+}

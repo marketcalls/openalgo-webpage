@@ -1,0 +1,14 @@
+{
+  "title": "RWMA: Range Weighted Moving Average",
+  "summary": "A moving average of the close where each bar is weighted by its own high to low range, so wide bars pull the line harder than narrow ones.",
+  "description": "The Range Weighted Moving Average averages the close over the last `period` bars, but instead of counting each bar equally it weights each one by its range, `high - low` (never less than zero). The sum of close times range is divided by the sum of the ranges.\n\nA wide bar, often one with a lot of participation behind it, pulls the average toward its close, while a narrow inside bar barely moves it. Until `period` bars exist, and on any window where every bar has zero range, the line shows the close itself.",
+  "howToRead": "Read it like any moving average, with one difference: it follows the bars that moved the most. After a large range bar the line jumps toward that bar's close, and a run of quiet bars leaves it almost where it was. Price holding above a rising line describes an uptrend, and below a falling line a downtrend.\n\nCompare it with a simple average of the same length. When the range weighted line sits above the simple one, the wide bars closed higher than the narrow ones, which suggests the larger moves were up moves.",
+  "settings": [
+    { "key": "period", "label": "Period", "description": "How many bars are averaged. A longer period gives a smoother, slower line." }
+  ],
+  "faq": [
+    { "q": "Why weight by range instead of volume?", "a": "The range needs only the high and the low, so the average works the same on any instrument, with or without volume. It measures how far price travelled within the bar rather than how much traded." },
+    { "q": "What does it show on the first bars?", "a": "The close itself, until the window holds `period` bars. After that it is the range weighted average." },
+    { "q": "What happens on a run of bars with no range?", "a": "If every bar in the window has zero range there is nothing to weight by, so the line shows the close." }
+  ]
+}

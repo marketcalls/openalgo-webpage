@@ -1,0 +1,21 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © openalgo
+// Original work (c) mihakralj, MIT License
+
+version 1
+study("Mean Relative Absolute Error", precision = 4)
+
+length = input(14, "Length", min = 1, max = 5000, step = 1)
+actual = input(close, "Actual")
+predicted = input(open, "Predicted")
+
+// An absent actual reads as 1 in the denominator, so it cannot divide by
+// zero, and as 0 inside the error term. An absent forecast reads as 0.
+absActual = abs(orElse(actual, 1))
+absError = abs(orElse(actual, 0) - orElse(predicted, 0))
+relError = absActual > 1e-10 ? absError / absActual : 0
+mrae = sma(relError, length)
+
+plot(mrae, "MRAE", #ffeb3b, width = 2)
+level(0, "Perfect", #26a69a, style = "dotted")
+level(1, "100% Error", #ef5350, style = "dotted")

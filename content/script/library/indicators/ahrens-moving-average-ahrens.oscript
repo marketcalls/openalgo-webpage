@@ -1,0 +1,21 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © openalgo
+// Original work (c) mihakralj, MIT License
+
+version 1
+study("Ahrens Moving Average (AHRENS)", overlay = true, precision = 2)
+
+period = input(9, "Period", min = 1, max = 5000, step = 1)
+source = input(close, "Source")
+
+// Each bar steps toward the source by 1 / period of its distance from the
+// midpoint of the previous value and the value period bars ago. Until either
+// exists, the source stands in for it.
+var ahrens = none
+if not isNone(source)
+    previous = orElse(ahrens, source)
+    lagged = orElse(ahrens[period], source)
+    midpoint = (previous + lagged) * 0.5
+    ahrens = previous + (source - midpoint) / period
+
+plot(ahrens, "AHRENS", #ffeb3b, width = 2)

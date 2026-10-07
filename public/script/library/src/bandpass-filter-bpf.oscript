@@ -1,0 +1,51 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © openalgo
+// Original work (c) mihakralj, MIT License
+
+version 1
+study("Bandpass Filter (BPF)", overlay = true, precision = 2)
+
+lower = input(10, "Lower Cutoff", min = 1, max = 5000, step = 1)
+upper = input(20, "Higher Cutoff", min = 1, max = 5000, step = 1)
+source = input(close, "Source")
+
+// Two-pole highpass coefficients from the lower cutoff.
+hpArg = sqrt(2) * math.pi / lower
+hpExpArg = exp(-hpArg)
+hpC2 = 2 * hpExpArg * math.cos(hpArg)
+hpC3 = -hpExpArg * hpExpArg
+hpC1 = (1 + hpC2 - hpC3) / 4
+
+// Two-pole lowpass coefficients from the higher cutoff.
+lpArg = sqrt(2) * math.pi / upper
+lpExpArg = exp(-lpArg)
+lpC2 = 2 * lpExpArg * math.cos(lpArg)
+lpC3 = -lpExpArg * lpExpArg
+lpC1 = 1 - lpC2 - lpC3
+
+// A missing price borrows the previous one, and missing history reads as the
+// nearest value that exists.
+ssrc = orElse(source, source[1])
+src1 = orElse(source[1], ssrc)
+src2 = orElse(source[2], src1)
+
+// The last two outputs of each stage, carried by hand.
+var hpA = none
+var hpB = none
+var bpA = none
+var bpB = none
+
+// The highpass starts from zero; the lowpass that follows it starts from the
+// first highpass value.
+hp = isNone(ssrc) ? none : hpC1 * (ssrc - 2 * src1 + src2) + hpC2 * orElse(hpA, 0) + hpC3 * orElse(hpB, 0)
+bp1 = orElse(bpA, hp)
+bp2 = orElse(bpB, bp1)
+bp = isNone(ssrc) ? none : lpC1 * hp + lpC2 * bp1 + lpC3 * bp2
+
+hpB = hpA
+hpA = hp
+bpB = bpA
+bpA = bp
+
+// The price with the cycle band taken out.
+plot(source - bp, "Bandpass", #ffeb3b, width = 2)

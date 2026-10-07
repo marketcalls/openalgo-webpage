@@ -1,0 +1,39 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © openalgo
+// Original work (c) mihakralj, MIT License
+
+version 1
+study("Solar Cycle (SOLAR)", precision = 4)
+
+// The sine of the Sun's apparent ecliptic longitude at the bar's open time,
+// from the low precision solar position formulas. Time is converted to a
+// Julian date, then to Julian centuries since the J2000 epoch.
+jd = time / 1000 / 86400 + 2440587.5
+tc = (jd - 2451545) / 36525
+
+// Mean longitude and mean anomaly of the Sun, in degrees, folded into 0 to 360.
+meanLongitude = mod(280.46646 + 36000.76983 * tc + 0.0003032 * tc * tc, 360)
+meanAnomaly = mod(357.52911 + 35999.05029 * tc - 0.0001537 * tc * tc - 0.00000025 * tc * tc * tc, 360)
+anomalyRad = meanAnomaly * math.pi / 180
+
+// The equation of centre corrects the mean longitude to the true longitude.
+centre = (1.914602 - 0.004817 * tc - 0.000014 * tc * tc) * math.sin(anomalyRad) + (0.019993 - 0.000101 * tc) * math.sin(2 * anomalyRad) + 0.000289 * math.sin(3 * anomalyRad)
+sunLongitude = mod(meanLongitude + centre, 360)
+solar = math.sin(sunLongitude * math.pi / 180)
+
+plot(solar, "Solar Cycle", #ffeb3b, width = 2)
+
+// The four turning points of the year. A solstice is a turn of the curve near
+// its extreme; an equinox is a crossing of the zero line.
+delta1 = solar - solar[1]
+delta0 = solar[1] - solar[2]
+peakSummer = not isNone(delta0) and solar > 0.985 and solar[1] > 0.985 and delta1 < 0 and delta0 > 0
+springRise = solar[1] < 0 and solar >= 0 and delta1 > 0
+peakWinter = not isNone(delta0) and solar < -0.985 and solar[1] < -0.985 and delta1 > 0 and delta0 < 0
+autumnFall = solar[1] > 0 and solar <= 0 and delta1 < 0
+
+// Each mark sits on the curve at a solstice and on the zero line at an equinox.
+plot(peakSummer ? solar : none, "Peak Summer", #ff5252, style = "lineWithMarkers")
+plot(springRise ? 0 : none, "Spring Rise", #ffeb3b, style = "lineWithMarkers")
+plot(peakWinter ? solar : none, "Peak Winter", #2196f3, style = "lineWithMarkers")
+plot(autumnFall ? 0 : none, "Autumn Fall", #ffeb3b, style = "lineWithMarkers")

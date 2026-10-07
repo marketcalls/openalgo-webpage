@@ -1,0 +1,35 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © openalgo
+// Original work (c) mihakralj, MIT License
+
+version 1
+study("Bollinger Bands (BBANDS)", overlay = true, precision = 2)
+
+period = input(20, "Period", min = 1, max = 5000, step = 1)
+source = input(close, "Source")
+multiplier = input(2.0, "StdDev Multiplier", min = 0.001, max = 100, step = 0.1)
+
+// Running sums of the source and of its square over the last `period` bars.
+// Until the window is full they cover every bar so far, so the first bar
+// draws the source itself with a band of zero width.
+var sumValue = 0.0
+var sumSq = 0.0
+if bar.index >= period
+    oldest = orElse(source[period], 0)
+    sumValue = sumValue - oldest
+    sumSq = sumSq - oldest * oldest
+value = orElse(source, 0)
+sumValue = sumValue + value
+sumSq = sumSq + value * value
+windowCount = min(bar.index + 1, period)
+
+basis = sumValue / windowCount
+
+// Population standard deviation from the two sums, floored at zero because
+// the subtraction can dip just below it on a flat series.
+deviation = windowCount > 1 ? multiplier * sqrt(max(0, sumSq / windowCount - basis * basis)) : 0
+
+plot(basis, "Basis", #ffeb3b, width = 2)
+top = plot(basis + deviation, "Upper", #ffeb3b, width = 2)
+bottom = plot(basis - deviation, "Lower", #ffeb3b, width = 2)
+fill(top, bottom, #2962ff, opacity = 0.1)

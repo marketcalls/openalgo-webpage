@@ -1,0 +1,1482 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © openalgo
+// Original work (c) sukesan7, MPL-2.0
+
+version 1
+study("Options Levels", overlay = true, precision = 2)
+
+// ---- 01. Sessions ----------------------------------------------------------
+sessionTimezone = input("America/New_York", "Session timezone", group = "01. Sessions", tooltip = "IANA zone the session windows are read in, for example Asia/Kolkata with a 0915-1530 regular session for Indian instruments.")
+rthInput = input("0930-1600", "Regular session", group = "01. Sessions", tooltip = "HHMM-HHMM in the session timezone.")
+premarketInput = input("0400-0930", "Premarket session", group = "01. Sessions", tooltip = "HHMM-HHMM in the session timezone. Leave a window the instrument never trades in to disable premarket levels.")
+weekdaysOnly = input(true, "Monday-Friday only", group = "01. Sessions")
+openingRangeMinutes = input(15, "Opening-range minutes", min = 1, max = 120, step = 1, group = "01. Sessions")
+
+// ---- 02. Display -----------------------------------------------------------
+displayMode = input("Reaction Zones", "Display mode", options = ["Reaction Zones", "Zones + Key References", "Legacy / Debug"], group = "02. Display", tooltip = "Reaction Zones draws the zone boxes only. The other modes add the reference lines and the debug readout.")
+showZoneText = input(true, "Show zone text", group = "02. Display")
+showDashboard = input(true, "Show compact dashboard", group = "02. Display")
+zoneBackBars = input(12, "Zone history bars", min = 1, max = 250, step = 1, group = "02. Display")
+zoneForwardBars = input(40, "Zone projection bars", min = 5, max = 250, step = 1, group = "02. Display")
+showEdgeSignals = input(true, "Show buy / sell edge zones", group = "02. Display")
+edgeSignalMinimumActionability = input(55, "Edge zone minimum actionability", min = 0, max = 100, step = 1, group = "02. Display")
+edgeSignalHeightPct = input(0.2, "Edge zone height (% of parent zone)", min = 0.05, max = 0.5, step = 0.01, group = "02. Display")
+showOpeningRangeBox = input(true, "Highlight opening-range window", group = "02. Display")
+
+// ---- 03. Reaction Zones ----------------------------------------------------
+atrLength = input(14, "Confirmed daily ATR length", min = 5, max = 100, step = 1, group = "03. Reaction Zones")
+maxDistanceAtr = input(2.5, "Maximum candidate distance (daily ATR)", min = 0.5, max = 10, step = 0.25, group = "03. Reaction Zones")
+clusterAtrFraction = input(0.08, "Cluster tolerance (daily ATR)", min = 0.02, max = 0.25, step = 0.01, group = "03. Reaction Zones")
+clusterMinimumTicks = input(4, "Minimum cluster tolerance (ticks)", min = 1, max = 100, step = 1, group = "03. Reaction Zones")
+clusterMinimumPct = input(0.0005, "Minimum cluster tolerance (% as decimal)", min = 0, max = 0.01, step = 0.0001, group = "03. Reaction Zones")
+minZoneAtr = input(0.02, "Minimum zone half-width (daily ATR)", min = 0.005, max = 0.1, step = 0.005, group = "03. Reaction Zones")
+maxZoneAtr = input(0.12, "Maximum zone half-width (daily ATR)", min = 0.03, max = 0.4, step = 0.01, group = "03. Reaction Zones")
+minZoneTicks = input(4, "Minimum zone half-width (ticks)", min = 1, max = 100, step = 1, group = "03. Reaction Zones")
+dispersionMultiplier = input(1.25, "Cluster dispersion multiplier", min = 0.5, max = 3, step = 0.05, group = "03. Reaction Zones")
+actionabilityDecay = input(0.45, "Distance decay", min = 0.05, max = 2, step = 0.05, group = "03. Reaction Zones")
+switchMargin = input(10, "Zone switch margin", min = 1, max = 30, step = 1, group = "03. Reaction Zones")
+minimumZoneStrength = input(45, "Minimum zone strength", min = 0, max = 100, step = 1, group = "03. Reaction Zones")
+refreshBars = input(3, "Cluster refresh bars", min = 1, max = 20, step = 1, group = "03. Reaction Zones")
+approachingAtr = input(0.2, "Approaching distance (daily ATR)", min = 0.02, max = 1, step = 0.01, group = "03. Reaction Zones")
+rejectionDisplacementAtr = input(0.03, "Rejection displacement (daily ATR)", min = 0, max = 0.25, step = 0.01, group = "03. Reaction Zones")
+breakDisplacementAtr = input(0.04, "Break displacement (daily ATR)", min = 0, max = 0.3, step = 0.01, group = "03. Reaction Zones")
+breakClosesRequired = input(2, "Closes beyond zone for break", min = 1, max = 5, step = 1, group = "03. Reaction Zones")
+acceptanceClosesRequired = input(2, "Closes in / through zone for acceptance", min = 1, max = 5, step = 1, group = "03. Reaction Zones")
+stateHoldBars = input(3, "Event-state hold bars", min = 1, max = 20, step = 1, group = "03. Reaction Zones")
+flipWatchMinutes = input(30, "Broken-zone flip watch (minutes)", min = 5, max = 240, step = 1, group = "03. Reaction Zones")
+flipRetestAtr = input(0.04, "Flip retest tolerance (daily ATR)", min = 0, max = 0.25, step = 0.01, group = "03. Reaction Zones")
+
+// ---- 04. Candidate Sources -------------------------------------------------
+usePriorDay = input(true, "Previous day / close", group = "04. Candidate Sources")
+usePriorWeek = input(true, "Previous week", group = "04. Candidate Sources")
+usePremarket = input(true, "Premarket high / low", group = "04. Candidate Sources")
+useOpeningRange = input(true, "Finalized opening range", group = "04. Candidate Sources")
+useRthOpen = input(true, "RTH open", group = "04. Candidate Sources")
+usePivots = input(true, "Confirmed swing pivots", group = "04. Candidate Sources")
+pivotLeftBars = input(3, "Pivot left bars", min = 1, max = 20, step = 1, group = "04. Candidate Sources")
+pivotRightBars = input(3, "Pivot right bars", min = 1, max = 20, step = 1, group = "04. Candidate Sources")
+maxPivotRecords = input(36, "Maximum pivot records", min = 10, max = 60, step = 1, group = "04. Candidate Sources")
+pivotMaxAgeBars = input(600, "Pivot maximum age (bars)", min = 50, max = 3000, step = 1, group = "04. Candidate Sources")
+pivotDecayBars = input(240, "Pivot recency decay (bars)", min = 20, max = 1500, step = 1, group = "04. Candidate Sources")
+useRoundNumbers = input(true, "Adaptive round numbers", group = "04. Candidate Sources")
+useAtrProjections = input(false, "ATR projections", group = "04. Candidate Sources")
+useGapStructure = input(true, "Gap structure", group = "04. Candidate Sources")
+gapMinimumAtr = input(0.15, "Minimum gap (daily ATR)", min = 0.02, max = 2, step = 0.01, group = "04. Candidate Sources")
+useVwapCandidate = input(true, "RTH VWAP as candidate", group = "04. Candidate Sources")
+useVwapBandCandidates = input(false, "VWAP bands as candidates", group = "04. Candidate Sources")
+
+// ---- 05. Reaction Model ----------------------------------------------------
+reactionLookback = input(120, "Reaction lookback bars", min = 30, max = 400, step = 1, group = "05. Reaction Model")
+reactionWindow = input(6, "Reaction observation bars", min = 2, max = 20, step = 1, group = "05. Reaction Model")
+touchCooldownBars = input(8, "Touch cooldown bars", min = 2, max = 50, step = 1, group = "05. Reaction Model")
+maxReactionTouches = input(6, "Maximum historical touches scored", min = 1, max = 12, step = 1, group = "05. Reaction Model")
+touchMinimumTicks = input(2, "Touch tolerance (ticks)", min = 1, max = 50, step = 1, group = "05. Reaction Model")
+touchAtrFraction = input(0.025, "Touch tolerance (daily ATR)", min = 0.005, max = 0.15, step = 0.005, group = "05. Reaction Model")
+
+// ---- 06. Event AVWAP -------------------------------------------------------
+eventAnchorMode = input("Automatic earnings", "Event AVWAP anchor", options = ["Automatic earnings", "Manual timestamp", "Disabled"], group = "06. Event AVWAP", tooltip = "The chart carries no earnings calendar, so the automatic mode never anchors. Use Manual timestamp to anchor the event VWAP yourself.")
+manualEventTime = input("", "Manual event timestamp", group = "06. Event AVWAP", tooltip = "YYYY-MM-DD or YYYY-MM-DD HH:MM, read in the session timezone.")
+eventMaxAgeDays = input(20, "Maximum event age (days)", min = 1, max = 90, step = 1, group = "06. Event AVWAP")
+eventMinBars = input(5, "Minimum bars before AVWAP contributes", min = 1, max = 100, step = 1, group = "06. Event AVWAP")
+eventMaxDistanceAtr = input(2, "Maximum AVWAP distance (daily ATR)", min = 0.25, max = 10, step = 0.25, group = "06. Event AVWAP")
+
+// ---- 07. VWAP --------------------------------------------------------------
+showVwap = input(true, "Show regular-session VWAP", group = "07. VWAP")
+vwapSource = input(hlc3, "VWAP source", group = "07. VWAP")
+showVwapBand1 = input(false, "Show +/-1 stdev band", group = "07. VWAP")
+showVwapBand2 = input(false, "Show +/-2 stdev band", group = "07. VWAP")
+vwapBand1Multiplier = input(1, "Band 1 multiplier", min = 0.1, step = 0.1, group = "07. VWAP")
+vwapBand2Multiplier = input(2, "Band 2 multiplier", min = 0.1, step = 0.1, group = "07. VWAP")
+showEmas = input(false, "Show 9 / 21 EMA in Legacy / Debug", group = "07. VWAP")
+
+// ---- 08. Dashboard and Alerts ----------------------------------------------
+enableAlerts = input(true, "Enable transition alerts", group = "08. Dashboard & Alerts")
+showResearchValues = input(false, "Show research values in the dashboard", group = "08. Dashboard & Alerts")
+
+// ---- settings the helper functions read ------------------------------------
+// A function body reads these copies: in this version an input read directly
+// from inside a function answers nothing.
+cfgReactionLookback = reactionLookback + 0
+cfgReactionWindow = reactionWindow + 0
+cfgMaxReactionTouches = maxReactionTouches + 0
+cfgTouchMinimumTicks = touchMinimumTicks + 0
+cfgTouchAtrFraction = touchAtrFraction + 0
+cfgTouchCooldownBars = touchCooldownBars + 0
+cfgPivotDecayBars = pivotDecayBars + 0
+cfgMinZoneTicks = minZoneTicks + 0
+cfgMinZoneAtr = minZoneAtr + 0
+cfgMaxZoneAtr = maxZoneAtr + 0
+cfgDispersionMultiplier = dispersionMultiplier + 0
+cfgActionabilityDecay = actionabilityDecay + 0
+cfgMinimumZoneStrength = minimumZoneStrength + 0
+cfgBreakDisplacementAtr = breakDisplacementAtr + 0
+cfgBreakClosesRequired = breakClosesRequired + 0
+cfgRejectionDisplacementAtr = rejectionDisplacementAtr + 0
+cfgAcceptanceClosesRequired = acceptanceClosesRequired + 0
+cfgStateHoldBars = stateHoldBars + 0
+cfgApproachingAtr = approachingAtr + 0
+cfgFlipWatchMinutes = flipWatchMinutes + 0
+cfgFlipRetestAtr = flipRetestAtr + 0
+cfgSwitchMargin = switchMargin + 0
+
+// ---- constants ---------------------------------------------------------------
+// Candidate source types.
+SRC_PDH = 1
+SRC_PDL = 2
+SRC_PDC = 3
+SRC_PMH = 4
+SRC_PML = 5
+SRC_PWH = 6
+SRC_PWL = 7
+SRC_ORH = 8
+SRC_ORL = 9
+SRC_RTH_OPEN = 10
+SRC_PIVOT_HIGH = 11
+SRC_PIVOT_LOW = 12
+SRC_GAP = 13
+SRC_ROUND = 14
+SRC_VWAP = 15
+SRC_VWAP_BAND = 16
+SRC_EVENT_AVWAP = 17
+SRC_ATR_PROJECTION = 18
+
+// Zone states.
+ST_DISTANT = 1
+ST_APPROACHING = 2
+ST_INSIDE = 3
+ST_REJECTING = 4
+ST_ACCEPTING = 5
+ST_BROKEN = 6
+ST_FLIPPED = 7
+
+// A candidate record in the registry: five numbers per candidate.
+RG = 5
+RG_PRICE = 0
+RG_SCORE = 1
+RG_RX = 2
+RG_POL = 3
+RG_TYPE = 4
+
+// A finished cluster: ten numbers per cluster, its source text kept beside it.
+CL = 10
+CL_CENTER = 0
+CL_LOW = 1
+CL_HIGH = 2
+CL_STRENGTH = 3
+CL_ACT = 4
+CL_MEAN = 5
+CL_RX = 6
+CL_DIV = 7
+CL_SUPW = 8
+CL_RESW = 9
+
+// The running sums of the cluster being built.
+AC_CENTER = 0
+AC_W = 1
+AC_PW = 2
+AC_SQW = 3
+AC_SW = 4
+AC_MAX = 5
+AC_RXW = 6
+AC_RXN = 7
+AC_SUPW = 8
+AC_RESW = 9
+AC_MEMBERS = 10
+AC_DIV = 11
+AC_NAMES = 12
+
+// A reaction zone, kept as one array of fields.
+Z_VALID = 0
+Z_CENTER = 1
+Z_LOW = 2
+Z_HIGH = 3
+Z_STRENGTH = 4
+Z_ACT = 5
+Z_MEAN = 6
+Z_RX = 7
+Z_DIV = 8
+Z_POL = 9
+Z_FLIPPED = 10
+Z_STATE = 11
+Z_STATEBAR = 12
+Z_SELBAR = 13
+Z_INSIDE = 14
+Z_BEYOND = 15
+Z_MISSED = 16
+
+// A broken zone watched for a flip.
+W_VALID = 0
+W_CENTER = 1
+W_LOW = 2
+W_HIGH = 3
+W_STRENGTH = 4
+W_MEAN = 5
+W_RX = 6
+W_DIV = 7
+W_TIME = 8
+
+// ---- small helpers -----------------------------------------------------------
+fn sourceName(t) =>
+    t == 1 ? "PDH" : t == 2 ? "PDL" : t == 3 ? "PDC" : t == 4 ? "PMH" : t == 5 ? "PML" : t == 6 ? "PWH" : t == 7 ? "PWL" : t == 8 ? "ORH" : t == 9 ? "ORL" : t == 10 ? "RTH OPEN" : t == 11 ? "PIV H" : t == 12 ? "PIV L" : t == 13 ? "GAP" : t == 14 ? "ROUND" : t == 15 ? "VWAP" : t == 16 ? "VWAP BAND" : t == 17 ? "EVENT AVWAP" : t == 18 ? "ATR PROJ" : "LEVEL"
+
+fn sourceFamily(t) =>
+    t <= 3 ? "DAY" : t <= 5 ? "PREMARKET" : t <= 7 ? "WEEK" : t <= 9 ? "OR" : t == 10 ? "SESSION" : t <= 12 ? "PIVOT" : t == 13 ? "GAP" : t == 14 ? "ROUND" : t <= 16 ? "VWAP" : t == 17 ? "EVENT" : t == 18 ? "PROJECTION" : "OTHER"
+
+fn stateText(s) =>
+    s == 2 ? "APPROACHING" : s == 3 ? "INSIDE" : s == 4 ? "REJECTING" : s == 5 ? "ACCEPTING" : s == 6 ? "BROKEN" : s == 7 ? "FLIPPED" : "DISTANT"
+
+fn baseRecencyFor(t) =>
+    t == 6 or t == 7 ? 78 : t == 1 or t == 2 or t == 3 ? 88 : 100
+
+// A 0 to 100 saturating map of a positive excursion.
+fn positiveSat(x) =>
+    isNone(x) ? none : x <= 0 ? 0 : 100 * x / (x + 0.5)
+
+// Relative volume mapped onto 0 to 100.
+fn participationScore(rvol) =>
+    isNone(rvol) ? none : clamp((rvol - 1) * 50, 0, 100)
+
+// Every character of s is a digit and its length is in [lo, hi].
+fn allDigits(s, lo, hi) =>
+    n = str.length(s)
+    ok = n >= lo and n <= hi
+    if ok
+        for k = 0 to n - 1
+            if not str.contains("0123456789", str.substring(s, k, k + 1))
+                ok = false
+    ok
+
+// ---- bar facts ---------------------------------------------------------------
+// The smallest price step guards every division and tolerance.
+tickSize = orElse(chart.tickSize, 0)
+eps = tickSize > 0 ? tickSize : max(abs(close) * 0.000001, 0.00000001)
+
+zone = str.trim(sessionTimezone) == "" ? "America/New_York" : str.trim(sessionTimezone)
+dayCodes = weekdaysOnly ? ":12345" : ":1234567"
+rthSpec = (str.trim(rthInput) == "" ? "0930-1600" : str.trim(rthInput)) + dayCodes
+premarketSpec = (str.trim(premarketInput) == "" ? "0400-0930" : str.trim(premarketInput)) + dayCodes
+// A window that does not parse falls back to the default window.
+inRth = orElse(session.isIn(rthSpec, zone), orElse(session.isIn("0930-1600" + dayCodes, zone), false))
+inPremarket = orElse(session.isIn(premarketSpec, zone), orElse(session.isIn("0400-0930" + dayCodes, zone), false))
+
+zYear = date.year(time, zone)
+zMonth = date.month(time, zone)
+zDay = date.day(time, zone)
+dayKey = zYear * 10000 + zMonth * 100 + zDay
+// Whole days since 1970-01-01 in the session zone, and Monday-start weeks.
+dayIdx = round(date.from(zYear, zMonth, zDay, 0, 0, 0, "UTC") / 86400000)
+weekIdx = floor((dayIdx + 3) / 7)
+
+// ---- the confirmed daily ATR -------------------------------------------------
+// The chart's own bars are folded into calendar days of the session zone. The
+// average true range of the finished days, seeded with a simple mean of the
+// first `atrLength` daily ranges and smoothed after that, is known from the
+// first bar of the next day, so nothing is read ahead.
+chartAtr = atr(atrLength)
+
+var dHigh = none
+var dLow = none
+var dClose = none
+var dPrevClose = none
+var dCount = 0
+var dSeedSum = 0.0
+var dAtr = none
+
+newDay = bar.isFirst or dayIdx != dayIdx[1]
+if newDay and not bar.isFirst
+    // the previous day is complete
+    dayRange = isNone(dPrevClose) ? dHigh - dLow : max(dHigh - dLow, max(abs(dHigh - dPrevClose), abs(dLow - dPrevClose)))
+    dCount += 1
+    if isNone(dAtr)
+        dSeedSum += dayRange
+        if dCount >= atrLength
+            dAtr = dSeedSum / atrLength
+    else
+        dAtr = (dAtr * (atrLength - 1) + dayRange) / atrLength
+    dPrevClose = dClose
+if newDay
+    dHigh = high
+    dLow = low
+    dClose = close
+else
+    dHigh = max(dHigh, high)
+    dLow = min(dLow, low)
+    dClose = close
+
+normAtr = not isNone(dAtr) and dAtr > 0 ? dAtr : chartAtr
+
+// The volume baseline: absent while any bar of its window has no volume.
+volumeBaseline = sma(volume, 20)
+
+// ---- EMAs and pivots -----------------------------------------------------------
+fastEma = ema(close, 9)
+slowEma = ema(close, 21)
+
+confirmedPivotHigh = pivotHigh(high, pivotLeftBars, pivotRightBars)
+confirmedPivotLow = pivotLow(low, pivotLeftBars, pivotRightBars)
+pivotConfirmationLow = lowest(low, pivotRightBars + 1)
+pivotConfirmationHigh = highest(high, pivotRightBars + 1)
+pivotOriginAtr = normAtr[pivotRightBars]
+pivotOriginBaseline = volumeBaseline[pivotRightBars]
+pivotOriginVolume = volume[pivotRightBars]
+
+// ---- the manual event anchor ---------------------------------------------------
+// YYYY-MM-DD or YYYY-MM-DD HH:MM, read in the session zone.
+eventText = str.trim(manualEventTime)
+eventParts = str.split(str.replace(eventText, "T", " "), " ")
+manualEventMs = none
+if size(eventParts) == 1 or size(eventParts) == 2
+    ymd = str.split(element(eventParts, 0), "-")
+    hourText = "0"
+    minuteText = "00"
+    timeOk = true
+    if size(eventParts) == 2
+        hm = str.split(element(eventParts, 1), ":")
+        timeOk = size(hm) == 2
+        if timeOk
+            hourText = element(hm, 0)
+            minuteText = element(hm, 1)
+            timeOk = allDigits(hourText, 1, 2) and allDigits(minuteText, 2, 2)
+    if timeOk and size(ymd) == 3
+        if allDigits(element(ymd, 0), 4, 4) and allDigits(element(ymd, 1), 1, 2) and allDigits(element(ymd, 2), 1, 2)
+            manualEventMs = date.from(toNumber(element(ymd, 0)), toNumber(element(ymd, 1)), toNumber(element(ymd, 2)), toNumber(hourText), toNumber(minuteText), 0, zone)
+
+// ---- scoring -------------------------------------------------------------------
+// How price behaved at `lvl` on the touches before this bar. Returns
+// [reaction quality, impulse quality, touch quality, volume evidence,
+// age of the most recent touch]; each is absent without a touch.
+fn reactionMetrics(lvl, knownBar, atrNow) =>
+    reactionSum = 0.0
+    impulseSum = 0.0
+    volumeSum = 0.0
+    volumeSamples = 0
+    touches = 0
+    lastAccepted = -1
+    recentAge = -1
+    historyLimit = isNone(knownBar) ? cfgReactionLookback : min(cfgReactionLookback, max(bar.index - knownBar - 1, 0))
+    top = min(cfgReactionLookback, historyLimit)
+    for off = cfgReactionWindow to top
+        if touches >= cfgMaxReactionTouches
+            break
+        if off > bar.index
+            continue
+        localAtr = normAtr[off]
+        baseAtr = isNone(localAtr) ? atrNow : localAtr
+        tolerance = max(cfgTouchMinimumTicks * eps, baseAtr * cfgTouchAtrFraction)
+        touched = orElse(low[off] <= lvl + tolerance and high[off] >= lvl - tolerance, false)
+        cooled = lastAccepted < 0 or off - lastAccepted >= cfgTouchCooldownBars
+        if not touched or not cooled
+            continue
+        prior = close[off + 1]
+        direction = 0
+        if not isNone(prior) and prior > lvl + tolerance * 0.25
+            direction = 1
+        else if not isNone(prior) and prior < lvl - tolerance * 0.25
+            direction = -1
+        else
+            direction = close[off] >= lvl ? 1 : -1
+        mfe = 0.0
+        mae = 0.0
+        persistenceCount = 0
+        for j = 1 to cfgReactionWindow
+            o = off - j
+            if o < 0
+                continue
+            hi = high[o]
+            lo = low[o]
+            cl = close[o]
+            if direction == 1
+                mfe = max(mfe, hi - lvl)
+                mae = max(mae, lvl - lo)
+                if cl >= lvl
+                    persistenceCount += 1
+            else
+                mfe = max(mfe, lvl - lo)
+                mae = max(mae, hi - lvl)
+                if cl <= lvl
+                    persistenceCount += 1
+        ratio = mfe / max(mfe + mae, eps)
+        persistence = 100 * persistenceCount / cfgReactionWindow
+        reaction = 75 * ratio + 0.25 * persistence
+        impulse = not isNone(localAtr) and localAtr > 0 ? positiveSat(mfe / localAtr) : none
+        reactionSum += reaction
+        impulseSum += orElse(impulse, 0)
+        baseline = volumeBaseline[off]
+        vol = volume[off]
+        rvol = not isNone(vol) and not isNone(baseline) and baseline > 0 ? vol / baseline : none
+        volumeScore = participationScore(rvol)
+        if not isNone(volumeScore)
+            volumeSum += volumeScore
+            volumeSamples += 1
+        touches += 1
+        lastAccepted = off
+        recentAge = recentAge < 0 ? off : min(recentAge, off)
+    reactionQuality = touches > 0 ? reactionSum / touches : none
+    impulseQuality = touches > 0 ? impulseSum / touches : none
+    countScore = touches > 0 ? 100 * touches / (touches + 2) : none
+    touchQuality = touches > 0 ? countScore * (0.5 + 0.5 * orElse(reactionQuality, 50) / 100) : none
+    volumeEvidence = volumeSamples > 0 ? volumeSum / volumeSamples : none
+    [reactionQuality, impulseQuality, touchQuality, volumeEvidence, recentAge < 0 ? none : recentAge]
+
+fn candidateScore(sourceQuality, reactionQuality, impulseQuality, touchQuality, recency, volumeEvidence) =>
+    weighted = 0.3 * sourceQuality + 0.1 * recency
+    weights = 0.4
+    if not isNone(reactionQuality)
+        weighted += 0.25 * reactionQuality
+        weights += 0.25
+    if not isNone(impulseQuality)
+        weighted += 0.18 * impulseQuality
+        weights += 0.18
+    if not isNone(touchQuality)
+        weighted += 0.12 * touchQuality
+        weights += 0.12
+    if not isNone(volumeEvidence)
+        weighted += 0.05 * volumeEvidence
+        weights += 0.05
+    clamp(weighted / max(weights, 0.001), 0, 100)
+
+// Score one candidate level and add it to the registry, unless it is too far
+// from price or the same source already holds the same price.
+fn addCandidate(reg, lvl, baseWeight, sourceType, polarity, originBar, knownBar, originImpulse, originVolume, recencyOverride, scan, atrNow, maxDistance) =>
+    if isNone(lvl) or lvl <= 0 or isNone(atrNow) or atrNow <= 0
+        return
+    if isNone(maxDistance) or not (abs(lvl - close) <= maxDistance)
+        return
+    n = size(reg) / RG
+    for k = 0 to n - 1
+        if element(reg, k * RG + RG_TYPE) == sourceType and abs(element(reg, k * RG + RG_PRICE) - lvl) <= eps * 0.5
+            return
+    reactionQuality = none
+    reactionImpulse = none
+    touchQuality = none
+    reactionVolume = none
+    recentAge = none
+    if scan
+        m = reactionMetrics(lvl, knownBar, atrNow)
+        reactionQuality = element(m, 0)
+        reactionImpulse = element(m, 1)
+        touchQuality = element(m, 2)
+        reactionVolume = element(m, 3)
+        recentAge = element(m, 4)
+    impulseQuality = isNone(originImpulse) ? reactionImpulse : isNone(reactionImpulse) ? originImpulse : max(originImpulse, reactionImpulse)
+    volumeEvidence = isNone(originVolume) ? reactionVolume : isNone(reactionVolume) ? originVolume : max(originVolume, reactionVolume)
+    baseRecency = baseRecencyFor(sourceType)
+    decay = max(cfgPivotDecayBars, 1)
+    originRecency = isNone(originBar) ? baseRecency : 100 / (1 + max(bar.index - originBar, 0) / decay)
+    touchRecency = isNone(recentAge) ? 0 : 100 / (1 + recentAge / decay)
+    isPivot = sourceType == SRC_PIVOT_HIGH or sourceType == SRC_PIVOT_LOW
+    recency = not isNone(recencyOverride) ? recencyOverride : isPivot ? max(originRecency, touchRecency) : max(baseRecency, touchRecency)
+    finalScore = candidateScore(baseWeight, reactionQuality, impulseQuality, touchQuality, recency, volumeEvidence)
+    push(reg, lvl)
+    push(reg, finalScore)
+    push(reg, reactionQuality)
+    push(reg, polarity)
+    push(reg, sourceType)
+
+// Start a cluster from registry entry k.
+fn clusterNew(acc, accText, reg, k) =>
+    price = element(reg, k * RG + RG_PRICE)
+    score = element(reg, k * RG + RG_SCORE)
+    rx = element(reg, k * RG + RG_RX)
+    pol = element(reg, k * RG + RG_POL)
+    t = element(reg, k * RG + RG_TYPE)
+    weight = max(score, 1)
+    set(acc, AC_CENTER, price)
+    set(acc, AC_W, weight)
+    set(acc, AC_PW, price * weight)
+    set(acc, AC_SQW, price * price * weight)
+    set(acc, AC_SW, score * weight)
+    set(acc, AC_MAX, score)
+    set(acc, AC_RXW, isNone(rx) ? 0 : rx * weight)
+    set(acc, AC_RXN, isNone(rx) ? 0 : weight)
+    set(acc, AC_SUPW, pol == 1 ? weight : 0)
+    set(acc, AC_RESW, pol == -1 ? weight : 0)
+    set(acc, AC_MEMBERS, 1)
+    set(acc, AC_DIV, 1)
+    set(acc, AC_NAMES, 1)
+    set(accText, 0, "|" + sourceFamily(t) + "|")
+    set(accText, 1, "|" + sourceName(t) + "|")
+    set(accText, 2, sourceName(t))
+
+// Add registry entry k to the cluster being built. A second member of a
+// family already present counts for less, and less again when it sits on
+// top of the cluster's centre.
+fn clusterAdd(acc, accText, reg, k, duplicateTolerance) =>
+    price = element(reg, k * RG + RG_PRICE)
+    score = element(reg, k * RG + RG_SCORE)
+    rx = element(reg, k * RG + RG_RX)
+    pol = element(reg, k * RG + RG_POL)
+    t = element(reg, k * RG + RG_TYPE)
+    family = sourceFamily(t)
+    name = sourceName(t)
+    sameFamily = str.contains(element(accText, 0), "|" + family + "|")
+    nearDuplicate = abs(price - element(acc, AC_CENTER)) <= duplicateTolerance
+    redundancyPenalty = sameFamily ? (nearDuplicate ? 0.55 : 0.78) : 1
+    weight = max(score * redundancyPenalty, 1)
+    set(acc, AC_W, element(acc, AC_W) + weight)
+    set(acc, AC_PW, element(acc, AC_PW) + price * weight)
+    set(acc, AC_SQW, element(acc, AC_SQW) + price * price * weight)
+    set(acc, AC_SW, element(acc, AC_SW) + score * weight)
+    set(acc, AC_MAX, max(element(acc, AC_MAX), score))
+    if not isNone(rx)
+        set(acc, AC_RXW, element(acc, AC_RXW) + rx * weight)
+        set(acc, AC_RXN, element(acc, AC_RXN) + weight)
+    if pol == 1
+        set(acc, AC_SUPW, element(acc, AC_SUPW) + weight)
+    else if pol == -1
+        set(acc, AC_RESW, element(acc, AC_RESW) + weight)
+    set(acc, AC_MEMBERS, element(acc, AC_MEMBERS) + 1)
+    if not sameFamily
+        set(acc, AC_DIV, element(acc, AC_DIV) + 1)
+        set(accText, 0, element(accText, 0) + family + "|")
+    if not str.contains(element(accText, 1), "|" + name + "|")
+        set(accText, 1, element(accText, 1) + name + "|")
+        if element(acc, AC_NAMES) < 3
+            set(accText, 2, element(accText, 2) + " + " + name)
+            set(acc, AC_NAMES, element(acc, AC_NAMES) + 1)
+    set(acc, AC_CENTER, element(acc, AC_PW) / element(acc, AC_W))
+
+// Close the cluster being built: its width from the weighted dispersion of its
+// members, its strength from their scores and variety, and its actionability
+// from that strength discounted by its distance from the close.
+fn clusterFinalize(acc, accText, cl, clText, atrNow) =>
+    w = element(acc, AC_W)
+    center = element(acc, AC_PW) / max(w, 0.001)
+    spreadSq = max(element(acc, AC_SQW) / max(w, 0.001) - center * center, 0)
+    weightedStd = sqrt(spreadSq)
+    minimumWidth = max(cfgMinZoneTicks * eps, atrNow * cfgMinZoneAtr)
+    maximumWidth = max(minimumWidth, atrNow * cfgMaxZoneAtr)
+    halfWidth = clamp(max(weightedStd * cfgDispersionMultiplier, minimumWidth), minimumWidth, maximumWidth)
+    zLow = center - halfWidth
+    zHigh = center + halfWidth
+    weightedMean = element(acc, AC_SW) / max(w, 0.001)
+    reactionQuality = element(acc, AC_RXN) > 0 ? element(acc, AC_RXW) / element(acc, AC_RXN) : none
+    diversity = element(acc, AC_DIV)
+    redundantMembers = max(element(acc, AC_MEMBERS) - diversity, 0)
+    diversityScore = clamp(25 + max(diversity - 1, 0) * 20 + min(redundantMembers, 3) * 5, 0, 100)
+    raw = 0.45 * weightedMean + 0.25 * element(acc, AC_MAX) + 0.2 * diversityScore
+    weights = 0.9
+    if not isNone(reactionQuality)
+        raw += 0.1 * reactionQuality
+        weights += 0.1
+    strength = clamp(raw / weights, 0, 100)
+    distanceToZone = close < zLow ? zLow - close : close > zHigh ? close - zHigh : 0
+    distanceAtr = distanceToZone / max(atrNow, eps)
+    actionability = strength / (1 + distanceAtr * cfgActionabilityDecay)
+    push(cl, center)
+    push(cl, zLow)
+    push(cl, zHigh)
+    push(cl, strength)
+    push(cl, actionability)
+    push(cl, weightedMean)
+    push(cl, reactionQuality)
+    push(cl, diversity)
+    push(cl, element(acc, AC_SUPW))
+    push(cl, element(acc, AC_RESW))
+    push(clText, element(accText, 2))
+
+// Whether a cluster's support or resistance members back the side asked for.
+fn clusterPolarityMatch(cl, k, polarity) =>
+    supW = element(cl, k * CL + CL_SUPW)
+    resW = element(cl, k * CL + CL_RESW)
+    hasSupport = supW > 0
+    hasResistance = resW > 0
+    polarity == 1 ? (not hasResistance or (hasSupport and supW >= resW)) : (not hasSupport or (hasResistance and resW >= supW))
+
+// The most actionable cluster on the right side of price, strong enough, and
+// clear of a zone that has just broken.
+fn bestClusterIndex(cl, polarity, w, tolerance) =>
+    bestIndex = -1
+    bestActionability = -1.0
+    n = size(cl) / CL
+    for k = 0 to n - 1
+        center = element(cl, k * CL + CL_CENTER)
+        cLow = element(cl, k * CL + CL_LOW)
+        cHigh = element(cl, k * CL + CL_HIGH)
+        sideMatch = polarity == 1 ? center < close : center > close
+        blocked = element(w, W_VALID) == 1 and ((cHigh >= element(w, W_LOW) and cLow <= element(w, W_HIGH)) or abs(center - element(w, W_CENTER)) <= tolerance * 1.5)
+        if sideMatch and clusterPolarityMatch(cl, k, polarity) and not blocked and element(cl, k * CL + CL_STRENGTH) >= cfgMinimumZoneStrength and element(cl, k * CL + CL_ACT) > bestActionability
+            bestActionability = element(cl, k * CL + CL_ACT)
+            bestIndex = k
+    bestIndex
+
+// The cluster that refreshes the active zone: strong enough, backing the
+// zone's side (any side once the zone has flipped), overlapping the zone or
+// centred within one and a half tolerances of it, and the nearest such one.
+fn matchingClusterIndex(cl, z, tolerance) =>
+    matchIndex = -1
+    nearest = 1000000000000.0
+    if element(z, Z_VALID) == 1
+        n = size(cl) / CL
+        for k = 0 to n - 1
+            center = element(cl, k * CL + CL_CENTER)
+            distance = abs(center - element(z, Z_CENTER))
+            overlap = element(cl, k * CL + CL_HIGH) >= element(z, Z_LOW) and element(cl, k * CL + CL_LOW) <= element(z, Z_HIGH)
+            polarityMatch = element(z, Z_FLIPPED) == 1 or clusterPolarityMatch(cl, k, element(z, Z_POL))
+            if element(cl, k * CL + CL_STRENGTH) >= cfgMinimumZoneStrength and polarityMatch and (overlap or distance <= tolerance * 1.5) and distance < nearest
+                nearest = distance
+                matchIndex = k
+    matchIndex
+
+fn zoneClear(z, zText) =>
+    set(z, Z_VALID, 0)
+    set(z, Z_CENTER, none)
+    set(z, Z_LOW, none)
+    set(z, Z_HIGH, none)
+    set(z, Z_STRENGTH, none)
+    set(z, Z_ACT, none)
+    set(z, Z_MEAN, none)
+    set(z, Z_RX, none)
+    set(z, Z_DIV, 0)
+    set(z, Z_POL, 0)
+    set(z, Z_FLIPPED, 0)
+    set(z, Z_STATE, 1)
+    set(z, Z_STATEBAR, none)
+    set(z, Z_SELBAR, none)
+    set(z, Z_INSIDE, 0)
+    set(z, Z_BEYOND, 0)
+    set(z, Z_MISSED, 0)
+    set(zText, 0, "")
+
+fn watchClear(w, wText) =>
+    set(w, W_VALID, 0)
+    set(w, W_CENTER, none)
+    set(w, W_LOW, none)
+    set(w, W_HIGH, none)
+    set(w, W_STRENGTH, none)
+    set(w, W_MEAN, none)
+    set(w, W_RX, none)
+    set(w, W_DIV, 0)
+    set(w, W_TIME, none)
+    set(wText, 0, "")
+
+// Copy cluster k's geometry and scores into a zone.
+fn zoneRefresh(z, zText, cl, clText, k) =>
+    set(z, Z_CENTER, element(cl, k * CL + CL_CENTER))
+    set(z, Z_LOW, element(cl, k * CL + CL_LOW))
+    set(z, Z_HIGH, element(cl, k * CL + CL_HIGH))
+    set(z, Z_STRENGTH, element(cl, k * CL + CL_STRENGTH))
+    set(z, Z_ACT, element(cl, k * CL + CL_ACT))
+    set(z, Z_MEAN, element(cl, k * CL + CL_MEAN))
+    set(z, Z_RX, element(cl, k * CL + CL_RX))
+    set(z, Z_DIV, element(cl, k * CL + CL_DIV))
+    set(z, Z_MISSED, 0)
+    set(zText, 0, element(clText, k))
+
+// Make a new zone from cluster k.
+fn zoneFromCluster(z, zText, cl, clText, k, polarity, state) =>
+    zoneRefresh(z, zText, cl, clText, k)
+    set(z, Z_VALID, 1)
+    set(z, Z_POL, polarity)
+    set(z, Z_FLIPPED, 0)
+    set(z, Z_STATE, state)
+    set(z, Z_STATEBAR, bar.index)
+    set(z, Z_SELBAR, bar.index)
+    set(z, Z_INSIDE, 0)
+    set(z, Z_BEYOND, 0)
+
+// Remember a zone that just broke, to watch it for a flip.
+fn watchFromZone(w, wText, z, zText) =>
+    set(w, W_VALID, element(z, Z_VALID))
+    set(w, W_CENTER, element(z, Z_CENTER))
+    set(w, W_LOW, element(z, Z_LOW))
+    set(w, W_HIGH, element(z, Z_HIGH))
+    set(w, W_STRENGTH, element(z, Z_STRENGTH))
+    set(w, W_MEAN, element(z, Z_MEAN))
+    set(w, W_RX, element(z, Z_RX))
+    set(w, W_DIV, element(z, Z_DIV))
+    set(w, W_TIME, time)
+    set(wText, 0, element(zText, 0))
+
+// A broken zone retested from the other side becomes a zone of that side.
+fn zoneFromWatch(z, zText, w, wText, polarity) =>
+    set(z, Z_VALID, 1)
+    set(z, Z_CENTER, element(w, W_CENTER))
+    set(z, Z_LOW, element(w, W_LOW))
+    set(z, Z_HIGH, element(w, W_HIGH))
+    set(z, Z_STRENGTH, element(w, W_STRENGTH))
+    set(z, Z_ACT, element(w, W_STRENGTH))
+    set(z, Z_MEAN, element(w, W_MEAN))
+    set(z, Z_RX, element(w, W_RX))
+    set(z, Z_DIV, element(w, W_DIV))
+    set(z, Z_POL, polarity)
+    set(z, Z_FLIPPED, 1)
+    set(z, Z_STATE, ST_FLIPPED)
+    set(z, Z_STATEBAR, bar.index)
+    set(z, Z_SELBAR, bar.index)
+    set(z, Z_INSIDE, 0)
+    set(z, Z_BEYOND, 0)
+    set(z, Z_MISSED, 0)
+    set(zText, 0, element(wText, 0))
+
+// Move one active zone through its states on this bar. `side` is 1 for the
+// support zone and -1 for the resistance zone. Returns [entered, rejection,
+// break or acceptance, broken] as 1 or 0; a break also arms the watch `w`.
+fn zoneStep(z, zText, w, wText, side, atrNow) =>
+    zLow = element(z, Z_LOW)
+    zHigh = element(z, Z_HIGH)
+    overlap = high >= zLow and low <= zHigh
+    beyond = side == 1 ? close < zLow : close > zHigh
+    distance = side == 1 ? (close > zHigh ? (close - zHigh) / max(atrNow, eps) : 0) : (close < zLow ? (zLow - close) / max(atrNow, eps) : 0)
+    previousState = element(z, Z_STATE)
+    closeInside = close >= zLow and close <= zHigh
+    entered = overlap and previousState != ST_INSIDE and previousState != ST_REJECTING and previousState != ST_ACCEPTING and previousState != ST_FLIPPED
+    set(z, Z_INSIDE, closeInside ? element(z, Z_INSIDE) + 1 : 0)
+    set(z, Z_BEYOND, beyond ? element(z, Z_BEYOND) + 1 : 0)
+    hardBreak = side == 1 ? close < zLow - atrNow * cfgBreakDisplacementAtr : close > zHigh + atrNow * cfgBreakDisplacementAtr
+    confirmedBreak = orElse(hardBreak, false) or element(z, Z_BEYOND) >= cfgBreakClosesRequired
+    rejection = overlap and orElse(side == 1 ? close > zHigh + atrNow * cfgRejectionDisplacementAtr : close < zLow - atrNow * cfgRejectionDisplacementAtr, false)
+    accepting = (element(z, Z_INSIDE) >= cfgAcceptanceClosesRequired or element(z, Z_BEYOND) > 0) and not rejection and not confirmedBreak
+    rejectEvent = false
+    breakEvent = false
+    broken = false
+    if confirmedBreak
+        set(z, Z_STATE, ST_BROKEN)
+        set(z, Z_STATEBAR, bar.index)
+        watchFromZone(w, wText, z, zText)
+        breakEvent = previousState != ST_BROKEN
+        broken = true
+    else if rejection
+        set(z, Z_STATE, ST_REJECTING)
+        set(z, Z_STATEBAR, bar.index)
+        rejectEvent = previousState != ST_REJECTING
+    else if accepting
+        set(z, Z_STATE, ST_ACCEPTING)
+        set(z, Z_STATEBAR, bar.index)
+        breakEvent = previousState != ST_ACCEPTING
+    else if overlap
+        set(z, Z_STATE, ST_INSIDE)
+        if previousState != ST_INSIDE
+            set(z, Z_STATEBAR, bar.index)
+    else if previousState == ST_REJECTING or previousState == ST_ACCEPTING or previousState == ST_FLIPPED
+        if bar.index - element(z, Z_STATEBAR) > cfgStateHoldBars
+            set(z, Z_STATE, distance <= cfgApproachingAtr ? ST_APPROACHING : ST_DISTANT)
+    else
+        set(z, Z_STATE, distance <= cfgApproachingAtr ? ST_APPROACHING : ST_DISTANT)
+    [entered ? 1 : 0, rejectEvent ? 1 : 0, breakEvent ? 1 : 0, broken ? 1 : 0]
+
+// Watch a broken zone for a retest from the other side. `side` is the side
+// the broken zone was on. Returns 1 when it flipped into the other zone `z`.
+fn watchStep(w, wText, z, zText, side, atrNow) =>
+    flipped = 0
+    if element(w, W_VALID) == 1
+        wLow = element(w, W_LOW)
+        wHigh = element(w, W_HIGH)
+        expired = time - element(w, W_TIME) > cfgFlipWatchMinutes * 60000
+        retested = high >= wLow - atrNow * cfgFlipRetestAtr and low <= wHigh + atrNow * cfgFlipRetestAtr
+        held = side == 1 ? close < wLow - atrNow * cfgRejectionDisplacementAtr : close > wHigh + atrNow * cfgRejectionDisplacementAtr
+        if orElse(time > element(w, W_TIME) and retested and held, false)
+            activate = element(z, Z_VALID) != 1 or orElse(element(w, W_STRENGTH) >= element(z, Z_ACT), false) or orElse(element(w, W_STRENGTH) >= element(z, Z_STRENGTH) + cfgSwitchMargin, false)
+            if activate
+                zoneFromWatch(z, zText, w, wText, -side)
+                flipped = 1
+            watchClear(w, wText)
+        else if expired
+            watchClear(w, wText)
+    flipped
+
+// ---- carried state ---------------------------------------------------------------
+var currentDayHigh = none
+var currentDayLow = none
+var currentDayClose = none
+var previousDayHigh = none
+var previousDayLow = none
+var previousDayClose = none
+var previousDayKnownBar = none
+var currentSessionOpen = none
+var currentSessionOpenKnownBar = none
+
+var trackedWeekKey = none
+var currentWeekHigh = none
+var currentWeekLow = none
+var previousWeekHigh = none
+var previousWeekLow = none
+var previousWeekKnownBar = none
+
+var premarketHigh = none
+var premarketLow = none
+var premarketDayKey = none
+var premarketHighKnownBar = none
+var premarketLowKnownBar = none
+
+var openingRangeEndTime = none
+var openingRangeStartBar = none
+var openingRangeHigh = none
+var openingRangeLow = none
+var openingRangeFinalized = false
+var openingRangeKnownBar = none
+
+var gapActive = false
+var gapFilled = false
+var gapDirection = 0
+var gapHigh = none
+var gapLow = none
+var gapMid = none
+var gapUnfilledBoundary = none
+var gapKnownBar = none
+
+var pendingEventAnchor = false
+var manualAnchorConsumed = false
+var eventAnchorTime = none
+var eventAnchorBar = none
+var eventCumPV = 0.0
+var eventCumVolume = 0.0
+var eventBars = 0
+
+var cumPV = 0.0
+var cumV = 0.0
+var cumP2V = 0.0
+
+// Confirmed pivots, as parallel arrays.
+var pvPrice: array<number> = []
+var pvPol: array<number> = []
+var pvBar: array<number> = []
+var pvKnown: array<number> = []
+var pvBase: array<number> = []
+var pvImpulse: array<number> = []
+var pvVolume: array<number> = []
+
+// The two zones and the two break watches.
+var supZone: array<number> = [0, none, none, none, none, none, none, none, 0, 0, 0, 1, none, none, 0, 0, 0]
+var resZone: array<number> = [0, none, none, none, none, none, none, none, 0, 0, 0, 1, none, none, 0, 0, 0]
+var supText: array<string> = [""]
+var resText: array<string> = [""]
+var supWatch: array<number> = [0, none, none, none, none, none, none, 0, none]
+var resWatch: array<number> = [0, none, none, none, none, none, none, 0, none]
+var supWatchText: array<string> = [""]
+var resWatchText: array<string> = [""]
+
+// ---- this bar ------------------------------------------------------------------------
+newCalendarDay = bar.isFirst or dayKey != dayKey[1]
+prevInRth = bar.isFirst ? false : inRth[1]
+prevInPremarket = bar.isFirst ? false : inPremarket[1]
+rthStart = inRth and (newCalendarDay or not prevInRth)
+premarketStart = inPremarket and (newCalendarDay or not prevInPremarket)
+barAtr = normAtr
+clusterTolerance = max(clusterMinimumTicks * eps, max(orElse(barAtr, 0) * clusterAtrFraction, close * clusterMinimumPct))
+maximumCandidateDistance = barAtr * maxDistanceAtr
+
+// previous day and session open
+dailyLevelRoll = premarketStart or (rthStart and not prevInPremarket)
+if dailyLevelRoll
+    if not isNone(currentDayHigh)
+        previousDayHigh = currentDayHigh
+        previousDayLow = currentDayLow
+        previousDayClose = currentDayClose
+        previousDayKnownBar = bar.index
+    currentDayHigh = none
+    currentDayLow = none
+    currentDayClose = none
+    currentSessionOpen = none
+    currentSessionOpenKnownBar = none
+if rthStart
+    currentSessionOpen = open
+    currentSessionOpenKnownBar = bar.index
+    currentDayHigh = high
+    currentDayLow = low
+    currentDayClose = close
+else if inRth
+    currentDayHigh = isNone(currentDayHigh) ? high : max(currentDayHigh, high)
+    currentDayLow = isNone(currentDayLow) ? low : min(currentDayLow, low)
+    currentDayClose = close
+
+// previous week
+if isNone(trackedWeekKey)
+    trackedWeekKey = weekIdx
+if weekIdx != trackedWeekKey
+    if not isNone(currentWeekHigh)
+        previousWeekHigh = currentWeekHigh
+        previousWeekLow = currentWeekLow
+        previousWeekKnownBar = bar.index
+    trackedWeekKey = weekIdx
+    currentWeekHigh = none
+    currentWeekLow = none
+if inRth
+    currentWeekHigh = isNone(currentWeekHigh) ? high : max(currentWeekHigh, high)
+    currentWeekLow = isNone(currentWeekLow) ? low : min(currentWeekLow, low)
+
+// premarket
+if premarketStart
+    premarketHigh = high
+    premarketLow = low
+    premarketDayKey = dayKey
+    premarketHighKnownBar = bar.index
+    premarketLowKnownBar = bar.index
+else if inPremarket
+    if isNone(premarketHigh) or high > premarketHigh
+        premarketHigh = high
+        premarketHighKnownBar = bar.index
+    if isNone(premarketLow) or low < premarketLow
+        premarketLow = low
+        premarketLowKnownBar = bar.index
+    premarketDayKey = dayKey
+if rthStart and (premarketDayKey != dayKey or isNone(premarketHigh) or isNone(premarketLow))
+    premarketHigh = none
+    premarketLow = none
+    premarketHighKnownBar = none
+    premarketLowKnownBar = none
+
+// opening range
+if premarketStart
+    openingRangeEndTime = none
+    openingRangeStartBar = none
+    openingRangeHigh = none
+    openingRangeLow = none
+    openingRangeFinalized = false
+    openingRangeKnownBar = none
+if rthStart
+    openingRangeEndTime = time + openingRangeMinutes * 60000
+    openingRangeStartBar = bar.index
+    openingRangeHigh = high
+    openingRangeLow = low
+    openingRangeFinalized = false
+    openingRangeKnownBar = none
+inOpeningRange = inRth and not isNone(openingRangeEndTime) and time < openingRangeEndTime
+if inOpeningRange and not rthStart
+    openingRangeHigh = max(openingRangeHigh, high)
+    openingRangeLow = min(openingRangeLow, low)
+if inRth and not inOpeningRange and not openingRangeFinalized and not isNone(openingRangeEndTime)
+    openingRangeFinalized = true
+    openingRangeKnownBar = bar.index
+
+// gap structure
+if premarketStart
+    gapActive = false
+    gapFilled = false
+    gapDirection = 0
+    gapHigh = none
+    gapLow = none
+    gapMid = none
+    gapUnfilledBoundary = none
+    gapKnownBar = none
+if rthStart
+    gapActive = useGapStructure and not isNone(previousDayClose) and not isNone(barAtr) and barAtr > 0 and abs(open - previousDayClose) >= barAtr * gapMinimumAtr
+    gapFilled = false
+    gapDirection = gapActive ? (open > previousDayClose ? 1 : -1) : 0
+    gapHigh = gapActive ? max(open, previousDayClose) : none
+    gapLow = gapActive ? min(open, previousDayClose) : none
+    gapMid = gapActive ? (open + previousDayClose) * 0.5 : none
+    gapUnfilledBoundary = gapActive ? open : none
+    gapKnownBar = gapActive ? bar.index : none
+if gapActive and not gapFilled and inRth
+    gapUnfilledBoundary = gapDirection == 1 ? min(gapUnfilledBoundary, low) : max(gapUnfilledBoundary, high)
+    gapFilled = gapDirection == 1 ? gapUnfilledBoundary <= gapLow : gapDirection == -1 ? gapUnfilledBoundary >= gapHigh : true
+
+// session VWAP and its bands, restarted at each regular-session open
+if rthStart
+    cumPV = 0.0
+    cumV = 0.0
+    cumP2V = 0.0
+barVolume = not isNone(volume) and volume > 0 ? volume : 0
+if barVolume > 0 and not isNone(vwapSource)
+    cumPV += vwapSource * barVolume
+    cumV += barVolume
+    cumP2V += vwapSource * vwapSource * barVolume
+sessionVwap = cumV > 0 ? cumPV / cumV : none
+vwapDeviation = cumV > 0 ? sqrt(max(cumP2V / cumV - sessionVwap * sessionVwap, 0)) : none
+band1Up = sessionVwap + vwapBand1Multiplier * vwapDeviation
+band1Dn = sessionVwap - vwapBand1Multiplier * vwapDeviation
+band2Up = sessionVwap + vwapBand2Multiplier * vwapDeviation
+band2Dn = sessionVwap - vwapBand2Multiplier * vwapDeviation
+
+// event AVWAP: the automatic mode has no event calendar to read, so it never
+// anchors; the manual anchor starts at the stated time, or at the next
+// regular-session open when that time falls outside the session.
+manualEventObserved = eventAnchorMode == "Manual timestamp" and not isNone(manualEventMs) and manualEventMs > 0 and not manualAnchorConsumed and time >= manualEventMs and (bar.isFirst or time[1] < manualEventMs)
+startEventAnchorNow = false
+if manualEventObserved
+    manualAnchorConsumed = true
+    if inRth
+        startEventAnchorNow = true
+    else
+        pendingEventAnchor = true
+if pendingEventAnchor and rthStart
+    startEventAnchorNow = true
+    pendingEventAnchor = false
+if startEventAnchorNow
+    eventAnchorTime = time
+    eventAnchorBar = bar.index
+    eventCumPV = 0.0
+    eventCumVolume = 0.0
+    eventBars = 0
+if eventAnchorMode != "Disabled" and not isNone(eventAnchorTime) and time >= eventAnchorTime
+    if not isNone(volume) and volume > 0
+        eventCumPV += hlc3 * volume
+        eventCumVolume += volume
+    eventBars += 1
+eventAvwap = eventCumVolume > 0 ? eventCumPV / eventCumVolume : none
+eventAgeDays = isNone(eventAnchorTime) ? none : max(time - eventAnchorTime, 0) / 86400000
+eventRecency = isNone(eventAgeDays) ? none : 100 / (1 + eventAgeDays / max(eventMaxAgeDays * 0.5, 1))
+eventCandidateValid = orElse(eventAnchorMode != "Disabled" and not isNone(eventAvwap) and eventBars >= eventMinBars and not isNone(eventAgeDays) and eventAgeDays <= eventMaxAgeDays and not isNone(barAtr) and abs(eventAvwap - close) <= barAtr * eventMaxDistanceAtr, false)
+
+// confirmed swing pivots; a pivot near one already held refreshes it
+newPivotAdded = false
+pivotMergeTolerance = max(eps * 2, orElse(barAtr, 0) * 0.015)
+pivotOriginRvol = not isNone(pivotOriginBaseline) and pivotOriginBaseline > 0 and not isNone(pivotOriginVolume) ? pivotOriginVolume / pivotOriginBaseline : none
+pivotOriginVolumeScore = participationScore(pivotOriginRvol)
+if usePivots and not isNone(confirmedPivotHigh)
+    excursion = not isNone(pivotOriginAtr) and pivotOriginAtr > 0 and not isNone(pivotConfirmationLow) ? (confirmedPivotHigh - pivotConfirmationLow) / pivotOriginAtr : 0
+    baseWeight = clamp(55 + excursion * 10, 55, 75)
+    originImpulse = positiveSat(excursion)
+    merged = false
+    for k = 0 to size(pvPrice) - 1
+        if element(pvPol, k) == -1 and abs(element(pvPrice, k) - confirmedPivotHigh) <= pivotMergeTolerance
+            set(pvBar, k, bar.index - pivotRightBars)
+            set(pvBase, k, max(element(pvBase, k), baseWeight))
+            set(pvImpulse, k, max(element(pvImpulse, k), originImpulse))
+            heldVolume = element(pvVolume, k)
+            set(pvVolume, k, isNone(heldVolume) ? pivotOriginVolumeScore : isNone(pivotOriginVolumeScore) ? heldVolume : max(heldVolume, pivotOriginVolumeScore))
+            merged = true
+            newPivotAdded = true
+    if not merged
+        push(pvPrice, confirmedPivotHigh)
+        push(pvPol, -1)
+        push(pvBar, bar.index - pivotRightBars)
+        push(pvKnown, bar.index)
+        push(pvBase, baseWeight)
+        push(pvImpulse, originImpulse)
+        push(pvVolume, pivotOriginVolumeScore)
+        newPivotAdded = true
+if usePivots and not isNone(confirmedPivotLow)
+    excursion = not isNone(pivotOriginAtr) and pivotOriginAtr > 0 and not isNone(pivotConfirmationHigh) ? (pivotConfirmationHigh - confirmedPivotLow) / pivotOriginAtr : 0
+    baseWeight = clamp(55 + excursion * 10, 55, 75)
+    originImpulse = positiveSat(excursion)
+    merged = false
+    for k = 0 to size(pvPrice) - 1
+        if element(pvPol, k) == 1 and abs(element(pvPrice, k) - confirmedPivotLow) <= pivotMergeTolerance
+            set(pvBar, k, bar.index - pivotRightBars)
+            set(pvBase, k, max(element(pvBase, k), baseWeight))
+            set(pvImpulse, k, max(element(pvImpulse, k), originImpulse))
+            heldVolume = element(pvVolume, k)
+            set(pvVolume, k, isNone(heldVolume) ? pivotOriginVolumeScore : isNone(pivotOriginVolumeScore) ? heldVolume : max(heldVolume, pivotOriginVolumeScore))
+            merged = true
+            newPivotAdded = true
+    if not merged
+        push(pvPrice, confirmedPivotLow)
+        push(pvPol, 1)
+        push(pvBar, bar.index - pivotRightBars)
+        push(pvKnown, bar.index)
+        push(pvBase, baseWeight)
+        push(pvImpulse, originImpulse)
+        push(pvVolume, pivotOriginVolumeScore)
+        newPivotAdded = true
+for k = size(pvPrice) - 1 to 0 step -1
+    if bar.index - element(pvBar, k) > pivotMaxAgeBars
+        remove(pvPrice, k)
+        remove(pvPol, k)
+        remove(pvBar, k)
+        remove(pvKnown, k)
+        remove(pvBase, k)
+        remove(pvImpulse, k)
+        remove(pvVolume, k)
+while size(pvPrice) > maxPivotRecords
+    shift(pvPrice)
+    shift(pvPol)
+    shift(pvBar)
+    shift(pvKnown)
+    shift(pvBase)
+    shift(pvImpulse)
+    shift(pvVolume)
+
+// zone lifecycle
+enteredSupport = false
+enteredResistance = false
+supportRejection = false
+resistanceRejection = false
+supportBreakAcceptance = false
+resistanceBreakAcceptance = false
+zoneFlip = false
+higherQualityZoneSelected = false
+zoneInvalidated = false
+
+if element(supZone, Z_VALID) == 1 and element(supZone, Z_STATE) == ST_BROKEN and bar.index > element(supZone, Z_STATEBAR)
+    zoneClear(supZone, supText)
+if element(resZone, Z_VALID) == 1 and element(resZone, Z_STATE) == ST_BROKEN and bar.index > element(resZone, Z_STATEBAR)
+    zoneClear(resZone, resText)
+
+if element(supZone, Z_VALID) == 1
+    ev = zoneStep(supZone, supText, supWatch, supWatchText, 1, barAtr)
+    enteredSupport = element(ev, 0) == 1
+    supportRejection = element(ev, 1) == 1
+    supportBreakAcceptance = element(ev, 2) == 1
+    zoneInvalidated = zoneInvalidated or element(ev, 3) == 1
+if element(resZone, Z_VALID) == 1
+    ev = zoneStep(resZone, resText, resWatch, resWatchText, -1, barAtr)
+    enteredResistance = element(ev, 0) == 1
+    resistanceRejection = element(ev, 1) == 1
+    resistanceBreakAcceptance = element(ev, 2) == 1
+    zoneInvalidated = zoneInvalidated or element(ev, 3) == 1
+
+if watchStep(supWatch, supWatchText, resZone, resText, 1, barAtr) == 1
+    zoneFlip = true
+if watchStep(resWatch, resWatchText, supZone, supText, -1, barAtr) == 1
+    zoneFlip = true
+
+// cluster rebuild
+rebuildClusters = not isNone(barAtr) and barAtr > 0 and (newPivotAdded or rthStart or premarketStart or zoneInvalidated or bar.index % refreshBars == 0)
+if rebuildClusters
+    reg = [0.0]
+    clear(reg)
+    if usePriorDay
+        addCandidate(reg, previousDayHigh, 75, SRC_PDH, -1, none, previousDayKnownBar, none, none, none, true, barAtr, maximumCandidateDistance)
+        addCandidate(reg, previousDayLow, 75, SRC_PDL, 1, none, previousDayKnownBar, none, none, none, true, barAtr, maximumCandidateDistance)
+        addCandidate(reg, previousDayClose, 55, SRC_PDC, 0, none, previousDayKnownBar, none, none, none, true, barAtr, maximumCandidateDistance)
+    if usePriorWeek
+        addCandidate(reg, previousWeekHigh, 80, SRC_PWH, -1, none, previousWeekKnownBar, none, none, none, true, barAtr, maximumCandidateDistance)
+        addCandidate(reg, previousWeekLow, 80, SRC_PWL, 1, none, previousWeekKnownBar, none, none, none, true, barAtr, maximumCandidateDistance)
+    if usePremarket and not isNone(premarketHigh) and not isNone(premarketLow)
+        premarketWeight = inPremarket ? 55 : 65
+        addCandidate(reg, premarketHigh, premarketWeight, SRC_PMH, -1, none, premarketHighKnownBar, none, none, none, true, barAtr, maximumCandidateDistance)
+        addCandidate(reg, premarketLow, premarketWeight, SRC_PML, 1, none, premarketLowKnownBar, none, none, none, true, barAtr, maximumCandidateDistance)
+    if useOpeningRange and openingRangeFinalized
+        addCandidate(reg, openingRangeHigh, 65, SRC_ORH, -1, none, openingRangeKnownBar, none, none, none, true, barAtr, maximumCandidateDistance)
+        addCandidate(reg, openingRangeLow, 65, SRC_ORL, 1, none, openingRangeKnownBar, none, none, none, true, barAtr, maximumCandidateDistance)
+    if useRthOpen
+        rthOpenWeight = gapActive and not gapFilled ? 55 : 45
+        addCandidate(reg, currentSessionOpen, rthOpenWeight, SRC_RTH_OPEN, 0, none, currentSessionOpenKnownBar, none, none, none, true, barAtr, maximumCandidateDistance)
+    if useGapStructure and gapActive and not gapFilled
+        if not usePriorDay
+            addCandidate(reg, previousDayClose, 55, SRC_GAP, 0, none, gapKnownBar, none, none, 100, true, barAtr, maximumCandidateDistance)
+        if not useRthOpen
+            addCandidate(reg, currentSessionOpen, 55, SRC_GAP, 0, none, gapKnownBar, none, none, 100, true, barAtr, maximumCandidateDistance)
+        addCandidate(reg, gapMid, 35, SRC_GAP, 0, none, gapKnownBar, none, none, 100, true, barAtr, maximumCandidateDistance)
+        distinctGapBoundary = not isNone(gapUnfilledBoundary) and orElse(abs(gapUnfilledBoundary - gapMid) > clusterTolerance and abs(gapUnfilledBoundary - currentSessionOpen) > clusterTolerance and abs(gapUnfilledBoundary - previousDayClose) > clusterTolerance, false)
+        if distinctGapBoundary
+            addCandidate(reg, gapUnfilledBoundary, 55, SRC_GAP, gapDirection == 1 ? 1 : -1, bar.index, bar.index, none, none, 100, false, barAtr, maximumCandidateDistance)
+    if useVwapCandidate and inRth and not isNone(sessionVwap)
+        addCandidate(reg, sessionVwap, 55, SRC_VWAP, 0, bar.index, bar.index, none, none, 100, false, barAtr, maximumCandidateDistance)
+    if useVwapBandCandidates and inRth
+        addCandidate(reg, band1Up, 25, SRC_VWAP_BAND, -1, bar.index, bar.index, none, none, 100, false, barAtr, maximumCandidateDistance)
+        addCandidate(reg, band1Dn, 25, SRC_VWAP_BAND, 1, bar.index, bar.index, none, none, 100, false, barAtr, maximumCandidateDistance)
+    if eventCandidateValid
+        eventSourceWeight = 75 * (0.6 + 0.4 * eventRecency / 100)
+        addCandidate(reg, eventAvwap, eventSourceWeight, SRC_EVENT_AVWAP, 0, eventAnchorBar, eventAnchorBar, none, none, eventRecency, false, barAtr, maximumCandidateDistance)
+    if useAtrProjections and not isNone(currentSessionOpen)
+        addCandidate(reg, currentSessionOpen + barAtr * 0.5, 20, SRC_ATR_PROJECTION, -1, currentSessionOpenKnownBar, currentSessionOpenKnownBar, none, none, 100, false, barAtr, maximumCandidateDistance)
+        addCandidate(reg, currentSessionOpen - barAtr * 0.5, 20, SRC_ATR_PROJECTION, 1, currentSessionOpenKnownBar, currentSessionOpenKnownBar, none, none, 100, false, barAtr, maximumCandidateDistance)
+        addCandidate(reg, currentSessionOpen + barAtr, 20, SRC_ATR_PROJECTION, -1, currentSessionOpenKnownBar, currentSessionOpenKnownBar, none, none, 100, false, barAtr, maximumCandidateDistance)
+        addCandidate(reg, currentSessionOpen - barAtr, 20, SRC_ATR_PROJECTION, 1, currentSessionOpenKnownBar, currentSessionOpenKnownBar, none, none, 100, false, barAtr, maximumCandidateDistance)
+        if not isNone(previousDayClose)
+            addCandidate(reg, previousDayClose + barAtr, 20, SRC_ATR_PROJECTION, -1, previousDayKnownBar, previousDayKnownBar, none, none, 100, false, barAtr, maximumCandidateDistance)
+            addCandidate(reg, previousDayClose - barAtr, 20, SRC_ATR_PROJECTION, 1, previousDayKnownBar, previousDayKnownBar, none, none, 100, false, barAtr, maximumCandidateDistance)
+    if useRoundNumbers
+        minorStep = close < 5 ? 0.1 : close < 20 ? 0.25 : close < 100 ? 0.5 : close < 500 ? 1 : 5
+        majorStep = close < 5 ? 0.25 : close < 20 ? 0.5 : close < 100 ? 1 : close < 500 ? 5 : 10
+        minorBelow = floor(close / minorStep) * minorStep
+        majorBelow = floor(close / majorStep) * majorStep
+        addCandidate(reg, minorBelow, 25, SRC_ROUND, 0, none, none, none, none, 100, true, barAtr, maximumCandidateDistance)
+        addCandidate(reg, minorBelow + minorStep, 25, SRC_ROUND, 0, none, none, none, none, 100, true, barAtr, maximumCandidateDistance)
+        addCandidate(reg, majorBelow, 25, SRC_ROUND, 0, none, none, none, none, 100, true, barAtr, maximumCandidateDistance)
+        addCandidate(reg, majorBelow + majorStep, 25, SRC_ROUND, 0, none, none, none, none, 100, true, barAtr, maximumCandidateDistance)
+    if usePivots
+        for k = 0 to size(pvPrice) - 1
+            pivotPol = element(pvPol, k)
+            addCandidate(reg, element(pvPrice, k), element(pvBase, k), pivotPol == -1 ? SRC_PIVOT_HIGH : SRC_PIVOT_LOW, pivotPol, element(pvBar, k), element(pvKnown, k), element(pvImpulse, k), element(pvVolume, k), none, true, barAtr, maximumCandidateDistance)
+
+    // The registry in price order; equal prices keep the order they were added in.
+    nReg = size(reg) / RG
+    order = [0.0]
+    clear(order)
+    for k = 0 to nReg - 1
+        p = element(reg, k * RG + RG_PRICE)
+        pos = size(order)
+        while pos > 0 and element(reg, element(order, pos - 1) * RG + RG_PRICE) > p
+            pos -= 1
+        insert(order, pos, k)
+
+    // Walk up the price ladder, merging neighbours within the tolerance.
+    clusters = [0.0]
+    clear(clusters)
+    clusterText = [""]
+    clear(clusterText)
+    acc = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+    accText = ["", "", ""]
+    duplicateTolerance = max(eps * 2, clusterTolerance * 0.2)
+    building = false
+    for q = 0 to nReg - 1
+        k = element(order, q)
+        if not building
+            clusterNew(acc, accText, reg, k)
+            building = true
+        else if abs(element(reg, k * RG + RG_PRICE) - element(acc, AC_CENTER)) <= clusterTolerance
+            clusterAdd(acc, accText, reg, k, duplicateTolerance)
+        else
+            clusterFinalize(acc, accText, clusters, clusterText, barAtr)
+            clusterNew(acc, accText, reg, k)
+    if building
+        clusterFinalize(acc, accText, clusters, clusterText, barAtr)
+
+    supportMatchIndex = matchingClusterIndex(clusters, supZone, clusterTolerance)
+    resistanceMatchIndex = matchingClusterIndex(clusters, resZone, clusterTolerance)
+    if element(supZone, Z_VALID) == 1
+        if supportMatchIndex >= 0
+            zoneRefresh(supZone, supText, clusters, clusterText, supportMatchIndex)
+        else
+            set(supZone, Z_MISSED, element(supZone, Z_MISSED) + 1)
+            if element(supZone, Z_MISSED) >= 3 or rthStart or premarketStart
+                zoneClear(supZone, supText)
+    if element(resZone, Z_VALID) == 1
+        if resistanceMatchIndex >= 0
+            zoneRefresh(resZone, resText, clusters, clusterText, resistanceMatchIndex)
+        else
+            set(resZone, Z_MISSED, element(resZone, Z_MISSED) + 1)
+            if element(resZone, Z_MISSED) >= 3 or rthStart or premarketStart
+                zoneClear(resZone, resText)
+
+    bestSupportIndex = bestClusterIndex(clusters, 1, resWatch, clusterTolerance)
+    bestResistanceIndex = bestClusterIndex(clusters, -1, supWatch, clusterTolerance)
+
+    if bestSupportIndex >= 0
+        bLow = element(clusters, bestSupportIndex * CL + CL_LOW)
+        bHigh = element(clusters, bestSupportIndex * CL + CL_HIGH)
+        bCenter = element(clusters, bestSupportIndex * CL + CL_CENTER)
+        initialState = bHigh >= low and bLow <= high ? ST_INSIDE : abs(bCenter - close) / barAtr <= approachingAtr ? ST_APPROACHING : ST_DISTANT
+        if element(supZone, Z_VALID) != 1
+            zoneFromCluster(supZone, supText, clusters, clusterText, bestSupportIndex, 1, initialState)
+            enteredSupport = enteredSupport or initialState == ST_INSIDE
+        else
+            sameSupport = (bHigh >= element(supZone, Z_LOW) and bLow <= element(supZone, Z_HIGH)) or abs(bCenter - element(supZone, Z_CENTER)) <= clusterTolerance * 1.5
+            better = element(clusters, bestSupportIndex * CL + CL_STRENGTH) >= element(supZone, Z_STRENGTH) + switchMargin or element(clusters, bestSupportIndex * CL + CL_ACT) >= element(supZone, Z_ACT) + switchMargin
+            if not sameSupport and orElse(better, false)
+                zoneFromCluster(supZone, supText, clusters, clusterText, bestSupportIndex, 1, initialState)
+                enteredSupport = enteredSupport or initialState == ST_INSIDE
+                higherQualityZoneSelected = true
+
+    if bestResistanceIndex >= 0
+        bLow = element(clusters, bestResistanceIndex * CL + CL_LOW)
+        bHigh = element(clusters, bestResistanceIndex * CL + CL_HIGH)
+        bCenter = element(clusters, bestResistanceIndex * CL + CL_CENTER)
+        initialState = bHigh >= low and bLow <= high ? ST_INSIDE : abs(bCenter - close) / barAtr <= approachingAtr ? ST_APPROACHING : ST_DISTANT
+        if element(resZone, Z_VALID) != 1
+            zoneFromCluster(resZone, resText, clusters, clusterText, bestResistanceIndex, -1, initialState)
+            enteredResistance = enteredResistance or initialState == ST_INSIDE
+        else
+            sameResistance = (bHigh >= element(resZone, Z_LOW) and bLow <= element(resZone, Z_HIGH)) or abs(bCenter - element(resZone, Z_CENTER)) <= clusterTolerance * 1.5
+            better = element(clusters, bestResistanceIndex * CL + CL_STRENGTH) >= element(resZone, Z_STRENGTH) + switchMargin or element(clusters, bestResistanceIndex * CL + CL_ACT) >= element(resZone, Z_ACT) + switchMargin
+            if not sameResistance and orElse(better, false)
+                zoneFromCluster(resZone, resText, clusters, clusterText, bestResistanceIndex, -1, initialState)
+                enteredResistance = enteredResistance or initialState == ST_INSIDE
+                higherQualityZoneSelected = true
+
+// ---- outputs ---------------------------------------------------------------------------
+showKeyReferences = displayMode == "Zones + Key References" or displayMode == "Legacy / Debug"
+showLegacy = displayMode == "Legacy / Debug"
+gapOpen = gapActive and not gapFilled
+supValid = element(supZone, Z_VALID) == 1
+resValid = element(resZone, Z_VALID) == 1
+
+plot(showKeyReferences and usePriorDay ? previousDayHigh : none, "PDH", withAlpha(#E4E4E7, 0.65), width = 1)
+plot(showKeyReferences and usePriorDay ? previousDayLow : none, "PDL", withAlpha(#E4E4E7, 0.65), width = 1)
+plot(showKeyReferences and usePriorDay ? previousDayClose : none, "PDC", withAlpha(#7DD3FC, 0.55), width = 1)
+plot(showKeyReferences and usePriorWeek ? previousWeekHigh : none, "PWH", withAlpha(#D4D4D8, 0.45), width = 1)
+plot(showKeyReferences and usePriorWeek ? previousWeekLow : none, "PWL", withAlpha(#D4D4D8, 0.45), width = 1)
+plot(showKeyReferences and usePremarket ? premarketHigh : none, "PMH", withAlpha(#67E8F9, 0.55), width = 1)
+plot(showKeyReferences and usePremarket ? premarketLow : none, "PML", withAlpha(#67E8F9, 0.55), width = 1)
+plot(showKeyReferences and useOpeningRange ? openingRangeHigh : none, "ORH", withAlpha(#FBBF24, 0.6), width = 1)
+plot(showKeyReferences and useOpeningRange ? openingRangeLow : none, "ORL", withAlpha(#FBBF24, 0.6), width = 1)
+plot(showKeyReferences and useRthOpen ? currentSessionOpen : none, "RTH Open", withAlpha(#BAE6FD, 0.5), width = 1)
+
+plot(showVwap and inRth ? sessionVwap : none, "RTH VWAP", #C4B5FD, width = 2)
+plot(showVwap and inRth and showVwapBand1 ? band1Up : none, "VWAP +1 stdev", withAlpha(#A78BFA, 0.65), width = 1)
+plot(showVwap and inRth and showVwapBand1 ? band1Dn : none, "VWAP -1 stdev", withAlpha(#A78BFA, 0.65), width = 1)
+plot(showVwap and inRth and showVwapBand2 ? band2Up : none, "VWAP +2 stdev", withAlpha(#A78BFA, 0.45), width = 1)
+plot(showVwap and inRth and showVwapBand2 ? band2Dn : none, "VWAP -2 stdev", withAlpha(#A78BFA, 0.45), width = 1)
+
+plot(showLegacy and showEmas ? fastEma : none, "EMA 9", withAlpha(#38BDF8, 0.75), width = 1)
+plot(showLegacy and showEmas ? slowEma : none, "EMA 21", withAlpha(#FDE68A, 0.75), width = 1)
+plot(showLegacy and eventCandidateValid ? eventAvwap : none, "Event AVWAP", withAlpha(#F472B6, 0.85), width = 2)
+
+plot(showLegacy and gapOpen ? gapHigh : none, "Active Gap High", withAlpha(#FB7185, 0.35), width = 1)
+plot(showLegacy and gapOpen ? gapLow : none, "Active Gap Low", withAlpha(#34D399, 0.35), width = 1)
+plot(showLegacy and gapOpen ? gapMid : none, "Active Gap Mid", withAlpha(#FBBF24, 0.3), width = 1)
+plot(showLegacy and gapOpen ? gapUnfilledBoundary : none, "Active Gap Unfilled Boundary", withAlpha(#F8FAFC, 0.45), width = 1)
+
+// ---- zone boxes ------------------------------------------------------------------------
+// The opening-range window, the two zones and their edge boxes describe the
+// present state only, so they are redrawn on the newest bar.
+RESISTANCE_COLOR = #F87171
+SUPPORT_COLOR = #2DD4BF
+NEUTRAL_COLOR = #A1A1AA
+
+fn fillAlphaFor(s) =>
+    s == 3 ? 0.2 : s == 4 or s == 7 ? 0.18 : s == 5 ? 0.16 : s == 2 ? 0.12 : s == 6 ? 0.07 : 0.08
+
+fn borderAlphaFor(s) =>
+    s == 3 or s == 4 or s == 7 ? 0.95 : s == 5 ? 0.85 : s == 2 ? 0.65 : s == 6 ? 0.5 : 0.35
+
+if bar.isLast
+    draw.deleteAll()
+    lastIndex = bar.index
+    // Project forward on the median spacing of the recent bars.
+    spacings = [0.0]
+    clear(spacings)
+    for k = 0 to lastIndex - max(1, lastIndex - 20)
+        gapMs = time[k] - time[k + 1]
+        if not isNone(gapMs) and gapMs > 0
+            push(spacings, gapMs)
+    sort(spacings, "asc")
+    barSpacing = size(spacings) > 0 ? element(spacings, floor(size(spacings) / 2)) : 60000
+    rightTime = time + zoneForwardBars * barSpacing
+    fallbackIndex = max(0, lastIndex - zoneBackBars)
+
+    if showOpeningRangeBox and useOpeningRange and not isNone(openingRangeStartBar) and not isNone(openingRangeHigh) and not isNone(openingRangeLow)
+        leftIdx = max(0, min(lastIndex, round(openingRangeStartBar)))
+        rightIdx = openingRangeFinalized and not isNone(openingRangeKnownBar) ? max(0, min(lastIndex, round(openingRangeKnownBar))) : lastIndex
+        draw.box(time[lastIndex - leftIdx], openingRangeHigh, time[lastIndex - max(rightIdx, leftIdx)], openingRangeLow, color = withAlpha(#FBBF24, 0.45), fillColor = #FBBF24, opacity = 0.1, width = 1)
+
+    if supValid and not isNone(element(supZone, Z_LOW)) and not isNone(element(supZone, Z_HIGH))
+        zLowS = element(supZone, Z_LOW)
+        zHighS = element(supZone, Z_HIGH)
+        stateS = element(supZone, Z_STATE)
+        baseS = stateS == ST_BROKEN ? NEUTRAL_COLOR : SUPPORT_COLOR
+        selS = element(supZone, Z_SELBAR)
+        leftS = max(isNone(selS) ? fallbackIndex : max(0, min(lastIndex, round(selS))), fallbackIndex)
+        leftTimeS = time[lastIndex - leftS]
+        draw.box(leftTimeS, zHighS, rightTime, zLowS, color = withAlpha(baseS, borderAlphaFor(stateS)), fillColor = baseS, opacity = fillAlphaFor(stateS), width = stateS == 3 or stateS == 4 or stateS == 7 ? 2 : 1, text = showZoneText ? "SUPPORT | " + stateText(stateS) : "", textColor = SUPPORT_COLOR)
+        actS = element(supZone, Z_ACT)
+        if showEdgeSignals and stateS != ST_BROKEN and not isNone(actS) and actS >= edgeSignalMinimumActionability
+            parentHeightS = max(zHighS - zLowS, eps * 2)
+            edgeHeightS = max(parentHeightS * edgeSignalHeightPct, eps * 2)
+            edgeTop = min(zLowS + edgeHeightS, zHighS)
+            draw.box(leftTimeS, edgeTop, rightTime, zLowS, color = #14B8A6, fillColor = #14B8A6, opacity = 0.28, width = 1, text = showZoneText ? "BUY" : "", textColor = #CCFBF1)
+
+    if resValid and not isNone(element(resZone, Z_LOW)) and not isNone(element(resZone, Z_HIGH))
+        zLowR = element(resZone, Z_LOW)
+        zHighR = element(resZone, Z_HIGH)
+        stateR = element(resZone, Z_STATE)
+        baseR = stateR == ST_BROKEN ? NEUTRAL_COLOR : RESISTANCE_COLOR
+        selR = element(resZone, Z_SELBAR)
+        leftR = max(isNone(selR) ? fallbackIndex : max(0, min(lastIndex, round(selR))), fallbackIndex)
+        leftTimeR = time[lastIndex - leftR]
+        draw.box(leftTimeR, zHighR, rightTime, zLowR, color = withAlpha(baseR, borderAlphaFor(stateR)), fillColor = baseR, opacity = fillAlphaFor(stateR), width = stateR == 3 or stateR == 4 or stateR == 7 ? 2 : 1, text = showZoneText ? "RESISTANCE | " + stateText(stateR) : "", textColor = RESISTANCE_COLOR)
+        actR = element(resZone, Z_ACT)
+        if showEdgeSignals and stateR != ST_BROKEN and not isNone(actR) and actR >= edgeSignalMinimumActionability
+            parentHeightR = max(zHighR - zLowR, eps * 2)
+            edgeHeightR = max(parentHeightR * edgeSignalHeightPct, eps * 2)
+            edgeBottom = max(zHighR - edgeHeightR, zLowR)
+            draw.box(leftTimeR, zHighR, rightTime, edgeBottom, color = #FB7185, fillColor = #FB7185, opacity = 0.28, width = 1, text = showZoneText ? "SELL" : "", textColor = #FFE4E6)
+
+// ---- dashboard -------------------------------------------------------------------------
+panel = table("Options Levels", 26, 2, position = "topRight")
+
+// Decimal places of the instrument's tick, two when the host states none.
+fn tickDigits(tick) =>
+    digits = 0
+    scaled = tick
+    if tick > 0
+        while digits < 10 and abs(round(scaled) - scaled) > 0.000000001
+            scaled = scaled * 10
+            digits += 1
+    tick > 0 ? digits : 2
+
+fn priceText(v, digits) =>
+    isNone(v) ? "n/a" : text(v, digits)
+
+fn wholeText(v) =>
+    isNone(v) ? "n/a" : text(floor(v + 0.5), 0)
+
+fn scoreText(v) =>
+    isNone(v) ? "n/a" : text(v, 2)
+
+// How far the close sits outside a zone, in daily ATR.
+fn atrDistanceText(lo, hi, atrValue, guard) =>
+    distanceOut = close < lo ? lo - close : close > hi ? close - hi : 0
+    isNone(lo) or isNone(hi) ? "n/a" : text(distanceOut / max(orElse(atrValue, 0), guard), 2) + "A"
+
+if bar.isLast and showDashboard
+    clear(panel)
+    digits = tickDigits(tickSize)
+    supCenter = element(supZone, Z_CENTER)
+    resCenter = element(resZone, Z_CENTER)
+    nearestText = "n/a"
+    if supValid and resValid
+        nearestText = abs(close - supCenter) <= abs(resCenter - close) ? "S " + stateText(element(supZone, Z_STATE)) : "R " + stateText(element(resZone, Z_STATE))
+    else if supValid
+        nearestText = "S " + stateText(element(supZone, Z_STATE))
+    else if resValid
+        nearestText = "R " + stateText(element(resZone, Z_STATE))
+    rowAt = 0
+    cell(panel, rowAt, 0, "OPTIONS LEVELS")
+    cell(panel, rowAt, 1, "v0.2.1")
+    rowAt += 1
+    cell(panel, rowAt, 0, "Resistance")
+    cell(panel, rowAt, 1, resValid ? priceText(element(resZone, Z_LOW), digits) + "-" + priceText(element(resZone, Z_HIGH), digits) : "n/a")
+    rowAt += 1
+    cell(panel, rowAt, 0, "Support")
+    cell(panel, rowAt, 1, supValid ? priceText(element(supZone, Z_LOW), digits) + "-" + priceText(element(supZone, Z_HIGH), digits) : "n/a")
+    rowAt += 1
+    cell(panel, rowAt, 0, "State")
+    cell(panel, rowAt, 1, nearestText)
+    rowAt += 1
+    cell(panel, rowAt, 0, "Daily ATR")
+    cell(panel, rowAt, 1, priceText(barAtr, digits))
+    rowAt += 1
+    if not orElse(chart.isIntraday, true)
+        cell(panel, rowAt, 0, "Note")
+        cell(panel, rowAt, 1, "Designed for intraday charts")
+        rowAt += 1
+    if showLegacy
+        cell(panel, rowAt, 0, "R SCORE")
+        cell(panel, rowAt, 1, resValid ? "Str " + wholeText(element(resZone, Z_STRENGTH)) + " | Act " + wholeText(element(resZone, Z_ACT)) + " | Dist " + atrDistanceText(element(resZone, Z_LOW), element(resZone, Z_HIGH), barAtr, eps) : "n/a")
+        rowAt += 1
+        cell(panel, rowAt, 0, "R REACTION")
+        cell(panel, rowAt, 1, resValid ? "Rx " + wholeText(element(resZone, Z_RX)) + " | Mean " + wholeText(element(resZone, Z_MEAN)) + " | Div " + wholeText(element(resZone, Z_DIV)) : "n/a")
+        rowAt += 1
+        cell(panel, rowAt, 0, "R SOURCES")
+        cell(panel, rowAt, 1, resValid and element(resText, 0) != "" ? element(resText, 0) : "n/a")
+        rowAt += 1
+        cell(panel, rowAt, 0, "S SCORE")
+        cell(panel, rowAt, 1, supValid ? "Str " + wholeText(element(supZone, Z_STRENGTH)) + " | Act " + wholeText(element(supZone, Z_ACT)) + " | Dist " + atrDistanceText(element(supZone, Z_LOW), element(supZone, Z_HIGH), barAtr, eps) : "n/a")
+        rowAt += 1
+        cell(panel, rowAt, 0, "S REACTION")
+        cell(panel, rowAt, 1, supValid ? "Rx " + wholeText(element(supZone, Z_RX)) + " | Mean " + wholeText(element(supZone, Z_MEAN)) + " | Div " + wholeText(element(supZone, Z_DIV)) : "n/a")
+        rowAt += 1
+        cell(panel, rowAt, 0, "S SOURCES")
+        cell(panel, rowAt, 1, supValid and element(supText, 0) != "" ? element(supText, 0) : "n/a")
+        rowAt += 1
+    if showResearchValues
+        nearestState = supValid and resValid ? (abs(close - supCenter) <= abs(resCenter - close) ? element(supZone, Z_STATE) : 0 - element(resZone, Z_STATE)) : supValid ? element(supZone, Z_STATE) : resValid ? 0 - element(resZone, Z_STATE) : none
+        cell(panel, rowAt, 0, "Support Zone Low")
+        cell(panel, rowAt, 1, supValid ? priceText(element(supZone, Z_LOW), digits) : "n/a")
+        cell(panel, rowAt + 1, 0, "Support Zone High")
+        cell(panel, rowAt + 1, 1, supValid ? priceText(element(supZone, Z_HIGH), digits) : "n/a")
+        cell(panel, rowAt + 2, 0, "Support Zone Strength")
+        cell(panel, rowAt + 2, 1, supValid ? scoreText(element(supZone, Z_STRENGTH)) : "n/a")
+        cell(panel, rowAt + 3, 0, "Resistance Zone Low")
+        cell(panel, rowAt + 3, 1, resValid ? priceText(element(resZone, Z_LOW), digits) : "n/a")
+        cell(panel, rowAt + 4, 0, "Resistance Zone High")
+        cell(panel, rowAt + 4, 1, resValid ? priceText(element(resZone, Z_HIGH), digits) : "n/a")
+        cell(panel, rowAt + 5, 0, "Resistance Zone Strength")
+        cell(panel, rowAt + 5, 1, resValid ? scoreText(element(resZone, Z_STRENGTH)) : "n/a")
+        cell(panel, rowAt + 6, 0, "Zone State")
+        cell(panel, rowAt + 6, 1, isNone(nearestState) ? "n/a" : text(nearestState, 0))
+        cell(panel, rowAt + 7, 0, "Support Zone Actionability")
+        cell(panel, rowAt + 7, 1, supValid ? scoreText(element(supZone, Z_ACT)) : "n/a")
+        cell(panel, rowAt + 8, 0, "Resistance Zone Actionability")
+        cell(panel, rowAt + 8, 1, resValid ? scoreText(element(resZone, Z_ACT)) : "n/a")
+        cell(panel, rowAt + 9, 0, "Gap High")
+        cell(panel, rowAt + 9, 1, gapOpen ? priceText(gapHigh, digits) : "n/a")
+        cell(panel, rowAt + 10, 0, "Gap Low")
+        cell(panel, rowAt + 10, 1, gapOpen ? priceText(gapLow, digits) : "n/a")
+        cell(panel, rowAt + 11, 0, "Gap Mid")
+        cell(panel, rowAt + 11, 1, gapOpen ? priceText(gapMid, digits) : "n/a")
+        cell(panel, rowAt + 12, 0, "Gap Unfilled Boundary")
+        cell(panel, rowAt + 12, 1, gapOpen ? priceText(gapUnfilledBoundary, digits) : "n/a")
+
+// ---- alerts ----------------------------------------------------------------------------
+if enableAlerts and enteredResistance
+    alert("Price entered the active resistance reaction zone.", "entered-resistance", "Entered Resistance Zone")
+if enableAlerts and enteredSupport
+    alert("Price entered the active support reaction zone.", "entered-support", "Entered Support Zone")
+if enableAlerts and resistanceRejection
+    alert("Price rejected the active resistance reaction zone.", "resistance-rejection", "Resistance Rejection")
+if enableAlerts and supportRejection
+    alert("Price rejected the active support reaction zone.", "support-rejection", "Support Rejection")
+if enableAlerts and resistanceBreakAcceptance
+    alert("Price is accepting through or has broken the active resistance zone.", "resistance-break", "Resistance Break / Acceptance")
+if enableAlerts and supportBreakAcceptance
+    alert("Price is accepting through or has broken the active support zone.", "support-break", "Support Break / Acceptance")
+if enableAlerts and zoneFlip
+    alert("A reaction zone flipped side.", "zone-flip", "Zone Flip")
+if enableAlerts and higherQualityZoneSelected
+    alert("A materially stronger reaction zone was selected.", "better-zone", "New Higher-Quality Zone Selected")

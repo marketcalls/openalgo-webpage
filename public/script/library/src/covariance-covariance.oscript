@@ -1,0 +1,41 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © openalgo
+// Original work (c) mihakralj, MIT License
+
+version 1
+study("Covariance (COVARIANCE)", precision = 4)
+
+source1 = input(close, "Source 1")
+source2 = input(open, "Source 2", tooltip = "The second series of the pair, read from the same instrument.")
+period = input(20, "Period", min = 2, max = 5000, step = 1)
+
+p = max(2, min(5000, floor(period)))
+
+// Running sums of each series and of their product over the last `p` bars,
+// counting only the bars where both series have a value. The window may be
+// partly filled, so the study answers from the second bar.
+var sum1 = 0.0
+var sum2 = 0.0
+var sumProd = 0.0
+var pairs = 0
+
+// The pair leaving the window, `p` bars back.
+oldest1 = source1[p]
+oldest2 = source2[p]
+if not isNone(oldest1) and not isNone(oldest2)
+    sum1 = sum1 - oldest1
+    sum2 = sum2 - oldest2
+    sumProd = sumProd - oldest1 * oldest2
+    pairs = pairs - 1
+
+if not isNone(source1) and not isNone(source2)
+    sum1 = sum1 + source1
+    sum2 = sum2 + source2
+    sumProd = sumProd + source1 * source2
+    pairs = pairs + 1
+
+// Population covariance: the mean of the products less the product of the
+// means.
+cov = pairs > 1 ? sumProd / pairs - (sum1 / pairs) * (sum2 / pairs) : none
+
+plot(cov, "Covariance", #ffeb3b, width = 2)

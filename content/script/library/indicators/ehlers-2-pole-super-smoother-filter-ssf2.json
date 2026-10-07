@@ -1,0 +1,14 @@
+{
+  "title": "Ehlers 2-Pole Super Smoother Filter (SSF2)",
+  "summary": "A two-pole recursive smoother that removes the fast wiggle a moving average of the same length still passes, with less lag.",
+  "description": "The 2-Pole Super Smoother is a recursive lowpass filter. Each value blends the current price with the filter's two previous outputs, using coefficients chosen so that fast price noise is strongly damped while slower movement passes through.\n\nFrom the length it sets arg = sqrt(2) pi / length and e = exp(-arg), then c2 = 2e cos(arg), c3 = -e squared and c1 = 1 - c2 - c3. On each bar the value is c1 times the price plus c2 times the previous output plus c3 times the output two bars back. Where an earlier output does not exist yet, the nearest price is used in its place, so on the first bar the filter returns the price itself and settles from there without a blank warmup. A missing price borrows the previous one.",
+  "howToRead": "Use it as a low-lag moving average. Price above a rising line points to upward short-term direction, and below a falling line to downward direction. Turns in the line, and crossings between price and the line, mark changes in the smoothed trend.\n\nIt stays smooth through choppy bars where a simple or exponential average of the same length would still twitch. A longer length gives a calmer line that turns later. It follows moves rather than anticipating them.",
+  "settings": [
+    { "key": "length", "label": "Length", "description": "The cutoff period in bars. A longer length removes more noise and turns later." },
+    { "key": "source", "label": "Source", "description": "The price series the filter smooths. The close by default." }
+  ],
+  "faq": [
+    { "q": "How is it different from an exponential moving average?", "a": "An exponential average has one pole and still passes much of the fastest noise. This filter has two poles, so its response falls off about twice as steeply past the cutoff and damps that noise far more." },
+    { "q": "Why does it start on the first bar?", "a": "Missing earlier values are filled with the nearest available price, so the first output equals the price and the recursion builds from there." }
+  ]
+}

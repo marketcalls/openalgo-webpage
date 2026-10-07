@@ -1,0 +1,25 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © openalgo
+// Original work (c) mihakralj, MIT License
+
+version 1
+study("NW - Nadaraya-Watson Kernel Regression", overlay = true, precision = 2)
+
+period = input(64, "Period", min = 1, max = 5000, step = 1)
+bandwidth = input(8, "Bandwidth (h)", min = 0.1, max = 1000, step = 0.5, tooltip = "Gaussian kernel width. Small h tracks price closely, large h smooths heavily.")
+source = input(close, "Source")
+
+// The Gaussian weight of a bar i back is exp(-i^2 / (2 h^2)). The window
+// grows with the data until it holds period bars, so the line starts on the
+// first bar. A missing value counts as zero but keeps its weight.
+h2x2 = 2 * bandwidth * bandwidth
+windowBars = min(bar.index + 1, period)
+numerator = 0.0
+weightTotal = 0.0
+for i = 0 to windowBars - 1
+    w = exp(-(i * i) / h2x2)
+    numerator += w * orElse(source[i], 0)
+    weightTotal += w
+nw = weightTotal > 0 ? numerator / weightTotal : orElse(source, 0)
+
+plot(nw, "NW", #ffeb3b, width = 2)

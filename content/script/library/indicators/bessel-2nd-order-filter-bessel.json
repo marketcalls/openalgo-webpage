@@ -1,0 +1,14 @@
+{
+  "title": "Bessel 2nd Order Filter (BESSEL)",
+  "summary": "A two-pole recursive lowpass smoother with Bessel-style coefficients, giving a smooth price line with a steady, predictable lag.",
+  "description": "The Bessel 2nd Order Filter is a recursive smoother: each new value blends the current price with the filter's own two previous outputs. Its coefficients come from a Bessel prototype, which keeps the delay through the filter nearly the same for slow and fast price swings, so the shape of a move is preserved rather than distorted.\n\nFrom the length it computes a = exp(-pi / length), c2 = 2a cos(1.738 pi / length), c3 = -a squared and c1 = 1 - c2 - c3. On each bar the output is c1 times the price plus c2 times the previous output plus c3 times the output before that. The first two bars take the price itself as the seed, and a missing price borrows the previous bar's value.",
+  "howToRead": "Use it as a moving average with a smooth, even lag. When price is above a rising line the short-term direction is up, and when it is below a falling line it is down. Crossings of price and the line, or turns in the line itself, mark changes in direction.\n\nBecause the coefficients add up to one, the line follows the price level closely. A longer length removes more noise but turns later. Like any smoother it lags, so it confirms a move rather than predicting one.",
+  "settings": [
+    { "key": "length", "label": "Length", "description": "The cutoff period in bars. A longer length smooths more and turns later." },
+    { "key": "source", "label": "Source", "description": "The price series the filter smooths. The close by default." }
+  ],
+  "faq": [
+    { "q": "How is it different from a simple moving average?", "a": "It is recursive, so every past bar still has some influence, and its coefficients keep the delay nearly constant across swing lengths. A simple average weighs a fixed window equally and drops older bars abruptly." },
+    { "q": "Why does the line start on the first bar?", "a": "The first two bars are seeded with the price itself, so there is no blank warmup. The line needs a few lengths of bars to settle away from that seed." }
+  ]
+}

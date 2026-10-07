@@ -1,0 +1,11 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © openalgo
+// Original work (c) mihakralj, MIT License
+
+version 1
+study("Open-Close Midpoint (OC2)", overlay = true, precision = 2)
+
+// The centre of the bar's body: half the sum of its open and its close.
+bodyMid = (open + close) * 0.5
+
+plot(bodyMid, "OC2", #ffeb3b, width = 2)

@@ -1,0 +1,22 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © openalgo
+// Original work (c) mihakralj, MIT License
+
+version 1
+study("SWMA: Symmetric Weighted Moving Average", overlay = true, precision = 2)
+
+period = input(4, "Period", min = 2, max = 2000, step = 1)
+
+// Triangular weights centred on the middle of the window: the bar k bars back
+// weighs half + 1 - |k - half|, so the middle bars count most.
+half = (period - 1) / 2
+weightTotal = 0.0
+weighted = 0.0
+for k = 0 to period - 1
+    w = half + 1 - abs(k - half)
+    weightTotal += w
+    weighted += close[k] * w
+
+// Before the window is full the oldest reads are absent, so the line starts
+// once period bars exist.
+plot(weighted / weightTotal, "SWMA", #ffeb3b, width = 2)

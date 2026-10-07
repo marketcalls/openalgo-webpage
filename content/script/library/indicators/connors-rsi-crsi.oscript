@@ -1,0 +1,82 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © openalgo
+// Original work (c) mihakralj, MIT License
+
+version 1
+study("Connors RSI (CRSI)", precision = 2)
+
+source = input(close, "Source")
+rsiPeriod = input(3, "RSI Period", min = 1, max = 500, step = 1)
+streakPeriod = input(2, "Streak RSI Period", min = 1, max = 500, step = 1)
+rankPeriod = input(100, "Percent Rank Period", min = 1, max = 1000, step = 1)
+
+// An RSI smoothed with weight 1 / len. Its running averages start at zero
+// and are scaled by 1 / (1 - beta^n) while that starting bias decays, so it
+// answers from the second bar. The first bar, with no change yet, reads 50.
+fn compensatedRsi(src, len) =>
+    var prevVal = none
+    var avgGain = 0.0
+    var avgLoss = 0.0
+    var e = 1.0
+    var warming = true
+    result = 50.0
+    if not isNone(src)
+        if isNone(prevVal)
+            prevVal = src
+        else
+            wAlpha = 1 / len
+            wBeta = 1 - wAlpha
+            delta = src - prevVal
+            gain = delta > 0 ? delta : 0
+            loss = delta < 0 ? -delta : 0
+            prevVal = src
+            avgGain = wAlpha * gain + wBeta * avgGain
+            avgLoss = wAlpha * loss + wBeta * avgLoss
+            if warming
+                e = e * wBeta
+                c = e > 1e-10 ? 1 / (1 - e) : 1
+                aG = avgGain * c
+                aL = avgLoss * c
+                total = aG + aL
+                result = total != 0 ? 100 * aG / total : 50
+                if e <= 1e-10
+                    warming = false
+            else
+                total = avgGain + avgLoss
+                result = total != 0 ? 100 * avgGain / total : 50
+    result
+
+// Component 1: RSI of price.
+priceRsi = compensatedRsi(source, rsiPeriod)
+
+// Component 2: the run of consecutive up or down closes, positive while
+// rising and negative while falling, then an RSI of that run.
+var streak = 0
+var prevSrc = none
+if not isNone(source)
+    if isNone(prevSrc)
+        streak = 0
+    else if source > prevSrc
+        streak = streak >= 0 ? streak + 1 : 1
+    else if source < prevSrc
+        streak = streak <= 0 ? streak - 1 : -1
+    else
+        streak = 0
+streakRsi = compensatedRsi(streak, streakPeriod)
+
+// Component 3: the one-bar percentage change, ranked against the previous
+// `rankPeriod` changes (this bar is not part of its own window).
+oneBar = not isNone(source) and not isNone(prevSrc) and prevSrc != 0 ? (source - prevSrc) / prevSrc * 100 : 0
+if not isNone(source)
+    prevSrc = source
+
+lookback = min(bar.index, rankPeriod)
+below = 0
+for k = 1 to lookback
+    if oneBar[k] < oneBar
+        below += 1
+pctRank = lookback > 0 ? below / lookback * 100 : 50
+
+level(70, "Overbought", #787b86, style = "dashed")
+level(30, "Oversold", #787b86, style = "dashed")
+plot(clamp((priceRsi + streakRsi + pctRank) / 3, 0, 100), "CRSI", #ffeb3b, width = 2)

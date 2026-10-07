@@ -1,0 +1,15 @@
+{
+  "title": "Sine-weighted Moving Average (SINEMA)",
+  "summary": "A moving average whose weights follow half a sine wave across the window, so the middle bars count most and the line runs smooth.",
+  "description": "The Sine-weighted Moving Average spreads half a sine wave across its window. With `p` bars in the window, the bar `k` bars back weighs `sin(pi * (k + 1) / p)`: small at the newest bar, largest near the middle, and zero at the oldest, so in effect the average covers the newest `p - 1` bars. The weighted sum of the source is divided by the sum of the weights.\n\nThe window grows with the data until it reaches `period`, so the line starts on the first bar. A missing price is left out together with its weight, and a window whose weights add to zero shows the source itself.",
+  "howToRead": "Read it as a smooth trend line. The rounded weights damp single-bar noise more than a simple average while keeping a similar lag of about half the window. A rising line with price above it describes an uptrend, and a falling line with price below it a downtrend; a change in the line's slope is the signal to watch.\n\nBecause the newest bar carries little weight, the line reacts to a sudden move a few bars later than a front-weighted average would. Until `period` bars exist the window is shorter.",
+  "settings": [
+    { "key": "period", "label": "Period", "description": "How many bars the half sine wave spans. A longer period gives a smoother, slower line." },
+    { "key": "source", "label": "Source", "description": "The price series that is averaged, the close by default." }
+  ],
+  "faq": [
+    { "q": "Why does the newest bar weigh so little?", "a": "The sine wave starts near zero at the newest bar and peaks in the middle of the window. That rounded shape is what makes the line smooth, at the cost of reacting a little later." },
+    { "q": "How does it compare with a simple average?", "a": "Over the same period it lags about as much but is smoother, because the edges of the window fade in and out instead of switching on and off." },
+    { "q": "What does a period of 1 show?", "a": "The source itself: a one-bar window averages just the current price. A period of 2 also follows the source, because the older of its two bars weighs zero." }
+  ]
+}

@@ -1,0 +1,21 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © openalgo
+// Original work (c) mihakralj, MIT License
+
+version 1
+study("Logistic Function (SIGMOID)", precision = 4)
+
+source = input(close, "Source")
+steepness = input(0.5, "Steepness (k)", min = 0.000001, max = 1000, step = 0.1, tooltip = "Higher k makes the curve steeper, so it saturates closer to the average.")
+
+// The midpoint of the curve is the 200-bar simple average, so the line reads
+// 0.5 exactly where the source sits on that average.
+midpoint = sma(source, 200)
+exponent = -steepness * (source - midpoint)
+
+// The exponential overflows a little above 709, where the curve has already
+// reached zero. Above an exponent of 700 the curve is below 1e-304, so the
+// value is written as exactly zero there.
+sigmoidValue = exponent > 700 ? 0.0 : 1 / (1 + exp(exponent))
+
+plot(sigmoidValue, "Sigmoid", #ffeb3b, width = 2)

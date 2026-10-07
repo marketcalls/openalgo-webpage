@@ -1,0 +1,49 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © openalgo
+// Original work (c) mihakralj, MIT License
+
+version 1
+study("Elliptic 2nd Order Filter (ELLIPTIC)", overlay = true, precision = 2)
+
+length = input(20, "Length", min = 2, max = 5000, step = 1)
+source = input(close, "Source")
+
+len = max(2, floor(length))
+
+// Normalised prototype: 1 dB passband ripple, 40 dB stopband.
+cWz = 2.15499
+cSigma = -0.31323
+cKpNorm = 0.91598
+cK = 0.14735
+
+// Bilinear pre-warp of the cutoff.
+wc = max(math.tan(math.pi / len), 0.000000001)
+omegaZScaled = cWz * wc
+sigmaScaled = cSigma * wc
+kpScaled = cKpNorm * wc * wc
+a0Raw = 1 - 2 * sigmaScaled + kpScaled
+a0Denom = abs(a0Raw) < 0.000000001 ? 0.000000001 : a0Raw
+
+normFactor = cKpNorm / (cK * cWz * cWz)
+b0 = (normFactor * cK * (1 + omegaZScaled * omegaZScaled)) / a0Denom
+b1 = (normFactor * cK * (2 * omegaZScaled * omegaZScaled - 2)) / a0Denom
+b2 = b0
+a1 = (2 * kpScaled - 2) / a0Denom
+a2 = (1 + 2 * sigmaScaled + kpScaled) / a0Denom
+
+// A missing price reads as zero; earlier inputs fall back to newer ones.
+s0 = orElse(source, 0)
+s1 = orElse(source[1], s0)
+s2 = orElse(source[2], s1)
+
+var out1 = none
+var out2 = none
+f1 = orElse(out1, s0)
+f2 = orElse(out2, f1)
+
+// The first two bars seed the recursion with the price itself.
+elliptic = bar.index < 2 ? s0 : b0 * s0 + b1 * s1 + b2 * s2 - a1 * f1 - a2 * f2
+out2 = out1
+out1 = elliptic
+
+plot(elliptic, "Elliptic (Rp=1, Rs=40)", #ffeb3b, width = 2)

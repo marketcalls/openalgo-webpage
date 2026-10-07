@@ -1,0 +1,12 @@
+{
+  "title": "True Range",
+  "summary": "Measures each bar's full movement, the bar's own range widened to include any gap from the previous close.",
+  "description": "True range is the full size of a bar's move. The plain range, high minus low, misses the move that happened between bars: if a market closes at 100 and the next bar opens at 104 and trades between 104 and 106, the range is 2 but price actually travelled 6 from where it last stood.\n\nThe study takes the greatest of three distances on every bar: the high minus the low, the distance from the high to the previous close, and the distance from the low to the previous close. The first bar has no previous close, so its true range is simply its high minus its low.\n\nIt is the raw input to the average true range and to many stop and channel tools, shown here bar by bar without any smoothing.",
+  "howToRead": "Each point is one bar's movement in price units. Tall spikes mark bars that moved far, often news bars or gaps; a run of low readings marks a quiet, compressed market.\n\nBecause it is not smoothed, the line is noisy. Read it for the size of individual bars, and compare a bar to its neighbours rather than to a fixed number, since the scale depends on the instrument's price.",
+  "settings": [],
+  "faq": [
+    { "q": "Why is true range different from high minus low?", "a": "It also counts the gap from the previous close. On a bar that opens away from the last close, the move across the gap is included, so true range is never smaller than the plain range." },
+    { "q": "What happens on the first bar?", "a": "There is no previous close to compare with, so the first bar's true range is its high minus its low." },
+    { "q": "How does it relate to the average true range?", "a": "The average true range is a smoothed average of this series. This study shows the unsmoothed value of every bar." }
+  ]
+}

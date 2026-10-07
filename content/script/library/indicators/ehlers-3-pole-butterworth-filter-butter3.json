@@ -1,0 +1,15 @@
+{
+  "title": "Ehlers 3-Pole Butterworth Filter (BUTTER3)",
+  "summary": "A third-order Butterworth lowpass filter on price that removes swings shorter than the chosen period with a steep roll-off and a flat passband.",
+  "description": "The 3-Pole Butterworth Filter is a recursive lowpass filter. Each new value is a weighted mix of the last four prices and the filter's own last three outputs, with weights set by the cutoff period in `Length`. Price cycles longer than the cutoff pass through almost untouched, while cycles shorter than it are cut away sharply, so the line keeps the shape of the trend and drops most of the bar-to-bar noise.\n\nThe input side uses the binomial weights 1, 3, 3, 1 on the current and three previous prices, scaled so the filter has a gain of exactly one on a flat price. The feedback side uses three coefficients derived from a pole radius of `exp(-pi / Length)` and an angle of `sqrt(3) * pi / Length`, which is what gives three poles instead of two.\n\nOn the first four bars the study simply plots the price, which seeds the recursion, and from the fifth bar on it runs the full formula. Compared with a two-pole version of the same length, the line is smoother but turns slightly later.",
+  "howToRead": "Read the line as a cleaned-up price. When it slopes up the smoothed trend is rising, when it slopes down it is falling, and a turn in the line is a turn in the swing at the scale set by `Length`. Price crossing the line is a weaker signal than the line itself turning, because the filter is designed to ignore the short swings that cause most crossings.\n\nAll lowpass filters lag. A longer `Length` gives a smoother line that turns later; a shorter one follows price closely but lets more noise through. The first few bars after the start of the chart are a warm-up and should not be read.",
+  "settings": [
+    { "key": "length", "label": "Length", "description": "The cutoff period in bars. Swings shorter than this are filtered out; a larger value gives a smoother, slower line." },
+    { "key": "source", "label": "Source", "description": "The price series the filter smooths, the close by default." }
+  ],
+  "faq": [
+    { "q": "How is this different from the two-pole version?", "a": "The third pole makes the roll-off past the cutoff steeper, so short swings are removed more completely. The price is a little more lag for the same length." },
+    { "q": "Why does the line equal the price on the first bars?", "a": "The recursion needs four earlier values to start. The first four bars plot the price itself and serve as the seed for the formula from the fifth bar on." },
+    { "q": "Does the line ever overshoot price?", "a": "It can. A flat passband does not rule out overshoot: after a sharp move the line can briefly run past price before it settles." }
+  ]
+}

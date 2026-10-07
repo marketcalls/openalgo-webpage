@@ -1,0 +1,14 @@
+{
+  "title": "Volatility Ratio (VR)",
+  "summary": "This bar's true range divided by an average true range, so values above 1 mark bars wider than the recent norm.",
+  "description": "The volatility ratio compares the size of the current bar with the size of recent bars. The current bar is measured by its true range: the greatest of high minus low and the two distances from the high and the low to the previous close. The first bar uses high minus low.\n\nThe recent norm is a Wilder average of true range with weight 1 divided by the ATR period, set to the first bar's true range on the first bar. While a compensating weight, which starts at 1 and shrinks by the factor one minus 1 divided by the ATR period on every bar, is above a tiny threshold, the average is divided by one minus that weight. The ratio is the current true range divided by that average.\n\nBecause the average already starts from a real true range and is still divided by a small number at first, the early average is too large and the early ratio too small: on the first bar the ratio is exactly 1 divided by the ATR period. The effect fades as the compensating weight shrinks.",
+  "howToRead": "A reading of 1 means the bar is as wide as the recent average. Readings well above 1 mark expansion bars, often a breakout or a news move, and readings below 1 mark quiet bars inside a contraction. A cluster of high readings means volatility is expanding.\n\nThe first bars read low because of the start-up correction, so read the line once a few multiples of the ATR period have passed. The ratio carries no direction: a wide down bar and a wide up bar read the same.",
+  "settings": [
+    { "key": "atrPeriod", "label": "ATR Period", "description": "How many bars the average true range in the denominator is smoothed over. A longer period makes the norm steadier." }
+  ],
+  "faq": [
+    { "q": "What does a value of 2 mean?", "a": "The current bar's true range is twice the recent average true range: an unusually wide bar." },
+    { "q": "Does it say which way price moved?", "a": "No. True range is a size, so a strong up bar and a strong down bar give the same reading." },
+    { "q": "Why are the early readings so low?", "a": "The average starts from the first true range and is then divided by a number that is small at first, so it begins too large. The first reading is 1 divided by the ATR period, and the ratio climbs toward normal as that divisor approaches 1." }
+  ]
+}

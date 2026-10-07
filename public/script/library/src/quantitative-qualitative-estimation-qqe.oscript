@@ -1,0 +1,94 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © openalgo
+// Original work (c) mihakralj, MIT License
+
+version 1
+study("Quantitative Qualitative Estimation (QQE)", precision = 2)
+
+source = input(close, "Source")
+rsiPeriod = input(14, "RSI Period", min = 1, max = 5000, step = 1)
+smoothFactor = input(5, "Smooth Factor", min = 1, max = 500, step = 1, tooltip = "EMA length applied to the RSI, and the basis of the 2*SF-1 length used for the dynamic average range.")
+qqeFactor = input(4.236, "QQE Factor", min = 0.001, max = 100, step = 0.001, tooltip = "Wilder multiplier applied to the dynamic average range to place the trailing band.")
+
+EPSILON = 1e-10
+
+// Every stage starts its accumulator at zero and divides out the weight still
+// owed to that zero seed, 1 - beta^n, so each one answers from the first bar.
+rmaAlpha = 1 / rsiPeriod
+rmaBeta = 1 - rmaAlpha
+sfAlpha = 2 / (smoothFactor + 1)
+sfBeta = 1 - sfAlpha
+darAlpha = 2 / (2 * smoothFactor - 1 + 1)
+darBeta = 1 - darAlpha
+
+// Stage 1: an RSI of the source, gains and losses smoothed with weight 1 / rsiPeriod.
+s = orElse(source, 0)
+var prevSrc = none
+chg = isNone(prevSrc) ? 0 : s - prevSrc
+prevSrc = s
+gain = chg > 0 ? chg : 0
+loss = chg < 0 ? -chg : 0
+
+var rmaGain = 0.0
+var rmaLoss = 0.0
+var eRma = 1.0
+rmaGain = rmaGain * rmaBeta + gain * rmaAlpha
+rmaLoss = rmaLoss * rmaBeta + loss * rmaAlpha
+eRma *= rmaBeta
+cRma = eRma > EPSILON ? 1 / (1 - eRma) : 1
+avgGain = rmaGain * cRma
+avgLoss = rmaLoss * cRma
+rs = avgLoss == 0 ? 100 : avgGain / avgLoss
+rsiVal = 100 - 100 / (1 + rs)
+
+// Stage 2: an exponential mean of the RSI, the QQE line.
+var rawRsiMa = 0.0
+var eRsiMa = 1.0
+rawRsiMa = rawRsiMa * sfBeta + rsiVal * sfAlpha
+eRsiMa *= sfBeta
+cRsiMa = eRsiMa > EPSILON ? 1 / (1 - eRsiMa) : 1
+rsiMa = rawRsiMa * cRsiMa
+
+// Stage 3: two exponential means of the line's absolute change give the
+// dynamic average range.
+var prevRsiMa = none
+absDelta = isNone(prevRsiMa) ? 0 : abs(rsiMa - prevRsiMa)
+prevRsiMa = rsiMa
+
+var rawDar1 = 0.0
+var eDar1 = 1.0
+rawDar1 = rawDar1 * darBeta + absDelta * darAlpha
+eDar1 *= darBeta
+cDar1 = eDar1 > EPSILON ? 1 / (1 - eDar1) : 1
+dar1 = rawDar1 * cDar1
+
+var rawDar2 = 0.0
+var eDar2 = 1.0
+rawDar2 = rawDar2 * darBeta + dar1 * darAlpha
+eDar2 *= darBeta
+cDar2 = eDar2 > EPSILON ? 1 / (1 - eDar2) : 1
+dar = rawDar2 * cDar2
+
+// Stage 4: the trailing level ratchets toward the line while the last two
+// readings sit on the same side of it, and otherwise jumps to the far band.
+band = qqeFactor * dar
+upperBand = rsiMa + band
+lowerBand = rsiMa - band
+
+var trail = 0.0
+var prevRsiMa2 = 50.0
+newTrail = trail
+if rsiMa > trail and prevRsiMa2 > trail
+    newTrail = max(trail, lowerBand)
+else if rsiMa < trail and prevRsiMa2 < trail
+    newTrail = min(trail, upperBand)
+else
+    newTrail = rsiMa > trail ? lowerBand : upperBand
+prevRsiMa2 = rsiMa
+trail = newTrail
+
+plot(rsiMa, "QQE", #ffeb3b, width = 2)
+plot(trail, "Trailing", #00bcd4, width = 1)
+level(70, "Overbought", #ef5350, style = "dashed")
+level(50, "Midline", #787b86, style = "dashed")
+level(30, "Oversold", #26a69a, style = "dashed")

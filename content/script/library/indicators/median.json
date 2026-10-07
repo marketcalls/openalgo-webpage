@@ -1,0 +1,15 @@
+{
+  "title": "Median",
+  "summary": "The middle value of the source over a rolling window, a centre line that a single outlier bar cannot drag around the way it drags a mean.",
+  "description": "The Median study sorts the last `Period` values of the source and plots the one in the middle. When the window holds an odd number of values that is the single middle value; when it holds an even number it is the average of the two middle values.\n\nUnlike a simple moving average, the median ignores how far the extreme values sit from the centre. One bar with a huge wick or a bad print moves a mean by its full size divided by the window, but it moves the median by at most one rank. That makes the line a steadier estimate of where price has typically been.\n\nThe study answers from the first bar. Before the window has filled it takes the median of the bars that exist so far, and any absent value in the window is skipped rather than counted.",
+  "howToRead": "Read the median as the typical price of the recent window. A current value above the line is higher than at least half of the recent values, and a value below it is lower than at least half of them. Because it moves in steps rather than smoothly, it often stays flat for several bars and then jumps, which is normal for a rank statistic.\n\nIt lags in a strong trend just as an average does, and after a sudden jump it moves to the new level only once more than half of the window's values sit there.",
+  "settings": [
+    { "key": "source", "label": "Source", "description": "The price series the median is taken from, such as the close or the bar midpoint." },
+    { "key": "length", "label": "Period", "description": "How many recent bars are ranked. A longer period gives a steadier line that responds later." }
+  ],
+  "faq": [
+    { "q": "Why does the line sometimes stay flat and then jump?", "a": "The median is one of the window's own values, or the average of two of them, so it only changes when the middle rank changes. A new bar that lands well away from the centre may not move it at all." },
+    { "q": "How is it different from a simple moving average?", "a": "An average adds up every value, so a single extreme bar pulls it by its full size. The median only looks at order, so the same bar moves it by at most one position in the sorted window." },
+    { "q": "Does it have a warmup period?", "a": "No. On early bars it takes the median of however many bars exist, so the first value is simply the first bar's source." }
+  ]
+}

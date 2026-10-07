@@ -1,0 +1,16 @@
+{
+  "title": "Variable Index Dynamic Average (VIDYA)",
+  "summary": "An exponential average that speeds up when short-term volatility rises against longer-term volatility and slows down when it falls.",
+  "description": "VIDYA is an exponential moving average whose smoothing factor changes every bar. The base factor is two over the period plus one. It is multiplied by a volatility index: the population standard deviation of the last five source values divided by the population standard deviation over a slower window. The index is held between zero and one, so the line can only slow down from an ordinary EMA, never speed past it.\n\nThe slower window is the Std Dev Period, or the main period when that is zero. Both deviations are computed from sums of the values and their squares over the bars available, so the first bars use shorter windows. When the slower deviation is zero the index is one. The line is seeded with the first source value, and a missing source value leaves it where it was.",
+  "howToRead": "When the last five bars are as volatile as the slower window or more, VIDYA moves like a normal EMA of the period. When recent bars are quiet against the longer window, the line nearly stops, so it stays flat through consolidation and resumes moving when price breaks out.\n\nA flat VIDYA with price coiling around it describes a quiet market; a VIDYA that starts to slope again after a flat stretch shows that directional movement has returned. Because the index is capped at one, the line never reacts faster than the base EMA.",
+  "settings": [
+    { "key": "period", "label": "Period", "description": "Sets the base smoothing factor, and the slower deviation window when the Std Dev Period is zero." },
+    { "key": "stdPeriod", "label": "Std Dev Period (0=use Period)", "description": "The window of the slower standard deviation. Zero uses the main period instead." },
+    { "key": "source", "label": "Source", "description": "The price series that is averaged, the close by default." }
+  ],
+  "faq": [
+    { "q": "Why is the fast window always five bars?", "a": "The volatility index compares the deviation of the last five values with the deviation over the slower window. The five-bar window is fixed in the calculation; only the slower window can be set." },
+    { "q": "Can VIDYA move faster than an EMA of the same period?", "a": "No. The volatility index is held between zero and one, and it multiplies the EMA's smoothing factor, so VIDYA is at most as fast as that EMA." },
+    { "q": "What does a flat VIDYA mean?", "a": "Recent bars are much quieter than the slower window, so the smoothing factor is close to zero and the line barely moves." }
+  ]
+}

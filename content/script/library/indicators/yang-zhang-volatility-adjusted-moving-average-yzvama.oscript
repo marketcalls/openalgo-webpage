@@ -1,0 +1,88 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © openalgo
+// Original work (c) mihakralj, MIT License
+
+version 1
+study("Yang-Zhang Volatility Adjusted Moving Average (YZVAMA)", overlay = true, precision = 2)
+
+source = input(close, "Source")
+yzvShort = input(3, "Short YZV Period", min = 1, max = 5000, step = 1)
+yzvLong = input(50, "Long YZV Period", min = 1, max = 5000, step = 1)
+percentileLookback = input(100, "Percentile Lookback", min = 1, max = 5000, step = 1)
+minLength = input(5, "Minimum Length", min = 1, max = 5000, step = 1)
+maxLength = input(100, "Maximum Length", min = 1, max = 5000, step = 1)
+
+// A minimum above the maximum is held at the maximum.
+lowLength = min(maxLength, minLength)
+lengthRange = maxLength - lowLength
+
+// The variance estimate of one bar: the overnight jump from the previous close
+// to this open, plus the open-to-close move weighted by k, plus the
+// high-low spread around the open weighted by 1 - k. The first bar compares
+// its open with its own close.
+prevClose = bar.index > 0 ? close[1] : close
+ratioN = yzvShort <= 1 ? 1 : (yzvShort + 1) / (yzvShort - 1)
+k = 0.34 / (1.34 + ratioN)
+valid = open > 0 and high > 0 and low > 0 and close > 0 and prevClose > 0
+ro = log(open / prevClose)
+rc = log(close / open)
+rh = log(high / open)
+rl = log(low / open)
+barVariance = valid ? ro * ro + k * rc * rc + (1 - k) * (rh * (rh - rc) + rl * (rl - rc)) : none
+
+// Short-term volatility: a running average of the variance with weight
+// 1 / yzvShort, started from zero and divided by (1 - e) to remove the bias of
+// the zero start, then its square root. Bars without a variance leave it
+// untouched and have no reading.
+var rawRma = 0.0
+var e = 1.0
+shortVol = none
+if not isNone(barVariance)
+    rawRma = (rawRma * (yzvShort - 1) + barVariance) / yzvShort
+    e = (1 - 1 / yzvShort) * e
+    shortVol = sqrt(e > 1e-10 ? rawRma / (1 - e) : rawRma)
+
+// Rank this reading among the last `percentileLookback` readings, itself
+// included: the share of them it exceeds, from 0 to 100. With one reading
+// there is nothing to rank against, so the rank is 50.
+var readings: array<number> = []
+if not isNone(shortVol)
+    push(readings, shortVol)
+    if size(readings) > percentileLookback
+        shift(readings)
+nValid = size(readings)
+rankPos = 0
+if nValid > 1 and not isNone(shortVol)
+    for i = 0 to nValid - 1
+        if element(readings, i) < shortVol
+            rankPos = rankPos + 1
+pct = nValid > 1 and not isNone(shortVol) ? rankPos / (nValid - 1) * 100 : 50
+
+// Calm markets (a low rank) get a long average and busy markets a short one,
+// moving linearly from the maximum length down to the minimum, then rounded
+// toward zero.
+adjustedLength = trunc(max(lowLength, min(maxLength, maxLength - pct / 100 * lengthRange)))
+
+// The source values held over the last `maxLength` bars.
+var bufferSum = 0.0
+var validCount = 0
+if bar.index >= maxLength and not isNone(source[maxLength])
+    bufferSum = bufferSum - source[maxLength]
+    validCount = validCount - 1
+if not isNone(source)
+    bufferSum = bufferSum + source
+    validCount = validCount + 1
+
+// The average is the mean of the newest `adjustedLength` of those values.
+actualCount = min(validCount, adjustedLength)
+partialSum = 0.0
+partialCount = 0
+for i = 0 to actualCount - 1
+    v = source[i]
+    if not isNone(v)
+        partialSum = partialSum + v
+        partialCount = partialCount + 1
+fallback = validCount > 0 ? bufferSum / validCount : source
+yzvama = partialCount > 0 ? partialSum / partialCount : fallback
+
+plot(yzvama, "YZVAMA", #ffeb3b, width = 2)

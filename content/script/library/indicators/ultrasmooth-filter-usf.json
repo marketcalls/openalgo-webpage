@@ -1,0 +1,15 @@
+{
+  "title": "Ultrasmooth Filter (USF)",
+  "summary": "A two-pole recursive filter fed through a momentum term, giving a very smooth price line that turns with little lag.",
+  "description": "The Ultrasmooth Filter is a two-pole recursive filter that reads this bar's price, its two previous prices and its own two previous values. With `arg = sqrt(2) * pi / length`, it sets `c2 = 2 * exp(-arg) * cos(arg)`, `c3 = -exp(-2 * arg)` and `c1 = (1 + c2 - c3) / 4`, then computes `USF = (1 - c1) * price + (2 * c1 - c2) * price[1] - (c1 + c3) * price[2] + c2 * USF[1] + c3 * USF[2]`.\n\nThe extra terms on the earlier prices act as a momentum correction: they let the line keep up with a steady trend while the two-pole feedback removes short-term noise. Before the filter has two values of its own it uses the price in their place, so it answers from the first bar.\n\nThe length sets how slow a swing must be to pass through. Shorter swings are flattened; slower ones are followed closely.",
+  "howToRead": "Read the USF as a smooth trend line that hugs price more tightly than a moving average of the same length. Its slope is the clearest signal: a line turning up marks the slower part of the market turning up, and a line turning down marks the reverse. Crossings of price, or of a second USF with a different length, can time those turns.\n\nThe momentum term means the line can overshoot after a sharp reversal. It still describes what price has done, and it lags a true turning point by at least a few bars.",
+  "settings": [
+    { "key": "length", "label": "Length", "description": "The cutoff period in bars. Larger values give a smoother line that turns later." },
+    { "key": "source", "label": "Source", "description": "The price series the filter smooths, the close by default." }
+  ],
+  "faq": [
+    { "q": "How does it differ from the Supersmooth Filter?", "a": "Both share the same two-pole feedback. The Ultrasmooth Filter also feeds in the two previous prices through a momentum term, which tracks a steady trend more closely." },
+    { "q": "Why can it overshoot price?", "a": "The feedback and momentum terms carry the recent direction forward for a bar or two, so a sudden reversal leaves the line briefly beyond price." },
+    { "q": "Does it repaint?", "a": "No. Each value uses only this bar and earlier bars, so a value never changes once its bar has closed." }
+  ]
+}

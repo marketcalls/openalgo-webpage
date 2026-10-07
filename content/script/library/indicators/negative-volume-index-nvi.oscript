@@ -1,0 +1,20 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © openalgo
+// Original work (c) mihakralj, MIT License
+
+version 1
+study("Negative Volume Index (NVI)", precision = 2)
+
+source = input(close, "Price Source")
+
+// The index starts at 100 and compounds the price change only on bars whose
+// volume fell against the previous bar. Every other bar holds it flat.
+prevValue = source[1]
+prevVol = volume[1]
+usable = bar.index > 0 and not isNone(source) and not isNone(volume) and orElse(prevValue, 0) != 0 and orElse(prevVol, 0) > 0
+
+var nviValue = 100.0
+if usable and volume < prevVol
+    nviValue = nviValue * source / prevValue
+
+plot(nviValue, "NVI", #ffeb3b, width = 2)

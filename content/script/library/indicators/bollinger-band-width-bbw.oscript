@@ -1,0 +1,32 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © openalgo
+// Original work (c) mihakralj, MIT License
+
+version 1
+study("Bollinger Band Width (BBW)", precision = 2)
+
+period = input(20, "Period", min = 1, max = 5000, step = 1)
+source = input(close, "Source")
+multiplier = input(2.0, "StdDev Multiplier", min = 0.001, max = 100, step = 0.1)
+
+// Running sums of the source and its square over the last `period` bars. The
+// window grows from one value to `period`, and a missing source counts as 0.
+value = orElse(source, 0)
+var sumValue = 0.0
+var sumSq = 0.0
+if bar.index >= period
+    oldest = value[period]
+    sumValue = sumValue - oldest
+    sumSq = sumSq - oldest * oldest
+sumValue = sumValue + value
+sumSq = sumSq + value * value
+filled = min(bar.index + 1, period)
+
+// Population deviation, sqrt(E[x^2] - E[x]^2). The width is the distance
+// between the bands, twice the multiplied deviation. One value has no width,
+// so the first bar is left empty.
+basis = sumValue / filled
+dev = multiplier * sqrt(max(0, sumSq / filled - basis * basis))
+bbw = filled > 1 ? 2 * dev : none
+
+plot(bbw, "BBW", #ffeb3b, width = 2)

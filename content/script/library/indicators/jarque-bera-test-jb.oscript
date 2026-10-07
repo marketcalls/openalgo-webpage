@@ -1,0 +1,53 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © openalgo
+// Original work (c) mihakralj, MIT License
+
+version 1
+study("Jarque-Bera Test (JB)", precision = 2)
+
+source = input(close, "Source")
+length = input(20, "Lookback Period (Sample Size)", min = 10, max = 200, step = 1, tooltip = "Number of bars for calculation. Min 10. Max 200 due to array processing. Higher values provide more stable estimates but lag more.")
+
+// The window is the last `length` values. Any missing value in it, or a
+// window that has not filled yet, gives no reading on this bar.
+complete = bar.index >= length - 1
+total = 0.0
+if complete
+    for k = 0 to length - 1
+        v = source[length - 1 - k]
+        if isNone(v)
+            complete = false
+            break
+        total += v
+
+jb = none
+if complete
+    mean = total / length
+    // The second, third and fourth central moments.
+    m2 = 0.0
+    m3 = 0.0
+    m4 = 0.0
+    for k = 0 to length - 1
+        d = source[length - 1 - k] - mean
+        d2 = d * d
+        m2 += d2
+        m3 += d2 * d
+        m4 += d2 * d2
+    m2 = m2 / length
+    m3 = m3 / length
+    m4 = m4 / length
+    // A window with almost no spread has no shape to test.
+    if m2 >= 1e-10
+        sd = sqrt(m2)
+        skew = m3 / pow(sd, 3)
+        excessKurtosis = m4 / pow(sd, 4) - 3
+        // Sample size over 6, times the squared skewness plus a quarter of
+        // the squared excess kurtosis.
+        jb = length / 6 * (skew * skew + excessKurtosis * excessKurtosis / 4)
+
+plot(jb, "Jarque-Bera Statistic", #ffeb3b, width = 2)
+
+// Chi-squared critical values with two degrees of freedom.
+level(4.605, "Critical Value (10%)", #9598a1, style = "dotted")
+level(5.991, "Critical Value (5%)", #ff9800, style = "dashed")
+level(9.21, "Critical Value (1%)", #f23645, style = "solid")

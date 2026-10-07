@@ -1,0 +1,27 @@
+{
+  "title": "Average Directional Movement Index (ADX)",
+  "summary": "Plots ADX with the +DI and -DI lines from running totals that subtract their own earlier value, a recursion that leaves the usual ranges soon after the first period.",
+  "description": "ADX is meant to separate how strongly a market is trending from which way it is trending. Each bar contributes three numbers. The true range is the bar's range, stretched to include any gap from the previous close (on the first bar it is simply high minus low). Plus directional movement is how far the high rose above the previous high, counted only when that rise is larger than the drop of the low and is positive. Minus directional movement is the mirror image for the low.\n\nEach of the three is kept in a running total that, on every bar, adds the new value and subtracts **the total itself** as it stood `period` bars earlier, not the value that entered `period` bars earlier. **+DI** is 100 times the plus total over the true range total and **-DI** is the same for the minus total, each capped at 50 but with no floor. DX is the gap between the two as a percentage of their sum, and **ADX** is a running total of DX built the same way, divided by the period.\n\nThat recursion is not a moving sum. For the first `period` bars it is an ordinary cumulative total, but once it starts subtracting earlier totals it no longer stays bounded: on hourly BTCUSD with the default period of 14, ADX leaves the 0 to 100 range on bar 19, the DI lines turn negative a bar later, and ADX grows to values of the order of 1e76 by the end of 1463 bars. With a period of 1 the totals reduce to the single bar's values and stay in range.",
+  "howToRead": "Only the first `period` bars or so follow the textbook reading: a rising ADX for a one-sided market, +DI above -DI when upward movement dominates and -DI above +DI when downward movement does. After that the running totals swing negative and grow without limit, so the lines no longer measure trend strength or direction and should not be read as such.\n\nTreat this study as a record of this particular calculation rather than as a trading tool. If you need a usable directional reading, the Directional Movement Index (DX) and ADXR entries in this library use smoothed averages that stay within 0 to 100.",
+  "settings": [
+    {
+      "key": "period",
+      "label": "Period",
+      "description": "The number of bars in each running total. A longer period gives smoother, slower lines; a shorter one reacts sooner and is noisier."
+    }
+  ],
+  "faq": [
+    {
+      "q": "Why does ADX reach huge negative and positive numbers?",
+      "a": "Each running total subtracts its own value from `period` bars earlier instead of the term that entered then. That recursion feeds back on itself, so after the first period the totals oscillate with growing size, and every line built from them follows."
+    },
+    {
+      "q": "Why are the DI lines never above 50?",
+      "a": "This calculation caps each directional index at 50 before the DX ratio is taken. There is no lower cap, which is why the DI lines can go far below zero once the totals turn negative."
+    },
+    {
+      "q": "Is any setting stable?",
+      "a": "A period of 1 is: each total then holds only the current bar's value, so +DI and -DI stay between 0 and 50 and ADX between 0 and 100. Every longer period becomes unstable a few bars after the first full period."
+    }
+  ]
+}

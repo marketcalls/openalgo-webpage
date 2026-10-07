@@ -1,0 +1,37 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © openalgo
+// Original work (c) mihakralj, MIT License
+
+version 1
+study("Recursive Gaussian Moving Average (RGMA)", overlay = true, precision = 2)
+
+period = input(10, "Period", min = 1, max = 5000, step = 1)
+passes = input(3, "Passes", min = 1, max = 10, step = 1, tooltip = "More passes create more Gaussian-like smoothing")
+source = input(close, "Source")
+
+// The period is divided by the square root of the passes, so a deeper cascade
+// keeps roughly the same effective smoothing length.
+smoothing = 2 / (period / sqrt(passes) + 1)
+
+// One exponential stage per pass, each reading the stage before it as already
+// updated on this bar.
+var filters: array<number> = []
+var seeded = false
+
+rgmaValue = none
+if not isNone(source)
+    if not seeded
+        // The first usable bar seeds every stage with the source.
+        for k = 0 to passes - 1
+            push(filters, source)
+        seeded = true
+        rgmaValue = source
+    else
+        set(filters, 0, smoothing * (source - element(filters, 0)) + element(filters, 0))
+        for k = 1 to passes - 1
+            prevStage = element(filters, k - 1)
+            stage = element(filters, k)
+            set(filters, k, smoothing * (prevStage - stage) + stage)
+        rgmaValue = element(filters, passes - 1)
+
+plot(rgmaValue, "RGMA", #ffeb3b, width = 2)

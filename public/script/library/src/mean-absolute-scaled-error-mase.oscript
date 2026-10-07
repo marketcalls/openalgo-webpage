@@ -1,0 +1,43 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © openalgo
+// Original work (c) mihakralj, MIT License
+
+version 1
+study("Mean Absolute Scaled Error (MASE)", precision = 2)
+
+source = input(close, "Source")
+period = input(100, "Period", min = 1, max = 5000, step = 1, tooltip = "Lookback for both the comparison EMA and the error averaging.")
+
+// The reference is an exponential mean seeded with the simple average of its
+// first `period` values, so it has no value through the warmup.
+reference = ema(source, period)
+
+// The averaging window, held to 4000 bars while the reference keeps the full
+// period.
+window = min(period, 4000)
+
+// The naive-forecast scale is the mean absolute one-bar change over the
+// window, measured once, on the first bar. The first bar has no earlier bar to
+// compare with, so no change is counted there and the scale settles at 1 for
+// the whole chart.
+var scale = none
+if isNone(scale)
+    scaleSum = 0.0
+    scaleCount = 0
+    for j = 1 to window
+        older = source[j]
+        newer = source[j - 1]
+        if not isNone(older) and not isNone(newer)
+            scaleSum += abs(older - newer)
+            scaleCount += 1
+    scale = scaleCount > 0 ? scaleSum / scaleCount : 1
+
+divisor = scale == 0 ? 1 : scale
+scaledErr = abs(source - reference) / divisor
+
+// Averaged over the last `window` bars, counting only the bars that carry an
+// error.
+mase = avgSkip(scaledErr, window)
+
+plot(mase, "MASE", #ef5350, width = 2, style = "area")
+plot(reference, "EMA", #ffeb3b, width = 1, overlay = true)

@@ -1,0 +1,14 @@
+{
+  "title": "Square Root Transformation (SQRT)",
+  "summary": "Plots the square root of the chosen source, which compresses large values and stretches small ones onto a flatter scale.",
+  "description": "Square Root Transformation (SQRT) replaces each value of the source with its square root. The transformation is applied bar by bar, with no lookback and no smoothing.\n\nThe square root grows more slowly than the value it is taken of. Going from 100 to 400 doubles the root from 10 to 20, while going from 10,000 to 40,000 also only doubles it, from 100 to 200. Large values are compressed far more than small ones, so a strongly skewed series, such as a price that has risen many times over, reads on a gentler scale. A negative value has no real square root and is left as a gap.",
+  "howToRead": "Read the shape of the line rather than its level. Moves look smaller at high prices than they do on the raw chart, so a long rise that seems to accelerate in price units can look steadier once transformed, and early moves at low prices become easier to see.\n\nThe values are not prices, so do not set orders against them. The transformation is a lens on the series, often used before comparing spans of very different price levels or as a step before further statistics.",
+  "settings": [
+    { "key": "source", "label": "Source", "description": "The series to transform, such as the close or the bar midpoint." }
+  ],
+  "faq": [
+    { "q": "Why is part of the line missing?", "a": "The source was negative on those bars. A negative number has no real square root, so those bars are left blank." },
+    { "q": "How does it differ from a logarithmic scale?", "a": "Both compress large values. The square root compresses less strongly than a logarithm, so it sits between the raw series and a log view." },
+    { "q": "Does it change the direction of moves?", "a": "No. The square root rises whenever the source rises and falls whenever it falls, so turns appear on the same bars; only the size of each move changes." }
+  ]
+}

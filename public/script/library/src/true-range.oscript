@@ -1,0 +1,12 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © openalgo
+// Original work (c) mihakralj, MIT License
+
+version 1
+study("True Range", precision = 2)
+
+// The greatest of the bar's own range and its two gaps to the previous close.
+// The first bar has no previous close, so its true range is high minus low.
+tr = trueRange()
+
+plot(tr, "TR", #ffeb3b, width = 2)

@@ -1,0 +1,225 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © openalgo
+// Original work (c) Arun K Bhaskar, MPL-2.0
+
+version 1
+study("Sideways Market Skipper", precision = 2)
+
+// ---- Supertrend -------------------------------------------------------------------
+stAtrPeriod = input(10, "ATR Length", min = 1, max = 5000, step = 1, group = "Supertrend")
+stFactor = input(3, "Factor", min = 0.01, max = 100, step = 0.01, group = "Supertrend")
+
+// ---- Volatility range ---------------------------------------------------------------
+rangeDisplay = input(true, "Display", group = "Volatility Range")
+rangeType = input("Auto ATR", "Range Type", options = ["Auto ATR", "Type Points"], group = "Volatility Range", tooltip = "Auto ATR sets the range from the ATR value, so it follows the symbol. Type Points sets it in points, for example 60 for an index and 120 for a more volatile one.")
+rangePoints = input(120, "Type Points", min = 0.01, max = 1000000, step = 0.01, group = "Volatility Range", tooltip = "Applicable only when 'Range Type' is 'Type Points'.")
+rangeAtrLength = input(14, "Range ATR Length", min = 1, max = 5000, step = 1, group = "Volatility Range")
+rangeAtrSmoothing = input("RMA", "ATR Smoothing", options = ["RMA", "SMA", "EMA", "WMA"], group = "Volatility Range")
+rangeAtrMultiplier = input(1.5, "ATR Multiplier", min = 1, max = 100, step = 0.5, group = "Volatility Range")
+rangeAtrSmaLength = input(14, "ATR SMA Length", min = 1, max = 5000, step = 1, group = "Volatility Range")
+
+// ---- Additional filters ---------------------------------------------------------------
+pchgFilter = input(false, "Apply % Change Filter", group = "Additional Filters", tooltip = "A long needs the cumulative daily percentage change above this figure, a short below its negative.")
+pchgAboveBelow = input(2, "% Change Above/Below +/-", min = 0, max = 1000, step = 0.1, group = "Additional Filters")
+volPchgFilter = input(false, "Apply Volume % Change Filter", group = "Additional Filters", tooltip = "Zero means today's cumulative volume only has to beat the previous day's. 300% or more often marks a major breakout.")
+volPchgAbove = input(0, "Volume % Change Above", min = 0, max = 100000, step = 1, group = "Additional Filters")
+atrFilter = input(true, "Apply ATR Filter", group = "Additional Filters", tooltip = "Filters out longer or more volatile signal candles.")
+atrLength = input(14, "Filter ATR Length", min = 1, max = 5000, step = 1, group = "Additional Filters")
+atrMulti = input(1, "Filter ATR Multiplier", min = 1, max = 100, step = 0.1, group = "Additional Filters", tooltip = "A higher multiplier filters a longer or more volatile signal candle.")
+bodyFilter = input(false, "Apply Body % Filter", group = "Additional Filters", tooltip = "80 means the body covers over 80% of the candle.")
+bodyPercent = input(80, "Body % Above", min = 0, max = 100, step = 1, group = "Additional Filters")
+bodySizeFilter = input(false, "Apply Body Size Filter", group = "Additional Filters", tooltip = "2 means the candle is 2 times larger than the previous candle.")
+bodySizeMultiplier = input(2, "Body Size Multiplier (x)", min = 0, max = 1000, step = 1, group = "Additional Filters")
+volumeFilter = input(false, "Apply Volume Filter", group = "Additional Filters", tooltip = "Filters out a candle whose volume is below the SMA of volume.")
+volSmaLength = input(20, "Volume SMA Length", min = 1, max = 5000, step = 1, group = "Additional Filters")
+relVolFilter = input(false, "Apply Relative Volume Filter", group = "Additional Filters", tooltip = "Filters out a candle whose volume is below the relative volume threshold.")
+relVolLength = input(90, "Relative Volume Length", min = 2, max = 5000, step = 1, group = "Additional Filters")
+relVolMultiplier = input(5, "Rel Vol SMA Multiplier", min = 0, max = 1000, step = 0.1, group = "Additional Filters")
+timeFilter = input(false, "Apply Time Filter", group = "Additional Filters", tooltip = "Keeps signals only between the two times, read in the chart timezone.")
+hourFrom = input(9, "Time From (hour)", min = 0, max = 23, step = 1, group = "Additional Filters")
+minuteFrom = input(15, "Time From (minute)", min = 0, max = 59, step = 1, group = "Additional Filters")
+hourTo = input(10, "Time To (hour)", min = 0, max = 23, step = 1, group = "Additional Filters")
+minuteTo = input(15, "Time To (minute)", min = 0, max = 59, step = 1, group = "Additional Filters")
+
+// ---- Data table ---------------------------------------------------------------------
+showTable = input(true, "Display Table", group = "Data Table")
+tablePosition = input("bottom-right", "Position", options = ["top-left", "top-center", "top-right", "middle-left", "middle-center", "middle-right", "bottom-left", "bottom-center", "bottom-right"], group = "Data Table")
+tableTextSize = input("normal", "Size", options = ["auto", "tiny", "small", "normal", "large", "huge"], group = "Data Table", tooltip = "Text size of the panel. Tables in this version draw at the chart's own text size.")
+
+POS = #26A69A
+POS_LIGHT = #ACE5DC
+NEG_LIGHT = #FCCBCD
+NEG = #FF5252
+NEU = #D1D4DC
+NEU_MID = #2A2E39
+NEU_DARK = #141516
+
+// ---- 1. Supertrend. The first bar carries no level. ------------------------------------
+// The line starts on the first bar with an ATR: there is no earlier band to
+// trail, so it opens on the upper band (midpoint plus factor times ATR) with a
+// downward direction. From the next bar on it follows the built-in Supertrend.
+st = supertrend(stFactor, stAtrPeriod)
+stAtr = atr(stAtrPeriod)
+stOpening = isNone(st[0]) and not isNone(stAtr) and isNone(stAtr[1])
+stValue = bar.isFirst ? none : stOpening ? hl2 + stFactor * stAtr : st[0]
+stDirection = stOpening ? 1 : st[1]
+
+// ---- 2. The range ATR, smoothed as chosen, and its simple average ----------------------
+// Every smoothing runs on every bar so each keeps its own history.
+tr = trueRange()
+atrRma = rma(tr, rangeAtrLength)
+atrSmaSmooth = sma(tr, rangeAtrLength)
+atrEma = ema(tr, rangeAtrLength)
+atrWma = wma(tr, rangeAtrLength)
+atrRange = rangeAtrSmoothing == "SMA" ? atrSmaSmooth : rangeAtrSmoothing == "EMA" ? atrEma : rangeAtrSmoothing == "WMA" ? atrWma : atrRma
+atrSmaV = sma(atrRange, rangeAtrSmaLength)
+
+// ---- Filter series --------------------------------------------------------------------
+wilderAtr = atr(atrLength)
+volSma = sma(volume, volSmaLength)
+averageVolume = sma(volume, relVolLength)
+prevAvgVolume = averageVolume[1]
+// This bar's volume over the previous bar's average volume.
+relativeVol = not isNone(prevAvgVolume) and prevAvgVolume != 0 ? volume / prevAvgVolume : none
+relVolSma = sma(relativeVol, relVolLength)
+
+// ---- Day statistics -----------------------------------------------------------------------
+// A new calendar day starts on its first bar; the first bar of the chart is not one.
+isNewDay = bar.isFirst ? false : not date.isSameDay(time, time[1])
+
+prevClose = close[1]
+dailyPct = not isNone(prevClose) and prevClose != 0 ? (close - prevClose) / prevClose * 100 : 0
+var cumPchg = none
+cumPchg = isNewDay ? dailyPct : isNone(cumPchg) ? dailyPct : cumPchg + dailyPct
+
+// The running total starts absent, so the first partial day carries none.
+var currentCumVol = none
+var prevCumVol = none
+if isNewDay
+    prevCumVol = currentCumVol
+    currentCumVol = volume
+else
+    currentCumVol = currentCumVol + volume
+volBase = isNone(prevCumVol) ? currentCumVol : prevCumVol
+cumVolPchg = not isNone(volBase) and toBool(volBase != 0) and not isNone(currentCumVol) ? (currentCumVol - volBase) / volBase * 100 : none
+
+// ---- Additional filters. A comparison against an absent value fails. -------------------------
+barRange = high - low
+bodyRatio = barRange > 0 ? abs(close - open) / barRange : none
+prevRange = high[1] - low[1]
+bodyFraction = bodyPercent / 100
+
+pchgAbovePass = not pchgFilter or toBool(cumPchg > pchgAboveBelow)
+pchgBelowPass = not pchgFilter or toBool(cumPchg < -pchgAboveBelow)
+volPchgPass = not volPchgFilter or toBool(cumVolPchg >= volPchgAbove)
+atrPass = not atrFilter or toBool(barRange > wilderAtr * atrMulti)
+bodyPass = not bodyFilter or toBool(bodyRatio >= bodyFraction)
+bodySizePass = not bodySizeFilter or (toBool(bodyRatio >= bodyFraction) and toBool(barRange >= prevRange * floor(bodySizeMultiplier)))
+volumePass = not volumeFilter or toBool(volume > volSma)
+relVolPass = not relVolFilter or toBool(relativeVol > relVolSma * relVolMultiplier)
+
+barHour = date.hour(time)
+barMinute = date.minute(time)
+timePass = not timeFilter or ((barHour > hourFrom or (barHour == hourFrom and barMinute >= minuteFrom)) and (barHour < hourTo or (barHour == hourTo and barMinute < minuteTo)))
+
+// A bar still forming on a moving chart does not count.
+isSettled = not bar.isRealtime or bar.isConfirmed
+
+// ---- Condition 1: the close crosses the Supertrend ---------------------------------------
+stPrev = stValue[1]
+shortCont = toBool(close < stValue and close[1] >= stPrev) and isSettled
+longCont = toBool(close > stValue and close[1] <= stPrev) and isSettled
+
+// The cross opens a volatility range one range width from the crossing close.
+rangeSource = rangeType == "Type Points" ? rangePoints : atrRange * rangeAtrMultiplier
+var topPrice = none
+var bottomPrice = none
+prevTopPrice = topPrice
+prevBottomPrice = bottomPrice
+if shortCont
+    bottomPrice = close - rangeSource
+    topPrice = none
+if longCont
+    topPrice = close + rangeSource
+    bottomPrice = none
+
+// ---- Condition 2: the close breaks out of that range with every filter agreeing --------------
+risingAtr = toBool(atrRange > atrSmaV)
+commonPass = risingAtr and volPchgPass and atrPass and bodyPass and bodySizePass and volumePass and relVolPass and timePass and isSettled
+shortBreakCond = toBool(close < bottomPrice) and open > close and pchgBelowPass and commonPass
+longBreakCond = toBool(close > topPrice) and open < close and pchgAbovePass and commonPass
+
+// Two-step state machines: the cross arms the setup, the break fires it, and a
+// fired state falls back to unarmed on the next bar.
+var shortState = 0
+var longState = 0
+shortState = shortState == 2 ? 0 : shortState
+if shortCont and shortState == 0
+    shortState = 1
+if shortBreakCond and shortState == 1
+    shortState = 2
+longState = longState == 2 ? 0 : longState
+if longCont and longState == 0
+    longState = 1
+if longBreakCond and longState == 1
+    longState = 2
+
+shortSignal = shortState == 2
+longSignal = longState == 2
+
+// ---- Plots ----------------------------------------------------------------------------------
+plot(stDirection < 0 ? stValue : none, "Supertrend Up", #26A69A, width = 2, overlay = true)
+plot(stDirection < 0 ? none : stValue, "Supertrend Down", #FF5252, width = 2, overlay = true)
+
+// A range level is drawn only while it is unchanged from the previous bar, one
+// bar back, so the step starts on the bar that opened the range.
+topLine = rangeDisplay and not isNone(topPrice) and toBool(topPrice == prevTopPrice) ? topPrice : none
+bottomLine = rangeDisplay and not isNone(bottomPrice) and toBool(bottomPrice == prevBottomPrice) ? bottomPrice : none
+plot(topLine, "Top Range", #26A69A, width = 1, style = "step", offset = -1, overlay = true)
+plot(bottomLine, "Bottom Range", #FF5252, width = 1, style = "step", offset = -1, overlay = true)
+
+plot(atrRange, "ATR", #2962FF, width = 2)
+plot(atrSmaV, "ATR SMA", #FF6D00, width = 2)
+
+// ---- Signals and bar colours ------------------------------------------------------------------
+signal(longSignal ? "Long" : none, color = #ACE5DC, at = "below", shape = "triangleUp")
+signal(shortSignal ? "Short" : none, color = #FCCBCD, at = "above", shape = "triangleDown")
+// The break signal colour wins over the cross colour.
+barColor(shortSignal ? NEG_LIGHT : longSignal ? POS_LIGHT : shortCont ? NEG_LIGHT : longCont ? POS_LIGHT : none)
+
+// ---- Data table on the newest bar ------------------------------------------------------------
+fn pct(v) => isNone(v) ? "n/a" : text(v, 2) + " %"
+fn lakhs(v) => isNone(v) ? "n/a" : text(v / 100000, 2) + " L"
+
+fn writeTable(t, pchg, vPchg, cVol, pVol) =>
+    pchgCol = toBool(pchg > 0) ? POS : NEG
+    volPchgCol = toBool(vPchg > 0) ? POS : NEG
+    prevVolCol = toBool(pVol < cVol) ? NEG : POS
+    cell(t, 0, 0, "%Chg", textColor = NEU, bgColor = NEU_DARK, align = "left")
+    cell(t, 0, 1, pct(pchg), textColor = pchgCol, bgColor = NEU_DARK, align = "right")
+    cell(t, 1, 0, "Vol %Chg", textColor = NEU, bgColor = NEU_MID, align = "left")
+    cell(t, 1, 1, pct(vPchg), textColor = volPchgCol, bgColor = NEU_MID, align = "right")
+    cell(t, 2, 0, "Vol", textColor = NEU, bgColor = NEU_DARK, align = "left")
+    cell(t, 2, 1, lakhs(cVol), textColor = volPchgCol, bgColor = NEU_DARK, align = "right")
+    cell(t, 3, 0, "PD Vol", textColor = NEU, bgColor = NEU_MID, align = "left")
+    cell(t, 3, 1, lakhs(pVol), textColor = prevVolCol, bgColor = NEU_MID, align = "right")
+    0
+
+// The grid can sit in one of four corners, so each of the nine positions is
+// drawn in its nearest corner.
+gridBottomRight = table("Day readings, bottom right", 4, 2, position = "bottomRight")
+gridBottomLeft = table("Day readings, bottom left", 4, 2, position = "bottomLeft")
+gridTopRight = table("Day readings, top right", 4, 2, position = "topRight")
+gridTopLeft = table("Day readings, top left", 4, 2, position = "topLeft")
+
+if showTable and bar.isLast
+    isLeft = str.endsWith(tablePosition, "-left")
+    isBottom = not str.startsWith(tablePosition, "top")
+    if isBottom and isLeft
+        writeTable(gridBottomLeft, cumPchg, cumVolPchg, currentCumVol, prevCumVol)
+    else if isBottom
+        writeTable(gridBottomRight, cumPchg, cumVolPchg, currentCumVol, prevCumVol)
+    else if isLeft
+        writeTable(gridTopLeft, cumPchg, cumVolPchg, currentCumVol, prevCumVol)
+    else
+        writeTable(gridTopRight, cumPchg, cumVolPchg, currentCumVol, prevCumVol)

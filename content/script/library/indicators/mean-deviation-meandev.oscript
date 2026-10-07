@@ -1,0 +1,28 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © openalgo
+// Original work (c) mihakralj, MIT License
+
+version 1
+study("Mean Deviation (MEANDEV)", precision = 2)
+
+period = input(14, "Period", min = 1, max = 5000, step = 1)
+source = input(close, "Source")
+
+// A missing value counts as zero.
+value = orElse(source, 0)
+
+// The mean of the last `period` values, or of every value so far while the
+// window is still filling.
+var total = 0.0
+total += value
+if bar.index >= period
+    total -= value[period]
+filled = min(bar.index + 1, period)
+mean = total / filled
+
+// The average absolute distance of those values from their mean.
+devSum = 0.0
+for k = 0 to filled - 1
+    devSum += abs(value[k] - mean)
+
+plot(devSum / filled, "MeanDev", #ffeb3b, width = 2)

@@ -1,0 +1,14 @@
+{
+  "title": "TRAMA: Trend Regularity Adaptive Moving Average",
+  "summary": "An adaptive average that moves fast while new highs or new lows keep printing and slows to a halt when the range stops expanding.",
+  "description": "TRAMA measures how regularly the market is making new extremes and uses that as its speed. On each bar it checks whether the highest high of the last `period` bars has risen or the lowest low has fallen. A bar where either happened counts as one, any other bar as zero. The simple average of those counts over the same period, squared, is the smoothing factor.\n\nThe average then steps toward the close by that factor: `ama = ama[1] + tc x (close - ama[1])`. When new extremes print on most bars the factor is near one and the line follows the close closely; when the range stops expanding the factor drops toward zero and the line flattens. Until the regularity measure has a full window there is no factor to step with: the line starts at the close on the first bar, has no value on the next, restarts at the close on the bar after that, and so on, so no continuous line appears until the window is full.",
+  "howToRead": "A steep TRAMA that tracks price closely describes a market that keeps extending to new highs or lows, which is a regular trend. A flat TRAMA describes a market inside its recent range, where the line deliberately ignores the back and forth.\n\nPrice breaking away from a flat TRAMA suggests the range is expanding again; the line will start to follow once new extremes accumulate in the window. Because the factor is squared, the line reacts only weakly until a good share of recent bars set new extremes.",
+  "settings": [
+    { "key": "period", "label": "Period", "description": "The window used for both the highest high and lowest low and for averaging how often they change. Longer periods react more slowly." }
+  ],
+  "faq": [
+    { "q": "Why is the regularity squared?", "a": "Squaring keeps the factor small unless new extremes are frequent. A market setting new extremes on half the bars gets a factor of 0.25, not 0.5, so the line stays calm until the trend is clearly regular." },
+    { "q": "Why is there no continuous line on the first bars?", "a": "The smoothing factor needs a full window of bars. Before that, a bar after a value has no value, and a bar after a gap restarts at the close, so the warmup alternates between the close and a gap. After the warmup the line is continuous." },
+    { "q": "Which prices does it use?", "a": "The high and low decide whether a new extreme was set, and the close is the value the average moves toward." }
+  ]
+}

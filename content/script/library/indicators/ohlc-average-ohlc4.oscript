@@ -1,0 +1,11 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © openalgo
+// Original work (c) mihakralj, MIT License
+
+version 1
+study("OHLC Average (OHLC4)", overlay = true, precision = 2)
+
+// The mean of all four prices of the bar.
+barAverage = (open + high + low + close) * 0.25
+
+plot(barAverage, "OHLC4", #ffeb3b, width = 2)

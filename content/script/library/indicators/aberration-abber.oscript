@@ -1,0 +1,42 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © openalgo
+// Original work (c) mihakralj, MIT License
+
+version 1
+study("Aberration (ABBER)", overlay = true, precision = 2)
+
+source = input(close, "Source")
+period = input(20, "Period", min = 1, max = 5000, step = 1)
+maType = input("SMA", "Moving Average Type", options = ["SMA", "EMA", "WMA", "RMA", "HMA"])
+multiplier = input(2.0, "Deviation Multiplier", min = 0.1, max = 100, step = 0.1, tooltip = "Band distance as a multiple of the average absolute deviation from the moving average.")
+showMa = input(true, "Show Moving Average Line")
+
+// An exponential mean seeded with the first value rather than with a simple
+// average, so it answers from the first bar.
+fn emaFromFirst(src, len) =>
+    var e = none
+    a = 2 / (len + 1)
+    e = isNone(e) ? src : src * a + e * (1 - a)
+    e
+
+// Every average is computed on every bar, so each keeps its own history
+// whichever one the menu picks.
+maSma = sma(source, period)
+maEma = emaFromFirst(source, period)
+maWma = wma(source, period)
+maRma = rma(source, period)
+maHma = hma(source, period)
+basis = maType == "EMA" ? maEma : maType == "WMA" ? maWma : maType == "RMA" ? maRma : maType == "HMA" ? maHma : maSma
+
+// The deviation reads an absent average as zero during warmup, so its own
+// average starts from the first bar rather than from the first basis value.
+deviation = abs(orElse(source, 0) - orElse(basis, 0))
+avgDeviation = sma(deviation, period)
+
+upper = basis + multiplier * avgDeviation
+lower = basis - multiplier * avgDeviation
+
+top = plot(upper, "Upper Band", #ffeb3b, width = 2)
+bottom = plot(lower, "Lower Band", #ffeb3b, width = 2)
+plot(showMa ? basis : none, "MA", #ffeb3b, width = 2)
+fill(top, bottom, #2962ff, opacity = 0.1)

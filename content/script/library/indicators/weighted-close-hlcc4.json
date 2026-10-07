@@ -1,0 +1,12 @@
+{
+  "title": "Weighted Close (HLCC4)",
+  "summary": "Draws the weighted close of each bar, the average of high, low and the close counted twice, as one line over the candles.",
+  "description": "Weighted Close is a single price for each bar that leans towards where the bar settled. It adds the high, the low and the close twice, then takes a quarter of the total. The close therefore carries half of the weight and the two extremes a quarter each.\n\nCompared with the typical price, which weights high, low and close equally, the weighted close follows the close more closely while still reflecting how far the bar ranged. There are no settings and no warmup: every bar is computed from its own prices alone, so the line starts on the first bar.",
+  "howToRead": "Read the line as a close that has been nudged towards the middle of the bar. On a bar that closed at its high, the line sits a quarter of the range below the close; on a bar that closed exactly mid-range, it sits on the close.\n\nIt is most useful as an input to other studies, such as averages and oscillators, when you want them to favour the closing price without ignoring the bar's range. On its own it gives no signals, and crossings of price and this line carry little meaning.",
+  "settings": [],
+  "faq": [
+    { "q": "How much weight does the close get?", "a": "Half. The close is counted twice out of four terms, while the high and the low get a quarter each." },
+    { "q": "When would I use this instead of the typical price?", "a": "When the close matters more to you than the extremes. The weighted close stays nearer the settlement price, while the typical price gives the high and low a third each." },
+    { "q": "Does it repaint?", "a": "No. Each value uses only its own bar's prices, so once a bar has closed its value never changes." }
+  ]
+}

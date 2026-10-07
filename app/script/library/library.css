@@ -1,0 +1,705 @@
+/* ============================================================
+   /script/library: the OpenScript indicator library.
+
+   The page follows the site's monochrome theme. The chart and the code are
+   the two dark inset surfaces, painted like the docs' code panels (the
+   --osd-* tokens from script-docs.css), so colour appears only in the chart
+   and in the code.
+   ============================================================ */
+
+.osl-wrap {
+  width: 100%;
+  max-width: 76rem;
+  margin: 0 auto;
+}
+
+/* ---------- index ---------- */
+.osl-hero {
+  max-width: 48rem;
+  margin: 0 auto;
+  text-align: center;
+}
+.osl-hero-title {
+  font-size: clamp(2.5rem, 6vw, 4rem);
+  font-weight: 800;
+  line-height: 1.04;
+  letter-spacing: -0.035em;
+  color: hsl(var(--on-surface));
+}
+.osl-hero-lede {
+  margin-top: 1.25rem;
+  font-size: 1.125rem;
+  line-height: 1.6;
+  color: hsl(var(--on-surface-variant));
+}
+.osl-search {
+  position: relative;
+  max-width: 42rem;
+  margin: 2.5rem auto 0;
+}
+.osl-search input {
+  width: 100%;
+  height: 3.25rem;
+  padding: 0 1.25rem;
+  border: 1px solid hsl(var(--border));
+  border-radius: 999px;
+  background: hsl(var(--surface-bright));
+  font-size: 1rem;
+  color: hsl(var(--on-surface));
+  outline: none;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+.osl-search input::placeholder {
+  color: hsl(var(--on-surface-variant) / 0.8);
+}
+.osl-search input:focus {
+  border-color: hsl(var(--on-surface) / 0.5);
+  box-shadow: 0 0 0 4px hsl(var(--on-surface) / 0.06);
+}
+.osl-search-key {
+  position: absolute;
+  top: 50%;
+  right: 1rem;
+  transform: translateY(-50%);
+  padding: 0.1rem 0.45rem;
+  border: 1px solid hsl(var(--border));
+  border-radius: 6px;
+  font-family: var(--osd-mono);
+  font-size: 11px;
+  color: hsl(var(--on-surface-variant));
+  pointer-events: none;
+}
+.osl-pills {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.5rem;
+  margin: 1.75rem auto 0;
+  max-width: 64rem;
+}
+.osl-pill {
+  height: 2.25rem;
+  padding: 0 1rem;
+  border: 1px solid hsl(var(--border));
+  border-radius: 999px;
+  background: hsl(var(--surface-bright));
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: hsl(var(--on-surface-variant));
+  cursor: pointer;
+  transition: color 0.15s, border-color 0.15s, background 0.15s;
+}
+.osl-pill:hover {
+  color: hsl(var(--on-surface));
+  border-color: hsl(var(--outline-variant));
+}
+.osl-pill.is-active {
+  border-color: hsl(var(--on-surface));
+  background: hsl(var(--on-surface));
+  color: hsl(var(--background));
+}
+.osl-pill-count {
+  margin-left: 0.35rem;
+  font-weight: 500;
+  opacity: 0.6;
+}
+.osl-count {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin: 2.75rem 0 1.75rem;
+  font-family: var(--osd-mono);
+  font-size: 11px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: hsl(var(--on-surface-variant));
+}
+.osl-count::before,
+.osl-count::after {
+  content: "";
+  flex: 1;
+  height: 1px;
+  background: hsl(var(--border));
+}
+.osl-grid {
+  display: grid;
+  gap: 1.25rem;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 20rem), 1fr));
+}
+.osl-card-link {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  border: 1px solid hsl(var(--border));
+  border-radius: 1.25rem;
+  background: hsl(var(--surface-bright));
+  transition: border-color 0.2s, box-shadow 0.2s, transform 0.2s;
+}
+.osl-card-link:hover {
+  border-color: hsl(var(--outline-variant));
+  box-shadow: 0 14px 34px hsl(0 0% 0% / 0.08);
+  transform: translateY(-2px);
+}
+.osl-thumb {
+  display: block;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  background: #0f0f10;
+  object-fit: cover;
+}
+.osl-card-text {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 0.5rem;
+  padding: 1.1rem 1.25rem 1.25rem;
+}
+.osl-card-cat {
+  font-family: var(--osd-mono);
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: hsl(var(--on-surface-variant));
+}
+.osl-card-name {
+  font-size: 1.0625rem;
+  font-weight: 700;
+  line-height: 1.3;
+  color: hsl(var(--on-surface));
+}
+.osl-card-sum {
+  display: -webkit-box;
+  overflow: hidden;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
+  font-size: 0.875rem;
+  line-height: 1.55;
+  color: hsl(var(--on-surface-variant));
+}
+.osl-card-foot {
+  display: flex;
+  justify-content: space-between;
+  margin-top: auto;
+  padding-top: 0.6rem;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: hsl(var(--on-surface));
+}
+.osl-card-foot span:last-child {
+  font-family: var(--osd-mono);
+  font-size: 11px;
+  font-weight: 500;
+  color: hsl(var(--on-surface-variant));
+}
+.osl-empty {
+  padding: 4rem 1rem;
+  text-align: center;
+  color: hsl(var(--on-surface-variant));
+}
+.osl-more {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.75rem;
+  margin-top: 2.5rem;
+  font-size: 0.875rem;
+  color: hsl(var(--on-surface-variant));
+}
+
+/* ---------- indicator page ---------- */
+.osl-back {
+  display: inline-block;
+  font-family: var(--osd-mono);
+  font-size: 11px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: hsl(var(--on-surface-variant));
+  transition: color 0.15s;
+}
+.osl-back::before {
+  content: "<  ";
+}
+.osl-back:hover {
+  color: hsl(var(--on-surface));
+}
+.osl-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 0.75rem 2rem;
+  margin-top: 1.5rem;
+}
+.osl-title {
+  max-width: 52rem;
+  font-size: clamp(2.25rem, 5vw, 3.75rem);
+  font-weight: 800;
+  line-height: 1.05;
+  letter-spacing: -0.035em;
+  color: hsl(var(--on-surface));
+}
+.osl-byline {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  padding-bottom: 0.4rem;
+  font-family: var(--osd-mono);
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: hsl(var(--on-surface-variant));
+}
+.osl-byline a:hover {
+  color: hsl(var(--on-surface));
+}
+.osl-lede {
+  max-width: 52rem;
+  margin-top: 1rem;
+  font-size: 1.0625rem;
+  line-height: 1.6;
+  color: hsl(var(--on-surface-variant));
+}
+
+/* the Chart / Source code toggle */
+.osl-bench {
+  margin-top: 2rem;
+}
+.osl-tabs {
+  display: inline-flex;
+  gap: 0.25rem;
+  padding: 0.25rem;
+  border: 1px solid hsl(var(--border));
+  border-radius: 999px;
+  background: hsl(var(--surface-bright));
+}
+.osl-tab {
+  height: 2.25rem;
+  padding: 0 1.1rem;
+  border-radius: 999px;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: hsl(var(--on-surface-variant));
+  cursor: pointer;
+  transition: color 0.15s, background 0.15s;
+}
+.osl-tab:hover {
+  color: hsl(var(--on-surface));
+}
+.osl-tab.is-active {
+  background: hsl(var(--on-surface));
+  color: hsl(var(--background));
+}
+.osl-panel {
+  margin-top: 1rem;
+  overflow: hidden;
+  border: 1px solid var(--osd-line);
+  border-radius: 1.25rem;
+  background: var(--osd-bg);
+  color: var(--osd-text);
+  color-scheme: dark;
+  box-shadow: 0 24px 60px hsl(0 0% 0% / 0.16);
+}
+.osl-panel-bar,
+.osl-source-bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem 1rem;
+  min-height: 44px;
+  padding: 0.4rem 1rem;
+  border-bottom: 1px solid var(--osd-line);
+  font-family: var(--osd-mono);
+  font-size: 12px;
+}
+.osl-panel-symbol {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: var(--osd-dim);
+}
+.osl-panel-symbol strong {
+  font-weight: 600;
+  color: var(--osd-text);
+}
+.osl-panel-meta {
+  color: var(--osd-dim);
+}
+.osl-badge {
+  padding: 0.1rem 0.5rem;
+  border: 1px solid var(--osd-line);
+  border-radius: 999px;
+  color: var(--osd-text);
+}
+.osl-chart {
+  position: relative;
+  width: 100%;
+}
+.osl-chart-host {
+  position: absolute;
+  inset: 0;
+}
+.osl-chart-note {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+  font-family: var(--osd-mono);
+  font-size: 12px;
+  color: var(--osd-dim);
+  pointer-events: none;
+}
+.osl-chart-note.is-error {
+  background: hsl(0 0% 4% / 0.85);
+  color: var(--osd-text);
+  text-align: center;
+  pointer-events: auto;
+}
+
+/* the source panel */
+.osl-source-file {
+  display: flex;
+  align-items: baseline;
+  gap: 0.75rem;
+  min-width: 0;
+}
+.osl-source-name {
+  overflow: hidden;
+  font-weight: 600;
+  color: var(--osd-text);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.osl-source-dim {
+  color: var(--osd-dim);
+  white-space: nowrap;
+}
+.osl-source-actions {
+  display: flex;
+  gap: 0.25rem;
+}
+.osl-action {
+  height: 28px;
+  padding: 0 0.7rem;
+  border: 1px solid transparent;
+  border-radius: 8px;
+  font-family: var(--osd-mono);
+  font-size: 12px;
+  color: var(--osd-dim);
+  cursor: pointer;
+  transition: color 0.15s, border-color 0.15s, background 0.15s;
+}
+.osl-action:hover:not(:disabled) {
+  border-color: var(--osd-line);
+  color: var(--osd-text);
+}
+.osl-action.is-primary {
+  border-color: var(--osd-line);
+  color: var(--osd-text);
+}
+.osl-action:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+.osl-source-body {
+  position: relative;
+}
+.osl-source-body .osd-static {
+  position: absolute;
+  inset: 0;
+  overflow: auto;
+}
+.osl-source-status {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 0.5rem;
+  padding: 0.55rem 1rem;
+  border-top: 1px solid var(--osd-line);
+  font-family: var(--osd-mono);
+  font-size: 12px;
+  color: var(--osd-dim);
+}
+.osl-source-status .is-clean {
+  color: var(--osd-string);
+}
+.osl-source-status .has-problems {
+  color: var(--osd-number);
+}
+.osl-source-placeholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 560px;
+  font-family: var(--osd-mono);
+  font-size: 12px;
+  color: var(--osd-dim);
+}
+.osl-source-placeholder a {
+  margin-left: 0.4rem;
+  text-decoration: underline;
+}
+.osl-problems {
+  max-height: 180px;
+  overflow-y: auto;
+  border-top: 1px solid var(--osd-line);
+}
+.osl-problems button {
+  display: flex;
+  gap: 0.75rem;
+  width: 100%;
+  padding: 0.45rem 1rem;
+  font-family: var(--osd-mono);
+  font-size: 12px;
+  text-align: left;
+  color: var(--osd-text);
+}
+.osl-problems button:hover {
+  background: #141414;
+}
+.osl-problem-code {
+  color: var(--osd-colour);
+}
+.osl-problem-code.is-warning {
+  color: var(--osd-number);
+}
+.osl-problem-msg {
+  flex: 1;
+}
+.osl-problem-line {
+  color: var(--osd-dim);
+}
+.osl-noscript {
+  margin-top: 0.75rem;
+  font-size: 0.875rem;
+  color: hsl(var(--on-surface-variant));
+}
+
+/* the article and its aside */
+.osl-columns {
+  display: grid;
+  gap: 3rem;
+}
+@media (min-width: 1024px) {
+  .osl-columns {
+    grid-template-columns: minmax(0, 1fr) 22rem;
+    align-items: start;
+  }
+  .osl-aside {
+    position: sticky;
+    top: 6rem;
+  }
+}
+.osl-article {
+  min-width: 0;
+  max-width: 46rem;
+}
+.osl-prose {
+  font-size: 1.0625rem;
+  line-height: 1.75;
+  color: hsl(var(--on-surface) / 0.86);
+}
+.osl-prose p + p {
+  margin-top: 1.1rem;
+}
+.osl-prose strong {
+  color: hsl(var(--on-surface));
+}
+.osl-prose code {
+  padding: 0.1rem 0.35rem;
+  border: 1px solid hsl(var(--border));
+  border-radius: 6px;
+  font-family: var(--osd-mono);
+  font-size: 0.875em;
+}
+.osl-prose ul,
+.osl-prose ol {
+  margin-top: 0.9rem;
+  padding-left: 1.25rem;
+  list-style: disc;
+}
+.osl-prose li + li {
+  margin-top: 0.4rem;
+}
+.osl-h2 {
+  margin: 2.75rem 0 1rem;
+  font-size: 1.5rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  color: hsl(var(--on-surface));
+}
+.osl-h2.mt-0 {
+  margin-top: 0;
+}
+.osl-deviation {
+  margin-bottom: 1.5rem;
+  padding: 0.9rem 1.1rem;
+  border: 1px solid hsl(var(--border));
+  border-radius: 0.9rem;
+  background: hsl(var(--surface-container, var(--surface-bright)));
+  font-size: 0.9375rem;
+  line-height: 1.6;
+  color: hsl(var(--on-surface-variant));
+}
+.osl-settings {
+  border-top: 1px solid hsl(var(--border));
+}
+.osl-setting {
+  display: grid;
+  gap: 0.25rem 1.5rem;
+  padding: 0.9rem 0;
+  border-bottom: 1px solid hsl(var(--border));
+}
+@media (min-width: 640px) {
+  .osl-setting {
+    grid-template-columns: 13rem minmax(0, 1fr);
+  }
+}
+.osl-setting dt {
+  font-weight: 700;
+  color: hsl(var(--on-surface));
+}
+.osl-setting dd {
+  line-height: 1.6;
+  color: hsl(var(--on-surface-variant));
+}
+.osl-faq {
+  border-top: 1px solid hsl(var(--border));
+}
+.osl-faq-item {
+  border-bottom: 1px solid hsl(var(--border));
+}
+.osl-faq-item summary {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 1.1rem 0;
+  font-weight: 700;
+  color: hsl(var(--on-surface));
+  cursor: pointer;
+  list-style: none;
+}
+.osl-faq-item summary::-webkit-details-marker {
+  display: none;
+}
+.osl-faq-item summary::after {
+  content: "+";
+  font-weight: 400;
+  color: hsl(var(--on-surface-variant));
+}
+.osl-faq-item[open] summary::after {
+  content: "-";
+}
+.osl-faq-item .osl-prose {
+  padding-bottom: 1.1rem;
+  font-size: 1rem;
+}
+.osl-aside {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+.osl-card {
+  padding: 1.25rem;
+  border: 1px solid hsl(var(--border));
+  border-radius: 1.1rem;
+  background: hsl(var(--surface-bright));
+}
+.osl-card-kicker {
+  font-family: var(--osd-mono);
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: hsl(var(--on-surface-variant));
+}
+.osl-card-title {
+  margin-top: 0.5rem;
+  font-size: 1.0625rem;
+  font-weight: 700;
+  color: hsl(var(--on-surface));
+}
+.osl-card-body {
+  margin-top: 0.6rem;
+  font-size: 0.9rem;
+  line-height: 1.55;
+  color: hsl(var(--on-surface));
+}
+.osl-card-body a {
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+.osl-dim {
+  color: hsl(var(--on-surface-variant));
+}
+.osl-steps {
+  margin-top: 0.75rem;
+  padding-left: 1.1rem;
+  list-style: decimal;
+  font-size: 0.9rem;
+  line-height: 1.55;
+  color: hsl(var(--on-surface-variant));
+}
+.osl-steps li + li {
+  margin-top: 0.35rem;
+}
+.osl-card-actions {
+  display: grid;
+  gap: 0.5rem;
+  margin-top: 1rem;
+}
+.osl-facts {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.75rem;
+  margin-top: 0.75rem;
+}
+.osl-facts dt {
+  font-size: 0.75rem;
+  color: hsl(var(--on-surface-variant));
+}
+.osl-facts dd {
+  font-weight: 700;
+  color: hsl(var(--on-surface));
+}
+.osl-related {
+  display: grid;
+  gap: 1.25rem;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 18rem), 1fr));
+}
+.osl-related-card {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  overflow: hidden;
+  padding-bottom: 1.1rem;
+  border: 1px solid hsl(var(--border));
+  border-radius: 1.1rem;
+  background: hsl(var(--surface-bright));
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+.osl-related-card:hover {
+  border-color: hsl(var(--outline-variant));
+  box-shadow: 0 12px 30px hsl(0 0% 0% / 0.07);
+}
+.osl-related-card img {
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  background: #0f0f10;
+}
+.osl-related-title {
+  padding: 0.35rem 1.1rem 0;
+  font-weight: 700;
+  color: hsl(var(--on-surface));
+}
+.osl-related-summary {
+  display: -webkit-box;
+  overflow: hidden;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  padding: 0 1.1rem;
+  font-size: 0.875rem;
+  line-height: 1.5;
+  color: hsl(var(--on-surface-variant));
+}

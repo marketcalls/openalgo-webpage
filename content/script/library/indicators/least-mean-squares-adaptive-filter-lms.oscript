@@ -1,0 +1,39 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © openalgo
+// Original work (c) mihakralj, MIT License
+
+version 1
+study("Least Mean Squares Adaptive Filter (LMS)", overlay = true, precision = 2)
+
+order = input(16, "Filter Order (taps)", min = 2, max = 128, step = 1, tooltip = "Number of past bars the filter weighs. More taps track longer structure and adapt more slowly.")
+mu = input(0.5, "Learning Rate (mu)", min = 0.01, max = 1.99, step = 0.05, tooltip = "Step size of each weight update. Higher follows price faster and noisier.")
+source = input(close, "Source")
+
+// The tap weights start at zero and are kept for the whole run.
+var weights: array<number> = []
+if size(weights) == 0
+    for k = 0 to order - 1
+        push(weights, 0.0)
+
+// Predict this bar from the previous order bars. History before the first
+// bar reads as zero.
+prediction = 0.0
+normSq = 0.0
+for k = 0 to order - 1
+    xi = orElse(source[k + 1], 0)
+    prediction += element(weights, k) * xi
+    normSq += xi * xi
+
+err = orElse(source, 0) - prediction
+
+// A normalised step, so the speed of learning does not depend on the price
+// level. Each weight moves toward the combination that would have been right.
+muEff = mu / (0.0000000001 + normSq)
+for k = 0 to order - 1
+    xi = orElse(source[k + 1], 0)
+    nextWeight = element(weights, k) + muEff * err * xi
+    if not isNone(nextWeight)
+        set(weights, k, nextWeight)
+
+// The first order predictions rest on zero-filled history and are not drawn.
+plot(bar.index >= order ? prediction : none, "LMS", #ffeb3b, width = 2)

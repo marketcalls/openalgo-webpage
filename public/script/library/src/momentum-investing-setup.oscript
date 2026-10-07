@@ -1,0 +1,358 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © openalgo
+// Original work (c) Arun K Bhaskar, MPL-2.0
+
+version 1
+study("Momentum Investing Setup", overlay = true, precision = 2)
+
+// A five-filter momentum screen on the price pane: the 250-bar percentage
+// change, RSI with its own average, MFI, CCI with its own average, and volume
+// against a multiple of its exponential average. A long signal needs every
+// filter stretched upward on the same bar, a short signal the mirror image.
+// RSI, MFI, CCI and volume are also redrawn as small panels in price space over
+// the most recent bars, and the newest reading of each sits in a corner table.
+
+pchgThreshold = input(8, "Above/Below %", min = 0, max = 500, step = 0.1, group = "250 Candle % Change", tooltip = "Percentage change between the bar 250 bars back and the current bar. Positive for a bullish trend and the same number negated for a bearish one. 8 suits the daily timeframe, 2 to 4 an intraday one.")
+
+rsiDisplay = input(true, "RSI Display", group = "Relative Strength Index (RSI)")
+rsiLen = input(14, "RSI Length", min = 1, max = 500, step = 1, group = "Relative Strength Index (RSI)")
+rsiSmaLen = input(14, "RSI SMA Length", min = 1, max = 500, step = 1, group = "Relative Strength Index (RSI)")
+rsiOb = input(60, "RSI Overbought", min = 0, max = 100, step = 1, group = "Relative Strength Index (RSI)")
+rsiOs = input(40, "RSI Oversold", min = 0, max = 100, step = 1, group = "Relative Strength Index (RSI)")
+rsiVOffset = input(1.3, "RSI Vertical Offset", min = -10, max = 10, step = 0.1, group = "Relative Strength Index (RSI)", tooltip = "How far below the lowest price of the display window the RSI panel is drawn.")
+rsiHeight = input(2, "RSI Height", min = -10, max = 10, step = 0.1, group = "Relative Strength Index (RSI)")
+
+mfiDisplay = input(true, "MFI Display", group = "Money Flow Index (MFI)")
+mfiLen = input(14, "MFI Length", min = 1, max = 500, step = 1, group = "Money Flow Index (MFI)")
+mfiOb = input(60, "MFI Overbought", min = 0, max = 100, step = 1, group = "Money Flow Index (MFI)")
+mfiOs = input(40, "MFI Oversold", min = 0, max = 100, step = 1, group = "Money Flow Index (MFI)")
+mfiVOffset = input(1.6, "MFI Vertical Offset", min = -10, max = 10, step = 0.1, group = "Money Flow Index (MFI)")
+mfiHeight = input(1, "MFI Height", min = -10, max = 10, step = 0.1, group = "Money Flow Index (MFI)")
+
+cciDisplay = input(true, "CCI Display", group = "Commodity Channel Index (CCI)")
+cciLen = input(20, "CCI Length", min = 1, max = 500, step = 1, group = "Commodity Channel Index (CCI)")
+cciSmaLen = input(5, "CCI SMA Length", min = 1, max = 500, step = 1, group = "Commodity Channel Index (CCI)")
+cciOb = input(100, "CCI Overbought", min = 0, max = 1000, step = 1, group = "Commodity Channel Index (CCI)")
+cciOs = input(-100, "CCI Oversold", min = -1000, max = 0, step = 1, group = "Commodity Channel Index (CCI)")
+cciVOffset = input(1.8, "CCI Vertical Offset", min = -10, max = 10, step = 0.1, group = "Commodity Channel Index (CCI)")
+cciHeight = input(0.2, "CCI Height", min = -10, max = 10, step = 0.1, group = "Commodity Channel Index (CCI)")
+
+volDisplay = input(true, "Display MA Line", group = "Volume", tooltip = "Draws the volume moving average line across the volume panel.")
+volType = input("Regular Volume", "Type", options = ["Buying/Selling Volume", "Regular Volume", "None"], group = "Volume")
+volMaLen = input(20, "MA Length", min = 1, max = 500, step = 1, group = "Volume")
+volMaMulti = input(5, "MA Multiplier (x)", min = 1, max = 100, step = 0.1, group = "Volume", tooltip = "Shifts the volume moving average upward. 1 applies no multiplier, and the setup asks for 5, meaning volume five times its average.")
+volVOffset = input(0.3, "Volume Vertical Offset", min = -10, max = 10, step = 0.1, group = "Volume")
+volHeight = input(0.6, "Volume Height", min = -10, max = 10, step = 0.1, group = "Volume")
+
+stDisplay = input(true, "Supertrend Display", group = "Supertrend")
+stAtrPeriod = input(10, "ATR Length", min = 1, max = 500, step = 1, group = "Supertrend")
+stFactor = input(3, "Factor", min = 0.01, max = 100, step = 0.01, group = "Supertrend")
+
+tablePosition = input("top-right", "Position", options = ["top-left", "top-center", "top-right", "middle-left", "middle-center", "middle-right", "bottom-left", "bottom-center", "bottom-right"], group = "Table")
+// The chart fits table text to its cells, so Size is kept as a setting but
+// does not change the drawing.
+tableTextSize = input("normal", "Size", options = ["auto", "tiny", "small", "normal", "large", "huge"], group = "Table")
+
+displayLen = input(50, "Display Length", min = 1, max = 500, step = 1, group = "Chart Settings", tooltip = "How many recent bars the miniature panels cover, and how far back the signal shading is drawn.")
+
+POS = #26A69A
+POS_LIGHT = #B2DFDB
+NEG_LIGHT = #FFCDD2
+NEG = #FF5250
+INDICATOR = #2962FF
+SIGNAL_COLOR = #FF6D00
+NEUTRAL = #787B86
+
+// The scale the oscillator panels are drawn against, and their middle line.
+OSC_HIGHEST = 100
+MID_LINE = 50
+
+// Volume with a missing value read as zero.
+nzVolume = orElse(volume, 0)
+
+// ---------------------------------------------------------------------------
+// The five filters
+// ---------------------------------------------------------------------------
+
+// 1. The move over 250 bars, divided by the current close.
+pchg = not isNone(close) and close != 0 and not isNone(close[250]) ? (close - close[250]) / close * 100 : none
+
+// 2. RSI of the close and its simple average.
+rsiVal = rsi(close, rsiLen)
+rsiSmaVal = sma(rsiVal, rsiSmaLen)
+
+// 3. Money flow on the typical price. A bar whose typical price did not rise
+// adds nothing to the positive flow, and one that did not fall adds nothing
+// to the negative flow. The first bar has no change to test and feeds both.
+fn windowSum(values: series number, len: number) =>
+    // A running total over the last len values, absent until the window fills
+    // and while any value in it is missing.
+    var total = 0
+    var missing = 0
+    if isNone(values)
+        missing = missing + 1
+    else
+        total = total + values
+    if bar.index >= len
+        old = values[len]
+        if isNone(old)
+            missing = missing - 1
+        else
+            total = total - old
+    bar.index >= len - 1 and missing == 0 ? total : none
+
+typical = hlc3
+flowTerm = nzVolume * typical
+typicalMove = typical - typical[1]
+upFlow = isNone(flowTerm) ? 0 : bar.index == 0 ? flowTerm : typicalMove <= 0 ? 0 : flowTerm
+downFlow = isNone(flowTerm) ? 0 : bar.index == 0 ? flowTerm : typicalMove >= 0 ? 0 : flowTerm
+upSum = windowSum(upFlow, mfiLen)
+downSum = windowSum(downFlow, mfiLen)
+// With no negative flow in the window the index sits at its ceiling.
+mfiVal = isNone(upSum) or isNone(downSum) ? none : downSum == 0 ? 100 : 100 - 100 / (1 + upSum / downSum)
+
+// 4. CCI of the typical price and its simple average.
+cciVal = cci(cciLen)
+cciSmaVal = sma(cciVal, cciSmaLen)
+
+// 5. The volume threshold: an exponential average seeded with the simple
+// average of its first values, lifted by the multiplier.
+volEma = ema(nzVolume, volMaLen)
+volSmaVal = isNone(volEma) ? none : volEma * volMaMulti
+
+// ---------------------------------------------------------------------------
+// Supertrend, split into an up half and a down half so each keeps its colour
+// and the line breaks at a flip. The first bar is left blank.
+// ---------------------------------------------------------------------------
+
+// The bands start on the first bar the average true range has a value. Each
+// band only tightens unless the previous close broke through it. While the
+// line rides the upper band it flips up on a close above that band; while it
+// rides the lower band it stays up on a close at or above it.
+stAtr = atr(stAtrPeriod)
+var stPrevUpper = none
+var stPrevLower = none
+var stPrevLine = none
+var stPrevClose = none
+var stStarted = false
+stLine = none
+stDir = none
+if not isNone(stAtr)
+    stMid = (high + low) / 2
+    upperBasic = stMid + stFactor * stAtr
+    lowerBasic = stMid - stFactor * stAtr
+    upperBand = stStarted ? (upperBasic < stPrevUpper or stPrevClose > stPrevUpper ? upperBasic : stPrevUpper) : upperBasic
+    lowerBand = stStarted ? (lowerBasic > stPrevLower or stPrevClose < stPrevLower ? lowerBasic : stPrevLower) : lowerBasic
+    if stStarted and stPrevLine != stPrevUpper
+        stLine = close >= lowerBand ? lowerBand : upperBand
+        stDir = close >= lowerBand ? -1 : 1
+    else
+        stLine = close <= upperBand ? upperBand : lowerBand
+        stDir = close <= upperBand ? 1 : -1
+    stPrevUpper = upperBand
+    stPrevLower = lowerBand
+    stPrevLine = stLine
+    stPrevClose = close
+    stStarted = true
+// The Display switch hides both halves.
+stShown = stDisplay and not bar.isFirst and not isNone(stLine)
+stIsUp = not isNone(stDir) and stDir < 0
+plot(stShown and stIsUp ? stLine : none, "Supertrend Up", #26A69A, width = 2)
+plot(stShown and not stIsUp ? stLine : none, "Supertrend Down", #FF5250, width = 2)
+
+// ---------------------------------------------------------------------------
+// Signals: every filter has to agree, on a settled bar. The short is tested
+// first; the two can never hold together, because the change cannot be above
+// the threshold and below its negative at once.
+// ---------------------------------------------------------------------------
+
+ready = not isNone(pchg) and not isNone(rsiVal) and not isNone(mfiVal) and not isNone(cciVal) and not isNone(volSmaVal)
+volumeOk = ready and bar.isConfirmed and nzVolume > volSmaVal
+isShort = volumeOk and pchg < -pchgThreshold and rsiVal < rsiOs and mfiVal < mfiOs and cciVal < cciOs
+isLong = volumeOk and not isShort and pchg > pchgThreshold and rsiVal > rsiOb and mfiVal > mfiOb and cciVal > cciOb
+
+// Plain triangles with no text: light red above a short bar, light green below
+// a long bar.
+signal(isShort ? "" : none, color = #FFCDD2, at = "above", shape = "triangleDown")
+signal(isLong ? "" : none, color = #B2DFDB, at = "below", shape = "triangleUp")
+
+// The signal candle itself is tinted across the whole history.
+barColor(isShort ? NEG_LIGHT : isLong ? POS_LIGHT : none)
+
+// The shading covers only the most recent Display Length bars. A bar cannot
+// know how many bars follow it, so the window is measured in time: a bar is in
+// it when fewer than Display Length whole chart intervals separate it from the
+// chart's clock. On a market that trades around the clock this is the same
+// count of bars.
+intervalMs = orElse(chart.intervalMinutes, 0) * 60000
+barsBack = intervalMs > 0 ? floor((chart.now() - time) / intervalMs) : 0
+recent = barsBack < displayLen
+background(recent and isShort ? withAlpha(NEG_LIGHT, 0.1) : recent and isLong ? withAlpha(POS_LIGHT, 0.1) : none)
+
+// Buying and selling volume, split by where the close sits in the bar's range.
+barRange = high - low
+sellVol = barRange > 0 ? nzVolume * (high - close) / barRange : none
+buyVol = barRange > 0 ? nzVolume * (close - low) / barRange : none
+
+// ---------------------------------------------------------------------------
+// The miniature panels, rebuilt on the newest bar
+// ---------------------------------------------------------------------------
+
+// An oscillator reading mapped into price space below the lowest low.
+fn oscPrice(voffset, height, lvl, priceLow, rate) =>
+    isNone(lvl) ? none : priceLow * (1 - rate * voffset) * (1 + (lvl / OSC_HIGHEST) * rate * height)
+
+// One path per unbroken run of prices: a missing price breaks the line, and a
+// run of a single point draws nothing.
+fn drawPath(times: array<number>, prices: array<number>, col) =>
+    runStart = 0
+    n = size(prices)
+    for i = 0 to n
+        gap = i == n ? true : isNone(element(prices, i))
+        if gap
+            if i - runStart > 1
+                draw.polyline(slice(times, runStart, i), slice(prices, runStart, i), color = col, width = 1)
+            runStart = i + 1
+    n
+
+// A reference level across the window, at a quarter strength.
+fn drawRef(t0, t1, price, col) =>
+    if not isNone(price)
+        draw.line(t0, price, t1, price, color = withAlpha(col, 0.25), width = 1)
+    price
+
+// A caption beside the newest bar, with no plate.
+fn drawTag(t, price, caption) =>
+    if not isNone(price)
+        draw.label(t, price, caption, color = none, textColor = NEUTRAL, align = "left")
+    price
+
+fn fmt(v) => isNone(v) ? "-" : text(v, 2)
+
+fn tagText(name, v) => isNone(v) ? name : name + " " + text(v, 2)
+
+fn compactVolume(v) =>
+    a = abs(v)
+    a >= 1000000000 ? text(v / 1000000000, 2) + "B" : a >= 1000000 ? text(v / 1000000, 2) + "M" : a >= 1000 ? text(v / 1000, 2) + "K" : text(round(v), 0)
+
+if bar.isLast and bar.index >= 1
+    draw.deleteAll()
+    // The lines and paths span Display Length + 1 bars; the extremes are read
+    // over the last Display Length bars.
+    kStart = min(displayLen, bar.index)
+    kStat = min(displayLen - 1, bar.index)
+
+    priceHighest = high
+    priceLowest = low
+    volumeHighest = 0
+    for k = 0 to kStat
+        if high[k] > priceHighest
+            priceHighest = high[k]
+        if low[k] < priceLowest
+            priceLowest = low[k]
+        v = orElse(volume[k], 0)
+        if v > volumeHighest
+            volumeHighest = v
+
+    if priceHighest != 0
+        rate = (priceHighest - priceLowest) / priceHighest
+        startTime = time[kStart]
+
+        times = []
+        mfiPath = []
+        rsiPath = []
+        rsiSmaPath = []
+        cciPath = []
+        cciSmaPath = []
+        for k = kStart to 0 step -1
+            push(times, time[k])
+            push(mfiPath, oscPrice(mfiVOffset, mfiHeight, mfiVal[k], priceLowest, rate))
+            push(rsiPath, oscPrice(rsiVOffset, rsiHeight, rsiVal[k], priceLowest, rate))
+            push(rsiSmaPath, oscPrice(rsiVOffset, rsiHeight, rsiSmaVal[k], priceLowest, rate))
+            push(cciPath, oscPrice(cciVOffset, cciHeight, cciVal[k], priceLowest, rate))
+            push(cciSmaPath, oscPrice(cciVOffset, cciHeight, cciSmaVal[k], priceLowest, rate))
+
+        if mfiDisplay
+            drawRef(startTime, time, oscPrice(mfiVOffset, mfiHeight, mfiOb, priceLowest, rate), POS)
+            drawRef(startTime, time, oscPrice(mfiVOffset, mfiHeight, MID_LINE, priceLowest, rate), NEUTRAL)
+            drawRef(startTime, time, oscPrice(mfiVOffset, mfiHeight, mfiOs, priceLowest, rate), NEG)
+            drawPath(times, mfiPath, INDICATOR)
+            drawTag(time, oscPrice(mfiVOffset, mfiHeight, MID_LINE, priceLowest, rate), tagText("MFI", mfiVal))
+
+        if rsiDisplay
+            drawRef(startTime, time, oscPrice(rsiVOffset, rsiHeight, rsiOb, priceLowest, rate), POS)
+            drawRef(startTime, time, oscPrice(rsiVOffset, rsiHeight, MID_LINE, priceLowest, rate), NEUTRAL)
+            drawRef(startTime, time, oscPrice(rsiVOffset, rsiHeight, rsiOs, priceLowest, rate), NEG)
+            drawPath(times, rsiPath, INDICATOR)
+            drawPath(times, rsiSmaPath, SIGNAL_COLOR)
+            drawTag(time, oscPrice(rsiVOffset, rsiHeight, MID_LINE, priceLowest, rate), tagText("RSI", rsiVal))
+
+        if cciDisplay
+            // The CCI's middle line is its zero level.
+            drawRef(startTime, time, oscPrice(cciVOffset, cciHeight, cciOb, priceLowest, rate), POS)
+            drawRef(startTime, time, oscPrice(cciVOffset, cciHeight, 0, priceLowest, rate), NEUTRAL)
+            drawRef(startTime, time, oscPrice(cciVOffset, cciHeight, cciOs, priceLowest, rate), NEG)
+            drawPath(times, cciPath, INDICATOR)
+            drawPath(times, cciSmaPath, SIGNAL_COLOR)
+            drawTag(time, oscPrice(cciVOffset, cciHeight, 0, priceLowest, rate), tagText("CCI", cciVal))
+
+        // The volume panel sits above the candles, and only when the newest
+        // bar carries volume.
+        if volType != "None" and nzVolume != 0 and volumeHighest > 0
+            volBase = priceHighest * (1 + rate * volVOffset)
+            buySell = volType == "Buying/Selling Volume"
+            for k = kStart to 0 step -1
+                v = orElse(volume[k], 0)
+                top = volBase * (1 + (v / volumeHighest) * rate * volHeight)
+                draw.line(time[k], volBase, time[k], top, color = buySell ? POS : close[k] > open[k] ? POS : NEG, width = 2)
+                if buySell
+                    rangeK = high[k] - low[k]
+                    if rangeK > 0
+                        sellTop = volBase * (1 + ((v * (high[k] - close[k]) / rangeK) / volumeHighest) * rate * volHeight)
+                        draw.line(time[k], volBase, time[k], sellTop, color = NEG, width = 2)
+
+            // The volume average, drawn through the histogram: each bar's
+            // height divided by its volume over the average.
+            if volDisplay
+                maPath = []
+                for k = kStart to 0 step -1
+                    v = orElse(volume[k], 0)
+                    maVal = volSmaVal[k]
+                    volRate = not isNone(maVal) and maVal != 0 ? v / maVal : none
+                    push(maPath, not isNone(volRate) and volRate != 0 ? volBase * (1 + ((v / volumeHighest) * rate * volHeight) / volRate) : none)
+                drawPath(times, maPath, NEUTRAL)
+
+            // The newest bar's volume, split into its buying and selling share.
+            total = isNone(buyVol) or isNone(sellVol) ? none : buyVol + sellVol
+            hasSplit = not isNone(total) and total != 0
+            buyText = hasSplit ? text(buyVol / total * 100, 2) + "%" : "-"
+            sellText = hasSplit ? text(sellVol / total * 100, 2) + "%" : "-"
+            avgText = isNone(volSmaVal) ? "-" : compactVolume(volSmaVal)
+            drawTag(time, volBase, "VOL\nBuy Vol : " + buyText + "\nSell Vol : " + sellText + "\nLast Vol : " + compactVolume(nzVolume) + "\nAvg Vol : " + avgText)
+
+// ---------------------------------------------------------------------------
+// The readout: each filter's reading, coloured by its verdict
+// ---------------------------------------------------------------------------
+
+// The grid sits in the corner nearest the chosen position.
+gridTopRight = table("Momentum readout", 5, 2, position = "topRight")
+gridTopLeft = table("Momentum readout, top left", 5, 2, position = "topLeft")
+gridBottomLeft = table("Momentum readout, bottom left", 5, 2, position = "bottomLeft")
+gridBottomRight = table("Momentum readout, bottom right", 5, 2, position = "bottomRight")
+
+fn verdict(v, ob, os) => isNone(v) ? NEUTRAL : v > ob ? POS : v < os ? NEG : NEUTRAL
+
+fn readoutRow(grid, row, name, value, col) =>
+    cell(grid, row, 0, name, textColor = col, bgColor = withAlpha(col, 0.1), align = "left")
+    cell(grid, row, 1, value, textColor = col, bgColor = withAlpha(col, 0.1), align = "left")
+    row
+
+if bar.isLast
+    corner = tablePosition == "top-left" or tablePosition == "middle-left" ? "topLeft" : tablePosition == "bottom-left" ? "bottomLeft" : tablePosition == "bottom-right" or tablePosition == "bottom-center" ? "bottomRight" : "topRight"
+    grid = corner == "topLeft" ? gridTopLeft : corner == "bottomLeft" ? gridBottomLeft : corner == "bottomRight" ? gridBottomRight : gridTopRight
+    colVol = not isNone(volSmaVal) and nzVolume > volSmaVal ? POS : NEUTRAL
+    readoutRow(grid, 0, "%Chg", fmt(pchg), verdict(pchg, pchgThreshold, -pchgThreshold))
+    readoutRow(grid, 1, "RSI", fmt(rsiVal), verdict(rsiVal, rsiOb, rsiOs))
+    readoutRow(grid, 2, "MFI", fmt(mfiVal), verdict(mfiVal, mfiOb, mfiOs))
+    readoutRow(grid, 3, "CCI", fmt(cciVal), verdict(cciVal, cciOb, cciOs))
+    readoutRow(grid, 4, "Vol", text(nzVolume / 100000, 2) + " L", colVol)

@@ -1,0 +1,46 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © openalgo
+// Original work (c) mihakralj, MIT License
+
+version 1
+study("Henderson Moving Average (HEND)", overlay = true, precision = 2)
+
+source = input(close, "Source")
+period = input(7, "Period", min = 5, max = 999, step = 2, tooltip = "Must be odd and at least 5. An even value is raised to the next odd one.")
+
+// The window is odd and at least five bars: an even length takes the next
+// odd one.
+base = max(5, floor(period))
+len = base % 2 == 0 ? base + 1 : base
+
+// The closed-form Henderson weights, built once and scaled to sum to one.
+// Tap j runs from the oldest bar of the window (j = 0) to the newest, at
+// distance k = j - half from the centre. They pass a cubic trend through
+// unchanged and turn negative near the ends of the window.
+var weights: array<number> = []
+if size(weights) == 0
+    half = (len - 1) / 2
+    n = (len + 3) / 2
+    n2 = n * n
+    nm1sq = (n - 1) * (n - 1)
+    np1sq = (n + 1) * (n + 1)
+    denom = 8 * n * (n2 - 1) * (4 * n2 - 1) * (4 * n2 - 9) * (4 * n2 - 25)
+    wsum = 0.0
+    for j = 0 to len - 1
+        k = j - half
+        k2 = k * k
+        w = denom != 0 ? 315 * (nm1sq - k2) * (n2 - k2) * (np1sq - k2) * (3 * n2 - 16 - 11 * k2) / denom : 0.0
+        push(weights, w)
+        wsum += w
+    if wsum != 0
+        for j = 0 to len - 1
+            set(weights, j, element(weights, j) / wsum)
+
+// Until the window is full the line sits on the price. A missing value
+// counts as zero.
+result = 0.0
+for j = 0 to len - 1
+    result += orElse(source[len - 1 - j], 0) * element(weights, j)
+hend = bar.index < len - 1 ? orElse(source, 0) : result
+
+plot(hend, "HEND", #ffeb3b, width = 2)

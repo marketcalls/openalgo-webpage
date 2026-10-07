@@ -1,0 +1,15 @@
+{
+  "title": "Chande Momentum Oscillator (CMO)",
+  "summary": "Compares the sum of up moves with the sum of down moves over the window and scales the difference from -100 to +100.",
+  "description": "The CMO splits each bar's change in the source into an up part and a down part. A rise adds to the up side, a fall adds its size to the down side, and an unchanged bar adds nothing. Over the last `Length` bars it sums each side and computes `100 * (sumUp - sumDown) / (sumUp + sumDown)`.\n\nThe sums are kept as running totals: each bar adds its own up and down parts and removes those of the bar that left the window. The first bar has no change and adds zero, and before a full window exists the sums cover the bars seen so far, so the line starts on the first bar. When both sums are zero the reading is 0.\n\nUnlike an oscillator that smooths its inputs, the CMO uses the raw sums, so it reacts directly to the moves inside the window.",
+  "howToRead": "A reading of +100 means every move in the window was up; -100 means every move was down; 0 means the up and down moves balanced. Readings beyond +50 or -50 are often treated as stretched, and the line crossing zero shows the window's moves switching from mostly down to mostly up, or the reverse.\n\nBecause it uses unsmoothed sums, the CMO can jump when a large bar enters or leaves the window. A longer length steadies it. Stretched readings can last through a strong trend, so they describe one-sided momentum rather than a guaranteed turn.",
+  "settings": [
+    { "key": "length", "label": "Length", "description": "How many bars of changes are summed. Longer windows give a steadier, slower oscillator." },
+    { "key": "source", "label": "Source", "description": "The price series whose changes are measured, the close by default." }
+  ],
+  "faq": [
+    { "q": "How is this different from RSI?", "a": "Both compare up moves with down moves. The CMO uses plain sums over the window and centres on 0 from -100 to +100, while RSI smooths the moves and runs from 0 to 100." },
+    { "q": "Why does the line jump on some bars?", "a": "When a large move enters or leaves the window, the sums change sharply. There is no smoothing to absorb it." },
+    { "q": "What does a reading of 0 mean?", "a": "The total of the up moves equals the total of the down moves over the window, or there were no moves at all." }
+  ]
+}

@@ -1,0 +1,110 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © openalgo
+// Original work (c) mihakralj, MIT License
+
+version 1
+study("Squeeze Momentum (SQUEEZE)", precision = 2)
+
+source = input(close, "Source")
+period = input(20, "Period", min = 1, max = 5000, step = 1)
+bbMult = input(2.0, "BB Multiplier", min = 0.001, max = 100, step = 0.1)
+kcMult = input(1.5, "KC Multiplier", min = 0.001, max = 100, step = 0.1)
+
+EPSILON = 1e-10
+srcVal = orElse(source, 0)
+
+// Every window below covers the last period bars, or every bar so far while
+// fewer than period have been seen, so the study answers from the first bar.
+var seen = 0
+var smaSum = 0.0
+var smaSumSq = 0.0
+if bar.index >= period
+    old = srcVal[period]
+    smaSum -= old
+    smaSumSq -= old * old
+else
+    seen += 1
+smaSum += srcVal
+smaSumSq += srcVal * srcVal
+
+// Bollinger Bands: the mean and the population deviation of the window.
+windowCount = max(1, seen)
+smaVal = smaSum / windowCount
+windowVar = max(0, smaSumSq / windowCount - smaVal * smaVal)
+stddev = sqrt(windowVar)
+bbUpper = smaVal + bbMult * stddev
+bbLower = smaVal - bbMult * stddev
+
+// Keltner Channel: an exponential mean of the source and a smoothed average of
+// true range, both seeded at zero and divided by the weight still owed to
+// that seed.
+emaAlpha = 2 / (period + 1)
+emaBeta = 1 - emaAlpha
+var rawEma = 0.0
+var eEma = 1.0
+rawEma = rawEma * emaBeta + srcVal * emaAlpha
+eEma *= emaBeta
+cEma = eEma > EPSILON and eEma < 1 ? 1 / (1 - eEma) : 1
+emaVal = rawEma * cEma
+
+rmaAlpha = 1 / period
+rmaBeta = 1 - rmaAlpha
+tr = isNone(close[1]) ? high - low : max(high - low, max(abs(high - close[1]), abs(low - close[1])))
+var rawRma = 0.0
+var eRma = 1.0
+if not isNone(tr)
+    rawRma = rawRma * rmaBeta + tr * rmaAlpha
+    eRma *= rmaBeta
+cRma = eRma > EPSILON and eRma < 1 ? 1 / (1 - eRma) : 1
+atrVal = rawRma * cRma
+
+kcUpper = emaVal + kcMult * atrVal
+kcLower = emaVal - kcMult * atrVal
+
+// The squeeze is on while the Bollinger Bands sit wholly inside the channel.
+isSqueezed = bbUpper < kcUpper and bbLower > kcLower
+
+// The Donchian midpoint of the same window.
+donHigh = high
+donLow = low
+for k = 1 to period - 1
+    if k <= bar.index
+        donHigh = max(donHigh, high[k])
+        donLow = min(donLow, low[k])
+donMid = (donHigh + donLow) / 2
+
+// Momentum: the least squares line through the distance of the source from
+// the average of the Donchian midpoint and the mean, read at this bar. The
+// sums are kept against the bar number, as running totals.
+delta = srcVal - (donMid + smaVal) / 2
+var sumY = 0.0
+var sumXY = 0.0
+if bar.index >= period
+    oldLr = delta[period]
+    sumY -= oldLr
+    sumXY -= (bar.index - period) * oldLr
+sumY += delta
+sumXY += bar.index * delta
+lrCount = bar.index + 1
+
+fn squares(m) =>
+    m < 0 ? 0 : m * (m + 1) * (2 * m + 1) / 6
+
+pn = min(lrCount, period)
+startIdx = lrCount - pn
+sumX = pn * (startIdx + startIdx + pn - 1) / 2
+sumX2 = squares(startIdx + pn - 1) - squares(startIdx - 1)
+denomX = pn * sumX2 - sumX * sumX
+slope = denomX == 0 ? 0 : (pn * sumXY - sumX * sumY) / denomX
+intercept = (sumY - slope * sumX) / pn
+momentum = slope * (lrCount - 1) + intercept
+
+// Brighter while momentum grows away from zero, darker while it fades.
+prevMom = orElse(momentum[1], 0)
+momColour = momentum > 0 ? (momentum > prevMom ? #00e676 : #4caf50) : (momentum < prevMom ? #ff5252 : #880e4f)
+
+plot(momentum, "Momentum", momColour, width = 2, style = "histogram")
+// The squeeze state along zero: red on bars in a squeeze, green on the rest.
+plot(isSqueezed ? 0 : none, "Squeeze On", #ff5252, width = 3)
+plot(isSqueezed ? none : 0, "Squeeze Off", #00e676, width = 3)
+level(0, "Zero", #787b86, style = "dashed")

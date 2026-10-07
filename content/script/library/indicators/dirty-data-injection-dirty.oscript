@@ -1,0 +1,15 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © openalgo
+// Original work (c) mihakralj, MIT License
+
+version 1
+study("Dirty Data Injection (DIRTY)", format = "percent", precision = 2)
+
+source = input(close, "Source")
+interval = input(10, "NA Injection Interval", min = 2, max = 5000, step = 1, tooltip = "Length of one cycle. The gap is injected at the start of every cycle.")
+gapSize = input(5, "NA Gap Size", min = 1, max = 5000, step = 1, tooltip = "How many bars at the start of each cycle are blanked.")
+
+// The first bar is always blank, then the first gapSize bars of every cycle
+// of interval bars. Every other bar echoes the source unchanged.
+blanked = bar.index == 0 or mod(bar.index, interval) < gapSize
+plot(blanked ? none : source, "Dirty Data", #ffeb3b, width = 2)

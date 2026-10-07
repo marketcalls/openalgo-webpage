@@ -1,0 +1,19 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © openalgo
+// Original work (c) mihakralj, MIT License
+
+version 1
+study("Cumulative Moving Average", overlay = true, precision = 2)
+
+source = input(close, "Source")
+
+// The running mean of every value seen so far, updated in place:
+// mean = mean + (value - mean) / count. A missing value is replaced by the
+// mean itself, which leaves the mean unchanged.
+var mean = 0.0
+var seen = 0
+value = isNone(source) ? mean : source
+seen += 1
+mean += (value - mean) / seen
+
+plot(mean, "CMA", #ffeb3b, width = 2)

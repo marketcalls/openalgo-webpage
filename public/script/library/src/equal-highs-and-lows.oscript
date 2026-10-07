@@ -1,0 +1,75 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © openalgo
+// Original work (c) Arun K Bhaskar, MPL-2.0
+
+version 1
+study("Equal Highs and Lows", overlay = true, precision = 2)
+
+left = input(60, "Left", min = 1, max = 1000, step = 1)
+right = input(30, "Right", min = 1, max = 1000, step = 1)
+eqPercent = input(0.05, "Equal HL %", min = 0, max = 100, step = 0.01, tooltip = "Lower values mean highs and lows are closer.")
+srcMode = input("High/Low", "Source", options = ["High/Low", "Open/Close"])
+
+bearColor = #f7525f
+bullColor = #22ab94
+
+// Only the newest 50 boxes stay on the chart.
+maxBoxes = 50
+
+// The swing points are taken from the bar's high and low, or from its body
+// when Open/Close is chosen.
+useOpenClose = srcMode == "Open/Close"
+srcHigh = useOpenClose ? max(open, close) : high
+srcLow = useOpenClose ? min(open, close) : low
+
+// A pivot is reported `right` bars after the bar it formed on.
+ph = pivotHigh(srcHigh, left, right)
+pl = pivotLow(srcLow, left, right)
+
+// The last two pivots of each side: index 0 is the newest. The time kept is
+// the pivot bar's own time, `right` bars before the bar that confirmed it.
+var phPrice0 = none
+var phPrice1 = none
+var phTime0 = none
+var phTime1 = none
+var plPrice0 = none
+var plPrice1 = none
+var plTime0 = none
+var plTime1 = none
+var boxes: array<box> = []
+
+isPh = not isNone(ph)
+isPl = not isNone(pl)
+pivotTime = time[right]
+
+if isPh
+    phPrice1 = phPrice0
+    phPrice0 = ph
+    phTime1 = phTime0
+    phTime0 = pivotTime
+if isPl
+    plPrice1 = plPrice0
+    plPrice0 = pl
+    plTime1 = plTime0
+    plTime0 = pivotTime
+
+// The percentage distance between the two newest pivots of each side.
+phPchg = not isNone(phPrice1) and phPrice1 != 0 ? abs((phPrice0 - phPrice1) / phPrice1 * 100) : none
+plPchg = not isNone(plPrice1) and plPrice1 != 0 ? abs((plPrice0 - plPrice1) / plPrice1 * 100) : none
+
+phCondition = isPh and not isNone(phPchg) and phPchg < eqPercent and bar.isConfirmed
+plCondition = isPl and not isNone(plPchg) and plPchg < eqPercent and bar.isConfirmed
+
+// Each pair is boxed from the earlier pivot to the later one, and the later
+// pivot bar is tagged with an x at its own high or low. Boxes, border and tag
+// are drawn at 75 percent opacity.
+if phCondition
+    push(boxes, draw.box(phTime1, phPrice1, phTime0, phPrice0, color = withAlpha(bearColor, 0.75), fillColor = bearColor, opacity = 0.75))
+    if size(boxes) > maxBoxes
+        draw.delete(shift(boxes))
+    draw.label(phTime0, high[right], "x", textColor = withAlpha(bearColor, 0.75))
+if plCondition
+    push(boxes, draw.box(plTime1, plPrice1, plTime0, plPrice0, color = withAlpha(bullColor, 0.75), fillColor = bullColor, opacity = 0.75))
+    if size(boxes) > maxBoxes
+        draw.delete(shift(boxes))
+    draw.label(plTime0, low[right], "x", textColor = withAlpha(bullColor, 0.75))

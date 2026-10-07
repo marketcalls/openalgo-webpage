@@ -1,0 +1,34 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © openalgo
+// Original work (c) mihakralj, MIT License
+
+version 1
+study("Weibull Distribution CDF (WEIBULLDIST)", precision = 4)
+
+source = input(close, "Source")
+period = input(50, "Period", min = 1, max = 1000, step = 1)
+shape = input(2.0, "Shape (k)", min = 0.01, max = 100, step = 0.1, tooltip = "Below 1 gives a concave curve, 1 is the exponential case, 2 the Rayleigh case, above 3 an S-curve.")
+scale = input(0.5, "Scale (lambda)", min = 0.01, max = 100, step = 0.1, tooltip = "A larger scale makes the curve rise more slowly, a smaller one saturates it sooner.")
+
+// The highest and lowest of the window. A bar before the first one counts as
+// 0, and a period of 1 still scans the previous bar as well as this one.
+cur = orElse(source, 0)
+hi = cur
+lo = cur
+for j = 1 to max(period - 1, 1)
+    v = orElse(source[j], 0)
+    if v > hi
+        hi = v
+    if v < lo
+        lo = v
+
+// Position in the range, 0 at the low and 1 at the high, read through the
+// Weibull CDF 1 - exp(-(x / lambda)^k). A flat window sits at 0.5.
+spanHL = hi - lo
+x = spanHL == 0 ? 0.5 : (cur - lo) / spanHL
+weibull = 1 - exp(0 - pow(max(0, x) / scale, shape))
+
+plot(weibull, "WEIBULLDIST", #ffeb3b, width = 2)
+level(0.5, "Midline", #787b86, style = "dashed")
+level(0.95, "Upper", #ef5350, style = "dashed")
+level(0.05, "Lower", #26a69a, style = "dashed")

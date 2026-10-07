@@ -1,0 +1,43 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © openalgo
+// Original work (c) mihakralj, MIT License
+
+version 1
+study("Relative Vigor Index (RVGI)", precision = 4)
+
+period = input(10, "Period", min = 1, max = 5000, step = 1)
+
+// The close-to-open move and the high-to-low range, each smoothed with the
+// symmetric four-bar weights 1, 2, 2, 1. On the three earlier bars each price
+// that is missing, or lies before the first bar, counts as zero on its own;
+// a missing price on this bar makes the whole smoothed value zero.
+fn pastGap(a, b, k) =>
+    orElse(a[k], 0) - orElse(b[k], 0)
+
+swmaNum = orElse((pastGap(close, open, 3) + 2 * pastGap(close, open, 2) + 2 * pastGap(close, open, 1) + (close - open)) / 6, 0)
+swmaDen = orElse((pastGap(high, low, 3) + 2 * pastGap(high, low, 2) + 2 * pastGap(high, low, 1) + (high - low)) / 6, 0)
+
+// Running totals over the last period bars, or over every bar so far while
+// fewer than period have been seen, so both averages answer from the first bar.
+var numSum = 0.0
+var denSum = 0.0
+var seen = 0
+if bar.index >= period
+    numSum -= swmaNum[period]
+    denSum -= swmaDen[period]
+else
+    seen += 1
+numSum += swmaNum
+denSum += swmaDen
+smaNum = numSum / max(1, seen)
+smaDen = denSum / max(1, seen)
+
+// A zero range reads 0 rather than dividing by it.
+rvgi = isNone(smaDen) or smaDen == 0 ? 0 : smaNum / smaDen
+
+// The signal line applies the same four-bar weights to the index itself.
+signalLine = (orElse(rvgi[3], 0) + 2 * orElse(rvgi[2], 0) + 2 * orElse(rvgi[1], 0) + rvgi) / 6
+
+plot(rvgi, "RVGI", #ffeb3b, width = 2)
+plot(signalLine, "Signal", #00bcd4, width = 1)
+level(0, "Zero", #787b86, style = "dashed")

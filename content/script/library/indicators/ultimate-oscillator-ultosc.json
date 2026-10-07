@@ -1,0 +1,19 @@
+{
+  "title": "Ultimate Oscillator (ULTOSC)",
+  "summary": "Buying pressure summed against true range over a fast, a medium and a slow window, blended by weight into one reading from 0 to 100.",
+  "description": "The Ultimate Oscillator measures how much of each bar's true range was won by buyers. For every bar it takes the **buying pressure**, the close minus the true low (the lower of this bar's low and the previous close), and the **true range**, from the true low to the true high (the higher of this bar's high and the previous close).\n\nIt then sums both over three windows, the fast, medium and slow periods, and divides buying pressure by true range in each to get three ratios from 0 to 100. A window that is not yet full, or whose range sums to zero, contributes zero. The three ratios are blended with the fast, medium and slow weights and divided by the sum of the weights. Nothing is drawn until the slow window is full.",
+  "howToRead": "Readings above 70 show closes sitting near the top of their true ranges across all three windows, and readings below 30 show the opposite. A common way to read it is to look for a divergence: price makes a new low while the oscillator holds above its previous low, then the oscillator breaks upward.\n\nBecause the fast window carries the most weight by default, short bursts still move the line, but the slower windows keep a single bar from dominating. The line stays between 0 and 100 and can hold near an extreme throughout a strong trend.",
+  "settings": [
+    { "key": "fastPeriod", "label": "Fast Period", "description": "Bars in the short window. A shorter window makes the fast ratio react to the latest few bars." },
+    { "key": "mediumPeriod", "label": "Medium Period", "description": "Bars in the middle window, which balances the fast and slow readings." },
+    { "key": "slowPeriod", "label": "Slow Period", "description": "Bars in the long window. Nothing is drawn until this many bars have passed." },
+    { "key": "fastWeight", "label": "Fast Weight", "description": "How much the fast ratio counts in the blend. Raising it makes the oscillator more responsive." },
+    { "key": "mediumWeight", "label": "Medium Weight", "description": "How much the medium ratio counts in the blend." },
+    { "key": "slowWeight", "label": "Slow Weight", "description": "How much the slow ratio counts in the blend. Raising it makes the oscillator steadier." }
+  ],
+  "faq": [
+    { "q": "Why three windows instead of one?", "a": "A single window either reacts quickly and gives many false extremes or reacts slowly and turns late. Blending three windows lets short-term pressure show while the longer windows confirm it." },
+    { "q": "What is buying pressure here?", "a": "The distance from the true low up to the close. If the close finishes at the true high, the whole true range counts as buying pressure; if it finishes at the true low, none of it does." },
+    { "q": "Why does the line start late?", "a": "It waits until the slow window holds a full set of bars, so the first value appears on bar `slowPeriod - 1`." }
+  ]
+}

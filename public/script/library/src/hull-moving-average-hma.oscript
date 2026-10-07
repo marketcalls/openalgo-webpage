@@ -1,0 +1,33 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © openalgo
+// Original work (c) mihakralj, MIT License
+
+version 1
+study("Hull Moving Average (HMA)", overlay = true, precision = 2)
+
+period = input(10, "Period", min = 1, max = 5000, step = 1)
+source = input(close, "Source")
+
+// A linearly weighted mean that answers from the first bar. Until the window
+// is full it weights the values seen so far 1, 2 and up, newest heaviest, and
+// divides by the sum of those weights. A missing value counts as zero.
+fn growingWma(src, len) =>
+    filled = min(bar.index + 1, len)
+    weighted = 0.0
+    for k = 0 to filled - 1
+        weighted += orElse(src[k], 0) * (filled - k)
+    weighted / (filled * (filled + 1) * 0.5)
+
+// Half the period and the square root of the period, each rounded to the
+// nearest whole bar and never below one.
+halfPeriod = max(1, round(period / 2))
+sqrtPeriod = max(1, round(sqrt(period)))
+
+// Twice the fast mean less the slow one cancels most of the lag; a short
+// weighted mean of that difference smooths it again.
+wmaHalf = growingWma(source, halfPeriod)
+wmaFull = growingWma(source, period)
+diff = 2 * wmaHalf - wmaFull
+hull = growingWma(diff, sqrtPeriod)
+
+plot(hull, "HMA", #ffeb3b, width = 2)

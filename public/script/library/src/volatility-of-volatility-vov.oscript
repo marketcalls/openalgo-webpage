@@ -1,0 +1,43 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © openalgo
+// Original work (c) mihakralj, MIT License
+
+version 1
+study("Volatility of Volatility (VOV)", precision = 4)
+
+source = input(close, "Source")
+volatilityPeriod = input(20, "Volatility Period", min = 1, max = 5000, step = 1, tooltip = "Period for the initial volatility calculation.")
+vovPeriod = input(10, "VOV Period", min = 1, max = 5000, step = 1, tooltip = "Period for the standard deviation of the volatility series.")
+
+// Each stage is a population standard deviation over a window that grows to
+// its period, kept as a running sum and sum of squares. A missing value counts
+// as zero, and a window holding fewer than two values reads 0.
+
+// Stage one: the standard deviation of the source.
+val1 = orElse(source, 0)
+var total1 = 0.0
+var totalSq1 = 0.0
+old1 = bar.index >= volatilityPeriod ? val1[volatilityPeriod] : none
+if not isNone(old1)
+    total1 = total1 - old1
+    totalSq1 = totalSq1 - old1 * old1
+total1 = total1 + val1
+totalSq1 = totalSq1 + val1 * val1
+n1 = min(bar.index + 1, volatilityPeriod)
+mean1 = total1 / n1
+volatility = n1 > 1 ? sqrt(max(0, totalSq1 / n1 - mean1 * mean1)) : 0
+
+// Stage two: the standard deviation of that volatility.
+var total2 = 0.0
+var totalSq2 = 0.0
+old2 = bar.index >= vovPeriod ? volatility[vovPeriod] : none
+if not isNone(old2)
+    total2 = total2 - old2
+    totalSq2 = totalSq2 - old2 * old2
+total2 = total2 + volatility
+totalSq2 = totalSq2 + volatility * volatility
+n2 = min(bar.index + 1, vovPeriod)
+mean2 = total2 / n2
+vov = n2 > 1 ? sqrt(max(0, totalSq2 / n2 - mean2 * mean2)) : 0
+
+plot(vov, "VOV", #ffeb3b, width = 2)

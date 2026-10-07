@@ -1,0 +1,71 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © openalgo
+// Original work (c) mihakralj, MIT License
+
+version 1
+study("Hilbert Trendline (HTIT)", overlay = true, precision = 2)
+
+source = input(close, "Source")
+
+twoPi = 2 * math.pi
+
+// The cycle period estimate, which sets the gain of every Hilbert stage. It
+// starts at 10 bars.
+var periodEst = 10.0
+padAdj = 0.075 * periodEst + 0.54
+
+// A four bar weighted smoothing, applied twice. Reads before the first bar
+// are absent, so the early bars stay empty until enough history exists.
+price = (4 * source + 3 * source[1] + 2 * source[2] + source[3]) / 10
+smooth = (4 * price + 3 * price[1] + 2 * price[2] + price[3]) / 10
+
+// The Hilbert transform: the same four taps on every stage.
+detrender = (0.0962 * smooth + 0.5769 * smooth[2] - 0.5769 * smooth[4] - 0.0962 * smooth[6]) * padAdj
+
+// In-phase and quadrature components. An absent in-phase value reads as zero.
+inPhase = orElse(detrender[3], 0)
+quadrature = (0.0962 * detrender + 0.5769 * detrender[2] - 0.5769 * detrender[4] - 0.0962 * detrender[6]) * padAdj
+
+// Both components advanced by 90 degrees.
+jI = (0.0962 * inPhase + 0.5769 * inPhase[2] - 0.5769 * inPhase[4] - 0.0962 * inPhase[6]) * padAdj
+jQ = (0.0962 * quadrature + 0.5769 * quadrature[2] - 0.5769 * quadrature[4] - 0.0962 * quadrature[6]) * padAdj
+
+// Phasor addition and the homodyne discriminator, each lightly smoothed.
+// Each name holds what the previous bar left, and an absent one reads as zero.
+var i2 = none
+var q2 = none
+var re = none
+var im = none
+prevI2 = orElse(i2, 0)
+prevQ2 = orElse(q2, 0)
+prevRe = orElse(re, 0)
+prevIm = orElse(im, 0)
+i2 = 0.2 * (inPhase - jQ) + 0.8 * prevI2
+q2 = 0.2 * (quadrature + jI) + 0.8 * prevQ2
+re = 0.2 * (i2 * prevI2 + q2 * prevQ2) + 0.8 * prevRe
+im = 0.2 * (i2 * prevQ2 - q2 * prevI2) + 0.8 * prevIm
+
+// The cycle period from the angle of the discriminator, smoothed and held
+// between 6 and 50 bars. It holds its value while the discriminator is absent.
+newPeriod = periodEst
+if not isNone(im) and im != 0 and not isNone(re) and re != 0
+    angleRatio = math.atan(im / re)
+    if angleRatio != 0
+        newPeriod = twoPi / angleRatio
+periodEst = max(6, min(50, 0.2 * newPeriod + 0.8 * periodEst))
+
+// The phase of the in-phase and quadrature pair, lifted into 0 to 2 pi.
+angle = inPhase != 0 ? math.atan(quadrature / inPhase) : math.pi / 2 * sign(quadrature)
+angle = angle + (inPhase < 0 ? math.pi : quadrature < 0 and inPhase > 0 ? twoPi : 0)
+angle = angle >= twoPi ? angle - twoPi : angle
+
+trendPower = sqrt(inPhase * inPhase + quadrature * quadrature)
+trendComponent = smooth + 0.07 * trendPower * math.sin(angle)
+
+// The trendline adds a weighted share of its own last value to the new
+// component, starting from the smoothed price when it has none.
+var iTrend = none
+prevTrend = orElse(iTrend, smooth)
+iTrend = 0.9 * trendComponent + 1.1 * prevTrend - 1.0 * prevTrend
+
+plot(iTrend, "HTIT", #ffeb3b, width = 2)

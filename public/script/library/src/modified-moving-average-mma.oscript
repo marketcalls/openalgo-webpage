@@ -1,0 +1,38 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © openalgo
+// Original work (c) mihakralj, MIT License
+
+version 1
+study("Modified Moving Average (MMA)", overlay = true, precision = 2)
+
+period = input(10, "Period", min = 2, max = 4000, step = 1)
+source = input(close, "Source")
+
+windowSize = min(max(2, period), 4000)
+
+// The window holds the last `windowSize` bars. Bars before the start of the chart
+// and missing values are left out of both the mean and the correction.
+validCount = 0
+total = 0.0
+for k = 0 to windowSize - 1
+    val = source[k]
+    if not isNone(val)
+        total += val
+        validCount += 1
+
+mmaValue = source
+if validCount > 0
+    mean = total / validCount
+    // A linear end-point correction: walking the window newest first, each
+    // value is weighted by its distance from the middle of the window.
+    weightedSum = 0.0
+    seen = 0
+    for k = 0 to windowSize - 1
+        val = source[k]
+        if not isNone(val)
+            weightedSum += (validCount - (2 * seen + 1)) * 0.5 * val
+            seen += 1
+    denominator = (validCount + 1) * validCount
+    mmaValue = denominator == 0 ? mean : mean + weightedSum * 6 / denominator
+
+plot(mmaValue, "MMA", #ffeb3b, width = 2)

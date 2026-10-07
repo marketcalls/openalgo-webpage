@@ -1,0 +1,83 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © openalgo
+// Original work (c) mihakralj, MIT License
+
+version 1
+study("HT_TRENDMODE: Hilbert Transform Trend Mode", precision = 0)
+
+source = input(hlc3, "Source")
+
+// The angle of the vector (x, y), computed from the arctangent of the smaller
+// over the larger component so it stays accurate in every quadrant.
+fn angleOf(y, x) =>
+    ay = abs(y)
+    ax = abs(x)
+    a = ax > ay ? math.atan(ay / ax) : math.pi / 2 - math.atan(ax / ay)
+    a = x < 0 ? math.pi - a : a
+    y < 0 ? -a : a
+
+// The cycle state, seeded at a 15 bar period.
+var period = 15.0
+var smoothPeriod = 15.0
+var dcPhase = 0.0
+var instPeriod = 15.0
+
+// Every read of an earlier bar before the first one counts as zero.
+price = orElse(source, 0)
+
+// The filter bandwidth reads the smoothed period before this bar updates it.
+bandwidth = 0.075 * smoothPeriod + 0.54
+
+smoothPrice = (4 * price + 3 * orElse(price[1], 0) + 2 * orElse(price[2], 0) + orElse(price[3], 0)) / 10
+detrender = (0.0962 * smoothPrice + 0.5769 * orElse(smoothPrice[2], 0) - 0.5769 * orElse(smoothPrice[4], 0) - 0.0962 * orElse(smoothPrice[6], 0)) * bandwidth
+
+// The quadrature and in-phase parts of the cycle.
+q1 = (0.0962 * detrender + 0.5769 * orElse(detrender[2], 0) - 0.5769 * orElse(detrender[4], 0) - 0.0962 * orElse(detrender[6], 0)) * bandwidth
+i1 = orElse(detrender[3], 0)
+
+// Each part advanced by 90 degrees.
+ji = (0.0962 * i1 + 0.5769 * orElse(i1[2], 0) - 0.5769 * orElse(i1[4], 0) - 0.0962 * orElse(i1[6], 0)) * bandwidth
+jq = (0.0962 * q1 + 0.5769 * orElse(q1[2], 0) - 0.5769 * orElse(q1[4], 0) - 0.0962 * orElse(q1[6], 0)) * bandwidth
+
+// The phasor, smoothed against its value on the previous bar.
+var i2 = 0.0
+var q2 = 0.0
+prevI2 = i2
+prevQ2 = q2
+i2 = 0.2 * (i1 - jq) + 0.8 * prevI2
+q2 = 0.2 * (q1 + ji) + 0.8 * prevQ2
+
+// Homodyne discriminator: the phase change from one bar to the next.
+var re = 0.0
+var im = 0.0
+re = 0.2 * (i2 * prevI2 + q2 * prevQ2) + 0.8 * re
+im = 0.2 * (i2 * prevQ2 - q2 * prevI2) + 0.8 * im
+
+hasPhasor = im != 0 or re != 0
+phasorAngle = hasPhasor ? angleOf(im, re) : 0
+if hasPhasor and phasorAngle != 0
+    period = 2 * math.pi / phasorAngle
+period = max(6, min(50, period))
+smoothPeriod = 0.33 * period + 0.67 * smoothPeriod
+
+if hasPhasor
+    dcPhase = phasorAngle
+
+// The change in phase, held at its last value when it barely moves.
+var deltaPhase = 0.0
+prevDcPhase = orElse(dcPhase[1], 0)
+prevDeltaPhase = deltaPhase
+deltaPhase = dcPhase - prevDcPhase
+if abs(deltaPhase) < 0.1
+    deltaPhase = prevDeltaPhase
+
+// The instantaneous period, smoothed against the previous bar's value, which
+// counts as zero before the first bar.
+prevInstPeriod = orElse(instPeriod[1], 0)
+if deltaPhase != 0
+    instPeriod = 0.33 * (2 * math.pi / deltaPhase) + 0.67 * prevInstPeriod
+
+// Trend mode when the measured period runs well past the smoothed one.
+trendMode = instPeriod > 1.5 * smoothPeriod ? 1 : 0
+
+plot(trendMode, "Trend Mode", trendMode == 1 ? #4caf50 : #ff5252, width = 3, style = "step")

@@ -1,0 +1,41 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © openalgo
+// Original work (c) mihakralj, MIT License
+
+version 1
+study("Fractal Chaos Bands (FCB)", overlay = true, precision = 2)
+
+period = input(20, "Period", min = 1, max = 999, step = 1)
+showFractals = input(false, "Show Fractal Points", tooltip = "Mark the bars that printed the fractal high or fractal low the bands track.")
+
+// A three-bar fractal: the middle bar's high above both neighbours, or its
+// low below both. It is known one bar after it forms.
+isHighFractal = bar.index >= 2 and high[1] > high[2] and high[1] > high
+isLowFractal = bar.index >= 2 and low[1] < low[2] and low[1] < low
+
+// The latest fractal high and low, starting from the first bar's own range.
+var hiFractal = high
+var loFractal = low
+if isHighFractal
+    hiFractal = high[1]
+if isLowFractal
+    loFractal = low[1]
+
+// The bands are the highest fractal high and the lowest fractal low of the
+// last `period` bars, or of every bar so far while the window fills.
+windowHigh = highest(hiFractal, period)
+windowLow = lowest(loFractal, period)
+var runHigh = none
+var runLow = none
+runHigh = isNone(runHigh) ? hiFractal : max(runHigh, hiFractal)
+runLow = isNone(runLow) ? loFractal : min(runLow, loFractal)
+upperBand = bar.index >= period - 1 ? windowHigh : runHigh
+lowerBand = bar.index >= period - 1 ? windowLow : runLow
+
+top = plot(upperBand, "Upper Band", #ffeb3b, width = 2)
+bottom = plot(lowerBand, "Lower Band", #ffeb3b, width = 2)
+fill(top, bottom, #2962ff, opacity = 0.1)
+
+// Each fractal is marked on the bar that printed it, one bar back.
+plot(showFractals and isHighFractal ? high[1] : none, "Fractal High", #ffeb3b, style = "lineWithMarkers", offset = -1)
+plot(showFractals and isLowFractal ? low[1] : none, "Fractal Low", #ffeb3b, style = "lineWithMarkers", offset = -1)

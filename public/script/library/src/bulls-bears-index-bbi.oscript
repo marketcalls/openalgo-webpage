@@ -1,0 +1,28 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © openalgo
+// Original work (c) mihakralj, MIT License
+
+version 1
+study("Bulls Bears Index (BBI)", overlay = true, precision = 2)
+
+source = input(close, "Source")
+p1 = input(3, "Period 1 (Ultra-Short)", min = 1, max = 5000, step = 1)
+p2 = input(6, "Period 2 (Short)", min = 1, max = 5000, step = 1)
+p3 = input(12, "Period 3 (Medium)", min = 1, max = 5000, step = 1)
+p4 = input(24, "Period 4 (Long)", min = 1, max = 5000, step = 1)
+
+// A missing source value counts as zero, and the running total feeds every
+// window below.
+total = cum(orElse(source, 0))
+
+// The mean of the last `len` values. Until `len` bars exist it averages the
+// bars seen so far, so the line starts on the first bar.
+fn runningMean(runTotal, len) =>
+    bar.index < len ? runTotal / (bar.index + 1) : (runTotal - runTotal[len]) / len
+
+m1 = runningMean(total, p1)
+m2 = runningMean(total, p2)
+m3 = runningMean(total, p3)
+m4 = runningMean(total, p4)
+
+plot((m1 + m2 + m3 + m4) / 4, "BBI", #ffeb3b, width = 2)

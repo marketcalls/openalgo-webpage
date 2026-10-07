@@ -1,0 +1,43 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © openalgo
+// Original work (c) mihakralj, MIT License
+
+version 1
+study("Discrete Wavelet Transform (DWT)", precision = 4)
+
+source = input(close, "Source")
+levels = input(4, "Decomposition Levels", min = 1, max = 8, step = 1, tooltip = "Number of levels; lookback = 2^levels bars.")
+output = input(0, "Output Component", min = 0, max = 8, step = 1, tooltip = "0 = approximation (trend), 1-8 = detail at that level (noise/cycles). Values above the level count are clamped to the deepest level.")
+
+levelCount = min(8, max(1, floor(levels)))
+// An output above the level count reads the deepest detail available.
+component = min(min(8, max(0, floor(output))), levelCount)
+
+// A trous Haar decomposition. Each level averages the previous approximation
+// with itself 2^(level - 1) bars back; the detail is what that average
+// removed. Where the lagged value does not exist yet, the current one is used.
+// A level beyond the chosen count passes the approximation through unchanged
+// and has no detail.
+c0 = orElse(source, 0)
+c1 = (c0 + orElse(source[1], c0)) * 0.5
+d1 = c0 - c1
+c2 = levelCount >= 2 ? (c1 + orElse(c1[2], c1)) * 0.5 : c1
+d2 = levelCount >= 2 ? c1 - c2 : 0
+c3 = levelCount >= 3 ? (c2 + orElse(c2[4], c2)) * 0.5 : c2
+d3 = levelCount >= 3 ? c2 - c3 : 0
+c4 = levelCount >= 4 ? (c3 + orElse(c3[8], c3)) * 0.5 : c3
+d4 = levelCount >= 4 ? c3 - c4 : 0
+c5 = levelCount >= 5 ? (c4 + orElse(c4[16], c4)) * 0.5 : c4
+d5 = levelCount >= 5 ? c4 - c5 : 0
+c6 = levelCount >= 6 ? (c5 + orElse(c5[32], c5)) * 0.5 : c5
+d6 = levelCount >= 6 ? c5 - c6 : 0
+c7 = levelCount >= 7 ? (c6 + orElse(c6[64], c6)) * 0.5 : c6
+d7 = levelCount >= 7 ? c6 - c7 : 0
+c8 = levelCount >= 8 ? (c7 + orElse(c7[128], c7)) * 0.5 : c7
+d8 = levelCount >= 8 ? c7 - c8 : 0
+
+approx = levelCount == 1 ? c1 : levelCount == 2 ? c2 : levelCount == 3 ? c3 : levelCount == 4 ? c4 : levelCount == 5 ? c5 : levelCount == 6 ? c6 : levelCount == 7 ? c7 : c8
+detail = component == 1 ? d1 : component == 2 ? d2 : component == 3 ? d3 : component == 4 ? d4 : component == 5 ? d5 : component == 6 ? d6 : component == 7 ? d7 : d8
+
+plot(component == 0 ? approx : detail, "DWT", #ffeb3b, width = 2)
+level(0, "Zero", #787b86, style = "dotted")

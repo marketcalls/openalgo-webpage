@@ -1,0 +1,88 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © openalgo
+// Original work (c) mihakralj, MIT License
+
+version 1
+study("Stochastic Momentum Index (SMI)", precision = 2)
+
+kPeriod = input(10, "%K Period", min = 1, max = 100, step = 1, tooltip = "Lookback period for high/low range calculation.")
+kSmooth = input(3, "%K Smooth", min = 1, max = 20, step = 1, tooltip = "First smoothing period for raw SMI values.")
+dSmooth = input(3, "%D Smooth", min = 1, max = 20, step = 1, tooltip = "Second smoothing period for the signal line.")
+source = input(close, "Source")
+blau = input(true, "Blau Method", tooltip = "On: Blau, smooth the raw SMI ratio. Off: Chande/Kroll, smooth numerator and denominator first.")
+
+a1 = 2 / (kSmooth + 1)
+a2 = 2 / (kSmooth + 1)
+a3 = 2 / (dSmooth + 1)
+
+// A bar with no source value leaves every stage untouched and draws nothing.
+hasSource = not isNone(source)
+
+// The highest high and lowest low of the last kPeriod bars that had a source
+// value, or of all of them while fewer have been seen. A missing price reads
+// as 0.
+var highBuf: array<number> = []
+var lowBuf: array<number> = []
+if hasSource
+    push(highBuf, orElse(high, 0))
+    push(lowBuf, orElse(low, 0))
+    if size(highBuf) > kPeriod
+        shift(highBuf)
+        shift(lowBuf)
+highestHigh = max(highBuf)
+lowestLow = min(lowBuf)
+midpoint = (highestHigh + lowestLow) / 2
+rangeHalf = (highestHigh - lowestLow) / 2
+
+// Three exponential stages, each seeded at zero. While any of them still owes
+// weight to that seed, each output is divided by the weight it has earned,
+// 1 - (1 - a)^n, so the first bars are not dragged toward zero.
+var e1 = 1.0
+var e2 = 1.0
+var e3 = 1.0
+var warmup = true
+var ema1Raw = 0.0
+var ema2Raw = 0.0
+var ema3Raw = 0.0
+var numEma1 = 0.0
+var numEma2 = 0.0
+var denEma2 = 0.0
+var kValue = 0.0
+var dValue = 0.0
+
+c1 = 1.0
+c2 = 1.0
+c3 = 1.0
+if hasSource
+    if warmup
+        e1 *= 1 - a1
+        e2 *= 1 - a2
+        e3 *= 1 - a3
+        c1 = 1 - e1 > 0 ? 1 / (1 - e1) : 1
+        c2 = 1 - e2 > 0 ? 1 / (1 - e2) : 1
+        c3 = 1 - e3 > 0 ? 1 / (1 - e3) : 1
+
+    if blau
+        // Smooth the ratio itself: the distance from the midpoint over half the
+        // range, as a percentage.
+        rawSmi = rangeHalf > 0 ? 100 * (source - midpoint) / rangeHalf : 0
+        ema1Raw = a1 * (rawSmi - ema1Raw) + ema1Raw
+        firstEma = warmup ? ema1Raw * c1 : ema1Raw
+        ema2Raw = a2 * (firstEma - ema2Raw) + ema2Raw
+        kValue = warmup ? ema2Raw * c2 : ema2Raw
+    else
+        // Smooth the distance and the half range apart, then divide.
+        ema1Raw = a1 * ((source - midpoint) - ema1Raw) + ema1Raw
+        numEma1 = a1 * (rangeHalf - numEma1) + numEma1
+        numFirst = warmup ? ema1Raw * c1 : ema1Raw
+        denFirst = warmup ? numEma1 * c1 : numEma1
+        numEma2 = a2 * (numFirst - numEma2) + numEma2
+        denEma2 = a2 * (denFirst - denEma2) + denEma2
+        kValue = denEma2 > 0 ? (warmup ? 100 * (numEma2 * c2) / (denEma2 * c2) : 100 * numEma2 / denEma2) : 0
+    ema3Raw = a3 * (kValue - ema3Raw) + ema3Raw
+    dValue = warmup ? ema3Raw * c3 : ema3Raw
+    if warmup
+        warmup = max(max(e1, e2), e3) > 1e-10
+
+plot(hasSource ? kValue : none, "SMI %K", #ffeb3b, width = 2)
+plot(hasSource ? dValue : none, "SMI %D", #2962ff, width = 2)

@@ -1,0 +1,15 @@
+{
+  "title": "Mean Error (ME)",
+  "summary": "The average signed gap between price and its own EMA over a rolling window, showing whether price has been sitting above or below it.",
+  "description": "Mean Error scores an exponential moving average as a forecast of price, keeping the sign of every miss. The average is taken over `Period` bars and seeded with the simple average of its first `Period` values. On every bar the study subtracts the average from the source, so the gap is positive when price is above the average and negative when it is below.\n\nThose signed gaps are averaged over the last `Period` bars, at most 4000, counting only the bars that carry a gap. The reading starts on the first bar where the average exists and widens its window until it is full. Because positive and negative gaps cancel, the result is a measure of bias rather than of size.\n\nThe error is plotted as a shaded area in its own pane, and the reference average is drawn on the price chart.",
+  "howToRead": "A reading above zero means price has, on balance, been above its average over the window, which is what an uptrend looks like. A reading below zero means price has been below it. A reading near zero means the misses have balanced out: either price has been hugging the average, or it has swung evenly on both sides.\n\nBecause cancellation hides size, a near-zero reading is not proof that price has been close to the average. Pair it with MAE to see how large the misses were. The value is in price units.",
+  "settings": [
+    { "key": "source", "label": "Source", "description": "The price series measured against its own average. The close by default." },
+    { "key": "period", "label": "Period", "description": "The length of the reference EMA and of the averaging window, which is held to at most 4000 bars." }
+  ],
+  "faq": [
+    { "q": "What does a positive value mean?", "a": "Price has been above its EMA more, or by more, than it has been below it over the window. It is a sign of upward bias." },
+    { "q": "Why can the reading be close to zero in a volatile market?", "a": "Positive and negative gaps cancel. A market that swings widely around its average can still average out near zero." },
+    { "q": "How is this different from MPE?", "a": "Mean Error is in price units. MPE divides each gap by price first, so it is in percent and comparable across instruments." }
+  ]
+}

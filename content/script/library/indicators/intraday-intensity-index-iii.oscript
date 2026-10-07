@@ -1,0 +1,35 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © openalgo
+// Original work (c) mihakralj, MIT License
+
+version 1
+study("Intraday Intensity Index (III)", precision = 2)
+
+period = input(14, "Period", min = 1, max = 100, step = 1, tooltip = "Smoothing period for the intensity index.")
+cumulative = input(false, "Cumulative Mode", tooltip = "Accumulate intensity values for trend analysis.")
+
+len = max(1, min(100, floor(period)))
+
+// Where the close sits in the bar's range, from -1 at the low to +1 at the
+// high, times the volume. Volume is floored at 1 and a bar with no range
+// reads zero.
+c = orElse(close, 0)
+h = orElse(high, c)
+l = orElse(low, c)
+vol = max(orElse(volume, 0), 1)
+barRange = h - l
+positionMultiplier = barRange > 0 ? (2 * c - h - l) / barRange : 0
+raw = positionMultiplier * vol
+
+// A window sum divided by the full period from the first bar, so the early
+// values are damped rather than absent.
+var total = 0.0
+if bar.index >= len
+    total -= raw[len]
+total += raw
+smoothed = total / len
+
+var cumulativeValue = 0.0
+cumulativeValue += raw
+
+plot(cumulative ? cumulativeValue : smoothed, "III", #ffeb3b, width = 2)

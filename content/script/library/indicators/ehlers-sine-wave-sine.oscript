@@ -1,0 +1,44 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © openalgo
+// Original work (c) mihakralj, MIT License
+
+version 1
+study("Ehlers Sine Wave (SINE)", precision = 4)
+
+source = input(close, "Source")
+hpLength = input(40, "High-Pass Filter Length", min = 1, max = 5000, step = 1, tooltip = "Detrending period: cycles longer than this are removed.")
+ssfLength = input(10, "Super-Smoother Filter Length", min = 1, max = 5000, step = 1, tooltip = "Cycle smoothing period applied after detrending.")
+
+hpLen = max(1, floor(hpLength))
+ssfLen = max(1, floor(ssfLength))
+
+// High-pass coefficient. At a length of 4 the angle is a quarter turn, where
+// both the numerator and the cosine vanish; the limit there is 0.
+angHp = 2 * math.pi / hpLen
+cosHp = math.cos(angHp)
+aHp = abs(cosHp) > 1e-12 ? (1 - math.sin(angHp)) / cosHp : 0
+
+// Super smoother coefficients.
+angSsf = sqrt(2) * math.pi / ssfLen
+aSsf = exp(-angSsf)
+c2 = 2 * aSsf * math.cos(angSsf)
+c3 = -aSsf * aSsf
+c1 = 1 - c2 - c3
+
+// Every history read takes zero before the first bar.
+s = orElse(source, 0)
+sPrev = orElse(source[1], 0)
+
+// Declared first, so each line can read its own previous bar.
+hp = 0.0
+filt = 0.0
+hp = 0.5 * (1 + aHp) * (s - sPrev) + aHp * orElse(hp[1], 0)
+filt = c1 * (hp + orElse(hp[1], 0)) / 2 + c2 * orElse(filt[1], 0) + c3 * orElse(filt[2], 0)
+
+// Quadrature from a four-tap Hilbert transform of the smoothed cycle.
+q = 0.0962 * orElse(filt[3], 0) + 0.5769 * orElse(filt[1], 0) - 0.5769 * orElse(filt[5], 0) - 0.0962 * orElse(filt[7], 0)
+pwr = filt * filt + q * q
+sineWave = pwr == 0 ? 0 : filt / sqrt(pwr)
+
+plot(isNone(sineWave) ? none : min(1, max(-1, sineWave)), "SINE", #ffeb3b, width = 2)
+level(0, "Zero Line", #787b86, style = "dashed")

@@ -1,0 +1,42 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © openalgo
+// Original work (c) mihakralj, MIT License
+
+version 1
+study("Butterworth 2nd Order Filter (BUTTER)", overlay = true, precision = 2)
+
+length = input(20, "Length", min = 2, max = 5000, step = 1)
+source = input(close, "Source")
+
+// Biquad lowpass coefficients with a maximally flat passband.
+safeLength = max(length, 2)
+omega = 2 * math.pi / safeLength
+sinOmega = math.sin(omega)
+cosOmega = math.cos(omega)
+damping = sinOmega / sqrt(2)
+a0 = 1 + damping
+a1 = -2 * cosOmega
+a2 = 1 - damping
+b0 = (1 - cosOmega) / 2
+b1 = 1 - cosOmega
+b2 = (1 - cosOmega) / 2
+
+// The last two outputs, carried by hand.
+var f1 = none
+var f2 = none
+
+// A missing price borrows the previous one, and missing history reads as the
+// nearest value that exists.
+ssrc = orElse(source, source[1])
+s1 = orElse(source[1], ssrc)
+s2 = orElse(source[2], s1)
+fa = orElse(f1, ssrc)
+fb = orElse(f2, fa)
+
+// The first two bars seed the recursion with the price itself.
+filt = bar.index < 2 ? orElse(source, 0) : (b0 * ssrc + b1 * s1 + b2 * s2 - a1 * fa - a2 * fb) / a0
+
+f2 = f1
+f1 = filt
+
+plot(filt, "Butterworth", #ffeb3b, width = 2)

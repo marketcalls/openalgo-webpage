@@ -1,0 +1,47 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © openalgo
+// Original work (c) mihakralj, MIT License
+
+version 1
+study("Correlation Trend Indicator (CTI)", precision = 3, range = [-1.05, 1.05])
+
+source = input(close, "Source")
+period = input(20, "Period", min = 2, max = 5000, step = 1)
+
+// Correlation of price against a straight rising line (x = 0, 1, 2, ... from
+// the oldest bar of the window). The sums are kept running: when the window
+// is full the oldest value leaves, every remaining x drops by one, and the new
+// value enters at x = period - 1. While the window fills, the new value
+// enters at the next free x.
+var sumY = 0.0
+var sumY2 = 0.0
+var sumXY = 0.0
+var filled = 0
+
+if bar.index >= period
+    oldest = source[period]
+    sumY -= oldest
+    sumY2 -= oldest * oldest
+    sumXY -= sumY
+    sumXY += (period - 1) * source
+else
+    sumXY += filled * source
+    filled += 1
+sumY += source
+sumY2 += source * source
+
+n = filled
+sumX = n * (n - 1) / 2
+sumX2 = n * (n - 1) * (2 * n - 1) / 6
+denomX = n * sumX2 - sumX * sumX
+denomY = n * sumY2 - sumY * sumY
+denom = denomX * denomY
+
+// A flat window has nothing to correlate, so it reads zero.
+r = denom <= 0 ? 0 : clamp((n * sumXY - sumX * sumY) / sqrt(denom), -1, 1)
+cti = n >= 2 ? r : none
+
+level(0.5, "Upper", #787b86, style = "dashed")
+level(0, "Zero", #787b86, style = "dashed")
+level(-0.5, "Lower", #787b86, style = "dashed")
+plot(cti, "CTI", #ffeb3b, width = 2)

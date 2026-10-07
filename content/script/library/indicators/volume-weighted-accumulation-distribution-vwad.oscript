@@ -1,0 +1,28 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © openalgo
+// Original work (c) mihakralj, MIT License
+
+version 1
+study("Volume Weighted Accumulation/Distribution (VWAD)", precision = 2)
+
+period = input(20, "Volume Weight Period", min = 1, max = 5000, step = 1, tooltip = "Lookback over which each bar volume is measured against the rolling volume total.")
+
+// A missing volume counts as zero.
+currentVol = orElse(volume, 0)
+
+// The rolling volume total over the last period bars, counting only the bars
+// seen so far until the window fills.
+var sumVol = 0.0
+sumVol -= orElse(currentVol[period], 0)
+sumVol += currentVol
+
+// Where the close sits in the bar's range, from -1 at the low to +1 at the high.
+mfm = high != low ? ((close - low) - (high - close)) / (high - low) : 0.0
+
+// The money flow weighted by the bar's volume and again by that volume's
+// share of the rolling total, summed from the first bar.
+volWeight = sumVol > 0 ? currentVol / sumVol : 0.0
+var cumVwad = 0.0
+cumVwad += currentVol * mfm * volWeight
+
+plot(cumVwad, "VWAD", #ffeb3b, width = 2)

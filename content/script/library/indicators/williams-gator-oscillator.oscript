@@ -1,0 +1,56 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © openalgo
+// Original work (c) mihakralj, MIT License
+
+version 1
+study("Williams Gator Oscillator", precision = 2)
+
+source = input(hlc3, "Source")
+jawPeriod = input(13, "Jaw Period", min = 1, max = 5000, step = 1)
+jawOffset = input(8, "Jaw Offset", min = 0, max = 500, step = 1, tooltip = "Bars the Jaw line is displaced forward by, so the histogram reads it from this many bars ago.")
+teethPeriod = input(8, "Teeth Period", min = 1, max = 5000, step = 1)
+teethOffset = input(5, "Teeth Offset", min = 0, max = 500, step = 1)
+lipsPeriod = input(5, "Lips Period", min = 1, max = 5000, step = 1)
+lipsOffset = input(3, "Lips Offset", min = 0, max = 500, step = 1)
+
+// A smoothed moving average that moves 1/len of the way toward the source on
+// each bar. It starts from zero and is divided by 1 - (1 - a)^k, with a = 1/len and
+// k the bars seen, while that factor still matters, so each line reads as the source from the first bar
+// instead of climbing up from zero. A missing source value counts as zero.
+fn smoothCompensated(src, len) =>
+    var smoothed = 0.0
+    var e = 1.0
+    var warm = true
+    a = 1 / len
+    smoothed = a * (orElse(src, 0) - smoothed) + smoothed
+    result = smoothed
+    if warm
+        e *= 1 - a
+        d = 1 - e
+        result = d > 0 ? smoothed / d : smoothed
+        warm = e > 1e-10
+    result
+
+jawRaw = smoothCompensated(source, jawPeriod)
+teethRaw = smoothCompensated(source, teethPeriod)
+lipsRaw = smoothCompensated(source, lipsPeriod)
+
+// Each line is displaced forward by its offset, so the value read on a bar is
+// the one computed that many bars earlier.
+jaw = jawRaw[jawOffset]
+teeth = teethRaw[teethOffset]
+lips = lipsRaw[lipsOffset]
+
+// The upper bar is the Jaw to Teeth gap, the lower bar the Teeth to Lips gap
+// drawn below zero.
+upperGap = abs(jaw - teeth)
+lowerGap = -abs(teeth - lips)
+
+// Green while a gap is widening (or holding), red while it narrows. The first
+// bar has nothing to compare with and is red.
+upperColor = isNone(upperGap) or isNone(upperGap[1]) ? #FF5252 : upperGap >= upperGap[1] ? #4CAF50 : #FF5252
+lowerColor = isNone(lowerGap) or isNone(lowerGap[1]) ? #FF5252 : lowerGap <= lowerGap[1] ? #4CAF50 : #FF5252
+
+plot(upperGap, "Upper", upperColor, width = 2, style = "histogram")
+plot(lowerGap, "Lower", lowerColor, width = 2, style = "histogram")
+plot(0, "Zero", #787b86, width = 1)

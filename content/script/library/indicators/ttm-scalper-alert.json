@@ -1,0 +1,37 @@
+{
+  "title": "TTM Scalper Alert",
+  "summary": "Marks every three-bar pivot: a bar whose high tops both neighbours, or whose low sits under both, as short-term turning points.",
+  "description": "This study marks the smallest kind of turning point on a chart. A pivot high is a bar whose high is higher than the high of the bar before it and the bar after it. A pivot low is a bar whose low is lower than the lows of both neighbours. With **Use Closes** on, both tests read closing prices instead of highs and lows, which ignores wicks.\n\nA pivot needs the bar after it, so it is known one bar after it forms. The study runs the test on that confirming bar and places the mark one bar back, at the pivot's own price on the bar it describes. Pivot highs are marked in red and pivot lows in green.",
+  "howToRead": "Each mark is a place where short-term momentum turned for at least one bar. A run of rising pivot lows shows buyers stepping in higher, and a run of falling pivot highs shows sellers pressing lower. Traders who scalp use the latest opposite pivot as a quick exit or stop reference.\n\nThree-bar pivots are frequent, and most do not lead to a lasting turn. Treat a single mark as information about the last few bars and look for agreement with the wider trend before acting on it.",
+  "settings": [
+    {
+      "key": "useCloses",
+      "label": "Use Closes",
+      "description": "Test closing prices instead of highs and lows, so a long wick alone cannot create a pivot."
+    },
+    {
+      "key": "showHigh",
+      "label": "Show Pivot Highs",
+      "description": "Draw the red marks at pivot highs, the bars that topped both neighbours."
+    },
+    {
+      "key": "showLow",
+      "label": "Show Pivot Lows",
+      "description": "Draw the green marks at pivot lows, the bars that sat under both neighbours."
+    }
+  ],
+  "faq": [
+    {
+      "q": "Why is the newest bar never marked?",
+      "a": "A pivot needs the bar after it to be confirmed. The newest bar has no bar after it yet, so it can only be marked once the next bar prints."
+    },
+    {
+      "q": "Does a tie with a neighbour count?",
+      "a": "No. The middle bar must be strictly higher than both neighbours for a pivot high, or strictly lower for a pivot low."
+    },
+    {
+      "q": "Can one bar carry both marks?",
+      "a": "Yes, while Use Closes is off. An outside bar whose high tops both neighbours and whose low sits under both is a pivot high and a pivot low at once. With Use Closes on, both tests read the same close, so a bar can be one or the other but not both."
+    }
+  ]
+}

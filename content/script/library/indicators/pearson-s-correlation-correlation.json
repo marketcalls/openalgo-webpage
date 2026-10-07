@@ -1,0 +1,16 @@
+{
+  "title": "Pearson's Correlation (CORRELATION)",
+  "summary": "The Pearson correlation between two series of the chart's symbol over a rolling window, from -1 for opposite moves to +1 for moves in step.",
+  "description": "The study measures how closely two series move together in a straight-line relationship. It keeps running sums of each series, their squares and their product over the last `Period` bars, then divides the covariance of the two by the product of their standard deviations. The result is +1 when the series rise and fall together in fixed proportion, -1 when one rises exactly as the other falls, and near 0 when their moves are unrelated.\n\nBoth series come from the chart's own symbol: by default the close and the volume. A bar enters the window only when both values are present. The coefficient appears as soon as two pairs are held and grows to the full window from there. When either series is flat over the window there is no defined correlation and the bar is left blank.",
+  "howToRead": "With the default inputs, a positive reading means bars with a higher close have also tended to carry higher volume over the window, and a negative reading means the heavier volume came with the lower closes. Readings near zero mean no consistent link.\n\nCorrelation measures a straight-line relationship only, and over a short window it swings widely. It says nothing about which series leads, and a strong reading over a few bars can be chance. Use a longer period for a steadier picture.",
+  "settings": [
+    { "key": "source1", "label": "Source 1", "description": "The first series of the pair, the close by default." },
+    { "key": "source2", "label": "Source 2", "description": "The second series of the pair, taken from the same symbol, volume by default. The menu lists only price series, so volume is available only as this default." },
+    { "key": "period", "label": "Period", "description": "How many recent bars the correlation is measured over. A longer period gives a steadier reading." }
+  ],
+  "faq": [
+    { "q": "Can it compare two different instruments?", "a": "No. Both series come from the symbol on the chart, so it compares two series of one instrument, such as its close and its volume." },
+    { "q": "Why is the line blank on some bars?", "a": "When one of the series did not change at all over the window, its standard deviation is zero and the correlation is undefined, so nothing is drawn." },
+    { "q": "What counts as a strong correlation?", "a": "Readings beyond about plus or minus 0.7 are usually called strong and readings inside plus or minus 0.3 weak, but over a short window even a strong reading can be chance." }
+  ]
+}

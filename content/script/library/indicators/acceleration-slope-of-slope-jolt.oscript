@@ -1,0 +1,50 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © openalgo
+// Original work (c) mihakralj, MIT License
+
+version 1
+study("Acceleration, Slope of Slope (JOLT)", precision = 6)
+
+period = input(14, "Period", min = 2, max = 5000, step = 1, tooltip = "Lookback used by each of the three least squares slope passes.")
+source = input(close, "Source")
+
+// A rolling least squares slope kept as running sums. x is the bar index, so
+// the window is the last len bars; a bar whose value is absent still uses its
+// slot but never enters the sums, which is why the count of valid points is
+// kept apart from the window length.
+fn rollingSlope(y, len) =>
+    var sumX = 0.0
+    var sumY = 0.0
+    var sumXY = 0.0
+    var sumX2 = 0.0
+    var valid = 0
+    i = bar.index
+    if i >= len
+        oldX = i - len
+        oldY = y[len]
+        if not isNone(oldY)
+            sumX -= oldX
+            sumY -= oldY
+            sumXY -= oldX * oldY
+            sumX2 -= oldX * oldX
+            valid -= 1
+    if not isNone(y)
+        sumX += i
+        sumY += y
+        sumXY += i * y
+        sumX2 += i * i
+        valid += 1
+    result = none
+    if valid >= 2
+        divisor = valid * sumX2 - sumX * sumX
+        if divisor != 0
+            result = (valid * sumXY - sumX * sumY) / divisor
+    result
+
+// Three chained fits: the slope of the source, the slope of that slope
+// (acceleration), and the slope of the acceleration.
+slope = rollingSlope(source, period)
+accel = rollingSlope(slope, period)
+jolt = rollingSlope(accel, period)
+
+plot(jolt, "Jolt", #ffeb3b, width = 2)

@@ -1,0 +1,88 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © openalgo
+// Original work (c) mihakralj, MIT License
+
+version 1
+study("Gamma Distribution CDF (GAMMADIST)", precision = 4)
+
+source = input(close, "Source")
+period = input(50, "Lookback Period", min = 2, max = 5000, step = 1, tooltip = "Min-max normalization window")
+shape = input(2.0, "Shape (alpha)", min = 0.01, max = 1000, step = 0.1, tooltip = "Shape parameter; alpha below 1 decays, alpha of 1 is exponential, above 1 is bell-shaped")
+rate = input(3.0, "Rate (beta)", min = 0.01, max = 1000, step = 0.1, tooltip = "Rate parameter; scales normalized x before CDF evaluation")
+
+// ln(Gamma(z)) for z > 0 by the Lanczos approximation, g = 7 with nine
+// coefficients.
+fn lnGamma(z) =>
+    zz = z - 1.0
+    x = 0.99999999999980993 + 676.5203681218851 / (zz + 1) - 1259.1392167224028 / (zz + 2) + 771.32342877765313 / (zz + 3) - 176.61502916214059 / (zz + 4) + 12.507343278686905 / (zz + 5) - 0.13857109526572012 / (zz + 6) + 9.9843695780195716e-6 / (zz + 7) + 1.5056327351493116e-7 / (zz + 8)
+    t = zz + 7.0 + 0.5
+    0.5 * log(2.0 * math.pi) + (zz + 0.5) * log(t) - t + log(x)
+
+// Regularized lower incomplete gamma P(a, x) by its series expansion.
+fn gammaSeries(a, x) =>
+    ap = a
+    total = 1.0 / a
+    del = total
+    for n = 1 to 200
+        ap += 1.0
+        del *= x / ap
+        total += del
+        if abs(del) < abs(total) * 1e-10
+            break
+    exp(a * log(x) - x - lnGamma(a)) * total
+
+// Regularized upper incomplete gamma Q(a, x) by the modified Lentz continued
+// fraction.
+fn gammaCF(a, x) =>
+    tiny = 1e-30
+    b0 = x + 1.0 - a
+    c = 1.0 / tiny
+    d = b0 < tiny ? 1.0 / tiny : 1.0 / b0
+    f = d
+    for i = 1 to 200
+        ai = -i * (i - a)
+        bi = x + 2.0 * i + 1.0 - a
+        d = bi + ai * d
+        if abs(d) < tiny
+            d = tiny
+        d = 1.0 / d
+        c = bi + ai / c
+        if abs(c) < tiny
+            c = tiny
+        delta = c * d
+        f *= delta
+        if abs(delta - 1.0) < 1e-10
+            break
+    exp(a * log(x) - x - lnGamma(a)) * f
+
+// P(a, x): the series converges quickly below a + 1, the continued fraction
+// above it.
+fn gammaP(a, x) =>
+    if x <= 0.0
+        return 0.0
+    if x < a + 1.0
+        return gammaSeries(a, x)
+    1.0 - gammaCF(a, x)
+
+// The window covers the last period bars, or every bar so far while fewer
+// than period bars exist.
+var runLow = none
+var runHigh = none
+runLow = isNone(runLow) ? source : min(runLow, source)
+runHigh = isNone(runHigh) ? source : max(runHigh, source)
+windowLow = lowest(source, period)
+windowHigh = highest(source, period)
+full = bar.index >= period - 1 and not isNone(windowLow) and not isNone(windowHigh)
+minVal = full ? windowLow : runLow
+maxVal = full ? windowHigh : runHigh
+
+// Position of the source inside its range, scaled by the rate. A flat window
+// has no range, so the position is the middle.
+spread = maxVal - minVal
+position = spread > 0.0 ? (source - minVal) / spread : 0.5
+scaled = max(0.0, position * rate)
+
+plot(gammaP(shape, scaled), "GAMMADIST", #ffeb3b, width = 2)
+level(0.5, "Midline", #787b86, style = "dotted")
+level(0.95, "Upper", #ef5350, style = "dashed")
+level(0.05, "Lower", #26a69a, style = "dashed")

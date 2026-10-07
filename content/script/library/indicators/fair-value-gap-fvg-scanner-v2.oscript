@@ -1,0 +1,333 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © openalgo
+// Original work (c) Arun K Bhaskar, MPL-2.0
+
+version 1
+study("Fair Value Gap (FVG) Scanner v2", overlay = true, precision = 2)
+
+// ---- Scanner ------------------------------------------------------------------
+method = input("First Touch Confirmed", "Scanning Method", options = ["FVG %", "First Touch", "First Touch Confirmed", "Full Fill", "Full Fill Confirmed", "Reversal"], group = "Scanner", tooltip = "Which stage of the gap the scan reports. FVG % draws no markers or candle colours: that stage is meant for a screener across many symbols, and on one chart the gap boxes already show every gap.")
+showLong = input(true, "Long Signals", group = "Scanner")
+showShort = input(true, "Short Signals", group = "Scanner")
+
+// ---- FVG ----------------------------------------------------------------------
+closeGapsPartially = input(true, "Close FVG Partially", group = "FVG")
+boxLimit = input(15, "Max Number of FVG", min = 1, max = 500, step = 1, group = "FVG")
+minimalDeviation = input(70, "Minimal Deviation (%)", min = 1, max = 100, step = 1, group = "FVG", tooltip = "Smallest gap that counts, as a percentage of the average high-low range of the last 14 bars. If no gap is ever found, either this is set too high or the feed aligns every bar open to the previous close.")
+limitBoxLength = input(false, "Max Bars", group = "FVG", tooltip = "Stop trailing a gap once it has run this many bars, whether or not price filled it.")
+limitBoxLengthBars = input(300, "Max Gap Trail Length (bars)", min = 1, max = 5000, step = 1, group = "FVG")
+transparency = input(70, "Transp", min = 0, max = 100, step = 1, group = "FVG", tooltip = "Transparency of the gap boxes. The border is drawn 20 points more transparent than the fill.")
+
+// ---- Additional filters -------------------------------------------------------
+timeFilter = input(false, "Apply Time Filter", group = "Additional Filters", tooltip = "Accept a signal only between the two clock times below, read in the chart timezone.")
+hourFrom = input(9, "Time From (hour)", min = 0, max = 23, step = 1, group = "Additional Filters")
+minuteFrom = input(15, "Time From (minute)", min = 0, max = 59, step = 1, group = "Additional Filters")
+hourTo = input(10, "Time To (hour)", min = 0, max = 23, step = 1, group = "Additional Filters")
+minuteTo = input(15, "Time To (minute)", min = 0, max = 59, step = 1, group = "Additional Filters")
+dateFilter = input(false, "Apply Date Filter", group = "Additional Filters")
+day = input(25, "Day", min = 1, max = 31, step = 1, group = "Additional Filters")
+month = input(10, "Month", min = 1, max = 12, step = 1, group = "Additional Filters")
+year = input(2024, "Year", min = 0, max = 9999, step = 1, group = "Additional Filters")
+
+// ---- Data table ---------------------------------------------------------------
+showTable = input(true, "Display Table", group = "Data Table")
+tablePosition = input("bottom-right", "Position", options = ["top-left", "top-center", "top-right", "middle-left", "middle-center", "middle-right", "bottom-left", "bottom-center", "bottom-right"], group = "Data Table")
+tableSize = input("normal", "Size", options = ["tiny", "small", "normal", "large", "huge"], group = "Data Table", tooltip = "Text size of the panel. Tables in this version draw at the chart's own text size.")
+
+// The palette.
+posColor = #089981
+posLight = #ACE5DC
+negColor = #F23645
+negLight = #FCCBCD
+
+// ---- Gap detection ------------------------------------------------------------
+// The smallest gap that counts is a share of the 14-bar average range. While
+// that average is still warming up the threshold is zero, so every gap counts.
+avgRange = sma(high - low, 14)
+minGap = isNone(avgRange) ? 0 : minimalDeviation / 100 * avgRange
+
+// A down gap: this bar's high stays below the low of two bars back, leaving a
+// void price has to rise into. An up gap is the mirror image. Neither can
+// form on the first two bars.
+hasHistory = bar.index >= 2
+isDownGap = hasHistory ? high < low[2] and low[2] - high >= minGap : false
+isUpGap = hasHistory ? low > high[2] and low - high[2] >= minGap : false
+
+// ---- Gap boxes ----------------------------------------------------------------
+// Every gap still on the chart, oldest first: its id, whether it is still
+// being trailed, its side, and the edges, left bar and handle of its newest
+// box. Every box drawn is listed with the id of the gap that drew it, so a
+// gap that drops off the list takes all of its boxes with it.
+var gapIds: array<number> = []
+var gapActive: array<bool> = []
+var gapDown: array<bool> = []
+var gapTop: array<number> = []
+var gapBottom: array<number> = []
+var gapLeft: array<number> = []
+var gapBox: array<box> = []
+var boxHandles: array<box> = []
+var boxGap: array<number> = []
+var nextGapId = 0
+
+fillOpacity = (100 - transparency) / 100
+borderAlpha = max(0, 100 - (transparency + 20)) / 100
+
+// Take one box off the chart and out of the list of boxes.
+fn dropBox(handles, owners, b) =>
+    k = indexOf(handles, b)
+    if k >= 0
+        remove(handles, k)
+        remove(owners, k)
+    draw.delete(b)
+    true
+
+// Covering runs over every gap registered so far, before this bar may
+// register one of its own. A touch either starts a smaller box over the part
+// of the gap price has not traded through, or ends the gap outright. A gap is
+// done once price trades through its far edge, or, with Max Bars on, once its
+// newest box has run that many bars.
+for k = 0 to size(gapIds) - 1
+    if element(gapActive, k)
+        down = element(gapDown, k)
+        top = element(gapTop, k)
+        bottom = element(gapBottom, k)
+        left = element(gapLeft, k)
+        current = element(gapBox, k)
+        draw.setTo(current, time, bottom)
+        newest = current
+        touched = down ? high > bottom : low < top
+        if touched
+            if closeGapsPartially
+                tone = down ? negColor : posColor
+                nextTop = down ? top : low
+                nextBottom = down ? high : bottom
+                newest = draw.box(time, nextTop, time, nextBottom, color = withAlpha(tone, borderAlpha), fillColor = tone, opacity = fillOpacity)
+                push(boxHandles, newest)
+                push(boxGap, element(gapIds, k))
+                set(gapBox, k, newest)
+                set(gapTop, k, nextTop)
+                set(gapBottom, k, nextBottom)
+                set(gapLeft, k, bar.index)
+            else
+                set(gapActive, k, false)
+        forced = limitBoxLength and bar.index - left >= limitBoxLengthBars
+        filled = down ? high > top : low < bottom
+        if filled or forced
+            set(gapActive, k, false)
+            // With partial closing, the remnant box the gap ended on goes.
+            if closeGapsPartially
+                dropBox(boxHandles, boxGap, newest)
+                set(gapBox, k, none)
+
+if isDownGap or isUpGap
+    tone = isDownGap ? negColor : posColor
+    newTop = isDownGap ? low[2] : low
+    newBottom = isDownGap ? high : high[2]
+    first = draw.box(time[2], newTop, time, newBottom, color = withAlpha(tone, borderAlpha), fillColor = tone, opacity = fillOpacity)
+    push(boxHandles, first)
+    push(boxGap, nextGapId)
+    push(gapIds, nextGapId)
+    push(gapActive, true)
+    push(gapDown, isDownGap)
+    push(gapTop, newTop)
+    push(gapBottom, newBottom)
+    push(gapLeft, bar.index - 2)
+    push(gapBox, first)
+    nextGapId += 1
+    // Past the limit the oldest gap is dropped with every box it drew.
+    if size(gapIds) > boxLimit
+        oldId = shift(gapIds)
+        shift(gapActive)
+        shift(gapDown)
+        shift(gapTop)
+        shift(gapBottom)
+        shift(gapLeft)
+        shift(gapBox)
+        for j = size(boxGap) - 1 to 0 step -1
+            if element(boxGap, j) == oldId
+                remove(boxGap, j)
+                draw.delete(remove(boxHandles, j))
+
+// ---- The newest gap on each side ------------------------------------------------
+// Each edge holds until the next gap on its side replaces it. They are written
+// before the signals read them, so a gap never triggers its own touch.
+var downTop = none
+var downBottom = none
+var upTop = none
+var upBottom = none
+if isDownGap
+    downTop = low[2]
+    downBottom = high
+if isUpGap
+    upTop = low
+    upBottom = high[2]
+
+// ---- Day readings for the table ---------------------------------------------------
+// A new calendar day in the chart's timezone. The first bar is never one.
+newDay = bar.isFirst ? false : not date.isSameDay(time, time[1])
+
+// The day's running percentage change: each bar's change from the previous
+// close, summed since the day began.
+prevClose = close[1]
+dailyChange = isNone(prevClose) or prevClose == 0 or isNone(close) ? 0 : (close - prevClose) / prevClose * 100
+var cumPchg = none
+cumPchg = newDay ? dailyChange : isNone(cumPchg) ? dailyChange : cumPchg + dailyChange
+
+// The day's running volume and the previous day's total. The running total
+// starts absent, so it stays absent until the first new day begins.
+var dayVol = none
+var prevDayVol = none
+if newDay
+    prevDayVol = dayVol
+    dayVol = volume
+else
+    dayVol = dayVol + volume
+
+volBase = isNone(prevDayVol) ? dayVol : prevDayVol
+cumVolPchg = isNone(volBase) or volBase == 0 or isNone(dayVol) ? none : (dayVol - volBase) / volBase * 100
+
+// ---- Filters -------------------------------------------------------------------
+barHour = date.hour(time)
+barMinute = date.minute(time)
+afterFrom = barHour > hourFrom or (barHour == hourFrom and barMinute >= minuteFrom)
+beforeTo = barHour < hourTo or (barHour == hourTo and barMinute < minuteTo)
+timePass = timeFilter ? afterFrom and beforeTo : true
+datePass = dateFilter ? date.year(time) == year and date.month(time) == month and date.day(time) == day : true
+gate = timePass and datePass and bar.isConfirmed
+
+// ---- The six stages ------------------------------------------------------------------
+// A crossing needs all four readings, this bar's and the previous bar's.
+fn crossedAbove(aPrev, aNow, bPrev, bNow) => not isNone(aPrev) and not isNone(aNow) and not isNone(bPrev) and not isNone(bNow) and aNow > bNow and aPrev <= bPrev
+fn crossedBelow(aPrev, aNow, bPrev, bNow) => not isNone(aPrev) and not isNone(aNow) and not isNone(bPrev) and not isNone(bNow) and aNow < bNow and aPrev >= bPrev
+
+// Short side: a down gap sits above price, so filling it is a rally.
+shortGap = isDownGap and gate
+shortTouch = gate and crossedAbove(high[1], high, downBottom[1], downBottom)
+var shortTouchLow = none
+if shortTouch
+    shortTouchLow = low
+shortTouchConf = gate and crossedBelow(close[1], close, shortTouchLow[1], shortTouchLow)
+shortFill = gate and crossedAbove(high[1], high, downTop[1], downTop) and not isNone(downTop) and close < downTop
+var shortFillLow = none
+if shortFill
+    shortFillLow = low
+shortFillConf = gate and crossedBelow(close[1], close, shortFillLow[1], shortFillLow)
+shortReversal = gate and crossedAbove(close[1], close, downTop[1], downTop)
+
+// Long side: an up gap sits below price, so filling it is a decline.
+longGap = isUpGap and gate
+longTouch = gate and crossedBelow(low[1], low, upTop[1], upTop)
+var longTouchHigh = none
+if longTouch
+    longTouchHigh = high
+longTouchConf = gate and crossedAbove(close[1], close, longTouchHigh[1], longTouchHigh)
+longFill = gate and crossedBelow(low[1], low, upBottom[1], upBottom) and not isNone(upBottom) and close > upBottom
+var longFillHigh = none
+if longFill
+    longFillHigh = high
+longFillConf = gate and crossedAbove(close[1], close, longFillHigh[1], longFillHigh)
+longReversal = gate and crossedBelow(close[1], close, upBottom[1], upBottom)
+
+// Each stage arms on a gap and fires on the step that follows it, then
+// resets on the next bar, which lets the next gap arm it again.
+fn step2(state, first, second) =>
+    a = state == 2 ? 0 : state
+    b = first and a == 0 ? 1 : a
+    second and b == 1 ? 2 : b
+
+fn step3(state, first, second, third) =>
+    a = state == 3 ? 0 : state
+    b = first and a == 0 ? 1 : a
+    c = second and b == 1 ? 2 : b
+    third and c == 2 ? 3 : c
+
+var sFirstTouch = 0
+var sFirstTouchConf = 0
+var sFullFill = 0
+var sFullFillConf = 0
+var sReversal = 0
+var lFirstTouch = 0
+var lFirstTouchConf = 0
+var lFullFill = 0
+var lFullFillConf = 0
+var lReversal = 0
+
+sFirstTouch = step2(sFirstTouch, shortGap, shortTouch)
+sFirstTouchConf = step3(sFirstTouchConf, shortGap, shortTouch, shortTouchConf)
+sFullFill = step2(sFullFill, shortGap, shortFill)
+sFullFillConf = step3(sFullFillConf, shortGap, shortFill, shortFillConf)
+sReversal = step2(sReversal, shortGap, shortReversal)
+
+lFirstTouch = step2(lFirstTouch, longGap, longTouch)
+lFirstTouchConf = step3(lFirstTouchConf, longGap, longTouch, longTouchConf)
+lFullFill = step2(lFullFill, longGap, longFill)
+lFullFillConf = step3(lFullFillConf, longGap, longFill, longFillConf)
+lReversal = step2(lReversal, longGap, longReversal)
+
+shortCond = method == "FVG %" ? shortGap : method == "First Touch" ? sFirstTouch == 2 : method == "Full Fill" ? sFullFill == 2 : method == "Full Fill Confirmed" ? sFullFillConf == 3 : method == "Reversal" ? sReversal == 2 : sFirstTouchConf == 3
+longCond = method == "FVG %" ? longGap : method == "First Touch" ? lFirstTouch == 2 : method == "Full Fill" ? lFullFill == 2 : method == "Full Fill Confirmed" ? lFullFillConf == 3 : method == "Reversal" ? lReversal == 2 : lFirstTouchConf == 3
+
+// ---- Markers and candle colours ----------------------------------------------------
+// FVG % only measures the gap, so it marks and colours nothing. Reversal is
+// the one stage drawn the other way round: a short-side reversal is price
+// closing back above a down gap, which is bullish, so it sits below the bar
+// in the positive colour, and the long side above in the negative one.
+isPct = method == "FVG %"
+isReversal = method == "Reversal"
+
+if not isPct and not isReversal and showShort and shortCond
+    signal("Short", color = #FCCBCD, at = "above", shape = "triangleDown")
+if not isPct and not isReversal and showLong and longCond
+    signal("Long", color = #ACE5DC, at = "below", shape = "triangleUp")
+if isReversal and showShort and shortCond
+    signal("Short", color = #ACE5DC, at = "below", shape = "triangleUp")
+if isReversal and showLong and longCond
+    signal("Long", color = #FCCBCD, at = "above", shape = "triangleDown")
+
+// The two touch stages colour the short side negative; the fill stages and
+// the reversal colour it positive. The long side takes the other colour.
+touchStage = method == "First Touch" or method == "First Touch Confirmed"
+shortPaint = touchStage ? negLight : posLight
+longPaint = touchStage ? posLight : negLight
+barColor(isPct ? none : showShort and shortCond ? shortPaint : showLong and longCond ? longPaint : none)
+
+// ---- Data table -------------------------------------------------------------------
+// Grids pin to the four corners, so each position is drawn in its nearest
+// corner: a top row at the top, a middle or bottom row at the bottom, a left
+// column on the left, a centre or right column on the right.
+// No grid has a border or a background of its own, so the three grids left
+// unwritten draw nothing in their corners.
+gridBottomRight = table("Gap readings, bottom right", 5, 2, position = "bottomRight")
+gridBottomLeft = table("Gap readings, bottom left", 5, 2, position = "bottomLeft")
+gridTopRight = table("Gap readings, top right", 5, 2, position = "topRight")
+gridTopLeft = table("Gap readings, top left", 5, 2, position = "topLeft")
+
+// Two decimals with trailing zeros dropped, and a dash for a missing reading.
+fn fmt2(v) => isNone(v) ? "-" : text(toNumber(text(v, 2)))
+fn pct(v) => isNone(v) ? "-" : fmt2(v) + " %"
+// Volume is reported in lakhs.
+fn lakh(v) => isNone(v) ? "-" : fmt2(v / 100000) + " L"
+fn upDown(v) => not isNone(v) and v > 0 ? #089981 : #F23645
+
+fn writePanel(g, pchg, volPchg, vol, pvol, noGaps) =>
+    prevTone = not isNone(pvol) and not isNone(vol) and pvol < vol ? #F23645 : #089981
+    cell(g, 0, 0, "%Chg", textColor = #9598A1, bgColor = #141516, align = "left")
+    cell(g, 0, 1, pct(pchg), textColor = upDown(pchg), bgColor = #141516, align = "right")
+    cell(g, 1, 0, "Vol %Chg", textColor = #9598A1, bgColor = #2A2E39, align = "left")
+    cell(g, 1, 1, pct(volPchg), textColor = upDown(volPchg), bgColor = #2A2E39, align = "right")
+    cell(g, 2, 0, "Vol", textColor = #9598A1, bgColor = #141516, align = "left")
+    cell(g, 2, 1, lakh(vol), textColor = upDown(volPchg), bgColor = #141516, align = "right")
+    cell(g, 3, 0, "PD Vol", textColor = #9598A1, bgColor = #2A2E39, align = "left")
+    cell(g, 3, 1, lakh(pvol), textColor = prevTone, bgColor = #2A2E39, align = "right")
+    // A separate note when the chart holds no gap at all.
+    if noGaps
+        cell(g, 4, 0, "FVG", textColor = #9598A1, bgColor = #141516, align = "left")
+        cell(g, 4, 1, "None found", textColor = #9598A1, bgColor = #141516, align = "right")
+    true
+
+atTop = tablePosition == "top-left" or tablePosition == "top-center" or tablePosition == "top-right"
+atLeft = tablePosition == "top-left" or tablePosition == "middle-left" or tablePosition == "bottom-left"
+
+if bar.isLast and showTable
+    target = atTop ? (atLeft ? gridTopLeft : gridTopRight) : (atLeft ? gridBottomLeft : gridBottomRight)
+    writePanel(target, cumPchg, cumVolPchg, dayVol, prevDayVol, size(gapIds) == 0)

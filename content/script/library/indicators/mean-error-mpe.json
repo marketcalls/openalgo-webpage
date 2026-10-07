@@ -1,0 +1,15 @@
+{
+  "title": "Mean %Error (MPE)",
+  "summary": "The average signed percentage by which price sits above or below its own EMA, over a rolling window of bars.",
+  "description": "Mean %Error scores an exponential moving average as a forecast of price, in percent and with the sign kept. The average is taken over `Period` bars and seeded with the simple average of its first `Period` values. On every bar the study subtracts the average from the source, divides by the source and multiplies by 100. A bar where the source is exactly zero carries no error.\n\nThe signed percentage errors are averaged over the last `Period` bars, at most 4000, counting only the bars that carry an error. The reading starts on the first bar where the average exists and widens its window until it is full. Positive and negative errors cancel, so the result shows a persistent bias as a level away from zero.\n\nThe error is plotted as a shaded area in its own pane, and the reference average is drawn on the price chart.",
+  "howToRead": "A reading of 1.5 means price has, on balance, been about 1.5 percent above its average over the window, the shape of an uptrend. A negative reading means price has been below its average. Because it is a percentage, the reading can be compared between instruments.\n\nA reading near zero does not mean price has been close to the average, only that the misses on each side have balanced. Pair it with MAPE to see how large the misses were.",
+  "settings": [
+    { "key": "source", "label": "Source", "description": "The price series measured against its own average. The close by default." },
+    { "key": "period", "label": "Period", "description": "The length of the reference EMA and of the averaging window, which is held to at most 4000 bars." }
+  ],
+  "faq": [
+    { "q": "How is MPE different from MAPE?", "a": "MAPE takes the absolute value of each percentage error, so it measures size. MPE keeps the sign, so it measures bias, and errors on opposite sides cancel." },
+    { "q": "What does a reading that stays above zero tell me?", "a": "Price has spent the window mostly above its EMA, which is typical of a sustained rise. The longer and higher it stays, the stronger the bias." },
+    { "q": "Why does the line start late?", "a": "The EMA has no value until the chart has Period bars, so the error cannot be measured before then." }
+  ]
+}

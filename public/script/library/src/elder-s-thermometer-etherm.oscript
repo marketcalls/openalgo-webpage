@@ -1,0 +1,35 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © openalgo
+// Original work (c) mihakralj, MIT License
+
+version 1
+study("Elder's Thermometer (ETHERM)", precision = 2)
+
+period = input(22, "EMA Period", min = 1, max = 5000, step = 1, tooltip = "Number of bars for the EMA signal line")
+multiplier = input(3.0, "Explosive Threshold", min = 0.1, max = 100, step = 0.5, tooltip = "Multiplier for explosive move detection")
+
+// The first bar compares against itself, so it reads zero.
+prevHigh = orElse(high[1], high)
+prevLow = orElse(low[1], low)
+highDiff = abs(high - prevHigh)
+lowDiff = abs(prevLow - low)
+
+// An inside bar, one whose range sits wholly within the previous bar's,
+// reads zero; any other bar reads the larger of the two extensions.
+isInsideBar = high < prevHigh and low > prevLow
+temp = isInsideBar ? 0.0 : max(highDiff, lowDiff)
+
+// An exponential mean of the reading that starts from zero and divides out
+// the weight it has not gathered yet, so it answers from the first bar.
+a = 2.0 / (period + 1)
+var rawEma = 0.0
+var e = 1.0
+rawEma = rawEma * (1 - a) + temp * a
+e = e * (1 - a)
+signalLine = e > 1e-10 ? rawEma / (1 - e) : rawEma
+
+threshold = max(0.1, multiplier)
+thermColor = temp >= signalLine * threshold ? #ff5252 : temp >= signalLine ? #ff9800 : #2196f3
+
+plot(temp, "Thermometer", thermColor, width = 2, style = "histogram")
+plot(signalLine, "Signal", #ffeb3b, width = 2)

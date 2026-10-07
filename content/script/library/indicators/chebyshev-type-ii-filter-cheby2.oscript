@@ -1,0 +1,67 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © openalgo
+// Original work (c) mihakralj, MIT License
+
+version 1
+study("Chebyshev Type II Filter (CHEBY2)", overlay = true, precision = 2)
+
+length = input(10, "Length", min = 2, max = 5000, step = 1)
+attenuation = input(5, "Stopband Attenuation (dB)", min = 0.1, max = 200, step = 1, tooltip = "How far the filter pushes down frequencies above the cutoff, in decibels.")
+source = input(close, "Source")
+
+// The analogue prototype, with its poles and its stopband zero, mapped to a
+// biquad by the bilinear transform.
+wc = 2 * math.pi / length
+bigWc = 2 * math.tan(wc / 2)
+rippleRatio = pow(10, attenuation / 10) - 1
+epsilon = rippleRatio > 0 ? 1 / sqrt(rippleRatio) : none
+asinhInvEps = log(1 / epsilon + sqrt(1 / (epsilon * epsilon) + 1))
+mu = asinhInvEps / 2
+sinhMu = (exp(mu) - exp(-mu)) / 2
+coshMu = (exp(mu) + exp(-mu)) / 2
+sigmaP = -bigWc * sinhMu / sqrt(2)
+omegaP = bigWc * coshMu / sqrt(2)
+omegaZ = bigWc / math.cos(math.pi / 4)
+kp = sigmaP * sigmaP + omegaP * omegaP
+kz = omegaZ * omegaZ
+dcGain = kp != 0 ? kz / kp : none
+a0z = 1 - 2 * sigmaP + kp
+a1z = 2 * kp - 2
+a2z = 1 + 2 * sigmaP + kp
+b0z = dcGain * (1 + kz)
+b1z = dcGain * (2 * kz - 2)
+b2z = dcGain * (1 + kz)
+
+rawB0 = b0z / a0z
+rawB1 = b1z / a0z
+rawB2 = b2z / a0z
+a1 = a1z / a0z
+a2 = a2z / a0z
+
+// Rescale the numerator so the filter passes a flat price unchanged.
+sumB = rawB0 + rawB1 + rawB2
+sumA = 1 + a1 + a2
+norm = sumB != 0 ? sumA / sumB : none
+b0 = rawB0 * norm
+b1 = rawB1 * norm
+b2 = rawB2 * norm
+
+// The last two outputs, carried by hand.
+var f1 = none
+var f2 = none
+
+// A missing price counts as zero, and missing history reads as the nearest
+// value that exists.
+s0 = orElse(source, 0)
+s1 = orElse(source[1], s0)
+s2 = orElse(source[2], s1)
+fa = orElse(f1, s0)
+fb = orElse(f2, fa)
+
+// The first two bars seed the recursion with the price itself.
+filt = bar.index < 2 ? s0 : b0 * s0 + b1 * s1 + b2 * s2 - a1 * fa - a2 * fb
+
+f2 = f1
+f1 = filt
+
+plot(filt, "Cheby2", #ffeb3b, width = 2)

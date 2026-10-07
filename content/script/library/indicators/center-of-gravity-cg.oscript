@@ -1,0 +1,25 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © openalgo
+// Original work (c) mihakralj, MIT License
+
+version 1
+study("Center of Gravity (CG)", precision = 4)
+
+length = input(10, "Length", min = 1, max = 2000, step = 1, tooltip = "Period for Center of Gravity calculation")
+source = input(close, "Source")
+
+// Each price in the window is weighted by its position, 1 for this bar up to
+// Length for the oldest, and the weighted total is divided by the plain total.
+// Bars before the first one count as zero, so the line answers from bar 0.
+centre = (length + 1) / 2
+num = 0.0
+den = 0.0
+for position = 1 to length
+    price = orElse(source[position - 1], 0)
+    num = num + position * price
+    den = den + price
+result = den != 0 ? num / den : centre
+
+// The balance point measured from the middle of the window.
+plot(result - centre, "CG", #ffeb3b, width = 2)
+level(0, "Zero Line", #9598a1, style = "dashed")

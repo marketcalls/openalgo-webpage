@@ -1,0 +1,40 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © openalgo
+// Original work (c) mihakralj, MIT License
+
+version 1
+study("Gaussian-Weighted Moving Average (GWMA)", overlay = true, precision = 2)
+
+period = input(10, "Period", min = 1, max = 5000, step = 1)
+sigma = input(0.4, "Sigma", min = 0.1, max = 1, step = 0.1, tooltip = "Controls the width of the Gaussian bell curve. Lower values make the curve narrower.")
+source = input(close, "Source")
+
+width = min(1, max(0.1, sigma))
+
+// The window grows with the chart until it holds period bars. Its weights
+// follow a bell centred on the middle of the window, with a spread of sigma
+// times the window length, and sum to one.
+len = min(bar.index + 1, period)
+centre = (len - 1) / 2
+invSpread = 1 / (width * len)
+bellTotal = 0.0
+for k = 0 to len - 1
+    x = (k - centre) * invSpread
+    bellTotal += exp(-0.5 * x * x)
+invTotal = bellTotal > 0 ? 1 / bellTotal : 0
+
+weighted = 0.0
+weightSum = 0.0
+for k = 0 to len - 1
+    price = source[k]
+    if isNone(price)
+        continue
+    x = (k - centre) * invSpread
+    w = exp(-0.5 * x * x) * invTotal
+    weighted += price * w
+    weightSum += w
+
+// An empty window falls back to the current value.
+gwma = weightSum != 0 ? weighted / weightSum : source
+
+plot(gwma, "GWMA", #ffeb3b, width = 2)

@@ -1,0 +1,35 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © openalgo
+// Original work (c) mihakralj, MIT License
+
+version 1
+study("Mass Index (MASSI)", precision = 4)
+
+emaLength = input(9, "EMA Length", min = 1, max = 5000, step = 1, tooltip = "Period for EMA smoothing of high-low range")
+sumLength = input(25, "Sum Length", min = 1, max = 5000, step = 1, tooltip = "Period for summing the EMA ratio")
+
+a = 2.0 / (emaLength + 1)
+decay = 1.0 - a
+
+// A single and a double exponential mean of the bar's range, both started
+// from zero.
+span = high - low
+var ema1Raw = 0.0
+var ema2Raw = 0.0
+var e = 1.0
+var warmup = true
+ema1Raw = a * (span - ema1Raw) + ema1Raw
+ema2Raw = a * (ema1Raw - ema2Raw) + ema2Raw
+
+// While the start-up weight is still meaningful both means are scaled up by
+// the weight they have not gathered yet.
+if warmup
+    e = e * decay
+    warmup = e > 1e-10
+comp = warmup and 1.0 - e > 0 ? 1.0 / (1.0 - e) : 1.0
+ema1 = comp * ema1Raw
+ema2 = comp * ema2Raw
+
+ratio = ema2 != 0 ? ema1 / ema2 : 0.0
+
+plot(sum(ratio, sumLength), "MASSI", #ffeb3b, width = 2)

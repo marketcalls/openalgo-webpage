@@ -1,0 +1,54 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © openalgo
+// Original work (c) mihakralj, MIT License
+
+version 1
+study("Savitzky-Golay Moving Average (SGMA)", overlay = true, precision = 2)
+
+period = input(9, "Period", min = 3, max = 5000, step = 2, tooltip = "Must be odd number (will be adjusted if even).")
+degree = input(2, "Polynomial Degree", min = 0, max = 4, step = 1, tooltip = "Higher degrees fit more complex shapes but risk overfitting.")
+source = input(close, "Source")
+
+// The window is always odd, so it has a middle bar. A degree the window
+// cannot support falls back to 2.
+usePeriod = period % 2 == 0 ? period + 1 : period
+useDeg = degree < 0 or degree >= usePeriod ? 2 : min(degree, 4)
+
+// The window grows with the data until it reaches the full length.
+p = min(bar.index + 1, usePeriod)
+halfWindow = (p - 1) / 2
+
+// The weight of tap pos, from x = (pos - half) / half across the window:
+// flat for degree 0, a triangle for 1, and 1 - |x|^d for the higher degrees.
+// With a one-bar window half is zero and x has no value.
+fn shapeWeight(pos, half, deg) =>
+    x = (pos - half) / half
+    deg == 0 ? 1 : deg == 1 ? 1 - abs(x) : deg == 3 ? 1 - abs(x * x * x) : deg == 4 ? 1 - x * x * x * x : 1 - x * x
+
+// Degree 2 uses a fixed table of coefficients for windows of 5, 7 and 9 bars.
+tabulated = useDeg == 2 and (p == 5 or p == 7 or p == 9)
+table5 = [-0.0857, 0.3429, 0.4857, 0.3429, -0.0857]
+table7 = [-0.0476, 0.0952, 0.2857, 0.3333, 0.2857, 0.0952, -0.0476]
+table9 = [-0.0281, 0.0337, 0.1236, 0.2247, 0.2921, 0.2247, 0.1236, 0.0337, -0.0281]
+
+shapeTotal = 0.0
+for k = 0 to p - 1
+    shapeTotal += shapeWeight(k, halfWindow, useDeg)
+
+// The shape is scaled to sum to one. On the degree 2 path the scaling is not
+// guarded, so a window whose shape sums to zero has no weights at all.
+hasTotal = not isNone(shapeTotal) and shapeTotal > 0
+weighted = 0.0
+weightTotal = 0.0
+for k = 0 to p - 1
+    raw = shapeWeight(k, halfWindow, useDeg)
+    w = tabulated ? (p == 5 ? element(table5, k) : p == 7 ? element(table7, k) : element(table9, k)) : useDeg == 2 ? raw * (1 / shapeTotal) : hasTotal ? raw * (1 / shapeTotal) : raw
+    price = source[k]
+    if not isNone(price)
+        weighted += price * w
+        weightTotal += w
+
+// A window with no usable weights shows the source itself.
+sgma = orElse(weighted / weightTotal, source)
+
+plot(sgma, "SGMA", #ffeb3b, width = 2)

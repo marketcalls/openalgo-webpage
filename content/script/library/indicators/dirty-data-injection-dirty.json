@@ -1,0 +1,16 @@
+{
+  "title": "Dirty Data Injection (DIRTY)",
+  "summary": "Echoes a price series with regular gaps cut into it, so you can see how other studies cope with missing bars.",
+  "description": "Dirty Data Injection is a test tool rather than a market study. It copies the chosen source series bar for bar, but blanks it on a fixed schedule: the very first bar is always empty, and after that the first few bars of every cycle are left empty too.\n\nThe cycle length is the **NA Injection Interval** and the number of blank bars at the start of each cycle is the **NA Gap Size**. A bar is blank when its position in the run, divided by the interval, leaves a remainder smaller than the gap size. With the defaults of 10 and 5, bars 0 to 4 are blank, bars 5 to 9 carry the source, bars 10 to 14 are blank again, and so on.\n\nNothing is smoothed or averaged. Every value that is drawn is exactly the source value on that bar.",
+  "howToRead": "Read it as a picture of a broken data feed. The line is the source where data is present and a gap where it has been removed, so it shows at a glance which bars an indicator would have to handle without a value.\n\nIt carries no trading signal. Its use is in building and checking other scripts: feed the same gap pattern into a calculation and confirm that its warmup, its running sums and its markers behave sensibly when bars are missing, rather than treating a gap as zero.",
+  "settings": [
+    { "key": "source", "label": "Source", "description": "The price series that is copied onto the chart where it is not blanked." },
+    { "key": "interval", "label": "NA Injection Interval", "description": "The length of one cycle in bars. A larger value spaces the gaps further apart." },
+    { "key": "gapSize", "label": "NA Gap Size", "description": "How many bars at the start of each cycle are left empty. A value equal to or above the interval blanks every bar." }
+  ],
+  "faq": [
+    { "q": "Why is the first bar always empty?", "a": "The first bar is blanked unconditionally, in addition to the gap at the start of every cycle, so every run begins with a missing value." },
+    { "q": "Is this meant to be traded?", "a": "No. It reproduces the source with holes in it. Its only job is to give other calculations a series with known gaps to test against." },
+    { "q": "What happens if the gap size is larger than the interval?", "a": "Every bar falls inside a gap, so nothing is drawn at all." }
+  ]
+}

@@ -1,0 +1,15 @@
+{
+  "title": " Ehlers Trendflex Indicator (TRENDFLEX)",
+  "summary": "A trend gauge centred on zero: the average distance of smoothed price from its own recent values, scaled by its running root mean square.",
+  "description": "TRENDFLEX measures how strongly a smoothed price is moving in one direction. The source is first passed through a two-pole smoothing filter tuned to half the period. On the first two bars the filter passes the price straight through.\n\nOn each bar the study adds up the distance from the filtered value now to each of its last values over the period (fewer on the opening bars, while the history is still short) and divides by the period. When the filtered price has been rising, all those distances are positive and the sum is large; when it has been falling, the sum is large and negative.\n\nThat sum is then divided by the square root of an exponential mean of its own square, with a weight of 0.04, so the output reads in units of its own recent spread and the same levels mean the same thing on any instrument. A missing source value enters the filter as zero and is blanked on the plot.",
+  "howToRead": "Above zero the smoothed price sits above where it has been over the period, which is an uptrend; below zero it is a downtrend. The further from zero, the more one-sided the move compared with recent behaviour. A turn back toward zero shows the trend losing strength, and a crossing of zero shows it changing direction.\n\nBecause the output is scaled by its own recent spread, a long quiet spell can make a modest move read large. Use the period to match the length of trend you care about: short periods follow swings, long periods follow the broader move.",
+  "settings": [
+    { "key": "period", "label": "Period", "description": "The number of bars the distances are measured over. The smoothing filter is tuned to half of it." },
+    { "key": "source", "label": "Source", "description": "The price series the filter reads. A missing value enters the filter as zero." }
+  ],
+  "faq": [
+    { "q": "How is this different from a cycle oscillator on the same filter?", "a": "This one compares the filtered value with each past value directly, so a steady trend gives a steady positive or negative reading. A cycle oscillator compares it with a straight line through the window, which removes the trend." },
+    { "q": "Why does the line open at zero and then near plus or minus 5?", "a": "On the first bar there is no earlier filtered value, so the sum is zero. On the second bar the mean square, which starts from zero, holds only 0.04 times the first sum squared, so the sum divided by its square root is plus or minus 5. The opening bars are a settling stretch until the mean square has built up." },
+    { "q": "Is there an overbought level?", "a": "There is no fixed one. The output is scaled by its own recent spread, so readings beyond about plus or minus one are stronger than usual, but how far they can run depends on the market." }
+  ]
+}

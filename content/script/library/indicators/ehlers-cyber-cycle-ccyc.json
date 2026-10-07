@@ -1,0 +1,15 @@
+{
+  "title": "Ehlers Cyber Cycle (CCYC)",
+  "summary": "A two-pole high-pass filter over a lightly smoothed price that strips out the trend and leaves the dominant cycle, with a one-bar trigger line.",
+  "description": "The Cyber Cycle removes the trend from price and keeps the swing. Price is first smoothed with a four-tap filter, weights 1, 2, 2 and 1 over the last four bars, which kills two-bar and three-bar noise. A two-pole high-pass filter then runs over that smoothed price. The *alpha* setting sets the filter's cutoff: the filter passes the short oscillations and rejects the slow drift, so what is left swings around zero.\n\nOn the first six bars the recursion has no history, so the cycle starts from the second difference of raw price divided by four, which gives it something to converge from instead of a flat start. From the seventh bar on, each value is the high-pass of the smoothed price plus two feedback terms from the previous two cycle values. The trigger line is the cycle delayed by one bar, zero on the first bar.",
+  "howToRead": "Read the cycle as the market's swing with the trend taken out. Above zero the short-term swing is up, below zero it is down. Crossings of the cycle and its trigger date the turns: the cycle crossing above the trigger marks a swing low turning up, and crossing below marks a swing high rolling over.\n\nIn a strong, steady trend the high-pass filter removes most of the move, so the cycle can turn against the trend often. Use the crossings to time entries in the direction of a trend you have judged by other means, not as stand-alone reversals.",
+  "settings": [
+    { "key": "alpha", "label": "alpha", "description": "The damping of the high-pass filter, from 0.01 to 0.99. Lower values give a smoother, slower cycle; higher values let faster swings through." },
+    { "key": "source", "label": "Source", "description": "The price series the cycle is computed from. The default is the bar's midpoint, (high + low) / 2." }
+  ],
+  "faq": [
+    { "q": "Why does the trigger line look like the cycle shifted right?", "a": "It is exactly that: the trigger is the cycle value from one bar earlier. Their crossings are the bars where the cycle changed direction." },
+    { "q": "Why do the first few bars look different?", "a": "The filter needs two bars of its own history. For the first six bars the study uses the second difference of price instead, and the recursion takes over from the seventh bar." },
+    { "q": "What does changing alpha do?", "a": "Alpha is the cutoff of the high-pass filter. At 0.07 the cycle is smooth and slow; raising it lets shorter swings through and makes the line busier." }
+  ]
+}

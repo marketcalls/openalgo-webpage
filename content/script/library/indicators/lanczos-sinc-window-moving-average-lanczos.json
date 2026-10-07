@@ -1,0 +1,15 @@
+{
+  "title": "Lanczos (Sinc) Window Moving Average (LANCZOS)",
+  "summary": "A symmetric moving average weighted by one lobe of the sinc function, peaking at the centre of the window.",
+  "description": "The Lanczos Window Moving Average weights the bars of its window with one lobe of the sinc function, sin(pi * x) / (pi * x). The position x runs from -1 on the oldest bar to 1 on the newest, so the weight is 1 at the centre of the window and falls smoothly to zero at both ends. The weights are computed once and scaled to sum to one. With a period of 2 both weights fall at the ends of the lobe and are effectively zero, so they are left unscaled and the line sits near zero once the window fills; use a period of 3 or more.\n\nOn every bar the last `period` prices are multiplied by their weights and added up. Until the window is full the line sits on the price itself, and a missing price counts as zero. The smooth roll-off at the edges keeps the line free of the steps a flat average shows when a large bar enters or leaves the window.",
+  "howToRead": "Read the LANCZOS line as a smooth trend line. Its weights peak in the middle of the window, so it runs roughly half a window behind price and turns well after price does. In exchange its path is clean, with little reaction to single large bars.\n\nUse it for the direction and slope of the trend rather than for timing. Because the newest and oldest bars carry almost no weight, the latest close barely moves the line until later bars arrive.",
+  "settings": [
+    { "key": "period", "label": "Period", "description": "Number of bars in the window. A longer window smooths more and lags more." },
+    { "key": "source", "label": "Source", "description": "The price series the average is taken from, the close by default." }
+  ],
+  "faq": [
+    { "q": "What shape are the weights?", "a": "One lobe of the sinc function: 1 at the centre of the window, falling smoothly to zero at the oldest and newest bars." },
+    { "q": "Why does the newest close barely move the line?", "a": "The sinc lobe gives almost no weight to the ends of the window, and the newest bar is at one end. Its effect grows as it moves toward the centre." },
+    { "q": "Why does the line equal price at the start?", "a": "Until the window holds the full period the weights cannot be applied, so the line returns the price itself." }
+  ]
+}

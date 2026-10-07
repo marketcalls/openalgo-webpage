@@ -1,0 +1,37 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © openalgo
+// Original work (c) mihakralj, MIT License
+
+version 1
+study("LRSI: Laguerre RSI", precision = 4)
+
+gamma = input(0.5, "Gamma", min = 0, max = 1, step = 0.01, tooltip = "Damping factor [0,1]. Lower = more responsive; higher = smoother.")
+
+g = clamp(gamma, 0, 1)
+price = orElse(close, 0)
+
+// Four Laguerre stages, each seeded at zero. Every stage reads the stage
+// above it on this bar and both its own and the upper stage's previous value.
+var l0 = 0.0
+var l1 = 0.0
+var l2 = 0.0
+var l3 = 0.0
+prevL0 = l0
+prevL1 = l1
+prevL2 = l2
+l0 = (1 - g) * price + g * prevL0
+l1 = -g * l0 + prevL0 + g * prevL1
+l2 = -g * l1 + prevL1 + g * prevL2
+l3 = -g * l2 + prevL2 + g * l3
+
+// The rises and the falls between neighbouring stages play the part of an
+// RSI's average gain and average loss.
+cu = (l0 > l1 ? l0 - l1 : 0) + (l1 > l2 ? l1 - l2 : 0) + (l2 > l3 ? l2 - l3 : 0)
+cd = (l0 < l1 ? l1 - l0 : 0) + (l1 < l2 ? l2 - l1 : 0) + (l2 < l3 ? l3 - l2 : 0)
+total = cu + cd
+lrsi = total != 0 ? cu / total : 0.5
+
+plot(lrsi, "LRSI", #ffeb3b, width = 2)
+level(0.8, "Overbought", #f23645, style = "dashed")
+level(0.5, "Midline", #787b86, style = "dashed")
+level(0.2, "Oversold", #089981, style = "dashed")

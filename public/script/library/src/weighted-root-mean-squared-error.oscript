@@ -1,0 +1,30 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © openalgo
+// Original work (c) mihakralj, MIT License
+
+version 1
+study("Weighted Root Mean Squared Error", precision = 4)
+
+length = input(14, "Length", min = 1, max = 5000, step = 1)
+useVolumeWeights = input(false, "Use Volume as Weights", tooltip = "When enabled, errors are weighted by volume")
+actual = input(close, "Actual")
+predicted = input(open, "Predicted")
+
+// An absent value on either side counts as zero.
+diff = orElse(actual, 0) - orElse(predicted, 0)
+
+// Each bar's squared miss is scaled by its weight: one for every bar, or the
+// bar's volume when volume weighting is on. A bar with no volume weighs one,
+// and a weight never goes below zero.
+barWeight = useVolumeWeights ? max(orElse(volume, 1), 0) : 1
+weightedSqError = barWeight * diff * diff
+
+sumWeightedError = sum(weightedSqError, length)
+sumWeight = sum(barWeight, length)
+
+// The root of the weighted mean squared miss. A window whose weights add up
+// to nothing reads as zero.
+wrmse = isNone(sumWeight) or isNone(sumWeightedError) ? none : sumWeight > 1e-10 ? sqrt(sumWeightedError / sumWeight) : 0
+
+plot(wrmse, "WRMSE", #ffeb3b, width = 2)
+level(0, "Perfect", #26a69a, style = "dashed")

@@ -1,0 +1,32 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © openalgo
+// Original work (c) mihakralj, MIT License
+
+version 1
+study("Elder Ray Index (ERI)", precision = 2)
+
+period = input(13, "Period", min = 1, max = 500, step = 1)
+
+weight = 2 / (period + 1)
+beta = 1 - weight
+
+// The centerline is an exponential average of the close that starts from the
+// first close, and while it is filling it is still divided by the weight
+// gathered so far. That lifts the earliest values well above price, so both
+// lines open with a large negative excursion before settling.
+src = orElse(close, 0)
+var emaState = 0.0
+emaState = bar.index == 0 ? src : weight * src + beta * emaState
+
+var warmup = true
+var eWeight = 1.0
+emaVal = emaState
+if warmup
+    eWeight = eWeight * beta
+    emaVal = emaState * (eWeight > 1e-10 ? 1 / (1 - eWeight) : 1)
+    if eWeight <= 1e-10
+        warmup = false
+
+plot(high - emaVal, "Bull Power", #4caf50, width = 2)
+plot(low - emaVal, "Bear Power", #ff5252, width = 2)
+level(0, "Zero", #9598a1, style = "dashed")

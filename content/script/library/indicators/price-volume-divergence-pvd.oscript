@@ -1,0 +1,44 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © openalgo
+// Original work (c) mihakralj, MIT License
+
+version 1
+study("Price Volume Divergence (PVD)", precision = 2)
+
+pricePeriod = input(14, "Price Period", min = 1, max = 100, step = 1)
+volumePeriod = input(14, "Volume Period", min = 1, max = 100, step = 1)
+divergenceThreshold = input(50, "Divergence Threshold", min = 0, max = 100000, step = 1, tooltip = "Kept for reference. It does not change the plotted line.")
+smoothing = input(3, "Smoothing Period", min = 1, max = 20, step = 1)
+
+priceLen = min(100, max(1, floor(pricePeriod)))
+volumeLen = min(100, max(1, floor(volumePeriod)))
+smoothLen = min(20, max(1, floor(smoothing)))
+
+// A missing close reads as zero and volume is floored at 1.
+c = orElse(close, 0)
+vol = max(orElse(volume, 0), 1)
+
+// Rate of change over the period. Until the period has passed, the change is
+// measured from the first bar; on the first bar itself it is zero.
+priceLag = bar.index < priceLen ? max(bar.index, 1) : priceLen
+volumeLag = bar.index < volumeLen ? max(bar.index, 1) : volumeLen
+prevClose = c[priceLag]
+prevVolume = vol[volumeLag]
+priceRoc = orElse(prevClose, 0) > 0 ? ((c - prevClose) / prevClose) * 100 : 0
+volumeRoc = orElse(prevVolume, 0) > 0 ? ((vol - prevVolume) / prevVolume) * 100 : 0
+
+// Opposite directions give a positive product, which is the divergence,
+// sized by how far both moved.
+priceMomentum = priceRoc > 0 ? 1 : priceRoc < 0 ? -1 : 0
+volumeMomentum = volumeRoc > 0 ? 1 : volumeRoc < 0 ? -1 : 0
+magnitude = abs(priceRoc) + abs(volumeRoc)
+raw = priceMomentum * -volumeMomentum * magnitude
+
+// A simple mean over the smoothing window, partial until it fills.
+var total = 0.0
+if bar.index >= smoothLen
+    total -= raw[smoothLen]
+total += raw
+pvdValue = total / min(bar.index + 1, smoothLen)
+
+plot(pvdValue, "PVD", #ffeb3b, width = 2)

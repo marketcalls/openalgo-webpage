@@ -1,0 +1,15 @@
+{
+  "title": "Mode",
+  "summary": "The value that repeats most often in the recent window, drawn only when some value actually repeats, marking prices the market keeps returning to.",
+  "description": "The Mode study counts how many times each distinct value of the source appears in the last `Period` bars and plots the one that appears most often. Values are compared exactly, so two closes count as the same only when they are equal to the last decimal.\n\nWhen two or more values share the highest count, the winner is the one met first while walking back from the current bar, which is the most recent of the tied values. When every value in the window is different there is no mode, and the study draws nothing on that bar.\n\nEarly bars use as many bars as exist rather than waiting for a full window, and absent values are skipped.",
+  "howToRead": "A mode that appears and holds the same value over many bars shows a price the instrument keeps settling at, often a round number or a level where orders cluster. Gaps in the line are bars where no value repeated in the window, which is the usual case for a finely priced instrument with a short period.\n\nThe study is most useful on a coarse source or a longer period, where repeats are common. On a source with many decimals it may draw very little, which is an honest answer rather than a fault.",
+  "settings": [
+    { "key": "source", "label": "Source", "description": "The series whose repeated values are counted. A coarser series repeats more often." },
+    { "key": "length", "label": "Period", "description": "How many recent bars are counted. A longer period finds more repeats and changes less often." }
+  ],
+  "faq": [
+    { "q": "Why are there gaps in the line?", "a": "On those bars every value in the window was different, so no value is more common than another and there is no mode to draw." },
+    { "q": "Which value wins a tie?", "a": "The one met first walking back from the current bar, which is the most recent of the tied values. A later value has to repeat strictly more often to replace it." },
+    { "q": "What period suits it?", "a": "A longer period gives repeats more chance to appear. With a short period on a finely priced instrument the line will be mostly empty." }
+  ]
+}

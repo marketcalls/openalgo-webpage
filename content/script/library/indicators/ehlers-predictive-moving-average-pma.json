@@ -1,0 +1,15 @@
+{
+  "title": "Ehlers Predictive Moving Average (PMA)",
+  "summary": "A weighted average with one lag cancelled by extrapolation, plus a faster trigger line that leads it.",
+  "description": "The Predictive Moving Average starts from a linearly weighted moving average of the source, in which the newest bar carries the most weight and each older bar one step less. It then takes a second weighted average of that first one. Because each smoothing pass adds lag, the gap between the two averages is an estimate of that lag, and the PMA adds it back: the line is twice the first average less the second.\n\nA second line, the trigger, is four times the first average less the second, divided by three. It sits closer to the newest price than the PMA, so it turns first. Both averages answer from the first bar: until the window holds `period` bars they weight the bars seen so far 1, 2 and up and divide by the sum of those weights.",
+  "howToRead": "Read the PMA as a low-lag trend line that follows price closely without the jitter of the raw close. The trigger line runs slightly ahead of it, so when the trigger crosses above the PMA the short-term pace has turned up, and when it crosses below the pace has turned down.\n\nThe extrapolation that removes lag also makes the line overshoot after a sharp reversal, and in a sideways market the two lines cross often and say little. Use the crossings with a view of the larger trend rather than on their own.",
+  "settings": [
+    { "key": "period", "label": "Period", "description": "Number of bars in each weighted average. A longer period gives smoother lines that react later." },
+    { "key": "source", "label": "Source", "description": "The price series both averages are taken from, the close by default." }
+  ],
+  "faq": [
+    { "q": "What is the difference between the PMA and the trigger line?", "a": "Both are built from the same two weighted averages. The PMA is twice the first less the second; the trigger is four times the first less the second, divided by three, which places it nearer the newest price so it turns sooner." },
+    { "q": "Why does the line appear from the very first bar?", "a": "The weighted averages use as many bars as exist until the window is full, weighting them 1, 2 and up. The first few values therefore rest on a shorter window than the period setting." },
+    { "q": "Why does the PMA sometimes move past price after a sharp turn?", "a": "It cancels lag by extrapolating the difference between two averages. After a sudden reversal that difference is large, so the line briefly runs beyond the turn before settling." }
+  ]
+}

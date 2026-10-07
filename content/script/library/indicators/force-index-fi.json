@@ -1,0 +1,14 @@
+{
+  "title": "Force Index (FI)",
+  "summary": "The change in close multiplied by volume and smoothed with an exponential average, showing who won each stretch of bars and with how much weight.",
+  "description": "The Force Index combines three things a bar says about the market: the direction of the move, its size, and the volume behind it. On each bar the raw force is the close minus the previous close, multiplied by the bar's volume. On the first bar there is no previous close, and the raw force is zero.\n\nThe raw force is then smoothed with an exponential average of weight 2 / (period + 1), seeded with the first raw value. While the average is filling, it is divided by the weight it has gathered so far, which lifts the early values. A missing close or a missing volume reads as zero.",
+  "howToRead": "Above zero, buyers have had the upper hand over the period, and below zero sellers have. The height of the line reflects both how far price moved and how much volume traded, so a large reading is a move with conviction behind it. Crossings of zero mark a change in who is in control, and a new price high made with a lower Force Index peak shows the move is running on less weight.\n\nThe scale depends on the instrument's price and volume, so compare the line with its own history only. On a series with no volume the line stays at zero.",
+  "settings": [
+    { "key": "period", "label": "Period", "description": "The length of the exponential average applied to the raw force. Short periods follow each push; long periods show the underlying balance." }
+  ],
+  "faq": [
+    { "q": "Why is the line zero on a symbol with no volume?", "a": "The raw force is the price change times volume, and missing volume reads as zero, so every raw value is zero." },
+    { "q": "Why does the line start at zero?", "a": "The first bar has no previous close, so its raw force is zero and the average is seeded with that zero. From the second bar the average is divided by the weight it has gathered so far, which scales the early values up toward the raw force until the correction fades." },
+    { "q": "What period should I use?", "a": "The default is 13. A period of 2 follows the force of each push closely and turns often, while a longer one shows which side has dominated over a longer stretch." }
+  ]
+}

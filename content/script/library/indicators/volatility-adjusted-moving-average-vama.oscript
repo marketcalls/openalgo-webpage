@@ -1,0 +1,70 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © openalgo
+// Original work (c) mihakralj, MIT License
+
+version 1
+study("Volatility Adjusted Moving Average (VAMA)", overlay = true, precision = 2)
+
+baseLength = input(20, "Base Length", min = 1, max = 5000, step = 1)
+source = input(close, "Source")
+shortAtr = input(10, "Short ATR Period", min = 1, max = 5000, step = 1, tooltip = "Short-term ATR period used as the current volatility measurement.")
+longAtr = input(50, "Long ATR Period", min = 1, max = 5000, step = 1, tooltip = "Long-term ATR period used as the reference volatility measurement.")
+minLength = input(5, "Minimum Length", min = 1, max = 5000, step = 1)
+maxLength = input(100, "Maximum Length", min = 1, max = 5000, step = 1)
+
+// A minimum above the maximum is lowered to the maximum.
+floorLength = min(maxLength, minLength)
+epsilon = 1e-10
+betaShort = 1 - 1 / shortAtr
+betaLong = 1 - 1 / longAtr
+
+// True range. On the first bar the previous close is the bar's own close.
+prevClose = bar.index == 0 ? close : close[1]
+tr = max(high - low, max(abs(high - prevClose), abs(low - prevClose)))
+
+// Smoothing by one over the period, started at zero and divided by one minus beta to the power
+// of the bars seen, so the first bar already answers its own true range.
+var rawShort = 0.0
+var eShort = 1.0
+var rawLong = 0.0
+var eLong = 1.0
+atrShort = none
+atrLong = none
+if not isNone(tr)
+    rawShort = (rawShort * (shortAtr - 1) + tr) / shortAtr
+    eShort = eShort * betaShort
+    atrShort = eShort > epsilon ? rawShort / (1 - eShort) : rawShort
+    rawLong = (rawLong * (longAtr - 1) + tr) / longAtr
+    eLong = eLong * betaLong
+    atrLong = eLong > epsilon ? rawLong / (1 - eLong) : rawLong
+
+// The window stretches when volatility is calm against its longer average
+// and shrinks when it expands, held between the minimum and the maximum.
+ratio = not isNone(atrShort) and not isNone(atrLong) and atrShort != 0 ? atrLong / atrShort : 1
+calcLength = baseLength * ratio
+clamped = max(floorLength, min(maxLength, calcLength))
+adjustedLength = isNone(clamped) ? floorLength : trunc(clamped)
+
+// The values held are the last maxLength source values.
+validCount = 0
+total = 0.0
+for k = 0 to maxLength - 1
+    held = source[k]
+    if not isNone(held)
+        total += held
+        validCount += 1
+fallback = validCount > 0 ? total / validCount : source
+
+// The average of the newest adjustedLength values.
+actualCount = min(validCount, adjustedLength)
+partialSum = 0.0
+partialCount = 0
+for k = 0 to actualCount - 1
+    held = source[k]
+    if not isNone(held)
+        partialSum += held
+        partialCount += 1
+
+vamaValue = partialCount > 0 ? partialSum / partialCount : fallback
+
+plot(vamaValue, "VAMA", #ffeb3b, width = 2)

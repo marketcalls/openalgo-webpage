@@ -1,0 +1,17 @@
+{
+  "title": "VWAP Bands (VWAPBANDS)",
+  "summary": "A volume weighted average price that restarts each chosen period, with one and two volume weighted standard deviation bands around it.",
+  "description": "VWAP Bands accumulates three running sums from the start of each reset period: price times volume, volume, and price squared times volume. The VWAP is the first divided by the second. The variance of price about the VWAP is the third sum divided by the volume total minus the VWAP squared, floored at zero, and its square root is the volume weighted standard deviation. Bars with no volume add nothing, and the bands stay on the VWAP until the period holds at least two bars with volume.\n\nThe first bands sit the multiplier times that deviation above and below the VWAP, and the optional second bands twice as far. The reset period is chosen in the menu: from one minute up to four hours, counted from midnight, or a day, a week starting Monday, a month, a quarter, a half year or a year, all in the chart's timezone, or never. On an hourly chart every period of an hour or less restarts on every bar.",
+  "howToRead": "The VWAP is the average price paid for every unit traded since the period began, so price above it means the current price is higher than the average paid in the period and price below it means it is lower. The bands show how far price has stretched from that average relative to its own volume weighted scatter: the first bands contain ordinary moves, and the second bands mark extended ones.\n\nEarly in a period the sums hold few bars, so the bands are narrow and the VWAP moves easily. Choose a reset period longer than the chart interval; one equal to or shorter than it restarts on every bar and leaves the bands on the source.",
+  "settings": [
+    { "key": "source", "label": "Source", "description": "The price averaged by volume. The typical price, (high + low + close) / 3, by default." },
+    { "key": "sessionType", "label": "Session Reset", "description": "When the running sums restart: an intraday period counted from midnight, a day, week, month, quarter, half year or year, or never." },
+    { "key": "multiplier", "label": "Standard Deviation Multiplier", "description": "Distance of the first bands from the VWAP in volume weighted standard deviations. The second bands sit twice as far." },
+    { "key": "showBands2", "label": "Show 2nd Standard Deviation Bands", "description": "Draw the outer pair of bands at twice the multiplier, or hide them." }
+  ],
+  "faq": [
+    { "q": "What happens when there is no volume?", "a": "A bar with no volume adds nothing to the sums. If the period has no volume at all, the VWAP falls back to the source value and the bands collapse onto it." },
+    { "q": "Why are the bands flat on the VWAP at the start of a day?", "a": "The deviation needs at least two bars with volume in the period. On the first bar after a reset it is zero, so all the bands sit on the VWAP." },
+    { "q": "Which timezone decides when a day or week begins?", "a": "The chart's timezone. A day starts at midnight there, and a week starts at midnight on Monday." }
+  ]
+}

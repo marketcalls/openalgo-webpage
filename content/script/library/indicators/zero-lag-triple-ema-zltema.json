@@ -1,0 +1,32 @@
+{
+  "title": "Zero-Lag Triple EMA (ZLTEMA)",
+  "summary": "A triple exponential average with progressively faster stages, fed a de-lagged price, for a very responsive trend line.",
+  "description": "Zero-Lag Triple EMA corrects the price for lag and then smooths it through three exponential averages. The de-lagged price is `2 * price - price lag bars ago`, with the lag half the period minus a half, rounded down, and at least one bar. Until `lag` bars exist, the first price of the chart stands in for the older one.\n\nThe first average has weight `a1 = 2 / (period + 1)`. The second and third are faster: each weight is the one before multiplied by the cube root of `1 / a1`, so the second is `a1 ^ (2/3)` and the third `a1 ^ (1/3)`: about 0.18, 0.32 and 0.57 at the default period of 10. All three start from zero, and while the zero start still carries weight `e` each stage is multiplied by `1 / (1 - e)`. The line is `3 * first - 3 * second + third`, the triple average combination that cancels most of the lag of the chain.",
+  "howToRead": "Read it as a very fast moving average on price. A rising line with price above it describes an uptrend, a falling line with price below it a downtrend. Its turns come earlier than those of an exponential average of the same period, which is useful for timing but also means it reacts to noise that a slower line would ignore.\n\nIt overshoots price after sharp moves and can cross price many times in a range. It is most useful in trending conditions, or paired with a slower average that sets the direction.",
+  "settings": [
+    {
+      "key": "period",
+      "label": "Period",
+      "description": "Sets the first stage's weight as 2 / (period + 1), from which the faster second and third weights follow, and the lag of the correction as (period - 1) / 2, rounded down and at least 1."
+    },
+    {
+      "key": "source",
+      "label": "Source",
+      "description": "The price series the average follows, the close by default."
+    }
+  ],
+  "faq": [
+    {
+      "q": "Why are the second and third stages faster?",
+      "a": "Each weight is the one before multiplied by the cube root of 1 / a1, so the second stage uses a1 ^ (2/3) and the third a1 ^ (1/3), about 0.32 and 0.57 at the default period of 10. Heavier weights keep the extra stages from adding as much lag as two more averages of the first weight would."
+    },
+    {
+      "q": "How does it compare with the double version?",
+      "a": "It adds a third average and combines the three as 3 times the first minus 3 times the second plus the third. That cancels more lag, at the cost of more overshoot."
+    },
+    {
+      "q": "What stands in for the older price at the start?",
+      "a": "Until enough bars exist, the first price of the chart is used as the older price, so the correction starts small instead of jumping."
+    }
+  ]
+}

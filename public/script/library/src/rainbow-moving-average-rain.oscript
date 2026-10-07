@@ -1,0 +1,36 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © openalgo
+// Original work (c) mihakralj, MIT License
+
+version 1
+study("Rainbow Moving Average (RAIN)", overlay = true, precision = 2)
+
+period = input(2, "Period", min = 1, max = 5000, step = 1, tooltip = "Lookback window used by each of the ten stacked moving average layers.")
+source = input(close, "Source")
+
+// A simple mean whose window grows with the data until it reaches len, so
+// every layer answers from the first bar. Both parts run on every bar and the
+// bar count picks between them.
+fn growingMean(x, len) =>
+    total = cum(x)
+    windowed = sma(x, len)
+    seen = bar.index + 1
+    seen < len ? total / seen : windowed
+
+// Ten layers, each smoothing the one below it. An absent price counts as zero.
+layer1 = growingMean(orElse(source, 0), period)
+layer2 = growingMean(layer1, period)
+layer3 = growingMean(layer2, period)
+layer4 = growingMean(layer3, period)
+layer5 = growingMean(layer4, period)
+layer6 = growingMean(layer5, period)
+layer7 = growingMean(layer6, period)
+layer8 = growingMean(layer7, period)
+layer9 = growingMean(layer8, period)
+layer10 = growingMean(layer9, period)
+
+// The faster layers weigh most: 5, 4, 3 and 2 for the first four and 1 for
+// each of the other six, twenty in all.
+rain = (5 * layer1 + 4 * layer2 + 3 * layer3 + 2 * layer4 + layer5 + layer6 + layer7 + layer8 + layer9 + layer10) / 20
+
+plot(rain, "RAIN", #ffeb3b, width = 2)

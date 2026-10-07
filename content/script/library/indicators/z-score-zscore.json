@@ -1,0 +1,32 @@
+{
+  "title": "Z-Score (ZSCORE)",
+  "summary": "How far the current value sits from its rolling mean, measured in standard deviations of the lookback window.",
+  "description": "The Z-Score expresses the current value as a distance from the average of the lookback window, divided by the window's standard deviation. A reading of 2 means the value is two standard deviations above the mean; a reading of -1 means one below. The deviation is the population one, dividing by the number of values in the window.\n\nThe study keeps a running sum and sum of squares, so the window is partial until it fills and the first bar, with a single value, draws nothing. The variance is clamped at zero, and when the standard deviation is effectively zero (a flat window) the study reports 0 rather than dividing by it.",
+  "howToRead": "Read the line against zero and against round levels. Near zero, price sits at its recent average. Readings beyond plus or minus 2 mean price has stretched unusually far from that average for the window, which mean reversion traders watch for a pullback and trend traders read as strength. A Z-Score that stays high while price keeps rising means the trend is outrunning its own recent range.\n\nThe score is relative to the window, so it adapts to quiet and volatile phases alike. It says nothing about direction ahead, and in a strong trend it can stay at an extreme for a long time.",
+  "settings": [
+    {
+      "key": "source",
+      "label": "Source",
+      "description": "The series being scored, usually the close."
+    },
+    {
+      "key": "period",
+      "label": "Period",
+      "description": "How many bars the mean and standard deviation cover. A short period scores against the very recent past; a long one against a broader average."
+    }
+  ],
+  "faq": [
+    {
+      "q": "Does a reading above 2 mean price will fall?",
+      "a": "No. It means price is unusually far above its recent average. In a sideways market some traders watch such a reading for a pullback, but in a strong trend the score can stay high for many bars."
+    },
+    {
+      "q": "Why is it 0 on a flat stretch?",
+      "a": "When every value in the window is the same there is no spread to measure, and the study reports 0 rather than dividing by zero."
+    },
+    {
+      "q": "Why do readings compare across quiet and busy periods?",
+      "a": "It divides by the window's own standard deviation, so it is measured in deviations rather than points, and a reading of 2 means the same stretch whatever the volatility."
+    }
+  ]
+}

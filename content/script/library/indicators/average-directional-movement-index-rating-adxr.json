@@ -1,0 +1,15 @@
+{
+  "title": "Average Directional Movement Index Rating (ADXR)",
+  "summary": "Averages today's ADX with the ADX from a set number of bars earlier, a steadier read of trend strength drawn with ADX, +DI and -DI.",
+  "description": "ADXR smooths trend strength by averaging the current ADX with an older one. It starts from the same building blocks as ADX: the true range of each bar, and the plus and minus directional movement, which is how far the high rose above the previous high or the low fell below the previous low, counted on one side only.\n\nThe three are smoothed with Wilder's recursion, each seeded with its first value. While the smoothing is young, each running value is divided by `1 - e`, where `e` is `(1 - 1 / period)` raised to the bar index, which removes the bias of the seed. **+DI** and **-DI** are the smoothed directional movements as a percentage of the smoothed true range, each capped at 50. DX is their gap as a percentage of their sum, and **ADX** is DX smoothed the same way from a zero start.\n\n**ADXR** is the average of this bar's ADX and the ADX `ratingPeriod` bars earlier. Until that many bars exist the earlier value is taken from the first bar, where ADX has no value and counts as zero, so the earliest ADXR readings are about half the ADX.",
+  "howToRead": "Read ADXR as a slower ADX. Because it mixes in an older reading, it turns later than ADX but moves less on a single burst of activity, which makes it useful for judging whether a market has been trending over a span of bars rather than just now. A rising ADXR says trend strength is building, a falling one that it is fading.\n\nUse the +DI and -DI lines for direction: the higher one shows which side owns the movement. The first stretch of bars is held down by the zero substitution described above, so wait for at least the rating period before trusting the level of the ADXR line.",
+  "settings": [
+    { "key": "period", "label": "ADX Period", "description": "The smoothing length for the true range, the directional movement and ADX itself. Longer gives slower, smoother lines." },
+    { "key": "ratingPeriod", "label": "Rating Period", "description": "How many bars back the older ADX is taken from. A longer gap makes ADXR lag ADX more and smooth it further." }
+  ],
+  "faq": [
+    { "q": "How is ADXR different from ADX?", "a": "ADXR is the average of the current ADX and the ADX from the rating period earlier, so it is smoother and slower to turn than ADX alone." },
+    { "q": "Why is ADXR about half of ADX at the start?", "a": "Until the rating period has passed, the older reading is taken from the first bar, where ADX has no value and is counted as zero. The average is therefore roughly half the current ADX." },
+    { "q": "Why are the DI lines capped at 50?", "a": "This calculation limits each directional index to 50 before the DX ratio is taken, so very one-sided movement reads as 50 rather than higher." }
+  ]
+}

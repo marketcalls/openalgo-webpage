@@ -1,0 +1,36 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © openalgo
+// Original work (c) mihakralj, MIT License
+
+version 1
+study("Stochastic Fast (STOCHF)", precision = 2)
+
+kLength = input(5, "K Length", min = 1, max = 100, step = 1, tooltip = "Period for calculating the raw %K line")
+dLength = input(3, "D Length", min = 1, max = 50, step = 1, tooltip = "Smoothing period for the %D signal line")
+
+// The lowest low and highest high of the last kLength bars, or of every bar so
+// far while fewer than kLength have been seen. A missing price reads as 0.
+lo = orElse(low, 0)
+hi = orElse(high, 0)
+lowestLow = lo
+highestHigh = hi
+for k = 1 to kLength - 1
+    if k <= bar.index
+        lowestLow = min(lowestLow, lo[k])
+        highestHigh = max(highestHigh, hi[k])
+
+// Raw %K: where the close sits in that range. A flat range reads 0.
+cv = orElse(close, 0)
+range = highestHigh - lowestLow
+kVal = range > 0 ? 100 * (cv - lowestLow) / range : 0
+
+// %D: the mean of the last dLength readings of %K, or of all of them while
+// fewer have been seen.
+var dSum = 0.0
+dSum += kVal
+if bar.index >= dLength
+    dSum -= kVal[dLength]
+dVal = dSum / min(bar.index + 1, dLength)
+
+plot(kVal, "Fast %K", #ffeb3b, width = 2)
+plot(dVal, "Fast %D", #2962ff, width = 2)

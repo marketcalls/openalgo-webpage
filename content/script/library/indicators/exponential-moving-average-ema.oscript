@@ -1,0 +1,31 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © openalgo
+// Original work (c) mihakralj, MIT License
+
+version 1
+study("Exponential Moving Average (EMA)", overlay = true, precision = 2)
+
+period = input(10, "Period", min = 1, max = 5000, step = 1)
+source = input(close, "Source")
+
+smoothing = 2 / (period + 1)
+beta = 1 - smoothing
+
+// The average starts from zero. While beta^n is still above 1e-10 it is
+// divided by 1 - beta^n, which removes the zero seed so the line is unbiased
+// from the first bar.
+var state = 0.0
+var decay = 1.0
+var warmup = true
+emaValue = none
+if not isNone(source)
+    state = smoothing * (source - state) + state
+    if warmup
+        decay = decay * beta
+        denom = 1 - decay
+        emaValue = denom != 0 ? state / denom : state
+        warmup = decay > 1e-10
+    else
+        emaValue = state
+
+plot(emaValue, "EMA", #ffeb3b, width = 2)

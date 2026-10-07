@@ -1,0 +1,37 @@
+{
+  "title": "Discrete Wavelet Transform (DWT)",
+  "summary": "An a trous Haar wavelet decomposition that plots either the smooth trend at the deepest level or the detail removed at one chosen level.",
+  "description": "This study splits the source into a smooth trend and a set of detail layers with a stationary, a trous Haar wavelet. Each level averages the previous approximation with itself a fixed number of bars back, and the lag doubles from level to level: 1 bar at level 1, 2 at level 2, 4 at level 3, up to 128 at level 8. The detail at a level is what that averaging removed, the previous approximation minus the new one.\n\nWith `Output Component` at 0 the plot is the approximation at the deepest level, a smoothed trend whose lookback is about 2 to the power of the level count. With a value from 1 to 8 it is the detail at that level instead, the part of price movement in that band of cycle lengths. A component above the level count is read as the deepest detail available. Where a lagged value does not exist yet, near the start of the chart, the current one is used instead.\n\nAdding all the detail layers to the deepest approximation gives back the source exactly, which is what makes the decomposition useful for separating trend from noise.",
+  "howToRead": "At component 0 read the line as a trend filter on the price chart's own scale: more levels make it smoother and slower. At a detail component the line oscillates around the dotted zero line: above zero the finer approximation one level up (the source itself at level 1) is above the smoother one at that level, below zero it is beneath it. Low levels hold bar to bar noise, higher levels hold slower swings.\n\nThe approximation lags price, roughly by half its lookback, and the detail layers only describe movement that has already happened. Use the trend for direction and a detail layer to see the swings of one size on their own.",
+  "settings": [
+    {
+      "key": "source",
+      "label": "Source",
+      "description": "The price series that is decomposed, the close by default."
+    },
+    {
+      "key": "levels",
+      "label": "Decomposition Levels",
+      "description": "How many times the series is halved into a smoother approximation. Each extra level doubles the lookback, so the trend becomes smoother and slower."
+    },
+    {
+      "key": "output",
+      "label": "Output Component",
+      "description": "Which layer to plot: 0 for the smooth approximation, or 1 to 8 for the detail at that level. A value above the level count shows the deepest detail."
+    }
+  ],
+  "faq": [
+    {
+      "q": "Why is it called stationary or a trous?",
+      "a": "The series is never downsampled. Instead of dropping every other bar, each level spreads its average over a wider gap, so every level has a value on every bar and nothing shifts when a new bar arrives."
+    },
+    {
+      "q": "What does component 1 show?",
+      "a": "The finest detail: half the difference between each bar and the one before it. It is mostly bar to bar noise."
+    },
+    {
+      "q": "How long is the lookback?",
+      "a": "About 2 to the power of the level count, so 16 bars at the default of 4 levels and 256 at 8."
+    }
+  ]
+}

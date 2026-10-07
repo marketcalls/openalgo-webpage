@@ -1,0 +1,44 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © openalgo
+// Original work (c) mihakralj, MIT License
+
+version 1
+study("Conditional Volatility (CV)", precision = 2)
+
+length = input(20, "Length", min = 10, max = 500, step = 1, tooltip = "Initial period for estimation.")
+// "alpha" is a library name, so this input carries no name of its own and is
+// keyed by its title instead.
+weightReturn = clamp(input(0.2, "alpha", min = 0.01, max = 0.99, step = 0.01, tooltip = "Weight on the previous squared return."), 0.01, 0.99)
+beta = input(0.7, "Beta", min = 0.01, max = 0.99, step = 0.01, tooltip = "Weight on the previous variance. Alpha plus Beta must stay below 1.")
+
+len = min(500, max(10, floor(length)))
+// The model needs alpha plus beta below 1 to stay stable, so beta is held just
+// under that line instead of letting the variance run away.
+betaIn = min(0.99, max(0.01, beta))
+weightVariance = weightReturn + betaIn >= 1 ? max(0.001, 1 - weightReturn - 0.001) : betaIn
+
+// The log return from the previous close, the first bar reading zero, and
+// capped at 20 percent either way so a single gap cannot swamp the model.
+safeClose = max(close, 1e-10)
+safePrevClose = max(orElse(close[1], safeClose), 1e-10)
+rawReturn = log(safeClose / safePrevClose)
+logReturn = abs(rawReturn) > 0.2 ? sign(rawReturn) * 0.2 : rawReturn
+squaredReturn = logReturn * logReturn
+
+var omega = 0.0
+var longRunVar = 0.0
+var prevVariance = 0.0
+
+// The first len bars build the long run variance as a running mean of the
+// squared returns; on bar len that level fixes the constant term omega.
+if bar.index < len
+    longRunVar = (bar.index * longRunVar + squaredReturn) / (bar.index + 1)
+    prevVariance = longRunVar
+else if bar.index == len
+    omega = (1 - weightReturn - weightVariance) * longRunVar
+    prevVariance = longRunVar
+
+condVariance = max(omega + weightReturn * squaredReturn + weightVariance * prevVariance, 0.0000001)
+prevVariance = condVariance
+
+plot(sqrt(252 * condVariance) * 100, "CV", #ffeb3b, width = 2)

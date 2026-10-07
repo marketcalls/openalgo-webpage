@@ -1,0 +1,27 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © openalgo
+// Original work (c) mihakralj, MIT License
+
+version 1
+study("Price Volume Trend (PVT)", precision = 2)
+
+signalLength = input(14, "Signal Line Period", min = 1, step = 1)
+
+// The first bar compares the close with itself, so it adds nothing.
+prevClose = bar.index > 0 ? close[1] : close
+ratio = prevClose != 0 ? (close - prevClose) / prevClose : 0.0
+
+// Volume weighted by the bar's percentage change, summed from the first bar.
+// A bar with no volume adds nothing.
+var pvtTotal = 0.0
+pvtTotal += orElse(volume, 0) * ratio
+
+pvtSignal = sma(pvtTotal, signalLength)
+
+plot(pvtTotal, "PVT", #ffeb3b, width = 2)
+plot(pvtSignal, "PVT Signal", #ff5252, width = 1)
+level(0, "Zero Line", #787b86, style = "dashed")
+
+// Green while the line is above its signal, red otherwise, including the
+// warmup bars before the signal exists.
+background(isNone(pvtSignal) ? fade(#ff5252, 88) : pvtTotal > pvtSignal ? fade(#4caf50, 88) : fade(#ff5252, 88))

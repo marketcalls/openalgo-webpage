@@ -1,0 +1,15 @@
+{
+  "title": "Ehlers Recursive Median Filter (RMED)",
+  "summary": "An exponential smoothing of the five-bar median price, which ignores one-bar spikes that would jolt an ordinary moving average.",
+  "description": "The Recursive Median Filter combines two ideas. First it takes the median of the last five prices, which throws away the two highest and the two lowest and so is not moved by a single spike bar. Then it smooths that median with an exponential filter whose factor is set by `Period`.\n\nThe factor is `(cos(a) + sin(a) - 1) / cos(a)`, where `a` is one full cycle divided by `Period`, held between 0 and 1. This places the cutoff of the exponential stage at a cycle of `Period` bars. Each new value is that factor times the five-bar median plus the rest times the previous value.\n\nThe first value is the first price. Before five bars exist, the missing places in the median window count as zero, which pulls the earliest values down; this start-up effect fades as the recursion moves on.",
+  "howToRead": "Read the line as a trend line that is hard to fool with one bar. A sudden wick or a single bad print does not move the median, so the line keeps its path; a move that lasts three bars or more does move it. Its slope gives the trend direction, and a turn marks a turn in the swing at the scale of `Period`.\n\nThe median adds a couple of bars of delay on top of the exponential smoothing, so the line turns later than a plain exponential average of the same period. The very first bars are a start-up and should not be read.",
+  "settings": [
+    { "key": "period", "label": "Period", "description": "The cycle length in bars that sets the smoothing factor. Larger values give a slower, smoother line." },
+    { "key": "source", "label": "Source", "description": "The price series the median is taken from, the close by default." }
+  ],
+  "faq": [
+    { "q": "Why use a median instead of the price?", "a": "The median of five bars ignores a single extreme value, so one spike bar does not pull the line. An ordinary average would move with it." },
+    { "q": "Why does the line dip at the very start?", "a": "Before five bars exist, the empty places in the median window count as zero. The effect fades as the smoothing carries on." },
+    { "q": "What does Period actually control?", "a": "Only the smoothing factor of the exponential stage. The median window is always five bars." }
+  ]
+}

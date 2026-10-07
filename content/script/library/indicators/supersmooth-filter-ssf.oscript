@@ -1,0 +1,38 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © openalgo
+// Original work (c) mihakralj, MIT License
+
+version 1
+study("Supersmooth Filter (SSF)", overlay = true, precision = 2)
+
+source = input(close, "Source")
+length = input(20, "Length", min = 1, max = 5000, step = 1)
+
+len = max(1, floor(length))
+
+// A two-pole lowpass: the coefficients sum to one, so a flat price passes
+// through unchanged. The angle is in radians.
+arg = sqrt(2) * math.pi / len
+expArg = exp(-arg)
+c2 = 2 * expArg * math.cos(arg)
+c3 = -expArg * expArg
+c1 = 1 - c2 - c3
+
+// Missing inputs read as the nearest value that exists.
+ssrc = orElse(source, source[1])
+src1 = orElse(source[1], ssrc)
+src2 = orElse(source[2], src1)
+
+// The two previous outputs, absent before they exist. Until then the filter
+// is fed the price, so the first bar reproduces it exactly.
+var prev1 = none
+var prev2 = none
+s1 = orElse(prev1, src1)
+s2 = orElse(prev2, src2)
+
+ssf = c1 * ssrc + c2 * s1 + c3 * s2
+
+prev2 = prev1
+prev1 = ssf
+
+plot(ssf, "SSF", #ffeb3b, width = 2)

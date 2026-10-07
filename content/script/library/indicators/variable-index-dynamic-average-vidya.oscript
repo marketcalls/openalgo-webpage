@@ -1,0 +1,59 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © openalgo
+// Original work (c) mihakralj, MIT License
+
+version 1
+study("Variable Index Dynamic Average (VIDYA)", overlay = true, precision = 2)
+
+period = input(10, "Period", min = 1, max = 5000, step = 1)
+stdPeriod = input(0, "Std Dev Period (0=use Period)", min = 0, max = 5000, step = 1, tooltip = "Window for the slower standard deviation. Zero falls back to Period.")
+source = input(close, "Source")
+
+smoothing = 2 / (period + 1)
+p = stdPeriod > 0 ? stdPeriod : period
+lookback = max(p, 5)
+
+var vidyaValue = none
+
+if not isNone(source)
+    // Population standard deviations over the slower window and over the last
+    // five bars, from running sums of the values and their squares. Bars
+    // before the first bar of the chart are skipped.
+    sumP = 0.0
+    sumSqP = 0.0
+    countP = 0
+    sum5 = 0.0
+    sumSq5 = 0.0
+    count5 = 0
+    for k = 0 to lookback - 1
+        val = source[k]
+        if not isNone(val)
+            if k < p
+                sumP += val
+                sumSqP += val * val
+                countP += 1
+            if k < 5
+                sum5 += val
+                sumSq5 += val * val
+                count5 += 1
+
+    stdSlow = 0.0
+    if countP > 0
+        meanP = sumP / countP
+        stdSlow = sqrt(max(sumSqP / countP - meanP * meanP, 0))
+    stdFast = 0.0
+    if count5 > 0
+        mean5 = sum5 / count5
+        stdFast = sqrt(max(sumSq5 / count5 - mean5 * mean5, 0))
+
+    // The volatility index is the fast deviation over the slow one, held
+    // between zero and one, and it scales the smoothing factor.
+    volIdx = stdSlow > 0 ? stdFast / stdSlow : 1
+    volIdx = isNone(volIdx) ? 1 : volIdx
+    volIdx = min(max(volIdx, 0), 1)
+
+    sc = smoothing * volIdx
+    vidyaValue = isNone(vidyaValue) ? source : source * sc + vidyaValue * (1 - sc)
+
+// A missing source value leaves the average where it was.
+plot(vidyaValue, "VIDYA", #ffeb3b, width = 2)

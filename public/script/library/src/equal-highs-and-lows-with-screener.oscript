@@ -1,0 +1,189 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © openalgo
+// Original work (c) Arun K Bhaskar, MPL-2.0
+
+version 1
+study("Equal Highs and Lows with Screener", overlay = true, precision = 2)
+
+// ---- Screener -----------------------------------------------------------------
+method = input("Equals", "Screening Method", options = ["Equals", "Equals Sweep"], group = "Screener", tooltip = "Equals reports the pair as it forms. Equals Sweep waits for price to run through the level.")
+direction = input("Both", "Direction", options = ["Both", "Bullish", "Bearish"], group = "Screener")
+showBull = input(true, "Only Bullish", group = "Screener")
+showBear = input(true, "Only Bearish", group = "Screener")
+displayRows = input(16, "Display Rows", min = 0, max = 100, step = 1, group = "Screener")
+tablePosition = input("bottom-left", "Table Position", options = ["top-left", "top-center", "top-right", "middle-left", "middle-center", "middle-right", "bottom-left", "bottom-center", "bottom-right"], group = "Screener")
+tableTextSize = input("small", "Table Size", options = ["auto", "tiny", "small", "normal", "large", "huge"], group = "Screener", tooltip = "Text size of the table. Tables in this version draw at the chart's own text size.")
+
+// ---- Equal high low -------------------------------------------------------------
+left = input(60, "Left", min = 1, max = 1000, step = 1, group = "Equal High Low")
+right = input(30, "Right", min = 1, max = 1000, step = 1, group = "Equal High Low")
+eqPercent = input(0.05, "Equal HL %", min = 0, max = 100, step = 0.01, group = "Equal High Low", tooltip = "Lower values mean highs and lows are closer.")
+srcMode = input("High/Low", "Source", options = ["High/Low", "Open/Close"], group = "Equal High Low")
+
+// The palette: equal highs, equal lows and the table's neutral ink.
+BEAR = #F7525F
+BULL = #22AB94
+NEUTRAL = #B2B5BE
+
+// Boxes and tags are drawn at 25 percent transparency.
+BOX_OPACITY = 0.75
+
+// Only the newest 50 boxes are kept.
+MAX_BOXES = 50
+
+// ---- Swing pivots ---------------------------------------------------------------
+// The swings are read from the wicks or from the candle bodies.
+useOpenClose = srcMode == "Open/Close"
+srcHigh = useOpenClose ? max(open, close) : high
+srcLow = useOpenClose ? min(open, close) : low
+
+ph = pivotHigh(srcHigh, left, right)
+pl = pivotLow(srcLow, left, right)
+isPh = not isNone(ph)
+isPl = not isNone(pl)
+
+// The last two pivots of each side and the time of the bar each formed on.
+// Index 0 is the newest. The newest levels as the previous bar left them are
+// kept for the sweep crossings.
+var phPrice0 = none
+var phPrice1 = none
+var phTime0 = none
+var phTime1 = none
+var plPrice0 = none
+var plPrice1 = none
+var plTime0 = none
+var plTime1 = none
+
+prevPhLevel = phPrice0
+prevPlLevel = plPrice0
+
+if isPh
+    phPrice1 = phPrice0
+    phPrice0 = ph
+    phTime1 = phTime0
+    phTime0 = time[right]
+if isPl
+    plPrice1 = plPrice0
+    plPrice0 = pl
+    plTime1 = plTime0
+    plTime0 = time[right]
+
+// The percentage gap between the two newest pivots of a side, held between
+// pivots and absent until two pivots of that side exist.
+phPchg = not isNone(phPrice0) and not isNone(phPrice1) and phPrice1 != 0 ? abs((phPrice0 - phPrice1) / phPrice1 * 100) : none
+plPchg = not isNone(plPrice0) and not isNone(plPrice1) and plPrice1 != 0 ? abs((plPrice0 - plPrice1) / plPrice1 * 100) : none
+
+phEqual = not isNone(phPchg) and phPchg < eqPercent
+plEqual = not isNone(plPchg) and plPchg < eqPercent
+
+// A pair counts only on a closed bar, so a bar still forming never draws a
+// box or lists a hit that its next tick could take back.
+phCondition = isPh and phEqual and bar.isConfirmed
+plCondition = isPl and plEqual and bar.isConfirmed
+
+// ---- Boxes and tags -------------------------------------------------------------
+// Each equal pair is boxed from the earlier pivot to the later one, and the
+// later pivot bar is tagged at its own high or low.
+var eqBoxes: array<box> = []
+
+if phCondition and not isNone(phTime1)
+    push(eqBoxes, draw.box(phTime1, phPrice1, phTime0, phPrice0, color = fade(BEAR, 25), fillColor = BEAR, opacity = BOX_OPACITY))
+    draw.label(time[right], high[right], "EQH", color = fade(BEAR, 25), textColor = white, tooltip = "Equal high")
+if plCondition and not isNone(plTime1)
+    push(eqBoxes, draw.box(plTime1, plPrice1, plTime0, plPrice0, color = fade(BULL, 25), fillColor = BULL, opacity = BOX_OPACITY))
+    draw.label(time[right], low[right], "EQL", color = fade(BULL, 25), textColor = white, tooltip = "Equal low")
+while size(eqBoxes) > MAX_BOXES
+    draw.delete(shift(eqBoxes))
+
+// ---- Screening ------------------------------------------------------------------
+// The sweep method waits for the high to cross above the newest equal high, or
+// the low to cross below the newest equal low.
+sweep = method == "Equals Sweep"
+crossOver = not isNone(high[1]) and not isNone(phPrice0) and not isNone(prevPhLevel) and high > phPrice0 and high[1] <= prevPhLevel
+crossUnder = not isNone(low[1]) and not isNone(plPrice0) and not isNone(prevPlLevel) and low < plPrice0 and low[1] >= prevPlLevel
+
+bullishCond = sweep ? phEqual and crossOver and bar.isConfirmed : phCondition
+bearishCond = sweep ? plEqual and crossUnder and bar.isConfirmed : plCondition
+
+bullAllowed = direction != "Bearish"
+bearAllowed = direction != "Bullish"
+
+// Direction calls an equal high bullish and an equal low bearish, while the two
+// switches are wired the other way round: "Only Bullish" gates the equal lows
+// and "Only Bearish" the equal highs. When both fire on one bar the equal low
+// is listed. An equal high is listed as H, an equal low as L.
+screenSignal = showBull and bearishCond and bearAllowed ? -1 : showBear and bullishCond and bullAllowed ? 1 : none
+
+var sigTimes: array<number> = []
+var sigPrices: array<number> = []
+var sigSides: array<number> = []
+if not isNone(screenSignal)
+    push(sigTimes, time)
+    push(sigPrices, orElse(roundToTick(close), close))
+    push(sigSides, screenSignal)
+    if size(sigTimes) > 100
+        shift(sigTimes)
+        shift(sigPrices)
+        shift(sigSides)
+
+// ---- Screener table ---------------------------------------------------------------
+// Grids pin to the four corners, so each position is drawn in its nearest
+// corner: a top row at the top, a middle or bottom row at the bottom, a left
+// column on the left, a centre or right column on the right.
+gridBottomLeft = table("Screener, bottom left", 101, 3, position = "bottomLeft")
+gridBottomRight = table("Screener, bottom right", 101, 3, position = "bottomRight")
+gridTopLeft = table("Screener, top left", 101, 3, position = "topLeft")
+gridTopRight = table("Screener, top right", 101, 3, position = "topRight")
+
+// The table's times are written in Indian time, whatever the chart's own zone.
+TABLE_ZONE = "Asia/Kolkata"
+
+// A price with the binary tail of the tick rounding trimmed: up to eight
+// decimals, trailing zeros dropped.
+fn priceText(v) =>
+    s = text(v, 8)
+    trimming = str.contains(s, ".")
+    while trimming
+        if str.endsWith(s, "0")
+            s = str.substring(s, 0, str.length(s) - 1)
+        else
+            trimming = false
+    if str.endsWith(s, ".")
+        s = str.substring(s, 0, str.length(s) - 1)
+    s
+
+fn header(g, c, caption) =>
+    cell(g, 0, c, caption, textColor = NEUTRAL, bgColor = withAlpha(NEUTRAL, 0.1), align = "left")
+    true
+
+fn row(g, r, caption, ink) =>
+    cell(g, r, 0, caption, textColor = ink, bgColor = withAlpha(ink, 0.1), align = "left")
+    true
+
+atTop = str.startsWith(tablePosition, "top")
+atLeft = str.endsWith(tablePosition, "-left")
+rowsWanted = max(0, min(100, floor(displayRows)))
+
+if bar.isLast and rowsWanted > 0
+    g = atTop ? (atLeft ? gridTopLeft : gridTopRight) : (atLeft ? gridBottomLeft : gridBottomRight)
+    // An intraday chart has bars less than a day apart.
+    spacing = isNone(time[1]) ? 0 : time - time[1]
+    intraday = spacing > 0 and spacing < 86400000
+    header(g, 0, "Time")
+    header(g, 1, "Dir")
+    header(g, 2, "Price")
+    shown = min(size(sigTimes), rowsWanted)
+    if shown == 0
+        row(g, 1, "No hits yet", NEUTRAL)
+        cell(g, 1, 1, "", bgColor = withAlpha(NEUTRAL, 0.1))
+        cell(g, 1, 2, "", bgColor = withAlpha(NEUTRAL, 0.1))
+    else
+        for r = 0 to shown - 1
+            at = size(sigTimes) - 1 - r
+            side = element(sigSides, at)
+            stamp = element(sigTimes, at)
+            ink = side == 1 ? BEAR : BULL
+            when = intraday ? date.format(stamp, "HH:mm", TABLE_ZONE) + "  " + date.format(stamp, "dd-MM-yyyy", TABLE_ZONE) : date.format(stamp, "dd-MM-yyyy", TABLE_ZONE)
+            row(g, r + 1, when, ink)
+            cell(g, r + 1, 1, side == 1 ? "H" : "L", textColor = ink, bgColor = withAlpha(ink, 0.1), align = "left")
+            cell(g, r + 1, 2, priceText(element(sigPrices, at)), textColor = ink, bgColor = withAlpha(ink, 0.1), align = "left")

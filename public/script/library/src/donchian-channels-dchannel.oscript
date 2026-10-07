@@ -1,0 +1,27 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © openalgo
+// Original work (c) mihakralj, MIT License
+
+version 1
+study("Donchian Channels (DCHANNEL)", overlay = true, precision = 2)
+
+period = input(20, "Period", min = 1, max = 5000, step = 1)
+highSource = input(high, "High Source")
+lowSource = input(low, "Low Source")
+
+// The highest high and lowest low of the last `period` bars. While the
+// window is still filling, the extremes of every bar so far are used, so the
+// channel is drawn from the first bar.
+windowHigh = highest(highSource, period)
+windowLow = lowest(lowSource, period)
+var runHigh = none
+var runLow = none
+runHigh = isNone(runHigh) ? highSource : max(runHigh, highSource)
+runLow = isNone(runLow) ? lowSource : min(runLow, lowSource)
+upperBand = bar.index >= period - 1 ? windowHigh : runHigh
+lowerBand = bar.index >= period - 1 ? windowLow : runLow
+
+plot((upperBand + lowerBand) / 2, "Basis", #ffeb3b, width = 2)
+top = plot(upperBand, "Upper", #ffeb3b, width = 2)
+bottom = plot(lowerBand, "Lower", #ffeb3b, width = 2)
+fill(top, bottom, #2962ff, opacity = 0.1)

@@ -1,0 +1,20 @@
+{
+  "title": "Williams Gator Oscillator",
+  "summary": "Two histograms that show how far apart the three displaced alligator lines have moved: wide bars for a trending market, bars near zero for a quiet one.",
+  "description": "The Gator Oscillator is built from three smoothed lines, the Jaw, the Teeth and the Lips, each a smoothed moving average of the source (the typical price by default) that moves one period's share of the way toward the source on every bar with its own period and its own forward displacement. Each average starts from zero and is divided by a correction factor while that start still matters, so it reads as the source from the first bar.\n\nThe upper histogram is the distance between the Jaw and the Teeth, and the lower histogram is the distance between the Teeth and the Lips, drawn below zero. A bar is green while its gap is widening or holding and red while it narrows. Because each line is displaced, the value on a bar uses the Jaw from `jawOffset` bars ago, the Teeth from `teethOffset` bars ago and the Lips from `lipsOffset` bars ago.",
+  "howToRead": "When both histograms grow away from zero with green bars, the three lines are spreading apart and the market is trending. When both shrink toward zero with red bars, the lines are converging and the market is resting or ranging.\n\nA common reading splits the cycle into phases: a quiet stretch with both bars small, one histogram turning green as the lines start to separate, both bars green as the trend runs, and red bars returning as it fades. The oscillator shows how strong a move is, not which way it is going; read the direction from price or from the lines themselves.",
+  "settings": [
+    { "key": "source", "label": "Source", "description": "The price series the three lines smooth. The typical price is the default." },
+    { "key": "jawPeriod", "label": "Jaw Period", "description": "The length of the slowest line. A longer Jaw widens the upper histogram during trends." },
+    { "key": "jawOffset", "label": "Jaw Offset", "description": "How many bars the Jaw is displaced forward, so the histogram reads its value from that many bars ago." },
+    { "key": "teethPeriod", "label": "Teeth Period", "description": "The length of the middle line, which both histograms are measured against." },
+    { "key": "teethOffset", "label": "Teeth Offset", "description": "How many bars the Teeth line is displaced forward before the gaps are measured." },
+    { "key": "lipsPeriod", "label": "Lips Period", "description": "The length of the fastest line. A shorter Lips makes the lower histogram react sooner." },
+    { "key": "lipsOffset", "label": "Lips Offset", "description": "How many bars the Lips line is displaced forward before the gap to the Teeth is measured." }
+  ],
+  "faq": [
+    { "q": "Why is the lower histogram negative?", "a": "It is drawn below zero only so the two gaps can be read side by side. Its size is the distance between the Teeth and the Lips, which is always positive." },
+    { "q": "What do the colours mean?", "a": "Green means the gap is at least as wide as on the previous bar, and red means it has narrowed. On the lower histogram a widening gap is a bar that moves further below zero." },
+    { "q": "Does it show the direction of the trend?", "a": "No. Both gaps are measured as distances, so an up trend and a down trend look the same. Use price or the three lines to tell the direction." }
+  ]
+}

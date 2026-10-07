@@ -1,0 +1,14 @@
+{
+  "title": "Elder's Force Index (EFI)",
+  "summary": "Multiplies each bar's change in close by its volume and smooths the result, sizing the force behind every move in one line.",
+  "description": "The Force Index combines the direction and size of a price move with the volume behind it. On each bar the raw force is the change in close from the previous bar times this bar's volume. A large move on heavy volume gives a large raw force; a small move or a quiet bar gives a small one. The first bar compares with itself, so its force is zero.\n\nThe raw force is smoothed with an exponential mean of **Length** bars, weighted 2 / (Length + 1). The mean starts from zero, and while that zero start still matters it is divided by one minus the decayed seed weight, which removes the pull toward zero. The line therefore reads true from the first bars instead of creeping up from nothing. Once the seed weight has decayed below 1e-10 the correction stops.",
+  "howToRead": "Above zero, buyers have had the stronger hand over the smoothing period: closes have been rising on volume. Below zero, sellers have. A cross of the zero line marks a change in which side is pushing, and a spike shows a single forceful move.\n\nThe values are in price times volume, so they are only comparable with the indicator's own history on the same symbol. A short Length reacts to each bar and suits timing entries; a longer Length shows the broader balance. A falling peak while price makes a new high suggests the move is running on less force.",
+  "settings": [
+    { "key": "length", "label": "Length", "description": "The length of the exponential mean that smooths the raw force. A shorter length follows each bar closely; a longer one shows the broader balance of force." }
+  ],
+  "faq": [
+    { "q": "Why is the first value exactly zero?", "a": "The first bar has no earlier close, so it compares with its own close and the change is zero." },
+    { "q": "Why does the line not start near zero and climb?", "a": "The exponential mean is corrected for its zero start during the early bars, so the first readings already reflect the raw force rather than a mean dragged toward zero." },
+    { "q": "Can I compare the reading across symbols?", "a": "Not directly. The value is a price change times volume, so its size depends on the symbol's price level and volume. Compare it with its own history instead." }
+  ]
+}

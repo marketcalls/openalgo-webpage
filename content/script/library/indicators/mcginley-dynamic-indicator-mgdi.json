@@ -1,0 +1,33 @@
+{
+  "title": "McGinley Dynamic Indicator (MGDI)",
+  "summary": "An adaptive average whose step toward price is divided by the fourth power of the price to line ratio, so it follows falls faster than rallies.",
+  "description": "MGDI starts at the first price. Each later bar it moves toward the source by the gap between them divided by `factor * period * (price / line) ^ 4`. When price is above the line in a rally, the ratio is greater than 1 and the line moves more slowly; when price drops below the line, the ratio falls under 1 and the line follows more quickly.\n\nThe divisor is kept at least 0.001 in size so the step can never blow up. If the line ever sits at zero, it resets to the current price.\n\nThe Factor scales the whole divisor. A smaller factor makes the line follow price more tightly, and a larger one makes it smoother.",
+  "howToRead": "Use MGDI as a trend line that adjusts its own speed. While price stays near the line the divisor is close to `factor * period`, so it moves like a short exponential average; a price well below the line shrinks the divisor and pulls the line down quickly, and a price well above it enlarges the divisor and slows the line.\n\nPrice crossing the line with the line turning is the usual reading of a change in direction. Because the speed depends on the ratio of price to the line, it reacts faster to falls than to rises of the same size, and on a strong rally it can lag noticeably.",
+  "settings": [
+    {
+      "key": "period",
+      "label": "Period",
+      "description": "The base length in the divisor. A longer period makes the line move more slowly toward price."
+    },
+    {
+      "key": "factor",
+      "label": "Factor",
+      "description": "Multiplies the divisor. Lower values make the line track price more closely; higher values smooth it."
+    },
+    {
+      "key": "source",
+      "label": "Source",
+      "description": "The price series the average follows. Close is the usual choice; hl2 or another blend smooths out closes that jump around."
+    }
+  ],
+  "faq": [
+    {
+      "q": "Why does MGDI react faster to drops than to rallies?",
+      "a": "The divisor uses `(price / line) ^ 4`. Below the line that ratio is under 1, the divisor shrinks and the step grows; above the line the divisor grows and the step shrinks."
+    },
+    {
+      "q": "What does the Factor do?",
+      "a": "It scales the divisor directly. At 0.6 the line moves toward price faster than at 1.0, which gives a tighter fit at the cost of more noise."
+    }
+  ]
+}

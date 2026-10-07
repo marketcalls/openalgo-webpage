@@ -1,0 +1,42 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © openalgo
+// Original work (c) mihakralj, MIT License
+
+version 1
+study("Christiano-Fitzgerald Band-Pass Filter (CFITZ)", precision = 4)
+
+pLow = input(6, "Min Period (pLow)", min = 2, max = 5000, step = 1, tooltip = "Shortest cycle to pass through (bars)")
+pHigh = input(32, "Max Period (pHigh)", min = 3, max = 5000, step = 1, tooltip = "Longest cycle to pass through (bars)")
+maxLookback = input(500, "Max Lookback", min = 10, max = 5000, step = 1, tooltip = "Maximum bars of history to use. Larger = better frequency resolution but slower. Zero-sum property is always maintained.")
+
+// The longest period is kept above the shortest so the band is never empty.
+lowPeriod = max(2, pLow)
+highPeriod = max(lowPeriod + 1, max(3, pHigh))
+lookback = max(10, min(5000, maxLookback))
+
+// Angular frequencies of the edges of the band, and the centre weight.
+wl = 2 * math.pi / highPeriod
+wh = 2 * math.pi / lowPeriod
+b0 = (wh - wl) / math.pi
+
+// The newest bar gets half the centre weight, and each earlier bar j gets the
+// ideal band-pass weight Bj, up to the lookback or the start of the chart.
+i = bar.index
+jMax = min(lookback - 1, i - 1)
+weightedSum = 0.5 * b0 * orElse(close, 0)
+sumBj = 0.0
+for j = 1 to jMax
+    bj = (math.sin(j * wh) - math.sin(j * wl)) / (math.pi * j)
+    weightedSum += bj * orElse(close[j], 0)
+    sumBj += bj
+
+// The oldest bar used takes whatever weight makes the total zero, so a flat
+// price leaves no cycle behind.
+btilde = -0.5 * b0 - sumBj
+depth = min(i, lookback)
+weightedSum += btilde * orElse(close[depth], 0)
+
+cycle = i < 1 ? 0 : i < 2 ? 0.5 * b0 * (orElse(close, 0) - orElse(close[1], 0)) : weightedSum
+
+plot(cycle, "CF Cycle", #00897b, width = 2)
+level(0, "Zero", #787b86, style = "dashed")

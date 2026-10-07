@@ -1,0 +1,52 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © openalgo
+// Original work (c) mihakralj, MIT License
+
+version 1
+study("Deviation-Scaled Moving Average (DSMA)", overlay = true, precision = 2)
+
+source = input(close, "Source")
+period = input(25, "Period", min = 2, max = 5000, step = 1)
+scale = input(0.9, "Scale Factor", min = 0.01, max = 0.9, step = 0.01, tooltip = "Combined scaling and smoothing factor. Higher reacts faster to the deviation-scaled error.")
+
+// Two-pole smoothing coefficients for half the period.
+a1 = exp(-1.414 * math.pi / (period * 0.5))
+b1 = 2 * a1 * math.cos(1.414 * math.pi / (period * 0.5))
+c1 = 1 - b1 + a1 * a1
+c1Half = c1 * 0.5
+periodRecip = 1 / period
+scaleAdjustment = scale * 5 * periodRecip
+a1Sq = a1 * a1
+
+var result = none
+var filt1 = 0.0
+var filt2 = 0.0
+var zeros1 = 0.0
+var sumSquared = 0.0
+var bufferIndex = 0
+// The last period squared filter values, every slot starting at zero.
+var filtSquared: array<number> = []
+if bar.isFirst
+    for k = 0 to period - 1
+        push(filtSquared, 0.0)
+
+if not isNone(source)
+    if isNone(result)
+        result = source
+    else
+        // The tracking error is smoothed, and its size against its own root
+        // mean square over the window sets how far the average moves.
+        zeros = source - result
+        filt = c1Half * (zeros + zeros1) + b1 * filt1 - a1Sq * filt2
+        filtSq = filt * filt
+        sumSquared = sumSquared + filtSq - element(filtSquared, bufferIndex)
+        set(filtSquared, bufferIndex, filtSq)
+        bufferIndex = (bufferIndex + 1) % period
+        rms = sqrt(max(sumSquared * periodRecip, 1e-10))
+        weight = min(scaleAdjustment * abs(filt / rms), 1)
+        result = weight * source + (1 - weight) * result
+        zeros1 = zeros
+        filt2 = filt1
+        filt1 = filt
+
+plot(result, "DSMA", #ffeb3b, width = 2)

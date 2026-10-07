@@ -1,0 +1,42 @@
+{
+  "title": "Bollinger Band Width Percentile (BBWP)",
+  "summary": "The share of recent band widths that are narrower than the current one, a 0 to 1 rank of how expanded the bands are now.",
+  "description": "Bollinger Band Width Percentile ranks the current band width against its own recent history. The width is computed first: over the last `period` bars the study keeps running sums of the source and of its square, takes the mean and the population standard deviation, and the width is `2 * multiplier * deviation`. A missing source counts as zero, and the width is zero while the window holds a single value.\n\nIt then looks at the last `lookback` widths, this one included, or every width so far while fewer exist, and counts how many are narrower than the current width. The count divided by the number of widths in the window is the reading, a fraction between 0 and 1. With only one width there is nothing to rank against, and the reading is 0.5.",
+  "howToRead": "A reading near 0 means the bands are narrower now than almost any time in the lookback, a squeeze, which traders watch because a larger move can follow. A reading near 1 means they are wider than almost any time in the lookback, which usually happens during a strong move and can mark a point where volatility is stretched. The value is a fraction, so 0.9 means 90 percent of recent widths were narrower.\n\nBecause the current width is part of its own window and never narrower than itself, the reading can approach 1 but cannot reach it. The first readings are based on very few widths and are noisy.",
+  "settings": [
+    {
+      "key": "period",
+      "label": "Period",
+      "description": "How many bars the mean and deviation behind each band width are measured over."
+    },
+    {
+      "key": "source",
+      "label": "Source",
+      "description": "The price series the bands are built around, the close by default."
+    },
+    {
+      "key": "multiplier",
+      "label": "StdDev Multiplier",
+      "description": "How many deviations each band sits from the mean. It scales every width equally, so it does not change the rank."
+    },
+    {
+      "key": "lookback",
+      "label": "Lookback Period",
+      "description": "How many band widths the current one is ranked against. A longer lookback makes extreme readings rarer."
+    }
+  ],
+  "faq": [
+    {
+      "q": "Why does the reading never reach 1?",
+      "a": "The current width is counted in the window but is never narrower than itself, so at most all the other widths are narrower. With a lookback of 252 the highest reading is 251 / 252."
+    },
+    {
+      "q": "Is the scale 0 to 100?",
+      "a": "No. The study reports a fraction from 0 to 1. Multiply by 100 to read it as a percentage."
+    },
+    {
+      "q": "How is it different from the normalized width?",
+      "a": "The normalized width measures where the value sits between the narrowest and widest in the window. The percentile counts how many widths are narrower, so a single extreme width does not squash the rest of the scale."
+    }
+  ]
+}

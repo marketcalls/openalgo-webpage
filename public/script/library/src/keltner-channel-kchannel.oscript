@@ -1,0 +1,42 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © openalgo
+// Original work (c) mihakralj, MIT License
+
+version 1
+study("Keltner Channel (KCHANNEL)", overlay = true, precision = 2)
+
+source = input(close, "Source")
+length = input(20, "Length", min = 1, max = 5000, step = 1)
+mult = input(2.0, "ATR Multiplier", min = 0.001, max = 100, step = 0.1, tooltip = "Band distance as a multiple of the average true range.")
+
+weight = 2 / (length + 1)
+alphaAtr = 1 / length
+
+// True range against the previous close. The first bar compares against its
+// own close, so its range is high minus low.
+prevClose = bar.index > 0 ? close[1] : close
+trueRangeValue = max(max(high - low, abs(high - prevClose)), abs(low - prevClose))
+
+// A running average with weight 1 / length, started from zero. Dividing by (1 - e), where e is the
+// weight still held by the zero start, removes that bias from the first bar.
+var rawRma = 0.0
+var e = 1.0
+rawRma = (rawRma * (length - 1) + trueRangeValue) / length
+e = (1 - alphaAtr) * e
+d = 1 - e
+atrValue = e > 1e-10 and d != 0 ? rawRma / d : rawRma
+
+// An exponential mean whose running sum and running weight both decay, so
+// their ratio equals the source on the first bar and needs no seed window.
+var emaSum = 0.0
+var emaWeight = 0.0
+emaSum = emaSum * (1 - weight) + source * weight
+emaWeight = emaWeight * (1 - weight) + weight
+basis = emaSum / emaWeight
+
+bandWidth = mult * orElse(atrValue, 0)
+
+plot(basis, "Middle", #ffeb3b, width = 2)
+top = plot(basis + bandWidth, "Upper", #ffeb3b, width = 2)
+bottom = plot(basis - bandWidth, "Lower", #ffeb3b, width = 2)
+fill(top, bottom, #2962ff, opacity = 0.1)

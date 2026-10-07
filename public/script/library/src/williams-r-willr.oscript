@@ -1,0 +1,25 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © openalgo
+// Original work (c) mihakralj, MIT License
+
+version 1
+study("Williams %R (WILLR)", precision = 2)
+
+period = input(14, "Period", min = 1, max = 100, step = 1, tooltip = "Lookback period for highest high and lowest low calculation")
+
+// Until the window is full it covers every bar so far, so the range is
+// measured from the first bar instead of waiting `period` bars.
+var runHigh = none
+var runLow = none
+runHigh = isNone(runHigh) ? high : max(runHigh, high)
+runLow = isNone(runLow) ? low : min(runLow, low)
+
+highestHigh = orElse(highest(high, period), runHigh)
+lowestLow = orElse(lowest(low, period), runLow)
+
+// Where the close sits in the range, from 0 at the top to -100 at the
+// bottom. A flat range has no top or bottom and reads as the middle, -50.
+span = highestHigh - lowestLow
+willr = span > 0 ? -100 * (highestHigh - close) / span : -50
+
+plot(willr, "Williams %R", #ffeb3b, width = 2)

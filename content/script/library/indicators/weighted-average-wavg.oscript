@@ -1,0 +1,29 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © openalgo
+// Original work (c) mihakralj, MIT License
+
+version 1
+study("Weighted Average (WAVG)", overlay = true, precision = 2)
+
+source = input(close, "Source")
+period = input(14, "Period", min = 1, max = 5000, step = 1)
+
+// A missing source value enters the window as zero.
+value = orElse(source, 0)
+
+// The oldest value in the window carries weight 1 and the newest carries the
+// window fill. Once the window is full, every weight steps down by one each
+// bar, which drops the departing value and demotes the rest.
+var weightedSum = 0.0
+var runningSum = 0.0
+var filled = 0
+if bar.index >= period
+    weightedSum -= runningSum
+    runningSum -= value[period]
+else
+    filled += 1
+runningSum += value
+weightedSum += filled * value
+
+denom = filled * (filled + 1) / 2
+plot(denom > 0 ? weightedSum / denom : value, "WAVG", #ffeb3b, width = 2)

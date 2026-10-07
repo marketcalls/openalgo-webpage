@@ -1,0 +1,248 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © openalgo
+// Original work (c) Arun K Bhaskar, MPL-2.0
+
+version 1
+study("Liquidity Sweep Pattern Scanner", overlay = true, precision = 2)
+
+// ---- Scanner ------------------------------------------------------------------
+method = input("Prev 2 Swing Sweep", "Screening Method", options = ["Prev 1 Swing Sweep", "Prev 2 Swing Sweep", "Prev 3 Swing Sweep"], group = "Scanner", tooltip = "Which earlier swing the newest swing has to sweep: the 1st, 2nd or 3rd one back.")
+showLong = input(true, "Long Signals", group = "Scanner")
+showShort = input(true, "Short Signals", group = "Scanner")
+
+// ---- Zig zag ------------------------------------------------------------------
+showZigzag = input(true, "Display Zig Zag", group = "Zig Zag")
+zzPeriod = input(4, "Zig Zag Length", min = 2, max = 500, step = 1, group = "Zig Zag")
+zzSource = input("High/Low", "Source", options = ["High/Low", "Open/Close"], group = "Zig Zag")
+levelLineStyle = input("solid", "Swept Level Line Style", options = ["solid", "dashed", "dotted"], group = "Zig Zag", tooltip = "Style of the line drawn from the swept swing across to the signal bar.")
+
+// ---- Data table ---------------------------------------------------------------
+showDataTable = input(true, "Display Table", group = "Data Table")
+tablePosition = input("bottom-right", "Position", options = ["top-left", "top-center", "top-right", "middle-left", "middle-center", "middle-right", "bottom-left", "bottom-center", "bottom-right"], group = "Data Table")
+tableSize = input("normal", "Size", options = ["auto", "tiny", "small", "normal", "large", "huge"], group = "Data Table")
+
+// The palette.
+posMid = #26A69A
+posLight = #ACE5DC
+negMid = #FF5252
+negLight = #FCCBCD
+neuLight = #D1D4DC
+neuMid = #2A2E39
+neuDark = #141516
+
+// The zig zag line is drawn this many bars behind the newest bar, because a
+// leg is only known once the swing after it has formed. Keep it equal to the
+// plot's offset below.
+zzDelay = 60
+maxPoints = 300
+
+// ---- Swing points -------------------------------------------------------------
+useOpenClose = zzSource == "Open/Close"
+swingHigh = useOpenClose ? max(open, close) : high
+swingLow = useOpenClose ? min(open, close) : low
+
+// A bar is a swing extreme when it is the extreme of the last zzPeriod bars; a
+// tie with an older bar still counts for this bar.
+windowHigh = highest(swingHigh, zzPeriod)
+windowLow = lowest(swingLow, zzPeriod)
+ph = not isNone(windowHigh) and windowHigh == swingHigh ? swingHigh : none
+pl = not isNone(windowLow) and windowLow == swingLow ? swingLow : none
+hasPh = not isNone(ph)
+hasPl = not isNone(pl)
+
+// The swing direction turns only when exactly one side prints: a bar that is
+// both the window high and the window low leaves it alone.
+var dir = 0
+prevDir = dir
+if hasPl and not hasPh
+    dir = -1
+else if hasPh and not hasPl
+    dir = 1
+dirChanged = dir != prevDir
+
+// Every swing point, oldest first. A turn adds a point; a bar that extends the
+// swing in progress moves the newest point instead.
+var pivPrice: array<number> = []
+var pivIndex: array<number> = []
+var pivTime: array<number> = []
+var pointsAdded = 0
+
+if hasPh or hasPl
+    value = dir == 1 ? ph : pl
+    if not isNone(value)
+        if dirChanged or size(pivPrice) == 0
+            push(pivPrice, value)
+            push(pivIndex, bar.index)
+            push(pivTime, time)
+            pointsAdded += 1
+            if size(pivPrice) > maxPoints
+                shift(pivPrice)
+                shift(pivIndex)
+                shift(pivTime)
+        else
+            newest = size(pivPrice) - 1
+            newestPrice = element(pivPrice, newest)
+            if (dir == 1 and value > newestPrice) or (dir == -1 and value < newestPrice)
+                set(pivPrice, newest, value)
+                set(pivIndex, newest, bar.index)
+                set(pivTime, newest, time)
+
+// The seven newest swings, zz1 the newest and zz7 the oldest. While fewer than
+// seven exist the slots fill from zz7 down, so zz1 is the last to appear.
+held = size(pivPrice)
+stacked = min(pointsAdded, 7)
+
+fn slotPrice(prices, slot, total, filled) =>
+    back = filled - 8 + slot
+    back >= 0 ? element(prices, total - 1 - back) : none
+
+zz1 = slotPrice(pivPrice, 1, held, stacked)
+zz2 = slotPrice(pivPrice, 2, held, stacked)
+zz3 = slotPrice(pivPrice, 3, held, stacked)
+zz4 = slotPrice(pivPrice, 4, held, stacked)
+zz5 = slotPrice(pivPrice, 5, held, stacked)
+zz6 = slotPrice(pivPrice, 6, held, stacked)
+zz7 = slotPrice(pivPrice, 7, held, stacked)
+t3 = slotPrice(pivTime, 3, held, stacked)
+t5 = slotPrice(pivTime, 5, held, stacked)
+t7 = slotPrice(pivTime, 7, held, stacked)
+
+// ---- Sweep conditions ---------------------------------------------------------
+fn crossesAbove(a, b) =>
+    not isNone(a) and not isNone(b) and not isNone(a[1]) and not isNone(b[1]) ? a > b and a[1] <= b[1] : false
+
+fn crossesBelow(a, b) =>
+    not isNone(a) and not isNone(b) and not isNone(a[1]) and not isNone(b[1]) ? a < b and a[1] >= b[1] : false
+
+// The six swings behind the newest one must sit in this shape: a = zz2 up to
+// f = zz7.
+stackReady = not isNone(zz2) and not isNone(zz3) and not isNone(zz4) and not isNone(zz5) and not isNone(zz6) and not isNone(zz7)
+bearStack = stackReady ? zz2 < zz3 and zz2 < zz4 and zz2 < zz6 and zz2 < zz7 and zz3 < zz5 and zz3 > zz4 and zz3 > zz2 and zz4 < zz3 and zz4 < zz5 and zz4 < zz6 and zz4 < zz7 and zz5 > zz3 and zz5 > zz4 and zz5 > zz6 and zz5 < zz7 and zz6 < zz5 and zz6 < zz7 and zz6 > zz4 and zz7 > zz2 and zz7 > zz3 and zz7 > zz4 and zz7 > zz5 and zz7 > zz6 : false
+bullStack = stackReady ? zz2 > zz3 and zz2 > zz4 and zz2 > zz6 and zz2 > zz7 and zz3 > zz5 and zz3 < zz4 and zz3 < zz2 and zz4 > zz3 and zz4 > zz5 and zz4 > zz6 and zz4 > zz7 and zz5 < zz3 and zz5 < zz4 and zz5 < zz6 and zz5 > zz7 and zz6 > zz5 and zz6 > zz7 and zz6 < zz4 and zz7 < zz2 and zz7 < zz3 and zz7 < zz4 and zz7 < zz5 and zz7 < zz6 : false
+
+// Every crossing is tested on every bar, so each keeps its own history.
+over3 = crossesAbove(zz1, zz3)
+under3 = crossesBelow(zz1, zz3)
+over5 = crossesAbove(zz1, zz5)
+under5 = crossesBelow(zz1, zz5)
+over7 = crossesAbove(zz1, zz7)
+under7 = crossesBelow(zz1, zz7)
+
+// The first method tests the long side against the same shape as the short
+// side; the other two mirror it.
+prev1 = method == "Prev 1 Swing Sweep"
+prev2 = method == "Prev 2 Swing Sweep"
+shortHit = prev1 ? bearStack and over3 : prev2 ? bearStack and over5 : bearStack and over7
+longHit = prev1 ? bearStack and under3 : prev2 ? bullStack and under5 : bullStack and under7
+sweptPrice = prev1 ? zz3 : prev2 ? zz5 : zz7
+sweptTime = prev1 ? t3 : prev2 ? t5 : t7
+
+shortOn = showShort and shortHit
+longOn = showLong and longHit
+
+if shortOn
+    signal("", color = #FCCBCD, at = "above", shape = "triangleDown")
+if longOn
+    signal("", color = #ACE5DC, at = "below", shape = "triangleUp")
+
+// The short verdict is tested first.
+barColor(shortOn ? negLight : longOn ? posLight : none)
+
+// The swept level, from the swing it came from across to the signal bar.
+if (shortOn or longOn) and not isNone(sweptPrice) and not isNone(sweptTime)
+    draw.line(sweptTime, sweptPrice, time, sweptPrice, color = shortOn ? negMid : posMid, width = 1, style = levelLineStyle)
+
+// ---- Zig zag line -------------------------------------------------------------
+// The value for the bar zzDelay bars back, read from the swings as they stand
+// now. Legs run between consecutive swings, except the leg out of the very
+// first swing, which is never drawn.
+target = bar.index - zzDelay
+zzValue = none
+if showZigzag and target >= 0 and held > 0
+    m = -1
+    for k = held - 1 to 0 step -1
+        if element(pivIndex, k) <= target
+            m = k
+            break
+    if m >= 0
+        firstHeld = pointsAdded - held
+        legFrom = firstHeld + m
+        startIdx = element(pivIndex, m)
+        if m + 1 < held and legFrom >= 1
+            a = element(pivPrice, m)
+            b = element(pivPrice, m + 1)
+            span = element(pivIndex, m + 1) - startIdx
+            zzValue = a + ((b - a) * (target - startIdx)) / span
+        else if startIdx == target and m == held - 1 and m >= 1 and legFrom - 1 >= 1
+            a = element(pivPrice, m - 1)
+            b = element(pivPrice, m)
+            span = startIdx - element(pivIndex, m - 1)
+            zzValue = a + ((b - a) * span) / span
+
+plot(zzValue, "Zig Zag", #1E53E5, width = 1, offset = -60)
+
+// ---- Data table ---------------------------------------------------------------
+// Each day's running percentage change, its running volume and the volume of
+// the day before, with days in the chart's own timezone.
+newDay = bar.isFirst or not date.isSameDay(time, time[1])
+prevClose = close[1]
+barPct = not isNone(prevClose) and prevClose != 0 ? (close - prevClose) / prevClose * 100 : 0
+var runningPct = none
+runningPct = newDay or isNone(runningPct) ? barPct : runningPct + barPct
+
+var dayVol = none
+var priorDayVol = none
+vol = orElse(volume, 0)
+if newDay
+    priorDayVol = dayVol
+    dayVol = vol
+else
+    dayVol = orElse(dayVol, 0) + vol
+volBase = isNone(priorDayVol) ? dayVol : priorDayVol
+volPct = not isNone(volBase) and volBase != 0 ? (dayVol - volBase) / volBase * 100 : none
+
+// Grids pin to the four corners, so each position is drawn in its nearest
+// corner: a top row at the top, a middle or bottom row at the bottom, a left
+// column on the left, a centre or right column on the right.
+// The default corner is declared first, so a chart that draws only a study's
+// first grid still shows the table at the default position.
+gridBottomRight = table("Data, bottom right", 4, 2, position = "bottomRight")
+gridBottomLeft = table("Data, bottom left", 4, 2, position = "bottomLeft")
+gridTopLeft = table("Data, top left", 4, 2, position = "topLeft")
+gridTopRight = table("Data, top right", 4, 2, position = "topRight")
+
+// A number with at most two decimals and no trailing zeros.
+fn shortText(v) =>
+    s = text(v, 2)
+    trimming = str.contains(s, ".")
+    while trimming
+        if str.endsWith(s, "0")
+            s = str.substring(s, 0, str.length(s) - 1)
+        else
+            trimming = false
+    if str.endsWith(s, ".")
+        s = str.substring(s, 0, str.length(s) - 1)
+    s == "-0" ? "0" : s
+
+fn numText(v) =>
+    isNone(v) ? "-" : shortText(v)
+
+fn lakhText(v) =>
+    isNone(v) ? "-" : shortText(v / 100000) + " L"
+
+atTop = tablePosition == "top-left" or tablePosition == "top-center" or tablePosition == "top-right"
+atLeft = tablePosition == "top-left" or tablePosition == "middle-left" or tablePosition == "bottom-left"
+
+if bar.isLast and showDataTable
+    g = atTop ? (atLeft ? gridTopLeft : gridTopRight) : (atLeft ? gridBottomLeft : gridBottomRight)
+    pctColor = not isNone(runningPct) and runningPct > 0 ? posMid : negMid
+    volPctColor = not isNone(volPct) and volPct > 0 ? posMid : negMid
+    priorVolColor = not isNone(priorDayVol) and not isNone(dayVol) and priorDayVol < dayVol ? negMid : posMid
+    cell(g, 0, 0, "%Chg", textColor = neuLight, bgColor = neuDark, align = "left")
+    cell(g, 0, 1, numText(runningPct) + " %", textColor = pctColor, bgColor = neuDark, align = "right")
+    cell(g, 1, 0, "Vol %Chg", textColor = neuLight, bgColor = neuMid, align = "left")
+    cell(g, 1, 1, numText(volPct) + " %", textColor = volPctColor, bgColor = neuMid, align = "right")
+    cell(g, 2, 0, "Vol", textColor = neuLight, bgColor = neuDark, align = "left")
+    cell(g, 2, 1, lakhText(dayVol), textColor = volPctColor, bgColor = neuDark, align = "right")
+    cell(g, 3, 0, "PD Vol", textColor = neuLight, bgColor = neuMid, align = "left")
+    cell(g, 3, 1, lakhText(priorDayVol), textColor = priorVolColor, bgColor = neuMid, align = "right")

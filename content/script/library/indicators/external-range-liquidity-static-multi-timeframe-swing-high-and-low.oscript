@@ -1,0 +1,378 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © openalgo
+// Original work (c) Arun K Bhaskar, MPL-2.0
+
+version 1
+study("External Range Liquidity Static Multi-timeframe (Swing High and Low)", overlay = true, precision = 2)
+
+// External range liquidity is the pool of resting stop orders above a swing
+// high and below a swing low. Three higher timeframes each contribute their
+// own swing pivots, drawn back to the chart bar that actually made the high or
+// the low and carried forward until price trades through the level, which is
+// the moment that liquidity is taken. A fourth pass looks for two consecutive
+// chart swings of the same kind within a percentage of each other and boxes
+// them as equal highs or equal lows.
+
+phl1Show = input(true, "Pivot High Low 1", group = "Quick On/Off")
+phl2Show = input(true, "Pivot High Low 2", group = "Quick On/Off")
+phl3Show = input(true, "Pivot High Low 3", group = "Quick On/Off")
+phlEqShow = input(true, "Equal Pivot High Low", group = "Quick On/Off")
+
+source = input("High/Low", "Source", options = ["High/Low", "Open/Close"], group = "Common Settings", tooltip = "Open/Close reads the candle body instead of the wick, so a long shadow does not set the swing.")
+
+phl1Tf = input("15", "PHL 1 Timeframe", group = "Pivot High Low 1", tooltip = "Timeframe code: a number for minutes, or D, W or M. Blank uses the chart timeframe.")
+phl1Left = input(2, "PHL 1 Left", min = 1, max = 500, step = 1, group = "Pivot High Low 1")
+phl1Right = input(2, "PHL 1 Right", min = 1, max = 500, step = 1, group = "Pivot High Low 1")
+phl1ShowLast = input(2, "PHL 1 Show Last", min = 0, max = 500, step = 1, group = "Pivot High Low 1", tooltip = "Levels kept for this timeframe, counting highs and lows together.")
+phl1Extend = input(false, "PHL 1 Line Extend", group = "Pivot High Low 1", tooltip = "Carry every level to the last bar instead of stopping it where price traded through.")
+phl1LineStyle = input("solid", "PHL 1 Line Style", options = ["solid", "dashed", "dotted"], group = "Pivot High Low 1")
+phl1LineWidth = input(2, "PHL 1 Line Width", min = 1, max = 10, step = 1, group = "Pivot High Low 1", tooltip = "Thickness of the level lines.")
+phl1LabelShow = input(false, "PHL 1 Label", group = "Pivot High Low 1")
+
+phl2Tf = input("60", "PHL 2 Timeframe", group = "Pivot High Low 2", tooltip = "Timeframe code: a number for minutes, or D, W or M. Blank uses the chart timeframe.")
+phl2Left = input(2, "PHL 2 Left", min = 1, max = 500, step = 1, group = "Pivot High Low 2")
+phl2Right = input(2, "PHL 2 Right", min = 1, max = 500, step = 1, group = "Pivot High Low 2")
+phl2ShowLast = input(2, "PHL 2 Show Last", min = 0, max = 500, step = 1, group = "Pivot High Low 2", tooltip = "Levels kept for this timeframe, counting highs and lows together.")
+phl2Extend = input(false, "PHL 2 Line Extend", group = "Pivot High Low 2", tooltip = "Carry every level to the last bar instead of stopping it where price traded through.")
+phl2LineStyle = input("solid", "PHL 2 Line Style", options = ["solid", "dashed", "dotted"], group = "Pivot High Low 2")
+phl2LineWidth = input(2, "PHL 2 Line Width", min = 1, max = 10, step = 1, group = "Pivot High Low 2", tooltip = "Thickness of the level lines.")
+phl2LabelShow = input(false, "PHL 2 Label", group = "Pivot High Low 2")
+
+phl3Tf = input("240", "PHL 3 Timeframe", group = "Pivot High Low 3", tooltip = "Timeframe code: a number for minutes, or D, W or M. Blank uses the chart timeframe.")
+phl3Left = input(2, "PHL 3 Left", min = 1, max = 500, step = 1, group = "Pivot High Low 3")
+phl3Right = input(2, "PHL 3 Right", min = 1, max = 500, step = 1, group = "Pivot High Low 3")
+phl3ShowLast = input(2, "PHL 3 Show Last", min = 0, max = 500, step = 1, group = "Pivot High Low 3", tooltip = "Levels kept for this timeframe, counting highs and lows together.")
+phl3Extend = input(false, "PHL 3 Line Extend", group = "Pivot High Low 3", tooltip = "Carry every level to the last bar instead of stopping it where price traded through.")
+phl3LineStyle = input("solid", "PHL 3 Line Style", options = ["solid", "dashed", "dotted"], group = "Pivot High Low 3")
+phl3LineWidth = input(2, "PHL 3 Line Width", min = 1, max = 10, step = 1, group = "Pivot High Low 3", tooltip = "Thickness of the level lines.")
+phl3LabelShow = input(false, "PHL 3 Label", group = "Pivot High Low 3")
+
+eqLeft = input(60, "Equal Left", min = 1, max = 1000, step = 1, group = "Equal High Low")
+eqRight = input(30, "Equal Right", min = 1, max = 1000, step = 1, group = "Equal High Low")
+eqPercent = input(0.05, "Equal HL %", min = 0, max = 100, step = 0.01, group = "Equal High Low", tooltip = "Lower values mean highs and lows are closer.")
+eqTransp = input(25, "Transparency", min = 0, max = 100, step = 1, group = "Equal High Low", tooltip = "Transparency of the equal high and low boxes and marks, 0 opaque to 100 invisible.")
+
+H_COLOR = #f7525f
+L_COLOR = #22ab94
+
+// The ceiling on how far back a level's own bar is searched for.
+MAX_BARS_BACK = 4999
+// The most equal high and low boxes kept at once, newest first.
+MAX_EQUAL_BOXES = 50
+
+useBody = source == "Open/Close"
+srcHigh = useBody ? max(open, close) : high
+srcLow = useBody ? min(open, close) : low
+
+// ---------------------------------------------------------------- timeframes
+
+// A timeframe code is a count and a unit: blank is the chart itself, a bare
+// number is minutes, S seconds, m minutes, h hours, D days, W weeks and an
+// upper case M months. Returns [unit, count], where unit is 0 for the chart,
+// 1 seconds, 2 minutes, 3 days, 4 weeks and 5 months. Anything unreadable is
+// read as the chart.
+fn parseTimeframe(spec) =>
+    raw = str.trim(spec)
+    n = str.length(raw)
+    digits = "0123456789"
+    letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz"
+    i = 0
+    while i < n and str.indexOf(digits, str.substring(raw, i, i + 1)) >= 0
+        i += 1
+    j = i
+    while j < n and str.substring(raw, j, j + 1) == " "
+        j += 1
+    k = j
+    while k < n and str.indexOf(letters, str.substring(raw, k, k + 1)) >= 0
+        k += 1
+    unit = 0
+    cnt = 1
+    if n > 0 and k == n
+        if i > 0
+            cnt = max(1, floor(orElse(toNumber(str.substring(raw, 0, i)), 1)))
+        u = k > j ? str.substring(raw, j, j + 1) : "m"
+        if u == "S" or u == "s"
+            unit = 1
+        else if u == "m"
+            unit = 2
+        else if u == "h" or u == "H"
+            unit = 2
+            cnt = cnt * 60
+        else if u == "D" or u == "d"
+            unit = 3
+        else if u == "W" or u == "w"
+            unit = 4
+        else if u == "M"
+            unit = 5
+    [unit, cnt]
+
+// A level's caption: the price at the instrument's tick, trailing zeros
+// dropped, or at a precision set by its size when no tick is known.
+fn formatPrice(value, tick) =>
+    d = 0
+    if not isNone(tick) and tick > 0
+        s = tick
+        while d < 10 and abs(s - round(s)) > 1e-9
+            s = s * 10
+            d += 1
+    else
+        d = abs(value) >= 1000 ? 2 : abs(value) >= 1 ? 4 : 6
+    caption = text(value, d)
+    if d > 0
+        while str.endsWith(caption, "0")
+            caption = str.substring(caption, 0, str.length(caption) - 1)
+        if str.endsWith(caption, ".")
+            caption = str.substring(caption, 0, str.length(caption) - 1)
+    caption
+
+// ------------------------------------------------------ pivot high low 1 to 3
+
+// The whole history is kept so the higher timeframe levels can be drawn on
+// the newest bar from every bar on the chart.
+var tArr: array<number> = []
+var oArr: array<number> = []
+var hArr: array<number> = []
+var lArr: array<number> = []
+var cArr: array<number> = []
+push(tArr, time)
+push(oArr, open)
+push(hArr, high)
+push(lArr, low)
+push(cArr, close)
+
+// One timeframe's levels, drawn on the newest bar.
+//
+// The chart's bars are folded into higher timeframe bars: intraday buckets
+// restart at each day's first bar, and day, week and month buckets follow the
+// chart's calendar. A pivot on the folded series is read one completed higher
+// timeframe bar behind, unless the fold holds one chart bar per bucket, when
+// it is read at once. A level is drawn once, on the chart bar where its pivot
+// first becomes available, so two pivots back to back draw one level. Only
+// the newest `showLast` levels are kept, highs and lows counted together.
+//
+// Each level starts at the chart bar whose value sits closest to the pivot
+// price, searched backwards from one bar before the event, the nearest bar
+// winning a tie. From the event bar it runs forward and stops on the bar
+// before the first one whose high is above it and whose low is below it, or
+// runs to the newest bar when `extendAll` is on.
+fn pivotGroup(ts: array<number>, os: array<number>, hs: array<number>, ls: array<number>, cs: array<number>, body, spec, left, right, showLast, extendAll, lineStyle, lineWidth, labelShow, highColor, lowColor, tick) =>
+    n = size(ts)
+    tf = parseTimeframe(spec)
+    unit = tf[0]
+    cnt = tf[1]
+
+    // Fold the chart into buckets.
+    bucketOf = []
+    bOpen = []
+    bHigh = []
+    bLow = []
+    bClose = []
+    lastA = none
+    lastB = none
+    ordinal = -1
+    lastGroup = none
+    dayKey = none
+    dayStart = none
+    for i = 0 to n - 1
+        t = element(ts, i)
+        keyA = i
+        keyB = 0
+        if unit == 1 or unit == 2
+            day = date.startOfDay(t)
+            if isNone(dayKey) or day != dayKey
+                dayKey = day
+                dayStart = t
+            span = unit == 1 ? cnt * 1000 : cnt * 60000
+            keyA = day
+            keyB = floor((t - dayStart) / span)
+        else if unit == 3
+            keyA = date.startOfDay(t)
+        else if unit == 4
+            keyA = date.startOfWeek(t)
+        else if unit == 5
+            keyA = date.startOfMonth(t)
+        if isNone(lastA) or keyA != lastA or keyB != lastB
+            lastA = keyA
+            lastB = keyB
+            ordinal += 1
+        grp = unit >= 3 ? floor(ordinal / cnt) : ordinal
+        h = element(hs, i)
+        l = element(ls, i)
+        o = element(os, i)
+        cl = element(cs, i)
+        if isNone(lastGroup) or grp != lastGroup
+            lastGroup = grp
+            push(bOpen, o)
+            push(bHigh, h)
+            push(bLow, l)
+            push(bClose, cl)
+        else
+            last = size(bHigh) - 1
+            if not isNone(h)
+                set(bHigh, last, isNone(element(bHigh, last)) ? h : max(element(bHigh, last), h))
+            if not isNone(l)
+                set(bLow, last, isNone(element(bLow, last)) ? l : min(element(bLow, last), l))
+            set(bClose, last, cl)
+        push(bucketOf, size(bHigh) - 1)
+    buckets = size(bHigh)
+
+    // The folded series a swing is read from: wick or body.
+    fHigh = []
+    fLow = []
+    for k = 0 to buckets - 1
+        push(fHigh, body ? max(element(bOpen, k), element(bClose, k)) : element(bHigh, k))
+        push(fLow, body ? min(element(bOpen, k), element(bClose, k)) : element(bLow, k))
+
+    // Pivots on the folded series, reported `right` buckets after they form:
+    // strictly above (or below) every other value in the window.
+    pivH = []
+    pivL = []
+    for k = 0 to buckets - 1
+        ph = none
+        pl = none
+        if k >= left + right
+            c = k - right
+            candH = element(fHigh, c)
+            candL = element(fLow, c)
+            okH = not isNone(candH)
+            okL = not isNone(candL)
+            for m = k - right - left to k
+                if m != c
+                    vh = element(fHigh, m)
+                    vl = element(fLow, m)
+                    if isNone(vh) or (okH and vh >= candH)
+                        okH = false
+                    if isNone(vl) or (okL and vl <= candL)
+                        okL = false
+            ph = okH ? candH : none
+            pl = okL ? candL : none
+        push(pivH, ph)
+        push(pivL, pl)
+
+    lag = buckets == n ? 0 : 1
+    barsHtf = max(1, round(n / max(1, buckets)))
+    barsOffset = floor(left * barsHtf)
+    maxBack = min(MAX_BARS_BACK, max(30, barsOffset + barsHtf + 1))
+
+    // Events: the chart bar where a pivot first becomes available.
+    evAt = []
+    evHigh = []
+    evPrice = []
+    if n > 0 and showLast > 0 and barsOffset <= MAX_BARS_BACK
+        prevHigh = none
+        prevLow = none
+        for i = 0 to n - 1
+            k = element(bucketOf, i) - lag
+            curHigh = k >= 0 ? element(pivH, k) : none
+            curLow = k >= 0 ? element(pivL, k) : none
+            if isNone(prevHigh) and not isNone(curHigh)
+                push(evAt, i)
+                push(evHigh, true)
+                push(evPrice, curHigh)
+            if isNone(prevLow) and not isNone(curLow)
+                push(evAt, i)
+                push(evHigh, false)
+                push(evPrice, curLow)
+            prevHigh = curHigh
+            prevLow = curLow
+
+    drawn = 0
+    for e = max(0, size(evAt) - showLast) to size(evAt) - 1
+        at = element(evAt, e)
+        isHigh = element(evHigh, e)
+        price = element(evPrice, e)
+        // The bar that made the swing: closest to the price, nearest first.
+        delta = 10e10
+        offset = none
+        for j = 1 to maxBack
+            idx = at - j
+            if idx < 0
+                break
+            v = isHigh ? (body ? max(element(os, idx), element(cs, idx)) : element(hs, idx)) : (body ? min(element(os, idx), element(cs, idx)) : element(ls, idx))
+            d = abs(v - price)
+            if not isNone(d) and d < delta
+                delta = d
+                offset = j
+        if not isNone(offset)
+            x1 = at - offset
+            // Carried forward up to the bar before one trades through the level.
+            x2 = at
+            if extendAll
+                x2 = n - 1
+            else
+                for k = at + 1 to n - 1
+                    if element(hs, k) > price and element(ls, k) < price
+                        break
+                    x2 = k
+            colour = isHigh ? highColor : lowColor
+            draw.line(element(ts, x1), price, element(ts, x2), price, color = colour, width = lineWidth, style = lineStyle)
+            if labelShow
+                // At the right end of a level that ever extended, at the left
+                // end of one that never did.
+                anchor = x2 > at ? element(ts, x2) : element(ts, x1)
+                draw.label(anchor, price, formatPrice(price, tick), color = none, textColor = colour, align = "left")
+            drawn += 1
+    drawn
+
+if bar.isLast
+    if phl1Show
+        pivotGroup(tArr, oArr, hArr, lArr, cArr, useBody, phl1Tf, phl1Left, phl1Right, phl1ShowLast, phl1Extend, phl1LineStyle, phl1LineWidth, phl1LabelShow, H_COLOR, L_COLOR, chart.tickSize)
+    if phl2Show
+        pivotGroup(tArr, oArr, hArr, lArr, cArr, useBody, phl2Tf, phl2Left, phl2Right, phl2ShowLast, phl2Extend, phl2LineStyle, phl2LineWidth, phl2LabelShow, H_COLOR, L_COLOR, chart.tickSize)
+    if phl3Show
+        pivotGroup(tArr, oArr, hArr, lArr, cArr, useBody, phl3Tf, phl3Left, phl3Right, phl3ShowLast, phl3Extend, phl3LineStyle, phl3LineWidth, phl3LabelShow, H_COLOR, L_COLOR, chart.tickSize)
+
+// ------------------------------------------------------- equal high and low
+
+// Swing pivots on the chart itself. Two consecutive swings of the same kind
+// whose prices differ by less than `eqPercent` percent of the older one are
+// boxed from the older swing's bar to the newer one's, and the newer swing is
+// marked with an x at its bar's high or low.
+eqPivotHigh = pivotHigh(srcHigh, eqLeft, eqRight)
+eqPivotLow = pivotLow(srcLow, eqLeft, eqRight)
+
+var highPrice0 = none
+var highPrice1 = none
+var highBar0 = none
+var highBar1 = none
+var lowPrice0 = none
+var lowPrice1 = none
+var lowBar0 = none
+var lowBar1 = none
+var eqBoxes: array<box> = []
+
+hasHigh = not isNone(eqPivotHigh)
+hasLow = not isNone(eqPivotLow)
+if hasHigh
+    highBar1 = highBar0
+    highBar0 = bar.index
+    highPrice1 = highPrice0
+    highPrice0 = eqPivotHigh
+if hasLow
+    lowBar1 = lowBar0
+    lowBar0 = bar.index
+    lowPrice1 = lowPrice0
+    lowPrice0 = eqPivotLow
+
+eqOpacity = (100 - eqTransp) / 100
+eqHighColor = withAlpha(H_COLOR, eqOpacity)
+eqLowColor = withAlpha(L_COLOR, eqOpacity)
+
+// The gap between the last two swings of one kind, as a percentage of the
+// older one; absent while there is no older swing.
+highChange = isNone(highPrice1) or highPrice1 == 0 ? none : abs((highPrice0 - highPrice1) / highPrice1 * 100)
+lowChange = isNone(lowPrice1) or lowPrice1 == 0 ? none : abs((lowPrice0 - lowPrice1) / lowPrice1 * 100)
+
+equalHigh = phlEqShow and hasHigh and not isNone(highChange) and highChange < eqPercent and not isNone(highBar1) and highBar1 - eqRight >= 0 and highBar0 - eqRight >= 0
+equalLow = phlEqShow and hasLow and not isNone(lowChange) and lowChange < eqPercent and not isNone(lowBar1) and lowBar1 - eqRight >= 0 and lowBar0 - eqRight >= 0
+
+// The newest 50 boxes are kept. On a bar with both, the low box is added
+// before the high box, so the high one survives when only one slot is left.
+if equalLow
+    push(eqBoxes, draw.box(element(tArr, lowBar1 - eqRight), lowPrice1, element(tArr, lowBar0 - eqRight), lowPrice0, color = eqLowColor, fillColor = L_COLOR, opacity = eqOpacity))
+    draw.label(element(tArr, lowBar0 - eqRight), element(lArr, lowBar0 - eqRight), "x", color = none, textColor = eqLowColor)
+if equalHigh
+    push(eqBoxes, draw.box(element(tArr, highBar1 - eqRight), highPrice1, element(tArr, highBar0 - eqRight), highPrice0, color = eqHighColor, fillColor = H_COLOR, opacity = eqOpacity))
+    draw.label(element(tArr, highBar0 - eqRight), element(hArr, highBar0 - eqRight), "x", color = none, textColor = eqHighColor)
+while size(eqBoxes) > MAX_EQUAL_BOXES
+    draw.delete(shift(eqBoxes))

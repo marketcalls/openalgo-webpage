@@ -1,0 +1,15 @@
+{
+  "title": "Relative Squared Error (RSE)",
+  "summary": "Squared error of an exponential average as a forecast, divided by the squared error of a plain rolling mean: below 1 the average does better.",
+  "description": "Relative Squared Error (RSE) asks whether an exponential moving average tracks price better than a flat rolling mean does, giving large misses extra weight. The exponential average uses `Period` as its length and starts from the simple average of its first `Period` values, so it has no value through that warmup. The baseline is the mean of the source over the last `Period` bars, including this one; before that many bars have passed it is the mean of every bar so far.\n\nOn every bar the study squares the gap between the source and the exponential average, and squares the gap between the source and the baseline mean. Each is totalled over the last `Period` bars, counting only the bars that carry a value. RSE is the first total divided by the second. When the baseline total is zero the reading is 1. The exponential average is drawn on the price chart.",
+  "howToRead": "Below 1, the exponential average has fitted price more closely than the flat mean of the window; above 1, it has fitted worse. In a clean trend the flat mean falls far behind price and RSE drops close to zero. In a sideways market the flat mean is a good fit and RSE climbs toward or above 1. Because the gaps are squared, one sharp move counts heavily in both totals.\n\nThe first bar reads 1, and the line then has no value until the exponential average starts on bar `Period` minus one. The ratio says which fit was better, not how large either error was. One minus RSE is the same idea as the R squared of the exponential average against the window mean.",
+  "settings": [
+    { "key": "source", "label": "Source", "description": "The series being fitted by both the exponential average and the rolling mean." },
+    { "key": "period", "label": "Period", "description": "The length of the exponential average and of the window used for the baseline mean and both error totals." }
+  ],
+  "faq": [
+    { "q": "What does a reading near zero mean?", "a": "The exponential average's squared misses were tiny compared with those of the flat mean, which happens when price trends steadily: the average follows it and the flat mean does not." },
+    { "q": "Why does the very first bar show 1?", "a": "On the first bar the baseline mean is that bar's own value, so the baseline error is zero, and a zero baseline is reported as 1." },
+    { "q": "How is it different from the Relative Absolute Error?", "a": "This one squares each gap before totalling, so large gaps dominate. The absolute version counts every point of error the same." }
+  ]
+}

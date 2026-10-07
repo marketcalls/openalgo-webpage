@@ -1,0 +1,71 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © openalgo
+// Original work (c) mihakralj, MIT License
+
+version 1
+study("Ehlers Reverse EMA (REVERSEEMA)", precision = 4)
+
+period = input(20, "Period", min = 1, max = 5000, step = 1, tooltip = "Lookback period for the base EMA.")
+source = input(close, "Source")
+
+a = 2 / (period + 1)
+cc = 1 - a
+beta = cc
+
+// Stage k multiplies by cc to the power 2^(k-1).
+cc2 = cc * cc
+cc4 = cc2 * cc2
+cc8 = cc4 * cc4
+cc16 = cc8 * cc8
+cc32 = cc16 * cc16
+cc64 = cc32 * cc32
+cc128 = cc64 * cc64
+
+// A missing price enters the average as zero; the output is blanked on that
+// bar, but the state still advances.
+s = orElse(source, 0)
+
+// The forward exponential average starts from zero, and while it is filling
+// it is divided by the weight gathered so far to remove the zero-start bias.
+var warmup = true
+var eWeight = 1.0
+var emaRaw = 0.0
+emaRaw = a * (s - emaRaw) + emaRaw
+emaVal = emaRaw
+if warmup
+    eWeight = eWeight * beta
+    denom = 1 - eWeight
+    emaVal = (denom != 0 ? 1 / denom : 1) * emaRaw
+    warmup = eWeight > 1e-10
+
+// Eight cascaded reverse stages. Each one reads the previous bar's value of
+// the stage below it.
+var prevEmaVal = 0.0
+var re1 = 0.0
+var re2 = 0.0
+var re3 = 0.0
+var re4 = 0.0
+var re5 = 0.0
+var re6 = 0.0
+var re7 = 0.0
+var re8 = 0.0
+prevEma = prevEmaVal
+prevRe1 = re1
+prevRe2 = re2
+prevRe3 = re3
+prevRe4 = re4
+prevRe5 = re5
+prevRe6 = re6
+prevRe7 = re7
+re1 = cc * emaVal + prevEma
+re2 = cc2 * re1 + prevRe1
+re3 = cc4 * re2 + prevRe2
+re4 = cc8 * re3 + prevRe3
+re5 = cc16 * re4 + prevRe4
+re6 = cc32 * re5 + prevRe5
+re7 = cc64 * re6 + prevRe6
+re8 = cc128 * re7 + prevRe7
+prevEmaVal = emaVal
+
+plot(isNone(source) ? none : emaVal - a * re8, "REVERSEEMA", #ffeb3b, width = 2)
+level(0, "Zero", #787b86, style = "dashed")

@@ -1,0 +1,15 @@
+{
+  "title": "Acceleration Bands (ACCBANDS)",
+  "summary": "An average of the close with bands pushed beyond the averaged high and low by a multiple of the average bar spread.",
+  "description": "Acceleration Bands build a channel from the typical shape of recent bars. Over the last `period` bars the study takes the simple average of the highs, of the lows and of the closes. The middle line is the average close.\n\nThe band width is the averaged high minus the averaged low, multiplied by the factor. The upper band adds that width on top of the averaged high, and the lower band subtracts it from the averaged low. Because the bands start from the averaged extremes rather than from the middle line, they are always wider than the typical bar.\n\nThe averages are running sums. Until a full period of bars exists they average every bar so far, so the bands are drawn from the first bar and settle into a true rolling average once the window fills.",
+  "howToRead": "A close above the upper band means price has moved beyond the recent typical range by more than the usual spread, a sign of an accelerating move up; a close below the lower band is the same on the downside. While price stays between the bands the move is ordinary for the period.\n\nThe bands widen when bars get larger and narrow when they get smaller. The first bars use fewer than `period` bars, so treat the opening stretch with care.",
+  "settings": [
+    { "key": "period", "label": "Period", "description": "The number of bars in the averages of the high, low and close. Longer gives smoother, slower bands." },
+    { "key": "factor", "label": "Factor", "description": "The multiple of the averaged high to low spread added beyond the averaged high and low. Larger values widen the channel." }
+  ],
+  "faq": [
+    { "q": "Why are the bands drawn from the very first bar?", "a": "The averages divide by however many bars exist until the window is full, so the first bars carry an expanding average instead of a gap." },
+    { "q": "What makes the bands widen?", "a": "Larger bars. The width is the average high minus the average low times the factor, so a stretch of wide bars pushes the bands apart." },
+    { "q": "Is the middle line an average of the close?", "a": "Yes. It is the simple average of the close over the same period as the two bands." }
+  ]
+}

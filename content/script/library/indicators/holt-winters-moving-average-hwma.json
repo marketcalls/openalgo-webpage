@@ -1,0 +1,28 @@
+{
+  "title": "Holt-Winters Moving Average (HWMA)",
+  "summary": "Triple exponential smoothing that tracks level, velocity and acceleration, so the line keeps moving through a turn instead of flattening.",
+  "description": "HWMA carries three numbers from bar to bar. The level is pulled toward the source with the weight `2 / (period + 1)`, starting from where the previous level, velocity and half the acceleration said it would be. The velocity is updated from the change in the level, and the acceleration from the change in the velocity, both with the weight `1 / period`.\n\nThe plotted value is level plus velocity plus half the acceleration: a projection one bar ahead from the current level, velocity and acceleration. Modelling the acceleration lets the line bend with a curving move rather than lagging behind it.\n\nThe first bar sets the level to the source with zero velocity and acceleration, and shows the source unchanged.",
+  "howToRead": "Read HWMA as a trend line that projects its own motion forward. In a smooth trend it hugs price, and when a move starts to curve the acceleration term bends the line with it earlier than a simple average would.\n\nBecause it projects velocity and acceleration forward, it overshoots at abrupt reversals and can swing past price in a choppy range. A longer period damps all three terms and gives a calmer line; a short period makes it very responsive and noisy.",
+  "settings": [
+    {
+      "key": "period",
+      "label": "Period",
+      "description": "Sets all three smoothing weights. A longer period gives a smoother, slower line with less overshoot."
+    },
+    {
+      "key": "source",
+      "label": "Source",
+      "description": "The price series the average follows. Close is the usual choice; hl2 or another blend smooths out closes that jump around."
+    }
+  ],
+  "faq": [
+    {
+      "q": "What do velocity and acceleration mean here?",
+      "a": "Velocity is the smoothed change in the level per bar, and acceleration is the smoothed change in the velocity. Both are carried forward and added to the level to form the plotted value."
+    },
+    {
+      "q": "Why does HWMA overshoot at reversals?",
+      "a": "It projects the current velocity and acceleration forward, so for a few bars after a sharp turn it still points in the old direction until the terms adjust."
+    }
+  ]
+}

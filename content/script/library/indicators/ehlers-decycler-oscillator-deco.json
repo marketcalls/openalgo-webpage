@@ -1,0 +1,37 @@
+{
+  "title": "Ehlers Decycler Oscillator (DECO)",
+  "summary": "The difference between two high-pass filters, so only the price cycles between a short and a long cutoff period remain.",
+  "description": "The Ehlers Decycler Oscillator (DECO) runs two 2-pole high-pass filters over the source. A high-pass filter removes cycles longer than its cutoff, so the long filter (60 bars by default) keeps everything shorter than 60 bars and the short filter (30 bars) keeps everything shorter than 30. Subtracting the short filter from the long one leaves the band of cycles between the two cutoffs, with the trend removed.\n\nBoth filters start at zero on the first two bars, and a missing source value reads as zero. Nothing is drawn unless the short period is below the long period.",
+  "howToRead": "The line swings around zero as the mid-length cycles move price up and down. Turns at a peak or trough mark the turning points of those cycles, and crossings of the zero line show the cycle changing phase. Because the trend is filtered out, the oscillator stays centred on zero even during a long advance or decline.\n\nThe filters need some bars to settle, so the opening stretch of the line is not reliable. It describes cycles in the past data and does not predict that they will continue.",
+  "settings": [
+    {
+      "key": "shortPeriod",
+      "label": "Short Period",
+      "description": "The short cutoff: cycles shorter than this are removed from the result."
+    },
+    {
+      "key": "longPeriod",
+      "label": "Long Period",
+      "description": "The long cutoff: cycles longer than this, including the trend, are removed. It must be above the short period."
+    },
+    {
+      "key": "source",
+      "label": "Source",
+      "description": "The price series the calculation reads, such as the close or the bar midpoint."
+    }
+  ],
+  "faq": [
+    {
+      "q": "Why is the pane empty?",
+      "a": "The short period must be below the long period. When it is not, there is no band of cycles to keep, so nothing is drawn."
+    },
+    {
+      "q": "What does a zero crossing mean?",
+      "a": "The cycles between the two cutoffs have changed phase, from pushing price up to pushing it down or the reverse."
+    },
+    {
+      "q": "Why does it ignore the trend?",
+      "a": "Both filters remove cycles longer than their cutoff, and the long cutoff removes the trend, so what remains is the swing around it."
+    }
+  ]
+}

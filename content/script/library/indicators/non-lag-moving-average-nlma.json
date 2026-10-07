@@ -1,0 +1,15 @@
+{
+  "title": "Non-Lag Moving Average (NLMA)",
+  "summary": "A long weighted average whose cosine kernel adds negative weights to older bars, cutting lag while still smoothing short noise.",
+  "description": "The Non-Lag Moving Average convolves the source with a fixed kernel that spans `5 * period - 1` bars. The first `period - 1` taps form a focus zone where a variable `t` ramps from 0 to 1; the remaining taps carry `t` on upward. Each tap weighs `cos(pi * t)`, and once `t` passes one half that is damped by `1 / (3 pi t + 1)`. The last tap weighs nothing.\n\nThe cosine swings below zero and back, so some older bars get negative weight. Those negative weights subtract part of the old price history, which pulls the line toward the newest bars and reduces lag. The weighted sum is divided by the sum of the weights, so a flat price passes through unchanged. Until the kernel has a full window the line shows the price, and a missing price counts as zero.",
+  "howToRead": "Read it as a trend line that stays close to price. It turns sooner than a simple or exponential average of a similar smoothness, so a change in its slope arrives earlier. Price above a rising line describes an uptrend, and below a falling line a downtrend.\n\nThe price of low lag is overshoot: after a sharp reversal the negative weights can push the line slightly past price before it settles. The kernel is five times the period long, so the line only starts filtering after that many bars; before then it equals the price.",
+  "settings": [
+    { "key": "period", "label": "Period", "description": "The conceptual averaging period. The kernel itself spans 5 * period - 1 bars, so a larger value smooths more and needs more history." },
+    { "key": "source", "label": "Source", "description": "The price series that is filtered, the close by default." }
+  ],
+  "faq": [
+    { "q": "Why is the kernel five times longer than the period?", "a": "That is how the kernel is laid out: the focus zone takes the first period - 1 taps, and the damped cosine carries on over the remaining 4 * period taps, swinging between positive and negative weights several more times as it fades." },
+    { "q": "Why does the line equal the price on early bars?", "a": "The filter needs a full kernel of history, 5 * period - 1 bars. Before that it shows the price rather than a partial result." },
+    { "q": "Can it overshoot price?", "a": "Yes. The negative weights that reduce lag also make the line run a little past a sharp turn before it catches up." }
+  ]
+}

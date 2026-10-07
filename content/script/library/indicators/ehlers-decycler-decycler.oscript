@@ -1,0 +1,38 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © openalgo
+// Original work (c) mihakralj, MIT License
+
+version 1
+study("Ehlers Decycler (DECYCLER)", overlay = true, precision = 2)
+
+period = input(60, "Period", min = 1, max = 5000, step = 1, tooltip = "Cutoff period for the high-pass filter")
+source = input(close, "Source")
+
+// Two-pole high-pass coefficients for the cutoff period.
+arg = 0.707 * 2 * math.pi / period
+cosArg = math.cos(arg)
+hpAlpha = abs(cosArg) > 1e-10 ? (cosArg + math.sin(arg) - 1) / cosArg : 0
+omah = 1 - hpAlpha * 0.5
+oma = 1 - hpAlpha
+a1 = omah * omah
+b1 = 2 * oma
+c1 = -(oma * oma)
+
+// The second difference of price, with a missing price, or one before the
+// first bar, read as zero.
+s0 = orElse(source, 0)
+s1 = orElse(source[1], 0)
+s2 = orElse(source[2], 0)
+diff = s0 - 2 * s1 + s2
+
+// The high-pass filter holds at zero until two earlier bars exist. Taking it
+// away from price leaves the trend.
+var hp = 0.0
+var hp1 = 0.0
+newHp = bar.index < 2 ? 0.0 : a1 * diff + b1 * hp + c1 * hp1
+hp1 = hp
+hp = newHp
+
+decycler = isNone(source) ? none : s0 - newHp
+
+plot(decycler, "DECYCLER", #ffeb3b, width = 2)

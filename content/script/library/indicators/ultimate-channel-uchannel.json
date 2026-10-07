@@ -1,0 +1,19 @@
+{
+  "title": "Ultimate Channel (UCHANNEL)",
+  "summary": "A two-pole ultra smooth filter of price as the centre line, with bands a multiple of a smoothed true range on each side.",
+  "description": "Ultimate Channel runs the same two-pole ultra smooth filter twice. Applied to the centreline source with the Centerline Length, it gives the middle channel. Applied to a true range with the STR Length, it gives the smoothed true range that sets the width. The filter's coefficients depend only on its length, and it passes the raw value through on its first two bars, before it has outputs of its own to feed back.\n\nThe true range here is anchored on the previous value of the centreline source rather than on the previous close: the larger of this bar's high source and that value, minus the smaller of this bar's low source and that value. On the first bar it is simply the high minus the low. The upper and lower channels sit the smoothed true range, times the STR multiplier, above and below the middle channel.",
+  "howToRead": "The filter is designed to follow price with very little lag while removing most of the bar to bar noise, so the middle line turns close to where price turns. The bands widen as bars grow larger and narrow as they shrink. A close outside the channel is a move larger than the recent typical range; in a trend price tends to stay on one side of the middle line.\n\nThe smoothing reacts quickly, so the channel can follow a short spike more than a slow average would. Lengthen the two lengths for a calmer channel.",
+  "settings": [
+    { "key": "source", "label": "Source for Centerline", "description": "The series the middle channel smooths, and the anchor for the true range." },
+    { "key": "highSource", "label": "Source for High", "description": "The series used as the top of each bar's true range. The bar high by default." },
+    { "key": "lowSource", "label": "Source for Low", "description": "The series used as the bottom of each bar's true range. The bar low by default." },
+    { "key": "strLength", "label": "STR Length", "description": "Lookback period for smoothing the true range. A longer length gives a steadier channel width." },
+    { "key": "length", "label": "Centerline Length", "description": "Lookback period for smoothing the centreline. A longer length gives a smoother, slower middle line." },
+    { "key": "numSTRs", "label": "STR Multiplier", "description": "Number of smoothed true ranges between the middle channel and each band. A larger value widens the channel." }
+  ],
+  "faq": [
+    { "q": "What is the ultra smooth filter?", "a": "A two-pole recursive filter whose coefficients come from its length. Each output mixes the last three inputs with the previous two outputs, which keeps lag low while damping noise." },
+    { "q": "Why is the true range anchored on the centreline source?", "a": "The range runs from the lower of this bar's low and the previous source value to the higher of this bar's high and that value, so a gap from the previous source value widens the range just as a gap from the previous close does in a classic true range." },
+    { "q": "Why do the first two bars equal price?", "a": "The filter needs two previous outputs to feed back. Until it has them it passes the raw value through." }
+  ]
+}

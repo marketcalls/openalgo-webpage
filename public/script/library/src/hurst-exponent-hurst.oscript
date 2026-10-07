@@ -1,0 +1,83 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © openalgo
+// Original work (c) mihakralj, MIT License
+
+version 1
+study("Hurst Exponent (HURST)", precision = 4)
+
+source = input(close, "Source")
+length = input(100, "Length", min = 20, max = 500, step = 1, tooltip = "Lookback period for the Hurst Exponent. Minimum 20, since sub-periods start at 10. Long lookbacks are slow: the work per bar grows with the square of this number.")
+
+// Log returns, absent where either price is missing or not positive.
+logReturn = orElse(source, 0) > 0 and orElse(source[1], 0) > 0 ? log(source / source[1]) : none
+
+minN = 10
+maxN = floor(length / 2)
+
+// Rescaled range analysis. For every sub-period size n from 10 to half the
+// lookback, the lookback is cut into floor(length / n) sub-periods counted
+// back from this bar. Each one gives its range of cumulative deviation from
+// its own mean over its standard deviation, and the average of those R/S
+// values is paired with n.
+logN = []
+logRs = []
+for n = minN to maxN
+    numSub = floor(length / n)
+    rsSum = 0.0
+    for s = 0 to numSub - 1
+        start = s * n
+        // A sub-period reaching back before the first bar contributes
+        // nothing, but still counts in the average below.
+        if bar.index - start - (n - 1) < 0
+            continue
+        total = 0.0
+        complete = true
+        for j = 0 to n - 1
+            v = logReturn[start + j]
+            if isNone(v)
+                complete = false
+                break
+            total += v
+        if not complete
+            continue
+        mean = total / n
+        // The walk runs from the newest return of the sub-period backwards.
+        run = 0.0
+        hi = -1e300
+        lo = 1e300
+        varSum = 0.0
+        for j = 0 to n - 1
+            d = logReturn[start + j] - mean
+            run += d
+            hi = max(hi, run)
+            lo = min(lo, run)
+            varSum += d * d
+        sd = sqrt(varSum / n)
+        // A flat sub-period contributes nothing.
+        if sd > 0
+            rsSum += (hi - lo) / sd
+    avgRs = rsSum / numSub
+    if avgRs > 0
+        push(logN, log(n))
+        push(logRs, log(avgRs))
+
+// The exponent is the least squares slope of log(R/S) against log(n).
+hurst = none
+m = size(logN)
+if m >= 2
+    sumX = 0.0
+    sumY = 0.0
+    sumXy = 0.0
+    sumXsq = 0.0
+    for k = 0 to m - 1
+        xi = element(logN, k)
+        yi = element(logRs, k)
+        sumX += xi
+        sumY += yi
+        sumXy += xi * yi
+        sumXsq += xi * xi
+    denominator = m * sumXsq - sumX * sumX
+    if denominator != 0
+        hurst = (m * sumXy - sumX * sumY) / denominator
+
+plot(hurst, "Hurst Exponent", #ffeb3b, width = 2)

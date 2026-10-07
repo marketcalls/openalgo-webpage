@@ -1,0 +1,60 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © openalgo
+// Original work (c) mihakralj, MIT License
+
+version 1
+study("Ehlers Automatic Gain Control (AGC)", precision = 4)
+
+decay = input(0.991, "Decay", min = 0.9, max = 0.9999, step = 0.001, tooltip = "Peak decay factor per bar (0.991 is roughly a 110-bar half-life).")
+hpLength = input(48, "HP Length", min = 1, max = 5000, step = 1, tooltip = "Highpass cutoff period: removes trend cycles longer than this.")
+ssLength = input(10, "SS Length", min = 1, max = 5000, step = 1, tooltip = "Super Smoother cutoff: removes noise cycles shorter than this.")
+source = input(close, "Source")
+
+dk = min(0.9999, max(0.9, decay))
+hpLen = max(1, floor(hpLength))
+ssLen = max(1, floor(ssLength))
+sqrt2Pi = sqrt(2) * math.pi
+
+// Stage 1: a two-pole Butterworth highpass.
+hpArg = sqrt2Pi / hpLen
+hpExp = exp(-hpArg)
+hpC2 = 2 * hpExp * math.cos(hpArg)
+hpC3 = -hpExp * hpExp
+hpC1 = (1 + hpC2 - hpC3) / 4
+
+// Stage 2: a Super Smoother.
+ssArg = sqrt2Pi / ssLen
+ssExp = exp(-ssArg)
+ssC2 = 2 * ssExp * math.cos(ssArg)
+ssC3 = -ssExp * ssExp
+ssC1 = 1 - ssC2 - ssC3
+
+// Missing prices fold back onto the newest one, so the highpass starts at zero.
+ssrc = orElse(source, orElse(source[1], 0))
+s1 = orElse(source[1], ssrc)
+s2 = orElse(source[2], s1)
+
+var hp1 = none
+var hp2 = none
+var roof1 = none
+var roof2 = none
+hp = hpC1 * (ssrc - 2 * s1 + s2) + hpC2 * orElse(hp1, 0) + hpC3 * orElse(hp2, 0)
+roof = ssC1 * hp + ssC2 * orElse(roof1, hp) + ssC3 * orElse(roof2, orElse(hp1, hp))
+hp2 = hp1
+hp1 = hp
+roof2 = roof1
+roof1 = roof
+
+// The peak decays every bar and jumps to any larger magnitude.
+var peak = 0.0000001
+value = orElse(roof, 0)
+peak = dk * peak
+if abs(value) > peak
+    peak = abs(value)
+agc = peak > 0 ? value / peak : 0
+
+plot(agc, "AGC", #2962ff, width = 2)
+plot(roof, "Filter", #9598a1, width = 1)
+level(1, "+1", #9598a1, style = "dashed")
+level(0, "Zero", #9598a1, style = "dashed")
+level(-1, "-1", #9598a1, style = "dashed")

@@ -1,0 +1,14 @@
+{
+  "title": "ADX Variable Moving Average (ADXVMA)",
+  "summary": "An adaptive average that uses the ADX as its smoothing factor, following price closely in a strong trend and flattening in a range.",
+  "description": "The ADX Variable Moving Average is an exponential-style average whose step size changes every bar. On each bar it moves from its previous value toward the source by a fraction of the distance, and that fraction is the ADX divided by 100.\n\nThe ADX is built in the usual way. The true range and the upward and downward directional moves are each smoothed with a weight of 1 / `Period`, giving the plus and minus directional indicators. Their normalised difference, the directional index, is smoothed the same way to give the ADX. Every smoothed value starts from zero and is divided by `1 - beta^n` over the early bars, where beta is `1 - 1 / Period`, so the ADX is usable from the first bars. The average itself starts at the first source value.",
+  "howToRead": "When the ADX is high the market is trending and the line moves a large share of the way toward price each bar, so it hugs the trend. When the ADX is low the market is directionless and the line barely moves, so it goes flat through a range. A flat ADXVMA is itself a sign of a trendless market, and a line that starts to slope again shows a trend gathering strength.\n\nThe ADX measures strength, not direction, so the line can still lag at a sharp reversal: the ADX often stays high for a few bars after a trend ends. It is a trend filter more than a timing tool.",
+  "settings": [
+    { "key": "period", "label": "Period", "description": "The smoothing length of the true range, directional moves and ADX. Longer makes the ADX, and so the line, react more slowly." },
+    { "key": "source", "label": "Source", "description": "The price series the average follows, the close by default. The ADX itself always uses the high, low and close." }
+  ],
+  "faq": [
+    { "q": "Why does the line go flat in a range?", "a": "A low ADX means a small step size, so each bar the line moves only a little toward price and stays almost level." },
+    { "q": "Does a rising line mean the ADX is rising?", "a": "No. The ADX only sets how fast the line moves; the direction comes from where price is relative to the line." }
+  ]
+}

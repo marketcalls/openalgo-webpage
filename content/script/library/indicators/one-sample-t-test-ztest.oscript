@@ -1,0 +1,44 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © openalgo
+// Original work (c) mihakralj, MIT License
+
+version 1
+study("One-Sample t-Test (ZTEST)", precision = 3)
+
+source = input(close, "Source")
+period = input(30, "Period", min = 2, max = 5000, step = 1, tooltip = "Lookback for the sample mean and standard deviation. Minimum 30 recommended for the z-critical approximation.")
+mu0 = input(0.0, "Hypothesized Mean", step = 0.01, tooltip = "The population mean being tested against. Use 0 when testing returns.")
+
+// Running sums over the last `period` bars: the value that leaves the window
+// is taken out before this bar's value goes in. Absent values are skipped,
+// so `n` counts the values actually held.
+var n = 0
+var total = 0.0
+var totalSq = 0.0
+oldest = source[period]
+if not isNone(oldest)
+    total -= oldest
+    totalSq -= oldest * oldest
+    n -= 1
+if not isNone(source)
+    total += source
+    totalSq += source * source
+    n += 1
+
+// Two values are enough for a sample variance, so the test answers from the
+// second bar. The variance carries the n / (n - 1) correction.
+tstat = none
+if n >= 2
+    mean = total / n
+    sampleVar = max(0, totalSq / n - mean * mean) * (n / (n - 1))
+    sd = sqrt(sampleVar)
+    standardError = sd / sqrt(n)
+    if standardError > 1e-10
+        tstat = (mean - mu0) / standardError
+
+plot(tstat, "t-statistic", #ffeb3b, width = 2)
+level(0, "Zero Line", #787b86, style = "dashed")
+level(2.04, "95% ~t(30) upper", #4caf504d, style = "dashed")
+level(-2.04, "95% ~t(30) lower", #4caf504d, style = "dashed")
+level(2.75, "99% ~t(30) upper", #ff52524d, style = "dashed")
+level(-2.75, "99% ~t(30) lower", #ff52524d, style = "dashed")

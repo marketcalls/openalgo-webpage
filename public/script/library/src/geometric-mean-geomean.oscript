@@ -1,0 +1,31 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © openalgo
+// Original work (c) mihakralj, MIT License
+
+version 1
+study("Geometric Mean (GEOMEAN)", overlay = true, precision = 2)
+
+source = input(close, "Source (must be positive values)", tooltip = "Bars whose source value is zero or negative are left out of the window.")
+length = input(14, "Lookback Period", min = 1, max = 5000, step = 1)
+
+// A running sum of the logarithms of the positive values in the last `length`
+// bars, and how many there are. The value entering is added and the value
+// leaving the window is taken out, so the window grows over the first
+// `length` bars and then slides.
+var sumLog = 0.0
+var validCount = 0
+
+leaving = orElse(source[length], 0)
+if leaving > 0
+    sumLog -= log(leaving)
+    validCount -= 1
+
+entering = orElse(source, 0)
+if entering > 0
+    sumLog += log(entering)
+    validCount += 1
+
+// The exponential of the mean logarithm.
+geomean = validCount > 0 ? exp(sumLog / validCount) : none
+
+plot(geomean, "GEOMEAN", #ffeb3b, width = 2)

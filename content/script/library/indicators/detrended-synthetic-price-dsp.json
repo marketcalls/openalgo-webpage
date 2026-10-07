@@ -1,0 +1,15 @@
+{
+  "title": "Detrended Synthetic Price (DSP)",
+  "summary": "The gap between a quarter-cycle and a half-cycle exponential average, which strips out the trend and leaves the dominant cycle swinging around zero.",
+  "description": "Detrended Synthetic Price takes the dominant cycle period as its input and builds two exponential averages of the source from it: a fast one over a quarter of the period, at least 2 bars, and a slow one over half the period, at least 3 bars, each rounded to a whole number. The study plots the fast average minus the slow one.\n\nBoth averages start at zero. While their starting weight is still decaying, each is divided by the weight it has gathered so far, which removes the pull toward zero on the early bars, and once that weight is negligible the plain averages are used. Subtracting a slower average from a faster one cancels the trend that both share, so what remains oscillates around the zero line at roughly the cycle period.",
+  "howToRead": "A rising line means the short-term average is gaining on the longer one, and a falling line the opposite. Crossings of zero mark the points where the two averages meet, which tend to fall near the middle of each swing, and the peaks and troughs of the line mark the cycle's turning points. The size of the swings is in price units, so it grows with price and with volatility.\n\nThe study assumes a steady dominant cycle. When the market trends hard or the cycle length changes, the line drifts and its turns become less regular; set the period to the cycle you actually see on the chart.",
+  "settings": [
+    { "key": "source", "label": "Source", "description": "The price series both averages are taken from. The typical price, (high + low + close) / 3, by default." },
+    { "key": "period", "label": "Dominant Cycle Period", "description": "The cycle length in bars. The fast average covers a quarter of it and the slow average half of it." }
+  ],
+  "faq": [
+    { "q": "What should the period be set to?", "a": "The length in bars of the cycle you see on the chart, peak to peak. The default is 40; a shorter period follows faster swings." },
+    { "q": "Why does it start without a warmup gap?", "a": "Both averages divide out the weight they have not gathered yet, so their early values are not dragged toward zero and the line is usable from the first bars." },
+    { "q": "Is this the same as MACD?", "a": "It is built the same way, a fast exponential average minus a slow one, but the two lengths are tied to a quarter and a half of one cycle period and there is no signal line." }
+  ]
+}

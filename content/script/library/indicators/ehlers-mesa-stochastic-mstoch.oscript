@@ -1,0 +1,75 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © openalgo
+// Original work (c) mihakralj, MIT License
+
+version 1
+study("Ehlers MESA Stochastic (MSTOCH)", precision = 3)
+
+stochLength = input(20, "Stochastic Length", min = 2, max = 500, step = 1)
+hpLength = input(48, "HP Length", min = 1, max = 5000, step = 1, tooltip = "Highpass cutoff period: removes cycles longer than this.")
+ssLength = input(10, "SS Length", min = 1, max = 5000, step = 1, tooltip = "Super Smoother cutoff period: removes cycles shorter than this.")
+source = input(close, "Source")
+
+sqrt2Pi = sqrt(2) * math.pi
+
+// Two-pole highpass coefficients.
+hpArg = sqrt2Pi / hpLength
+hpExp = exp(-hpArg)
+hpC2 = 2 * hpExp * math.cos(hpArg)
+hpC3 = -hpExp * hpExp
+hpC1 = (1 + hpC2 - hpC3) / 4
+
+// Super smoother coefficients, used twice.
+ssArg = sqrt2Pi / ssLength
+ssExp = exp(-ssArg)
+ssC2 = 2 * ssExp * math.cos(ssArg)
+ssC3 = -ssExp * ssExp
+ssC1 = 1 - ssC2 - ssC3
+
+// On the first two bars the missing earlier prices fold back onto the
+// nearest price that exists.
+ssrc = orElse(source, orElse(source[1], 0))
+src1 = orElse(source[1], ssrc)
+src2 = orElse(source[2], src1)
+
+// Stage 1: the highpass starts from zero; the smoother starts from the
+// highpass output itself.
+var hp = 0.0
+var filt = 0.0
+var stoc = 0.0
+var mstoc = 0.0
+hp1 = bar.index >= 1 ? hp[1] : 0
+hp2 = bar.index >= 2 ? hp[2] : 0
+hpNow = hpC1 * (ssrc - 2 * src1 + src2) + hpC2 * hp1 + hpC3 * hp2
+hpPrev = bar.index >= 1 ? hp[1] : hpNow
+filtPrev = bar.index >= 1 ? filt[1] : hpNow
+filtPrev2 = bar.index >= 2 ? filt[2] : hpPrev
+filtNow = ssC1 * (hpNow + hpPrev) / 2 + ssC2 * filtPrev + ssC3 * filtPrev2
+hp = hpNow
+filt = filtNow
+
+// Stage 2: where the filtered value sits inside its range over the last
+// `stochLength` bars. Bars before the first read this bar's value.
+top = filtNow
+bottom = filtNow
+for k = 1 to stochLength - 1
+    v = bar.index >= k ? filt[k] : filtNow
+    if v > top
+        top = v
+    if v < bottom
+        bottom = v
+spanNow = top - bottom
+stocNow = spanNow > 0 ? (filtNow - bottom) / spanNow : 0.5
+
+// Stage 3: the super smoother again, over the stochastic.
+stocPrev = bar.index >= 1 ? stoc[1] : stocNow
+mstocPrev = bar.index >= 1 ? mstoc[1] : stocNow
+mstocPrev2 = bar.index >= 2 ? mstoc[2] : stocPrev
+mstocNow = ssC1 * (stocNow + stocPrev) / 2 + ssC2 * mstocPrev + ssC3 * mstocPrev2
+stoc = stocNow
+mstoc = mstocNow
+
+level(0.8, "Overbought", #787b86, style = "dashed")
+level(0.5, "Midline", #787b86, style = "dashed")
+level(0.2, "Oversold", #787b86, style = "dashed")
+plot(clamp(mstocNow, 0, 1), "MSTOCH", #ffeb3b, width = 2)

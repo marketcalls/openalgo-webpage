@@ -1,0 +1,11 @@
+{
+  "title": "On Balance Volume (OBV)",
+  "summary": "A running total that adds each bar's volume on a higher close and subtracts it on a lower close, tracking where volume is flowing.",
+  "description": "On Balance Volume keeps one running total from the first bar. When a bar closes above the previous bar's close, its whole volume is added to the total. When it closes below, its volume is subtracted. When the close is unchanged, the total does not move.\n\nThe total starts at zero, and the first bar compares with its own close, so it adds nothing. A missing volume reads as zero, and a bar with no close leaves the total as it was. There are no settings: the line depends only on the closes and the volume of the bars on the chart.",
+  "howToRead": "Read the direction of the line rather than its level, which depends only on where the chart starts. A rising line says volume has been arriving on up closes, a falling one that it has been arriving on down closes. When price and the line move together the trend has volume behind it.\n\nThe most watched reading is a divergence: price making a new high while the line fails to, or price making a new low while the line holds up. Because a bar counts its whole volume whatever the size of its move, one heavy bar with a tiny close change can shift the line a long way.",
+  "settings": [],
+  "faq": [
+    { "q": "Why does the line start at zero on my chart?", "a": "The running total begins on the first loaded bar. Its level depends only on that starting point, so compare slopes and turns, not values between charts." },
+    { "q": "Does the size of the price move matter?", "a": "No. Only the direction of the close matters. A bar that closes one tick higher adds its full volume, the same as a bar that rallies strongly." }
+  ]
+}

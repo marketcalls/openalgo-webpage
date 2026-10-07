@@ -1,0 +1,59 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © openalgo
+// Original work (c) mihakralj, MIT License
+
+version 1
+study("Decay Min-Max Channel (DECAYCHANNEL)", overlay = true, precision = 2)
+
+period = input(100, "Period", min = 1, max = 2000, step = 1)
+
+// The decay rate is ln 2 / period: once an edge has gone `period` bars
+// without a new extreme, it closes half its gap to the midpoint on each bar.
+decayLambda = log(2) / period
+
+// The highest high and lowest low of the last `period` bars, or of every bar
+// so far while the window is still filling.
+windowHigh = highest(high, period)
+windowLow = lowest(low, period)
+var runHigh = none
+var runLow = none
+runHigh = isNone(runHigh) ? high : max(runHigh, high)
+runLow = isNone(runLow) ? low : min(runLow, low)
+periodMax = bar.index >= period - 1 ? windowHigh : runHigh
+periodMin = bar.index >= period - 1 ? windowLow : runLow
+
+var currentMax = none
+var currentMin = none
+var timeSinceNewMax = 0
+var timeSinceNewMin = 0
+
+if isNone(currentMax) or isNone(currentMin)
+    currentMax = periodMax
+    currentMin = periodMin
+    timeSinceNewMax = 0
+    timeSinceNewMin = 0
+else
+    // A new extreme resets its clock; otherwise the clock keeps running.
+    if high >= currentMax
+        currentMax = high
+        timeSinceNewMax = 0
+    else
+        timeSinceNewMax = timeSinceNewMax + 1
+    if low <= currentMin
+        currentMin = low
+        timeSinceNewMin = 0
+    else
+        timeSinceNewMin = timeSinceNewMin + 1
+    // Each edge drifts toward the channel midpoint, faster the longer it has
+    // gone without a new extreme, and never past the window's own range.
+    midpoint = (currentMax + currentMin) / 2
+    maxDecayRate = 1 - exp(-decayLambda * timeSinceNewMax)
+    minDecayRate = 1 - exp(-decayLambda * timeSinceNewMin)
+    currentMax = currentMax - maxDecayRate * (currentMax - midpoint)
+    currentMin = currentMin - minDecayRate * (currentMin - midpoint)
+    currentMax = min(currentMax, periodMax)
+    currentMin = max(currentMin, periodMin)
+
+top = plot(currentMax, "Decaying High", #ffeb3b, width = 2)
+bottom = plot(currentMin, "Decaying Low", #ffeb3b, width = 2)
+fill(top, bottom, #2962ff, opacity = 0.1)

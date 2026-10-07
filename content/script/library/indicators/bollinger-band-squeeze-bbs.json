@@ -1,0 +1,20 @@
+{
+  "title": "Bollinger Band Squeeze (BBS)",
+  "summary": "Draws Bollinger Bands and Keltner Channels on price and marks every bar where the bands sit entirely inside the channels, the low-volatility squeeze.",
+  "description": "The Bollinger Band Squeeze compares two volatility envelopes around price. The Bollinger Bands are a simple average of the source plus and minus a multiple of its standard deviation. The Keltner Channels are the same kind of average plus and minus a multiple of an average true range. A squeeze is a bar where the upper band is below the upper channel and the lower band is above the lower channel.\n\nBoth averages cover the bars seen so far until their windows fill, so everything is drawn from the first bar. The true range uses the previous close, which counts as 0 on the first bar, so that bar's range is the whole price level. The range average is an exponential one started at zero and divided by 1 minus its decay raised to the bars seen, until that correction falls below 1e-10.",
+  "howToRead": "Each bar carries a small dot below it: red during a squeeze and green otherwise, and squeeze bars also get a faint red background. A squeeze means price has been quiet relative to its own typical range, a coil that can come before a larger move. The squeeze does not say which way the move will go; traders usually wait for the bands to expand back outside the channels and for price to leave the range.\n\nThe first bars rest on short windows and a large first true range, so early squeeze readings are unreliable. Squeezes can also last a long time on quiet markets without a breakout following.",
+  "settings": [
+    { "key": "bbPeriod", "label": "Bollinger Band Period", "description": "Number of bars in the Bollinger average and standard deviation." },
+    { "key": "bbMult", "label": "BB StdDev Multiplier", "description": "How many standard deviations the Bollinger Bands sit from their average. Smaller values make squeezes more frequent." },
+    { "key": "kcPeriod", "label": "Keltner Channel Period", "description": "Number of bars in the Keltner average and in the true range average." },
+    { "key": "kcMult", "label": "KC ATR Multiplier", "description": "How many average true ranges the channels sit from their average. Larger values make squeezes more frequent." },
+    { "key": "source", "label": "Source", "description": "The price series both averages and the deviation are computed from, the close by default." },
+    { "key": "showBands", "label": "Show Bands", "description": "Draw the three Bollinger lines. The squeeze is still computed when they are hidden." },
+    { "key": "showChannels", "label": "Show Channels", "description": "Draw the three Keltner lines. The squeeze is still computed when they are hidden." }
+  ],
+  "faq": [
+    { "q": "What exactly counts as a squeeze?", "a": "A bar where the upper Bollinger Band is below the upper Keltner Channel and the lower band is above the lower channel, so the bands sit fully inside the channels." },
+    { "q": "Does a squeeze tell me the breakout direction?", "a": "No. It only says volatility is low compared with the typical range. The direction has to come from price itself or from another study." },
+    { "q": "Why are the first bars often marked as a squeeze?", "a": "The first true range is measured against a previous close of zero, so it equals the whole price level and makes the early channels very wide, wide enough to hold the bands. That effect fades as the true range average moves on." }
+  ]
+}

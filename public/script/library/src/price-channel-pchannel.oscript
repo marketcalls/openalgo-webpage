@@ -1,0 +1,31 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © openalgo
+// Original work (c) mihakralj, MIT License
+
+version 1
+study("Price Channel (PCHANNEL)", overlay = true, precision = 2)
+
+length = input(20, "Length", min = 1, max = 5000, step = 1)
+
+// A missing high or low is read as zero.
+hi = orElse(high, 0)
+lo = orElse(low, 0)
+
+// The channel answers from the first bar over whatever part of the window
+// exists. Until the window is full that part is every bar so far, so a running
+// extreme stands in for the windowed one.
+var runHigh = none
+var runLow = none
+runHigh = isNone(runHigh) ? hi : max(runHigh, hi)
+runLow = isNone(runLow) ? lo : min(runLow, lo)
+
+windowHigh = highest(hi, length)
+windowLow = lowest(lo, length)
+
+highestHigh = bar.index < length - 1 ? runHigh : windowHigh
+lowestLow = bar.index < length - 1 ? runLow : windowLow
+
+plot((highestHigh + lowestLow) / 2.0, "Middle Channel", #ffeb3b, width = 2)
+top = plot(highestHigh, "Upper Channel", #ffeb3b, width = 2)
+bottom = plot(lowestLow, "Lower Channel", #ffeb3b, width = 2)
+fill(top, bottom, #2196f3, opacity = 0.1)

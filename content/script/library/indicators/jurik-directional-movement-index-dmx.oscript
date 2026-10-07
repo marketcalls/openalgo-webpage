@@ -1,0 +1,99 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © openalgo
+// Original work (c) mihakralj, MIT License
+
+version 1
+study("Jurik Directional Movement Index (DMX)", precision = 4)
+
+period = input(14, "Period", min = 1, max = 5000, step = 1, tooltip = "Number of bars used in the calculation")
+
+wilderAlpha = 1 / period
+
+// Constants of the adaptive average, which depend on the period alone.
+phaseValue = 0.5
+power = 0.2
+jBeta = power * (period - 1) / (power * (period - 1) + 2)
+halfSpan = sqrt(0.5 * (period - 1))
+len1 = halfSpan > 0 ? max(log(halfSpan) / log(2) + 2, 0) : 0
+pow1 = max(len1 - 2, 0.5)
+len2 = halfSpan * len1
+pow1Reciprocal = 1 / pow1
+avgVoltyAlpha = 2 / (max(4 * period, 65) + 1)
+div = 1 / (10 + 10 * min(max(period - 10, 0), 100) / 100)
+
+// Directional movement; the first bar has no previous bar and takes zero.
+upMove = high - high[1]
+downMove = low[1] - low
+upDm = bar.index == 0 ? 0 : upMove > downMove and upMove > 0 ? upMove : 0
+downDm = bar.index == 0 ? 0 : downMove > upMove and downMove > 0 ? downMove : 0
+
+// Wilder average started from zero, scaled by 1 / (1 - (1 - a)^k) until the
+// residual falls below 1e-10. The first bar takes the raw movement.
+fn wilderDi(dm, a) =>
+    var smoothed = none
+    var e = 1.0
+    var warm = true
+    di = dm
+    if isNone(smoothed)
+        smoothed = 0.0
+    else
+        smoothed = a * (dm - smoothed) + smoothed
+        if warm
+            e *= 1 - a
+            di = 1 / (1 - e) * smoothed
+            if e <= 1e-10
+                warm = false
+        else
+            di = smoothed
+    di
+
+upDi = wilderDi(upDm, wilderAlpha)
+downDi = wilderDi(downDm, wilderAlpha)
+
+// The normalised difference of the two, zero when both are zero.
+sumDi = upDi + downDi
+src = sumDi != 0 ? (upDi - downDi) / sumDi : 0
+
+// Adaptive moving average of that difference.
+var upperBand = none
+var lowerBand = none
+var ma1 = none
+var jma = none
+var vSum = 0.0
+var det0 = 0.0
+var det1 = 0.0
+var avgVolty = none
+
+del1 = src - orElse(upperBand, src)
+del2 = src - orElse(lowerBand, src)
+absDel1 = abs(del1)
+absDel2 = abs(del2)
+volty = absDel1 == absDel2 ? 0 : max(absDel1, absDel2)
+
+// The volatility ten bars ago, zero before ten bars exist.
+vSum = vSum + (volty - orElse(volty[10], 0)) * div
+prevAvgVolty = orElse(avgVolty, vSum)
+avgVolty = prevAvgVolty + avgVoltyAlpha * (vSum - prevAvgVolty)
+
+ratio = avgVolty > 0 ? volty / avgVolty : 1
+rvolty = min(max(ratio, 1), pow(len1, pow1Reciprocal))
+pow2 = pow(rvolty, pow1)
+kv = pow(len2 / (len2 + 1), sqrt(pow2))
+
+upperBand = del1 > 0 ? src : src - kv * del1
+lowerBand = del2 < 0 ? src : src - kv * del2
+
+jAlpha = pow(jBeta, pow2)
+jAlphaSquared = jAlpha * jAlpha
+oneMinusAlpha = 1 - jAlpha
+oneMinusAlphaSquared = oneMinusAlpha * oneMinusAlpha
+
+prevMa1 = orElse(ma1, src)
+ma1 = src + jAlpha * (prevMa1 - src)
+det0 = (src - ma1) * (1 - jBeta) + jBeta * det0
+ma2 = ma1 + phaseValue * det0
+prevJma = orElse(jma, src)
+det1 = (ma2 - prevJma) * oneMinusAlphaSquared + jAlphaSquared * det1
+jma = prevJma + det1
+
+plot(jma, "DMX", #ffeb3b, width = 2)

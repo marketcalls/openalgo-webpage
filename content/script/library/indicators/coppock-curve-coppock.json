@@ -1,0 +1,42 @@
+{
+  "title": "Coppock Curve (COPPOCK)",
+  "summary": "A weighted average of two rates of change added together, a slow momentum line that tends to turn up after a decline runs out.",
+  "description": "The Coppock Curve adds two percentage rates of change of the source, one over a longer lookback (14 bars by default) and one over a shorter lookback (11 bars), and smooths the sum with a linearly weighted moving average (10 bars), in which the newest value carries the most weight.\n\nEach rate of change counts as zero until its lookback exists. The weighted average uses the values it has while its window fills, weighting them 1 for the oldest up to the count for the newest, so the curve starts on the first bar. A missing source value reads as zero.",
+  "howToRead": "The curve swings around zero. It was designed as a slow momentum gauge: the classic reading is a turn upward while the curve is below zero, which suggests a decline is losing force. A turn down from above zero suggests an advance is fading. Crossings of the zero line show the combined momentum changing sign.\n\nBecause both rates of change and the smoothing are long, it reacts late and is best used to confirm a change in direction rather than to time an entry.",
+  "settings": [
+    {
+      "key": "source",
+      "label": "Source",
+      "description": "The price series the calculation reads, such as the close or the bar midpoint."
+    },
+    {
+      "key": "longRoc",
+      "label": "Long ROC Period",
+      "description": "Lookback of the longer rate of change. A larger value makes the curve slower."
+    },
+    {
+      "key": "shortRoc",
+      "label": "Short ROC Period",
+      "description": "Lookback of the shorter rate of change added to the longer one."
+    },
+    {
+      "key": "wmaPeriod",
+      "label": "WMA Period",
+      "description": "Length of the weighted average that smooths the summed rates of change."
+    }
+  ],
+  "faq": [
+    {
+      "q": "What is the signal people watch for?",
+      "a": "A turn upward while the curve is below zero. It suggests downside momentum is easing, though it does not say how soon price will follow."
+    },
+    {
+      "q": "Why are the first readings small?",
+      "a": "Each rate of change counts as zero until its lookback exists, so the early sum is missing one or both parts."
+    },
+    {
+      "q": "Does it work on intraday bars?",
+      "a": "The calculation counts bars, so it runs on any timeframe. On short bars it becomes a medium-term momentum line rather than the slow gauge it was built as."
+    }
+  ]
+}

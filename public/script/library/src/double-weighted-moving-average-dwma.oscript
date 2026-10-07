@@ -1,0 +1,52 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © openalgo
+// Original work (c) mihakralj, MIT License
+
+version 1
+study("Double Weighted Moving Average (DWMA)", overlay = true, precision = 2)
+
+period = input(10, "Period", min = 1, max = 5000, step = 1, tooltip = "Lookback for both weighted smoothing passes.")
+source = input(close, "Source")
+
+// Each pass is a linearly weighted average kept with running sums. While the
+// window fills, it averages the values so far with weights 1 to count, so it
+// answers from the first bar. Once full, each bar drops the window sum from the
+// weighted sum and adds the new value at the top weight. A missing value
+// counts as zero.
+
+// First pass over the source.
+cur1 = orElse(source, 0)
+var sum1 = 0.0
+var weighted1 = 0.0
+var count1 = 0
+var norm1 = 0.0
+if bar.index >= period
+    oldSum1 = sum1
+    sum1 -= cur1[period]
+    sum1 += cur1
+    weighted1 = weighted1 - oldSum1 + period * cur1
+else
+    count1 += 1
+    sum1 += cur1
+    weighted1 = weighted1 + count1 * cur1
+    norm1 = count1 * (count1 + 1) * 0.5
+firstPass = norm1 > 0 ? weighted1 / norm1 : none
+
+// Second pass over the first.
+cur2 = orElse(firstPass, 0)
+var sum2 = 0.0
+var weighted2 = 0.0
+var count2 = 0
+var norm2 = 0.0
+if bar.index >= period
+    oldSum2 = sum2
+    sum2 -= cur2[period]
+    sum2 += cur2
+    weighted2 = weighted2 - oldSum2 + period * cur2
+else
+    count2 += 1
+    sum2 += cur2
+    weighted2 = weighted2 + count2 * cur2
+    norm2 = count2 * (count2 + 1) * 0.5
+
+plot(norm2 > 0 ? weighted2 / norm2 : none, "DWMA", #ffeb3b, width = 2)

@@ -1,0 +1,19 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © openalgo
+// Original work (c) mihakralj, MIT License
+
+version 1
+study("On Balance Volume (OBV)", precision = 0)
+
+// A running total that adds the bar's volume on a higher close and subtracts
+// it on a lower one. The first bar compares with itself and adds nothing.
+var obvTotal = 0.0
+if not isNone(close)
+    prevClose = orElse(close[1], close)
+    vol = orElse(volume, 0)
+    if close > prevClose
+        obvTotal += vol
+    else if close < prevClose
+        obvTotal -= vol
+
+plot(obvTotal, "OBV", #ffeb3b, width = 2)

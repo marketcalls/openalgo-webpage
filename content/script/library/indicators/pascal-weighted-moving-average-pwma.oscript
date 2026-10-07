@@ -1,0 +1,29 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © openalgo
+// Original work (c) mihakralj, MIT License
+
+version 1
+study("Pascal Weighted Moving Average (PWMA)", overlay = true, precision = 2)
+
+period = input(10, "Period", min = 1, max = 1000, step = 1)
+source = input(close, "Source")
+
+// The weights are a row of the binomial triangle, w(0) = 1 and
+// w(k) = w(k - 1) * (p - k) / k, so the middle of the window counts most. The
+// window grows with the data until it reaches the period.
+p = min(bar.index + 1, period)
+weighted = 0.0
+weightTotal = 0.0
+w = 1.0
+for k = 0 to p - 1
+    if k > 0
+        w = w * (p - k) / k
+    price = source[k]
+    // A missing price is left out, and so is its weight.
+    if not isNone(price)
+        weighted += price * w
+        weightTotal += w
+
+pwma = orElse(weightTotal > 0 ? weighted / weightTotal : none, source)
+
+plot(pwma, "PWMA", #ffeb3b, width = 2)

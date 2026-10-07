@@ -1,0 +1,47 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © openalgo
+// Original work (c) mihakralj, MIT License
+
+version 1
+study("Log-Normal Distribution CDF (LOGNORMDIST)", precision = 4)
+
+source = input(close, "Source")
+period = input(50, "Lookback Period", min = 2, max = 5000, step = 1, tooltip = "Min-max normalization window.")
+mu = input(0.0, "Mu", step = 0.1, tooltip = "Location parameter; mean of ln(X). 0 = centered on geometric mean of [0,1].")
+sigma = input(1.0, "Sigma", min = 0.01, step = 0.1, tooltip = "Scale parameter; std dev of ln(X). Lower = steeper S-curve.")
+
+// Standard normal CDF by the five-term polynomial approximation of the upper
+// tail (formula 26.2.17 of Abramowitz and Stegun), with t = 1 / (1 + p|z|);
+// its error is below 7.5e-8. The lower half follows by symmetry.
+fn normalCdf(z) =>
+    az = abs(z)
+    t = 1 / (1 + 0.2316419 * az)
+    phi = exp(-0.5 * az * az) / sqrt(2 * math.pi)
+    poly = ((((1.330274429 * t - 1.821255978) * t + 1.781477937) * t - 0.356563782) * t + 0.319381530) * t
+    cdf = 1 - phi * poly
+    z >= 0 ? cdf : 1 - cdf
+
+// The window covers the last period bars, or every bar so far while fewer
+// than period bars exist.
+var runLow = none
+var runHigh = none
+runLow = isNone(runLow) ? source : min(runLow, source)
+runHigh = isNone(runHigh) ? source : max(runHigh, source)
+windowLow = lowest(source, period)
+windowHigh = highest(source, period)
+full = bar.index >= period - 1
+minVal = full ? windowLow : runLow
+maxVal = full ? windowHigh : runHigh
+
+// Position of the source inside its range, 0 at the low and 1 at the high. A
+// flat window has no range, so the position is the middle.
+spread = maxVal - minVal
+x = spread > 0 ? (source - minVal) / spread : 0.5
+safeX = max(1e-10, x)
+
+cdfValue = normalCdf((log(safeX) - mu) / sigma)
+
+plot(cdfValue, "LOGNORMDIST", #ffeb3b, width = 2)
+level(0.5, "Midline", #787b86, style = "dashed")
+level(0.95, "Upper", #ff5252, style = "dashed")
+level(0.05, "Lower", #4caf50, style = "dashed")

@@ -1,0 +1,16 @@
+{
+  "title": "Ehlers Roofing Filter (ROOFING)",
+  "summary": "A highpass and a Super Smoother in series that keep only the price cycles between two lengths, plotted as a zero-centred oscillator.",
+  "description": "The Roofing Filter is a bandpass built from two stages. The first is a two-pole highpass with cutoff `HP Length`: it removes trends and cycles longer than that many bars, leaving a wave that wanders around zero. The second is a Super Smoother with cutoff `SS Length`: it removes the fast noise shorter than that many bars.\n\nWhat remains is the band of cycles between the two lengths, shown as a single line in its own pane around a dashed zero level. The highpass uses the current price and the two before it, and both stages feed back their own last two values.\n\nOn the first bars, missing earlier prices are read as the current one, so the highpass starts at zero and the oscillator builds from there.",
+  "howToRead": "Read the line as the cycle part of price. Above zero, price is above its long-term path in this cycle band; below zero, it is below. Peaks and troughs of the line are the cycle's highs and lows, and the zero crossings are the turns between them. Because the trend has been removed, the line says nothing about the longer trend; read it alongside a trend measure of your choice.\n\nThe values are in price units and are not normalised, so the height of the swings grows with volatility and price level. A cycle longer than `HP Length` is invisible here, which is the point of the filter but also its limit.",
+  "settings": [
+    { "key": "hpLength", "label": "HP Length", "description": "The highpass cutoff in bars. Trends and cycles longer than this are removed." },
+    { "key": "ssLength", "label": "SS Length", "description": "The Super Smoother cutoff in bars. Noise faster than this is removed." },
+    { "key": "source", "label": "Source", "description": "The price series the filter runs on, the close by default." }
+  ],
+  "faq": [
+    { "q": "Why is it called a roofing filter?", "a": "It puts a ceiling and a floor on the cycle lengths that get through: the highpass sets the longest and the smoother sets the shortest." },
+    { "q": "What units is the line in?", "a": "Price units. It is the filtered deviation of price, not a percentage or a normalised score." },
+    { "q": "How should I set the two lengths?", "a": "Keep `HP Length` well above `SS Length`. The band between them is the range of cycle lengths the line shows." }
+  ]
+}

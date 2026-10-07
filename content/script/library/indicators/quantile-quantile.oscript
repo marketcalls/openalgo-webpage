@@ -1,0 +1,42 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © openalgo
+// Original work (c) mihakralj, MIT License
+
+version 1
+study("Quantile (QUANTILE)", overlay = true, precision = 2)
+
+source = input(close, "Source")
+length = input(14, "Period", min = 1, max = 1000, step = 1)
+quantileLevel = input(0.25, "Quantile Level (0.0-1.0)", min = 0, max = 1, step = 0.01, tooltip = "Rank within the sorted window: 0 is the lowest value, 0.5 the median, 1 the highest.")
+
+qLevel = clamp(quantileLevel, 0, 1)
+
+// The last `length` values of the source that are present, sorted. A window
+// at the left edge of the chart is ranked over the bars that exist.
+win = []
+for k = 0 to length - 1
+    v = source[k]
+    if not isNone(v)
+        push(win, v)
+sort(win, "asc")
+n = size(win)
+
+// The value at the requested rank, interpolated linearly between the two
+// neighbouring ranks.
+result = none
+if n == 1 or (n > 1 and qLevel == 0)
+    result = element(win, 0)
+else if n > 1 and qLevel == 1
+    result = element(win, n - 1)
+else if n > 1
+    rank = qLevel * (n - 1)
+    kFloor = floor(rank)
+    kCeil = ceil(rank)
+    if kFloor == kCeil
+        result = element(win, kFloor)
+    else
+        valFloor = element(win, kFloor)
+        valCeil = element(win, kCeil)
+        result = valFloor + (rank - kFloor) * (valCeil - valFloor)
+
+plot(result, "Quantile", #ffeb3b, width = 2)

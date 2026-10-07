@@ -1,0 +1,15 @@
+{
+  "title": "Entropy (ENTROPY)",
+  "summary": "Normalised Shannon entropy of the recent window, from 0 when the values crowd into one slice of the range to 1 when they spread evenly.",
+  "description": "Entropy measures how evenly the values in the lookback window are spread. The study divides a price range into equal slices, called bins, drops each value of the window into its bin, and counts the bins. From those counts it computes the Shannon entropy, the sum of minus p times the natural log of p over every bin that holds a share p of the values. It then divides by the log of the number of bins, the entropy of a perfectly flat spread, so the reading sits between 0 and 1.\n\nThe range and the number of bins are not reset for each window. The lowest and highest values are kept from every value seen so far, so the range is the range of the whole chart to date. The count that sets the number of bins also grows with every value scanned, which takes it to its ceiling of 100 bins within the first few dozen bars. The reading is therefore the spread of the recent window measured against the whole range seen so far.\n\nThe line needs at least two values before it draws, and reads 0 if every value seen so far is the same.",
+  "howToRead": "A low reading means the values in the recent window fall into only a few slices of the chart's range: price has been sitting in a narrow band. A higher reading means the window has travelled across more of the range. Because the range keeps growing with the chart, a window of the same width reads lower late in a long chart than early in it.\n\nUse it to compare quiet and active stretches on the same chart rather than as an absolute number. It says nothing about direction.",
+  "settings": [
+    { "key": "source", "label": "Source", "description": "The series whose spread is measured, such as the close." },
+    { "key": "length", "label": "Length", "description": "How many recent bars are dropped into the bins. A longer window covers more of the range and usually reads higher." }
+  ],
+  "faq": [
+    { "q": "Why is the reading low even when price moves?", "a": "The bins divide the whole range seen so far, often into 100 slices. A window of a few bars only reaches a handful of them unless it covers a large part of that range." },
+    { "q": "Why does the same move read differently later in the chart?", "a": "The range used for the bins grows as new highs and lows arrive, so each bin gets wider and the same window lands in fewer of them." },
+    { "q": "What does a reading of 1 mean?", "a": "Every bin holds the same share of the window's values, a perfectly even spread. With 100 bins and a short window that cannot happen, so readings stay well below 1." }
+  ]
+}

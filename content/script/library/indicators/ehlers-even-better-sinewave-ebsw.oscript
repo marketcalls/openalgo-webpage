@@ -1,0 +1,52 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © openalgo
+// Original work (c) mihakralj, MIT License
+
+version 1
+study("Ehlers Even Better Sinewave (EBSW)", precision = 4)
+
+source = input(close, "Source")
+hpLength = input(40, "High-Pass Filter Length", min = 1, max = 5000, step = 1, tooltip = "Period for detrending the price data.")
+ssfLength = input(10, "Super Smoother Filter Length", min = 1, max = 5000, step = 1, tooltip = "Period for smoothing the cycle component.")
+
+hpLen = max(1, floor(hpLength))
+ssfLen = max(1, floor(ssfLength))
+
+// High-pass filter coefficient.
+angleHp = 2 * math.pi / hpLen
+cosHp = math.cos(angleHp)
+alpha1Hp = orElse(cosHp == 0 ? 0 : (1 - math.sin(angleHp)) / cosHp, 0)
+
+// Super smoother coefficients.
+angleSsf = sqrt(2) * math.pi / ssfLen
+alpha2Ssf = exp(-angleSsf)
+c2 = 2 * alpha2Ssf * math.cos(angleSsf)
+c3 = -alpha2Ssf * alpha2Ssf
+c1 = 1 - c2 - c3
+
+// Filter state carried from bar to bar. Everything starts at zero, so the
+// price before the first bar also reads as zero.
+var hpPrev = 0.0
+var filt1 = 0.0
+var filt2 = 0.0
+var srcPrev = 0.0
+
+wave = none
+if not isNone(source)
+    hp = 0.5 * (1 + alpha1Hp) * (source - srcPrev) + alpha1Hp * hpPrev
+    filt = c1 * ((hp + hpPrev) / 2) + c2 * filt1 + c3 * filt2
+
+    // Automatic gain control: the three-bar mean of the wave over the root of
+    // its three-bar power, held to -1 and +1.
+    waveVal = (filt + filt1 + filt2) / 3
+    pwr = (filt * filt + filt1 * filt1 + filt2 * filt2) / 3
+    sineWave = pwr == 0 ? 0 : waveVal / sqrt(pwr)
+    wave = isNone(sineWave) ? 0 : min(1, max(-1, sineWave))
+
+    filt2 = filt1
+    filt1 = filt
+    hpPrev = hp
+    srcPrev = source
+
+plot(wave, "EBSW", #ffeb3b, width = 2)
+level(0, "Zero Line", #787b86, style = "dashed")

@@ -1,0 +1,16 @@
+{
+  "title": "ATR Bands (ATRBANDS)",
+  "summary": "A simple average of the source with bands a multiple of the average true range above and below it.",
+  "description": "ATR Bands place a band on each side of a simple moving average, at a distance set by the average true range. The middle line is the mean of the source over the last `length` bars. Until that many bars exist it averages every bar so far, so it is drawn from the first bar.\n\nThe true range of a bar is the largest of its high minus its low, the distance from its high to the previous close and the distance from its low to the previous close. The study smooths it with a running average whose weight is one over the length, starting from zero, and divides out the weight that zero start still holds, so the average true range is unbiased from the first bar.\n\nThe upper band is the middle line plus the multiplier times the average true range, and the lower band is the middle line minus it.",
+  "howToRead": "Because the width comes from true range, the bands reflect how far the instrument actually moves per bar, gaps included. A close beyond a band is a move larger than the recent typical range would suggest. Many traders also use the band distance as a stop distance, since it scales with volatility.\n\nThe middle line lags price by about half the length, so in a strong trend price can ride one band for a long time. Wider bands mean larger bars, not a direction.",
+  "settings": [
+    { "key": "source", "label": "Source", "description": "The price series the middle line averages, the close by default." },
+    { "key": "length", "label": "Length", "description": "The number of bars in the middle average and the smoothing length of the average true range." },
+    { "key": "multiplier", "label": "ATR Multiplier", "description": "How many average true ranges the bands sit from the middle line. Larger values give a wider channel." }
+  ],
+  "faq": [
+    { "q": "Why are the bands drawn from the first bar?", "a": "The middle line averages every bar so far until the window fills, and the true range average removes the bias of its zero start, so both have a value from bar one." },
+    { "q": "How is this different from a deviation band?", "a": "The width comes from bar ranges and gaps, not from how far closes stray from the mean. A quiet trend with large bars still gets wide bands." },
+    { "q": "What is the first bar's true range?", "a": "The first bar has no previous close, so it compares against its own close and its true range is its high minus its low." }
+  ]
+}

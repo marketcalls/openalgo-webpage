@@ -1,0 +1,34 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © openalgo
+// Original work (c) mihakralj, MIT License
+
+version 1
+study("Qstick Indicator", precision = 2)
+
+length = input(14, "Length", min = 1, max = 5000, step = 1, tooltip = "Lookback period for moving average calculation.")
+maType = input("SMA", "MA Type", options = ["SMA", "EMA"], tooltip = "Simple (SMA) or Exponential (EMA) moving average.")
+sourceClose = input(close, "Close Source", tooltip = "Source for closing price.")
+sourceOpen = input(open, "Open Source", tooltip = "Source for opening price.")
+
+// The candle body, close minus open; an absent value counts as zero.
+diff = orElse(sourceClose - sourceOpen, 0)
+
+// Exponential form: the recursion starts at zero on the first bar, so the
+// earliest readings are pulled toward zero.
+weight = 2 / (length + 1)
+var acc = 0.0
+acc = weight * (diff - acc) + acc
+
+// Simple form: an expanding mean over the bars seen so far, which becomes a
+// rolling mean of length bars once that many have arrived.
+var total = 0.0
+if bar.index >= length
+    total -= diff[length]
+total += diff
+smaValue = total / min(bar.index + 1, length)
+
+qstick = maType == "EMA" ? acc : smaValue
+
+level(0, "Zero Line", #787b86, style = "dashed")
+plot(qstick, "Qstick", #ffeb3b, width = 2)
+background(isNone(qstick) ? none : qstick > 0 ? fade(#4CAF50, 90) : fade(#FF5252, 90))

@@ -1,0 +1,16 @@
+{
+  "title": "Spearman Rank Correlation (SPEARMAN)",
+  "summary": "Correlation between the ranks of two series of the chart's symbol over a window: whether they move together in order, regardless of size.",
+  "description": "Spearman's rank correlation replaces each value in the window by its rank, then measures the Pearson correlation between the two rank series. Each value's rank is the count of smaller values in its window, plus half the number of other values equal to it, plus one, so tied values share the average of their ranks.\n\nBecause only order matters, the result is unmoved by outliers and by any rescaling that keeps the order of the values. It reads +1 when the two series rise and fall in perfect step, -1 when one rises exactly as the other falls, and 0 when their orderings are unrelated. When either series is flat over the window the study reads 0.\n\nBoth series come from the chart's own symbol, the close and the open by default. The study needs a full window of `Lookback Period` bars, and a bar is left blank when any value in the window is absent.",
+  "howToRead": "With the default inputs, a reading near +1 means the closes and opens have been ranked the same way, which happens in a steady trend; readings that fall toward zero show the two drifting apart within the window. The dashed lines at plus and minus 0.5 mark a moderate relationship, and the solid lines at plus and minus 1 are the bounds.\n\nRank correlation is less sensitive to a single extreme bar than Pearson correlation, but over a short window it still moves a lot by chance. The lookback is capped at 60 bars.",
+  "settings": [
+    { "key": "source1", "label": "Source 1", "description": "The first series of the pair, the close by default." },
+    { "key": "source2", "label": "Source 2", "description": "The second series of the pair, from the same symbol. It defaults to the open because a series compared with itself always reads +1." },
+    { "key": "length", "label": "Lookback Period", "description": "How many bars are ranked, from 2 to 60. A longer period gives a steadier reading." }
+  ],
+  "faq": [
+    { "q": "How does it differ from Pearson correlation?", "a": "Pearson correlation uses the values themselves and measures a straight-line relationship, so one extreme bar can dominate it. Spearman uses only the order of the values, so it measures whether the two series rise and fall together in any steady way." },
+    { "q": "Why is the lookback capped at 60?", "a": "Ranking compares every value in the window with every other, so the work grows with the square of the window. The cap keeps the study fast." },
+    { "q": "Why does it default to close against open?", "a": "Both series come from the chart's own symbol, and comparing a series with itself reads +1 on every bar. The open is a different series of the same instrument." }
+  ]
+}

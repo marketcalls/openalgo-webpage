@@ -1,0 +1,54 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © openalgo
+// Original work (c) mihakralj, MIT License
+
+version 1
+study("Pretty Good Oscillator", precision = 2)
+
+period = input(14, "Period", min = 1, max = 500, step = 1, tooltip = "Number of bars used for both the moving average and the average true range.")
+source = input(close, "Source")
+
+// The simple average of the bars seen so far, up to period of them, kept as a
+// running total so it answers from the first bar.
+var total = 0.0
+var counted = 0
+oldest = bar.index >= period ? source[period] : none
+if not isNone(oldest)
+    total -= oldest
+    counted -= 1
+if not isNone(source)
+    total += source
+    counted += 1
+average = counted > 0 ? total / counted : source
+
+// True range, with the bar's own close standing in for a missing previous one.
+prevClose = orElse(close[1], close)
+tr = orElse(max(high - low, max(abs(high - prevClose), abs(low - prevClose))), 0)
+
+// Average true range: an exponential mean with weight 1 / period seeded at
+// zero, divided by the weight still owed to the seed while that weight is
+// material, so the first bars are not dragged toward zero.
+a = 1 / period
+b = 1 - a
+var warmup = true
+var e = 1.0
+var emaTr = 0.0
+atrValue = 0.0
+emaTr = a * (tr - emaTr) + emaTr
+if warmup
+    e *= b
+    correction = 1 - e
+    atrValue = abs(correction) > 1e-15 ? emaTr / correction : emaTr
+    warmup = e > 1e-10
+else
+    atrValue = emaTr
+
+pgo = atrValue > 0 and not isNone(source) and not isNone(average) ? (source - average) / atrValue : none
+
+plot(pgo, "PGO", #ffeb3b, width = 2)
+level(0, "Zero Line", #787b86, style = "dashed")
+level(3, "Overbought", #ff5252, style = "dashed")
+level(-3, "Oversold", #4caf50, style = "dashed")
+
+// Shade the pane while the oscillator sits beyond plus or minus 3.
+background(isNone(pgo) ? none : pgo > 3 ? #ff525226 : pgo < -3 ? #4caf5026 : none)
