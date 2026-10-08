@@ -20,9 +20,9 @@ const dict = {
   'footer.copyright': 'Copyright',
 
   'hero.h1a': 'Votre plateforme personnelle',
-  'hero.h1b': 'de trading algo.',
+  'hero.h1b': 'de trading.',
   'hero.desc':
-    "Testez et exécutez vos idées de trading, connectez vos plateformes préférées et créez des stratégies avec l'IA - le tout avec une suite d'analyse d'options intégrée et 35+ brokers pris en charge.",
+    "Pour les traders algo, options et discrétionnaires. Automatisez depuis TradingView, Amibroker ou Python, ou créez vos stratégies sans code. Tradez les options de la chaîne jusqu'à l'exécution multi-jambes, avec gestion du risque intégrée. Graphiques, scalping et tests en mode Sandbox, avec 35+ brokers et sur votre propre serveur.",
   'hero.statDownloads': 'Téléchargements',
   'hero.statOpenSource': 'Open source',
   'hero.statStars': 'Stars GitHub',

@@ -20,9 +20,9 @@ const dict = {
   'footer.copyright': 'Copyright',
 
   'hero.h1a': 'Tu plataforma personal',
-  'hero.h1b': 'de trading algorítmico.',
+  'hero.h1b': 'de trading.',
   'hero.desc':
-    'Prueba y ejecuta tus ideas de trading, conecta tus plataformas favoritas y crea estrategias con IA - con una suite integrada de análisis de opciones compatible con 35+ brokers.',
+    'Para traders algorítmicos, de opciones y discrecionales. Automatiza desde TradingView, Amibroker o Python, o crea estrategias sin código. Opera opciones desde la cadena hasta la ejecución multi-leg con gestión de riesgo integrada. Gráficos, scalping y pruebas en modo Sandbox, con 35+ brokers y en tu propio servidor.',
   'hero.statDownloads': 'Descargas',
   'hero.statOpenSource': 'Código abierto',
   'hero.statStars': 'Estrellas en GitHub',

@@ -25,9 +25,9 @@ const en = {
 
   // Hero
   'hero.h1a': 'Your personal',
-  'hero.h1b': 'algo trading platform.',
+  'hero.h1b': 'trading platform.',
   'hero.desc':
-    'Test and execute your trading ideas, connect your favorite trading platforms, and build strategies with AI - with a built-in options analytics suite across 35+ brokers.',
+    'For algo, options and discretionary traders. Automate from TradingView, Amibroker or Python, or build strategies with no code. Trade options from the chain to multi-leg execution with built-in risk management. Chart, scalp and test in Sandbox mode, across 35+ brokers on your own server.',
   'hero.statDownloads': 'Downloads',
   'hero.statOpenSource': 'Open source',
   'hero.statStars': 'GitHub stars',
