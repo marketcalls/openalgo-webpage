@@ -31,7 +31,8 @@
     "gen:psychology": "node scripts/gen-psychology-content.mjs",
     "check:learn-i18n": "node scripts/check-learn-i18n.mjs",
     "translate:learn": "node scripts/translate-learn-content.mjs",
-    "translate:learn-metadata": "node scripts/translate-learn-metadata.mjs"
+    "translate:learn-metadata": "node scripts/translate-learn-metadata.mjs",
+    "audit": "npm audit"
   },
   "dependencies": {
     "@monaco-editor/react": "^4.7.0",
@@ -65,14 +66,16 @@
     "@types/react": "^19.0.0",
     "@types/react-dom": "^19.0.0",
     "eslint": "^8.57.0",
-    "eslint-config-next": "^15.4.8",
-    "postcss": "^8.5.10",
+    "eslint-config-next": "14.2.35",
+    "postcss": "^8.5.30",
     "tailwindcss": "^4.3.1",
     "typescript": "^5.3.3",
     "wrangler": "^4.100.0"
   },
   "overrides": {
-    "postcss": "^8.5.10"
+    "postcss": "^8.5.30",
+    "dompurify": "^3.4.17",
+    "glob": "^10.5.0"
   },
   "browserslist": [
     "chrome >= 109",
