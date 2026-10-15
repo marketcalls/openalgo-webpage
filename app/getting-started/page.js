@@ -42,7 +42,9 @@ import {
   FileSpreadsheet,
   Gauge,
   CandlestickChart,
-  Workflow
+  Workflow,
+  BarChart3,
+  Sigma
 } from "lucide-react"
 import { useState } from "react"
 
@@ -116,6 +118,8 @@ export default function BeginnerPage() {
     { lang: ".NET", icon: Hash },
     { lang: "Go", icon: Wind },
     { lang: "Rust", icon: Cog },
+    { lang: "R", icon: BarChart3 },
+    { lang: "MATLAB", icon: Sigma },
   ]
 
   return (
@@ -541,7 +545,7 @@ export default function BeginnerPage() {
             <p className="text-on-surface-variant mb-5">
               {t('gs.connect.sdkDesc')}
             </p>
-            <div className="grid grid-cols-3 sm:grid-cols-6 gap-2 sm:gap-3">
+            <div className="grid grid-cols-4 sm:grid-cols-8 gap-2 sm:gap-3">
               {sdks.map((s, index) => (
                 <div key={s.lang} className="rounded-lg sm:rounded-xl surface-container p-3 sm:p-4 text-center hover-lift transition-all">
                   <s.icon className={`h-5 w-5 sm:h-6 sm:w-6 mx-auto ${sdkAccents[index % sdkAccents.length]}`} />

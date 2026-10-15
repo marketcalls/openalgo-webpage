@@ -110,7 +110,9 @@ export default function Home() {
     { title: "Java SDK", description: t('home.sdk.javaDesc'), icon: Coffee, url: "https://github.com/marketcalls/openalgo-java" },
     { title: ".NET SDK", description: t('home.sdk.netDesc'), icon: Hash, url: "https://github.com/marketcalls/openalgo.NET" },
     { title: "Go SDK", description: t('home.sdk.goDesc'), icon: Wind, url: "https://github.com/marketcalls/openalgo-go" },
-    { title: "Rust SDK", description: t('home.sdk.rustDesc'), icon: Cog, url: "https://github.com/marketcalls/openalgo-rust" }
+    { title: "Rust SDK", description: t('home.sdk.rustDesc'), icon: Cog, url: "https://github.com/marketcalls/openalgo-rust" },
+    { title: "R SDK", description: t('home.sdk.rDesc'), icon: BarChart3, url: "https://github.com/marketcalls/openalgo-R-library" },
+    { title: "MATLAB SDK", description: t('home.sdk.matlabDesc'), icon: Sigma, url: "https://github.com/marketcalls/openalgo-matlab-library" }
   ]
 
   const platformBlocks = [
@@ -206,7 +208,7 @@ export default function Home() {
             <div className="mx-auto flex max-w-3xl flex-wrap justify-center gap-2">
               {[
                 "Amibroker", "TradingView", "GoCharting", "Python", "MetaTrader",
-                "NinjaTrader", "N8N", "Java", "Go", ".NET", "Node.js", "Rust",
+                "NinjaTrader", "N8N", "Java", "Go", ".NET", "Node.js", "Rust", "R", "MATLAB",
                 "ChartInk", "Excel", "Google Sheets", "OpenClaw", "Hermes Agent",
                 "GrokBot", "Telegram", "WhatsApp"
               ].map((platform) => (

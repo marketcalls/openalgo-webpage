@@ -33,7 +33,9 @@ export default function DownloadPage() {
     { title: "Java", description: t('home.sdk.javaDesc'), icon: Coffee, url: "https://github.com/marketcalls/openalgo-java", docs: "https://docs.openalgo.in/trading-platform/java" },
     { title: ".NET / C#", description: t('home.sdk.netDesc'), icon: Hash, url: "https://github.com/marketcalls/openalgo.NET", docs: "https://docs.openalgo.in/trading-platform/.net" },
     { title: "Go", description: t('home.sdk.goDesc'), icon: Wind, url: "https://github.com/marketcalls/openalgo-go", docs: "https://docs.openalgo.in/trading-platform/go" },
-    { title: "Rust", description: t('home.sdk.rustDesc'), icon: Cog, url: "https://github.com/marketcalls/openalgo-rust" }
+    { title: "Rust", description: t('home.sdk.rustDesc'), icon: Cog, url: "https://github.com/marketcalls/openalgo-rust", docs: "https://docs.openalgo.in/trading-platform/rust" },
+    { title: "R", description: t('home.sdk.rDesc'), icon: BarChart3, url: "https://github.com/marketcalls/openalgo-R-library", docs: "https://docs.openalgo.in/trading-platform/r" },
+    { title: "MATLAB", description: t('home.sdk.matlabDesc'), icon: Sigma, url: "https://github.com/marketcalls/openalgo-matlab-library", docs: "https://docs.openalgo.in/trading-platform/matlab" }
   ]
 
   const integrations = [
