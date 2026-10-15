@@ -93,36 +93,37 @@ createWidget(document.getElementById('chart'), {
 
 const LiveBtcChart = dynamic(() => import("@/components/charts/LiveBtcChart"), {
   ssr: false,
-  loading: () => <ChartSkeleton height={640} label="Loading the live BTC/USD chart" />,
+  loading: () => <ChartSkeleton height={640} labelKey="charts.loadingLive" />,
 })
 
 const EmbeddedDemo = dynamic(() => import("@/components/charts/EmbeddedDemo"), { ssr: false })
 
 const ChartTypeCard = dynamic(
   () => import("@/components/charts/demos").then((m) => m.ChartTypeCard),
-  { ssr: false, loading: () => <ChartSkeleton height={320} label="Loading demo" /> }
+  { ssr: false, loading: () => <ChartSkeleton height={320} labelKey="charts.loadingDemo" /> }
 )
 const ThemeCard = dynamic(() => import("@/components/charts/demos").then((m) => m.ThemeCard), {
   ssr: false,
-  loading: () => <ChartSkeleton height={320} label="Loading demo" />,
+  loading: () => <ChartSkeleton height={320} labelKey="charts.loadingDemo" />,
 })
 const IndicatorsCard = dynamic(
   () => import("@/components/charts/demos").then((m) => m.IndicatorsCard),
-  { ssr: false, loading: () => <ChartSkeleton height={320} label="Loading demo" /> }
+  { ssr: false, loading: () => <ChartSkeleton height={320} labelKey="charts.loadingDemo" /> }
 )
 const PriceScaleCard = dynamic(
   () => import("@/components/charts/demos").then((m) => m.PriceScaleCard),
-  { ssr: false, loading: () => <ChartSkeleton height={320} label="Loading demo" /> }
+  { ssr: false, loading: () => <ChartSkeleton height={320} labelKey="charts.loadingDemo" /> }
 )
 
 /** A box the size of the chart that will replace it, so nothing jumps on load. */
-function ChartSkeleton({ height, label }) {
+function ChartSkeleton({ height, labelKey }) {
+  const { t } = useI18n()
   return (
     <div
       className="flex items-center justify-center rounded-2xl border bg-surface-bright text-sm text-on-surface-variant"
       style={{ height }}
     >
-      {label}
+      {t(labelKey)}
     </div>
   )
 }

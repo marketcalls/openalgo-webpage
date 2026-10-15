@@ -103,7 +103,7 @@ export function Navbar() {
 
         {/* Desktop pill navigation */}
         <nav
-          aria-label="Main"
+          aria-label={t('nav.mainAria')}
           className="hidden lg:flex items-center gap-0.5 rounded-full border bg-surface-bright px-1.5 py-1.5 shadow-[0_2px_16px_rgba(0,0,0,0.05)]"
         >
           {menuItems.map((item) => {
@@ -205,7 +205,7 @@ export function Navbar() {
             size="icon"
             className="lg:hidden"
             onClick={() => setIsOpen(!isOpen)}
-            aria-label="Toggle Menu"
+            aria-label={t('nav.toggleMenu')}
             aria-expanded={isOpen}
           >
             {isOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}

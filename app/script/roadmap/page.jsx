@@ -21,7 +21,7 @@ export default function ScriptsRoadmapPage() {
     <ProductRoadmap
       data={data}
       repo="https://github.com/marketcalls/openscript"
-      related={{ href: "/charts/roadmap", label: "OpenAlgo Charts roadmap" }}
+      related={{ href: "/charts/roadmap", label: "OpenAlgo Charts roadmap", labelKey: "proad.relCharts" }}
     />
   )
 }

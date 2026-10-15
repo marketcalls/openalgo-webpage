@@ -1,6 +1,7 @@
 "use client"
 
 import { useEffect, useState } from "react"
+import { useI18n } from "@/components/i18n/LanguageProvider"
 import InteractiveChart from "./InteractiveChart"
 import { fetchCandlesOnce } from "./btcUsdFeed"
 
@@ -55,9 +56,9 @@ function useBtcDaily() {
 }
 
 /** The label under each card, so the reader always knows what they are looking at. */
-function sourceNote(real, settled) {
-  if (!settled) return "Loading Bitcoin daily candles"
-  return real ? "Bitcoin / US Dollar, daily, from Gemini" : "Generated sample data, market feed unavailable"
+function sourceNote(real, settled, t) {
+  if (!settled) return t('charts.demo.noteLoading')
+  return real ? t('charts.demo.noteReal') : t('charts.demo.noteSample')
 }
 
 /** Bars for a build: the real series when there is one, generated otherwise. */
@@ -97,20 +98,21 @@ function buildChartType(el, lib, tab, data) {
 }
 
 export function ChartTypeCard() {
+  const { t } = useI18n()
   const { bars, real, settled } = useBtcDaily()
   return (
     <InteractiveChart
-      title="Chart type"
-      note={sourceNote(real, settled)}
+      title={t('charts.demo.typeTitle')}
+      note={sourceNote(real, settled, t)}
       build={buildChartType}
       data={bars}
       tabs={[
-        { label: "Candles", key: "candles" },
-        { label: "Line", key: "line" },
-        { label: "Bars", key: "bars" },
-        { label: "Area", key: "area" },
-        { label: "Baseline", key: "baseline" },
-        { label: "Step", key: "step" },
+        { label: t('charts.demo.tabCandles'), key: "candles" },
+        { label: t('charts.demo.tabLine'), key: "line" },
+        { label: t('charts.demo.tabBars'), key: "bars" },
+        { label: t('charts.demo.tabArea'), key: "area" },
+        { label: t('charts.demo.tabBaseline'), key: "baseline" },
+        { label: t('charts.demo.tabStep'), key: "step" },
       ]}
     />
   )
@@ -148,17 +150,18 @@ function buildTheme(el, lib, tab, data) {
 }
 
 export function ThemeCard() {
+  const { t } = useI18n()
   const { bars, real, settled } = useBtcDaily()
   return (
     <InteractiveChart
-      title="Custom theme"
-      note={sourceNote(real, settled)}
+      title={t('charts.demo.themeTitle')}
+      note={sourceNote(real, settled, t)}
       build={buildTheme}
       data={bars}
       tabs={[
-        { label: "Dark", key: "dark" },
-        { label: "Light", key: "light" },
-        { label: "Colorful", key: "colorful" },
+        { label: t('charts.demo.tabDark'), key: "dark" },
+        { label: t('charts.demo.tabLight'), key: "light" },
+        { label: t('charts.demo.tabColorful'), key: "colorful" },
       ]}
     />
   )
@@ -219,17 +222,18 @@ function buildIndicators(el, lib, tab, data) {
 }
 
 export function IndicatorsCard() {
+  const { t } = useI18n()
   const { bars, real, settled } = useBtcDaily()
   return (
     <InteractiveChart
-      title="Indicators and markers"
-      note={sourceNote(real, settled)}
+      title={t('charts.demo.indTitle')}
+      note={sourceNote(real, settled, t)}
       build={buildIndicators}
       data={bars}
       tabs={[
-        { label: "Volume", key: "volume" },
-        { label: "Trade markers", key: "markers" },
-        { label: "Moving average", key: "ma" },
+        { label: t('charts.demo.tabVolume'), key: "volume" },
+        { label: t('charts.demo.tabMarkers'), key: "markers" },
+        { label: t('charts.demo.tabMa'), key: "ma" },
       ]}
     />
   )
@@ -266,11 +270,12 @@ function buildPriceScale(el, lib, _tab, data) {
 }
 
 export function PriceScaleCard() {
+  const { t } = useI18n()
   const { bars, real, settled } = useBtcDaily()
   return (
     <InteractiveChart
-      title="Price lines"
-      note={sourceNote(real, settled)}
+      title={t('charts.demo.priceTitle')}
+      note={sourceNote(real, settled, t)}
       build={buildPriceScale}
       data={bars}
     />

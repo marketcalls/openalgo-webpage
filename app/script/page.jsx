@@ -1,14 +1,8 @@
-import Link from "next/link"
-
-import { buttonVariants } from "@/components/ui/button"
-import PlaygroundLoader from "@/components/script/PlaygroundLoader"
-import ScreenGallery from "@/components/script/ScreenGallery"
-import ScreenImage from "@/components/script/ScreenImage"
-import SearchButton from "@/components/script/SearchButton"
-import { paint } from "@/components/script/StaticCode"
 import screensData from "@/content/script/screens.json"
 import { SCRIPT_REPO, SCRIPT_VERSION, SITE, firstPageOf, scriptNav } from "@/lib/scriptDocs"
 import manual from "@/lib/scriptReferenceV1.json"
+
+import ScriptLandingClient from "./ScriptLandingClient"
 
 // The reference manual: every implemented name on one page.
 const MANUAL_HREF = "/script/reference/v1"
@@ -54,54 +48,12 @@ export const metadata = {
 const NPM = "https://www.npmjs.com/package/openalgo-script"
 const PYPI = "https://pypi.org/project/openscript/"
 
-const FEATURES = [
-  {
-    mark: "study()  strategy()",
-    title: "Studies and strategies in one language",
-    body: "A study draws plots, fills, markers and tables on the chart. A strategy adds orders, exits and position sizing. The declaration line is the only difference, so an idea moves from the chart to a backtest without a rewrite.",
-    wide: true,
-    sample: ['study("EMA cross", overlay = true)', 'strategy("EMA cross, bracketed", capital = 500000)'],
-  },
-  {
-    mark: "no eval",
-    title: "Compiles in milliseconds",
-    body: "A script compiles to a versioned data program that an engine runs. Nothing is built with eval or new Function, and a typical script compiles in a few milliseconds: the playground above times every keystroke.",
-  },
-  {
-    mark: "diagnose()  hover()",
-    title: "Checks as you type",
-    body: "The language ships highlight, complete, hover, signature, diagnose and format as plain functions, so any editor can complete, explain and check a script while it is written. Every error has a code, a message and a fix.",
-  },
-  {
-    mark: "Backtest panel",
-    title: "Backtests in the browser",
-    body: "Pick a strategy, a date range and its inputs in the Backtest panel of /trading, and run it in the browser. The report shows net profit, drawdown and win rate, with every trade and the equity curve they add up to.",
-    wide: true,
-    steps: ["Pick a strategy", "Set the range and inputs", "Run it in the browser", "Read the report and trades"],
-  },
-  {
-    mark: "analyzer mode",
-    title: "Sandbox first, then live",
-    body: "Deploy a strategy to sandbox trading (analyzer mode in OpenAlgo) and watch its orders on real market data before you switch it to live trading.",
-  },
-  {
-    mark: "alert()",
-    title: "Alerts from scripts",
-    body: "Call alert() on the bar a condition is met. The Alerts panel lists every active alert and logs each time one fires.",
-  },
-  {
-    mark: "spec + 2 engines",
-    title: "An open specification",
-    body: "The language is written down as a specification with a conformance suite. The JavaScript and Python engines run the same compiled programs and agree to the last bit on every numerical function and on every conformance case both can run.",
-  },
-]
-
 const LIBRARIES = [
   {
     name: "openalgo-script",
     registry: "npm",
-    runtime: "JavaScript and TypeScript",
-    body: "The compiler, the engine, the backtest, the six editor functions, a charts adapter and an importer for scripts written in another chart language, as ES modules for the browser and Node.",
+    runtimeKey: "script.lib1Runtime",
+    bodyKey: "script.lib1Body",
     install: "npm install openalgo-script",
     registryHref: NPM,
     doc: ["integrate", "javascript"],
@@ -109,8 +61,8 @@ const LIBRARIES = [
   {
     name: "openscript",
     registry: "PyPI",
-    runtime: "Python",
-    body: "Runs compiled OpenScript programs in pure Python, with the same library as the JavaScript engine, on a server next to your data and your order routing.",
+    runtimeKey: "script.lib2Runtime",
+    bodyKey: "script.lib2Body",
     install: "pip install openscript",
     registryHref: PYPI,
     doc: ["integrate", "python-engine"],
@@ -137,14 +89,6 @@ function pageHref(section, page) {
   return firstPageOf(section) ?? "/script#docs"
 }
 
-function Kicker({ children, id }) {
-  return (
-    <p id={id} className="font-label text-label-md uppercase text-on-surface-variant">
-      {children}
-    </p>
-  )
-}
-
 export default function ScriptLandingPage() {
   const introHref = pageHref("getting-started", "introduction")
   // "The reference" is the manual: every name on one page, filterable.
@@ -167,6 +111,24 @@ export default function ScriptLandingPage() {
   const totalPages = scriptNav.reduce((n, s) => n + s.pages.length, 0)
   const readyCount = scriptNav.reduce((n, s) => n + s.pages.filter((p) => p.ready).length, 0)
 
+  const libraries = LIBRARIES.map((lib) => ({
+    name: lib.name,
+    registry: lib.registry,
+    runtimeKey: lib.runtimeKey,
+    bodyKey: lib.bodyKey,
+    install: lib.install,
+    registryHref: lib.registryHref,
+    docHref: pageHref(lib.doc[0], lib.doc[1]),
+  }))
+
+  const sections = scriptNav.map((s) => ({
+    slug: s.slug,
+    title: s.title,
+    first: firstPageOf(s.slug),
+    ready: s.pages.filter((p) => p.ready).length,
+    pages: s.pages.map((p) => ({ slug: p.slug, title: p.title, ready: Boolean(p.ready) })),
+  }))
+
   const languageLd = {
     "@context": "https://schema.org",
     "@type": "ComputerLanguage",
@@ -182,306 +144,23 @@ export default function ScriptLandingPage() {
   return (
     <div className="osd-landing">
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(languageLd) }} />
-
-      {/* Hero: the language's name, its promise, and the editor itself */}
-      <section className="px-4 pt-14 pb-16 md:pt-20">
-        <div className="container mx-auto">
-          <div className="mx-auto max-w-4xl text-center">
-            <div className="mb-7 flex flex-wrap items-center justify-center gap-2">
-              <span className="osd-pill">v{SCRIPT_VERSION}</span>
-              <span className="osd-pill">Apache 2.0</span>
-            </div>
-
-            <h1 className="osd-hero-title">OpenScript</h1>
-            <p className="mt-3 font-mono text-sm text-on-surface-variant">Also called OpenAlgo Script.</p>
-
-            <p className="osd-hero-tagline">
-              Write a study or a strategy once.
-              <span className="block text-on-surface-variant/70">Plot it, backtest it, trade it.</span>
-            </p>
-
-            <p className="mx-auto mt-6 max-w-2xl text-lg leading-relaxed text-on-surface-variant">
-              The open trading language of OpenAlgo. One short script draws on the chart in /trading, backtests in
-              the browser, and trades through OpenAlgo, starting in sandbox trading (analyzer mode in OpenAlgo).
-            </p>
-
-            <div className="mt-9 flex flex-wrap items-center justify-center gap-3">
-              <Link href={introHref} className={buttonVariants({ size: "lg", className: "h-11 px-6" })}>
-                Read the introduction
-              </Link>
-              <Link href={referenceHref} className={buttonVariants({ variant: "outline", size: "lg", className: "h-11 px-6" })}>
-                Reference manual
-              </Link>
-              <Link href="/script/library" prefetch={false} className={buttonVariants({ variant: "outline", size: "lg", className: "h-11 px-6" })}>
-                Indicator library
-              </Link>
-              <a
-                href={SCRIPT_REPO}
-                target="_blank"
-                rel="noopener noreferrer"
-                className={buttonVariants({ variant: "ghost", size: "lg", className: "h-11 px-5" })}
-              >
-                GitHub
-              </a>
-            </div>
-
-            {basicsHref ? (
-              <p className="osd-start">
-                <span>New to OpenScript?</span>{" "}
-                <Link href={basicsHref} className="osd-start-link">
-                  Start with Language basics
-                </Link>
-              </p>
-            ) : null}
-
-            <div className="mt-6 flex justify-center">
-              <SearchButton />
-            </div>
-          </div>
-
-          <div className="osd-hero-stage">
-            <div className="min-w-0">
-              <PlaygroundLoader />
-            </div>
-            <div className="osd-hero-side">
-              {hero ? (
-                <div>
-                  <p className="osd-side-label">In /trading</p>
-                  <ScreenImage
-                    src={`/script/screens/${hero.file}`}
-                    alt={hero.alt}
-                    caption={
-                      heroId === "halftrend"
-                        ? "The first tab, halftrend.oscript, running on a BHEL 15 minute NSE chart in the /trading page of OpenAlgo."
-                        : hero.caption
-                    }
-                    eager
-                  />
-                </div>
-              ) : null}
-              <div>
-                <p className="osd-side-label">In this playground</p>
-                <ul className="osd-try">
-                  <li>
-                    <strong>Hover a name</strong> such as <code>atr</code> or <code>orElse</code> to read its signature
-                    and what it does.
-                  </li>
-                  <li>
-                    <strong>Start typing a name</strong> on a new line and pick from the library, with each signature
-                    beside it.
-                  </li>
-                  <li>
-                    <strong>Misspell</strong> <code>close</code>. The compiler marks it with an error code and a fix.
-                  </li>
-                </ul>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* What the language does */}
-      <section className="border-t px-4 py-24" aria-labelledby="osd-features">
-        <div className="container mx-auto">
-          <div className="mx-auto mb-14 max-w-3xl text-center">
-            <Kicker>What it does</Kicker>
-            <h2 id="osd-features" className="mt-4 text-display-md text-on-surface">
-              From an idea on a chart
-              <span className="block text-on-surface-variant/70">to an order, in one language</span>
-            </h2>
-          </div>
-
-          <div className="mx-auto grid max-w-6xl gap-4 md:grid-cols-2 lg:grid-cols-3">
-            {FEATURES.map((f) => (
-              <div key={f.title} className={`obsidian-card osd-feature rounded-3xl p-6${f.wide ? " lg:col-span-2" : ""}`}>
-                <p className="osd-feature-mark">{f.mark}</p>
-                <h3 className="mt-4 text-lg font-bold text-on-surface">{f.title}</h3>
-                <p className="mt-2 text-sm leading-relaxed text-on-surface-variant">{f.body}</p>
-                {f.sample ? (
-                  <div className="osd-feature-code" aria-hidden="true">
-                    {f.sample.map((line) => (
-                      <code key={line}>
-                        {paint(line).map(([cls, text], i) => (cls ? <span key={i} className={cls}>{text}</span> : text))}
-                      </code>
-                    ))}
-                  </div>
-                ) : null}
-                {f.steps ? (
-                  <ol className="osd-feature-steps">
-                    {f.steps.map((s) => (
-                      <li key={s}>{s}</li>
-                    ))}
-                  </ol>
-                ) : null}
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Where it runs: the /trading page */}
-      <section className="px-3 py-6 sm:px-6" aria-labelledby="osd-gallery">
-        <div className="scheme-dark rounded-[2.5rem] px-4 py-20 sm:px-8 md:py-24">
-          <div className="container mx-auto">
-            <div className="mx-auto mb-12 max-w-3xl text-center">
-              <Kicker>In /trading</Kicker>
-              <h2 id="osd-gallery" className="mt-4 text-display-md text-on-surface">
-                Where your scripts run
-              </h2>
-              <p className="mx-auto mt-5 max-w-2xl text-lg leading-relaxed text-on-surface-variant">
-                OpenScript is built into the /trading page of OpenAlgo: write in the Scripts panel, draw on the chart,
-                backtest, and deploy, on Indian market instruments.
-              </p>
-            </div>
-            <div className="mx-auto max-w-6xl">
-              <ScreenGallery screens={screens} />
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Two libraries */}
-      <section className="px-4 py-24" aria-labelledby="osd-libraries">
-        <div className="container mx-auto">
-          <div className="mx-auto mb-12 max-w-3xl text-center">
-            <Kicker>Libraries</Kicker>
-            <h2 id="osd-libraries" className="mt-4 text-display-md text-on-surface">
-              Two libraries, one language
-            </h2>
-            <p className="mx-auto mt-5 max-w-2xl text-lg leading-relaxed text-on-surface-variant">
-              Put OpenScript inside any financial portal. Both are Apache 2.0 with zero dependencies.
-            </p>
-          </div>
-
-          <div className="mx-auto grid max-w-5xl gap-5 md:grid-cols-2">
-            {LIBRARIES.map((lib) => (
-              <div key={lib.name} className="osd-lib">
-                <div className="flex flex-wrap items-baseline justify-between gap-2">
-                  <h3 className="font-mono text-xl font-semibold text-on-surface">{lib.name}</h3>
-                  <span className="osd-lib-reg">
-                    {lib.registry} &middot; {lib.runtime}
-                  </span>
-                </div>
-                <p className="mt-3 text-sm leading-relaxed text-on-surface-variant">{lib.body}</p>
-                <div className="osd-lib-install">
-                  <span aria-hidden="true">$</span>
-                  <code>{lib.install}</code>
-                </div>
-                <div className="mt-5 flex flex-wrap gap-2">
-                  <Link href={pageHref(lib.doc[0], lib.doc[1])} prefetch={false} className={buttonVariants({ size: "sm", className: "h-9 px-4" })}>
-                    Read the guide
-                  </Link>
-                  <a href={lib.registryHref} target="_blank" rel="noopener noreferrer" className={buttonVariants({ variant: "outline", size: "sm", className: "h-9 px-4" })}>
-                    {lib.registry}
-                  </a>
-                  <a href={SCRIPT_REPO} target="_blank" rel="noopener noreferrer" className={buttonVariants({ variant: "ghost", size: "sm", className: "h-9 px-4" })}>
-                    GitHub
-                  </a>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* The documentation, section by section */}
-      <section id="docs" className="border-t px-4 py-24" aria-labelledby="osd-docs">
-        <div className="container mx-auto">
-          <div className="mx-auto mb-12 max-w-3xl text-center">
-            <Kicker>Documentation</Kicker>
-            <h2 id="osd-docs" className="mt-4 text-display-md text-on-surface">
-              Everything, from a first study to the full reference
-            </h2>
-            <p className="mx-auto mt-5 max-w-2xl text-lg leading-relaxed text-on-surface-variant">
-              {totalPages} pages in {scriptNav.length} sections
-              {readyCount < totalPages ? `, ${readyCount} published so far` : ""}.
-            </p>
-          </div>
-
-          <div className="mx-auto grid max-w-6xl gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            {scriptNav.map((s) => {
-              const first = firstPageOf(s.slug)
-              const ready = s.pages.filter((p) => p.ready).length
-              return (
-                <div key={s.slug} className="obsidian-card osd-map-card rounded-3xl p-6">
-                  <div className="flex items-baseline justify-between gap-3">
-                    <h3 className="text-lg font-bold text-on-surface">
-                      {first ? (
-                        <Link href={first} prefetch={false} className="osd-map-title">
-                          {s.title}
-                        </Link>
-                      ) : (
-                        s.title
-                      )}
-                    </h3>
-                    <span className="osd-map-count">
-                      {s.pages.length} {s.pages.length === 1 ? "page" : "pages"}
-                    </span>
-                  </div>
-                  <ul className="osd-map-pages">
-                    {s.pages.slice(0, 5).map((p) => (
-                      <li key={p.slug}>
-                        {p.ready ? (
-                          <Link href={`/script/${s.slug}/${p.slug}`} prefetch={false}>
-                            {p.title}
-                          </Link>
-                        ) : (
-                          <span className="is-pending">{p.title}</span>
-                        )}
-                      </li>
-                    ))}
-                    {s.pages.length > 5 ? <li className="osd-map-more">and {s.pages.length - 5} more</li> : null}
-                  </ul>
-                  {ready === 0 ? <p className="osd-map-note">Being written</p> : null}
-                </div>
-              )
-            })}
-          </div>
-
-          <div className="obsidian-card osd-manual-card mx-auto mt-6 flex max-w-6xl flex-col gap-5 rounded-3xl p-6 sm:flex-row sm:items-center sm:justify-between md:p-8">
-            <div>
-              <h3 className="text-lg font-bold text-on-surface">
-                <Link href={MANUAL_HREF} className="osd-map-title">
-                  Reference manual, version 1
-                </Link>
-              </h3>
-              <p className="mt-2 max-w-2xl text-sm leading-relaxed text-on-surface-variant">
-                All {MANUAL_NAMES} names you can use today on one page: variables, constants, functions, keywords, types
-                and operators, each with its syntax, arguments, return type and a working example. Filter it with{" "}
-                <kbd className="osd-kbd">/</kbd> and link straight to any entry.
-              </p>
-            </div>
-            <Link href={MANUAL_HREF} className={buttonVariants({ size: "sm", className: "h-9 shrink-0 px-4" })}>
-              Open the manual
-            </Link>
-          </div>
-
-          <p className="mx-auto mt-10 max-w-3xl text-center text-sm text-on-surface-variant">
-            For AI assistants: <a className="osd-inline-link" href="/script/llms.txt">llms.txt</a> maps the
-            documentation, and <a className="osd-inline-link" href="/script/openscript-reference.md">openscript-reference.md</a>{" "}
-            holds all of it as one markdown file.
-          </p>
-        </div>
-      </section>
-
-      {/* Close */}
-      <section className="scheme-dark px-4 py-24 md:py-28">
-        <div className="container mx-auto text-center">
-          <h2 className="mx-auto max-w-3xl text-display-md text-on-surface">Write your first study</h2>
-          <p className="mx-auto mt-5 max-w-xl text-lg text-on-surface-variant">
-            The quickstart takes five minutes: open the Scripts panel in /trading, write a study, and put it on an NSE
-            chart.
-          </p>
-          <div className="mt-9 flex flex-wrap items-center justify-center gap-3">
-            <Link href={quickstartHref} className={buttonVariants({ size: "lg", className: "h-11 px-6" })}>
-              Start the quickstart
-            </Link>
-            <Link href={referenceHref} className={buttonVariants({ variant: "outline", size: "lg", className: "h-11 px-6" })}>
-              Open the reference manual
-            </Link>
-          </div>
-        </div>
-      </section>
+      <ScriptLandingClient
+        scriptVersion={SCRIPT_VERSION}
+        scriptRepo={SCRIPT_REPO}
+        manualHref={MANUAL_HREF}
+        manualNames={MANUAL_NAMES}
+        introHref={introHref}
+        referenceHref={referenceHref}
+        quickstartHref={quickstartHref}
+        basicsHref={basicsHref}
+        screens={screens}
+        hero={hero}
+        heroId={heroId}
+        libraries={libraries}
+        sections={sections}
+        totalPages={totalPages}
+        readyCount={readyCount}
+      />
     </div>
   )
 }

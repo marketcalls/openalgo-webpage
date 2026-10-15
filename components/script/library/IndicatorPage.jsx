@@ -3,7 +3,7 @@ import Link from "next/link"
 import { buttonVariants } from "@/components/ui/button"
 import { SITE } from "@/lib/scriptDocs"
 
-import Workbench from "./Workbench"
+import Workbench, { LibText } from "./Workbench"
 
 /**
  * One study of the OpenScript library at /script/library/<slug>.
@@ -72,12 +72,14 @@ export default function IndicatorPage({ data }) {
       <section className="px-4 pt-12 pb-10 md:pt-16">
         <div className="osl-wrap">
           <Link href="/script/library" prefetch={false} className="osl-back">
-            All indicators
+            <LibText k="slib.ind.allIndicators" />
           </Link>
           <div className="osl-head">
             <h1 className="osl-title">{data.title}</h1>
             <p className="osl-byline">
-              <span>By openalgo</span>
+              <span>
+                <LibText k="slib.ind.byOpenalgo" />
+              </span>
               <span aria-hidden="true">&middot;</span>
               <Link href={`/script/library?category=${encodeURIComponent(data.category)}`} prefetch={false}>
                 {data.category}
@@ -97,17 +99,24 @@ export default function IndicatorPage({ data }) {
           <article className="osl-article">
             {data.deviation ? (
               <p className="osl-deviation">
-                <strong>Note.</strong> {data.deviation}
+                <strong>
+                  <LibText k="slib.ind.note" />
+                </strong>{" "}
+                {data.deviation}
               </p>
             ) : null}
             <Html html={data.descriptionHtml} />
 
-            <h2 className="osl-h2">How to read {data.title}</h2>
+            <h2 className="osl-h2">
+              <LibText k="slib.ind.howToRead" vars={{ title: data.title }} />
+            </h2>
             <Html html={data.howToReadHtml} />
 
             {data.settings.length ? (
               <>
-                <h2 className="osl-h2">Settings</h2>
+                <h2 className="osl-h2">
+                  <LibText k="slib.ind.settings" />
+                </h2>
                 <dl className="osl-settings">
                   {data.settings.map((s) => (
                     <div key={s.key} className="osl-setting">
@@ -121,7 +130,9 @@ export default function IndicatorPage({ data }) {
 
             {data.faq.length ? (
               <>
-                <h2 className="osl-h2">Frequently asked questions</h2>
+                <h2 className="osl-h2">
+                  <LibText k="slib.ind.faq" />
+                </h2>
                 <div className="osl-faq">
                   {data.faq.map((f) => (
                     <details key={f.q} className="osl-faq-item">
@@ -136,27 +147,39 @@ export default function IndicatorPage({ data }) {
 
           <aside className="osl-aside">
             <div className="osl-card">
-              <p className="osl-card-kicker">Use it in OpenAlgo</p>
-              <p className="osl-card-title">Add it to a chart in /trading</p>
+              <p className="osl-card-kicker">
+                <LibText k="slib.ind.useInOpenalgo" />
+              </p>
+              <p className="osl-card-title">
+                <LibText k="slib.ind.addToChart" />
+              </p>
               <ol className="osl-steps">
-                <li>Open Source code and press Copy.</li>
-                <li>In /trading, open the Scripts panel and create a new script.</li>
-                <li>Paste, save, and add it to the chart.</li>
+                <li>
+                  <LibText k="slib.ind.step1" />
+                </li>
+                <li>
+                  <LibText k="slib.ind.step2" />
+                </li>
+                <li>
+                  <LibText k="slib.ind.step3" />
+                </li>
               </ol>
               <div className="osl-card-actions">
                 <Link href="/script/getting-started/the-editor" prefetch={false} className={buttonVariants({ size: "sm", className: "h-9 w-full" })}>
-                  How the editor works
+                  <LibText k="slib.ind.howEditorWorks" />
                 </Link>
                 <Link href="/script/getting-started/quickstart" prefetch={false} className={buttonVariants({ variant: "outline", size: "sm", className: "h-9 w-full" })}>
-                  OpenScript quickstart
+                  <LibText k="slib.ind.quickstart" />
                 </Link>
               </div>
             </div>
 
             <div className="osl-card">
-              <p className="osl-card-kicker">Licence</p>
+              <p className="osl-card-kicker">
+                <LibText k="slib.ind.licence" />
+              </p>
               <p className="osl-card-body">
-                This source code is subject to the terms of the{" "}
+                <LibText k="slib.ind.licenceSubject" />{" "}
                 <a href={data.licenceUrl} target="_blank" rel="noopener noreferrer">
                   {data.licenceName}
                 </a>
@@ -166,23 +189,35 @@ export default function IndicatorPage({ data }) {
             </div>
 
             <div className="osl-card">
-              <p className="osl-card-kicker">The script</p>
+              <p className="osl-card-kicker">
+                <LibText k="slib.ind.theScript" />
+              </p>
               <dl className="osl-facts">
                 <div>
-                  <dt>Lines</dt>
+                  <dt>
+                    <LibText k="slib.ind.lines" />
+                  </dt>
                   <dd>{data.lines}</dd>
                 </div>
                 <div>
-                  <dt>Settings</dt>
+                  <dt>
+                    <LibText k="slib.ind.settings" />
+                  </dt>
                   <dd>{data.inputs}</dd>
                 </div>
                 <div>
-                  <dt>Plots</dt>
+                  <dt>
+                    <LibText k="slib.ind.plots" />
+                  </dt>
                   <dd>{data.plots}</dd>
                 </div>
                 <div>
-                  <dt>Draws on</dt>
-                  <dd>{data.pane === "price" ? "The price pane" : "Its own pane"}</dd>
+                  <dt>
+                    <LibText k="slib.ind.drawsOn" />
+                  </dt>
+                  <dd>
+                    <LibText k={data.pane === "price" ? "slib.ind.pricePane" : "slib.ind.ownPane"} />
+                  </dd>
                 </div>
               </dl>
             </div>
@@ -193,7 +228,9 @@ export default function IndicatorPage({ data }) {
       {data.related?.length ? (
         <section className="border-t px-4 py-16">
           <div className="osl-wrap">
-            <h2 className="osl-h2 mt-0">More in {data.category}</h2>
+            <h2 className="osl-h2 mt-0">
+              <LibText k="slib.ind.moreIn" vars={{ category: data.category }} />
+            </h2>
             <div className="osl-related">
               {data.related.map((r) => (
                 <Link key={r.slug} href={`/script/library/${r.slug}`} prefetch={false} className="osl-related-card">
@@ -209,17 +246,18 @@ export default function IndicatorPage({ data }) {
 
       <section className="px-3 pb-6 sm:px-6">
         <div className="scheme-dark rounded-[2.5rem] px-4 py-20 text-center sm:px-8">
-          <h2 className="mx-auto max-w-2xl text-display-sm text-on-surface">Write your own in OpenScript</h2>
+          <h2 className="mx-auto max-w-2xl text-display-sm text-on-surface">
+            <LibText k="slib.ind.ctaTitle" />
+          </h2>
           <p className="mx-auto mt-4 max-w-2xl text-lg leading-relaxed text-on-surface-variant">
-            Every study here is plain OpenScript. Change a setting, combine two, or turn one into a strategy, then backtest it in /trading and
-            run it in sandbox trading (analyzer mode in OpenAlgo) before going further.
+            <LibText k="slib.ind.ctaDesc" />
           </p>
           <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
             <Link href="/script" prefetch={false} className={buttonVariants({ size: "lg", className: "h-11 px-6" })}>
-              Learn OpenScript
+              <LibText k="slib.ind.learnOpenscript" />
             </Link>
             <Link href="/script/library" prefetch={false} className={buttonVariants({ variant: "outline", size: "lg", className: "h-11 px-6" })}>
-              Browse the library
+              <LibText k="slib.ind.browseLibrary" />
             </Link>
           </div>
         </div>
@@ -227,3 +265,4 @@ export default function IndicatorPage({ data }) {
     </div>
   )
 }
+

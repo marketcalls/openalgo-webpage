@@ -1,3 +1,7 @@
+"use client"
+
+import { useI18n } from "@/components/i18n/LanguageProvider"
+
 import { EXAMPLES } from "./examples"
 import StaticCode from "./StaticCode"
 
@@ -36,15 +40,22 @@ export function PlaygroundFrame({ active = 0, onSelect, actions = null, status, 
 
 /** What the server renders and what shows while Monaco loads. */
 export function PlaygroundPlaceholder() {
+  const { t } = useI18n()
   const ex = EXAMPLES[0]
   const lines = ex.code.replace(/\n+$/, "").split("\n").length
+  const kindLabel =
+    ex.kind === "Strategy"
+      ? t("script.play.strategy")
+      : ex.kind === "Study"
+        ? t("script.play.study")
+        : t("script.play.script")
   return (
     <PlaygroundFrame
       status={
         <>
-          <span className="osd-play-kind">{ex.kind}</span>
-          <span className="osd-play-dim">{lines} lines</span>
-          <span className="osd-play-verdict">Loading the editor</span>
+          <span className="osd-play-kind">{kindLabel}</span>
+          <span className="osd-play-dim">{t("script.play.lines").replace("{n}", lines)}</span>
+          <span className="osd-play-verdict">{t("script.play.loadingEditor")}</span>
         </>
       }
     >

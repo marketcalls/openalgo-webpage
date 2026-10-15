@@ -2,6 +2,7 @@
 
 import { useState } from "react"
 import { ArrowUpRight } from "lucide-react"
+import { useI18n } from "@/components/i18n/LanguageProvider"
 
 /**
  * One of the standalone demos, embedded live.
@@ -21,6 +22,7 @@ import { ArrowUpRight } from "lucide-react"
  * to them never pays for them.
  */
 export default function EmbeddedDemo({ title, description, src, height = 560 }) {
+  const { t } = useI18n()
   const [failed, setFailed] = useState(false)
 
   return (
@@ -36,7 +38,7 @@ export default function EmbeddedDemo({ title, description, src, height = 560 }) 
           rel="noreferrer"
           className="flex shrink-0 items-center gap-1 font-label text-label-md text-on-surface-variant transition-colors hover:text-on-surface"
         >
-          Open full size
+          {t('charts.embed.openFull')}
           <ArrowUpRight className="h-3.5 w-3.5" />
         </a>
       </figcaption>
@@ -47,14 +49,14 @@ export default function EmbeddedDemo({ title, description, src, height = 560 }) 
           className="flex flex-col items-center justify-center gap-2 px-6 py-16 text-center"
           style={{ minHeight: 220 }}
         >
-          <strong className="text-on-surface">This demo could not be embedded.</strong>
+          <strong className="text-on-surface">{t('charts.embed.errTitle')}</strong>
           <a
             href={src}
             target="_blank"
             rel="noreferrer"
             className="text-sm text-on-surface-variant underline underline-offset-2 transition-colors hover:text-on-surface"
           >
-            Open it in a new tab instead
+            {t('charts.embed.openTab')}
           </a>
         </div>
       ) : (

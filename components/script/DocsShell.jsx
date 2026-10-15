@@ -4,6 +4,8 @@ import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { useCallback, useEffect, useRef, useState } from "react"
 
+import { useI18n } from "@/components/i18n/LanguageProvider"
+
 import SearchButton from "./SearchButton"
 
 const STORAGE_KEY = "openalgo.script.nav.collapsed"
@@ -26,7 +28,7 @@ function writeCollapsed(set) {
   }
 }
 
-function SidebarNav({ nav, pathname, collapsed, onToggle, onNavigate, idPrefix }) {
+function SidebarNav({ nav, pathname, collapsed, onToggle, onNavigate, idPrefix, t }) {
   return (
     <nav aria-label="OpenScript documentation" className="osd-nav">
       <Link
@@ -36,10 +38,10 @@ function SidebarNav({ nav, pathname, collapsed, onToggle, onNavigate, idPrefix }
         className={`osd-nav-home${pathname === "/script" ? " is-active" : ""}`}
         aria-current={pathname === "/script" ? "page" : undefined}
       >
-        Overview
+        {t("sdoc.overview")}
       </Link>
       <Link href="/script/reference/v1" prefetch={false} onClick={onNavigate} className="osd-nav-home osd-nav-manual">
-        Reference manual
+        {t("sdoc.referenceManual")}
         <span className="osd-nav-count">v1</span>
       </Link>
       {nav.map((section) => {
@@ -78,7 +80,7 @@ function SidebarNav({ nav, pathname, collapsed, onToggle, onNavigate, idPrefix }
                     ) : (
                       <span className="osd-nav-link is-pending" aria-disabled="true" title="This page is being written">
                         {p.title}
-                        <span className="osd-nav-soon">soon</span>
+                        <span className="osd-nav-soon">{t("sdoc.soon")}</span>
                       </span>
                     )}
                   </li>
@@ -100,6 +102,7 @@ function SidebarNav({ nav, pathname, collapsed, onToggle, onNavigate, idPrefix }
  * position from page to page.
  */
 export default function DocsShell({ nav, version, repo, children }) {
+  const { t } = useI18n()
   const pathname = usePathname()
   const [collapsed, setCollapsed] = useState(() => new Set())
   const [drawer, setDrawer] = useState(false)
@@ -181,17 +184,17 @@ export default function DocsShell({ nav, version, repo, children }) {
               setDrawer(true)
             }}
           >
-            Menu
+            {t("sdoc.menu")}
           </button>
           <Link href="/script" prefetch={false} className="osd-docbar-brand">
             OpenScript
           </Link>
           <span className="osd-docbar-version">v{version}</span>
-          <span className="osd-docbar-sub">Documentation</span>
+          <span className="osd-docbar-sub">{t("sdoc.documentation")}</span>
           <div className="osd-docbar-end">
             <SearchButton />
             <Link href="/script/reference/v1" prefetch={false} className="osd-docbar-link">
-              Reference
+              {t("sdoc.reference")}
             </Link>
             <a href={repo} target="_blank" rel="noopener noreferrer" className="osd-docbar-link">
               GitHub
@@ -202,7 +205,7 @@ export default function DocsShell({ nav, version, repo, children }) {
 
       <div className="osd-frame">
         <aside className="osd-sidebar" ref={sidebarRef}>
-          <SidebarNav nav={nav} pathname={pathname} collapsed={collapsed} onToggle={toggle} idPrefix="osd-side" />
+          <SidebarNav nav={nav} pathname={pathname} collapsed={collapsed} onToggle={toggle} idPrefix="osd-side" t={t} />
         </aside>
         <div className="osd-main">{children}</div>
       </div>
@@ -221,7 +224,7 @@ export default function DocsShell({ nav, version, repo, children }) {
         <div className="osd-drawer-head">
           <span className="osd-docbar-brand">OpenScript</span>
           <button type="button" className="osd-drawer-close" onClick={closeDrawer}>
-            Close
+            {t("sdoc.close")}
           </button>
         </div>
         {drawerBuilt ? (
@@ -232,9 +235,11 @@ export default function DocsShell({ nav, version, repo, children }) {
             onToggle={toggle}
             onNavigate={closeDrawer}
             idPrefix="osd-drawer"
+            t={t}
           />
         ) : null}
       </div>
     </div>
   )
 }
+

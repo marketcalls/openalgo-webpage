@@ -17,10 +17,10 @@ async function fetchRSSFeed() {
 }
 
 function BlogCard({ post }) {
-  const { t } = useI18n()
+  const { t, lang } = useI18n()
 
   const formatDate = (dateString) => {
-    return new Date(dateString).toLocaleDateString('en-US', {
+    return new Date(dateString).toLocaleDateString(lang || 'en-US', {
       year: 'numeric', month: 'long', day: 'numeric'
     })
   }

@@ -82,9 +82,26 @@ export default function LocalizedCourseHome({
   const { lang, t } = useI18n()
   const { parts: localizedParts, loading } = useLocalizedCourseMetadata(course, parts)
 
-  if (!LABELS[lang]) return children
+  if (!lang || lang === "en") return children
 
-  const labels = LABELS[lang]
+  const fallback = LABELS[lang] || {}
+  const tr = (key, fb) => {
+    const val = t(key)
+    return val && val !== key ? val : fb
+  }
+
+  const labels = {
+    chapters: tr("courseHome.chapters", fallback.chapters || t("learn.chapters") || "chapters"),
+    modules: tr("courseHome.modules", fallback.modules || t("learn.modules") || "modules"),
+    start: tr("courseHome.start", fallback.start || "Start Chapter 1"),
+    browse: tr("courseHome.browse", fallback.browse || "Browse all chapters"),
+    module: tr("courseHome.module", fallback.module || t("courseNav.module") || "Module"),
+    chapter: tr("courseHome.chapter", fallback.chapter || t("courseNav.chapter") || "Chapter"),
+    free: tr("courseHome.free", fallback.free || "Free"),
+    selfPaced: tr("courseHome.selfPaced", fallback.selfPaced || "Self-paced"),
+    loading: tr("courseHome.loading", fallback.loading || "Loading curriculum…"),
+    disclaimer: tr("courseHome.disclaimer", fallback.disclaimer || t("learn.edNote") || "For education only — not investment advice."),
+  }
   const courseKey = COURSE_KEYS[course]
   const chapters = localizedParts.flatMap((part) => part.chapters || [])
   const firstChapter = chapters[0]

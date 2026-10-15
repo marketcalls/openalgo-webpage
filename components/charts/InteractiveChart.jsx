@@ -1,6 +1,7 @@
 "use client"
 
 import { useEffect, useRef, useState } from "react"
+import { useI18n } from "@/components/i18n/LanguageProvider"
 import { cn } from "@/lib/utils"
 
 /**
@@ -25,6 +26,7 @@ import { cn } from "@/lib/utils"
  * box answers that question the wrong way.
  */
 export default function InteractiveChart({ title, note, tabs, build, data, height = 320, className }) {
+  const { t } = useI18n()
   const host = useRef(null)
   const [tab, setTab] = useState(tabs?.[0]?.key ?? "")
   const [error, setError] = useState(null)
@@ -91,7 +93,7 @@ export default function InteractiveChart({ title, note, tabs, build, data, heigh
             role="alert"
             className="absolute inset-0 flex items-center justify-center bg-surface-bright px-6 text-center text-sm text-on-surface-variant"
           >
-            This demo could not start: {error}
+            {t('charts.demo.errStart')}{error}
           </div>
         )}
       </div>

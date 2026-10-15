@@ -3,24 +3,47 @@
 import dynamic from "next/dynamic"
 import { useCallback, useEffect, useState } from "react"
 
+import { useI18n } from "@/components/i18n/LanguageProvider"
+
+export function LibText({ k, vars }) {
+  const { t } = useI18n()
+  let text = t(k)
+  if (vars) {
+    for (const [key, val] of Object.entries(vars)) {
+      text = text.replace(`{${key}}`, String(val ?? ""))
+    }
+  }
+  return text
+}
+
+function ChartLoading() {
+  const { t } = useI18n()
+  return (
+    <div className="osl-chart" style={{ height: 540 }}>
+      <div className="osl-chart-note">{t("slib.bench.loadingChart")}</div>
+    </div>
+  )
+}
+
+function EditorLoading() {
+  const { t } = useI18n()
+  return <div className="osl-source-placeholder">{t("slib.bench.loadingEditor")}</div>
+}
+
 // The chart and the editor are client chunks only: ssr:false keeps the chart
 // engine, Monaco and the compiler out of the Worker bundle.
 const LibraryChart = dynamic(() => import("./LibraryChart"), {
   ssr: false,
-  loading: () => (
-    <div className="osl-chart" style={{ height: 540 }}>
-      <div className="osl-chart-note">Loading the chart</div>
-    </div>
-  ),
+  loading: ChartLoading,
 })
 const SourcePanel = dynamic(() => import("./SourcePanel"), {
   ssr: false,
-  loading: () => <div className="osl-source-placeholder">Loading the editor</div>,
+  loading: EditorLoading,
 })
 
 const TABS = [
-  { id: "chart", label: "Chart" },
-  { id: "source", label: "Source code" },
+  { id: "chart", key: "slib.bench.chart" },
+  { id: "source", key: "slib.bench.sourceCode" },
 ]
 
 /**
@@ -29,6 +52,7 @@ const TABS = [
  * chose to run from the editor.
  */
 export default function Workbench({ file, lines, capturedAt, interval, viewEndBack = null, aheadBars = 0, chartSettings = null, chartSettingsText = null, chartNote = null }) {
+  const { t } = useI18n()
   const [tab, setTab] = useState("chart")
   const [visited, setVisited] = useState({ chart: true, source: false })
   const [source, setSource] = useState(null)
@@ -68,18 +92,18 @@ export default function Workbench({ file, lines, capturedAt, interval, viewEndBa
   return (
     <div className="osl-bench">
       <div className="osl-tabs" role="tablist" aria-label="View">
-        {TABS.map((t) => (
+        {TABS.map((item) => (
           <button
-            key={t.id}
+            key={item.id}
             type="button"
             role="tab"
-            id={`osl-tab-${t.id}`}
-            aria-selected={tab === t.id}
-            aria-controls={`osl-panel-${t.id}`}
-            className={`osl-tab${tab === t.id ? " is-active" : ""}`}
-            onClick={() => show(t.id)}
+            id={`osl-tab-${item.id}`}
+            aria-selected={tab === item.id}
+            aria-controls={`osl-panel-${item.id}`}
+            className={`osl-tab${tab === item.id ? " is-active" : ""}`}
+            onClick={() => show(item.id)}
           >
-            {t.label}
+            {t(item.key)}
           </button>
         ))}
       </div>
@@ -91,10 +115,14 @@ export default function Workbench({ file, lines, capturedAt, interval, viewEndBa
               <strong>BTCUSD</strong>
               <span aria-hidden="true">&middot;</span>
               <span>{interval}</span>
-              {edited ? <span className="osl-badge">Your edited script</span> : null}
-              {!edited && chartSettingsText ? <span className="osl-badge" title="Its defaults suit other charts; the source keeps them.">Shown with {chartSettingsText}</span> : null}
+              {edited ? <span className="osl-badge">{t("slib.bench.editedScript")}</span> : null}
+              {!edited && chartSettingsText ? (
+                <span className="osl-badge" title="Its defaults suit other charts; the source keeps them.">
+                  {t("slib.bench.shownWith").replace("{s}", String(chartSettingsText))}
+                </span>
+              ) : null}
             </div>
-            <div className="osl-panel-meta">Fixed data to {capturedAt}, UTC</div>
+            <div className="osl-panel-meta">{t("slib.bench.fixedData").replace("{t}", String(capturedAt ?? ""))}</div>
           </div>
           {chartNote ? <p className="osl-panel-note">{chartNote}</p> : null}
           {visited.chart ? <LibraryChart name={file} source={drawn} edited={edited} viewEndBack={viewEndBack} aheadBars={aheadBars} chartSettings={chartSettings} /> : null}
@@ -103,11 +131,14 @@ export default function Workbench({ file, lines, capturedAt, interval, viewEndBa
         <div id="osl-panel-source" role="tabpanel" aria-labelledby="osl-tab-source" hidden={tab !== "source"}>
           {failed ? (
             <div className="osl-source-placeholder" role="alert">
-              The source did not load. <a href={`/script/library/src/${file}`}>Open {file}</a>
+              {t("slib.bench.sourceFailed")}{" "}
+              <a href={`/script/library/src/${file}`}>{t("slib.bench.openFile").replace("{file}", String(file))}</a>
             </div>
           ) : source === null ? (
             <div className="osl-source-placeholder">
-              Loading {file}, {lines} lines
+              {t("slib.bench.loadingFile")
+                .replace("{file}", String(file))
+                .replace("{lines}", String(lines))}
             </div>
           ) : visited.source ? (
             <SourcePanel file={file} source={source} onRun={run} height={Math.min(640, Math.max(280, lines * 20 + 40))} />
@@ -122,3 +153,4 @@ export default function Workbench({ file, lines, capturedAt, interval, viewEndBa
     </div>
   )
 }
+

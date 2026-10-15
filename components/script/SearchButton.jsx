@@ -2,10 +2,13 @@
 
 import { useEffect, useState } from "react"
 
+import { useI18n } from "@/components/i18n/LanguageProvider"
+
 import { SEARCH_EVENT } from "./DocSearch"
 
 /** Opens the search palette. The shortcut hint follows the reader's platform. */
-export default function SearchButton({ className = "", label = "Search the docs" }) {
+export default function SearchButton({ className = "", label }) {
+  const { t } = useI18n()
   const [mod, setMod] = useState("Ctrl")
 
   useEffect(() => {
@@ -20,10 +23,11 @@ export default function SearchButton({ className = "", label = "Search the docs"
       onClick={() => window.dispatchEvent(new CustomEvent(SEARCH_EVENT))}
       aria-keyshortcuts="Control+K Meta+K"
     >
-      <span className="osd-search-button-label">{label}</span>
+      <span className="osd-search-button-label">{label ?? t("sdoc.searchDocs")}</span>
       <span className="osd-kbd" aria-hidden="true">
         {mod} K
       </span>
     </button>
   )
 }
+

@@ -3,6 +3,8 @@
 import Editor from "@monaco-editor/react"
 import { useCallback, useEffect, useMemo, useRef, useState } from "react"
 
+import { useI18n } from "@/components/i18n/LanguageProvider"
+
 import { baseOptions, loadMonaco } from "../monaco/loader"
 import { LANGUAGE_ID } from "../monaco/openscript"
 import { THEME_NAME } from "../monaco/theme"
@@ -17,10 +19,10 @@ import StaticCode from "../StaticCode"
  * Monaco and the compiler are client chunks only (this module is loaded with
  * next/dynamic and ssr:false).
  */
-function summary(list) {
+function summary(list, t) {
   const errors = list.filter((d) => d.severity !== "warning").length
   const warnings = list.length - errors
-  if (!list.length) return "No problems"
+  if (!list.length) return t("slib.bench.noProblems")
   const parts = []
   if (errors) parts.push(`${errors} ${errors === 1 ? "error" : "errors"}`)
   if (warnings) parts.push(`${warnings} ${warnings === 1 ? "warning" : "warnings"}`)
@@ -28,6 +30,7 @@ function summary(list) {
 }
 
 export default function SourcePanel({ file, source, onRun, onDraftChange, height = 560 }) {
+  const { t } = useI18n()
   const [monaco, setMonaco] = useState(null)
   const [failed, setFailed] = useState(false)
   const [copied, setCopied] = useState(false)
@@ -168,22 +171,22 @@ export default function SourcePanel({ file, source, onRun, onDraftChange, height
       <div className="osl-source-bar">
         <div className="osl-source-file">
           <span className="osl-source-name">{file}</span>
-          <span className="osl-source-dim">{lines} lines</span>
-          {edited ? <span className="osl-source-dim">edited</span> : null}
+          <span className="osl-source-dim">{t("slib.bench.lines").replace("{n}", String(lines))}</span>
+          {edited ? <span className="osl-source-dim">{t("slib.bench.edited")}</span> : null}
         </div>
         <div className="osl-source-actions">
           {edited ? (
             <>
               <button type="button" className="osl-action" onClick={reset}>
-                Reset
+                {t("slib.bench.reset")}
               </button>
               <button type="button" className="osl-action is-primary" disabled={errors > 0 || check.state !== "ready"} onClick={() => onRun?.(text())}>
-                Run on chart
+                {t("slib.bench.runOnChart")}
               </button>
             </>
           ) : null}
           <button type="button" className="osl-action" onClick={copy} aria-live="polite">
-            {copied ? "Copied" : "Copy"}
+            {copied ? t("slib.bench.copied") : t("slib.bench.copy")}
           </button>
         </div>
       </div>
@@ -209,13 +212,13 @@ export default function SourcePanel({ file, source, onRun, onDraftChange, height
       </div>
       <div className="osl-source-status" aria-live="polite">
         {check.state === "ready" ? (
-          <span className={check.list.length ? "has-problems" : "is-clean"}>{summary(check.list)}</span>
+          <span className={check.list.length ? "has-problems" : "is-clean"}>{summary(check.list, t)}</span>
         ) : check.state === "unavailable" ? (
-          <span>The compiler did not load</span>
+          <span>{t("slib.bench.compilerFailed")}</span>
         ) : (
-          <span>{failed ? "The editor did not load" : monaco ? "Loading the compiler" : "Loading the editor"}</span>
+          <span>{failed ? t("slib.bench.editorFailed") : monaco ? t("slib.bench.loadingCompiler") : t("slib.bench.loadingEditor")}</span>
         )}
-        <span className="osl-source-dim">OpenScript, compiled in your browser</span>
+        <span className="osl-source-dim">{t("slib.bench.compiledInBrowser")}</span>
       </div>
       {check.state === "ready" && check.list.length ? (
         <ul className="osl-problems" aria-label="Problems">
@@ -224,7 +227,7 @@ export default function SourcePanel({ file, source, onRun, onDraftChange, height
               <button type="button" onClick={() => reveal(d)}>
                 <span className={`osl-problem-code${d.severity === "warning" ? " is-warning" : ""}`}>{d.code}</span>
                 <span className="osl-problem-msg">{d.message}</span>
-                <span className="osl-problem-line">Line {d.span.line}</span>
+                <span className="osl-problem-line">{t("slib.bench.line").replace("{n}", String(d.span.line))}</span>
               </button>
             </li>
           ))}
@@ -233,3 +236,4 @@ export default function SourcePanel({ file, source, onRun, onDraftChange, height
     </div>
   )
 }
+

@@ -3,6 +3,8 @@
 import Link from "next/link"
 import { useCallback, useDeferredValue, useEffect, useMemo, useRef, useState } from "react"
 
+import { useI18n } from "@/components/i18n/LanguageProvider"
+
 import DocEnhancerLoader from "./DocEnhancerLoader"
 import SearchButton from "./SearchButton"
 
@@ -103,15 +105,15 @@ function Marked({ name, q }) {
 }
 
 /** The index of every name, grouped by kind, or the search results in its place. */
-function NameIndex({ groups, results, collapsed, onToggle, active, onNavigate, idPrefix }) {
+function NameIndex({ groups, results, collapsed, onToggle, active, onNavigate, idPrefix, t }) {
   const shown = results ? results.groups : groups
   return (
     <nav aria-label="Every name in the reference manual" className="orv-index">
       {results ? (
         <p className="orv-index-count" aria-live="polite">
           {results.count === 0
-            ? "Nothing matches. Try a shorter word, or a word from what the name does."
-            : `${results.count} ${results.count === 1 ? "result" : "results"}`}
+            ? t("sdoc.ref.noMatch")
+            : (results.count === 1 ? t("sdoc.ref.resultOne") : t("sdoc.ref.resultMany")).replace("{n}", String(results.count))}
         </p>
       ) : null}
       {shown.map((g) => {
@@ -151,7 +153,7 @@ function NameIndex({ groups, results, collapsed, onToggle, active, onNavigate, i
 }
 
 /** The search box above the index. Enter opens the best match; Escape clears it. */
-function SearchBox({ value, onChange, inputRef, total, best, onJump }) {
+function SearchBox({ value, onChange, inputRef, total, best, onJump, t }) {
   const onKeyDown = (e) => {
     if (e.key === "Escape" && value) {
       e.preventDefault()
@@ -177,7 +179,7 @@ function SearchBox({ value, onChange, inputRef, total, best, onJump }) {
         value={value}
         onChange={(e) => onChange(e.target.value)}
         onKeyDown={onKeyDown}
-        placeholder="Search"
+        placeholder={t("sdoc.search")}
         aria-describedby={`${id}-hint`}
         autoComplete="off"
         spellCheck={false}
@@ -203,6 +205,7 @@ function SearchBox({ value, onChange, inputRef, total, best, onJump }) {
  * viewers as the docs.
  */
 export default function ReferenceManual({ index, repo }) {
+  const { t } = useI18n()
   const groups = index.groups
   const total = useMemo(() => groups.reduce((n, g) => n + g.items.length, 0), [groups])
   const order = useMemo(() => new Map(groups.flatMap((g) => g.items).map((it, i) => [it.a, i])), [groups])
@@ -256,9 +259,9 @@ export default function ReferenceManual({ index, repo }) {
     if (!id) return
     const go = () => document.getElementById(id)?.scrollIntoView({ block: "start" })
     go()
-    const t = setTimeout(go, 250)
+    const timer = setTimeout(go, 250)
     setActive(id)
-    return () => clearTimeout(t)
+    return () => clearTimeout(timer)
   }, [html])
 
   // The entry at the top of the reading area is the active one in the index.
@@ -309,8 +312,8 @@ export default function ReferenceManual({ index, repo }) {
   useEffect(() => {
     const onKey = (e) => {
       if (e.key !== "/" || e.ctrlKey || e.metaKey || e.altKey) return
-      const t = e.target
-      if (t instanceof HTMLElement && (t.isContentEditable || /^(INPUT|TEXTAREA|SELECT)$/.test(t.tagName))) return
+      const target = e.target
+      if (target instanceof HTMLElement && (target.isContentEditable || /^(INPUT|TEXTAREA|SELECT)$/.test(target.tagName))) return
       e.preventDefault()
       if (window.matchMedia("(min-width: 1024px)").matches) filterRef.current?.focus()
       else {
@@ -372,7 +375,7 @@ export default function ReferenceManual({ index, repo }) {
 
   // Lowered once when the entries arrive, not on every key.
   const lowered = useMemo(
-    () => (data?.search ? Object.fromEntries(Object.entries(data.search).map(([a, t]) => [a, t.toLowerCase()])) : null),
+    () => (data?.search ? Object.fromEntries(Object.entries(data.search).map(([a, txt]) => [a, txt.toLowerCase()])) : null),
     [data],
   )
   const results = useMemo(
@@ -389,6 +392,7 @@ export default function ReferenceManual({ index, repo }) {
         total={total}
         best={results?.best ?? null}
         onJump={jump}
+        t={t}
       />
       <NameIndex
         groups={groups}
@@ -398,6 +402,7 @@ export default function ReferenceManual({ index, repo }) {
         active={active}
         onNavigate={onNavigate}
         idPrefix={idPrefix}
+        t={t}
       />
     </>
   )
@@ -417,17 +422,17 @@ export default function ReferenceManual({ index, repo }) {
               setDrawer(true)
             }}
           >
-            Index
+            {t("sdoc.ref.index")}
           </button>
           <Link href="/script" prefetch={false} className="osd-docbar-brand">
             OpenScript
           </Link>
           <span className="osd-docbar-version">v1</span>
-          <span className="osd-docbar-sub">Reference manual</span>
+          <span className="osd-docbar-sub">{t("sdoc.referenceManual")}</span>
           <div className="osd-docbar-end">
             <SearchButton />
             <Link href="/script/getting-started/introduction" prefetch={false} className="osd-docbar-link">
-              Docs
+              {t("sdoc.ref.docs")}
             </Link>
             <a href={repo} target="_blank" rel="noopener noreferrer" className="osd-docbar-link">
               GitHub
@@ -443,13 +448,9 @@ export default function ReferenceManual({ index, repo }) {
 
         <main className="orv-main">
           <header className="orv-intro">
-            <p className="orv-eyebrow">OpenScript language reference</p>
-            <h1>Reference manual, version 1</h1>
-            <p className="orv-lede">
-              Every name you can use in an OpenScript (OpenAlgo Script) file today, with its syntax, its arguments, what it
-              returns and a working example. The library facts are read from openalgo-script {index.version}, the compiler
-              the /trading editor runs.
-            </p>
+            <p className="orv-eyebrow">{t("sdoc.ref.eyebrow")}</p>
+            <h1>{t("sdoc.ref.title")}</h1>
+            <p className="orv-lede">{t("sdoc.ref.lede").replace("{version}", String(index.version))}</p>
             <ul className="orv-counts">
               {summary.map(([k, label]) => (
                 <li key={k}>
@@ -479,15 +480,15 @@ export default function ReferenceManual({ index, repo }) {
 
           {failed ? (
             <p className="orv-status" role="alert">
-              The entries could not be loaded. Reload the page, or read the same entries in the{" "}
+              {t("sdoc.ref.errorPre")}{" "}
               <Link href="/script/reference/technical-analysis" prefetch={false}>
-                reference pages of the documentation
+                {t("sdoc.ref.errorLink")}
               </Link>
               .
             </p>
           ) : !html ? (
             <p className="orv-status" aria-live="polite">
-              Loading {total} entries.
+              {t("sdoc.ref.loading").replace("{n}", String(total))}
             </p>
           ) : null}
 
@@ -512,9 +513,9 @@ export default function ReferenceManual({ index, repo }) {
         inert={drawer ? undefined : true}
       >
         <div className="osd-drawer-head">
-          <span className="osd-docbar-brand">Index</span>
+          <span className="osd-docbar-brand">{t("sdoc.ref.index")}</span>
           <button type="button" className="osd-drawer-close" onClick={closeDrawer}>
-            Close
+            {t("sdoc.close")}
           </button>
         </div>
         {drawerBuilt ? sidebar("orv-drawer", closeDrawer) : null}
@@ -522,3 +523,4 @@ export default function ReferenceManual({ index, repo }) {
     </div>
   )
 }
+

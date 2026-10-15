@@ -28,35 +28,35 @@ export default function DownloadPage() {
   // this page was the one left behind, still offering five SDKs and none of the
   // projects added since.
   const sdks = [
-    { title: "Python", description: "Official Python SDK for OpenAlgo API", icon: Code2, url: "https://github.com/marketcalls/openalgo-python-library", docs: "https://docs.openalgo.in/trading-platform/python" },
-    { title: "Node.js", description: "JavaScript/TypeScript SDK", icon: Hexagon, url: "https://github.com/marketcalls/openalgo-node", docs: "https://docs.openalgo.in/trading-platform/nodejs" },
-    { title: "Java", description: "Official Java SDK for OpenAlgo", icon: Coffee, url: "https://github.com/marketcalls/openalgo-java", docs: "https://docs.openalgo.in/trading-platform/java" },
-    { title: ".NET / C#", description: "C# / .NET SDK for OpenAlgo", icon: Hash, url: "https://github.com/marketcalls/openalgo.NET", docs: "https://docs.openalgo.in/trading-platform/.net" },
-    { title: "Go", description: "Golang SDK for OpenAlgo", icon: Wind, url: "https://github.com/marketcalls/openalgo-go", docs: "https://docs.openalgo.in/trading-platform/go" },
-    { title: "Rust", description: "Official Rust SDK for OpenAlgo", icon: Cog, url: "https://github.com/marketcalls/openalgo-rust" }
+    { title: "Python", description: t('home.sdk.pythonDesc'), icon: Code2, url: "https://github.com/marketcalls/openalgo-python-library", docs: "https://docs.openalgo.in/trading-platform/python" },
+    { title: "Node.js", description: t('home.sdk.nodeDesc'), icon: Hexagon, url: "https://github.com/marketcalls/openalgo-node", docs: "https://docs.openalgo.in/trading-platform/nodejs" },
+    { title: "Java", description: t('home.sdk.javaDesc'), icon: Coffee, url: "https://github.com/marketcalls/openalgo-java", docs: "https://docs.openalgo.in/trading-platform/java" },
+    { title: ".NET / C#", description: t('home.sdk.netDesc'), icon: Hash, url: "https://github.com/marketcalls/openalgo.NET", docs: "https://docs.openalgo.in/trading-platform/.net" },
+    { title: "Go", description: t('home.sdk.goDesc'), icon: Wind, url: "https://github.com/marketcalls/openalgo-go", docs: "https://docs.openalgo.in/trading-platform/go" },
+    { title: "Rust", description: t('home.sdk.rustDesc'), icon: Cog, url: "https://github.com/marketcalls/openalgo-rust" }
   ]
 
   const integrations = [
-    { title: "Excel Add-in", description: "Trade from Excel spreadsheets", icon: FileSpreadsheet, url: "https://github.com/marketcalls/OpenAlgo-Excel", docs: "https://docs.openalgo.in/trading-platform/excel" },
-    { title: "Amibroker Plugin", description: "OpenAlgo Plugin for Amibroker", icon: Plug, url: "https://github.com/marketcalls/OpenAlgoPlugin", docs: "https://docs.openalgo.in/trading-platform/amibroker/amibroker-plugin" },
-    { title: "Backtrader Integration", description: "Python Library for backtesting", icon: History, url: "https://github.com/p2c2e/openalgo-backtrader" },
-    { title: "AI Agents", description: "Multi-agent AI trading research framework", icon: Bot, url: "https://github.com/marketcalls/TradingAgent" },
-    { title: "MCP", description: "Model Context Protocol integration", icon: Network, url: "/mcp", docs: "https://docs.openalgo.in/mcp" },
-    { title: "Indicator Skills", description: "AI agent skills for 100+ indicators, charts & scanners", icon: BarChart3, url: "/skills" },
-    { title: "Backtesting Skills", description: "VectorBT backtesting skills for Claude Code, Cursor, Codex", icon: FlaskConical, url: "/skills" },
-    { title: "AlgoMirror", description: "Multi Account OpenAlgo Orchestrator", icon: Layers, url: "https://github.com/marketcalls/algomirror" },
-    { title: "OpenAlgo Charts", description: "Dependency-free HTML5 canvas charting engine, 137.53 kB Brotli", icon: LineChart, url: "https://github.com/marketcalls/openalgo-charts", docs: "https://marketcalls.github.io/openalgo-charts" },
-    { title: "OpenStatz", description: "Portfolio analytics for quants - Quant Tearsheets", icon: PieChart, url: "https://github.com/marketcalls/openstatz" },
-    { title: "OpenAlgo Heatmap", description: "Finviz-style market heatmap (React Component)", icon: LayoutGrid, url: "https://github.com/marketcalls/openalgo-heatmap" },
-    { title: "OpenQuest", description: "Realtime Stock Data Aggregator with TradingView Charts", icon: Activity, url: "https://github.com/marketcalls/openquest" },
-    { title: "Marginism", description: "Offline SPAN margin calculator", icon: Calculator, url: "https://github.com/marketcalls/marginism" },
-    { title: "OpenGreeks", description: "Fast options pricing & Greeks for Python", icon: Sigma, url: "https://github.com/marketcalls/opengreeks" },
-    { title: "OpenScript", description: "Open trading language for studies and strategies. Apache 2.0, zero dependencies", icon: Code2, url: "https://github.com/marketcalls/openscript", docs: "/script" },
-    { title: "OpenAlgo Mobile", description: "Flutter Mobile Trading App", icon: Smartphone, url: "https://github.com/marketcalls/openalgo-mobile" },
-    { title: "Web Portal", description: "NextJS + ShadcnUI web interface", icon: Globe, url: "https://github.com/marketcalls/openalgo-webpage" },
-    { title: "Chrome Plugin", description: "Browser extension for OpenAlgo", icon: Puzzle, url: "https://github.com/marketcalls/openalgo-chrome" },
-    { title: "Fast Scalper", description: "High-performance app (Rust + Tauri)", icon: Gauge, url: "https://github.com/marketcalls/fastscalper-tauri" },
-    { title: "OpenBull", description: "Self Hostable Options Trading Platform", icon: TrendingUp, url: "https://github.com/marketcalls/openbull" }
+    { title: "Excel Add-in", description: t('home.int.1Desc'), icon: FileSpreadsheet, url: "https://github.com/marketcalls/OpenAlgo-Excel", docs: "https://docs.openalgo.in/trading-platform/excel" },
+    { title: "Amibroker Plugin", description: t('home.int.2Desc'), icon: Plug, url: "https://github.com/marketcalls/OpenAlgoPlugin", docs: "https://docs.openalgo.in/trading-platform/amibroker/amibroker-plugin" },
+    { title: "Backtrader Integration", description: t('home.int.3Desc'), icon: History, url: "https://github.com/p2c2e/openalgo-backtrader" },
+    { title: "AI Agents", description: t('home.int.4Desc'), icon: Bot, url: "https://github.com/marketcalls/TradingAgent" },
+    { title: "MCP", description: t('home.int.6Desc'), icon: Network, url: "/mcp", docs: "https://docs.openalgo.in/mcp" },
+    { title: "Indicator Skills", description: t('home.int.8Desc'), icon: BarChart3, url: "/skills" },
+    { title: "Backtesting Skills", description: t('home.int.9Desc'), icon: FlaskConical, url: "/skills" },
+    { title: "AlgoMirror", description: t('home.int.5Desc'), icon: Layers, url: "https://github.com/marketcalls/algomirror" },
+    { title: "OpenAlgo Charts", description: t('home.int.14Desc'), icon: LineChart, url: "https://github.com/marketcalls/openalgo-charts", docs: "https://marketcalls.github.io/openalgo-charts" },
+    { title: "OpenStatz", description: t('home.int.15Desc'), icon: PieChart, url: "https://github.com/marketcalls/openstatz" },
+    { title: "OpenAlgo Heatmap", description: t('home.int.16Desc'), icon: LayoutGrid, url: "https://github.com/marketcalls/openalgo-heatmap" },
+    { title: "OpenQuest", description: t('home.int.17Desc'), icon: Activity, url: "https://github.com/marketcalls/openquest" },
+    { title: "Marginism", description: t('home.int.18Desc'), icon: Calculator, url: "https://github.com/marketcalls/marginism" },
+    { title: "OpenGreeks", description: t('home.int.20Desc'), icon: Sigma, url: "https://github.com/marketcalls/opengreeks" },
+    { title: "OpenScript", description: t('home.int.19Desc'), icon: Code2, url: "https://github.com/marketcalls/openscript", docs: "/script" },
+    { title: "OpenAlgo Mobile", description: t('home.int.10Desc'), icon: Smartphone, url: "https://github.com/marketcalls/openalgo-mobile" },
+    { title: "Web Portal", description: t('home.int.11Desc'), icon: Globe, url: "https://github.com/marketcalls/openalgo-webpage" },
+    { title: "Chrome Plugin", description: t('home.int.12Desc'), icon: Puzzle, url: "https://github.com/marketcalls/openalgo-chrome" },
+    { title: "Fast Scalper", description: t('home.int.13Desc'), icon: Gauge, url: "https://github.com/marketcalls/fastscalper-tauri" },
+    { title: "OpenBull", description: t('home.int.21Desc'), icon: TrendingUp, url: "https://github.com/marketcalls/openbull" }
   ]
 
 
@@ -68,17 +68,17 @@ export default function DownloadPage() {
 
   const downloads = {
     mac: [
-      { platform: "Mac Universal", version: "v0.1.0", url: "https://github.com/marketcalls/fastscalper-tauri/releases/download/v0.1.0/fastscalper_0.1.0_universal.dmg", label: t('dl.downloadFmt').replace('{x}', "DMG") },
-      { platform: "Mac Universal (Portable)", version: "v0.1.0", url: "https://github.com/marketcalls/fastscalper-tauri/releases/download/v0.1.0/fastscalper_0.1.0_universal_mac.zip", label: t('dl.downloadFmt').replace('{x}', "ZIP") },
+      { platform: t('dl.macUniversal'), version: "v0.1.0", url: "https://github.com/marketcalls/fastscalper-tauri/releases/download/v0.1.0/fastscalper_0.1.0_universal.dmg", label: t('dl.downloadFmt').replace('{x}', "DMG") },
+      { platform: t('dl.macPortable'), version: "v0.1.0", url: "https://github.com/marketcalls/fastscalper-tauri/releases/download/v0.1.0/fastscalper_0.1.0_universal_mac.zip", label: t('dl.downloadFmt').replace('{x}', "ZIP") },
     ],
     linux: [
-      { platform: "Ubuntu / Debian", version: "v0.1.0", url: "https://github.com/marketcalls/fastscalper-tauri/releases/download/v0.1.0/fastscalper_0.1.0_amd64.deb", label: t('dl.downloadFmt').replace('{x}', "DEB") },
-      { platform: "Fedora / Red Hat", version: "v0.1.0", url: "https://github.com/marketcalls/fastscalper-tauri/releases/download/v0.1.0/fastscalper-0.1.0-1.x86_64.rpm", label: t('dl.downloadFmt').replace('{x}', "RPM") },
-      { platform: "AppImage", version: "v0.1.0", url: "https://github.com/marketcalls/fastscalper-tauri/releases/download/v0.1.0/fastscalper_0.1.0_amd64.AppImage", label: t('dl.downloadFmt').replace('{x}', "AppImage") },
+      { platform: t('dl.ubuntuDebian'), version: "v0.1.0", url: "https://github.com/marketcalls/fastscalper-tauri/releases/download/v0.1.0/fastscalper_0.1.0_amd64.deb", label: t('dl.downloadFmt').replace('{x}', "DEB") },
+      { platform: t('dl.fedoraRedhat'), version: "v0.1.0", url: "https://github.com/marketcalls/fastscalper-tauri/releases/download/v0.1.0/fastscalper-0.1.0-1.x86_64.rpm", label: t('dl.downloadFmt').replace('{x}', "RPM") },
+      { platform: t('dl.appImage'), version: "v0.1.0", url: "https://github.com/marketcalls/fastscalper-tauri/releases/download/v0.1.0/fastscalper_0.1.0_amd64.AppImage", label: t('dl.downloadFmt').replace('{x}', "AppImage") },
     ],
     windows: [
-      { platform: "Windows (MSI)", version: "v0.1.0", url: "https://github.com/marketcalls/fastscalper-tauri/releases/download/v0.1.0/fastscalper_0.1.0_x64_en-US.msi", label: t('dl.downloadFmt').replace('{x}', "MSI") },
-      { platform: "Windows (EXE)", version: "v0.1.0", url: "https://github.com/marketcalls/fastscalper-tauri/releases/download/v0.1.0/fastscalper_0.1.0_x64-setup.exe", label: t('dl.downloadFmt').replace('{x}', "EXE") },
+      { platform: t('dl.windowsMsi'), version: "v0.1.0", url: "https://github.com/marketcalls/fastscalper-tauri/releases/download/v0.1.0/fastscalper_0.1.0_x64_en-US.msi", label: t('dl.downloadFmt').replace('{x}', "MSI") },
+      { platform: t('dl.windowsExe'), version: "v0.1.0", url: "https://github.com/marketcalls/fastscalper-tauri/releases/download/v0.1.0/fastscalper_0.1.0_x64-setup.exe", label: t('dl.downloadFmt').replace('{x}', "EXE") },
     ]
   }
 

@@ -83,34 +83,34 @@ export default function Home() {
   ]
 
   const suiteTools = [
-    { icon: Wand2, title: "Strategy Builder", desc: "Multi-leg construction with real-time Greeks, payoff diagram, and one-click basket execution." },
-    { icon: Box, title: "Strategy Portfolio", desc: "MyTrades and Simulation watchlists for your saved strategies." },
-    { icon: Layers, title: "Option Chain", desc: "Streaming Greeks per strike with inline click-to-trade." },
-    { icon: Gauge, title: "Option Greeks", desc: "Historical IV, Delta, Theta, Vega, Gamma for ATM options." },
-    { icon: Activity, title: "OI Tracker", desc: "CE/PE OI bars, PCR overlay, ATM strike marker." },
-    { icon: Target, title: "Max Pain", desc: "Max pain strike with pain distribution chart." },
-    { icon: LineChart, title: "Straddle Chart", desc: "Dynamic ATM straddle with synthetic futures overlay." },
-    { icon: BarChart3, title: "Straddle PnL", desc: "Intraday straddle simulation with auto N-point adjustments." },
-    { icon: Box, title: "Vol Surface", desc: "3D implied volatility surface across strikes and expiries." },
-    { icon: Sigma, title: "GEX Dashboard", desc: "OI walls, net GEX per strike, top gamma strikes." },
-    { icon: PieChart, title: "IV Smile", desc: "Call and Put IV curves with skew analysis." },
-    { icon: Wallet, title: "OI Profile", desc: "Futures candles with OI butterfly overlay." },
+    { icon: Wand2, title: t('home.suite.t1'), desc: t('home.suite.d1') },
+    { icon: Box, title: t('home.suite.t2'), desc: t('home.suite.d2') },
+    { icon: Layers, title: t('home.suite.t3'), desc: t('home.suite.d3') },
+    { icon: Gauge, title: t('home.suite.t4'), desc: t('home.suite.d4') },
+    { icon: Activity, title: t('home.suite.t5'), desc: t('home.suite.d5') },
+    { icon: Target, title: t('home.suite.t6'), desc: t('home.suite.d6') },
+    { icon: LineChart, title: t('home.suite.t7'), desc: t('home.suite.d7') },
+    { icon: BarChart3, title: t('home.suite.t8'), desc: t('home.suite.d8') },
+    { icon: Box, title: t('home.suite.t9'), desc: t('home.suite.d9') },
+    { icon: Sigma, title: t('home.suite.t10'), desc: t('home.suite.d10') },
+    { icon: PieChart, title: t('home.suite.t11'), desc: t('home.suite.d11') },
+    { icon: Wallet, title: t('home.suite.t12'), desc: t('home.suite.d12') },
   ]
 
   const coreProject = {
     title: "OpenAlgo Core",
-    description: "Central API service, authentication, routing, and platform logic",
+    description: t('home.proj.coreDesc'),
     icon: Brain,
     url: "https://github.com/marketcalls/openalgo"
   }
 
   const sdks = [
-    { title: "Python SDK", description: "Official Python SDK for OpenAlgo API", icon: Code2, url: "https://github.com/marketcalls/openalgo-python-library" },
-    { title: "Node.js SDK", description: "JavaScript/TypeScript SDK", icon: Hexagon, url: "https://github.com/marketcalls/openalgo-node" },
-    { title: "Java SDK", description: "Official Java SDK for OpenAlgo", icon: Coffee, url: "https://github.com/marketcalls/openalgo-java" },
-    { title: ".NET SDK", description: "C# / .NET SDK for OpenAlgo", icon: Hash, url: "https://github.com/marketcalls/openalgo.NET" },
-    { title: "Go SDK", description: "Golang SDK for OpenAlgo", icon: Wind, url: "https://github.com/marketcalls/openalgo-go" },
-    { title: "Rust SDK", description: "Official Rust SDK for OpenAlgo", icon: Cog, url: "https://github.com/marketcalls/openalgo-rust" }
+    { title: "Python SDK", description: t('home.sdk.pythonDesc'), icon: Code2, url: "https://github.com/marketcalls/openalgo-python-library" },
+    { title: "Node.js SDK", description: t('home.sdk.nodeDesc'), icon: Hexagon, url: "https://github.com/marketcalls/openalgo-node" },
+    { title: "Java SDK", description: t('home.sdk.javaDesc'), icon: Coffee, url: "https://github.com/marketcalls/openalgo-java" },
+    { title: ".NET SDK", description: t('home.sdk.netDesc'), icon: Hash, url: "https://github.com/marketcalls/openalgo.NET" },
+    { title: "Go SDK", description: t('home.sdk.goDesc'), icon: Wind, url: "https://github.com/marketcalls/openalgo-go" },
+    { title: "Rust SDK", description: t('home.sdk.rustDesc'), icon: Cog, url: "https://github.com/marketcalls/openalgo-rust" }
   ]
 
   const platformBlocks = [
@@ -126,27 +126,27 @@ export default function Home() {
   ]
 
   const integrations = [
-    { title: "Excel Add-in", description: "Trade from Excel spreadsheets", icon: FileSpreadsheet, url: "https://github.com/marketcalls/OpenAlgo-Excel" },
-    { title: "Amibroker Plugin", description: "OpenAlgo Plugin for Amibroker", icon: Plug, url: "https://github.com/marketcalls/OpenAlgoPlugin" },
-    { title: "Backtrader", description: "Python Library for backtesting", icon: History, url: "https://github.com/p2c2e/openalgo-backtrader" },
-    { title: "AI Agents", description: "Multi-agent AI trading research framework", icon: Bot, url: "https://github.com/marketcalls/TradingAgent" },
-    { title: "AlgoMirror", description: "Multi Account OpenAlgo Orchestrator", icon: Layers, url: "https://github.com/marketcalls/algomirror" },
-    { title: "MCP", description: "Model Context Protocol integration", icon: Network, url: "/mcp" },
-    { title: "OpenAlgo CLI", description: "Agent-first command line for the OpenAlgo API (Go)", icon: Terminal, url: "https://github.com/marketcalls/openalgo-cli" },
-    { title: "Indicator Skills", description: "AI agent skills for 100+ indicators, charts & scanners", icon: BarChart3, url: "/skills" },
-    { title: "Backtesting Skills", description: "VectorBT backtesting skills for Claude Code, Cursor, Codex", icon: FlaskConical, url: "/skills" },
-    { title: "OpenAlgo Mobile", description: "Flutter Mobile Trading App", icon: Smartphone, url: "https://github.com/marketcalls/openalgo-mobile" },
-    { title: "Web Portal", description: "NextJS + ShadcnUI web interface", icon: Globe, url: "https://github.com/marketcalls/openalgo-webpage" },
-    { title: "Chrome Plugin", description: "Browser extension for OpenAlgo", icon: Puzzle, url: "https://github.com/marketcalls/openalgo-chrome" },
-    { title: "Fast Scalper", description: "High-performance app (Rust + Tauri)", icon: Gauge, url: "https://github.com/marketcalls/fastscalper-tauri" },
-    { title: "OpenAlgo Charts", description: "Dependency-free HTML5 canvas charting engine, 137.53 kB Brotli", icon: LineChart, url: "https://github.com/marketcalls/openalgo-charts" },
-    { title: "OpenStatz", description: "Portfolio analytics for quants - Quant Tearsheets", icon: PieChart, url: "https://github.com/marketcalls/openstatz" },
-    { title: "OpenAlgo Heatmap", description: "Finviz-style market heatmap (React Component)", icon: LayoutGrid, url: "https://github.com/marketcalls/openalgo-heatmap" },
-    { title: "OpenQuest", description: "Realtime Stock Data Aggregator with TradingView Charts", icon: Activity, url: "https://github.com/marketcalls/openquest" },
-    { title: "Marginism", description: "Offline SPAN margin calculator", icon: Calculator, url: "https://github.com/marketcalls/marginism" },
-    { title: "OpenScript", description: "Open trading language for studies and strategies. Apache 2.0, zero dependencies", icon: Code2, url: "https://github.com/marketcalls/openscript" },
-    { title: "OpenGreeks", description: "Fast options pricing & Greeks for Python", icon: Sigma, url: "https://github.com/marketcalls/opengreeks" },
-    { title: "OpenBull", description: "Self Hostable Options Trading Platform", icon: TrendingUp, url: "https://github.com/marketcalls/openbull" }
+    { title: "Excel Add-in", description: t('home.int.1Desc'), icon: FileSpreadsheet, url: "https://github.com/marketcalls/OpenAlgo-Excel" },
+    { title: "Amibroker Plugin", description: t('home.int.2Desc'), icon: Plug, url: "https://github.com/marketcalls/OpenAlgoPlugin" },
+    { title: "Backtrader", description: t('home.int.3Desc'), icon: History, url: "https://github.com/p2c2e/openalgo-backtrader" },
+    { title: "AI Agents", description: t('home.int.4Desc'), icon: Bot, url: "https://github.com/marketcalls/TradingAgent" },
+    { title: "AlgoMirror", description: t('home.int.5Desc'), icon: Layers, url: "https://github.com/marketcalls/algomirror" },
+    { title: "MCP", description: t('home.int.6Desc'), icon: Network, url: "/mcp" },
+    { title: "OpenAlgo CLI", description: t('home.int.7Desc'), icon: Terminal, url: "https://github.com/marketcalls/openalgo-cli" },
+    { title: "Indicator Skills", description: t('home.int.8Desc'), icon: BarChart3, url: "/skills" },
+    { title: "Backtesting Skills", description: t('home.int.9Desc'), icon: FlaskConical, url: "/skills" },
+    { title: "OpenAlgo Mobile", description: t('home.int.10Desc'), icon: Smartphone, url: "https://github.com/marketcalls/openalgo-mobile" },
+    { title: "Web Portal", description: t('home.int.11Desc'), icon: Globe, url: "https://github.com/marketcalls/openalgo-webpage" },
+    { title: "Chrome Plugin", description: t('home.int.12Desc'), icon: Puzzle, url: "https://github.com/marketcalls/openalgo-chrome" },
+    { title: "Fast Scalper", description: t('home.int.13Desc'), icon: Gauge, url: "https://github.com/marketcalls/fastscalper-tauri" },
+    { title: "OpenAlgo Charts", description: t('home.int.14Desc'), icon: LineChart, url: "https://github.com/marketcalls/openalgo-charts" },
+    { title: "OpenStatz", description: t('home.int.15Desc'), icon: PieChart, url: "https://github.com/marketcalls/openstatz" },
+    { title: "OpenAlgo Heatmap", description: t('home.int.16Desc'), icon: LayoutGrid, url: "https://github.com/marketcalls/openalgo-heatmap" },
+    { title: "OpenQuest", description: t('home.int.17Desc'), icon: Activity, url: "https://github.com/marketcalls/openquest" },
+    { title: "Marginism", description: t('home.int.18Desc'), icon: Calculator, url: "https://github.com/marketcalls/marginism" },
+    { title: "OpenScript", description: t('home.int.19Desc'), icon: Code2, url: "https://github.com/marketcalls/openscript" },
+    { title: "OpenGreeks", description: t('home.int.20Desc'), icon: Sigma, url: "https://github.com/marketcalls/opengreeks" },
+    { title: "OpenBull", description: t('home.int.21Desc'), icon: TrendingUp, url: "https://github.com/marketcalls/openbull" }
   ]
 
   return (
@@ -195,7 +195,7 @@ export default function Home() {
 
           <ProductScreen
             id="dashboard"
-            alt="OpenAlgo trading dashboard with account summary cards and quick access tools"
+            alt={t('home.screen.dashboardAlt')}
             className="reveal reveal-5 mb-20 shadow-sm"
           />
 
@@ -239,7 +239,7 @@ export default function Home() {
 
             <ProductScreen
               id="trading-terminal"
-              alt="OpenAlgo trading terminal showing AXISBANK 15-minute candles with the HalfTrend indicator and its buy and sell signals"
+              alt={t('home.screen.terminalAlt')}
               rounded="rounded-3xl"
               className="mb-6 shadow-sm"
             />
@@ -321,9 +321,9 @@ export default function Home() {
               </div>
 
               <div className="mb-6 grid gap-4 md:grid-cols-3">
-                <ProductScreen id="straddle" alt="OpenAlgo Straddle Chart showing the NIFTY ATM straddle price over three days" />
-                <ProductScreen id="vol-surface" alt="OpenAlgo 3D implied volatility surface for NIFTY across strikes and expiries" />
-                <ProductScreen id="gex" alt="OpenAlgo GEX Dashboard with OI walls and net GEX by strike for NIFTY" />
+                <ProductScreen id="straddle" alt={t('home.screen.straddleAlt')} />
+                <ProductScreen id="vol-surface" alt={t('home.screen.volSurfaceAlt')} />
+                <ProductScreen id="gex" alt={t('home.screen.gexAlt')} />
               </div>
 
               <div className="grid gap-px overflow-hidden rounded-3xl border bg-border sm:grid-cols-2 lg:grid-cols-3">
@@ -394,7 +394,7 @@ export default function Home() {
                       {t('ai.mcpDesc')}
                     </p>
                     <div className="flex flex-wrap gap-2">
-                      {["25+ built-in actions", "Claude / Cursor / Windsurf / ChatGPT", "Runs on your computer"].map(tag => (
+                      {[t('home.ai.mcpTag1'), t('home.ai.mcpTag2'), t('home.ai.mcpTag3')].map(tag => (
                         <span key={tag} className="rounded-full border px-3 py-1 font-label text-label-sm text-on-surface-variant">{tag}</span>
                       ))}
                     </div>
@@ -417,7 +417,7 @@ export default function Home() {
                       {t('ai.skillsDesc')}
                     </p>
                     <div className="flex flex-wrap gap-2">
-                      {["100+ indicators", "12 ready-made strategies", "India / US / Crypto"].map(tag => (
+                      {[t('home.ai.skillTag1'), t('home.ai.skillTag2'), t('home.ai.skillTag3')].map(tag => (
                         <span key={tag} className="rounded-full border px-3 py-1 font-label text-label-sm text-on-surface-variant">{tag}</span>
                       ))}
                     </div>

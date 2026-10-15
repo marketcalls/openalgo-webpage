@@ -3,6 +3,8 @@
 import { useRouter } from "next/navigation"
 import { useCallback, useEffect, useId, useMemo, useRef, useState } from "react"
 
+import { useI18n } from "@/components/i18n/LanguageProvider"
+
 /**
  * The /script search palette. Opened by any SearchButton, by Ctrl+K or Cmd+K,
  * and by "/" when the reader is not typing somewhere. The index
@@ -12,10 +14,10 @@ import { useCallback, useEffect, useId, useMemo, useRef, useState } from "react"
 export const SEARCH_EVENT = "osd:search"
 
 const GROUPS = [
-  { k: "page", title: "Pages", max: 6 },
-  { k: "entry", title: "Reference", max: 8 },
-  { k: "error", title: "Errors", max: 6 },
-  { k: "heading", title: "Headings", max: 6 },
+  { k: "page", titleKey: "sdoc.group.pages", max: 6 },
+  { k: "entry", titleKey: "sdoc.group.reference", max: 8 },
+  { k: "error", titleKey: "sdoc.group.errors", max: 6 },
+  { k: "heading", titleKey: "sdoc.group.headings", max: 6 },
 ]
 const KIND_WEIGHT = { page: 30, entry: 20, error: 10, heading: 0 }
 
@@ -101,6 +103,7 @@ function isTyping(target) {
 }
 
 export default function DocSearch() {
+  const { t } = useI18n()
   const router = useRouter()
   const [open, setOpen] = useState(false)
   const [query, setQuery] = useState("")
@@ -260,7 +263,7 @@ export default function DocSearch() {
       <div className="osd-search-panel" role="dialog" aria-modal="true" aria-label="Search the OpenScript documentation">
         <div className="osd-search-field">
           <label htmlFor={`${listId}-input`} className="osd-search-label">
-            Search
+            {t("sdoc.search")}
           </label>
           <input
             ref={inputRef}
@@ -274,7 +277,7 @@ export default function DocSearch() {
             autoComplete="off"
             autoCorrect="off"
             spellCheck={false}
-            placeholder="Pages, functions, error codes"
+            placeholder={t("sdoc.searchPlaceholder")}
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             onKeyDown={onInputKey}
@@ -288,7 +291,7 @@ export default function DocSearch() {
           {failed ? (
             <p className="osd-search-empty">The search index did not load. Check your connection and open search again.</p>
           ) : !items ? (
-            <p className="osd-search-empty">Loading the index</p>
+            <p className="osd-search-empty">{t("sdoc.loadingIndex")}</p>
           ) : hasQuery && !groups.length ? (
             <p className="osd-search-empty">
               Nothing matches <strong>{query.trim()}</strong>. Try a function name such as <code>ema</code> or an error code such as{" "}
@@ -301,13 +304,13 @@ export default function DocSearch() {
               {hasQuery ? (
                 groups.map((g) => (
                   <li key={g.k} role="presentation" className="osd-search-group">
-                    <p className="osd-search-group-title">{g.title}</p>
+                    <p className="osd-search-group-title">{t(g.titleKey)}</p>
                     <ul role="presentation">{g.items.map(row)}</ul>
                   </li>
                 ))
               ) : (
                 <li role="presentation" className="osd-search-group">
-                  <p className="osd-search-group-title">Start here</p>
+                  <p className="osd-search-group-title">{t("sdoc.startHere")}</p>
                   <ul role="presentation">{starters.map(row)}</ul>
                 </li>
               )}
@@ -317,16 +320,17 @@ export default function DocSearch() {
 
         <div className="osd-search-foot" aria-hidden="true">
           <span>
-            <span className="osd-kbd">Up</span> <span className="osd-kbd">Down</span> to move
+            <span className="osd-kbd">Up</span> <span className="osd-kbd">Down</span> {t("sdoc.toMove")}
           </span>
           <span>
-            <span className="osd-kbd">Enter</span> to open
+            <span className="osd-kbd">Enter</span> {t("sdoc.toOpen")}
           </span>
           <span>
-            <span className="osd-kbd">Esc</span> to close
+            <span className="osd-kbd">Esc</span> {t("sdoc.toClose")}
           </span>
         </div>
       </div>
     </div>
   )
 }
+

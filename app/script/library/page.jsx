@@ -1,8 +1,6 @@
 // The OpenScript library: every published study, searchable by name and
 // category. The index (lib/scriptLibraryIndex.json) and each study's route are
 // written by scripts/script-library/gen-library.mjs.
-import Link from "next/link"
-
 import LibraryBrowser from "@/components/script/library/LibraryBrowser"
 import index from "@/lib/scriptLibraryIndex.json"
 import { SITE } from "@/lib/scriptDocs"
@@ -47,20 +45,7 @@ export default function ScriptLibraryPage() {
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(ld) }} />
       <section className="px-4 pt-14 pb-24 md:pt-20">
         <div className="osl-wrap">
-          <div className="osl-hero">
-            <p className="font-label text-label-md uppercase text-on-surface-variant">
-              <Link href="/script" prefetch={false} className="hover:text-on-surface">
-                OpenScript
-              </Link>{" "}
-              library
-            </p>
-            <h1 className="osl-hero-title mt-4">Every indicator, written in OpenScript</h1>
-            <p className="osl-hero-lede">
-              {index.entries.length} studies, each with its full source and a chart drawn on real BTCUSD hourly data from {index.dataFrom} to{" "}
-              {index.dataTo}. Read the code, change it in the editor, and copy it into OpenAlgo.
-            </p>
-          </div>
-          <LibraryBrowser entries={index.entries} categories={index.categories} />
+          <LibraryBrowser entries={index.entries} categories={index.categories} dataFrom={index.dataFrom} dataTo={index.dataTo} />
         </div>
       </section>
     </div>

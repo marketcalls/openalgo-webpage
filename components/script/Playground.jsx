@@ -3,6 +3,8 @@
 import Editor from "@monaco-editor/react"
 import { useCallback, useEffect, useMemo, useRef, useState } from "react"
 
+import { useI18n } from "@/components/i18n/LanguageProvider"
+
 import { EXAMPLES } from "./examples"
 import { baseOptions, loadMonaco } from "./monaco/loader"
 import { LANGUAGE_ID } from "./monaco/openscript"
@@ -21,19 +23,20 @@ import StaticCode from "./StaticCode"
  */
 const kindOf = (code) => (/^\s*strategy\s*\(/m.test(code) ? "Strategy" : /^\s*study\s*\(/m.test(code) ? "Study" : "Script")
 
-function summary(list) {
+function summary(list, t) {
   const errors = list.filter((d) => d.severity !== "warning").length
   const warnings = list.length - errors
-  if (!list.length) return "No problems"
+  if (!list.length) return t("script.play.noProblems")
   const parts = []
-  if (errors) parts.push(`${errors} ${errors === 1 ? "error" : "errors"}`)
-  if (warnings) parts.push(`${warnings} ${warnings === 1 ? "warning" : "warnings"}`)
+  if (errors) parts.push(t(errors === 1 ? "script.play.error" : "script.play.errors").replace("{n}", errors))
+  if (warnings) parts.push(t(warnings === 1 ? "script.play.warning" : "script.play.warnings").replace("{n}", warnings))
   return parts.join(", ")
 }
 
 const formatMs = (ms) => (ms < 10 ? ms.toFixed(1) : Math.round(ms).toString())
 
 export default function Playground() {
+  const { t } = useI18n()
   const [active, setActive] = useState(0)
   const [monaco, setMonaco] = useState(null)
   const [monacoFailed, setMonacoFailed] = useState(false)
@@ -182,19 +185,28 @@ export default function Playground() {
 
   const verdict =
     check.state === "ready" ? (
-      <span className={`osd-play-verdict${check.list.length ? " has-problems" : " is-clean"}`}>{summary(check.list)}</span>
+      <span className={`osd-play-verdict${check.list.length ? " has-problems" : " is-clean"}`}>{summary(check.list, t)}</span>
     ) : check.state === "unavailable" ? (
-      <span className="osd-play-verdict">The compiler did not load</span>
+      <span className="osd-play-verdict">{t("script.play.compilerFailed")}</span>
     ) : (
-      <span className="osd-play-verdict">{monaco ? "Loading the compiler" : monacoFailed ? "The editor did not load" : "Loading the editor"}</span>
+      <span className="osd-play-verdict">{monaco ? t("script.play.loadingCompiler") : monacoFailed ? t("script.play.editorFailed") : t("script.play.loadingEditor")}</span>
     )
+
+  const kindLabel =
+    meta.kind === "Strategy"
+      ? t("script.play.strategy")
+      : meta.kind === "Study"
+        ? t("script.play.study")
+        : t("script.play.script")
 
   const status = (
     <>
-      <span className="osd-play-kind">{meta.kind}</span>
-      <span className="osd-play-dim">{meta.lines} lines</span>
+      <span className="osd-play-kind">{kindLabel}</span>
+      <span className="osd-play-dim">{t("script.play.lines").replace("{n}", meta.lines)}</span>
       {verdict}
-      {check.state === "ready" ? <span className="osd-play-time">Compiled in {formatMs(check.ms)} ms</span> : null}
+      {check.state === "ready" ? (
+        <span className="osd-play-time">{t("script.play.compiledIn").replace("{ms}", formatMs(check.ms))}</span>
+      ) : null}
     </>
   )
 
@@ -209,7 +221,7 @@ export default function Playground() {
                 {d.message}
                 {d.fix ? <span className="osd-play-fix"> {d.fix}</span> : null}
               </span>
-              <span className="osd-play-line">Line {d.span.line}</span>
+              <span className="osd-play-line">{t("script.play.line").replace("{n}", d.span.line)}</span>
             </button>
           </li>
         ))}
@@ -219,10 +231,10 @@ export default function Playground() {
   const actions = monaco ? (
     <>
       <button type="button" className="osd-play-action" onClick={reset}>
-        Reset
+        {t("script.play.reset")}
       </button>
       <button type="button" className="osd-play-action" onClick={copy}>
-        {copied ? "Copied" : "Copy"}
+        {copied ? t("script.play.copied") : t("script.play.copy")}
       </button>
     </>
   ) : null

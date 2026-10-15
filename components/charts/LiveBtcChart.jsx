@@ -1,6 +1,7 @@
 "use client"
 
 import { useEffect, useRef, useState } from "react"
+import { useI18n } from "@/components/i18n/LanguageProvider"
 import { BTC_USD_INTERVALS, BTC_USD_SOURCE, createBtcUsdFeed } from "./btcUsdFeed"
 
 /**
@@ -58,6 +59,7 @@ function showRecent(widget, count) {
 }
 
 export default function LiveBtcChart() {
+  const { t } = useI18n()
   const host = useRef(null)
   const retry = useRef(null)
   const [market, setMarket] = useState({ state: "loading", interval: "1h" })
@@ -163,12 +165,12 @@ export default function LiveBtcChart() {
   const unavailable = market.state === "error" || market.state === "stale"
   const statusLabel =
     market.state === "loading"
-      ? "Connecting to market data"
+      ? t('charts.live.connecting')
       : market.state === "stale"
-        ? "Disconnected, showing last known data"
+        ? t('charts.live.staleStatus')
         : market.state === "error"
-          ? "Market data unavailable"
-          : "Real market data"
+          ? t('charts.live.errorStatus')
+          : t('charts.live.realStatus')
   const syncTime = market.updatedAt
     ? new Date(market.updatedAt).toLocaleTimeString("en-GB", { hour12: false })
     : null
@@ -208,7 +210,7 @@ export default function LiveBtcChart() {
 
         {(!ready || market.state === "loading") && !unavailable && (
           <div className="pointer-events-none absolute inset-0 flex items-center justify-center text-sm text-on-surface-variant">
-            Loading BTC/USD market data
+            {t('charts.live.loadingOverlay')}
           </div>
         )}
 
@@ -217,9 +219,9 @@ export default function LiveBtcChart() {
             role="alert"
             className="absolute inset-0 flex flex-col items-center justify-center gap-3 bg-surface-bright px-6 text-center"
           >
-            <strong className="text-on-surface">BTC/USD data is unavailable.</strong>
+            <strong className="text-on-surface">{t('charts.live.errTitle')}</strong>
             <span className="text-sm text-on-surface-variant">
-              The public market feed did not answer. Everything else on this page still works.
+              {t('charts.live.errDesc')}
             </span>
             {ready && (
               <button
@@ -227,7 +229,7 @@ export default function LiveBtcChart() {
                 onClick={() => void retry.current?.()}
                 className="rounded-full border px-4 py-2 font-label text-label-md text-on-surface transition-colors hover:bg-surface-container"
               >
-                Retry connection
+                {t('charts.live.retryConn')}
               </button>
             )}
           </div>
@@ -240,20 +242,20 @@ export default function LiveBtcChart() {
           className="flex flex-wrap items-center justify-between gap-2 border-t px-4 py-2.5"
         >
           <span className="text-sm text-on-surface-variant">
-            Connection interrupted. Showing the last received candles.
+            {t('charts.live.staleBanner')}
           </span>
           <button
             type="button"
             onClick={() => void retry.current?.()}
             className="rounded-full border px-3 py-1 font-label text-label-md text-on-surface transition-colors hover:bg-surface-container"
           >
-            Retry
+            {t('charts.live.retry')}
           </button>
         </div>
       )}
 
       <div className="flex flex-wrap items-center justify-between gap-x-4 gap-y-2 border-t px-4 py-3 font-label text-label-md text-on-surface-variant">
-        <span>Draw an idea. Add an indicator. It is the real engine.</span>
+        <span>{t('charts.live.footerHint')}</span>
         <span className="flex flex-wrap items-center gap-x-3 gap-y-1">
           <a
             href={BTC_USD_SOURCE}
@@ -261,10 +263,10 @@ export default function LiveBtcChart() {
             rel="noreferrer"
             className="underline-offset-2 transition-colors hover:text-on-surface hover:underline"
           >
-            Source: Gemini
+            {t('charts.live.sourceGemini')}
           </a>
-          <span>Refreshes every 15s</span>
-          {syncTime && <span>Synced {syncTime}</span>}
+          <span>{t('charts.live.refreshRate')}</span>
+          {syncTime && <span>{t('charts.live.synced').replace('{t}', syncTime)}</span>}
         </span>
       </div>
     </div>
