@@ -1,0 +1,648 @@
+{
+  "course": "python",
+  "locale": "pt",
+  "parts": [
+    {
+      "id": "A",
+      "name": "Fundações",
+      "desc": "Configure, converse com o mercado e aprenda o suficiente sobre Python, NumPy e Pandas.",
+      "chapters": [
+        {
+          "n": 1,
+          "slug": "getting-started",
+          "title": "Introdução ao OpenAlgo",
+          "summary": "Conecte o OpenAlgo Python SDK, verifique os fundos e entenda o modo análise versus modo ao vivo.",
+          "learn": [
+            "Configure um espaço de trabalho com UV",
+            "Crie um cliente de API",
+            "Mantenha segredos em .env",
+            "Leia fundos e versão",
+            "Modo de análise versus modo ao vivo",
+            "Sua primeira extração de dados"
+          ],
+          "tags": [
+            "NSE"
+          ]
+        },
+        {
+          "n": 2,
+          "slug": "python-for-traders",
+          "title": "Python Fundamentos para Traders",
+          "summary": "O Python que você realmente precisa – variáveis, listas, dictos, loops e funções, em um contexto de negociação.",
+          "learn": [
+            "Números e matemática P&L",
+            "Listas e ditados de posições",
+            "Loops sobre símbolos",
+            "Funções para lógica reutilizável",
+            "Condicionais para sinais",
+            "Tratamento de respostas SDK"
+          ],
+          "tags": [
+            "NSE"
+          ]
+        },
+        {
+          "n": 3,
+          "slug": "symbols-exchanges",
+          "title": "Símbolos, trocas e tamanhos de lote",
+          "summary": "Domine o formato do símbolo OpenAlgo em ações NSE, NFO F&O e commodities MCX.",
+          "learn": [
+            "Símbolos de ações/futuros/opções",
+            "search() e symbol()",
+            "Símbolos de índice",
+            "expiry() para F&O",
+            "Lista mestre instruments()",
+            "Tamanhos de lote para dimensionamento"
+          ],
+          "tags": [
+            "NSE",
+            "NFO",
+            "MCX",
+            "INDEX"
+          ]
+        },
+        {
+          "n": 4,
+          "slug": "market-data-quotes",
+          "title": "Citações, profundidade e LTP",
+          "summary": "Extraia instantâneos ao vivo - aspas simples, multiquotas em lote e profundidade total da carteira de pedidos.",
+          "learn": [
+            "quotes() para um símbolo",
+            "multiquotes() para muitos",
+            "carteira de pedidos depth()",
+            "Spread de lance/ask",
+            "Cotações em exchanges",
+            "Construindo um quadro de cotações"
+          ],
+          "tags": [
+            "NSE",
+            "NFO",
+            "MCX"
+          ]
+        },
+        {
+          "n": 5,
+          "slug": "historical-data",
+          "title": "Dados históricos e prazos",
+          "summary": "Busque o histórico OHLCV em qualquer intervalo e remodele-o para análise.",
+          "learn": [
+            "history() OHLCV",
+            "Intervalos de 1m a D",
+            "Intervalos de datas",
+            "Download de vários símbolos",
+            "fonte API vs banco de dados",
+            "Prazos de reamostragem"
+          ],
+          "tags": [
+            "NSE",
+            "NFO",
+            "MCX"
+          ]
+        },
+        {
+          "n": 6,
+          "slug": "numpy-for-traders",
+          "title": "NumPy para comerciantes",
+          "summary": "Fundamentos do NumPy para traders - criação de matrizes, indexação, matemática vetorial e funções cotidianas, com base em dados simples de preços.",
+          "learn": [
+            "Criando matrizes e ajudantes",
+            "Forma, tamanho e tipo",
+            "Indexação e fatiamento",
+            "Matemática vetorial e transmissão",
+            "Agregações, máscaras e np.where",
+            "Matrizes 2D e o argumento do eixo"
+          ],
+          "tags": [
+            "NSE",
+            "INDEX"
+          ]
+        },
+        {
+          "n": 7,
+          "slug": "pandas-for-traders",
+          "title": "Pandas para comerciantes",
+          "summary": "DataFrames, janelas rolantes, reamostragem e agrupamentos - o carro-chefe da análise de mercado.",
+          "learn": [
+            "Série e DataFrame em OHLCV",
+            "Indexação e divisão por data",
+            "Janelas de enrolar",
+            "Reamostrar para maior TF",
+            "agregações agrupadas",
+            "Devoluções e saques"
+          ],
+          "tags": [
+            "NSE",
+            "MCX"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "B",
+      "name": "Visualização e aplicativos",
+      "desc": "Transforme dados em gráficos e painéis interativos.",
+      "chapters": [
+        {
+          "n": 8,
+          "slug": "matplotlib-charts",
+          "title": "Gráficos com Matplotlib",
+          "summary": "Gráficos estáticos: linhas de preços, distribuições de retorno, subparcelas e sobreposições de indicadores.",
+          "learn": [
+            "Gráficos de linhas e etapas",
+            "Subtramas",
+            "Histogramas de retorno",
+            "Gráficos estatísticos Seaborn",
+            "Mapas de calor de correlação",
+            "Salvar figuras em arquivo"
+          ],
+          "tags": [
+            "NSE",
+            "MCX",
+            "INDEX"
+          ]
+        },
+        {
+          "n": 9,
+          "slug": "plotly-charts",
+          "title": "Gráficos interativos com Plotly",
+          "summary": "Gráficos de velas com zoom e indicadores de volume e vários painéis.",
+          "learn": [
+            "Gráfico de velas",
+            "Subpainel Volume",
+            "Sobreposições de indicadores",
+            "Painéis RSI/MACD",
+            "Controle deslizante de intervalo",
+            "Exportar para HTML"
+          ],
+          "tags": [
+            "NSE",
+            "NFO"
+          ]
+        },
+        {
+          "n": 10,
+          "slug": "streamlit-apps",
+          "title": "Painéis ao vivo com Streamlit",
+          "summary": "Crie aplicativos da web clicáveis ​​- um quadro de cotações, um visualizador de gráficos e um mini scanner.",
+          "learn": [
+            "Noções básicas de Streamlit",
+            "Widgets e entradas",
+            "Painel de cotação ao vivo",
+            "Incorporar um gráfico",
+            "Um scanner simples UI",
+            "Cache de chamadas SDK"
+          ],
+          "tags": [
+            "NSE",
+            "MCX"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "C",
+      "name": "Indicadores Técnicos",
+      "desc": "Mais de oitenta indicadores da biblioteca openalgo.ta, por categoria.",
+      "chapters": [
+        {
+          "n": 11,
+          "slug": "trend-indicators",
+          "title": "Tendência e médias móveis",
+          "summary": "De SMA e EMA a Supertrend, Ichimoku e Parabolic SAR.",
+          "learn": [
+            "SMA / EMA / WMA",
+            "HMA / ALMA / KAMA / VWMA",
+            "Supertendência",
+            "Nuvem Ichimoku",
+            "Parabólico SAR",
+            "Escolhendo um filtro de tendência"
+          ],
+          "tags": [
+            "NSE",
+            "NFO",
+            "MCX"
+          ]
+        },
+        {
+          "n": 12,
+          "slug": "momentum-indicators",
+          "title": "Indicadores de impulso",
+          "summary": "Meça velocidade e força: RSI, MACD, Estocástico, CCI e muito mais.",
+          "learn": [
+            "RSI",
+            "MACD",
+            "Estocástico",
+            "CCI & Williams %R",
+            "Transformada de Fisher",
+            "Connors RSI"
+          ],
+          "tags": [
+            "NSE",
+            "NFO"
+          ]
+        },
+        {
+          "n": 13,
+          "slug": "volatility-indicators",
+          "title": "Indicadores de Volatilidade",
+          "summary": "ATR, Bandas de Bollinger, canais Keltner e Donchian para alcance e risco.",
+          "learn": [
+            "ATR e NATR",
+            "Bandas de Bollinger",
+            "Canal Keltner",
+            "Canal Donchian",
+            "Saída do lustre",
+            "BB largura e %B"
+          ],
+          "tags": [
+            "NSE",
+            "MCX"
+          ]
+        },
+        {
+          "n": 14,
+          "slug": "volume-indicators",
+          "title": "Indicadores de volume",
+          "summary": "Leia a participação com OBV, VWAP, MFI, CMF e volume relativo.",
+          "learn": [
+            "OBV",
+            "VWAP",
+            "Índice de Fluxo de Dinheiro",
+            "Fluxo de dinheiro Chaikin",
+            "Acumulação/Distribution",
+            "Volume relativo"
+          ],
+          "tags": [
+            "NSE",
+            "NFO"
+          ]
+        },
+        {
+          "n": 15,
+          "slug": "oscillators",
+          "title": "Osciladores",
+          "summary": "Ferramentas de momentum limitadas: ROC, TRIX, Awesome Oscillator, StochRSI, Vortex e amigos.",
+          "learn": [
+            "ROC e CMO",
+            "TRIX",
+            "Oscilador incrível",
+            "Estocástico RSI",
+            "Vórtice e TSI",
+            "Índice de instabilidade"
+          ],
+          "tags": [
+            "NSE",
+            "MCX"
+          ]
+        },
+        {
+          "n": 16,
+          "slug": "statistical-hybrid",
+          "title": "Funções estatísticas, híbridas e utilitárias",
+          "summary": "Regressão, correlação, ADX, pivôs - além dos auxiliares de sinal que você usará em qualquer lugar.",
+          "learn": [
+            "Regressão linear e inclinação",
+            "Correlação e beta",
+            "ADX / DMI",
+            "Pontos de articulação",
+            "crossover / crossunder",
+            "exrem / flip / valor quando"
+          ],
+          "tags": [
+            "NSE",
+            "NFO"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "D",
+      "name": "Sinais e varredura",
+      "desc": "Converta indicadores em sinais limpos e analise todo o mercado.",
+      "chapters": [
+        {
+          "n": 17,
+          "slug": "signals",
+          "title": "Dos indicadores aos sinais de negociação",
+          "summary": "Crie sinais de entrada e saída precisos e desduplicados nos quais você pode confiar em um backtest.",
+          "learn": [
+            "Condições booleanas",
+            "crossover / crossunder",
+            "exrem para remover repetições",
+            "inverter para retenções com estado",
+            "valorquando pesquisas",
+            "Mudando para evitar olhar para frente"
+          ],
+          "tags": [
+            "NSE"
+          ]
+        },
+        {
+          "n": 18,
+          "slug": "scanning",
+          "title": "Digitalização e rastreadores",
+          "summary": "Execute um sinal em dezenas de símbolos e classifique os resultados.",
+          "learn": [
+            "Faça um loop em um universo",
+            "Telas RSI / EMA",
+            "Verificação detalhada",
+            "Varredura de volume relativo",
+            "Classificar e classificar hits",
+            "Digitalize em exchanges"
+          ],
+          "tags": [
+            "NSE",
+            "NFO",
+            "MCX"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "E",
+      "name": "Manual de estratégia",
+      "desc": "Estilos reais de estratégia – cada um buscado, sinalizado e explicado.",
+      "chapters": [
+        {
+          "n": 19,
+          "slug": "cash-equity-strategies",
+          "title": "Estratégias de caixa e patrimônio",
+          "summary": "Acompanhamento de tendências de estilo de entrega e classificação de impulso em ações.",
+          "learn": [
+            "Tendência da cruz dourada",
+            "Classificação dinâmica",
+            "Fuga de Donchian",
+            "Posição vs CNC",
+            "Visualização da curva de patrimônio",
+            "Rotação do universo"
+          ],
+          "tags": [
+            "NSE"
+          ]
+        },
+        {
+          "n": 20,
+          "slug": "intraday-strategies",
+          "title": "Estratégias intradiárias",
+          "summary": "Rompimento de intervalo de abertura, reversão VWAP e sistemas EMA intradiários.",
+          "learn": [
+            "Quebra de faixa de abertura",
+            "VWAP reversão à média",
+            "Cruzamento intradiário EMA",
+            "Saídas baseadas no tempo",
+            "Produto MIS",
+            "Futuros de índices e ações"
+          ],
+          "tags": [
+            "NSE",
+            "NFO"
+          ]
+        },
+        {
+          "n": 21,
+          "slug": "pair-stat-arb",
+          "title": "Negociação de pares e arbitragem estatística",
+          "summary": "Negocie o spread: proporção, pontuação z, correlação e pares beta-neutros.",
+          "learn": [
+            "Construa um spread de preços",
+            "Pontuação Z do spread",
+            "Filtro de correlação",
+            "Taxa beta e de hedge",
+            "Bandas de entrada/exit",
+            "Mecânica Stat-arb"
+          ],
+          "tags": [
+            "NSE"
+          ]
+        },
+        {
+          "n": 22,
+          "slug": "momentum-volatility",
+          "title": "Negociação de impulso e volatilidade",
+          "summary": "Momento transversal mais entradas e dimensionamentos baseados na volatilidade de ATR / Bollinger.",
+          "learn": [
+            "Momento transversal",
+            "ATR fuga",
+            "Aperto de Bollinger",
+            "Segmentação por volatilidade",
+            "Filtro de regime",
+            "Tamanho da posição em escala Vol"
+          ],
+          "tags": [
+            "NSE",
+            "MCX"
+          ]
+        },
+        {
+          "n": 23,
+          "slug": "seasonal-strategies",
+          "title": "Estratégias sazonais e de calendário",
+          "summary": "Efeitos de dia da semana, mês e semana de vencimento medidos diretamente do histórico.",
+          "learn": [
+            "Devoluções por dia da semana",
+            "Sazonalidade mensal",
+            "Efeito de virada de mês",
+            "Comportamento na semana de vencimento",
+            "Máscaras de calendário em Pandas",
+            "Backtest de uma regra sazonal"
+          ],
+          "tags": [
+            "NSE",
+            "NFO"
+          ]
+        },
+        {
+          "n": 24,
+          "slug": "options-strategies",
+          "title": "Estratégias de opções",
+          "summary": "Da cadeia de opções à compra, spreads, straddles e hedge - tudo por símbolo.",
+          "learn": [
+            "Cadeia de opções & ATM",
+            "optionsymbol() e gregos",
+            "Compra de chamadas / opções de venda",
+            "Pernas verticais e abertas",
+            "Protegendo uma posição",
+            "Pedidos multi-percurso"
+          ],
+          "tags": [
+            "NFO",
+            "INDEX"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "F",
+      "name": "Execução",
+      "desc": "Faça e gerencie pedidos reais através do SDK (em modo de análise).",
+      "chapters": [
+        {
+          "n": 25,
+          "slug": "placing-orders",
+          "title": "Colocação e gerenciamento de pedidos",
+          "summary": "Cada tipo de pedido - mercado, limite, SL, inteligente, cesta, split - além de modificação e cancelamento.",
+          "learn": [
+            "Tipos placeorder()",
+            "placesmartorder()",
+            "cesta e pedidos divididos",
+            "modificar / cancelar",
+            "Livros de pedidos e posições",
+            "Fechar todas as posições"
+          ],
+          "tags": [
+            "NSE",
+            "NFO",
+            "MCX"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "G",
+      "name": "Backtesting e otimização",
+      "desc": "Prove uma vantagem antes de arriscar capital - com VectorBT.",
+      "chapters": [
+        {
+          "n": 26,
+          "slug": "backtesting-basics",
+          "title": "Backtesting do zero e com VectorBT",
+          "summary": "Crie um backtest vetorizado manualmente e depois reproduza-o com VectorBT e custos realistas.",
+          "learn": [
+            "Posições de sinais",
+            "Curva de retornos e patrimônio",
+            "Custos e derrapagem",
+            "VectorBT from_signals",
+            "Leitura pf.stats()",
+            "Apenas longo vs ambos"
+          ],
+          "tags": [
+            "NSE",
+            "MCX"
+          ]
+        },
+        {
+          "n": 27,
+          "slug": "performance-metrics",
+          "title": "Métricas e relatórios de desempenho",
+          "summary": "Sharpe, Sortino, CAGR, drawdown e win-rate - além de um relatório QuantStats completo.",
+          "learn": [
+            "CAGR e retorno total",
+            "Sharpe e Sortino",
+            "Rebaixamento máximo",
+            "Taxa de ganho e fator de lucro",
+            "Referência vs índice",
+            "Folha de publicação do QuantStats"
+          ],
+          "tags": [
+            "NSE"
+          ]
+        },
+        {
+          "n": 28,
+          "slug": "optimization",
+          "title": "Otimização de parâmetros",
+          "summary": "Varra grades de parâmetros, desenhe mapas de calor e escolha configurações robustas - não apenas as melhores.",
+          "learn": [
+            "Definir uma grade de parâmetros",
+            "Transmissão VectorBT",
+            "Mapa de calor de retorno",
+            "Mapa de calor Sharpe",
+            "Robusto vs pico",
+            "Otimização consciente dos custos"
+          ],
+          "tags": [
+            "NSE",
+            "MCX"
+          ]
+        },
+        {
+          "n": 29,
+          "slug": "walk-forward",
+          "title": "Testes passo a passo e robustez",
+          "summary": "Divida dentro e fora da amostra, role a janela para frente e evite se enganar.",
+          "learn": [
+            "Trem/test dividido",
+            "Dentro vs fora da amostra",
+            "Rolando para frente",
+            "Estabilidade de parâmetros",
+            "Overfitting de bandeiras vermelhas",
+            "Expectativas deflacionadas"
+          ],
+          "tags": [
+            "NSE"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "H",
+      "name": "Aprendizado de máquina",
+      "desc": "Ensine um modelo a ler o mercado e depois envie um bot completo.",
+      "chapters": [
+        {
+          "n": 30,
+          "slug": "ml-neural-capstone",
+          "title": "Aprendizado de máquina, redes neurais e um bot completo",
+          "summary": "Projete recursos, treine um classificador e uma rede neural e, em seguida, conecte-os a um loop OpenAlgo ativo.",
+          "learn": [
+            "Recursos de indicadores",
+            "Treinar/test para ML",
+            "Floresta logística e aleatória",
+            "Uma rede neural (MLP)",
+            "Verificação ML passo a passo",
+            "Bot de negociação ponta a ponta"
+          ],
+          "tags": [
+            "NSE",
+            "NFO"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "I",
+      "name": "Entrando ao vivo",
+      "desc": "Transmita ticks ao vivo por meio de WebSockets e gerencie posições reais em tempo real.",
+      "chapters": [
+        {
+          "n": 31,
+          "slug": "websockets",
+          "title": "Dados em tempo real com WebSockets",
+          "summary": "Transmita ticks ao vivo por meio de um WebSocket e gerencie uma posição em tempo real - calculando stop-loss, alvo e trailing stop à medida que cada preço chega.",
+          "learn": [
+            "Pesquisa (REST) versus streaming (WebSocket)",
+            "Quando usar o API versus o feed",
+            "connect() e subscribe_ltp/quote/depth",
+            "Calcule um stop-loss e uma meta ao vivo",
+            "Trailing stop-loss em cada tick",
+            "Um gerente comercial completo ao vivo"
+          ],
+          "tags": [
+            "NSE",
+            "NFO",
+            "MCX"
+          ]
+        },
+        {
+          "n": 32,
+          "slug": "risk-position-sizing",
+          "title": "Dimensionamento de risco e posição",
+          "summary": "Transforme um sinal na quantidade certa - dimensionamento por risco fracionário fixo, distância de stop, ATR e calor do portfólio, com um dimensionador reutilizável com reconhecimento de lote.",
+          "learn": [
+            "Por que o dimensionamento supera as entradas",
+            "Fracionário fixo: risco de 1% por negociação",
+            "Quantidade da distância de parada",
+            "Paradas baseadas em ATR e dimensionamento de volatilidade",
+            "Limites de calor e exposição do portfólio",
+            "Um auxiliar position_size() reutilizável"
+          ],
+          "tags": [
+            "NSE",
+            "NFO",
+            "MCX"
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,616 @@
+{
+  "course": "risk-management",
+  "locale": "es",
+  "parts": [
+    {
+      "id": "A",
+      "name": "El riesgo no es sólo perder dinero",
+      "desc": "Qué significa realmente el riesgo, por qué la supervivencia está por delante de las ganancias y qué dinero nunca debería entrar al mercado.",
+      "chapters": [
+        {
+          "n": 1,
+          "slug": "what-risk-really-means",
+          "title": "Qué significa realmente el riesgo",
+          "summary": "El riesgo no es sólo un número en una pantalla. Es perder capital, perder el sueño, perder disciplina, perder tiempo o verse obligado a vender en el peor momento posible. Empezamos viendo el riesgo como lo ven los supervivientes.",
+          "learn": [
+            "El riesgo es más que la volatilidad",
+            "Las muchas caras de perder",
+            "Pérdida permanente versus temporal",
+            "Ser un vendedor obligado",
+            "Riesgo que puedes ver versus riesgo que ignoras",
+            "Por qué los principiantes juzgan mal el riesgo"
+          ],
+          "tags": [
+            "Mentalidad"
+          ]
+        },
+        {
+          "n": 2,
+          "slug": "survive-first",
+          "title": "La primera regla: sobrevivir",
+          "summary": "El beneficio es opcional; la supervivencia no lo es. Por qué una mala operación puede deshacer años de ganancias, qué significa \"riesgo de ruina\" en cifras simples y por qué el objetivo de un principiante es simplemente permanecer en el juego.",
+          "learn": [
+            "Supervivencia antes que beneficio",
+            "Riesgo de ruina, simplemente",
+            "¿Por qué las pérdidas se acumulan en su contra?",
+            "La matemática de volver a igualar",
+            "Cómo finaliza una operación las cuentas",
+            "Permanecer en el juego"
+          ],
+          "tags": [
+            "Mentalidad"
+          ]
+        },
+        {
+          "n": 3,
+          "slug": "risk-vs-reward",
+          "title": "Riesgo versus recompensa, explicado simplemente",
+          "summary": "Los altos rendimientos siempre conllevan riesgos ocultos; la única pregunta es si puedes verlo. La diferencia entre el riesgo conocido, el riesgo desconocido y el riesgo que usted finge silenciosamente no existe.",
+          "learn": [
+            "Por qué regresar y arriesgarse a viajar juntos",
+            "Riesgo conocido versus desconocido",
+            "Riesgo oculto en las apuestas 'seguras'",
+            "La trampa del almuerzo gratis",
+            "Leer honestamente un riesgo-recompensa",
+            "Ejemplos indios reales"
+          ],
+          "tags": [
+            "Mentalidad"
+          ]
+        },
+        {
+          "n": 4,
+          "slug": "the-risk-pyramid",
+          "title": "La pirámide del riesgo",
+          "summary": "Antes de cualquier dinero de mercado, construya la base: fondo de emergencia, seguros, control de deuda. Luego, capital de inversión, capital comercial y capital de especulación, además del dinero que nunca debería ingresar al mercado.",
+          "learn": [
+            "La pirámide del riesgo, capa a capa",
+            "Fondo de emergencia primero",
+            "Seguros y deuda como control de riesgos",
+            "Inversión versus comercio versus capital de especulación",
+            "Dinero que debe quedarse fuera",
+            "Dimensionando cada capa"
+          ],
+          "tags": [
+            "Dinero"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "B",
+      "name": "El sistema de seguridad del dinero para principiantes",
+      "desc": "El riesgo de mercado comienza fuera del mercado. Arregle su base, separe su dinero y combine el riesgo con su vida real.",
+      "chapters": [
+        {
+          "n": 5,
+          "slug": "fix-your-base",
+          "title": "Antes de invertir: arregle su base",
+          "summary": "Fondo de emergencia, seguro médico, seguro temporal, deuda con intereses elevados y estabilidad de ingresos: por qué la verdadera gestión de riesgos comienza mucho antes de realizar un solo pedido.",
+          "learn": [
+            "La lista de verificación de preinversión",
+            "¿Qué tan grande es el fondo de emergencia?",
+            "Conceptos básicos del seguro médico y temporal",
+            "Por qué la deuda con intereses altos es lo primero",
+            "La estabilidad del ingreso como colchón",
+            "El riesgo de mercado comienza fuera del mercado"
+          ],
+          "tags": [
+            "Dinero"
+          ]
+        },
+        {
+          "n": 6,
+          "slug": "capital-buckets",
+          "title": "Cubos de capital",
+          "summary": "Separar el dinero de inversión a largo plazo, el dinero de objetivos a corto plazo, el dinero comercial, el dinero F&O y el dinero de aprendizaje, de modo que una pérdida en un solo cubo nunca hunda todo el barco.",
+          "learn": [
+            "Por qué una piscina es peligrosa",
+            "Los cinco cubos de dinero",
+            "Dinero objetivo versus dinero de riesgo",
+            "Un grupo de aprendizaje separado",
+            "Nunca mezclar cubos",
+            "Un plan de cubo simple"
+          ],
+          "tags": [
+            "Dinero"
+          ]
+        },
+        {
+          "n": 7,
+          "slug": "time-horizon-is-risk",
+          "title": "El horizonte temporal es la gestión de riesgos",
+          "summary": "El dinero a seis meses, el dinero a tres años y el dinero a veinte años deben manejarse de forma completamente diferente. Por qué el horizonte temporal decide cuánto riesgo puede asumir de manera responsable.",
+          "learn": [
+            "Por qué el horizonte lo cambia todo",
+            "Reglas del dinero a corto plazo",
+            "Reglas monetarias a mediano plazo",
+            "Dinero a largo plazo y volatilidad",
+            "Emparejar activos con el horizonte",
+            "Los errores de horizonte que cometen los principiantes"
+          ],
+          "tags": [
+            "Dinero"
+          ]
+        },
+        {
+          "n": 8,
+          "slug": "risk-capacity-vs-tolerance",
+          "title": "¿Cuánto riesgo puedes correr realmente?",
+          "summary": "La capacidad de riesgo (lo que tus finanzas pueden soportar) no es lo mismo que la tolerancia al riesgo (lo que tus emociones pueden soportar). Ejemplos prácticos para un asalariado, un jubilado, un empresario, un comerciante, un ama de casa y un estudiante.",
+          "learn": [
+            "Capacidad versus tolerancia",
+            "Midiendo tu capacidad real",
+            "Conociendo tu límite emocional",
+            "Cuando los dos no están de acuerdo",
+            "Seis perfiles de la vida real",
+            "Establecer su presupuesto de riesgo personal"
+          ],
+          "tags": [
+            "Dinero"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "C",
+      "name": "Gestión de riesgos de inversores",
+      "desc": "Para inversores a largo plazo: asignación, diversificación, comportamiento en caídas y los errores que parecen inteligentes.",
+      "chapters": [
+        {
+          "n": 9,
+          "slug": "asset-allocation",
+          "title": "Asignación de activos: la decisión más importante",
+          "summary": "Acciones, deuda, oro, efectivo y bienes raíces: por qué importa mucho más cómo divide su dinero que qué acciones elige, y cómo una simple asignación controla la mayor parte de su riesgo real.",
+          "learn": [
+            "¿Qué es la asignación de activos?",
+            "Por qué es mejor que la selección de valores",
+            "Las principales clases de activos",
+            "Una asignación inicial sencilla",
+            "Cómo la asignación controla el riesgo",
+            "Ejemplos y caídas indias."
+          ],
+          "tags": [
+            "Inversor"
+          ]
+        },
+        {
+          "n": 10,
+          "slug": "diversification",
+          "title": "Diversificación sin exagerar",
+          "summary": "Una acción es peligrosa; cien no tiene sentido. Cómo la distribución entre empresas reduce el riesgo de una sola empresa y cómo los fondos mutuos y los fondos indexados lo hacen por usted.",
+          "learn": [
+            "Por qué una acción es riesgosa",
+            "Lo que realmente soluciona la diversificación",
+            "Rendimientos decrecientes pasado un punto",
+            "Fondos y fondos indexados",
+            "Sobrediversificación ('diworsificación')",
+            "Una cartera del tamaño adecuado"
+          ],
+          "tags": [
+            "Inversor"
+          ]
+        },
+        {
+          "n": 11,
+          "slug": "sip-lumpsum-falls",
+          "title": "SIP, Lumpsum y caídas del mercado",
+          "summary": "Por qué los SIP ayudan más a su comportamiento que a sus rendimientos, cuándo tiene sentido una suma global y por qué un mercado en caída no es automáticamente una mala noticia para un inversor a largo plazo.",
+          "learn": [
+            "Cómo controla el comportamiento un SIP",
+            "Honestamente, el costo promedio en rupias",
+            "Cuando el pago global tiene sentido",
+            "Por qué las caídas ayudan a los acumuladores",
+            "Mantener la inversión durante las crisis",
+            "Ejemplos reales de caída de NIFTY"
+          ],
+          "tags": [
+            "Inversor"
+          ]
+        },
+        {
+          "n": 12,
+          "slug": "rebalancing",
+          "title": "Reequilibrio: vender ganadores, comprar perdedores",
+          "summary": "El reequilibrio te obliga a recortar lo que se aceleró y agregar lo que se retrasó: la disciplina que controla el riesgo, por qué se siente emocionalmente mal y con qué frecuencia un principiante debería hacerlo.",
+          "learn": [
+            "¿Qué hace el reequilibrio?",
+            "Por qué controla el riesgo",
+            "¿Por qué se siente al revés?",
+            "Reequilibrio de umbral versus calendario",
+            "¿Con qué frecuencia es suficiente?",
+            "Una regla para principiantes"
+          ],
+          "tags": [
+            "Inversor"
+          ]
+        },
+        {
+          "n": 13,
+          "slug": "concentrated-stock-risk",
+          "title": "Riesgo de acciones concentrado",
+          "summary": "Acciones de empleados, acciones de empresas familiares, acciones favoritas, exageraciones de IPO, la obsesión de los multibagger. Cuando la concentración genera riqueza real y cuando la destruye silenciosamente.",
+          "learn": [
+            "¿Qué es el riesgo de concentración?",
+            "Stock de empleados y empresas familiares",
+            "Sesgo de acciones favoritas",
+            "IPO y exageración multibagger",
+            "Cuando la concentración vale la pena",
+            "Reducir la concentración de forma segura"
+          ],
+          "tags": [
+            "Inversor"
+          ]
+        },
+        {
+          "n": 14,
+          "slug": "investor-mistakes",
+          "title": "Errores de los inversores que parecen inteligentes",
+          "summary": "Promediar a ciegas, perseguir rentabilidades pasadas, caídas que provocan pánico, comprar sólo porque el precio cayó, confundir dividendo con seguridad: los errores que parecen inteligentes y que cuestan más.",
+          "learn": [
+            "Promedio ciego hacia abajo",
+            "Persiguiendo el desempeño pasado",
+            "Caídas de ventas por pánico",
+            "\"Se cayó, por eso es barato\"",
+            "Mito del dividendo como seguridad",
+            "Cómo atraparte a ti mismo"
+          ],
+          "tags": [
+            "Inversor"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "D",
+      "name": "Gestión de riesgos del comerciante",
+      "desc": "El trading es un juego diferente con reglas diferentes: salidas, tamaño, paradas, expectativas y límites estrictos de riesgo.",
+      "chapters": [
+        {
+          "n": 15,
+          "slug": "trading-is-not-investing",
+          "title": "Operar no es invertir",
+          "summary": "Juego diferente, reglas diferentes. Por qué los traders no pueden confiar en el tiempo y la paciencia como lo hacen los inversores, y por qué las salidas, el tamaño de las posiciones, los stop-loss, los registros y los límites de riesgo diarios no son negociables.",
+          "learn": [
+            "Negociar versus invertir",
+            "¿Por qué el tiempo no salvará una operación?",
+            "El conjunto de herramientas de riesgo del comerciante",
+            "Ventaja, no convicción",
+            "Proceso sobre predicción",
+            "Por qué la mayoría de los principiantes explotan"
+          ],
+          "tags": [
+            "Comerciante"
+          ]
+        },
+        {
+          "n": 16,
+          "slug": "position-sizing",
+          "title": "Dimensionamiento de posición simplificado",
+          "summary": "El control de riesgo más importante: cuántas acciones comprar. Riesgo de rupia fija, riesgo porcentual, distancia de parada y una calculadora para principiantes que puede copiar para cada operación.",
+          "learn": [
+            "Por qué el tamaño es riesgo",
+            "Riesgo de rupia fija",
+            "Riesgo de porcentaje de capital",
+            "Distancia de parada a la cantidad",
+            "Una calculadora de tallas para principiantes",
+            "Errores de talla comunes"
+          ],
+          "tags": [
+            "Comerciante"
+          ]
+        },
+        {
+          "n": 17,
+          "slug": "stop-loss",
+          "title": "Stop-Loss: ¿seguro o ilusión?",
+          "summary": "Un stop sólo te protege si se coloca antes de que entre la emoción. Paradas técnicas, paradas de volatilidad, paradas del tiempo, paradas mentales y paradas de desastre, y por qué las paradas mentales suelen fallar.",
+          "learn": [
+            "Qué parada es realmente",
+            "Stops técnicos y de volatilidad",
+            "El tiempo y el desastre se detienen",
+            "Por qué fallan las paradas mentales",
+            "Poner un alto ante la emoción",
+            "Cuando las paradas no ayudan"
+          ],
+          "tags": [
+            "Comerciante"
+          ]
+        },
+        {
+          "n": 18,
+          "slug": "risk-reward-win-rate",
+          "title": "Riesgo-recompensa y tasa de ganancia",
+          "summary": "Por qué una precisión del 80% aún puede hacer perder dinero y una precisión del 40% puede generar dinero. La expectativa se explica con ejemplos sencillos de rupias indias, para que dejes de perseguir tener razón y empieces a perseguir la rentabilidad.",
+          "learn": [
+            "La tasa de ganancia no es una ventaja",
+            "Relación riesgo-recompensa",
+            "Expectativa en rupias simples",
+            "¿Por qué la alta precisión puede perder?",
+            "Por qué la baja precisión puede ganar",
+            "Diseñar una operación con expectativas positivas"
+          ],
+          "tags": [
+            "Comerciante"
+          ]
+        },
+        {
+          "n": 19,
+          "slug": "drawdowns-losing-streaks",
+          "title": "Reducciones y rachas de derrotas",
+          "summary": "Cómo se siente realmente una reducción del 10%, 20% y 40%, cuántas pérdidas seguidas son estadísticamente normales y por qué los principiantes hacen lo peor posible: aumentar el tamaño, exactamente en el momento equivocado.",
+          "learn": [
+            "Que reducción es",
+            "Cómo funcionan las matemáticas de recuperación",
+            "Rachas de derrotas normales",
+            "La curva emocional de una reducción",
+            "¿Por qué los principiantes aumentan su tamaño cuando pierden?",
+            "Sobrevivir a una mala racha"
+          ],
+          "tags": [
+            "Comerciante"
+          ]
+        },
+        {
+          "n": 20,
+          "slug": "risk-limits",
+          "title": "Límites de riesgo diarios, semanales y mensuales",
+          "summary": "Pérdida máxima por operación, por día, por semana y por estrategia. Cuándo dejar de operar durante el día, cuándo dejar de operar durante el mes y por qué los límites preestablecidos son la diferencia entre un mal día y una cuenta arruinada.",
+          "learn": [
+            "Límite de riesgo por operación",
+            "Parada diaria y semanal",
+            "Límites por estrategia",
+            "cuando alejarse",
+            "Disyuntor mensual",
+            "Construyendo tu hoja de límites"
+          ],
+          "tags": [
+            "Comerciante"
+          ]
+        },
+        {
+          "n": 21,
+          "slug": "portfolio-heat",
+          "title": "Calor de cartera: su riesgo abierto total",
+          "summary": "El uno por ciento por operación todavía suma. Con varias posiciones abiertas a la vez, especialmente las correlacionadas, su riesgo total puede alcanzar tranquilamente el ocho por ciento o más. Cómo medir el calor de la cartera, por qué la correlación y la superposición sectorial lo ocultan y cómo limitarlo.",
+          "learn": [
+            "¿Qué es el calor de la cartera?",
+            "Riesgo por operación versus riesgo total",
+            "Correlación y concentración oculta.",
+            "Superposición de sectores",
+            "Exposición bruta vs neta",
+            "Establecer un límite de calor total"
+          ],
+          "tags": [
+            "Comerciante"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "E",
+      "name": "Apalancamiento, margen y riesgo de ejecución",
+      "desc": "Cómo el dinero prestado, las salidas forzadas y la brecha entre el precio que ves y el precio que obtienes destruyen a los principiantes.",
+      "chapters": [
+        {
+          "n": 22,
+          "slug": "leverage",
+          "title": "Apalancamiento: la forma más rápida de perder el control",
+          "summary": "El apalancamiento magnifica tanto las ganancias como las pérdidas. Cómo un pequeño movimiento de precios se convierte en un gran daño de capital, por qué el apalancamiento acorta el tiempo necesario para acertar y los números indios que muestran lo rápido que muerde.",
+          "learn": [
+            "¿Qué es el apalancamiento?",
+            "Cómo magnifica la pérdida",
+            "Pequeño movimiento, gran daño",
+            "Apalancamiento y presión de tiempo",
+            "Ejemplos de margen real",
+            "Elegir un apalancamiento seguro"
+          ],
+          "tags": [
+            "Aprovechar"
+          ]
+        },
+        {
+          "n": 23,
+          "slug": "margin-calls",
+          "title": "Llamadas de margen y salidas forzadas",
+          "summary": "Qué significa el margen, por qué su corredor lo enfrenta, por qué ocurren salidas forzadas a los peores precios y por qué \"margen disponible\" no es lo mismo que capital utilizable.",
+          "learn": [
+            "¿Qué margen es realmente?",
+            "¿Por qué los corredores fuerzan el cierre?",
+            "Salidas forzadas a malos precios",
+            "Margen disponible versus margen utilizable",
+            "Reglas de margen máximo",
+            "Evitando el enfrentamiento"
+          ],
+          "tags": [
+            "Aprovechar"
+          ]
+        },
+        {
+          "n": 24,
+          "slug": "broker-rms-reality",
+          "title": "El sistema de riesgo del corredor",
+          "summary": "El sistema de riesgo de su corredor (RMS) puede cerrar sus posiciones antes de lo esperado. Efectivo versus garantía prometida, el recorte de las promesas, el déficit de margen, el momento de la liquidación automática, la regla del componente de efectivo y las penalizaciones por el margen máximo: las realidades del lado del corredor que atrapan a los principiantes.",
+          "learn": [
+            "Qué hace un RMS",
+            "Efectivo versus garantía pignorada",
+            "El corte de pelo de promesa",
+            "Déficit de margen y enfrentamiento",
+            "Sincronización automática de cuadratura",
+            "Penalizaciones por margen máximo"
+          ],
+          "tags": [
+            "Aprovechar"
+          ]
+        },
+        {
+          "n": 25,
+          "slug": "slippage-liquidity-spread",
+          "title": "Deslizamiento, liquidez y diferencial",
+          "summary": "El precio que ves no siempre es el precio que obtienes. Diferencial entre oferta y demanda, órdenes de mercado versus órdenes limitadas, liquidez y costo de impacto: los impuestos silenciosos que convierten una idea ganadora en una operación perdedora.",
+          "learn": [
+            "El diferencial de oferta y demanda",
+            "Órdenes de mercado versus órdenes limitadas",
+            "¿Qué significa liquidez?",
+            "Costo de impacto en el tamaño",
+            "Deslizamiento en mercados rápidos",
+            "Negociar instrumentos líquidos"
+          ],
+          "tags": [
+            "Aprovechar"
+          ]
+        },
+        {
+          "n": 26,
+          "slug": "gap-and-event-risk",
+          "title": "Riesgo de brecha y riesgo de evento",
+          "summary": "Los resultados, la política RBI, las elecciones, las crisis globales y las noticias de la noche a la mañana mueven los precios mientras el mercado está cerrado. Por qué un stop-loss no puede protegerle contra una brecha y cómo dimensionar las sorpresas.",
+          "learn": [
+            "que brecha es",
+            "¿Por qué las paradas fallan en los huecos?",
+            "Riesgo nocturno y de eventos",
+            "Resultados y jornadas políticas",
+            "Ejemplos de shock global",
+            "Dimensionamiento para sorpresas"
+          ],
+          "tags": [
+            "Aprovechar"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "F",
+      "name": "Riesgo de F&O para principiantes",
+      "desc": "Los futuros y las opciones recompensan el respeto y castigan la participación casual. Los riesgos que todo principiante debe afrontar primero.",
+      "chapters": [
+        {
+          "n": 27,
+          "slug": "why-fno-is-different",
+          "title": "Por qué F&O es diferente",
+          "summary": "El vencimiento, el apalancamiento, el margen, el valor de mercado, la disminución del tiempo y el tamaño del lote se combinan para castigar la participación casual. Por qué F&O no son \"acciones con más acción\" sino un mundo de riesgos completamente diferente.",
+          "learn": [
+            "¿Qué hace que F&O sea diferente?",
+            "Vencimiento y tamaño del lote",
+            "Apalancamiento y margen",
+            "Presión de valor de mercado",
+            "Conceptos básicos de la decadencia del tiempo",
+            "Por qué falla la F&O casual"
+          ],
+          "tags": [
+            "F&O"
+          ]
+        },
+        {
+          "n": 28,
+          "slug": "futures-risk",
+          "title": "Riesgo de futuros",
+          "summary": "Los futuros son simples pero peligrosos: pérdidas y ganancias lineales, valoración diaria del mercado, riesgo de brecha, riesgo de refinanciamiento, riesgo de base y presión de margen constante. El perfil de riesgo honesto de una posición de futuros.",
+          "learn": [
+            "Pérdidas y ganancias lineales",
+            "Flujo de caja diario MTM",
+            "Brecha y riesgo nocturno",
+            "Riesgo de renovación y de base",
+            "Presión de margen",
+            "Dimensionar una operación de futuros"
+          ],
+          "tags": [
+            "F&O"
+          ]
+        },
+        {
+          "n": 29,
+          "slug": "option-buyer-risk",
+          "title": "Riesgo del comprador de opciones",
+          "summary": "Pérdida limitada, pero baja probabilidad de ganar. Caída de las primas, acierto en la dirección pero equivocado en el momento, aplastamiento de IV y el exceso de operaciones con opciones baratas que silenciosamente agotan una cuenta.",
+          "learn": [
+            "Pérdida limitada, bajas probabilidades",
+            "Decaimiento del tiempo premium",
+            "Dirección correcta, momento equivocado",
+            "IV aplastamiento después de los eventos",
+            "La trampa de la opción barata",
+            "Comprar opciones con disciplina"
+          ],
+          "tags": [
+            "Opciones"
+          ]
+        },
+        {
+          "n": 30,
+          "slug": "option-seller-risk",
+          "title": "Riesgo del vendedor de opciones",
+          "summary": "Pequeñas ganancias frecuentes y raras y grandes pérdidas. Por qué \"alta probabilidad\" no es lo mismo que \"bajo riesgo\", cómo se ve realmente la cola de pérdidas y las exigencias de venta de opciones de respeto.",
+          "learn": [
+            "La forma de pago del vendedor",
+            "Alta probabilidad versus bajo riesgo",
+            "La cola de la pérdida de grasa",
+            "Margen y asignación",
+            "¿Por qué los vendedores explotan?",
+            "Vender con riesgo definido"
+          ],
+          "tags": [
+            "Opciones"
+          ]
+        },
+        {
+          "n": 31,
+          "slug": "greeks-as-risk",
+          "title": "Los griegos como lengua de riesgo",
+          "summary": "Delta, gamma, theta y vega se explican sólo como herramientas de riesgo, no como fórmulas. Lo que puede hacerte daño hoy, lo que se acumula mañana y lo que explota durante un shock.",
+          "learn": [
+            "Los griegos como panel de riesgo",
+            "Delta: riesgo de dirección",
+            "Theta: riesgo de tiempo",
+            "Vega: riesgo de volatilidad",
+            "Gamma: riesgo de aceleración",
+            "Leyendo los griegos de tu posición"
+          ],
+          "tags": [
+            "Opciones"
+          ]
+        },
+        {
+          "n": 32,
+          "slug": "expiry-day-risk",
+          "title": "Riesgo del día de vencimiento",
+          "summary": "Picos gamma, trampas de liquidez, movimientos repentinos, congelaciones de ejecución y pánico de ajuste. Por qué el día de vencimiento es el día del calendario menos amigable para los principiantes, con ejemplos reales de vencimiento de la India.",
+          "learn": [
+            "Por qué el vencimiento es especial",
+            "Picos gamma cerca de su vencimiento",
+            "Trampas de liquidez",
+            "La ejecución se congela",
+            "Pánico de ajuste",
+            "Por qué los principiantes deberían esperar"
+          ],
+          "tags": [
+            "Opciones"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "G",
+      "name": "Referencia y mantenerse actualizado",
+      "desc": "Cada número real en este curso (tamaños de lote, márgenes, cargos, cifras SEBI) cambia con el tiempo. Aquí es donde verificarlos.",
+      "chapters": [
+        {
+          "n": 33,
+          "slug": "sources-and-staying-current",
+          "title": "Fuentes y mantenerse actualizado",
+          "summary": "Los tamaños de lote, las fechas de vencimiento, los márgenes, los cargos y las cifras de SEBI cambian. Esta referencia muestra exactamente dónde verificar cada hecho en vivo que utiliza este curso y el simple hábito de \"a la fecha\" que evita que sus propios números se vuelvan obsoletos.",
+          "learn": [
+            "Dónde consultar los tamaños y especificaciones de los lotes NSE",
+            "Fuentes del calendario de vencimiento",
+            "Los estudios SEBI F&O",
+            "Reglas de margen y liquidación",
+            "El hábito de 'a la fecha'",
+            "Una tabla de hechos a fuentes"
+          ],
+          "tags": [
+            "Dinero"
+          ]
+        }
+      ]
+    }
+  ]
+}

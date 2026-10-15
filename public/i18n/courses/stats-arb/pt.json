@@ -1,0 +1,339 @@
+{
+  "course": "stats-arb",
+  "locale": "pt",
+  "parts": [
+    {
+      "id": "A",
+      "name": "Fundações e Honestidade",
+      "desc": "O que realmente é stat arb, os dados em que se baseia e as estatísticas que decidem se um relacionamento é real.",
+      "chapters": [
+        {
+          "n": 1,
+          "slug": "what-is-statistical-arbitrage",
+          "title": "O que realmente é arbitragem estatística",
+          "summary": "Negocie uma relação estacionária, não um preço. A árvore genealógica da reversão de um único nome para pares, cestas e livros transversais, por que a borda decaiu e um cenário honesto de expectativas.",
+          "learn": [
+            "Negocie o relacionamento, não o preço",
+            "A árvore genealógica stat-arb",
+            "Neutralidade do mercado",
+            "De onde veio e foi a borda",
+            "Pesquise primeiro a mecânica",
+            "Expectativas honestas"
+          ],
+          "tags": [
+            "NSE",
+            "STAT"
+          ]
+        },
+        {
+          "n": 2,
+          "slug": "building-the-database",
+          "title": "Construindo o banco de dados histórico",
+          "summary": "Baixe uma vez, leia rápido. Como o cache local do DuckDB de 50 nomes NSE mais o índice é construído com OpenAlgo, verificado quanto a lacunas e mantido atualizado, para que cada capítulo posterior seja lido em milissegundos.",
+          "learn": [
+            "API de origem vs banco de dados de origem",
+            "O universo dos 50 nomes",
+            "Persistindo no DuckDB",
+            "Verificando cobertura e lacunas",
+            "Limites de taxa e novas tentativas",
+            "Recarga incremental"
+          ],
+          "tags": [
+            "DATA"
+          ]
+        },
+        {
+          "n": 3,
+          "slug": "the-data-layer-and-its-biases",
+          "title": "A camada de dados e seus preconceitos",
+          "summary": "A maioria dos resultados do stat-arb morrem devido a problemas de dados antes de morrerem devido a estatísticas ruins. O painel de preços alinhado, filtros de liquidez, viés de sobrevivência e mudança de símbolo e fechamento ajustado versus fechamento negociável.",
+          "learn": [
+            "O painel de preços alinhado",
+            "Filtros de liquidez",
+            "Viés de sobrevivência",
+            "Mudanças de símbolos e novas listagens",
+            "Fechamento ajustado vs negociável",
+            "Nomeando as limitações"
+          ],
+          "tags": [
+            "DATA",
+            "NSE"
+          ]
+        },
+        {
+          "n": 4,
+          "slug": "research-vs-real-markets",
+          "title": "Pesquisa vs Mercados Reais",
+          "summary": "Um backtest de ações longo /short é uma abstração de pesquisa. A perna curta na Índia precisa de um veículo real (dinheiro intradiário, SLB, ou um proxy de futuros de ações) e da lacuna entre uma relação estatística e uma vantagem negociável.",
+          "learn": [
+            "Por que fechar preços para aprendizagem",
+            "Os veículos de pernas curtas na Índia",
+            "Elegibilidade de empréstimo, margem e F&O",
+            "Relacionamento vs vantagem negociável",
+            "Como cada escolha altera os custos",
+            "A lista de verificação pré-ao vivo"
+          ],
+          "tags": [
+            "RISK",
+            "EXEC"
+          ]
+        },
+        {
+          "n": 5,
+          "slug": "stationarity-and-random-walks",
+          "title": "Estacionaridade e passeios aleatórios",
+          "summary": "Por que uma única ação não pode ser negociada como reversor à média. Passeio aleatório versus estacionário, preços versus retornos, testes ADF e KPSS feitos corretamente, e o expoente de Hurst, em nomes NSE reais.",
+          "learn": [
+            "Caminhada aleatória vs estacionária",
+            "Os preços são I(1), os retornos são I(0)",
+            "Especificação de atraso e tendência ADF",
+            "KPSS como o oposto nulo",
+            "O expoente de Hurst",
+            "ADF baixo consumo de energia"
+          ],
+          "tags": [
+            "STAT",
+            "NSE"
+          ]
+        },
+        {
+          "n": 6,
+          "slug": "correlation-is-not-cointegration",
+          "title": "Correlação não é cointegração",
+          "summary": "A lição que quase todo mundo erra, calculada ao vivo em dados NSE: os pares mais correlacionados não precisam ser cointegrados, e um par menos correlacionado pode ser. Regressão espúria e por que os traders de correlação explodem.",
+          "learn": [
+            "Correlação vs cointegração",
+            "A maioria correlacionada não é cointegrada",
+            "A dispersão corr-vs-coint",
+            "Regressão espúria",
+            "Um Monte Carlo de bobagens",
+            "Sensibilidade da janela"
+          ],
+          "tags": [
+            "STAT",
+            "NSE"
+          ]
+        },
+        {
+          "n": 7,
+          "slug": "cointegration-mechanics",
+          "title": "Mecânica de Cointegração",
+          "summary": "O maquinário de ponta a ponta em um par NSE real cointegrado: Engle-Granger, a relação de hedge (OLS versus total de mínimos quadrados), o spread e a meia-vida de Ornstein-Uhlenbeck que diz quanto tempo você manteria.",
+          "learn": [
+            "O Engle-Granger em duas etapas",
+            "Viés da taxa de hedge OLS",
+            "Total de mínimos quadrados",
+            "Construindo a propagação",
+            "A meia-vida do OU",
+            "Detectando uma meia-vida inválida"
+          ],
+          "tags": [
+            "STAT",
+            "NSE"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "B",
+      "name": "Construindo um par e depois quebrando-o",
+      "desc": "Encontre um par sem se enganar, construa o sinal, observe o belo backtest e desmonte-o honestamente.",
+      "chapters": [
+        {
+          "n": 8,
+          "slug": "finding-pairs-without-fooling-yourself",
+          "title": "Encontrar pares sem se enganar",
+          "summary": "Primeiro a prioridade econômica, depois a varredura de cointegração e depois a armadilha de testes múltiplos: a varredura de muitos pares garante falsos positivos. Bonferroni e o controle de falsas descobertas, e quão poucos sobrevivem fora da amostra.",
+          "learn": [
+            "Prioridade econômica primeiro",
+            "A varredura de cointegração",
+            "A armadilha dos testes múltiplos",
+            "Falsos positivos em dados aleatórios",
+            "Controle Bonferroni e FDR",
+            "Quão poucos sobrevivem"
+          ],
+          "tags": [
+            "STAT",
+            "NSE"
+          ]
+        },
+        {
+          "n": 9,
+          "slug": "the-spread-and-the-signal",
+          "title": "A propagação e o sinal",
+          "summary": "A estratégia de pontuação z em um par real: spread, pontuações z contínuas e robustas, entrada, saída e stop, dimensionamento neutro em rúpia e um primeiro backtest na amostra com preenchimentos de barra seguinte que parece ótimo, de propósito.",
+          "learn": [
+            "O spread e o z-score",
+            "Z robusto com mediana e MAD",
+            "Entrada, saída e parada",
+            "Dimensionamento neutro em rúpias",
+            "Preenchimento da próxima barra, sem previsão",
+            "A curva sedutora da amostra"
+          ],
+          "tags": [
+            "NSE",
+            "STAT"
+          ]
+        },
+        {
+          "n": 10,
+          "slug": "the-brutal-reality-check",
+          "title": "A brutal verificação da realidade",
+          "summary": "Desmontar o bonito backtest: colapso fora da amostra, custos realistas NSE líquidos de custos brutos, descointegração do spread e antecipação, com a curva líquida perdedora mostrada, não escondida.",
+          "learn": [
+            "Colapso fora da amostra",
+            "Custos reais NSE, brutos vs líquidos",
+            "Descointegração contínua",
+            "Antecipação quantificada",
+            "Sobrevivência na seleção de pares",
+            "O veredicto honesto"
+          ],
+          "tags": [
+            "RISK",
+            "NSE"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "C",
+      "name": "Fazendo isso corretamente",
+      "desc": "Hedges dinâmicos, cestas, livros transversais e a construção de risco e portfólio que mantêm um livro vivo.",
+      "chapters": [
+        {
+          "n": 11,
+          "slug": "dynamic-hedge-ratios-kalman",
+          "title": "Taxas de hedge dinâmicas com o filtro de Kalman",
+          "summary": "Um índice de hedge estático é errado porque o relacionamento muda. Um filtro de Kalman feito à mão para uma cobertura variável no tempo e a descoberta honesta de que mais flexibilidade pode perder para um simples beta estático.",
+          "learn": [
+            "Por que um beta estático muda",
+            "O ciclo de atualização de previsão de Kalman",
+            "Um índice de hedge variável no tempo",
+            "Kalman vs rolando OLS",
+            "O ajuste é em si um ajuste",
+            "Quando o mais simples vence"
+          ],
+          "tags": [
+            "STAT",
+            "NSE"
+          ]
+        },
+        {
+          "n": 12,
+          "slug": "baskets-and-johansen",
+          "title": "Cestas e o Teste de Johansen",
+          "summary": "Além de dois nomes: cointegração de vetores entre diversas ações com o teste de Johansen, escolha do posto, leitura dos pesos da cesta e quão instável é o vetor fora da amostra.",
+          "learn": [
+            "De pares a cestas",
+            "Os testes de rastreamento e autovalor de Johansen",
+            "Escolhendo a classificação de cointegração",
+            "Lendo o vetor cointegrante",
+            "Instabilidade vetorial",
+            "Erro de estimativa cresce com as pernas"
+          ],
+          "tags": [
+            "STAT",
+            "NSE"
+          ]
+        },
+        {
+          "n": 13,
+          "slug": "cross-sectional-factor-neutral",
+          "title": "Stat Arb transversal, fator neutro",
+          "summary": "A versão que escala: remove os retornos do mercado e do setor, classifica por reversão residual de curto prazo e constrói uma carteira longa-curta neutra para o mercado em todo o universo, e como o volume de negócios e os custos invertem a margem bruta.",
+          "learn": [
+            "Reversão residual",
+            "Removendo mercado e setor",
+            "Classificando a seção transversal",
+            "Um livro longo-curto neutro em termos de mercado",
+            "Rotatividade e redução de custos",
+            "Capacidade e lotação"
+          ],
+          "tags": [
+            "NSE",
+            "STAT"
+          ]
+        },
+        {
+          "n": 14,
+          "slug": "risk-sizing-and-portfolio",
+          "title": "Risco, Dimensionamento e Construção de Portfólio",
+          "summary": "Dos sinais a um livro de sobrevivência: neutralidade beta versus rupia, metas de volatilidade, redução de covariância, dilema de stop-loss em um spread, contribuição de risco e uma regra para retirar um par quebrado.",
+          "learn": [
+            "Neutralidade beta vs rupia",
+            "Segmentação por volatilidade",
+            "Redução de covariância",
+            "O dilema do stop-on-a-spread",
+            "Contribuição de risco",
+            "Aposentando um par quebrado"
+          ],
+          "tags": [
+            "RISK",
+            "NSE"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "D",
+      "name": "Pesquisa para a realidade",
+      "desc": "Valide sem se enganar, entenda o que uma implementação ao vivo precisa e junte tudo.",
+      "chapters": [
+        {
+          "n": 15,
+          "slug": "honest-backtesting-and-validation",
+          "title": "Backtesting e validação honestos",
+          "summary": "O scorecard de validação completo: validação cruzada walk-forward, eliminada e embargada, o Sharpe deflacionado, a probabilidade de overfitting de backtest, um bootstrap bloqueado e mapas de estabilidade de parâmetros.",
+          "learn": [
+            "Distribuições passo a passo",
+            "Por que o CV comum vaza",
+            "Expurgado e embargado CV",
+            "O desanimado Sharpe",
+            "Probabilidade de overfitting de backtest",
+            "Ridge vs planalto"
+          ],
+          "tags": [
+            "STAT",
+            "RISK"
+          ]
+        },
+        {
+          "n": 16,
+          "slug": "implementation-pathways",
+          "title": "Caminhos de implementação",
+          "summary": "O que uma versão ao vivo realmente precisa: os veículos de perna, o risco de legging e o problema de preenchimento de duas pernas, o impacto estimado a partir das barras intradiárias, os limites de participação, o monitoramento e o kill switch, e a lacuna entre a pesquisa e a vida.",
+          "learn": [
+            "Os veículos das pernas em profundidade",
+            "Risco de legging e preenchimentos parciais",
+            "Impacto das barras intradiárias",
+            "Limites de participação e deslizamento",
+            "Monitoramento e kill switch",
+            "Aposentando uma estratégia"
+          ],
+          "tags": [
+            "EXEC",
+            "RISK"
+          ]
+        },
+        {
+          "n": 17,
+          "slug": "capstone-and-checklist",
+          "title": "Conclusão: o fluxo de trabalho honesto do Stat-Arb",
+          "summary": "Tudo junto como um fluxo de trabalho disciplinado, do universo a um modelo validado, consciente dos custos e de nível de pesquisa neutro para o mercado, com a lista de verificação pré-ativa e os cadernos complementares para você executar tudo sozinho.",
+          "learn": [
+            "O fluxo de trabalho de ponta a ponta",
+            "Do relacionamento à vantagem do candidato",
+            "O scorecard honesto",
+            "O que o tornaria negociável",
+            "A lista de verificação pré-ao vivo",
+            "Os cadernos complementares"
+          ],
+          "tags": [
+            "RISK",
+            "NSE"
+          ]
+        }
+      ]
+    }
+  ]
+}

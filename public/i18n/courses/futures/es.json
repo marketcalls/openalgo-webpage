@@ -1,0 +1,514 @@
+{
+  "course": "futures",
+  "locale": "es",
+  "parts": [
+    {
+      "id": "A",
+      "name": "Qué futuro es",
+      "desc": "Qué es un contrato de futuros, en qué se diferencia de los forwards, opciones y acciones, y por qué existe.",
+      "chapters": [
+        {
+          "n": 1,
+          "slug": "what-is-a-future",
+          "title": "¿Qué es un contrato de futuros?",
+          "summary": "Un futuro es simplemente un acuerdo para comprar o vender algo a un precio fijo en una fecha futura. Aprenda lo que eso significa en palabras sencillas, con un ejemplo indio real, antes de que llegue la jerga.",
+          "learn": [
+            "Un acuerdo para una fecha futura.",
+            "Obligaciones del comprador y del vendedor",
+            "Subyacente, precio y vencimiento",
+            "Una simple analogía del mundo real",
+            "Cómo funciona un futuro sobre acciones",
+            "¿Por qué nadie espera la entrega?"
+          ],
+          "tags": [
+            "Lo esencial"
+          ]
+        },
+        {
+          "n": 2,
+          "slug": "futures-vs-forwards-options-equity",
+          "title": "Futuros vs Forwards, Opciones y Acciones",
+          "summary": "Un futuro no es un contrato a plazo, ni una opción, ni una acción. Descubra en qué se diferencia un futuro estandarizado negociado en bolsa de un forward privado, por qué un futuro es una obligación mientras que una opción es un derecho y por qué tener un futuro no es lo mismo que poseer acciones.",
+          "learn": [
+            "Futuro estandarizado vs forward privado",
+            "Negociado en bolsa y garantizado",
+            "Obligación versus derecho de opción",
+            "Un futuro es no poseer la acción.",
+            "Sin dividendos, sin votos",
+            "Por qué la diferencia es importante para el riesgo"
+          ],
+          "tags": [
+            "Lo esencial"
+          ]
+        },
+        {
+          "n": 3,
+          "slug": "why-futures-exist",
+          "title": "Por qué existen los futuros: coberturadores y especuladores",
+          "summary": "Los futuros no se inventaron para apostar. Conozca las dos multitudes que se encuentran en el mercado de futuros: el coberturista que quiere eliminar el riesgo y el especulador que está feliz de asumirlo.",
+          "learn": [
+            "El propósito original de los futuros.",
+            "Coberturistas que descargan riesgos",
+            "Especuladores que lo asumen",
+            "Cómo las dos partes se necesitan mutuamente",
+            "Liquidez y descubrimiento de precios.",
+            "Un ejemplo de granjero y molino"
+          ],
+          "tags": [
+            "Lo esencial"
+          ]
+        },
+        {
+          "n": 4,
+          "slug": "contract-specs",
+          "title": "Lectura de un contrato: tamaño del lote, vencimiento y tick",
+          "summary": "Todo futuro está estandarizado. Conozca el tamaño del lote (NIFTY 65, BANKNIFTY 30, RELIANCE 500), el vencimiento mensual, el tamaño del tick y el formato del símbolo, para saber exactamente qué controla un contrato.",
+          "learn": [
+            "Tamaño del lote y valor del contrato",
+            "Tamaños de lote reales (NIFTY, BANKNIFTY, RELIANCE)",
+            "Vencimiento mensual y semanal",
+            "Tamaño de tick y movimiento mínimo",
+            "El formato del símbolo OpenAlgo",
+            "Por qué todo está estandarizado"
+          ],
+          "tags": [
+            "Lo esencial"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "B",
+      "name": "Mecánica comercial",
+      "desc": "Cómo funcionan las órdenes, liquidez y deslizamiento, y el beneficio lineal de ir en largo o en corto.",
+      "chapters": [
+        {
+          "n": 5,
+          "slug": "how-futures-orders-work",
+          "title": "Cómo funcionan realmente las órdenes de futuros",
+          "summary": "Antes de operar, debe realizar un pedido correctamente. Conozca los tipos de órdenes (mercado, límite, stop-loss y mercado stop-loss), los tipos de productos (intradiario versus arrastre), cómo funciona un cuadro y los errores de orden que atrapan a los principiantes.",
+          "learn": [
+            "Órdenes de mercado versus órdenes limitadas",
+            "Mercado de stop-loss y stop-loss",
+            "Intradiario (MIS) vs arrastre (NRML)",
+            "Cómo funciona un enfrentamiento",
+            "Cuadrado automático para intradía",
+            "Errores de orden comunes"
+          ],
+          "tags": [
+            "Ejecución"
+          ]
+        },
+        {
+          "n": 6,
+          "slug": "liquidity-spread-slippage",
+          "title": "Liquidez, diferencial de oferta y demanda y deslizamiento",
+          "summary": "El último precio negociado puede engañarle. Conozca la oferta, la demanda y el diferencial con el que realmente opera, qué significan el deslizamiento y el costo de impacto, y por qué un futuro de acciones de largo mes o de poco valor puede costar mucho más para entrar y salir de lo que sugiere la pantalla.",
+          "learn": [
+            "Por qué el LTP puede engañar",
+            "Oferta, demanda y diferencial",
+            "Deslizamiento al entrar y salir",
+            "Costo de impacto en contratos delgados",
+            "Riesgo de mes lejano y futuros sobre acciones",
+            "Negociar sólo contratos líquidos"
+          ],
+          "tags": [
+            "Ejecución"
+          ]
+        },
+        {
+          "n": 7,
+          "slug": "long-and-short",
+          "title": "Ir largo y corto",
+          "summary": "Los futuros le permiten beneficiarse de una caída tan fácilmente como de una subida. Descubra lo que significa ir en largo y en corto, y por qué vender primero es normal y no exótico en el mercado de futuros.",
+          "learn": [
+            "Largo significa comprar primero",
+            "Corto significa vender primero",
+            "Aprovechando una caída",
+            "No es necesario pedir prestado para vender",
+            "Ambas partes enfrentan riesgos ilimitados",
+            "Cuando usarías cada uno"
+          ],
+          "tags": [
+            "Mecánica"
+          ]
+        },
+        {
+          "n": 8,
+          "slug": "futures-payoff",
+          "title": "La rentabilidad de los futuros: una línea recta",
+          "summary": "A diferencia de las opciones, un futuro tiene el pago más simple que existe: una línea recta. Aprenda a leer el pago de futuros a largo y corto plazo en un ejemplo real de RELIANCE, incluyendo por qué la pérdida puede ser tan grande como la ganancia.",
+          "learn": [
+            "La forma de pago lineal",
+            "Pago de futuros largos",
+            "Pago de futuros cortos",
+            "Uno a uno con el subyacente",
+            "Ganancias y pérdidas ilimitadas",
+            "Leer una tabla de pagos real"
+          ],
+          "tags": [
+            "Saldar"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "C",
+      "name": "Margen y dinero",
+      "desc": "Margen y apalancamiento, SPAN y garantía pignorada, liquidación diaria y costos de negociación.",
+      "chapters": [
+        {
+          "n": 9,
+          "slug": "margin-and-leverage",
+          "title": "Margen y apalancamiento: el arma de doble filo",
+          "summary": "No pagas el valor total del contrato, sólo un margen. Eso es apalancamiento y multiplica tanto las ganancias como las pérdidas. Descubra cómo funciona el margen y por qué el apalancamiento es el riesgo más importante en los futuros.",
+          "learn": [
+            "que margen es",
+            "Cómo se multiplica el apalancamiento P&L",
+            "Margen inicial vs mantenimiento",
+            "La llamada de margen",
+            "Un ejemplo de apalancamiento trabajado",
+            "Por qué el apalancamiento tiene efectos en ambos sentidos"
+          ],
+          "tags": [
+            "Mecánica"
+          ]
+        },
+        {
+          "n": 10,
+          "slug": "span-margin-and-pledge",
+          "title": "SPAN Margen, exposición y garantía pignorada",
+          "summary": "El margen no es un número fijo. Descubra cómo se construye a partir de SPAN plus exposición, por qué aumenta cuando aumenta la volatilidad, qué significan las reglas de margen máximo y cómo los operadores indios prometen tenencias como garantía, incluido por qué el margen disponible no es lo mismo que el efectivo libre.",
+          "learn": [
+            "SPAN más margen de exposición",
+            "Por qué el margen cambia dinámicamente",
+            "Aumentos de márgenes impulsados ​​por la volatilidad",
+            "Margen máximo y bloqueo",
+            "Garantía prendaria versus efectivo",
+            "¿Por qué la garantía no es efectivo gratis?"
+          ],
+          "tags": [
+            "Mecánica"
+          ]
+        },
+        {
+          "n": 11,
+          "slug": "mark-to-market",
+          "title": "Valor de mercado: se liquida todos los días",
+          "summary": "Una posición de futuros se liquida en efectivo al final de cada día de negociación, no sólo al vencimiento. Descubra cómo el valor de mercado mueve dinero dentro y fuera de su cuenta diariamente y por qué se le puede cerrar una posición perdedora.",
+          "learn": [
+            "Liquidación diaria de efectivo",
+            "Ganancias y pérdidas acreditadas cada día",
+            "Cómo MTM protege el intercambio",
+            "Recargas de margen",
+            "Por qué no se puede ignorar una posición",
+            "Un ejemplo trabajado en dos días"
+          ],
+          "tags": [
+            "Mecánica"
+          ]
+        },
+        {
+          "n": 12,
+          "slug": "costs-and-taxation",
+          "title": "Costos de transacción e impuestos",
+          "summary": "Un futuro parece barato para negociar hasta que se suman los costos y los impuestos. Conozca todos los cargos, corretaje, STT, tarifas de cambio, GST y el impuesto de timbre, cómo influyen en su punto de equilibrio y los conceptos básicos de cómo se gravan las ganancias de futuros como ingresos comerciales.",
+          "learn": [
+            "Corretaje y STT sobre futuros",
+            "Gastos de cambio, GST y derechos de timbre",
+            "Su verdadero punto de equilibrio ajustado a costos",
+            "Futuros como ingresos comerciales",
+            "ITR-3 y facturación en una línea",
+            "Dónde aprender el impuesto en su totalidad."
+          ],
+          "tags": [
+            "Costos"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "D",
+      "name": "Precios y ciclo",
+      "desc": "Cómo se fija el precio de un futuro frente al spot, el ciclo del contrato, la renovación, los diferenciales de calendario y la base.",
+      "chapters": [
+        {
+          "n": 13,
+          "slug": "basis-and-carry",
+          "title": "Base y costo de transporte",
+          "summary": "Un futuro rara vez se negocia exactamente al precio spot. Conozca la base (la brecha entre el futuro y el spot) y el costo de transporte que lo explica, además de lo que le dice una prima o un descuento.",
+          "learn": [
+            "Precio futuro vs precio spot",
+            "La base explicada",
+            "costo de transporte",
+            "Prima y descuento",
+            "Convergencia al vencimiento",
+            "Lo que señala la base"
+          ],
+          "tags": [
+            "Precios"
+          ]
+        },
+        {
+          "n": 14,
+          "slug": "expiry-calendar-and-cycle",
+          "title": "El calendario de vencimiento y el ciclo del contrato",
+          "summary": "En cualquier momento se negocian tres contratos mensuales a la vez. Conozca el mes próximo, el siguiente y el lejano, el ciclo mensual y el día de vencimiento, cómo elegir qué contrato negociar y por qué un principiante debe evitar el contrato reducido de mes lejano.",
+          "learn": [
+            "Mes cercano, próximo y lejano",
+            "El ciclo mensual del contrato.",
+            "Día de vencimiento del ciclo.",
+            "Elegir qué mes operar",
+            "¿Por qué el mes lejano es delgado?",
+            "Liquidez a lo largo del ciclo"
+          ],
+          "tags": [
+            "Precios"
+          ]
+        },
+        {
+          "n": 15,
+          "slug": "rollover",
+          "title": "Rollover: pasar al siguiente mes",
+          "summary": "Los futuros vencen, pero una vista puede durar más de un mes. Conozca el rollover, el acto de cerrar el contrato que vence y abrir el siguiente, y lo que un alto rollover le indica sobre el sentimiento del mercado.",
+          "learn": [
+            "¿Por qué caducan los contratos?",
+            "Cerrar y reabrir una posición",
+            "El costo de la renovación",
+            "Porcentaje de rollover como señal",
+            "Mecánica de día de vencimiento",
+            "Evitando el mes lejano ilíquido"
+          ],
+          "tags": [
+            "Precios"
+          ]
+        },
+        {
+          "n": 16,
+          "slug": "calendar-spread-and-basis",
+          "title": "Roll Spreads, Calendar Spreads y negociación de bases",
+          "summary": "La brecha entre dos meses y la brecha entre el futuro y el spot se pueden negociar. Conozca el diferencial de rollo que paga en el momento del rollover, el diferencial de calendario como posición y la idea del arbitraje de futuros en efectivo, que debe comprender pero no intentar a ciegas.",
+          "learn": [
+            "Precios del mes cercano frente al del mes siguiente",
+            "El diferencial de rollo lo pagas",
+            "La posición de propagación del calendario.",
+            "Valor razonable y la base.",
+            "Arbitraje de futuros en efectivo",
+            "Por qué el comercio minorista no debería perseguirlo"
+          ],
+          "tags": [
+            "Precios"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "E",
+      "name": "Asentamiento y Posicionamiento",
+      "desc": "Liquidación física frente a liquidación en efectivo, futuros sobre índices frente a acciones y lectura de interés abierto.",
+      "chapters": [
+        {
+          "n": 17,
+          "slug": "settlement-stock-vs-index",
+          "title": "Liquidación: entrega de acciones frente a efectivo indexado",
+          "summary": "Lo que sucede al vencimiento depende de lo que haya negociado. Descubra que los futuros sobre acciones se liquidan físicamente (una posición abierta puede convertirse en una obligación de entrega real, con riesgo de entrega a corto plazo), mientras que los futuros sobre índices se liquidan en efectivo, y por qué un principiante debería liquidar los futuros sobre acciones antes de su vencimiento.",
+          "learn": [
+            "Liquidación física de futuros sobre acciones",
+            "La obligación de entrega al vencimiento",
+            "Entrega corta y su penalización.",
+            "Liquidación en efectivo de futuros sobre índices",
+            "El precio de liquidación final",
+            "Enfrentamiento antes del vencimiento"
+          ],
+          "tags": [
+            "Asentamiento"
+          ]
+        },
+        {
+          "n": 18,
+          "slug": "index-vs-stock-futures",
+          "title": "Futuros sobre índices frente a futuros sobre acciones",
+          "summary": "Los futuros NIFTY y BANKNIFTY se comportan de manera diferente al futuro de una sola acción. Conozca las diferencias prácticas en liquidez, riesgo y uso, y por qué los principiantes suelen empezar con el índice.",
+          "learn": [
+            "Futuros sobre índices (NIFTY, BANKNIFTY)",
+            "Futuros sobre acciones individuales",
+            "Diferencias de liquidez",
+            "Riesgo de brecha de acción única",
+            "Liquidación en efectivo para índice",
+            "Por dónde debería empezar un principiante"
+          ],
+          "tags": [
+            "Asentamiento"
+          ]
+        },
+        {
+          "n": 19,
+          "slug": "open-interest-in-futures",
+          "title": "Interés abierto en futuros",
+          "summary": "El interés abierto es el número más cotizado y más mal leído en futuros. Aprenda lo que realmente significa OI, cómo leer una acumulación larga o corta frente a un desenrollado o cobertura, un volumen frente a OI y por qué OI no es una señal de predicción garantizada.",
+          "learn": [
+            "¿Qué significa el interés abierto?",
+            "Preparación larga y preparación corta",
+            "Desenrollado largo y cubrimiento corto",
+            "Volumen vs interés abierto",
+            "OI con precio junto",
+            "Por qué OI no es una señal segura"
+          ],
+          "tags": [
+            "OI"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "F",
+      "name": "Controles y ajustes del mercado",
+      "desc": "Las reglas del mercado de valores que dan forma a lo que se puede negociar: límites de posición y la prohibición, ajustes de acciones corporativas y las bandas de precios y suspensiones que limitan cada sesión.",
+      "chapters": [
+        {
+          "n": 20,
+          "slug": "position-limits-and-ban",
+          "title": "Límites de posición, prohibición de F&O y congelación de cantidades",
+          "summary": "El intercambio limita la cantidad de contrato que cualquiera puede tener. Conozca el límite de posiciones en todo el mercado, los límites de clientes y miembros, lo que hace que una acción entre en el período de prohibición de F&O y la regla de que no puede tomar nuevas posiciones mientras dure, y la congelación de cantidades que obliga a dividir una orden grande.",
+          "learn": [
+            "Límite de posición en todo el mercado (MWPL)",
+            "Límites de clientes y miembros",
+            "¿Qué desencadena la prohibición de F&O?",
+            "No hay nuevas posiciones en una prohibición",
+            "Congelación de cantidades y corte de pedidos",
+            "Leyendo la lista de prohibiciones"
+          ],
+          "tags": [
+            "Riesgo"
+          ]
+        },
+        {
+          "n": 21,
+          "slug": "corporate-actions",
+          "title": "Acciones corporativas y ajustes de F&O",
+          "summary": "Cuando una empresa divide sus acciones, emite una bonificación o paga un dividendo especial, sus futuros y opciones se ajustan para que las posiciones abiertas mantengan su valor. Descubra cómo una división o bonificación cambia el tamaño del lote y el ejercicio, cómo funciona el factor de ajuste, el umbral de dividendo especial que desencadena un cambio y cómo se manejan los derechos y las fusiones.",
+          "learn": [
+            "Por qué se debe ajustar F&O",
+            "Divisiones y emisiones de bonificaciones",
+            "El factor de ajuste",
+            "Tamaño del lote y cambios de huelga",
+            "Dividendos especiales y el umbral",
+            "Fusiones y derechos"
+          ],
+          "tags": [
+            "Asentamiento"
+          ]
+        },
+        {
+          "n": 22,
+          "slug": "price-bands-and-halts",
+          "title": "Bandas de precios, circuitos y paradas comerciales",
+          "summary": "Un contrato no es libre de recorrer ninguna distancia en un día. Conozca los rangos operativos y las bandas de precios que limitan un futuro, por qué se puede rechazar una orden por infringirlos, cómo los disyuntores de índices detienen todo el mercado y cómo estos controles cambian su riesgo y su capacidad para salir.",
+          "learn": [
+            "Rangos operativos y bandas de precios",
+            "Por qué se rechaza un pedido",
+            "Bandas de precios dinámicas en F&O",
+            "Disyuntores indexados",
+            "Paradas y como levantan",
+            "Operar cerca de los límites"
+          ],
+          "tags": [
+            "Ejecución"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "G",
+      "name": "Riesgo y disciplina",
+      "desc": "Cobertura en la práctica, tamaño de posición, riesgo de brecha y evento, y errores a evitar.",
+      "chapters": [
+        {
+          "n": 23,
+          "slug": "hedging-with-futures",
+          "title": "Cobertura de una cartera: ejemplos resueltos",
+          "summary": "El trabajo original de un futuro. Descubra cómo la venta en corto de un futuro sobre índices protege una cartera, con casos resueltos: una cobertura completa, una cobertura parcial, una cartera con beta alta y qué sucede cuando el tamaño de la cobertura es incorrecto.",
+          "learn": [
+            "¿Qué hace una cobertura?",
+            "Beta y el ratio de cobertura",
+            "Una cobertura completa superada",
+            "Una cobertura parcial",
+            "Cobertura de una cartera de beta alta",
+            "Cuando el tamaño del seto es incorrecto"
+          ],
+          "tags": [
+            "Cobertura"
+          ]
+        },
+        {
+          "n": 24,
+          "slug": "position-sizing",
+          "title": "Dimensionamiento de posiciones con futuros",
+          "summary": "La forma más rápida de explotar es realizar transacciones demasiado grandes. Aprenda cómo dimensionar una posición de futuros a partir de su capital y su riesgo por operación, el método de distancia de parada multiplicada por el tamaño del lote, la diferencia entre el tamaño intradiario y posicional y por qué muchas cuentas son simplemente demasiado pequeñas para futuros.",
+          "learn": [
+            "Capital realmente necesario",
+            "Riesgo por operación, una pequeña porción",
+            "Distancia de parada multiplicada por el tamaño del lote",
+            "Dimensionamiento intradiario versus posicional",
+            "La exposición nocional no es capital",
+            "Por qué las cuentas pequeñas deberían esperar"
+          ],
+          "tags": [
+            "Riesgo"
+          ]
+        },
+        {
+          "n": 25,
+          "slug": "gap-and-event-risk",
+          "title": "Riesgo de brecha y riesgo de evento",
+          "summary": "El apalancamiento es más peligroso cuando el mercado salta. Descubra por qué una brecha nocturna puede superar su límite, los eventos que lo causan, los resultados, la política RBI, el presupuesto, las elecciones y las noticias globales, y por qué un límite de pérdidas no es una garantía en una posición apalancada.",
+          "learn": [
+            "Por qué duele una brecha de la noche a la mañana",
+            "Eventos que causan brechas",
+            "Por qué una parada puede fallar en un hueco",
+            "Por qué el apalancamiento magnifica una brecha",
+            "Dimensionamiento para el espacio, no para el tope",
+            "Evitar eventos a los que no puedas sobrevivir"
+          ],
+          "tags": [
+            "Riesgo"
+          ]
+        },
+        {
+          "n": 26,
+          "slug": "risks-of-leverage",
+          "title": "Los riesgos del apalancamiento (y cómo sobrevivir)",
+          "summary": "La mayoría de los operadores de futuros pierden, y la razón suele ser el apalancamiento. Conozca los riesgos honestos, la espiral de llamadas de margen y el movimiento nocturno, y la disciplina que mantiene a un operador en el juego.",
+          "learn": [
+            "Por qué pierden la mayoría de los operadores de futuros",
+            "La espiral de la llamada de margen",
+            "Tratar el margen como pérdida máxima, una trampa",
+            "Confundir nocional con capital",
+            "Respetando el apalancamiento",
+            "La mentalidad del superviviente"
+          ],
+          "tags": [
+            "Riesgo"
+          ]
+        },
+        {
+          "n": 27,
+          "slug": "mistakes-and-checklist",
+          "title": "Errores de principiante y su lista de verificación para el futuro",
+          "summary": "Cierra el curso con los errores que arruinan a los principiantes y una lista de control para evitarlos. Negociar demasiado, mantener los futuros de acciones hasta su vencimiento, ignorar la liquidez, promediar las pérdidas apalancadas y tratar el margen como lo máximo que se puede perder, luego una lista de verificación previa a la negociación clara.",
+          "learn": [
+            "Negociar demasiado grande",
+            "Mantener futuros sobre acciones hasta su vencimiento",
+            "Ignorando la liquidez",
+            "Promediar una pérdida apalancada",
+            "El margen no es su pérdida máxima",
+            "La lista de verificación previa a la negociación"
+          ],
+          "tags": [
+            "Riesgo"
+          ]
+        }
+      ]
+    }
+  ]
+}

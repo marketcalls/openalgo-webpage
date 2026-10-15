@@ -1,0 +1,514 @@
+{
+  "course": "futures",
+  "locale": "pt",
+  "parts": [
+    {
+      "id": "A",
+      "name": "O que é um futuro",
+      "desc": "O que é um contrato futuro, como ele difere de contratos a termo, opções e ações e por que existe.",
+      "chapters": [
+        {
+          "n": 1,
+          "slug": "what-is-a-future",
+          "title": "O que é um contrato futuro?",
+          "summary": "Um futuro é simplesmente um acordo para comprar ou vender algo a um preço fixo numa data futura. Aprenda o que isso significa em palavras simples, com um exemplo indiano real, antes que chegue qualquer jargão.",
+          "learn": [
+            "Um acordo para uma data futura",
+            "Obrigações do comprador e do vendedor",
+            "Subjacente, preço e vencimento",
+            "Uma analogia simples do mundo real",
+            "Como funciona um futuro de ações",
+            "Por que ninguém espera pela entrega"
+          ],
+          "tags": [
+            "Noções básicas"
+          ]
+        },
+        {
+          "n": 2,
+          "slug": "futures-vs-forwards-options-equity",
+          "title": "Futuros vs Forwards, Opções e Ações",
+          "summary": "Um futuro não é um forward, nem uma opção, nem uma ação. Saiba como um futuro negociado em bolsa padronizado difere de um termo privado, por que um futuro é uma obrigação enquanto uma opção é um direito e por que manter um futuro não é o mesmo que possuir ações.",
+          "learn": [
+            "Futuro padronizado vs futuro privado",
+            "Negociado em bolsa e garantido",
+            "Obrigação versus direito de opção",
+            "Um futuro não é possuir a ação",
+            "Sem dividendos, sem votos",
+            "Por que a diferença é importante para o risco"
+          ],
+          "tags": [
+            "Noções básicas"
+          ]
+        },
+        {
+          "n": 3,
+          "slug": "why-futures-exist",
+          "title": "Por que existem futuros: hedgers e especuladores",
+          "summary": "Os futuros não foram inventados para jogos de azar. Conheça as duas multidões que se encontram no mercado de futuros: o hedger que quer eliminar o risco e o especulador que fica feliz em assumi-lo.",
+          "learn": [
+            "O propósito original dos futuros",
+            "Hedgers que descarregam risco",
+            "Especuladores que assumem isso",
+            "Como os dois lados precisam um do outro",
+            "Liquidez e descoberta de preços",
+            "Um exemplo de agricultor e moinho"
+          ],
+          "tags": [
+            "Noções básicas"
+          ]
+        },
+        {
+          "n": 4,
+          "slug": "contract-specs",
+          "title": "Lendo um contrato: tamanho do lote, vencimento e tick",
+          "summary": "Todo futuro é padronizado. Aprenda o tamanho do lote (NIFTY 65, BANKNIFTY 30, RELIANCE 500), o vencimento mensal, o tamanho do tick e o formato do símbolo, para saber exatamente o que um contrato controla.",
+          "learn": [
+            "Tamanho do lote e valor do contrato",
+            "Tamanhos de lote reais (NIFTY, BANKNIFTY, RELIANCE)",
+            "Expiração mensal e semanal",
+            "Tamanho do tick e movimento mínimo",
+            "O formato do símbolo OpenAlgo",
+            "Por que tudo é padronizado"
+          ],
+          "tags": [
+            "Noções básicas"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "B",
+      "name": "Mecânica de Negociação",
+      "desc": "Como funcionam os pedidos, liquidez e derrapagem e o retorno linear de operar comprado ou vendido.",
+      "chapters": [
+        {
+          "n": 5,
+          "slug": "how-futures-orders-work",
+          "title": "Como os pedidos de futuros realmente funcionam",
+          "summary": "Antes de negociar, você precisa fazer um pedido corretamente. Aprenda os tipos de pedidos (mercado, limite, stop-loss e mercado stop-loss), os tipos de produtos (intradiário versus carry-forward), como funciona um square-off e os erros de pedido que pegam os iniciantes.",
+          "learn": [
+            "Ordens de mercado vs limite",
+            "Mercado de stop-loss e stop-loss",
+            "Intradiário (MIS) vs transporte (NRML)",
+            "Como funciona um confronto direto",
+            "Auto square-off para intradiário",
+            "Erros comuns de pedido"
+          ],
+          "tags": [
+            "Execução"
+          ]
+        },
+        {
+          "n": 6,
+          "slug": "liquidity-spread-slippage",
+          "title": "Liquidez, o spread Bid-Ask e a derrapagem",
+          "summary": "O último preço negociado pode enganá-lo. Aprenda o lance, o pedido e o spread contra o qual você realmente negocia, o que significam derrapagem e custo de impacto e por que um futuro de ações de um mês distante ou com poucas ações pode custar muito mais para entrar e sair do que a tela sugere.",
+          "learn": [
+            "Por que o LTP pode enganar",
+            "Licite, pergunte e o spread",
+            "Deslizamento na entrada e saída",
+            "Custo de impacto em contratos finos",
+            "Risco do mês distante e do futuro das ações",
+            "Negociação apenas de contratos líquidos"
+          ],
+          "tags": [
+            "Execução"
+          ]
+        },
+        {
+          "n": 7,
+          "slug": "long-and-short",
+          "title": "Operando comprado e vendido",
+          "summary": "Os futuros permitem que você lucre com uma queda tão facilmente quanto com uma alta. Aprenda o que significa operar comprado e vendido e por que vender primeiro é normal e não exótico no mercado futuro.",
+          "learn": [
+            "Longo significa comprar primeiro",
+            "Curto significa vender primeiro",
+            "Lucrando com uma queda",
+            "Não é necessário empréstimo para vender",
+            "Ambos os lados enfrentam risco ilimitado",
+            "Quando você usaria cada"
+          ],
+          "tags": [
+            "Mecânica"
+          ]
+        },
+        {
+          "n": 8,
+          "slug": "futures-payoff",
+          "title": "A recompensa futura: uma linha reta",
+          "summary": "Ao contrário das opções, um futuro tem o retorno mais simples que existe, uma linha reta. Aprenda a ler o retorno de futuros longos e curtos em um exemplo real RELIANCE, incluindo por que a perda pode ser tão grande quanto o ganho.",
+          "learn": [
+            "A forma de recompensa linear",
+            "Pagamento futuro longo",
+            "Pagamento futuro curto",
+            "Um a um com o subjacente",
+            "Lucros e perdas ilimitados",
+            "Lendo um gráfico de recompensa real"
+          ],
+          "tags": [
+            "Pague"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "C",
+      "name": "Margem e dinheiro",
+      "desc": "Margem e alavancagem, SPAN e garantias prometidas, liquidação diária e quais custos de negociação.",
+      "chapters": [
+        {
+          "n": 9,
+          "slug": "margin-and-leverage",
+          "title": "Margem e alavancagem: a espada de dois gumes",
+          "summary": "Você não paga o valor total do contrato, apenas uma margem. Isso é alavancagem e multiplica ganhos e perdas. Saiba como funciona a margem e por que a alavancagem é o risco mais importante em futuros.",
+          "learn": [
+            "Qual é a margem",
+            "Como a alavancagem multiplica P&L",
+            "Margem inicial vs manutenção",
+            "A chamada de margem",
+            "Um exemplo de alavancagem trabalhado",
+            "Por que a alavancagem funciona nos dois sentidos"
+          ],
+          "tags": [
+            "Mecânica"
+          ]
+        },
+        {
+          "n": 10,
+          "slug": "span-margin-and-pledge",
+          "title": "SPAN Margem, exposição e garantias prometidas",
+          "summary": "A margem não é um número fixo. Saiba como ele é construído a partir de SPAN mais a exposição, por que ele aumenta quando a volatilidade aumenta, o que significam as regras de margem máxima e como os traders indianos prometem ativos como garantia, incluindo por que a margem disponível não é o mesmo que dinheiro livre.",
+          "learn": [
+            "SPAN mais margem de exposição",
+            "Por que a margem muda dinamicamente",
+            "Aumentos de margem impulsionados pela volatilidade",
+            "Margem de pico e bloqueio",
+            "Promessa de garantia versus dinheiro",
+            "Por que a garantia não é dinheiro grátis"
+          ],
+          "tags": [
+            "Mecânica"
+          ]
+        },
+        {
+          "n": 11,
+          "slug": "mark-to-market",
+          "title": "Marcação a mercado: liquidada todos os dias",
+          "summary": "Uma posição futura é liquidada em dinheiro no final de cada dia de negociação, não apenas no vencimento. Aprenda como a marcação a mercado movimenta dinheiro para dentro e para fora de sua conta diariamente e por que uma posição perdedora pode ser fechada para você.",
+          "learn": [
+            "Liquidação diária em dinheiro",
+            "Lucros e perdas creditados todos os dias",
+            "Como MTM protege a troca",
+            "Recargas de margem",
+            "Por que você não pode ignorar uma posição",
+            "Um exemplo trabalhado em dois dias"
+          ],
+          "tags": [
+            "Mecânica"
+          ]
+        },
+        {
+          "n": 12,
+          "slug": "costs-and-taxation",
+          "title": "Custos de transação e tributação",
+          "summary": "Um futuro parece barato para negociar até que você adicione os custos e os impostos. Aprenda todos os encargos, corretagem, STT, taxas de câmbio, GST e imposto de selo, como eles movimentam seu ponto de equilíbrio e os princípios básicos de como o lucro futuro é tributado como receita comercial.",
+          "learn": [
+            "Corretagem e STT em futuros",
+            "Taxas de câmbio, GST e imposto de selo",
+            "Seu verdadeiro ponto de equilíbrio ajustado ao custo",
+            "Futuros como receita de negócios",
+            "ITR-3 e rotatividade em uma linha",
+            "Onde aprender o imposto na íntegra"
+          ],
+          "tags": [
+            "Custos"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "D",
+      "name": "Preços e o Ciclo",
+      "desc": "Como um futuro é precificado em relação à vista, o ciclo do contrato, rollover, spreads de calendário e base.",
+      "chapters": [
+        {
+          "n": 13,
+          "slug": "basis-and-carry",
+          "title": "Base e custo de transporte",
+          "summary": "Um futuro raramente é negociado exatamente ao preço à vista. Aprenda a base (a lacuna entre o futuro e o spot) e o custo de transporte que a explica, além do que um prêmio ou desconto lhe diz.",
+          "learn": [
+            "Preço futuro versus preço à vista",
+            "A base explicada",
+            "Custo de transporte",
+            "Prêmio e desconto",
+            "Convergência no vencimento",
+            "O que a base sinaliza"
+          ],
+          "tags": [
+            "Preços"
+          ]
+        },
+        {
+          "n": 14,
+          "slug": "expiry-calendar-and-cycle",
+          "title": "O calendário de vencimento e o ciclo do contrato",
+          "summary": "A qualquer momento, três contratos mensais são negociados ao mesmo tempo. Aprenda o mês próximo, próximo e distante, o ciclo mensal e o dia de vencimento, como escolher qual contrato negociar e por que um iniciante deve evitar o contrato fino do mês distante.",
+          "learn": [
+            "Próximo, próximo e distante mês",
+            "O ciclo de contrato mensal",
+            "Dia de expiração no ciclo",
+            "Escolhendo em qual mês negociar",
+            "Por que o mês distante é fino",
+            "Liquidez ao longo do ciclo"
+          ],
+          "tags": [
+            "Preços"
+          ]
+        },
+        {
+          "n": 15,
+          "slug": "rollover",
+          "title": "Rollover: passando para o próximo mês",
+          "summary": "Os futuros expiram, mas uma visualização pode durar mais de um mês. Aprenda o rollover, o ato de fechar o contrato que está vencendo e abrir o próximo, e o que o rollover alto lhe diz sobre o sentimento do mercado.",
+          "learn": [
+            "Por que os contratos expiram",
+            "Fechando e reabrindo uma posição",
+            "O custo de rolagem",
+            "Porcentagem de rollover como sinal",
+            "Mecânica do dia de vencimento",
+            "Evitando o mês distante ilíquido"
+          ],
+          "tags": [
+            "Preços"
+          ]
+        },
+        {
+          "n": 16,
+          "slug": "calendar-spread-and-basis",
+          "title": "Roll Spreads, Spreads de Calendário e Negociação Base",
+          "summary": "A diferença entre dois meses e a diferença entre o futuro e o spot podem ser negociadas. Aprenda o roll spread que você paga na rolagem, o spread do calendário como uma posição e a ideia de arbitragem de futuros em dinheiro, que você deve entender, mas não tentar cegamente.",
+          "learn": [
+            "Preços do próximo mês versus preços do próximo mês",
+            "O roll spread você paga",
+            "A posição do spread do calendário",
+            "Valor justo e a base",
+            "Arbitragem de futuros em dinheiro explicada",
+            "Por que o varejo não deveria persegui-lo"
+          ],
+          "tags": [
+            "Preços"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "E",
+      "name": "Liquidação e Posicionamento",
+      "desc": "Liquidação física versus em dinheiro, índice versus futuros de ações e leitura de contratos em aberto.",
+      "chapters": [
+        {
+          "n": 17,
+          "slug": "settlement-stock-vs-index",
+          "title": "Liquidação: Entrega de Ações vs Dinheiro do Índice",
+          "summary": "O que acontece no vencimento depende do que você negociou. Aprenda que os futuros de ações são liquidados fisicamente (uma posição aberta pode se tornar uma obrigação de entrega real, com risco de entrega a descoberto), enquanto os futuros de índices são liquidados em dinheiro, e por que um iniciante deve liquidar os futuros de ações antes do vencimento.",
+          "learn": [
+            "Liquidação física de futuros de ações",
+            "A obrigação de entrega no vencimento",
+            "Entrega curta e sua penalidade",
+            "Liquidação em dinheiro de futuros de índices",
+            "O preço de liquidação final",
+            "Quadratura antes do vencimento"
+          ],
+          "tags": [
+            "Povoado"
+          ]
+        },
+        {
+          "n": 18,
+          "slug": "index-vs-stock-futures",
+          "title": "Futuros de índices vs futuros de ações",
+          "summary": "Os futuros NIFTY e BANKNIFTY se comportam de maneira diferente do futuro de uma única ação. Aprenda as diferenças práticas em liquidez, risco e uso, e por que os iniciantes geralmente começam com o índice.",
+          "learn": [
+            "Futuros de índices (NIFTY, BANKNIFTY)",
+            "Futuros de ações individuais",
+            "Diferenças de liquidez",
+            "Risco de lacuna de ações únicas",
+            "Liquidação em dinheiro para índice",
+            "Por onde um iniciante deve começar"
+          ],
+          "tags": [
+            "Povoado"
+          ]
+        },
+        {
+          "n": 19,
+          "slug": "open-interest-in-futures",
+          "title": "Interesse aberto em futuros",
+          "summary": "Os contratos em aberto são o número mais cotado e mais mal interpretado em futuros. Aprenda o que OI realmente significa, como ler um acúmulo longo ou curto versus um desenrolamento ou cobertura, volume versus OI e por que OI não é um sinal de previsão garantido.",
+          "learn": [
+            "O que significa interesse em aberto",
+            "Acúmulo longo e acúmulo curto",
+            "Desenrolamento longo e cobertura curta",
+            "Volume vs juros em aberto",
+            "OI com preço junto",
+            "Por que OI não é um sinal seguro"
+          ],
+          "tags": [
+            "OI"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "F",
+      "name": "Controles e ajustes de mercado",
+      "desc": "As regras de câmbio que moldam o que você pode negociar: limites de posição e proibição, ajustes de ações corporativas e as faixas de preços e interrupções que limitam cada sessão.",
+      "chapters": [
+        {
+          "n": 20,
+          "slug": "position-limits-and-ban",
+          "title": "Limites de posição, proibição de F&O e congelamento de quantidade",
+          "summary": "A troca limita quanto de um contrato qualquer um pode manter. Aprenda o limite de posição em todo o mercado, os limites de clientes e membros, o que leva uma ação ao período de proibição de F&O e a regra de que você não pode assumir novas posições enquanto durar, e o congelamento de quantidade que força o corte de um pedido grande.",
+          "learn": [
+            "Limite de posição em todo o mercado (MWPL)",
+            "Limites de clientes e membros",
+            "O que desencadeia a proibição de F&O",
+            "Não há novas posições em uma proibição",
+            "Congelar quantidade e fatiar pedidos",
+            "Lendo a lista de banimentos"
+          ],
+          "tags": [
+            "Risco"
+          ]
+        },
+        {
+          "n": 21,
+          "slug": "corporate-actions",
+          "title": "Ações Corporativas e Ajustes de F&O",
+          "summary": "Quando uma empresa divide suas ações, emite um bônus ou paga um dividendo especial, seus futuros e opções são ajustados para que as posições abertas mantenham seu valor. Saiba como uma divisão ou bônus altera o tamanho do lote e o exercício, como funciona o fator de ajuste, o limite de dividendos especiais que desencadeia uma alteração e como os direitos e fusões são tratados.",
+          "learn": [
+            "Por que o F&O deve ser ajustado",
+            "Divisões e questões de bônus",
+            "O fator de ajuste",
+            "Tamanho do lote e alterações de strike",
+            "Dividendos especiais e o limite",
+            "Fusões e direitos"
+          ],
+          "tags": [
+            "Povoado"
+          ]
+        },
+        {
+          "n": 22,
+          "slug": "price-bands-and-halts",
+          "title": "Faixas de preços, circuitos e paradas de negociação",
+          "summary": "Um contrato não é livre para percorrer qualquer distância em um dia. Aprenda as faixas operacionais e as faixas de preços que limitam um futuro, por que um pedido pode ser rejeitado por violá-las, como os disjuntores de índice param todo o mercado e como esses controles alteram seu risco e sua capacidade de sair.",
+          "learn": [
+            "Faixas operacionais e faixas de preço",
+            "Por que um pedido é rejeitado",
+            "Faixas de preços dinâmicas em F&O",
+            "Disjuntores de índice",
+            "Paradas e como elas levantam",
+            "Negociando perto dos limites"
+          ],
+          "tags": [
+            "Execução"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "G",
+      "name": "Risco e Disciplina",
+      "desc": "Hedging na prática, dimensionamento de posição, risco de gap e evento e os erros a evitar.",
+      "chapters": [
+        {
+          "n": 23,
+          "slug": "hedging-with-futures",
+          "title": "Cobertura de um portfólio: exemplos trabalhados",
+          "summary": "O trabalho original de um futuro. Aprenda como vender a descoberto um índice futuro protege um portfólio, com casos resolvidos: um hedge completo, um hedge parcial, um portfólio com beta alto e o que acontece quando o tamanho do hedge está errado.",
+          "learn": [
+            "O que uma cerca viva faz",
+            "Beta e o índice de hedge",
+            "Uma cobertura completa foi trabalhada",
+            "Uma cobertura parcial",
+            "Cobertura de um portfólio com beta alto",
+            "Quando o tamanho da sebe está errado"
+          ],
+          "tags": [
+            "Cobertura"
+          ]
+        },
+        {
+          "n": 24,
+          "slug": "position-sizing",
+          "title": "Dimensionamento de posição com futuros",
+          "summary": "A maneira mais rápida de explodir é negociar muito grande. Aprenda como dimensionar uma posição futura a partir do seu capital e do seu risco por negociação, o método do tamanho do lote vezes a distância de parada, a diferença entre o dimensionamento intradiário e posicional e por que muitas contas são simplesmente pequenas demais para futuros.",
+          "learn": [
+            "Capital genuinamente necessário",
+            "Risco por negociação, uma pequena fatia",
+            "Distância de parada vezes tamanho do lote",
+            "Dimensionamento intradiário vs. posicional",
+            "A exposição nocional não é capital",
+            "Por que contas pequenas deveriam esperar"
+          ],
+          "tags": [
+            "Risco"
+          ]
+        },
+        {
+          "n": 25,
+          "slug": "gap-and-event-risk",
+          "title": "Risco de lacuna e risco de evento",
+          "summary": "A alavancagem é mais perigosa quando o mercado salta. Saiba por que um gap noturno pode ultrapassar seu stop, os eventos que o causam, os resultados, a política RBI, o orçamento, as eleições e as notícias globais, e por que um stop-loss não é uma garantia em uma posição alavancada.",
+          "learn": [
+            "Por que um intervalo noturno dói",
+            "Eventos que causam lacunas",
+            "Por que um stop pode falhar em um gap",
+            "Por que a alavancagem amplia uma lacuna",
+            "Dimensionando para a lacuna, não para a parada",
+            "Evitando eventos aos quais você não pode sobreviver"
+          ],
+          "tags": [
+            "Risco"
+          ]
+        },
+        {
+          "n": 26,
+          "slug": "risks-of-leverage",
+          "title": "Os riscos da alavancagem (e como sobreviver)",
+          "summary": "A maioria dos traders de futuros perde, e a alavancagem geralmente é o motivo. Aprenda os riscos honestos, a espiral de chamada de margem e o movimento noturno, e a disciplina que mantém um trader no jogo.",
+          "learn": [
+            "Por que a maioria dos traders de futuros perde",
+            "A espiral de chamada de margem",
+            "Tratar a margem como perda máxima, uma armadilha",
+            "Confundindo nocional com capital",
+            "Respeitando a alavancagem",
+            "A mentalidade do sobrevivente"
+          ],
+          "tags": [
+            "Risco"
+          ]
+        },
+        {
+          "n": 27,
+          "slug": "mistakes-and-checklist",
+          "title": "Erros de iniciante e lista de verificação do seu futuro",
+          "summary": "Encerre o curso com os erros que arruínam os iniciantes e um checklist para evitá-los. Negociar muito alto, manter futuros de ações até o vencimento, ignorar a liquidez, calcular a média das perdas alavancadas e tratar a margem como o máximo que você pode perder e, em seguida, uma lista de verificação pré-negociação clara.",
+          "learn": [
+            "Negociação muito grande",
+            "Manter futuros de ações até o vencimento",
+            "Ignorando a liquidez",
+            "Calculando a média de uma perda alavancada",
+            "Margem não é sua perda máxima",
+            "A lista de verificação pré-negociação"
+          ],
+          "tags": [
+            "Risco"
+          ]
+        }
+      ]
+    }
+  ]
+}

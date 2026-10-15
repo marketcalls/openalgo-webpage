@@ -1,0 +1,514 @@
+{
+  "course": "futures",
+  "locale": "fr",
+  "parts": [
+    {
+      "id": "A",
+      "name": "Qu'est-ce qu'un avenir",
+      "desc": "Qu'est-ce qu'un contrat à terme, en quoi il diffère des contrats à terme, des options et des actions, et pourquoi il existe.",
+      "chapters": [
+        {
+          "n": 1,
+          "slug": "what-is-a-future",
+          "title": "Qu'est-ce qu'un contrat à terme ?",
+          "summary": "Un contrat à terme est simplement un accord visant à acheter ou à vendre quelque chose à un prix fixe à une date ultérieure. Apprenez ce que cela signifie en termes simples, avec un exemple indien réel, avant l'arrivée du jargon.",
+          "learn": [
+            "Un accord pour une date ultérieure",
+            "Obligations de l'acheteur et du vendeur",
+            "Sous-jacent, prix et expiration",
+            "Une simple analogie avec le monde réel",
+            "Comment fonctionne un contrat à terme sur actions",
+            "Pourquoi personne n'attend la livraison"
+          ],
+          "tags": [
+            "Les bases"
+          ]
+        },
+        {
+          "n": 2,
+          "slug": "futures-vs-forwards-options-equity",
+          "title": "Futures vs Forwards, options et actions",
+          "summary": "Un futur n’est pas un contrat à terme, ni une option, ni une action. Découvrez en quoi un contrat à terme standardisé diffère d'un contrat à terme privé, pourquoi un contrat à terme est une obligation alors qu'une option est un droit, et pourquoi détenir un contrat à terme n'est pas la même chose que posséder une action.",
+          "learn": [
+            "Future standardisée vs forward privée",
+            "Négociable en bourse et garanti",
+            "Obligation vs droit d'option",
+            "Un avenir, ce n'est pas posséder l'action",
+            "Pas de dividendes, pas de votes",
+            "Pourquoi la différence est importante pour le risque"
+          ],
+          "tags": [
+            "Les bases"
+          ]
+        },
+        {
+          "n": 3,
+          "slug": "why-futures-exist",
+          "title": "Pourquoi les contrats à terme existent : les opérateurs de couverture et les spéculateurs",
+          "summary": "Les contrats à terme n’ont pas été inventés pour le jeu. Rencontrez les deux foules qui se rencontrent sur le marché à terme, le hedger qui veut éliminer le risque et le spéculateur qui est heureux de l'assumer.",
+          "learn": [
+            "Le but initial des contrats à terme",
+            "Des hedgers qui se déchargent du risque",
+            "Les spéculateurs qui s'en prennent",
+            "Comment les deux parties ont besoin l’une de l’autre",
+            "Liquidité et découverte des prix",
+            "Un exemple d'agriculteur et de moulin"
+          ],
+          "tags": [
+            "Les bases"
+          ]
+        },
+        {
+          "n": 4,
+          "slug": "contract-specs",
+          "title": "Lecture d'un contrat : taille du lot, expiration et coche",
+          "summary": "Chaque avenir est standardisé. Apprenez la taille du lot (NIFTY 65, BANKNIFTY 30, RELIANCE 500), l'expiration mensuelle, la taille du tick et le format du symbole, afin de savoir exactement ce qu'un contrat contrôle.",
+          "learn": [
+            "Taille du lot et valeur du contrat",
+            "Tailles réelles des lots (NIFTY, BANKNIFTY, RELIANCE)",
+            "Expiration mensuelle et hebdomadaire",
+            "Taille du tick et déplacement minimum",
+            "Le format de symbole OpenAlgo",
+            "Pourquoi tout est standardisé"
+          ],
+          "tags": [
+            "Les bases"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "B",
+      "name": "Mécanismes de trading",
+      "desc": "Comment fonctionnent les ordres, la liquidité et le dérapage, et le gain linéaire d'une position longue ou courte.",
+      "chapters": [
+        {
+          "n": 5,
+          "slug": "how-futures-orders-work",
+          "title": "Comment fonctionnent réellement les commandes à terme",
+          "summary": "Avant de trader, vous devez passer une commande correctement. Apprenez les types d'ordres (marché, limite, stop-loss et stop-loss marché), les types de produits (intrajournaliers ou reportés), le fonctionnement d'une confrontation et les erreurs d'ordre qui surprennent les débutants.",
+          "learn": [
+            "Ordres au marché ou à cours limité",
+            "Marché stop-loss et stop-loss",
+            "Intrajournalier (MIS) vs report en avant (NRML)",
+            "Comment fonctionne une confrontation",
+            "Carré automatique pour l'intrajournalier",
+            "Erreurs de commande courantes"
+          ],
+          "tags": [
+            "Exécution"
+          ]
+        },
+        {
+          "n": 6,
+          "slug": "liquidity-spread-slippage",
+          "title": "Liquidité, écart acheteur-vendeur et glissement",
+          "summary": "Le dernier prix négocié peut vous induire en erreur. Apprenez l'offre, la demande et le spread contre lesquels vous négociez réellement, ce que signifient les coûts de dérapage et d'impact, et pourquoi un contrat à terme sur un mois lointain ou sur des actions minces peut coûter beaucoup plus cher à l'entrée et à la sortie que ce que l'écran suggère.",
+          "learn": [
+            "Pourquoi le LTP peut induire en erreur",
+            "Enchérir, demander et spread",
+            "Glissement à l’entrée et à la sortie",
+            "Coût d’impact dans les contrats légers",
+            "Risque à long terme et à terme sur actions",
+            "Négocier uniquement des contrats liquides"
+          ],
+          "tags": [
+            "Exécution"
+          ]
+        },
+        {
+          "n": 7,
+          "slug": "long-and-short",
+          "title": "Aller long et aller court",
+          "summary": "Les contrats à terme vous permettent de profiter d'une baisse aussi facilement que d'une hausse. Découvrez ce que signifie être long et court, et pourquoi vendre en premier est normal et non exotique sur le marché à terme.",
+          "learn": [
+            "Long signifie acheter en premier",
+            "Short signifie vendre en premier",
+            "Profiter d'une chute",
+            "Aucun emprunt nécessaire pour vendre à découvert",
+            "Les deux parties font face à des risques illimités",
+            "Quand utiliseriez-vous chacun"
+          ],
+          "tags": [
+            "Mécanique"
+          ]
+        },
+        {
+          "n": 8,
+          "slug": "futures-payoff",
+          "title": "Le gain à terme : une ligne droite",
+          "summary": "Contrairement aux options, un avenir offre le gain le plus simple qui soit : une ligne droite. Apprenez à lire les gains des contrats à terme longs et courts sur un exemple réel de RELIANCE, notamment pourquoi la perte peut être aussi importante que le gain.",
+          "learn": [
+            "La forme de gain linéaire",
+            "Gain des contrats à terme longs",
+            "Gain à court terme",
+            "En tête-à-tête avec le sous-jacent",
+            "Profits et pertes illimités",
+            "Lire un véritable tableau des gains"
+          ],
+          "tags": [
+            "Payer"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "C",
+      "name": "Marge et argent",
+      "desc": "Marge et effet de levier, SPAN et garanties promises, règlement quotidien et quels sont les coûts de négociation.",
+      "chapters": [
+        {
+          "n": 9,
+          "slug": "margin-and-leverage",
+          "title": "Marge et effet de levier : l’épée à double tranchant",
+          "summary": "Vous ne payez pas la totalité de la valeur du contrat, seulement une marge. C’est un effet de levier qui multiplie à la fois les gains et les pertes. Découvrez comment fonctionne la marge et pourquoi l'effet de levier est le risque le plus important dans les contrats à terme.",
+          "learn": [
+            "Quelle est la marge",
+            "Comment l’effet de levier multiplie P&L",
+            "Marge initiale vs marge de maintenance",
+            "L'appel de marge",
+            "Un exemple de levier travaillé",
+            "Pourquoi l’effet de levier joue dans les deux sens"
+          ],
+          "tags": [
+            "Mécanique"
+          ]
+        },
+        {
+          "n": 10,
+          "slug": "span-margin-and-pledge",
+          "title": "SPAN Marge, exposition et garantie promise",
+          "summary": "La marge n'est pas un nombre fixe. Découvrez comment il est construit à partir de SPAN plus l'exposition, pourquoi il augmente lorsque la volatilité augmente, ce que signifient les règles de marge maximale et comment les traders indiens donnent leurs avoirs en garantie, y compris pourquoi la marge disponible n'est pas la même chose que les liquidités disponibles.",
+          "learn": [
+            "SPAN plus marge d'exposition",
+            "Pourquoi la marge change dynamiquement",
+            "Hausses de marge liées à la volatilité",
+            "Marge de pointe et blocage",
+            "Mise en gage de garanties ou espèces",
+            "Pourquoi la garantie n'est pas de l'argent gratuit"
+          ],
+          "tags": [
+            "Mécanique"
+          ]
+        },
+        {
+          "n": 11,
+          "slug": "mark-to-market",
+          "title": "Mark-to-Market : réglé chaque jour",
+          "summary": "Une position à terme est réglée en espèces à la fin de chaque journée de négociation, et non seulement à l'expiration. Découvrez comment l'évaluation à la valeur de marché déplace quotidiennement de l'argent vers et hors de votre compte et pourquoi une position perdante peut être clôturée pour vous.",
+          "learn": [
+            "Règlement en espèces quotidien",
+            "Gains et pertes crédités chaque jour",
+            "Comment MTM protège l'échange",
+            "Recharges de marge",
+            "Pourquoi vous ne pouvez pas ignorer une position",
+            "Un exemple travaillé sur deux jours"
+          ],
+          "tags": [
+            "Mécanique"
+          ]
+        },
+        {
+          "n": 12,
+          "slug": "costs-and-taxation",
+          "title": "Coûts de transaction et fiscalité",
+          "summary": "Un avenir semble peu coûteux à échanger jusqu’à ce que l’on y ajoute les coûts et les taxes. Découvrez l'ensemble des frais, du courtage, des STT, des frais de change, des GST et des droits de timbre, comment ils déterminent votre seuil de rentabilité et les bases de la manière dont les bénéfices à terme sont imposés en tant que revenus d'entreprise.",
+          "learn": [
+            "Courtage et STT sur futures",
+            "Frais de change, GST et droit de timbre",
+            "Votre véritable seuil de rentabilité ajusté en fonction des coûts",
+            "Contrats à terme comme revenu d'entreprise",
+            "ITR-3 et chiffre d'affaires sur une seule ligne",
+            "Où apprendre la taxe en entier"
+          ],
+          "tags": [
+            "Frais"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "D",
+      "name": "Prix ​​et cycle",
+      "desc": "Comment un contrat à terme est évalué par rapport au comptant, le cycle du contrat, le refinancement, les spreads calendaires et la base.",
+      "chapters": [
+        {
+          "n": 13,
+          "slug": "basis-and-carry",
+          "title": "Base et coût de transport",
+          "summary": "Un contrat à terme se négocie rarement exactement au prix au comptant. Apprenez la base (l'écart entre le futur et le spot) et le coût de portage qui l'explique, ainsi que ce que vous indique une prime ou une remise.",
+          "learn": [
+            "Prix ​​futur vs prix au comptant",
+            "La base expliquée",
+            "Coût de transport",
+            "Prime et remise",
+            "Convergence à l'échéance",
+            "Ce que la base signale"
+          ],
+          "tags": [
+            "Tarifs"
+          ]
+        },
+        {
+          "n": 14,
+          "slug": "expiry-calendar-and-cycle",
+          "title": "Le calendrier d’expiration et le cycle du contrat",
+          "summary": "À tout moment, trois contrats mensuels se négocient en même temps. Apprenez le mois proche, suivant et lointain, le cycle mensuel et le jour d'expiration, comment choisir le contrat à négocier et pourquoi un débutant devrait éviter le contrat mince du mois lointain.",
+          "learn": [
+            "Le mois proche, le mois prochain et le mois lointain",
+            "Le cycle mensuel du contrat",
+            "Jour d'expiration dans le cycle",
+            "Choisir quel mois trader",
+            "Pourquoi le mois lointain est mince",
+            "Liquidité tout au long du cycle"
+          ],
+          "tags": [
+            "Tarifs"
+          ]
+        },
+        {
+          "n": 15,
+          "slug": "rollover",
+          "title": "Rollover : passer au mois suivant",
+          "summary": "Les contrats à terme expirent, mais une vue peut durer un mois. Apprenez le rollover, l'acte de clôturer le contrat expirant et d'ouvrir le suivant, et ce qu'un rollover élevé vous indique sur le sentiment du marché.",
+          "learn": [
+            "Pourquoi les contrats expirent",
+            "Clôture et réouverture d'une position",
+            "Le coût du roulement",
+            "Pourcentage de roulement comme signal",
+            "Mécanique du jour d'expiration",
+            "Éviter le mois lointain illiquide"
+          ],
+          "tags": [
+            "Tarifs"
+          ]
+        },
+        {
+          "n": 16,
+          "slug": "calendar-spread-and-basis",
+          "title": "Spreads en rouleau, spreads calendaires et trading de base",
+          "summary": "L'écart entre deux mois et l'écart entre le futur et le spot peuvent eux-mêmes être négociés. Apprenez le roll spread que vous payez au rollover, le spread calendaire en tant que position et l'idée de l'arbitrage cash-futures, que vous devez comprendre mais pas tenter aveuglément.",
+          "learn": [
+            "Tarifs du mois proche et du mois suivant",
+            "Le rouleau que vous payez",
+            "La position de spread du calendrier",
+            "Juste valeur et base",
+            "Arbitrage cash-futures expliqué",
+            "Pourquoi le commerce de détail ne devrait pas le chasser"
+          ],
+          "tags": [
+            "Tarifs"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "E",
+      "name": "Règlement et positionnement",
+      "desc": "Règlement physique contre paiement en espèces, sur indices contre contrats à terme sur actions et lecture des intérêts ouverts.",
+      "chapters": [
+        {
+          "n": 17,
+          "slug": "settlement-stock-vs-index",
+          "title": "Règlement : livraison de titres par rapport à l'indice en espèces",
+          "summary": "Ce qui se passe à l'expiration dépend de ce que vous avez négocié. Découvrez que les contrats à terme sur actions sont réglés physiquement (une position ouverte peut devenir une véritable obligation de livraison, avec un risque de livraison courte), tandis que les contrats à terme sur indices sont réglés en espèces, et pourquoi un débutant devrait régler les contrats à terme sur actions avant l'expiration.",
+          "learn": [
+            "Règlement physique des contrats à terme sur actions",
+            "L'obligation de livraison à l'expiration",
+            "Livraison courte et sa pénalité",
+            "Règlement en espèces des contrats à terme sur indices",
+            "Le prix de règlement final",
+            "S'affronter avant l'expiration"
+          ],
+          "tags": [
+            "Règlement"
+          ]
+        },
+        {
+          "n": 18,
+          "slug": "index-vs-stock-futures",
+          "title": "Contrats à terme sur indices et contrats à terme sur actions",
+          "summary": "Les contrats à terme NIFTY et BANKNIFTY se comportent différemment du futur d'une action unique. Découvrez les différences pratiques en matière de liquidité, de risque et d'utilisation, et pourquoi les débutants commencent généralement par l'indice.",
+          "learn": [
+            "Futures sur indices (NIFTY, BANKNIFTY)",
+            "Contrats à terme sur actions uniques",
+            "Différences de liquidité",
+            "Risque d’écart sur un seul titre",
+            "Règlement en espèces pour l'indice",
+            "Par où un débutant devrait commencer"
+          ],
+          "tags": [
+            "Règlement"
+          ]
+        },
+        {
+          "n": 19,
+          "slug": "open-interest-in-futures",
+          "title": "Intérêt ouvert pour les contrats à terme",
+          "summary": "L’intérêt ouvert est le nombre le plus cité et le plus mal lu dans les contrats à terme. Apprenez ce que OI signifie réellement, comment lire une accumulation longue ou courte par rapport à un déroulement ou un recouvrement, un volume par rapport à OI, et pourquoi OI n'est pas un signal de prédiction garanti.",
+          "learn": [
+            "Que signifie l'intérêt ouvert",
+            "Accumulation longue et accumulation courte",
+            "Déroulage long et recouvrement court",
+            "Volume vs intérêt ouvert",
+            "OI avec prix ensemble",
+            "Pourquoi OI n'est pas un signal sûr"
+          ],
+          "tags": [
+            "OI"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "F",
+      "name": "Contrôles et ajustements du marché",
+      "desc": "Les règles d'échange qui déterminent ce que vous pouvez échanger : les limites de position et l'interdiction, les ajustements des opérations sur titres, ainsi que les fourchettes de prix et les arrêts qui délimitent chaque session.",
+      "chapters": [
+        {
+          "n": 20,
+          "slug": "position-limits-and-ban",
+          "title": "Limites de position, interdiction F&O et gel des quantités",
+          "summary": "L'échange plafonne la quantité de contrat que chacun peut détenir. Apprenez la limite de position à l'échelle du marché, les limites des clients et des membres, ce qui fait basculer une action dans la période d'interdiction F&O et la règle selon laquelle vous ne pouvez pas prendre de nouvelles positions tant qu'elle dure, et le gel des quantités qui oblige à trancher une commande importante.",
+          "learn": [
+            "Limite de position à l'échelle du marché (MWPL)",
+            "Limites de clients et de membres",
+            "Qu'est-ce qui déclenche l'interdiction F&O",
+            "Pas de nouvelles positions dans une interdiction",
+            "Gel des quantités et découpage des commandes",
+            "Lire la liste des bannissements"
+          ],
+          "tags": [
+            "Risque"
+          ]
+        },
+        {
+          "n": 21,
+          "slug": "corporate-actions",
+          "title": "Opérations sur titres et ajustements F&O",
+          "summary": "Lorsqu'une entreprise divise ses actions, émet un bonus ou verse un dividende spécial, ses contrats à terme et ses options sont ajustés afin que les positions ouvertes conservent leur valeur. Découvrez comment un partage ou un bonus modifie la taille et l'exercice du lot, comment fonctionne le facteur d'ajustement, le seuil de dividende spécial qui déclenche un changement et comment les droits et les fusions sont gérés.",
+          "learn": [
+            "Pourquoi F&O doit être ajusté",
+            "Problèmes de fractionnement et de bonus",
+            "Le facteur d'ajustement",
+            "Taille du lot et changements de grève",
+            "Dividendes spéciaux et seuil",
+            "Fusions et droits"
+          ],
+          "tags": [
+            "Règlement"
+          ]
+        },
+        {
+          "n": 22,
+          "slug": "price-bands-and-halts",
+          "title": "Bandes de prix, circuits et arrêts de négociation",
+          "summary": "Un contrat n'est pas libre de parcourir n'importe quelle distance en une journée. Découvrez les fourchettes de fonctionnement et les fourchettes de prix qui délimitent un avenir, pourquoi un ordre peut être rejeté pour violation de ces fourchettes, comment les disjoncteurs d'indice arrêtent l'ensemble du marché et comment ces contrôles modifient votre risque et votre capacité à vous en sortir.",
+          "learn": [
+            "Plages de fonctionnement et tranches de prix",
+            "Pourquoi une commande est rejetée",
+            "Bandes de prix dynamiques dans F&O",
+            "Disjoncteurs à index",
+            "Arrêts et comment ils se lèvent",
+            "Trader près des limites"
+          ],
+          "tags": [
+            "Exécution"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "G",
+      "name": "Risque et discipline",
+      "desc": "La couverture en pratique, la taille des positions, le risque d'écart et d'événement et les erreurs à éviter.",
+      "chapters": [
+        {
+          "n": 23,
+          "slug": "hedging-with-futures",
+          "title": "Couverture d'un portefeuille : exemples concrets",
+          "summary": "Le métier original d'un futur. Découvrez comment la vente à découvert d'un contrat à terme sur indice protège un portefeuille, avec des cas concrets : une couverture complète, une couverture partielle, un portefeuille à bêta élevé, et ce qui se passe lorsque la taille de la couverture est incorrecte.",
+          "learn": [
+            "À quoi sert une haie",
+            "Bêta et ratio de couverture",
+            "Une haie complète réalisée",
+            "Une haie partielle",
+            "Couverture d'un portefeuille à bêta élevé",
+            "Quand la taille de la haie est mauvaise"
+          ],
+          "tags": [
+            "Couverture"
+          ]
+        },
+        {
+          "n": 24,
+          "slug": "position-sizing",
+          "title": "Dimensionnement des positions avec les contrats à terme",
+          "summary": "Le moyen le plus rapide d’exploser est d’effectuer des échanges trop importants. Apprenez comment dimensionner une position à terme à partir de votre capital et de votre risque par transaction, la méthode de taille de lot multipliée par la distance d'arrêt, la différence entre la taille intrajournalière et la taille de position, et pourquoi de nombreux comptes sont tout simplement trop petits pour les contrats à terme.",
+          "learn": [
+            "Capital réellement nécessaire",
+            "Risque par transaction, une petite tranche",
+            "Distance d'arrêt multipliée par la taille du lot",
+            "Dimensionnement intrajournalier ou positionnel",
+            "L’exposition notionnelle n’est pas du capital",
+            "Pourquoi les petits comptes devraient attendre"
+          ],
+          "tags": [
+            "Risque"
+          ]
+        },
+        {
+          "n": 25,
+          "slug": "gap-and-event-risk",
+          "title": "Risque d’écart et risque d’événement",
+          "summary": "L’effet de levier est plus dangereux lorsque le marché bondit. Découvrez pourquoi un écart au jour le jour peut dépasser votre stop, les événements qui le provoquent, les résultats, la politique RBI, le budget, les élections et l'actualité mondiale, et pourquoi un stop-loss n'est pas une garantie dans une position à effet de levier.",
+          "learn": [
+            "Pourquoi un intervalle d'une nuit fait mal",
+            "Événements qui provoquent des lacunes",
+            "Pourquoi un stop peut échouer sur un écart",
+            "Pourquoi l’effet de levier amplifie un écart",
+            "Dimensionner pour l'écart, pas pour l'arrêt",
+            "Éviter les événements auxquels vous ne pouvez pas survivre"
+          ],
+          "tags": [
+            "Risque"
+          ]
+        },
+        {
+          "n": 26,
+          "slug": "risks-of-leverage",
+          "title": "Les risques de l’effet de levier (et comment survivre)",
+          "summary": "La plupart des traders à terme perdent, et l’effet de levier en est généralement la cause. Apprenez les risques honnêtes, la spirale des appels de marge et les mouvements du jour au lendemain, ainsi que la discipline qui maintient un trader dans le jeu.",
+          "learn": [
+            "Pourquoi la plupart des traders à terme perdent",
+            "La spirale des appels de marge",
+            "Traiter la marge comme une perte maximale, un piège",
+            "Confondre notionnel et capital",
+            "Respecter l'effet de levier",
+            "La mentalité du survivant"
+          ],
+          "tags": [
+            "Risque"
+          ]
+        },
+        {
+          "n": 27,
+          "slug": "mistakes-and-checklist",
+          "title": "Erreurs du débutant et liste de contrôle de votre avenir",
+          "summary": "Clôturez le cours avec les erreurs qui ruinent les débutants et une check-list pour les éviter. Négocier trop gros, conserver les contrats à terme sur actions jusqu'à l'expiration, ignorer la liquidité, faire la moyenne des pertes liées à l'effet de levier et traiter la marge comme le maximum que vous puissiez perdre, puis une liste de contrôle pré-négociation claire.",
+          "learn": [
+            "Trading trop important",
+            "Conserver les contrats à terme sur actions jusqu'à leur expiration",
+            "Ignorer la liquidité",
+            "Calculer la moyenne d'une perte liée à un effet de levier",
+            "La marge n'est pas votre perte maximale",
+            "La liste de contrôle pré-négociation"
+          ],
+          "tags": [
+            "Risque"
+          ]
+        }
+      ]
+    }
+  ]
+}

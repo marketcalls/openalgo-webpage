@@ -1,0 +1,515 @@
+{
+  "course": "options-strategies",
+  "locale": "fr",
+  "parts": [
+    {
+      "id": "A",
+      "name": "Lire une stratégie",
+      "desc": "Le diagramme des gains et les neuf nombres qui décrivent toute stratégie d’options.",
+      "chapters": [
+        {
+          "n": 1,
+          "slug": "the-strategy-builder",
+          "title": "Le constructeur de stratégie et le diagramme de gains",
+          "summary": "Avant toute stratégie, vous devez lire un diagramme de gains. Découvrez ce que montre la courbe, la ligne orange à l'expiration par rapport à la ligne bleue T+0, les bandes sigma et comment le générateur de stratégie de OpenAlgo les tire de vos jambes sur des données réelles NIFTY.",
+          "learn": [
+            "Ce que montre un diagramme de gains",
+            "La courbe à l’expiration vs la courbe T+0",
+            "Zones de profits et de pertes",
+            "Jambes : les éléments d’une stratégie",
+            "Les bandes sigma et la ligne spot",
+            "Lire un exemple réel"
+          ],
+          "tags": [
+            "Fondations"
+          ]
+        },
+        {
+          "n": 2,
+          "slug": "reading-payoffs",
+          "title": "Les neuf chiffres : profit maximum, POP, marge et plus encore",
+          "summary": "Le constructeur affiche neuf mesures pour chaque stratégie. Apprenez à les lire tous : le point mort, le profit et la perte maximum, la probabilité de profit, le risque de récompense, le crédit ou le débit net, la prime estimée, le total P&L et la marge bloquée par la transaction.",
+          "learn": [
+            "Points morts",
+            "Profit maximum et perte maximale",
+            "Probabilité de profit (POP)",
+            "Risquer pour récompenser",
+            "Crédit net vs débit net",
+            "Prime et marge estimées"
+          ],
+          "tags": [
+            "Fondations"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "B",
+      "name": "Stratégies haussières",
+      "desc": "Les neuf structures haussières du constructeur, d'un seul appel au ratio et aux transactions papillon.",
+      "chapters": [
+        {
+          "n": 3,
+          "slug": "long-call-short-put",
+          "title": "Achat long et vente courte",
+          "summary": "Les deux transactions haussières sur une seule jambe. Apprenez le long call (risque limité, hausse illimitée) et le short put (collecte de prime, gros inconvénient), les deux extrémités du spectre haussier, sur des gains réels NIFTY.",
+          "learn": [
+            "Le long appel",
+            "Risque limité, potentiel de hausse illimité",
+            "Le short put",
+            "Encaissement des primes, risque élevé",
+            "Acheteur vs vendeur optimiste",
+            "Lire les vrais gains"
+          ],
+          "tags": [
+            "Haussier"
+          ]
+        },
+        {
+          "n": 4,
+          "slug": "bull-call-spread",
+          "title": "Le spread d’achat haussier",
+          "summary": "Une transaction légèrement haussière avec un coût et un profit plafonnés. Découvrez comment acheter un call et vendre un call plus élevé permet d'être haussier à moindre coût et avec un risque défini, avec les véritables métriques NIFTY.",
+          "learn": [
+            "Une vision légèrement haussière",
+            "Achetez un call, vendez un call plus élevé",
+            "Coût plafonné et profit plafonné",
+            "Le seuil de rentabilité",
+            "Quand le préférer à un long appel",
+            "Lire le vrai gain"
+          ],
+          "tags": [
+            "Haussier"
+          ]
+        },
+        {
+          "n": 5,
+          "slug": "bull-put-spread",
+          "title": "Le spread du marché haussier",
+          "summary": "Une transaction haussière qui vous rapporte un crédit d'avance. Découvrez comment la vente d'un put et l'achat d'un put inférieur génèrent une prime tout en plafonnant le risque, et comment cela profite si NIFTY ne baisse tout simplement pas.",
+          "learn": [
+            "Une vision haussière de la collecte de primes",
+            "Vendre un put, acheter un put inférieur",
+            "Le crédit net",
+            "Perte maximale définie",
+            "Probabilité de profit",
+            "Lire le vrai gain"
+          ],
+          "tags": [
+            "Haussier"
+          ]
+        },
+        {
+          "n": 6,
+          "slug": "bull-ratio-synthetic",
+          "title": "Ratio Back Spread, Synthétique et Range Forward",
+          "summary": "Trois autres formes haussières. Apprenez le back spread du ratio d'achat (hausse explosive et bon marché), le futur synthétique long (appels et options de vente qui imitent un futur) et le range forward, avec leurs gains réels et les risques à surveiller.",
+          "learn": [
+            "Le back spread du taux d’appel",
+            "Pourquoi cela peut être une opération de crédit",
+            "Le long avenir synthétique",
+            "Pourquoi cela équivaut à un avenir",
+            "Le collier range forward",
+            "Lire les vrais gains"
+          ],
+          "tags": [
+            "Haussier"
+          ]
+        },
+        {
+          "n": 7,
+          "slug": "bullish-butterfly-condor",
+          "title": "Papillon haussier et Condor haussier",
+          "summary": "Des moyens à risque défini pour cibler une zone haussière spécifique. Apprenez le papillon haussier et le condor haussier, les structures d'appel général qui paient le plus si NIFTY dérive jusqu'à un niveau choisi, avec les métriques.",
+          "learn": [
+            "Une vision haussière ciblée",
+            "Le papillon haussier",
+            "Le condor haussier",
+            "Bon marché, récompense élevée par rapport au risque",
+            "Pourquoi le POP est faible",
+            "Lire les vrais gains"
+          ],
+          "tags": [
+            "Haussier"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "C",
+      "name": "Stratégies baissières",
+      "desc": "Les neuf structures baissières, l’image miroir de la famille haussière.",
+      "chapters": [
+        {
+          "n": 8,
+          "slug": "long-put-short-call",
+          "title": "Put long et call court",
+          "summary": "Les deux trades baissiers sur une seule jambe. Apprenez le put long (risque limité, profit à la baisse important) et le call short (collecte de prime, risque illimité), les deux extrémités du spectre baissier, sur des gains réels NIFTY.",
+          "learn": [
+            "Le long put",
+            "Risque limité, profit important en cas de chute",
+            "Le court appel",
+            "Collecte des primes, risque illimité",
+            "Acheteur vs vendeur baissier",
+            "Lire les vrais gains"
+          ],
+          "tags": [
+            "Baissier"
+          ]
+        },
+        {
+          "n": 9,
+          "slug": "bear-call-spread",
+          "title": "Le spread d’appel à l’ours",
+          "summary": "Une opération de crédit baissière. Découvrez comment la vente d'un call et l'achat d'un call plus élevé génèrent une prime avec un risque défini, et profitent si NIFTY reste en dessous du prix d'exercice court, avec les métriques.",
+          "learn": [
+            "Une vision baissière et axée sur la collecte de primes",
+            "Vendez un call, achetez un call plus élevé",
+            "Le crédit net",
+            "Perte maximale définie",
+            "Bénéficiez si le prix reste bas",
+            "Lire le vrai gain"
+          ],
+          "tags": [
+            "Baissier"
+          ]
+        },
+        {
+          "n": 10,
+          "slug": "bear-put-spread",
+          "title": "Le spread du Bear Put",
+          "summary": "Un commerce baissier à risque défini. Découvrez comment l'achat d'un put et la vente d'un put inférieur constituent un moyen moins coûteux de profiter d'une baisse, avec des profits et des pertes plafonnés, sur des données réelles NIFTY.",
+          "learn": [
+            "Une vision baissière",
+            "Acheter un put, vendre un put inférieur",
+            "Coût plafonné et profit plafonné",
+            "Le seuil de rentabilité",
+            "Quand le préférer à un put long",
+            "Lire le vrai gain"
+          ],
+          "tags": [
+            "Baissier"
+          ]
+        },
+        {
+          "n": 11,
+          "slug": "bear-ratio-synthetic",
+          "title": "Put Ratio Back Spread, Synthétique et Inversion du Risque",
+          "summary": "Trois autres formes baissières. Apprenez le spread du put ratio (bon marché, baisse explosive), le future synthétique court et le retournement de risque, avec leurs gains réels et les risques à respecter.",
+          "learn": [
+            "Le ratio de put back spread",
+            "Le futur synthétique court",
+            "Pourquoi cela équivaut à un avenir court",
+            "Le renversement du risque",
+            "Là où se cache le risque illimité",
+            "Lire les vrais gains"
+          ],
+          "tags": [
+            "Baissier"
+          ]
+        },
+        {
+          "n": 12,
+          "slug": "bearish-butterfly-condor",
+          "title": "Papillon baissier et condor baissier",
+          "summary": "Des moyens à risque défini pour cibler une zone baissière spécifique. Apprenez le papillon baissier et le condor baissier, les structures à tout prix qui paient le plus si NIFTY descend jusqu'à un niveau choisi.",
+          "learn": [
+            "Une vision baissière ciblée",
+            "Le papillon baissier",
+            "Le condor baissier",
+            "Bon marché, récompense élevée par rapport au risque",
+            "Pourquoi le POP est faible",
+            "Lire les vrais gains"
+          ],
+          "tags": [
+            "Baissier"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "D",
+      "name": "Stratégies de volatilité",
+      "desc": "Parier sur un grand mouvement, ou sur le calme, plutôt que sur la direction.",
+      "chapters": [
+        {
+          "n": 13,
+          "slug": "long-straddle-strangle",
+          "title": "Long Straddle et Strangle : parier sur un grand coup",
+          "summary": "Parfois, vous vous attendez à un grand mouvement, mais pas dans quelle direction. Apprenez le long straddle et l'étranglement, l'achat d'un call et d'un put, les deux seuils de rentabilité et la décroissance temporelle qui vous combat, avec de véritables métriques NIFTY.",
+          "learn": [
+            "Une vue non directionnelle à grands mouvements",
+            "Le long chevauchement",
+            "L'étranglement long le moins cher",
+            "Deux points morts",
+            "Le temps dépérit en tant qu'ennemi",
+            "Lire les vrais gains"
+          ],
+          "tags": [
+            "Volatilité"
+          ]
+        },
+        {
+          "n": 14,
+          "slug": "short-straddle-strangle",
+          "title": "Short Straddle et Strangle : parier sur le calme",
+          "summary": "Le pari inverse, ce prix reste bloqué. Apprenez le short straddle et l'étranglement, en vendant les deux côtés pour percevoir la prime, la large zone de profit, la grande marge et le risque illimité qui exige le respect.",
+          "learn": [
+            "Une vue limitée à la plage",
+            "Le court écart",
+            "L'étranglement court et plus large",
+            "Prime de perception",
+            "Risque illimité et marge importante",
+            "Lire les vrais gains"
+          ],
+          "tags": [
+            "Volatilité"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "E",
+      "name": "Gamme et revenu",
+      "desc": "La famille du fer, les papillons, les ratios et le lézard de jade : des formes de revenus à risque défini.",
+      "chapters": [
+        {
+          "n": 15,
+          "slug": "iron-condor",
+          "title": "Le Condor de Fer",
+          "summary": "La stratégie de revenus la plus populaire. Découvrez comment quatre pattes construisent une large zone de profit qui vous rapporte si NIFTY reste dans une fourchette, les versions longue et courte, le risque défini aux deux extrémités, avec les métriques.",
+          "learn": [
+            "Un jeu de range à risque défini",
+            "Quatre pattes expliquées simplement",
+            "Le large plateau de profit",
+            "Condor de fer long ou court",
+            "Deux points morts et le POP",
+            "Lire le vrai gain"
+          ],
+          "tags": [
+            "Gamme"
+          ]
+        },
+        {
+          "n": 16,
+          "slug": "iron-fly-butterfly",
+          "title": "La mouche de fer et le papillon",
+          "summary": "Cousins ​​​​du condor plus serrés et plus rémunérateurs. Apprenez le fly de fer (long et court) et le papillon call and put, qui rapportent le plus si NIFTY réussit une frappe, avec de véritables formes de gains.",
+          "learn": [
+            "La mouche de fer",
+            "Mouche de fer longue ou courte",
+            "L'appel et la mise du papillon",
+            "Un pari parfait",
+            "Récompense plus élevée, zone plus étroite",
+            "Lire les vrais gains"
+          ],
+          "tags": [
+            "Gamme"
+          ]
+        },
+        {
+          "n": 17,
+          "slug": "ratio-and-backspreads",
+          "title": "Spreads des ratios d’achat et de vente",
+          "summary": "Stratégies avec un nombre inégal de jambes. Apprenez le spread du ratio d'appel et le spread du ratio de vente, où la vente d'options supplémentaires finance la transaction mais ouvre un risque illimité d'un côté, avec les mesures.",
+          "learn": [
+            "Jambes inégales",
+            "Le spread du taux d’appel",
+            "Le spread du ratio de put",
+            "Où se cache le risque nu",
+            "Versions crédit ou débit",
+            "Lire les vrais gains"
+          ],
+          "tags": [
+            "Gamme"
+          ]
+        },
+        {
+          "n": 18,
+          "slug": "jade-lizard",
+          "title": "Le lézard de jade et le lézard de jade inversé",
+          "summary": "Des structures de crédit soignées qui éliminent le risque d’un côté. Apprenez le lézard de jade (pas de risque à la hausse) et le lézard de jade inversé (pas de risque à la baisse), et comment le crédit efface une queue, avec de vrais gains.",
+          "learn": [
+            "La structure du lézard de jade",
+            "Aucun risque à la hausse",
+            "Le lézard de jade inversé",
+            "Aucun risque à la baisse",
+            "Pourquoi le crédit est important",
+            "Lire les vrais gains"
+          ],
+          "tags": [
+            "Gamme"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "F",
+      "name": "Avancé et temps",
+      "desc": "De larges structures multi-pattes, des calendriers qui échangent le temps et des synthétiques.",
+      "chapters": [
+        {
+          "n": 19,
+          "slug": "advanced-multileg",
+          "title": "Batman, Double Mouche et Double Condor",
+          "summary": "Les grandes structures multi-pattes. Apprenez le batman (deux ailes à ratio), le double fly et le double condor, qui placent deux structures de range côte à côte pour une zone de profit plus large ou à deux sommets, avec les métriques.",
+          "learn": [
+            "Structures empilables",
+            "Le Batman",
+            "La double mouche",
+            "Le double condor",
+            "Deux pics de bénéfices",
+            "Lire les vrais gains"
+          ],
+          "tags": [
+            "Avancé"
+          ]
+        },
+        {
+          "n": 20,
+          "slug": "calendars",
+          "title": "Calendrier et spreads diagonaux : heure de négociation",
+          "summary": "Stratégies qui vendent une échéance proche et achètent une échéance lointaine. Apprenez l'appel et le calendrier et la diagonale, comment le segment du mois précédent conserve sa valeur temporelle pour former une tente et comment ils profitent de la dégradation du temps.",
+          "learn": [
+            "Vendre près, acheter loin",
+            "Le calendrier des appels et des mises",
+            "La propagation diagonale",
+            "La forme de la tente du calendrier",
+            "Profiter de la dégradation du temps",
+            "Lire les vrais gains"
+          ],
+          "tags": [
+            "Avancé"
+          ]
+        },
+        {
+          "n": 21,
+          "slug": "synthetic-and-covered",
+          "title": "Les synthétiques et l’option d’achat couverte",
+          "summary": "Les options peuvent copier un futur et s'associer à un futur. Apprenez le futur synthétique long et court (un call plus un put qui imite un future) et le call couvert (une détention plus un call vendu pour un revenu).",
+          "learn": [
+            "Le long avenir synthétique",
+            "Le futur synthétique court",
+            "Pourquoi ils sont synonymes d'avenir",
+            "L'appel couvert",
+            "Gagner un revenu sur une exploitation",
+            "La casquette à l'envers"
+          ],
+          "tags": [
+            "Avancé"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "G",
+      "name": "Financement, ajustement et choix",
+      "desc": "Marge et collatéral, défendre un trade testé et choisir la bonne stratégie.",
+      "chapters": [
+        {
+          "n": 22,
+          "slug": "collateral-and-margin",
+          "title": "Marge et garantie pour F&O",
+          "summary": "La vente d’options et le trading de contrats à terme bloquent la marge, mais vous n’avez pas toujours besoin de liquidités. Découvrez comment la marge est construite à partir de SPAN et de l'exposition, comment le calculateur de marge OpenAlgo l'affiche et quels actifs vous pouvez donner en garantie au lieu d'espèces.",
+          "learn": [
+            "Pourquoi vendre a besoin de marge",
+            "SPAN et marge d’exposition",
+            "Le calculateur de marge OpenAlgo",
+            "Mettre en gage des garanties plutôt que des espèces",
+            "Ce qui compte comme garantie F&O",
+            "Coupes de cheveux et composante monétaire"
+          ],
+          "tags": [
+            "Gestion"
+          ]
+        },
+        {
+          "n": 23,
+          "slug": "pledging-for-margin",
+          "title": "S'engager pour la marge, intelligemment",
+          "summary": "Le nantissement vous permet de négocier des actifs que vous possédez déjà sans les vendre. Découvrez comment la décote détermine le montant de la marge que vous obtenez, pourquoi la garantie liquide surpasse les actions volatiles, le coût des intérêts en cas de violation de la composante en espèces, l'astuce des appels couverts et le risque d'appel de marge.",
+          "learn": [
+            "Comment fonctionne la promesse de don",
+            "Coupes de cheveux et quelle marge vous obtenez",
+            "Garanties en espèces ou non en espèces",
+            "Le coût des intérêts en espèces",
+            "Première astuce : préférer les garanties liquides",
+            "Deuxième astuce : l'appel couvert",
+            "Risque d’appel de marge et de vente forcée"
+          ],
+          "tags": [
+            "Gestion"
+          ]
+        },
+        {
+          "n": 24,
+          "slug": "margin-penalties",
+          "title": "Marges et pénalités de marge",
+          "summary": "La bourse vérifie votre marge à des moments aléatoires de la journée, et tout déficit vous coûte une pénalité. Apprenez la règle de marge minimale, les contrôles de marge maximale, les pénalités et les situations quotidiennes qui les déclenchent discrètement.",
+          "learn": [
+            "La règle de la marge minimale",
+            "Marge maximale et contrôles aléatoires",
+            "Les dalles de pénalité",
+            "Lacunes initiales et non initiales",
+            "Pourquoi une vente à découvert ou une non-couverture augmente la marge",
+            "Garder un tampon de marge"
+          ],
+          "tags": [
+            "Gestion"
+          ]
+        },
+        {
+          "n": 25,
+          "slug": "options-adjustments",
+          "title": "Ajustements d'options : défendre une transaction testée",
+          "summary": "Une stratégie est rarement laissée intacte jusqu’à son expiration. Apprenez à ajuster une position lorsque le prix la teste : lancer un strike vers le haut, vers le bas ou à l'extérieur dans le temps, convertir un spread, ajouter une jambe de couverture et le workflow OpenAlgo pour clôturer et ressaisir les jambes.",
+          "learn": [
+            "Pourquoi s'ajuster du tout",
+            "Déploiement dans le temps",
+            "Lancer une frappe vers le haut ou vers le bas",
+            "Conversion vers une structure plus large",
+            "Ajout d'une jambe défensive",
+            "Quand s’ajuster ou sortir"
+          ],
+          "tags": [
+            "Gestion"
+          ]
+        },
+        {
+          "n": 26,
+          "slug": "position-greeks-and-iv",
+          "title": "La position des Grecs et le régime de volatilité",
+          "summary": "Un spread est plus que son image de gain. Il comporte un delta, un gamma, un thêta et un vega nets, et vit dans un régime de volatilité. Apprenez à lire les Grecs agrégés d'une position entière, jugez si la volatilité implicite est riche ou bon marché avec le rang IV, lisez l'asymétrie et la structure des termes, et choisissez les structures de crédit, de débit ou de calendrier qui correspondent au régime dans lequel vous vous trouvez réellement.",
+          "learn": [
+            "Position globale delta et gamma",
+            "Net thêta et véga",
+            "Rang et percentile IV",
+            "Lire le biais",
+            "La structure des termes de volatilité",
+            "Crédit, débit ou calendrier par régime"
+          ],
+          "tags": [
+            "Gestion"
+          ]
+        },
+        {
+          "n": 27,
+          "slug": "choosing-and-managing",
+          "title": "Choisir une stratégie et la gérer",
+          "summary": "Une stratégie est aussi bonne que la vision qui la sous-tend. Apprenez à faire correspondre une stratégie à des vues haussières, baissières, neutres ou importantes à l'aide des métriques, à dimensionner la position pour la survie et à gérer ou quitter lorsque vous vous trompez.",
+          "learn": [
+            "Stratégie de correspondance à afficher",
+            "Utiliser POP et risquer pour récompenser",
+            "Le risque défini d’abord pour les débutants",
+            "Dimensionnement des postes",
+            "Quand prendre des bénéfices",
+            "Savoir quand s'éloigner"
+          ],
+          "tags": [
+            "Gestion"
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,739 @@
+{
+  "course": "fundamentals",
+  "locale": "es",
+  "parts": [
+    {
+      "id": "1",
+      "name": "Primeros pasos con Python",
+      "desc": "Desde cero hasta su primer script: instale Python, conozca sus herramientas y aprenda los conceptos básicos absolutos.",
+      "chapters": [
+        {
+          "n": 1,
+          "slug": "why-python-for-finance",
+          "title": "Por qué Python para Finanzas",
+          "summary": "Por qué las mesas de operaciones del mundo funcionan con Python y la sorprendente razón por la que un lenguaje \"lento\" es en realidad rápido cuando importa.",
+          "learn": [
+            "Por qué los traders aprenden Python",
+            "¿Es Python realmente lento?",
+            "Python como pegamento: núcleos C y Rust",
+            "NumPy vs Python puro (30x)",
+            "¿Quién usa Python en la calle?",
+            "Cómo funciona este curso"
+          ],
+          "tags": [
+            "PY"
+          ]
+        },
+        {
+          "n": 2,
+          "slug": "installing-python",
+          "title": "Instalación de Python y pip",
+          "summary": "Obtenga Python en su computadora de manera sencilla y conozca pip, la herramienta que instala todo lo demás que usará.",
+          "learn": [
+            "Descargue e instale Python",
+            "Notas de Windows vs Mac",
+            "Comprobando tu versión",
+            "que pipa es",
+            "Tu primer comando de terminal",
+            "Evitar trampas de configuración comunes"
+          ],
+          "tags": [
+            "PY"
+          ]
+        },
+        {
+          "n": 3,
+          "slug": "vscode-and-jupyter",
+          "title": "Su kit de herramientas: Código VS y Jupyter",
+          "summary": "Configure un lugar limpio y amigable para escribir código y conozca a Jupyter, el equipo que a los comerciantes de portátiles les encanta hurgar en los datos.",
+          "learn": [
+            "Instalación del código VS",
+            "Ejecutando su primer archivo .py",
+            "Qué es un cuaderno Jupyter",
+            "Celdas y salida interactiva",
+            "Editor vs cuaderno",
+            "Una configuración cómoda"
+          ],
+          "tags": [
+            "PY"
+          ]
+        },
+        {
+          "n": 4,
+          "slug": "variables-and-comments",
+          "title": "Variables y comentarios",
+          "summary": "Guarde un precio, un símbolo, una cantidad y deje notas para su yo futuro. El humilde componente básico de cada programa.",
+          "learn": [
+            "que es una variable",
+            "Almacenamiento de precios y símbolos",
+            "Buenos nombres de variables",
+            "Reasignación de valores",
+            "Escribir comentarios",
+            "Leer código en voz alta"
+          ],
+          "tags": [
+            "PY"
+          ]
+        },
+        {
+          "n": 5,
+          "slug": "numbers-and-types",
+          "title": "Números y tipos de datos",
+          "summary": "Enteros, decimales, texto y verdadero/false: los tipos básicos de datos y cómo convertir uno en otro.",
+          "learn": [
+            "int, flotador, str, bool",
+            "La función type()",
+            "Números enteros versus decimales",
+            "Conversión entre tipos",
+            "Redondear el dinero correctamente",
+            "Valores de verdad"
+          ],
+          "tags": [
+            "PY"
+          ]
+        },
+        {
+          "n": 6,
+          "slug": "operators",
+          "title": "Operadores y Matemáticas P&L",
+          "summary": "Suma, resta, compara y combina usando Python como calculadora para calcular ganancias, pérdidas y movimientos porcentuales.",
+          "learn": [
+            "Operadores aritméticos",
+            "Calcular ganancias y pérdidas",
+            "Cambio porcentual",
+            "Operadores de comparación",
+            "Lógico y/o/no",
+            "Prioridad del operador"
+          ],
+          "tags": [
+            "PY"
+          ]
+        },
+        {
+          "n": 7,
+          "slug": "input-output-fstrings",
+          "title": "Entrada, salida y cadenas f",
+          "summary": "Imprima los resultados claramente y lea los datos ingresados, y dé formato a rupias, dólares y porcentajes para que realmente se vean bien.",
+          "learn": [
+            "La función print()",
+            "Leyendo input()",
+            "cuerdas f explicadas",
+            "Formatear dinero y %",
+            "Redondeo de la producción",
+            "Salida multilínea"
+          ],
+          "tags": [
+            "PY"
+          ]
+        },
+        {
+          "n": 8,
+          "slug": "strings",
+          "title": "Trabajar con cuerdas",
+          "summary": "Los símbolos, tickers y fechas son todos texto. Córtelos, límpielos y vuelva a darles forma con el kit de herramientas para cuerdas de Python.",
+          "learn": [
+            "Cadenas como texto",
+            "Indexación y corte",
+            "Superior, inferior y tira",
+            "dividir y unirse",
+            "Comprobando y reemplazando",
+            "Construyendo cadenas de teletipo"
+          ],
+          "tags": [
+            "PY",
+            "NSE"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "2",
+      "name": "Programación central",
+      "desc": "Los componentes básicos de los que está hecho cada programa: estructuras de datos, lógica, bucles y funciones.",
+      "chapters": [
+        {
+          "n": 9,
+          "slug": "lists",
+          "title": "Listas: su primera estructura de datos",
+          "summary": "Una lista de seguimiento, una semana de precios de cierre, una canasta de acciones: las listas contienen una serie ordenada que puede crecer, dividir y ordenar.",
+          "learn": [
+            "hacer una lista",
+            "Indexación y corte",
+            "Agregar y eliminar",
+            "Cortar una serie de precios",
+            "Clasificación y reversión",
+            "Métodos de lista útiles"
+          ],
+          "tags": [
+            "PY",
+            "NSE"
+          ]
+        },
+        {
+          "n": 10,
+          "slug": "tuples",
+          "title": "tuplas",
+          "summary": "Se corrigieron pequeños grupos de valores (una barra OHLC, una fila, un par) que no desea cambiar por accidente.",
+          "learn": [
+            "Tupla vs lista",
+            "Por qué ayuda la inmutabilidad",
+            "Valores de desembalaje",
+            "Una barra OHLC como tupla",
+            "Devolver múltiples valores",
+            "Cuando usar cada"
+          ],
+          "tags": [
+            "PY"
+          ]
+        },
+        {
+          "n": 11,
+          "slug": "dictionaries",
+          "title": "Diccionarios",
+          "summary": "Busque las cosas por nombre, no por posición. Una cotización en vivo (símbolo, precio, volumen) es un diccionario, la estructura más útil en el código financiero.",
+          "learn": [
+            "Pares clave-valor",
+            "Una cita como dictado",
+            "Obtener y configurar valores",
+            "Recorriendo un dictado",
+            "Diccionarios anidados",
+            "get() y valores predeterminados"
+          ],
+          "tags": [
+            "PY",
+            "NSE"
+          ]
+        },
+        {
+          "n": 12,
+          "slug": "sets",
+          "title": "Conjuntos",
+          "summary": "Una bolsa de cosas únicas. Elimine los símbolos duplicados, pruebe la membresía al instante y compare dos listas de vigilancia con matemáticas establecidas.",
+          "learn": [
+            "que conjunto es",
+            "Eliminar duplicados",
+            "Pruebas rápidas de membresía",
+            "Unión e intersección",
+            "Superposición de dos listas de vigilancia",
+            "Conjunto vs lista"
+          ],
+          "tags": [
+            "PY"
+          ]
+        },
+        {
+          "n": 13,
+          "slug": "conditionals",
+          "title": "Tomando Decisiones: if/elif/else",
+          "summary": "Enseñe a su código a elegir (comprar, vender o mantener) con condiciones y la lógica booleana debajo de ellas.",
+          "learn": [
+            "si/elif/si no",
+            "condiciones booleanas",
+            "Combinando con y/o",
+            "Una simple regla de compra/venta",
+            "Condiciones anidadas",
+            "Cláusulas de guardia"
+          ],
+          "tags": [
+            "PY"
+          ]
+        },
+        {
+          "n": 14,
+          "slug": "loops",
+          "title": "Bucles: por y mientras",
+          "summary": "Haga algo con cada precio de una serie sin escribirlo cien veces: el corazón de todo trabajo de datos.",
+          "learn": [
+            "El bucle for",
+            "Recorriendo los precios",
+            "range() y enumerar",
+            "mientras bucles",
+            "romper y continuar",
+            "Acumulando un total"
+          ],
+          "tags": [
+            "PY",
+            "NSE"
+          ]
+        },
+        {
+          "n": 15,
+          "slug": "comprehensions",
+          "title": "Comprensiones",
+          "summary": "El elegante one-liner Python que crea una lista nueva o un dictado a partir de una anterior: lo verá en todas partes.",
+          "learn": [
+            "Lista por comprensión",
+            "Filtrando con si",
+            "Transformando precios",
+            "Dictar comprensiones",
+            "Legibilidad versus inteligencia",
+            "Patrones comunes"
+          ],
+          "tags": [
+            "PY"
+          ]
+        },
+        {
+          "n": 16,
+          "slug": "functions",
+          "title": "Funciones",
+          "summary": "Envuelva un cálculo en un nombre y reutilícelo para siempre. Escribe 'percentage_change' una vez, llámalo mil veces.",
+          "learn": [
+            "Definiendo una función",
+            "Argumentos y devolución",
+            "Una función reutilizable P&L",
+            "Argumentos predeterminados",
+            "cadenas de documentos",
+            "Por qué son importantes las funciones"
+          ],
+          "tags": [
+            "PY"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "3",
+      "name": "Bibliotecas, archivos y código robusto",
+      "desc": "Utilice el código de otras personas, lea y escriba archivos, maneje fechas y corrija errores como un profesional.",
+      "chapters": [
+        {
+          "n": 17,
+          "slug": "modules-and-imports",
+          "title": "Módulos e importaciones",
+          "summary": "Python viene con pilas incluidas. Aprenda a importar herramientas listas para usar y divida su propio código en archivos ordenados.",
+          "learn": [
+            "que es un modulo",
+            "importar y desde importar",
+            "Aliado con como",
+            "Los módulos de matemáticas y estadística.",
+            "Tu propio módulo",
+            "Donde mira Python"
+          ],
+          "tags": [
+            "PY"
+          ]
+        },
+        {
+          "n": 18,
+          "slug": "standard-library",
+          "title": "El recorrido estándar por la biblioteca",
+          "summary": "Un recorrido rápido por la caja de herramientas gratuita que se incluye con Python: fechas, matemáticas, aleatoriedad y JSON, no necesita instalación.",
+          "learn": [
+            "conceptos básicos de fecha y hora",
+            "matemáticas y estadística",
+            "aleatorio para simulación",
+            "json dentro y fuera",
+            "el módulo csv",
+            "Pilas incluidas"
+          ],
+          "tags": [
+            "PY"
+          ]
+        },
+        {
+          "n": 19,
+          "slug": "installing-libraries",
+          "title": "Instalación de bibliotecas: pip y venv",
+          "summary": "Vaya más allá de la biblioteca estándar. Instale pandas y amigos con pip y mantenga limpios los proyectos con entornos virtuales.",
+          "learn": [
+            "instalación de pipas",
+            "Encontrar paquetes",
+            "Entornos virtuales",
+            "Por qué es importante venv",
+            "requisitos.txt",
+            "Instalación de pandas y yfinance"
+          ],
+          "tags": [
+            "PY"
+          ]
+        },
+        {
+          "n": 20,
+          "slug": "errors-and-debugging",
+          "title": "Errores y depuración",
+          "summary": "Cada codificador llega al texto rojo. Lea un rastreo con calma, detecte errores con try/except y solucione los errores habituales de los principiantes.",
+          "learn": [
+            "Leyendo un rastreo",
+            "Tipos de errores comunes",
+            "intentar / excepto",
+            "Planteando tus propios errores",
+            "depuración de impresión",
+            "Una mentalidad tranquila de depuración"
+          ],
+          "tags": [
+            "PY"
+          ]
+        },
+        {
+          "n": 21,
+          "slug": "files",
+          "title": "Lectura y escritura de archivos",
+          "summary": "Guarde sus resultados y cargue datos desde el disco: abra archivos de forma segura, lea líneas y escriba un pequeño informe.",
+          "learn": [
+            "Abriendo un archivo",
+            "Leer texto",
+            "el con bloque",
+            "Escribir y adjuntar",
+            "Rutas de archivos",
+            "Guardar un pequeño informe"
+          ],
+          "tags": [
+            "PY"
+          ]
+        },
+        {
+          "n": 22,
+          "slug": "json-data",
+          "title": "Trabajar con JSON",
+          "summary": "JSON es como hablan las API del mercado. Convierta una cadena JSON en un dictado Python y viceversa: el formato que encontrará una y otra vez.",
+          "learn": [
+            "¿Qué es JSON?",
+            "json.cargas y volcados",
+            "JSON <-> dictado",
+            "Datos de mercado anidados",
+            "Leyendo un archivo JSON",
+            "Bonita impresión"
+          ],
+          "tags": [
+            "PY",
+            "NSE"
+          ]
+        },
+        {
+          "n": 23,
+          "slug": "dates-and-times",
+          "title": "Fechas y horarios",
+          "summary": "Los mercados funcionan según un reloj y un calendario. Analiza, formatea y realiza operaciones aritméticas con fechas: sesiones, vencimientos y intervalos.",
+          "learn": [
+            "fecha y fecha hora",
+            "Análisis y formato",
+            "tiempo de ejecución y tiempo de ejecución",
+            "matemáticas delta de tiempo",
+            "Horarios de las sesiones de mercado",
+            "Días laborables y festivos"
+          ],
+          "tags": [
+            "PY"
+          ]
+        },
+        {
+          "n": 24,
+          "slug": "getting-unstuck",
+          "title": "Despegarse",
+          "summary": "El verdadero superpoder: ayudarte a ti mismo. Utilice help(), lea los documentos, busque bien y nunca más se quede atascado.",
+          "learn": [
+            "help() y dir()",
+            "Leer documentación",
+            "Buscando efectivamente",
+            "Leyendo mensajes de error",
+            "Ejemplos mínimos",
+            "haciendo buenas preguntas"
+          ],
+          "tags": [
+            "PY"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "4",
+      "name": "Análisis de datos con NumPy y Pandas",
+      "desc": "Los verdaderos caballos de batalla de las finanzas en Python: matrices rápidas, tablas etiquetadas y gráficos que se comunican.",
+      "chapters": [
+        {
+          "n": 25,
+          "slug": "numpy-basics",
+          "title": "Conceptos básicos de NumPy",
+          "summary": "La matriz rápida que impulsa toda la ciencia de datos y la velocidad 30 veces mayor que la simple Python del Capítulo 1, ahora en tus propias manos.",
+          "learn": [
+            "que es una matriz",
+            "Creando matrices",
+            "Matemáticas vectorizadas",
+            "Estadísticas de matriz (media, estándar)",
+            "La aceleración 30x",
+            "Matrices vs listas"
+          ],
+          "tags": [
+            "PY"
+          ]
+        },
+        {
+          "n": 26,
+          "slug": "pandas-series",
+          "title": "Serie Pandas",
+          "summary": "Una columna de números con etiquetas: una serie de precios con la que puedes hacer cálculos reales y la puerta de entrada a los pandas.",
+          "learn": [
+            "que es una serie",
+            "Índice y valores",
+            "Operaciones vectorizadas",
+            "Rendimientos informáticos",
+            "Métodos prácticos",
+            "Serie de una lista"
+          ],
+          "tags": [
+            "PY",
+            "US"
+          ]
+        },
+        {
+          "n": 27,
+          "slug": "dataframes",
+          "title": "El marco de datos",
+          "summary": "Una hoja de cálculo en Python. La tabla en el centro de cada análisis: filas, columnas y las operaciones que utilizará a diario.",
+          "learn": [
+            "Qué es un marco de datos",
+            "Columnas y filas",
+            "Seleccionando datos",
+            "Filtrar filas",
+            "Agregar columnas",
+            "Inspección rápida"
+          ],
+          "tags": [
+            "US"
+          ]
+        },
+        {
+          "n": 28,
+          "slug": "loading-data",
+          "title": "Cargando datos de mercado",
+          "summary": "Precios reales, en dos líneas. Extraiga acciones US con yfinance y lea un CSV, luego mire antes de saltar con head() y info().",
+          "learn": [
+            "Leyendo un CSV",
+            "Obteniendo con yfinance",
+            "cabeza, cola, información",
+            "describe()",
+            "Establecer un índice",
+            "Guardando en CSV"
+          ],
+          "tags": [
+            "US",
+            "NSE"
+          ]
+        },
+        {
+          "n": 29,
+          "slug": "data-cleaning",
+          "title": "Limpieza de datos",
+          "summary": "Los datos reales son confusos. Maneje los valores faltantes (sí, el NaN que yfinance deja atrás), los tipos incorrectos y los duplicados que arruinan silenciosamente los resultados.",
+          "learn": [
+            "Detectar datos faltantes",
+            "dropna y fillna",
+            "Por qué aparece NaN",
+            "Arreglando tipos de datos",
+            "Eliminar duplicados",
+            "controles de cordura"
+          ],
+          "tags": [
+            "NSE"
+          ]
+        },
+        {
+          "n": 30,
+          "slug": "dates-in-pandas",
+          "title": "Fechas y series horarias",
+          "summary": "Pandas fue creado para series temporales. Utilice un índice de fecha y hora para volver a muestrear las barras diarias en forma semanal y calcular promedios móviles.",
+          "learn": [
+            "El índice de fecha y hora",
+            "Seleccionando por fecha",
+            "Plazos de remuestreo",
+            "ventanas enrollables",
+            "Cambiando para obtener devoluciones",
+            "Errores de las series temporales"
+          ],
+          "tags": [
+            "US"
+          ]
+        },
+        {
+          "n": 31,
+          "slug": "grouping-data",
+          "title": "Agrupación y agregación",
+          "summary": "Responda preguntas reales sobre sus datos (rendimiento promedio por mes, día más alto por acción) con el patrón agrupar por.",
+          "learn": [
+            "Dividir-aplicar-combinar",
+            "conceptos básicos de grupo",
+            "Agregando con agg",
+            "Agrupación por mes",
+            "Múltiples acciones",
+            "Tablas resumen"
+          ],
+          "tags": [
+            "US",
+            "NSE"
+          ]
+        },
+        {
+          "n": 32,
+          "slug": "visualization",
+          "title": "Visualización de datos",
+          "summary": "Un gráfico vale más que mil filas. Dibuje líneas de precios, devuelva histogramas y limpie gráficos marítimos que realmente comuniquen.",
+          "learn": [
+            "conceptos básicos de matplotlib",
+            "Trazar una línea de precios",
+            "Histogramas de retornos",
+            "Estilismo con seaborn",
+            "Etiquetas y títulos",
+            "guardar una figura"
+          ],
+          "tags": [
+            "US",
+            "NSE"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "5",
+      "name": "Python para los Mercados",
+      "desc": "Junte todo con datos reales del mercado indio y US: OHLCV, cotizaciones en vivo, rentabilidades y señales.",
+      "chapters": [
+        {
+          "n": 33,
+          "slug": "market-landscape",
+          "title": "El panorama del mercado",
+          "summary": "Un mapa visual de dónde provienen estos datos: intercambios NSE y BSE, US, índices y los segmentos que encontrará.",
+          "learn": [
+            "NSE, BSE y SEBI",
+            "Intercambios US",
+            "Efectivo versus derivados",
+            "Índices principales",
+            "Demat y liquidación, brevemente",
+            "De dónde provienen los datos"
+          ],
+          "tags": [
+            "NSE",
+            "US",
+            "INDEX"
+          ]
+        },
+        {
+          "n": 34,
+          "slug": "symbols-and-tickers",
+          "title": "Símbolos, tickers y tamaños de lote",
+          "summary": "RELIANCE, RELIANCE.NS o AAPL? Conozca los sistemas de símbolos de la India y el US, además de los tamaños de los lotes y lo que realmente es un ticker.",
+          "learn": [
+            "Símbolos NSE",
+            "Sufijos .NS / .BO de Yahoo",
+            "US teletipos",
+            "Símbolos de índice",
+            "Conceptos básicos sobre el tamaño del lote",
+            "Mapeo de símbolos entre fuentes"
+          ],
+          "tags": [
+            "NSE",
+            "US"
+          ]
+        },
+        {
+          "n": 35,
+          "slug": "money-timings-holidays",
+          "title": "Dinero, horarios y días festivos",
+          "summary": "Lakhs frente a millones, 9:15 IST frente a 9:30 ET: las unidades y relojes cotidianos de los mercados indio y US, expresados ​​en código.",
+          "learn": [
+            "Lakh y crore frente a millones",
+            "Formatear dinero indio",
+            "Horario de mercado IST vs ET",
+            "Zonas horarias en Python",
+            "Días festivos comerciales",
+            "Sesiones y preapertura"
+          ],
+          "tags": [
+            "NSE",
+            "US"
+          ]
+        },
+        {
+          "n": 36,
+          "slug": "ohlcv-data",
+          "title": "Trabajar con datos OHLCV",
+          "summary": "Apertura, máximo, mínimo, cierre, volumen: los cinco números detrás de cada vela. Calcule el rango, el cuerpo y los rendimientos de una barra real.",
+          "learn": [
+            "Qué significa OHLCV",
+            "Una vela, decodificada",
+            "Rango diario y cuerpo",
+            "Rendimientos informáticos",
+            "Días altos versus días bajos",
+            "De los bares al conocimiento"
+          ],
+          "tags": [
+            "NSE",
+            "US"
+          ]
+        },
+        {
+          "n": 37,
+          "slug": "fetching-data",
+          "title": "Obteniendo datos a través de HTTP",
+          "summary": "Cómo los programas hablan con los mercados. Utilice la biblioteca de solicitudes para acceder al REST API de OpenAlgo y leer el JSON que regresa, en vivo, desde la India.",
+          "learn": [
+            "Qué es un API",
+            "Solicitud y respuesta",
+            "La biblioteca de solicitudes",
+            "Llamando a OpenAlgo REST",
+            "Leyendo el JSON",
+            "Errores de manejo"
+          ],
+          "tags": [
+            "NSE",
+            "LIVE"
+          ]
+        },
+        {
+          "n": 38,
+          "slug": "quotes-and-live",
+          "title": "Cotizaciones en vivo y datos retrasados",
+          "summary": "La diferencia entre un precio en vivo y el cierre de ayer: obtenga cotizaciones indias en vivo de OpenAlgo y datos retrasados ​​de US de yfinance, uno al lado del otro.",
+          "learn": [
+            "Datos en vivo vs diferidos",
+            "En vivo LTP desde OpenAlgo",
+            "US cotizaciones de yfinance",
+            "Por qué es importante la brecha",
+            "Campos de cotización explicados",
+            "Construyendo un tablero de cotizaciones"
+          ],
+          "tags": [
+            "NSE",
+            "LIVE",
+            "US"
+          ]
+        },
+        {
+          "n": 39,
+          "slug": "websockets-concept",
+          "title": "Qué es un WebSocket",
+          "summary": "Por qué los datos comerciales en vivo se transmiten a usted en lugar de ser solicitados. Una mirada sencilla a WebSockets: el concepto, no requiere configuración.",
+          "learn": [
+            "Solicitud/response frente a transmisión",
+            "¿Qué es un WebSocket?",
+            "¿Por qué fluyen las garrapatas?",
+            "Un mensaje de suscripción",
+            "Cuando necesitarías uno",
+            "SDK frente a conector sin formato"
+          ],
+          "tags": [
+            "LIVE"
+          ]
+        },
+        {
+          "n": 40,
+          "slug": "returns-signals-performance",
+          "title": "Devoluciones, señales y rendimiento",
+          "summary": "Todo lo que ha aprendido, en un gráfico: convierta los precios en rendimientos, un cruce de media móvil en una señal y júzguelo con la tasa de ganancias y la reducción. Entonces: adónde ir después.",
+          "learn": [
+            "Precios a devoluciones",
+            "Una señal de media móvil",
+            "Cruces en pandas",
+            "Tasa de ganancia y movimiento promedio",
+            "Reducción máxima",
+            "A dónde ir desde aquí"
+          ],
+          "tags": [
+            "US",
+            "NSE"
+          ]
+        }
+      ]
+    }
+  ]
+}

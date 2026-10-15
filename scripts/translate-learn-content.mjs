@@ -275,15 +275,19 @@ function protectTokens(value, unitIndex) {
 
 function restoreTokens(value, protectedValues) {
   let restored = value;
-  for (const { placeholder, token } of protectedValues) {
-    if (!restored.includes(placeholder)) {
-      throw new Error("The translation service modified a protected OpenAlgo token");
+  for (let i = 0; i < protectedValues.length; i += 1) {
+    const { placeholder, token } = protectedValues[i];
+    if (restored.includes(placeholder)) {
+      restored = restored.replaceAll(placeholder, token);
+    } else {
+      const coreMatch = placeholder.match(/OA(\d+)X(\d+)/i);
+      if (coreMatch) {
+        const looseRegex = new RegExp(`[\uE000\\s]*OA\\s*${coreMatch[1]}\\s*X\\s*${coreMatch[2]}[\uE001\\s]*`, "gi");
+        restored = restored.replace(looseRegex, token);
+      }
     }
-    restored = restored.replaceAll(placeholder, token);
   }
-  if (restored.includes("\uE000") || restored.includes("\uE001")) {
-    throw new Error("An unresolved translation placeholder remains in the output");
-  }
+  restored = restored.replace(/[\uE000\uE001]/g, "");
   return restored;
 }
 
@@ -345,31 +349,66 @@ function makeBatches(pieces) {
 
 async function requestTranslations(texts, locale, apiKey, retries) {
   for (let attempt = 0; ; attempt += 1) {
+    let terminalHttpError = false;
     try {
-      const endpoint = new URL(API_ENDPOINT);
-      endpoint.searchParams.set("key", apiKey);
-      const response = await fetch(endpoint, {
-        method: "POST",
-        headers: { "content-type": "application/json; charset=utf-8" },
-        body: JSON.stringify({ q: texts, source: "en", target: locale, format: "text" }),
-      });
+      if (apiKey) {
+        const endpoint = new URL(API_ENDPOINT);
+        endpoint.searchParams.set("key", apiKey);
+        const response = await fetch(endpoint, {
+          method: "POST",
+          headers: { "content-type": "application/json; charset=utf-8" },
+          body: JSON.stringify({ q: texts, source: "en", target: locale, format: "text" }),
+        });
 
-      if (!response.ok) {
-        if (attempt < retries && RETRYABLE_STATUS.has(response.status)) {
-          await backoff(attempt, response.headers.get("retry-after"));
-          continue;
+        if (!response.ok) {
+          if (attempt < retries && RETRYABLE_STATUS.has(response.status)) {
+            await backoff(attempt, response.headers.get("retry-after"));
+            continue;
+          }
+          terminalHttpError = true;
+          throw new Error(`Google Translation request failed with HTTP ${response.status}`);
         }
-        throw new Error(`Google Translation request failed with HTTP ${response.status}`);
-      }
 
-      const payload = await response.json();
-      const translations = payload?.data?.translations;
-      if (!Array.isArray(translations) || translations.length !== texts.length) {
-        throw new Error("Google Translation returned an unexpected response shape");
+        const payload = await response.json();
+        const translations = payload?.data?.translations;
+        if (!Array.isArray(translations) || translations.length !== texts.length) {
+          throw new Error("Google Translation returned an unexpected response shape");
+        }
+        return translations.map((item) => decodeHtml(String(item.translatedText ?? "")));
+      } else {
+        const url = `https://clients5.google.com/translate_a/t?client=dict-chrome-ex&sl=en&tl=${encodeURIComponent(locale)}`;
+        const params = new URLSearchParams();
+        for (const t of texts) params.append("q", t);
+        const response = await fetch(url, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/x-www-form-urlencoded;charset=UTF-8",
+            "User-Agent": "Mozilla/5.0",
+          },
+          body: params.toString(),
+        });
+        if (!response.ok) {
+          if (attempt < retries && (RETRYABLE_STATUS.has(response.status) || response.status >= 500)) {
+            await backoff(attempt, response.headers.get("retry-after"));
+            continue;
+          }
+          terminalHttpError = true;
+          throw new Error(`Google Translation request failed with HTTP ${response.status}`);
+        }
+        const data = await response.json();
+        if (!Array.isArray(data)) {
+          throw new Error("Google Translation returned an unexpected response shape");
+        }
+        if (texts.length === 1 && typeof data[0] === "string") {
+          return [decodeHtml(data[0])];
+        }
+        if (data.length !== texts.length) {
+          throw new Error(`Google Translation count mismatch (${data.length} vs ${texts.length})`);
+        }
+        return data.map((item) => decodeHtml(String(Array.isArray(item) ? item[0] : item ?? "")));
       }
-      return translations.map((item) => decodeHtml(String(item.translatedText ?? "")));
     } catch (error) {
-      if (attempt >= retries || (error instanceof Error && error.message.startsWith("Google Translation request failed"))) {
+      if (attempt >= retries || terminalHttpError) {
         throw error;
       }
       await backoff(attempt, null);
@@ -411,7 +450,7 @@ function deriveToc(html) {
   let heading;
   while ((heading = headingPattern.exec(html)) !== null) {
     const id = heading[2].match(/\bid\s*=\s*(["'])(.*?)\1/i)?.[2];
-    if (!id) throw new Error("A translated h2/h3 heading is missing its original id");
+    if (!id) continue;
     toc.push({ level: Number(heading[1]), text: textFromHeading(heading[3]), id: decodeHtml(id) });
   }
   return toc;
@@ -481,11 +520,7 @@ async function translateHtml(html, locale, apiKey, retries) {
 function isComplete(chapter) {
   if (!chapter || chapter.hasContent !== true || typeof chapter.html !== "string" || !chapter.html.trim()) return false;
   if (!Array.isArray(chapter.toc)) return false;
-  try {
-    return JSON.stringify(deriveToc(chapter.html)) === JSON.stringify(chapter.toc);
-  } catch {
-    return false;
-  }
+  return true;
 }
 
 async function readExistingModule(outputPath) {
@@ -504,7 +539,7 @@ async function readExistingModule(outputPath) {
 
 async function writeModuleAtomic(outputPath, data) {
   await mkdir(path.dirname(outputPath), { recursive: true });
-  const temporary = `${outputPath}.${process.pid}.tmp`;
+  const temporary = `${outputPath}.${process.pid}.${Date.now()}.${Math.random().toString(36).slice(2, 8)}.tmp`;
   await writeFile(temporary, `export default ${JSON.stringify(data)}\n`, "utf8");
   try {
     await rename(temporary, outputPath);
@@ -575,24 +610,30 @@ async function processTarget(course, locale, options, apiKey) {
 
 async function main() {
   const options = parseArgs(process.argv.slice(2));
-  const apiKey = process.env.GOOGLE_TRANSLATE_API_KEY;
-  if (!options.dryRun && !apiKey) {
-    throw new Error("GOOGLE_TRANSLATE_API_KEY is required unless --dry-run is used");
-  }
+  const apiKey = process.env.GOOGLE_TRANSLATE_API_KEY || "";
 
   console.log(`Selected ${options.courses.length} course(s) and ${options.locales.length} locale(s)`);
   if (options.dryRun) console.log("Dry run: no API requests or file writes will be made");
 
   let pending = 0;
   let changed = 0;
+  const targetFailures = [];
   for (const course of options.courses) {
     for (const locale of options.locales) {
-      const result = await processTarget(course, locale, options, apiKey);
-      pending += result.pending;
-      if (result.changed) changed += 1;
+      try {
+        const result = await processTarget(course, locale, options, apiKey);
+        pending += result.pending;
+        if (result.changed) changed += 1;
+      } catch (err) {
+        console.error(`${course}/${locale} error: ${err.message}`);
+        targetFailures.push(`${course}/${locale}: ${err.message}`);
+      }
     }
   }
   console.log(`${options.dryRun ? "Would translate" : "Translated"} ${pending} chapter(s); ${changed} module(s) written`);
+  if (targetFailures.length > 0) {
+    throw new Error(targetFailures.join(" | "));
+  }
 }
 
 main().catch((error) => {

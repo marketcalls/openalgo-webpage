@@ -11,9 +11,9 @@ export function LocalizedLesson({ course, chapterN, html, toc, hasContent }) {
     <div className="lesson" dangerouslySetInnerHTML={{ __html: content.html }} />
   ) : (
     <div className="callout info">
-      <span className="callout-tag">{t("courseNav.note")}</span>
+      <span className="callout-tag">{t("courseNav.unavailableTitle")}</span>
       <div>
-        <p>{t("courseNav.chapterComingSoon")}</p>
+        <p>{t("courseNav.unavailableBody")}</p>
       </div>
     </div>
   )

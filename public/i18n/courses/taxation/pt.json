@@ -1,0 +1,364 @@
+{
+  "course": "taxation",
+  "locale": "pt",
+  "parts": [
+    {
+      "id": "A",
+      "name": "Comece aqui",
+      "desc": "Por que os impostos são importantes para os comerciantes, os escalões de rendimento, os dois regimes e os prazos.",
+      "chapters": [
+        {
+          "n": 1,
+          "slug": "why-tax-matters",
+          "title": "Por que os impostos são importantes",
+          "summary": "Uma história verídica de um comerciante que perdeu dinheiro, mas acabou devendo milhões, porque nunca entrou com o pedido. Saiba por que o departamento fiscal já conhece suas negociações e por que ignorar os impostos é o erro mais caro que um trader pode cometer.",
+          "learn": [
+            "O comerciante que devia milhões de dólares por perda",
+            "Como o departamento já vê suas negociações",
+            "Lucro ou perda, você ainda reporta",
+            "O que este curso cobre",
+            "Uma promessa: apenas em inglês simples",
+            "A única regra: arquivar, todos os anos"
+          ],
+          "tags": [
+            "Noções básicas"
+          ]
+        },
+        {
+          "n": 2,
+          "slug": "the-income-buckets",
+          "title": "Os três baldes: como seu lucro é classificado",
+          "summary": "Antes de qualquer imposto, seus ganhos se enquadram em um dos três grupos: ganhos de capital, receitas comerciais ou receitas especulativas. Aprenda o teste simples que decide em qual intervalo suas negociações vão parar, com uma tabela clara, porque o intervalo muda tudo.",
+          "learn": [
+            "Ganhos de capital versus receita comercial",
+            "Especulativo vs não especulativo",
+            "Entrega, intradiária e F&O",
+            "Por que o balde é importante",
+            "A tabela de classificação",
+            "Exemplos para cada bucket"
+          ],
+          "tags": [
+            "Noções básicas"
+          ]
+        },
+        {
+          "n": 3,
+          "slug": "old-vs-new-regime",
+          "title": "Antigo regime ou novo: quais lajes fiscais se aplicam",
+          "summary": "O novo regime fiscal é agora o padrão. Aprenda as taxas da laje AY 2026-27 em números simples, o desconto que pode tornar a renda até certo ponto isenta de impostos, quando o antigo regime ainda vence, e a forma que você não deve esquecer se mudar.",
+          "learn": [
+            "O novo regime é o padrão",
+            "AY Taxas de laje 2026-27",
+            "O desconto da Seção 87A",
+            "Sobretaxa e taxa",
+            "Quando manter o antigo regime",
+            "Formulário 10-IEA, o erro fácil"
+          ],
+          "tags": [
+            "Noções básicas"
+          ]
+        },
+        {
+          "n": 4,
+          "slug": "advance-tax-and-deadlines",
+          "title": "Imposto antecipado e as datas que você não pode perder",
+          "summary": "Imposto não é um trabalho que ocorre uma vez por ano. Aprenda o imposto antecipado (pagar conforme você ganha), as datas trimestrais, os prazos de apresentação para AY 2026-27 e por que perder a data de vencimento custa silenciosamente a você o direito de transportar perdas adiante.",
+          "learn": [
+            "O que é imposto antecipado",
+            "As quatro datas de imposto antecipado",
+            "Juros se você pagar menos",
+            "Datas de vencimento de arquivamento para AY 2026-27",
+            "Prazos de auditoria versus não auditoria",
+            "Por que o arquivamento dentro do prazo protege você"
+          ],
+          "tags": [
+            "Arquivamento"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "B",
+      "name": "O investidor em ações",
+      "desc": "Ações e fundos mútuos: ganhos de capital, STT, intradiários e doações.",
+      "chapters": [
+        {
+          "n": 5,
+          "slug": "capital-gains-on-shares",
+          "title": "Ganhos de capital em ações e fundos mútuos",
+          "summary": "Comprar, manter, vender: a forma mais comum de investir e seus impostos. Aprenda o curto prazo versus o longo prazo, as taxas atuais, a linha de um ano que as divide, o limite de isenção de impostos LTCG e a proteção dos direitos adquiridos, tudo com exemplos práticos.",
+          "learn": [
+            "Curto prazo versus longo prazo",
+            "A linha de espera de um ano",
+            "Taxas STCG e LTCG",
+            "O limite LTCG isento de impostos",
+            "Avô explicado simplesmente",
+            "Um exemplo completo trabalhado"
+          ],
+          "tags": [
+            "Equidade"
+          ]
+        },
+        {
+          "n": 6,
+          "slug": "stt-and-charges",
+          "title": "STT e as cobranças ocultas em todas as negociações",
+          "summary": "Cada negociação acarreta um Imposto sobre Transações de Valores Mobiliários e uma série de outros encargos. Saiba o que é STT, as taxas de entrega, intradiárias, futuras e opções após a última alta e como esses custos interagem com o seu imposto de renda.",
+          "learn": [
+            "O que é STT e quem paga",
+            "Taxas STT por tipo de negociação",
+            "A última caminhada STT",
+            "Outros encargos em uma nota de contrato",
+            "Como STT afeta seu imposto",
+            "Um cálculo STT trabalhado"
+          ],
+          "tags": [
+            "Equidade"
+          ]
+        },
+        {
+          "n": 7,
+          "slug": "intraday-trading-tax",
+          "title": "Negociação intradiária: renda especulativa",
+          "summary": "Compre e venda no mesmo dia e as regras fiscais mudam completamente. Saiba por que o patrimônio intradiário é uma receita de negócios especulativos, como é tributado com base em taxas fixas e a regra estrita de que as perdas intradiárias só podem compensar os ganhos intradiários.",
+          "learn": [
+            "Por que o intradiário é especulativo",
+            "Tributado de acordo com sua taxa de laje",
+            "A regra estrita de compensação de perdas",
+            "Transporte de quatro anos",
+            "Faturamento intradiário",
+            "Um exemplo trabalhado"
+          ],
+          "tags": [
+            "Equidade"
+          ]
+        },
+        {
+          "n": 8,
+          "slug": "gifting-and-inheriting-shares",
+          "title": "Doação e herança de ações",
+          "summary": "Dar ações à família, ou recebê-las, tem regras tributárias próprias. Aprenda quando um presente é isento de impostos, quando é tributável, cujo preço de compra conta quando você o vende posteriormente e a armadilha que pega presentes para um cônjuge ou filho.",
+          "learn": [
+            "Presentes de parentes estão isentos",
+            "Presentes de outras pessoas acima de um limite",
+            "Sem limite máximo para parentes",
+            "Cujo preço de custo você herda",
+            "A transferência do período de detenção",
+            "A armadilha da renda"
+          ],
+          "tags": [
+            "Equidade"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "C",
+      "name": "O comerciante de F&O",
+      "desc": "Futuros e opções: rendimentos empresariais, volume de negócios, auditoria, perdas e o custo de ocultá-los.",
+      "chapters": [
+        {
+          "n": 9,
+          "slug": "fno-is-business-income",
+          "title": "O erro número um: F&O é receita comercial",
+          "summary": "A maioria dos novos traders de F&O erra na primeira coisa. Saiba por que os futuros e as opções são rendimentos comerciais não especulativos, e não ganhos de capital, por que isso significa taxas fixas e ITR-3, e as liberdades e deveres que os acompanham.",
+          "learn": [
+            "Não ganhos de capital, receitas de negócios",
+            "Não especulativo e por quê",
+            "Tributado de acordo com sua taxa de laje",
+            "Relatado em ITR-3",
+            "Despesas que você pode reivindicar",
+            "Por que o balde é importante aqui"
+          ],
+          "tags": [
+            "FnO"
+          ]
+        },
+        {
+          "n": 10,
+          "slug": "fno-turnover-and-expenses",
+          "title": "A rotatividade de F&O não é o que você pensa",
+          "summary": "A maior confusão de F&O é a rotatividade. Saiba por que o volume de negócios não é o valor do seu contrato, mas a soma dos seus ganhos e perdas, como as opções acrescentam o prémio e as despesas genuínas que pode reclamar contra o seu lucro.",
+          "learn": [
+            "Faturamento não é valor do contrato",
+            "O método do lucro absoluto",
+            "Como as opções premium são adicionadas",
+            "Usando o relatório fiscal do seu corretor",
+            "Despesas que você pode reivindicar",
+            "Guardando as provas"
+          ],
+          "tags": [
+            "FnO"
+          ]
+        },
+        {
+          "n": 11,
+          "slug": "fno-tax-audit",
+          "title": "Quando um comerciante de F&O precisa de uma auditoria fiscal",
+          "summary": "A auditoria é a regra de F&O mais incompreendida. Aprenda a simples verificação em três etapas, por que uma perda não significa automaticamente uma auditoria, os limites de rotatividade e a regra de transação em dinheiro que decide qual limite se aplica a você.",
+          "learn": [
+            "Etapa um: encontre seu faturamento",
+            "Etapa dois: verifique o limite",
+            "As linhas de 1 crore e 10 crore",
+            "A regra dos 5% em dinheiro",
+            "Por que uma perda não é uma auditoria",
+            "O ângulo do imposto presumido"
+          ],
+          "tags": [
+            "FnO"
+          ]
+        },
+        {
+          "n": 12,
+          "slug": "fno-losses-set-off",
+          "title": "Perdas de F&O: compensação e transporte",
+          "summary": "Um ano de perdas ainda pode economizar impostos, se você lidar com isso da maneira certa. Saiba como as perdas de F&O compensam quase todas as outras receitas, como as perdas não utilizadas são transportadas por oito anos e a única condição que você deve cumprir para manter esse direito.",
+          "learn": [
+            "Compensação com a maior parte da renda",
+            "A exceção salarial",
+            "Transporte por oito anos",
+            "Arquive dentro do prazo ou perca-o",
+            "Somente contra a receita do negócio mais tarde",
+            "Um exemplo de compensação trabalhado"
+          ],
+          "tags": [
+            "FnO"
+          ]
+        },
+        {
+          "n": 13,
+          "slug": "not-reporting-fno",
+          "title": "O que acontece se você não relatar F&O",
+          "summary": "Esconder uma perda de F&O parece inofensivo. Não é. Aprenda o caso real de um trader atingido por uma demanda do tamanho de milhões de dólares, como o departamento vincula seu faturamento por meio de dados STT e as penalidades que transformam o silêncio em um desastre.",
+          "learn": [
+            "O caso de demanda do tamanho de milhões",
+            "Como os dados STT expõem você",
+            "O aviso sob a lei",
+            "Penalidades por não divulgação",
+            "Perdendo o transporte",
+            "A maneira simples de se manter seguro"
+          ],
+          "tags": [
+            "FnO"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "D",
+      "name": "Global e criptográfico",
+      "desc": "Ações US, divulgação de ativos estrangeiros e imposto sobre criptomoedas e derivativos de criptomoedas.",
+      "chapters": [
+        {
+          "n": 14,
+          "slug": "tax-on-us-stocks",
+          "title": "Imposto sobre ações US para investidores indianos",
+          "summary": "Possuir uma Apple ou um S&P 500 ETF traz dois países para a sua vida fiscal. Saiba como os ganhos e dividendos de ações US são tributados na Índia, o período de detenção que define o longo prazo, a retenção de dividendos US e o crédito que impede a dupla tributação.",
+          "learn": [
+            "Ganhos de capital em ações US",
+            "A linha de longo prazo de 24 meses",
+            "Dividendos e retenção de US",
+            "O crédito fiscal estrangeiro",
+            "Formulário 67 e o DTAA",
+            "Um exemplo de estoque US trabalhado"
+          ],
+          "tags": [
+            "Global"
+          ]
+        },
+        {
+          "n": 15,
+          "slug": "foreign-assets-and-black-money",
+          "title": "Cronograma FA e o Black Money Act",
+          "summary": "Possuir pelo menos uma ação estrangeira acarreta uma obrigação de prestação de contas que a maioria dos investidores não percebe. Aprenda o Cronograma FA, por que você divulga ativos estrangeiros mesmo com ganho zero, o limite LRS e seu TCS, e as severas penalidades por permanecer calado.",
+          "learn": [
+            "Qual é o cronograma FA",
+            "Reportar mesmo sem ganho",
+            "O limite LRS e TCS",
+            "As penalidades da Lei do Black Money",
+            "Por que isso não é opcional",
+            "Uma rotina simples de conformidade"
+          ],
+          "tags": [
+            "Global"
+          ]
+        },
+        {
+          "n": 16,
+          "slug": "crypto-tax-basics",
+          "title": "Imposto criptográfico: os 30 por cento fixos e o 1 por cento TDS",
+          "summary": "A Crypto tem as regras fiscais mais severas de qualquer ativo na Índia. Aprenda os 30% fixos sobre os ganhos, o 1% TDS nas vendas, a regra brutal de que as perdas não podem ser compensadas com nada e como relatá-las no Cronograma VDA.",
+          "learn": [
+            "A taxa fixa de 30 por cento",
+            "Apenas o custo é dedutível",
+            "O 1 por cento TDS",
+            "As perdas não podem ser compensadas",
+            "Não há transporte de perdas",
+            "Relatórios no Cronograma VDA"
+          ],
+          "tags": [
+            "Criptografia"
+          ]
+        },
+        {
+          "n": 17,
+          "slug": "crypto-fno-tax",
+          "title": "Futuros e derivativos criptográficos: uma área cinzenta",
+          "summary": "Os futuros de criptografia são tributados de forma muito diferente da própria criptografia, e as regras ainda não estão definidas. Saiba por que os derivativos de criptografia geralmente são receitas de negócios com taxas fixas, e não os 30% fixos, a plataforma offshore TCS e o risco de litígio a ser respeitado.",
+          "learn": [
+            "Não os 30 por cento fixos",
+            "Tratado como receita comercial",
+            "Não há 1 por cento TDS em futuros",
+            "Plataformas offshore e TCS",
+            "As regras instáveis",
+            "Por que cautela é importante aqui"
+          ],
+          "tags": [
+            "Criptografia"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "E",
+      "name": "Arquivando corretamente",
+      "desc": "Escolher a devolução correta e uma lista de verificação para manter a conformidade todos os anos.",
+      "chapters": [
+        {
+          "n": 18,
+          "slug": "choosing-your-itr",
+          "title": "Qual formulário ITR é o seu",
+          "summary": "O formulário de devolução incorreto pode invalidar todo o seu pedido. Aprenda, em um mapa simples, qual formato ITR se adapta a um investidor, um trader intradiário ou F&O, um detentor de ações US e um trader de criptomoedas, e por que a maioria dos traders termina em ITR-3.",
+          "learn": [
+            "ITR-1 e ITR-2",
+            "ITR-3 para renda empresarial",
+            "ITR-4 e imposto presumido",
+            "Qual formulário para qual trader",
+            "Por que F&O significa ITR-3",
+            "Misturando investimento e negociação"
+          ],
+          "tags": [
+            "Arquivamento"
+          ]
+        },
+        {
+          "n": 19,
+          "slug": "the-traders-tax-checklist",
+          "title": "A lista de verificação fiscal do comerciante durante todo o ano",
+          "summary": "O imposto é ganho ao longo do ano, não na noite anterior ao prazo. Aprenda uma rotina simples mês a mês: obtenha os relatórios fiscais do seu corretor, acompanhe os impostos antecipados, guarde os comprovantes de despesas, reconcilie-se com o AIS e saiba quando contratar um revisor oficial de contas.",
+          "learn": [
+            "Retire o imposto do seu corretor P&L",
+            "Acompanhe o imposto antecipado trimestralmente",
+            "Guarde todos os comprovantes de despesas",
+            "Reconcilie com o AIS",
+            "Saiba quando contratar um CA",
+            "A lista de verificação final de pré-arquivamento"
+          ],
+          "tags": [
+            "Arquivamento"
+          ]
+        }
+      ]
+    }
+  ]
+}

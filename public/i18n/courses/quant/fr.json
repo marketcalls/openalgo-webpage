@@ -1,0 +1,1431 @@
+{
+  "course": "quant",
+  "locale": "fr",
+  "parts": [
+    {
+      "id": "A",
+      "name": "Carte de carrière Quant et structure du marché indien",
+      "desc": "Ce que fait réellement un quant, les entreprises et les rôles, et exactement comment le marché indien est câblé.",
+      "chapters": [
+        {
+          "n": 1,
+          "slug": "what-is-a-quant",
+          "title": "Ce que fait réellement un quant",
+          "summary": "Le véritable travail derrière le mot : comment un quant transforme une question de marché en une décision testée, dimensionnée et surveillée, et en quoi cela diffère du trading discrétionnaire.",
+          "learn": [
+            "Pensée quantitative ou discrétionnaire",
+            "La boucle recherche-risque",
+            "Signal contre bruit",
+            "La pile de compétences quantitatives",
+            "À quoi ressemble réellement une journée",
+            "Mythes contre réalité"
+          ],
+          "tags": [
+            "NSE",
+            "INDEX"
+          ]
+        },
+        {
+          "n": 2,
+          "slug": "quant-roles",
+          "title": "Chercheur Quant vs Quant Trader vs Quant Developer",
+          "summary": "Les trois rôles quantitatifs principaux, les compétences requises par chacun et la façon dont la recherche, le commerce et l'ingénierie travaillent ensemble sur un véritable bureau.",
+          "learn": [
+            "Chercheur / commerçant / développeur",
+            "Échelles de compétences pour chacun",
+            "Comment les rôles collaborent",
+            "Quant d'exécution vs quant alpha",
+            "Où tu te situes",
+            "Construire vers un rôle"
+          ],
+          "tags": [
+            "NSE"
+          ]
+        },
+        {
+          "n": 3,
+          "slug": "quant-firms",
+          "title": "Entreprises côté achat, côté vente, accessoires et HFT",
+          "summary": "Le paysage de l'entreprise dans lequel un quant travaille - banques, courtiers, fonds communs de placement, fonds spéculatifs, magasins d'accessoires et maisons HFT - et comment leurs incitations façonnent le travail.",
+          "learn": [
+            "Côté acheteur vs côté vendeur",
+            "Sociétés de négoce d'accessoires",
+            "HFT et maisons de tenue de marché",
+            "AMC, PMS et FIA en Inde",
+            "Comment les incitations façonnent la stratégie",
+            "Qui embauche des quants en Inde"
+          ],
+          "tags": [
+            "NSE"
+          ]
+        },
+        {
+          "n": 4,
+          "slug": "indian-market-map",
+          "title": "La carte des marchés indiens",
+          "summary": "NSE et BSE, les segments de liquidités, de F&O, de devises et de dette, les indices principaux et les segments qu'un quant négocie réellement.",
+          "learn": [
+            "NSE contre BSE",
+            "Trésorerie, F&O, devises, segments de dette",
+            "Nifty, Banque Nifty, FinNifty, Sensex",
+            "Tailles des lots et types de contrats",
+            "Indice vs action unique",
+            "Quel segment pour quel bord"
+          ],
+          "tags": [
+            "NSE",
+            "INDEX"
+          ]
+        },
+        {
+          "n": 5,
+          "slug": "market-participants",
+          "title": "Acteurs du marché et qui fait bouger les prix",
+          "summary": "Vente au détail, HNI, FPI, DII, bureaux propriétaires et teneurs de marché : qui fournit et qui demande des liquidités, et comment lire leurs empreintes dans les données.",
+          "learn": [
+            "Flux Retail et HNI",
+            "Comportement de FPI et DII",
+            "Bureaux propriétaires",
+            "Teneurs de marché et fournisseurs de liquidité",
+            "Flux informé ou non informé",
+            "Lecture des données des participants"
+          ],
+          "tags": [
+            "NSE",
+            "NFO"
+          ]
+        },
+        {
+          "n": 6,
+          "slug": "market-plumbing",
+          "title": "SEBI, Bourses, organismes de compensation et dépositaires",
+          "summary": "La plomberie institutionnelle – le régulateur, les bourses, les sociétés de compensation avec leur cascade de défauts, les dépositaires et l’interopérabilité.",
+          "learn": [
+            "Mandat de SEBI",
+            "Bourses vs sociétés de compensation",
+            "Le CCP et la cascade par défaut",
+            "Dépôts NSDL et CDSL",
+            "Effacer l’interopérabilité",
+            "Pourquoi la plomberie est importante"
+          ],
+          "tags": [
+            "NSE"
+          ]
+        },
+        {
+          "n": 7,
+          "slug": "clearing-and-settlement",
+          "title": "Compensation, Règlement, T+1 et Optionnel T+0",
+          "summary": "La vie d'une transaction après le match : novation, compensation, marges tout au long de la journée, cycle T+1 et règlement facultatif T+0 de l'Inde.",
+          "learn": [
+            "Cycle de vie des échanges après l'appariement",
+            "Novation et compensation",
+            "Obligations de règlement",
+            "Le cycle T+1",
+            "Règlement optionnel T+0",
+            "Risque de règlement et montant"
+          ],
+          "tags": [
+            "NSE"
+          ]
+        },
+        {
+          "n": 8,
+          "slug": "cost-of-trading",
+          "title": "Le vrai coût d’une transaction",
+          "summary": "STT, droit de timbre, change et SEBI frais, GST et courtage, plus spread, slippage et impact - le modèle de coût tout compris qui tue discrètement la plupart des bords.",
+          "learn": [
+            "STT par segment",
+            "Droit de timbre et frais de change",
+            "Frais SEBI et GST",
+            "Frais de courtage et DP",
+            "Propagation, glissement et impact",
+            "Une fonction de coût tout compris"
+          ],
+          "tags": [
+            "NSE",
+            "NFO"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "B",
+      "name": "Fondements des mathématiques quantitatives, des statistiques et de la recherche",
+      "desc": "Probabilités, statistiques et algèbre linéaire pour le trading - en termes simples, avec des graphiques et des rendements réels.",
+      "chapters": [
+        {
+          "n": 9,
+          "slug": "returns-and-distributions",
+          "title": "Retours, retours de journaux et faits stylisés",
+          "summary": "Rendements simples ou logarithmiques et vérités empiriques des marchés : grosses queues, regroupement de volatilité et effet de levier, mesurés sur des données indiennes réelles.",
+          "learn": [
+            "Retours simples ou logarithmiques",
+            "Composition et agrégation",
+            "Grosses queues vs courbe en cloche",
+            "Regroupement de volatilité",
+            "L'effet de levier",
+            "Faits stylisés sur Nifty"
+          ],
+          "tags": [
+            "NSE",
+            "INDEX"
+          ]
+        },
+        {
+          "n": 10,
+          "slug": "probability-for-traders",
+          "title": "Probabilité pour les traders",
+          "summary": "Variables aléatoires, attente et variance, probabilité conditionnelle et Bayes – la probabilité qu'un trader utilise réellement, construite à partir d'exemples de marché.",
+          "learn": [
+            "Variables aléatoires et attentes",
+            "Variance et écart type",
+            "Probabilité conditionnelle",
+            "Bayes pour les commerçants",
+            "Loi des grands nombres",
+            "Simulation de Monte-Carlo"
+          ],
+          "tags": [
+            "INDEX"
+          ]
+        },
+        {
+          "n": 11,
+          "slug": "distributions-fat-tails",
+          "title": "Distributions, grosses queues et mouvements extrêmes",
+          "summary": "Pourquoi la distribution normale sous-estime le risque : l'aplatissement, le Student-t, les lois de puissance et la pensée des valeurs extrêmes appliquées aux krachs du marché indien.",
+          "learn": [
+            "La normale et ses échecs",
+            "Asymétrie et aplatissement",
+            "Student-t et lois stables",
+            "Lois de puissance dans les retours",
+            "Théorie des valeurs extrêmes",
+            "Dimensionnement pour les grosses queues"
+          ],
+          "tags": [
+            "NSE",
+            "INDEX"
+          ]
+        },
+        {
+          "n": 12,
+          "slug": "inference-and-hypothesis-testing",
+          "title": "Inférence statistique et tests d’hypothèses",
+          "summary": "Échantillonnage, estimation, intervalles de confiance et tests d’hypothèses : le mécanisme honnête permettant de déterminer si un avantage existe réellement.",
+          "learn": [
+            "Échantillonnage et estimations",
+            "Intervalles de confiance",
+            "Test d'hypothèse",
+            "Honnêtement, les valeurs p",
+            "tests t et bootstrap",
+            "Taille de l'effet et signification"
+          ],
+          "tags": [
+            "NSE"
+          ]
+        },
+        {
+          "n": 13,
+          "slug": "multiple-testing",
+          "title": "Tests multiples et fausses découvertes",
+          "summary": "Testez 500 idées et un faux gagnant est presque garanti - le problème des comparaisons multiples, les erreurs familiales, le taux de fausses découvertes et le Sharpe dégonflé.",
+          "learn": [
+            "Le piège des tests multiples",
+            "Taux d'erreur par famille",
+            "Bonferroni et Holm",
+            "Taux de fausses découvertes",
+            "Surveillance des données dans les backtests",
+            "Le ratio de Sharpe dégonflé"
+          ],
+          "tags": [
+            "NSE"
+          ]
+        },
+        {
+          "n": 14,
+          "slug": "stationarity-random-walk",
+          "title": "Stationnarité, marches aléatoires et EMH",
+          "summary": "Pourquoi les prix fluctuent de manière imprévisible, comment les tester et quelles sont les bonnes et les mauvaises idées de l’idée d’un marché efficace.",
+          "learn": [
+            "La marche aléatoire",
+            "Stationnaire ou non stationnaire",
+            "Tests ADF et KPSS",
+            "Pourquoi les prix résistent aux prévisions",
+            "L’hypothèse d’un marché efficient",
+            "Là où le EMH se fissure"
+          ],
+          "tags": [
+            "NSE",
+            "INDEX"
+          ]
+        },
+        {
+          "n": 15,
+          "slug": "linear-algebra-pca",
+          "title": "Algèbre linéaire, covariance et PCA",
+          "summary": "Vecteurs, matrices et matrice de covariance qui se trouvent sous chaque modèle de risque - et comment les principales composantes révèlent les quelques facteurs qui régissent tout un univers.",
+          "learn": [
+            "Vecteurs et matrices pour quants",
+            "La matrice de covariance",
+            "Valeurs propres et vecteurs propres",
+            "Analyse en composantes principales",
+            "Facteurs de PCA sur les actions Nifty",
+            "Dimensionnalité et bruit"
+          ],
+          "tags": [
+            "NSE"
+          ]
+        },
+        {
+          "n": 16,
+          "slug": "optimization-methods",
+          "title": "Optimisation, contraintes et méthodes numériques",
+          "summary": "Comment un quant résout réellement les poids, les paramètres et les ajustements : convexité, gradients, contraintes et pièges numériques intermédiaires.",
+          "learn": [
+            "Fonctions objectives",
+            "Convexe vs non convexe",
+            "Méthodes de gradient et de Newton",
+            "Optimisation contrainte",
+            "Programmation quadratique pour portefeuilles",
+            "Pièges de stabilité numérique"
+          ],
+          "tags": [
+            "NSE",
+            "INDEX"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "C",
+      "name": "Microstructure du marché indien",
+      "desc": "Comment les prix se forment réellement : le carnet d’ordres, le jour de négociation, la liquidité, l’impact et le flux des ordres.",
+      "chapters": [
+        {
+          "n": 17,
+          "slug": "why-microstructure-matters",
+          "title": "Pourquoi la microstructure du marché est importante",
+          "summary": "L'écart entre le prix sur un graphique et le prix que vous obtenez réellement - et pourquoi la microstructure est l'endroit où la plupart des avantages du commerce de détail disparaissent tranquillement.",
+          "learn": [
+            "Quelles études de microstructure",
+            "Prix ​​indiqué vs prix effectif",
+            "Là où les bords fuient",
+            "Le coût du franchissement du spread",
+            "Microstructure pour les traders lents aussi",
+            "Une carte du module C"
+          ],
+          "tags": [
+            "NSE"
+          ]
+        },
+        {
+          "n": 18,
+          "slug": "limit-order-book",
+          "title": "Principes fondamentaux du carnet d’ordres limités",
+          "summary": "Offres, demandes et profondeur - la file d'attente en direct où chaque transaction indienne est comparée, lue directement à partir de données de profondeur réelles.",
+          "learn": [
+            "Offres, demandes et profondeur",
+            "Ordres au marché ou à cours limité",
+            "Lire l'échelle de profondeur",
+            "Quantité totale d'achat et de vente",
+            "Quantité divulguée et iceberg",
+            "Lecture des données depth()"
+          ],
+          "tags": [
+            "NSE",
+            "MCX"
+          ]
+        },
+        {
+          "n": 19,
+          "slug": "order-types-lifecycle",
+          "title": "Types de commandes et cycle de vie des commandes",
+          "summary": "Chaque type d'ordre sur les bourses indiennes et la durée de vie complète d'un ordre - saisie, modification, annulation, piste d'audit et contrôles du code client.",
+          "learn": [
+            "Marché, limite, SL et SL-M",
+            "IOC, GTT et iceberg",
+            "Saisie et modification de commande",
+            "Annulation et piste d'audit",
+            "UCC et commandes de code client",
+            "Types de produits (MIS, NRML, CNC)"
+          ],
+          "tags": [
+            "NSE"
+          ]
+        },
+        {
+          "n": 20,
+          "slug": "price-time-priority",
+          "title": "Priorité prix-temps et position dans la file d'attente",
+          "summary": "Comment le moteur de correspondance décide qui remplit en premier, pourquoi votre place dans la file d'attente vaut de l'argent et comment la position dans la file d'attente stimule le trading passif.",
+          "learn": [
+            "Priorité prix-temps",
+            "Position et valeur de la file d'attente",
+            "Événements du carnet de commandes",
+            "Annuler et remplacer les coûts",
+            "Correspondance au prorata et FIFO",
+            "Dynamique de file d'attente pour les quants"
+          ],
+          "tags": [
+            "NSE",
+            "NFO"
+          ]
+        },
+        {
+          "n": 21,
+          "slug": "trading-day-structure",
+          "title": "La structure des jours de bourse indiens",
+          "summary": "De la pré-ouverture à la post-clôture - à chaque session des journées NSE et BSE, les horaires et les segments spéciaux qu'un quant doit respecter.",
+          "learn": [
+            "Séance pré-ouverte",
+            "Trading continu",
+            "Bloquer et regrouper les fenêtres",
+            "Séance de clôture et post-clôture",
+            "Pré-ouverture spéciale pour les nouvelles inscriptions",
+            "Horaires des matières premières et des devises"
+          ],
+          "tags": [
+            "NSE",
+            "MCX",
+            "CDS"
+          ]
+        },
+        {
+          "n": 22,
+          "slug": "auctions",
+          "title": "Pré-ouverture, enchères par appel et enchères de clôture",
+          "summary": "Comment les enchères sur appel découvrent un prix propre à partir d'un carnet d'ordres - le mécanisme de pré-ouverture et la nouvelle session d'enchères de clôture de SEBI.",
+          "learn": [
+            "Mécanismes d'enchères par appel",
+            "Découverte du prix d'équilibre",
+            "L'enchère pré-ouverte",
+            "Signaux de déséquilibre des commandes",
+            "La séance de clôture des enchères (CAS)",
+            "Enchères vs trading continu"
+          ],
+          "tags": [
+            "NSE",
+            "INDEX"
+          ]
+        },
+        {
+          "n": 23,
+          "slug": "circuit-breakers",
+          "title": "Disjoncteurs, fourchettes de prix et arrêts de négociation",
+          "summary": "Les arrêts d'indices, les tranches de prix des titres, les listes ASM et GSM et l'interdiction F&O - les règles qui gèlent le marché et faussent les signaux que vous calculez.",
+          "learn": [
+            "Disjoncteurs à index",
+            "Fourchettes de prix des scripts",
+            "Listes ASM et GSM",
+            "La période d’interdiction F&O",
+            "Circuits supérieur et inférieur",
+            "Arrêts et vos signaux"
+          ],
+          "tags": [
+            "NSE"
+          ]
+        },
+        {
+          "n": 24,
+          "slug": "bulk-block-deals",
+          "title": "Offres groupées, offres en bloc et fenêtres spéciales",
+          "summary": "Comment les grands acteurs modifient leur taille sans détruire le prix : les fenêtres de transaction en gros et en bloc, les règles de divulgation et ce que les impressions indiquent sur un quant.",
+          "learn": [
+            "Offres en gros ou en bloc",
+            "Les fenêtres de block-deal",
+            "Seuils de divulgation",
+            "Lecture des données de transactions groupées",
+            "Métiers négociés",
+            "Ce que signalent les gros caractères"
+          ],
+          "tags": [
+            "NSE"
+          ]
+        },
+        {
+          "n": 25,
+          "slug": "liquidity-spread-depth",
+          "title": "Liquidité, spread et profondeur",
+          "summary": "Ce que signifie réellement la liquidité : spread coté et effectif, profondeur et résilience, et comment les mesurer en noms réels NSE.",
+          "learn": [
+            "Composants du spread bid-ask",
+            "Spread coté vs effectif",
+            "Profondeur et résilience",
+            "Illiquidité d’Amihud",
+            "Mesurer la liquidité dans les noms NSE",
+            "La liquidité comme coût"
+          ],
+          "tags": [
+            "NSE"
+          ]
+        },
+        {
+          "n": 26,
+          "slug": "impact-cost-tca",
+          "title": "Analyse des coûts d'impact, des dérapages et des coûts de transaction",
+          "summary": "Pourquoi votre propre ordre fait varier le prix : modélisation de l'impact du marché, mesure du dérapage par rapport aux références et analyse honnête des coûts de transaction.",
+          "learn": [
+            "Impact temporaire ou permanent",
+            "L'intuition lambda de Kyle",
+            "Prix ​​de glissement vs prix d'arrivée",
+            "Lacune de mise en œuvre",
+            "Modèles d'impact à racine carrée",
+            "TCA sur remplissages réels"
+          ],
+          "tags": [
+            "NSE"
+          ]
+        },
+        {
+          "n": 27,
+          "slug": "order-flow",
+          "title": "Intérêt ouvert, volume et flux de commandes",
+          "summary": "Pression de lecture dans la bande - volume, intérêt ouvert, positions des participants et signaux de flux d'ordres qui suggèrent une activité éclairée.",
+          "learn": [
+            "Volume vs intérêt ouvert",
+            "Par participant OI",
+            "FII/DII données de flux",
+            "Déséquilibre des flux de commandes",
+            "Toxicité et sélection adverse",
+            "Le flux comme signal"
+          ],
+          "tags": [
+            "NSE",
+            "NFO"
+          ]
+        },
+        {
+          "n": 28,
+          "slug": "short-selling-slb",
+          "title": "Vente à découvert, SLB et mécanismes d'emprunt",
+          "summary": "Comment fonctionne réellement la vente à découvert en Inde : les ventes à découvert intrajournalières ou de livraison, le marché du prêt et de l'emprunt de titres, ainsi que le coût et le risque d'être à découvert.",
+          "learn": [
+            "Shorts intrajournaliers ou de livraison",
+            "Mécanique SLB",
+            "Coût d’emprunt et disponibilité",
+            "Pressions courtes",
+            "Règles courtes nues en Inde",
+            "Shorting pour des livres neutres sur le marché"
+          ],
+          "tags": [
+            "NSE",
+            "NFO"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "D",
+      "name": "HFT, Technologie d'exécution et de trading",
+      "desc": "Le trading algorithmique, le jeu de vitesse, les algorithmes d'exécution ainsi que la technologie et les règles qui les régissent.",
+      "chapters": [
+        {
+          "n": 29,
+          "slug": "algo-trading-foundations",
+          "title": "Fondements du trading algorithmique",
+          "summary": "Qu'est-ce qu'une stratégie algorithmique ? la boucle allant des données au signal, en passant par l'ordre et le risque, et l'architecture que partage chaque système automatisé.",
+          "learn": [
+            "La boucle du trading d'algorithmes",
+            "Couches de signal, de dimensionnement et d'exécution",
+            "Piloté par les événements ou par sondage",
+            "État et idempotence",
+            "OpenAlgo comme passerelle de commande",
+            "De l'idée au robot en cours d'exécution"
+          ],
+          "tags": [
+            "NSE"
+          ]
+        },
+        {
+          "n": 30,
+          "slug": "hft-vs-algo-vs-systematic",
+          "title": "HFT vs Algo Trading vs Trading Systématique",
+          "summary": "Trois mots que les gens confondent : latence, période de détention et infrastructure qui séparent le véritable HFT du trading algorithmique et systématique.",
+          "learn": [
+            "Définition de HFT",
+            "Algo vs systématique",
+            "Latence et périodes d’attente",
+            "Qui peut jouer à chaque niveau",
+            "Infrastructure par niveau",
+            "Où s'adaptent les quantités de vente au détail"
+          ],
+          "tags": [
+            "NSE"
+          ]
+        },
+        {
+          "n": 31,
+          "slug": "dma-colocation-latency",
+          "title": "DMA, colocalisation et accès à faible latence",
+          "summary": "La microstructure de la vitesse : accès direct au marché, colocalisation à NSE, flux tick par tick, horodatage et course aux armements en matière de latence.",
+          "learn": [
+            "Accès direct au marché",
+            "Colocalisation au NSE/BSE",
+            "Données tick par tick",
+            "Arbitrage de latence",
+            "Horodatage et horloges",
+            "Où le commerce de détail peut et ne peut pas jouer"
+          ],
+          "tags": [
+            "NSE"
+          ]
+        },
+        {
+          "n": 32,
+          "slug": "market-data-feeds",
+          "title": "Flux de données de marché : Snapshot, Tick, L2 et L3",
+          "summary": "Les données derrière chaque algorithme : flux instantanés ou flux de ticks, niveaux L1, L2 et L3 du livre, diffusion ou monodiffusion, et ce que chacun coûte et révèle.",
+          "learn": [
+            "Flux d'instantanés et de tiques",
+            "Données L1, L2 et L3",
+            "Échanger des flux de diffusion",
+            "Confiné ou pleine profondeur",
+            "Gestionnaires de flux et espaces",
+            "Choisir le bon aliment"
+          ],
+          "tags": [
+            "NSE",
+            "MCX"
+          ]
+        },
+        {
+          "n": 33,
+          "slug": "orderbook-reconstruction",
+          "title": "Reconstruction et relecture du carnet de commandes",
+          "summary": "Reconstruire le carnet d'ordres limité complet à partir d'un flux d'événements, rejouer une journée de négociation de manière déterministe et l'utiliser pour tester l'exécution.",
+          "learn": [
+            "Des événements à un livre",
+            "Ajouter, modifier, annuler, échanger",
+            "Relecture déterministe",
+            "Les pièges de la reconstruction",
+            "Construire un ensemble de données de recherche",
+            "Replay pour les tests d'exécution"
+          ],
+          "tags": [
+            "NSE"
+          ]
+        },
+        {
+          "n": 34,
+          "slug": "hft-strategy-families",
+          "title": "HFT Familles de stratégies : création, arbitrage et événement",
+          "summary": "Ce que les bureaux à haute fréquence fonctionnent réellement : tenue de marché passive, latence et arbitrage statistique, et stratégies de réaction basées sur les événements.",
+          "learn": [
+            "Tenue de marché passive",
+            "Arbitrage de latence",
+            "Arbitrage statistique rapide",
+            "Réaction aux événements et aux nouvelles",
+            "Détection de liquidité",
+            "Risque dans les livres HFT"
+          ],
+          "tags": [
+            "NSE",
+            "NFO"
+          ]
+        },
+        {
+          "n": 35,
+          "slug": "order-to-trade-ratio",
+          "title": "Ratio commandes/échanges, annulations et bourrage de devis",
+          "summary": "Les freins de la bourse à la vitesse : le ratio commandes/échanges, les pénalités d'annulation et la frontière entre les cotations légitimes et le bourrage de cotations manipulateur.",
+          "learn": [
+            "Le ratio commandes/échanges",
+            "Pénalités OTR sur NSE",
+            "Économie de l’annulation",
+            "Bourrage de citations et usurpation d'identité",
+            "Superposition et surveillance",
+            "Rester du bon côté"
+          ],
+          "tags": [
+            "NSE"
+          ]
+        },
+        {
+          "n": 36,
+          "slug": "smart-order-routing",
+          "title": "Routage intelligent des commandes et exécution sur plusieurs sites",
+          "summary": "Répartition d'un ordre entre NSE et BSE pour une exécution optimale : routage intelligent des ordres, livre consolidé et meilleure exécution sur tous les sites.",
+          "learn": [
+            "Pourquoi parcourir les sites",
+            "Logique intelligente de routage des commandes",
+            "Le carnet de commandes consolidé",
+            "Devoir de meilleure exécution",
+            "Latence dans le routage",
+            "SOR pour la vente au détail via des courtiers"
+          ],
+          "tags": [
+            "NSE"
+          ]
+        },
+        {
+          "n": 37,
+          "slug": "execution-algorithms",
+          "title": "Algorithmes d'exécution : VWAP, TWAP, POV et IS",
+          "summary": "Comment les commandes importantes sont traitées sur le marché sans le déplacer - les algorithmes de planification et le cadre de mise en œuvre qui les sous-tend.",
+          "learn": [
+            "Pourquoi trancher les grosses commandes",
+            "VWAP et TWAP",
+            "Pourcentage du volume (POV)",
+            "Lacune de mise en œuvre",
+            "L'intuition d'Almgren et Chriss",
+            "Choisir un algorithme d'exécution"
+          ],
+          "tags": [
+            "NSE"
+          ]
+        },
+        {
+          "n": 38,
+          "slug": "market-making-inventory",
+          "title": "Tenue de marché et risque d’inventaire",
+          "summary": "L'autre côté de chaque transaction : coter les deux côtés, gagner le spread, et le risque d'inventaire et de sélection adverse qui peut l'anéantir.",
+          "learn": [
+            "Citant les deux côtés",
+            "Gagner la propagation",
+            "Risque d'inventaire",
+            "Sélection adverse",
+            "L'intuition d'Avellaneda-Stoikov",
+            "Fausser les devis pour gérer les stocks"
+          ],
+          "tags": [
+            "NSE",
+            "NFO"
+          ]
+        },
+        {
+          "n": 39,
+          "slug": "retail-api-algo-framework",
+          "title": "Le framework Algo Retail API en Inde",
+          "summary": "Le cadre de SEBI pour un trading d'algorithmes de détail plus sûr - clés API, IP statiques, identifiants d'algo uniques, classification boîte blanche ou boîte noire et responsabilités du courtier et de l'échange.",
+          "learn": [
+            "SEBI circulaire d'algorithme de vente au détail (2025)",
+            "Touches API et statique IP",
+            "Enregistrement de l'algorithme unique ID",
+            "Algos boîte blanche ou boîte noire",
+            "Droits de courtage et de change",
+            "Quels changements pour les quants de détail"
+          ],
+          "tags": [
+            "NSE"
+          ]
+        },
+        {
+          "n": 40,
+          "slug": "kill-switches-risk-controls",
+          "title": "Kill Switches, contrôles des risques et surveillance algorithmique",
+          "summary": "La couche de sécurité dont tout trader automatisé a besoin : contrôles des risques avant la transaction, limites de position et de perte, kill switch et surveillance qui surveille les fugues.",
+          "learn": [
+            "Vérifications des risques avant la transaction",
+            "Limites de position et de perte",
+            "Le coupe-circuit",
+            "Limitation et limites de débit",
+            "Surveillance au niveau de l'échange",
+            "Concevoir des systèmes de sécurité"
+          ],
+          "tags": [
+            "NSE"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "E",
+      "name": "Séries chronologiques, économétrie et prévisions",
+      "desc": "Modéliser comment le marché d'aujourd'hui dépend de celui d'hier - retour à la moyenne, volatilité, régimes et dégradation.",
+      "chapters": [
+        {
+          "n": 41,
+          "slug": "time-series-models",
+          "title": "Modèles AR, MA et ARIMA",
+          "summary": "Les modèles classiques pour les séries qui se souviennent de leur passé - et un regard honnête sur ce qui est ou non prévisible en termes de rendement.",
+          "learn": [
+            "Autorégression (AR)",
+            "Moyenne mobile (MA)",
+            "ARIMA",
+            "Adaptation aux modèles de statistiques",
+            "Prévoir les rendements par rapport au volume",
+            "Ce qui est vraiment prévisible"
+          ],
+          "tags": [
+            "NSE",
+            "INDEX"
+          ]
+        },
+        {
+          "n": 42,
+          "slug": "volatility-modeling",
+          "title": "Modélisation de la volatilité : EWMA, ARCH et GARCH",
+          "summary": "La volatilité a une mémoire – le calme succède au calme, les tempêtes se regroupent. EWMA, ARCH et GARCH rendent cela précis sur les données de l'indice indien.",
+          "learn": [
+            "Pourquoi des clusters vol",
+            "EWMA volatilité",
+            "Intuition ARCH et GARCH",
+            "Ferrure GARCH avec arceau",
+            "Prévision de la volatilité",
+            "Prévoir la volatilité Nifty"
+          ],
+          "tags": [
+            "INDEX"
+          ]
+        },
+        {
+          "n": 43,
+          "slug": "realized-volatility",
+          "title": "Volatilité réalisée et intrajournalière",
+          "summary": "Mesurer la volatilité à partir de données à haute fréquence : variance réalisée, sourire de volatilité intrajournalière du jour de négociation et risque du jour au lendemain par rapport au risque intrajournalier.",
+          "learn": [
+            "Écart réalisé",
+            "Fréquence d'échantillonnage et bruit",
+            "La forme en U du volume intrajournalier",
+            "Risque du jour au lendemain ou intrajournalier",
+            "Réalisé vs implicite",
+            "Utilisation du RV dans les modèles"
+          ],
+          "tags": [
+            "INDEX",
+            "NSE"
+          ]
+        },
+        {
+          "n": 44,
+          "slug": "mean-reversion-ou",
+          "title": "Réversion moyenne et Ornstein-Uhlenbeck",
+          "summary": "Les mathématiques d'un prix en laisse - le processus Ornstein-Uhlenbeck, la demi-vie de réversion et comment tester si une série se retourne réellement.",
+          "learn": [
+            "Intuition de réversion moyenne",
+            "Le procédé Ornstein-Uhlenbeck",
+            "Estimation de la vitesse de réversion",
+            "Demi-vie de réversion",
+            "Test de retour à la moyenne",
+            "Trader une série inversée"
+          ],
+          "tags": [
+            "NSE"
+          ]
+        },
+        {
+          "n": 45,
+          "slug": "cointegration-pairs",
+          "title": "Cointégration et trading par paires",
+          "summary": "Deux prix errants liés par une relation à long terme – la cointégration, le test d'Engle-Granger, le spread et le z-score, et un échange complet de paires indiennes.",
+          "learn": [
+            "Cointégration vs corrélation",
+            "Test d'Engle-Granger",
+            "Construire la propagation",
+            "Le signal du score z",
+            "Sélection de paires indiennes",
+            "Risques du trading par paires"
+          ],
+          "tags": [
+            "NSE"
+          ]
+        },
+        {
+          "n": 46,
+          "slug": "regimes-and-breaks",
+          "title": "Détection de régime et ruptures structurelles",
+          "summary": "Les marchés alternent entre des hausses calmes, des baisses brutales et des chocs violents – détectant le régime dans lequel vous vous trouvez et les ruptures qui mettent fin à une stratégie.",
+          "learn": [
+            "Régimes haussiers / baissiers / latéraux",
+            "Régimes de volatilité",
+            "Intuition de changement de Markov",
+            "Détection des points de changement",
+            "Ruptures structurelles",
+            "Pourquoi une stratégie ne fonctionne plus"
+          ],
+          "tags": [
+            "INDEX"
+          ]
+        },
+        {
+          "n": 47,
+          "slug": "forecast-evaluation",
+          "title": "Évaluation des prévisions et dégradation du modèle",
+          "summary": "Comment juger honnêtement une prévision et détecter un modèle en train de pourrir en temps réel : mesures d'erreur, discipline hors échantillon et surveillance de la dégradation.",
+          "learn": [
+            "Métriques d'erreur (MSE, MAE)",
+            "Précision directionnelle",
+            "Évaluation hors échantillon",
+            "L'intuition de Diebold-Mariano",
+            "Détection de la dégradation du modèle",
+            "Quand retirer un modèle"
+          ],
+          "tags": [
+            "NSE",
+            "INDEX"
+          ]
+        },
+        {
+          "n": 48,
+          "slug": "capacity-and-half-life",
+          "title": "Capacité, rotation et demi-vie du signal",
+          "summary": "Combien d’argent une stratégie peut contenir et à quelle vitesse son avantage s’estompe – capacité d’impact, chiffre d’affaires et coût, et demi-vie d’un signal.",
+          "learn": [
+            "Capacité stratégique",
+            "Chiffre d’affaires et réduction des coûts",
+            "Demi-vie du signal",
+            "Capacité issue de l’impact sur le marché",
+            "Surpeuplement et délabrement",
+            "Dimensionnement à capacité"
+          ],
+          "tags": [
+            "NSE"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "F",
+      "name": "Produits dérivés, volatilité et arbitrage",
+      "desc": "La machine des produits dérivés en Inde – les contrats à terme et les bases, le prix des options et les titres grecs, la surface des volumes et l’arbitrage qui les relie.",
+      "chapters": [
+        {
+          "n": 49,
+          "slug": "futures-and-carry",
+          "title": "Futures, forwards et coût de portage",
+          "summary": "L'idée la plus puissante en matière de tarification est celle de l'absence d'argent gratuit et de la façon dont le coût de portage fixe le juste prix d'un contrat à terme par rapport à son sous-jacent.",
+          "learn": [
+            "Forward vs futures",
+            "Le principe de non-arbitrage",
+            "Coût de transport",
+            "Juste valeur et base",
+            "Convergence à l'échéance",
+            "Carry sur les contrats à terme indiens"
+          ],
+          "tags": [
+            "NFO",
+            "INDEX"
+          ]
+        },
+        {
+          "n": 50,
+          "slug": "basis-and-index-arb",
+          "title": "Base Cash-Futures et arbitrage sur indices",
+          "summary": "L'arbitrage qui se déroule sur chaque bureau indien - la base cash-futures, quand il est riche ou bon marché, et comment l'arbitrage sur indices maintient l'avenir honnête.",
+          "learn": [
+            "La base cash-futures",
+            "Base riche ou bon marché",
+            "Mécanismes d’arbitrage d’indices",
+            "Réplication de l'index",
+            "Dividendes et base",
+            "Risques des transactions de base"
+          ],
+          "tags": [
+            "NFO",
+            "INDEX"
+          ]
+        },
+        {
+          "n": 51,
+          "slug": "options-pricing",
+          "title": "Tarification des options : Black-Scholes contre Black-76",
+          "summary": "Pourquoi le prix du F&O indien est-il basé sur le Black-76 du futur synthétique, et non sur le Black-Scholes hors spot ? Les modèles, leurs hypothèses et leurs ruptures.",
+          "learn": [
+            "Parité put-call",
+            "Le futur synthétique",
+            "Hypothèses de Black-Scholes",
+            "Black-76 à l'avant",
+            "Pourquoi l'Inde utilise le Black-76",
+            "Tarification d’une option Nifty"
+          ],
+          "tags": [
+            "NFO",
+            "INDEX"
+          ]
+        },
+        {
+          "n": 52,
+          "slug": "the-greeks",
+          "title": "Les Grecs : Delta, Gamma, Vega, Theta et Rho",
+          "summary": "Comment respire une option - les Grecs mesurent sa sensibilité au prix, à la volatilité et au temps, calculés en direct sur de vraies options Nifty.",
+          "learn": [
+            "Delta et gamma",
+            "Véga et thêta",
+            "Rho et dividendes",
+            "Les Grecs face aux grèves",
+            "Position des Grecs",
+            "OpenAlgo Grecs avec une option astucieuse"
+          ],
+          "tags": [
+            "NFO",
+            "INDEX"
+          ]
+        },
+        {
+          "n": 53,
+          "slug": "volatility-surface",
+          "title": "La surface de volatilité, le biais et la structure des termes",
+          "summary": "La volatilité implicite n'est pas qu'un seul chiffre : le sourire et l'asymétrie des strikes et la structure des termes à travers les expirations, lisent les chaînes d'options réelles.",
+          "learn": [
+            "Volatilité implicite",
+            "La volatilité sourit et biaise",
+            "Structure des termes",
+            "Construire la surface",
+            "Dynamique d'expiration hebdomadaire",
+            "Lire la surface"
+          ],
+          "tags": [
+            "NFO",
+            "INDEX"
+          ]
+        },
+        {
+          "n": 54,
+          "slug": "vix-and-vrp",
+          "title": "Inde VIX et prime de risque de volatilité",
+          "summary": "L'indicateur de peur du marché et la prime pour la vente d'assurance : comment l'Inde VIX est construite, ce qu'elle prédit et la prime de risque de volatilité.",
+          "learn": [
+            "Comment l'Inde VIX est calculée",
+            "VIX comme prévu",
+            "Écart implicite et réalisé",
+            "La prime de risque de volatilité",
+            "VIX et l'index",
+            "Négocier la prime"
+          ],
+          "tags": [
+            "NFO",
+            "INDEX"
+          ]
+        },
+        {
+          "n": 55,
+          "slug": "gamma-scalping-vol-trading",
+          "title": "Scalping gamma et trading de volatilité",
+          "summary": "La volatilité en tant qu'actif que vous pouvez échanger : straddles couverts en delta, scalping gamma, variance et les effets du jour d'expiration indien qui la motivent.",
+          "learn": [
+            "La volatilité comme atout",
+            "Options couvertes en delta",
+            "Scalping gamma P&L",
+            "Variance et chevauchements",
+            "Effets du jour d'expiration",
+            "Volume de vente ou d'achat"
+          ],
+          "tags": [
+            "NFO",
+            "INDEX"
+          ]
+        },
+        {
+          "n": 56,
+          "slug": "equity-derivatives-microstructure",
+          "title": "Microstructure des dérivés sur actions en Inde",
+          "summary": "Comment se négocient réellement les F&O sur indices et sur actions uniques : liquidité à travers les levées et les expirations, hebdomadaires ou mensuelles, et les bizarreries de la microstructure des options indiennes.",
+          "learn": [
+            "Liquidité F&O indice vs action",
+            "Expirations hebdomadaires ou mensuelles",
+            "Frappez la liquidité et les spreads",
+            "Concentration expiratoire",
+            "Règlement physique des stocks F&O",
+            "bizarreries de microstructure"
+          ],
+          "tags": [
+            "NFO"
+          ]
+        },
+        {
+          "n": 57,
+          "slug": "currency-and-rate-derivatives",
+          "title": "Dérivés de change et de taux d'intérêt",
+          "summary": "Au-delà des actions - USD-INR et contrats à terme et options sur devises, contrats à terme sur taux d'intérêt et comment un quant les utilise à des fins macroéconomiques et de couverture.",
+          "learn": [
+            "Futures et options sur devises",
+            "Microstructure USD-INR",
+            "Futures sur taux d'intérêt (IRF)",
+            "Les bases de la courbe des taux",
+            "Utilisations de la macro-couverture",
+            "Liquidité et limites"
+          ],
+          "tags": [
+            "CDS",
+            "NSE"
+          ]
+        },
+        {
+          "n": 58,
+          "slug": "margins-and-position-limits",
+          "title": "Marges, garanties, limites de position et règlement",
+          "summary": "La machinerie financière des produits dérivés - SPAN et marge d'exposition, garanties et décotes, limites de position et règlement physique des actions F&O.",
+          "learn": [
+            "SPAN et marge d'exposition",
+            "Garanties et décotes de cheveux",
+            "Avantages des marges croisées",
+            "Limites de position",
+            "Règlement physique",
+            "Marge dans un livre quantitatif"
+          ],
+          "tags": [
+            "NFO"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "G",
+      "name": "Familles de recherche et de stratégie Alpha",
+      "desc": "Le processus de recherche et les grandes familles de stratégies systématiques, construits et testés sur des données indiennes.",
+      "chapters": [
+        {
+          "n": 59,
+          "slug": "alpha-research-process",
+          "title": "Le processus de recherche Alpha",
+          "summary": "Transformer une intuition en avantage testé - hypothèse, données, test et validation : la méthode scientifique pour le trading, avec une liste de contrôle réutilisable.",
+          "learn": [
+            "Idée à hypothèse",
+            "Concevoir un test équitable",
+            "Signal contre bruit",
+            "Dans l'échantillon ou hors échantillon",
+            "Dégradation et capacité",
+            "Une liste de contrôle de recherche"
+          ],
+          "tags": [
+            "NSE"
+          ]
+        },
+        {
+          "n": 60,
+          "slug": "cross-sectional-momentum",
+          "title": "Momentum transversal",
+          "summary": "Le cheval de bataille de l'équité systématique : classer l'univers en fonction des rendements passés, privilégier les gagnants et les perdants à découvert, et tenir compte des frictions indiennes.",
+          "learn": [
+            "Séries transversales ou chronologiques",
+            "Délais de constitution et de détention",
+            "Classement de l'univers NSE",
+            "Construction longue-courte",
+            "L'élan s'écrase",
+            "Coûts et chiffre d'affaires"
+          ],
+          "tags": [
+            "NSE"
+          ]
+        },
+        {
+          "n": 61,
+          "slug": "value-quality-factors",
+          "title": "Facteurs de valeur, de qualité, de taille et de faible volume",
+          "summary": "La poignée de forces qui déterminent la plupart des rendements boursiers : valeur, qualité, taille et faible volatilité, conçues et combinées pour le marché indien.",
+          "learn": [
+            "CAPM et version bêta",
+            "Facteurs de valeur et de qualité",
+            "Taille et faible volume",
+            "Facteurs de construction de l’Inde",
+            "Combinaison de facteurs",
+            "Le facteur zoo et prudence"
+          ],
+          "tags": [
+            "NSE"
+          ]
+        },
+        {
+          "n": 62,
+          "slug": "statistical-arbitrage",
+          "title": "Arbitrage statistique et livres neutres par rapport au marché",
+          "summary": "Négociation de relations neutre par rapport au marché - paires et paniers, arbitrage de contrats à terme en espèces et constitution d'un portefeuille avec une faible exposition nette au marché.",
+          "learn": [
+            "Paires issues de la cointégration",
+            "Construire la propagation",
+            "Entrées et sorties du score Z",
+            "Arb panier et index",
+            "Construction neutre par rapport au marché",
+            "Risque comptable neutre"
+          ],
+          "tags": [
+            "NSE",
+            "NFO"
+          ]
+        },
+        {
+          "n": 63,
+          "slug": "event-driven",
+          "title": "Stratégies basées sur les événements",
+          "summary": "Trading du calendrier - dérive des bénéfices, reconstitution des indices, opérations sur titres et flux prévisibles autour des événements programmés.",
+          "learn": [
+            "Dérive des bénéfices",
+            "Reconstitution d'index astucieuse",
+            "Opérations sur titres",
+            "Rachats et dividendes",
+            "Concevoir des métiers événementiels",
+            "Contrôle des risques événementiels"
+          ],
+          "tags": [
+            "NSE",
+            "NFO"
+          ]
+        },
+        {
+          "n": 64,
+          "slug": "flow-based-strategies",
+          "title": "Stratégies basées sur le flux : FII/DII, OI et expiration",
+          "summary": "Négociez les empreintes de grosses sommes d'argent - les flux FII et DII, les changements d'intérêts ouverts, la liste d'interdictions F&O et les puissants effets du jour d'expiration indien.",
+          "learn": [
+            "FII/DII signaux de débit",
+            "Constitution d’un intérêt ouvert",
+            "L’interdiction F&O comme signal",
+            "Effets du jour d'expiration",
+            "Analyse de roulement",
+            "Combinaison de signaux de débit"
+          ],
+          "tags": [
+            "NSE",
+            "NFO"
+          ]
+        },
+        {
+          "n": 65,
+          "slug": "intraday-mean-reversion-breakout",
+          "title": "Modèles de réversion à la moyenne et de cassure intrajournaliers",
+          "summary": "Les deux archétypes intrajournaliers – mouvements étirés en fondu et évasions confirmées – construits avec des données intrajournalières réelles et des coûts honnêtes.",
+          "learn": [
+            "Inversion de la moyenne intrajournalière",
+            "Évasion de la plage d'ouverture",
+            "Réversion VWAP",
+            "Effets d'heure",
+            "Arrêts et cibles",
+            "Réalité des coûts intrajournaliers"
+          ],
+          "tags": [
+            "NSE",
+            "INDEX"
+          ]
+        },
+        {
+          "n": 66,
+          "slug": "alt-data-nlp",
+          "title": "Données alternatives et NLP pour les marchés indiens",
+          "summary": "Des avantages au-delà du prix : actualités, annonces, dépôts et sentiments, ainsi que les outils en langage naturel qui transforment le texte en signal échangeable.",
+          "learn": [
+            "Ce qui compte comme données alternatives",
+            "Nouvelles et annonces",
+            "NLP et sentiment",
+            "Dépôts et divulgations",
+            "Les pièges des données alternatives",
+            "Construire un signal texte"
+          ],
+          "tags": [
+            "NSE"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "H",
+      "name": "Backtesting, ML et construction de portefeuille",
+      "desc": "Tester honnêtement, utiliser l’apprentissage automatique en toute sécurité et transformer de nombreux signaux en un seul livre avec gestion des risques.",
+      "chapters": [
+        {
+          "n": 67,
+          "slug": "backtesting-rigor",
+          "title": "Backtester sans vous tromper",
+          "summary": "Les pièges qui transforment un système perdant en un magnifique backtest, et la discipline qui maintient un test honnête.",
+          "learn": [
+            "Anatomie d'un backtest",
+            "Remplissages et coûts réalistes",
+            "Dans l'échantillon ou hors échantillon",
+            "Surapprentissage et surveillance",
+            "Contrôles de santé mentale",
+            "Un backtest auquel vous pouvez faire confiance"
+          ],
+          "tags": [
+            "NSE"
+          ]
+        },
+        {
+          "n": 68,
+          "slug": "bias-lookahead-survivorship",
+          "title": "Biais d’anticipation, de survie et d’action sur titres",
+          "summary": "Les trois préjugés qui gonflent silencieusement tous les backtests naïfs : utiliser le futur, ignorer les morts et mal gérer les fractionnements et les bonus.",
+          "learn": [
+            "Biais d’anticipation",
+            "Biais de survie",
+            "Ajustement des OST",
+            "Données ponctuelles",
+            "Biais de reconstitution de l'index",
+            "Auditer un ensemble de données"
+          ],
+          "tags": [
+            "NSE"
+          ]
+        },
+        {
+          "n": 69,
+          "slug": "walkforward-purged-cv",
+          "title": "Marche en avant, CV purgé et Sharpe dégonflé",
+          "summary": "Une validation qui respecte le temps : tests progressifs, validation croisée purgée et sous embargo, et dégonflage du Sharpe pour tous les essais que vous avez effectués.",
+          "learn": [
+            "Tests avancés",
+            "Pourquoi des fuites ordinaires de CV",
+            "Pliage en K purgé CV",
+            "Embarqué",
+            "Combinatoire purgé CV",
+            "Le Sharpe dégonflé"
+          ],
+          "tags": [
+            "NSE"
+          ]
+        },
+        {
+          "n": 70,
+          "slug": "ml-in-quant",
+          "title": "L'apprentissage automatique en Quant : promesse et péril",
+          "summary": "Où l’apprentissage automatique aide véritablement un quant, où il divulgue discrètement l’avenir et comment l’utiliser sans se tromper.",
+          "learn": [
+            "Où ML aide ou fait mal",
+            "Entraîner/test sur des séries temporelles",
+            "Fuite des caractéristiques et des étiquettes",
+            "Modèles d'arbres vs linéaires",
+            "Importance des fonctionnalités",
+            "Éviter le surajustement ML"
+          ],
+          "tags": [
+            "NSE"
+          ]
+        },
+        {
+          "n": 71,
+          "slug": "feature-engineering-labeling",
+          "title": "Ingénierie des fonctionnalités, étiquetage et fuites",
+          "summary": "La partie de ML qui décide de tout : créer des fonctionnalités ponctuelles, étiqueter avec la triple barrière et éliminer les fuites.",
+          "learn": [
+            "Fonctionnalités ponctuelles",
+            "Transformations d'entités stationnaires",
+            "Étiquettes à horizon fixe",
+            "La méthode triple barrière",
+            "Méta-étiquetage",
+            "Audits de fuites"
+          ],
+          "tags": [
+            "NSE"
+          ]
+        },
+        {
+          "n": 72,
+          "slug": "portfolio-construction-risk",
+          "title": "Construction de portefeuille, modèles de risque, VaR et stress",
+          "summary": "De nombreux signaux dans un seul livre : la variance moyenne et ses correctifs, le dimensionnement des positions et Kelly, les modèles de risque, ainsi que la VaR, la CVaR et les tests de résistance pour la queue.",
+          "learn": [
+            "La variance moyenne et ses limites",
+            "Parité des risques et ciblage des volumes",
+            "Kelly et Kelly fractionnée",
+            "Modèles de risque factoriel",
+            "VaR et CVaR",
+            "Test de contrainte de la queue"
+          ],
+          "tags": [
+            "NSE",
+            "INDEX"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "I",
+      "name": "Production, conformité et carrière",
+      "desc": "Prendre la recherche en direct : l'infrastructure, le pipeline de production, la surveillance, la conformité et le projet de synthèse.",
+      "chapters": [
+        {
+          "n": 73,
+          "slug": "data-infrastructure",
+          "title": "Infrastructure de données et de recherche",
+          "summary": "L'épine dorsale peu glamour : stockage en ticks ou en barres, ensembles de données ponctuelles, bases de données de séries chronologiques et environnement de recherche reproductible.",
+          "learn": [
+            "Cocher / L1 / L2 / L3 stockage",
+            "Ensembles de données ponctuelles",
+            "Bases de données de séries chronologiques",
+            "Nettoyage et opérations sur titres",
+            "Pipelines reproductibles",
+            "Coût et échelle"
+          ],
+          "tags": [
+            "NSE"
+          ]
+        },
+        {
+          "n": 74,
+          "slug": "research-to-production",
+          "title": "Le pipeline de la recherche à la production",
+          "summary": "Combler l'écart entre un ordinateur portable et un robot actif : chemins de code partagés, configuration, tests de parité et processus de déploiement discipliné.",
+          "learn": [
+            "Le fossé recherche-production",
+            "Code de signal partagé",
+            "Configuration et paramètres",
+            "Parité backtest-live",
+            "Mise en scène et déploiement",
+            "Gestion des versions et restauration"
+          ],
+          "tags": [
+            "NSE"
+          ]
+        },
+        {
+          "n": 75,
+          "slug": "live-trading-system-design",
+          "title": "Conception du système de trading en direct",
+          "summary": "L'architecture d'un système commercial en cours d'exécution - les OMS et PMS, le cycle de vie des ordres et des positions, la gestion de l'état et la résilience en cas de panne.",
+          "learn": [
+            "Rôles OMS et PMS",
+            "Etat de l'ordre et de la position",
+            "Boucles et files d'attente d'événements",
+            "Idempotence et récupération",
+            "BCP et reprise après sinistre",
+            "Concevoir pour l’échec"
+          ],
+          "tags": [
+            "NSE"
+          ]
+        },
+        {
+          "n": 76,
+          "slug": "monitoring-reconciliation",
+          "title": "Surveillance, réconciliation et gestion des incidents",
+          "summary": "Garder un livre en direct honnête et vivant : surveillance en temps réel, rapprochement de fin de journée, journalisation, alertes et réponse calme aux incidents.",
+          "learn": [
+            "Surveillance en direct et tableaux de bord",
+            "Alertes de limite de risque",
+            "Rapprochement des échanges et des positions",
+            "Journalisation et pistes d'audit",
+            "Réponse aux incidents",
+            "Autopsies"
+          ],
+          "tags": [
+            "NSE"
+          ]
+        },
+        {
+          "n": 77,
+          "slug": "sebi-algo-compliance-ethics",
+          "title": "SEBI Conformité et éthique des algorithmes",
+          "summary": "Négocier dans le respect des règles : le cadre algo SEBI, les tâches d'audit et de gouvernance du système, les règles de conduite sur le marché et l'éthique du trading automatisé.",
+          "learn": [
+            "Le framework algo SEBI",
+            "Audit et gouvernance du système",
+            "Devoirs de cyber-résilience",
+            "Règles de conduite sur le marché",
+            "Lignes rouges de manipulation",
+            "Éthique et responsabilité"
+          ],
+          "tags": [
+            "NSE"
+          ]
+        },
+        {
+          "n": 78,
+          "slug": "capstone",
+          "title": "Capstone : Un projet de recherche quantitatif indien complet",
+          "summary": "Tout est réuni : un véritable avantage tiré de l'hypothèse grâce à des données, un modèle, un portefeuille, des risques tenant compte de la microstructure, un backtest honnête et un chemin vers la production.",
+          "learn": [
+            "Formuler une hypothèse",
+            "Données sensibles à la microstructure",
+            "Construire le modèle",
+            "Portefeuille et dimensionnement",
+            "Backtest et coûts honnêtes",
+            "Vers la production"
+          ],
+          "tags": [
+            "NSE",
+            "INDEX",
+            "NFO"
+          ]
+        }
+      ]
+    }
+  ]
+}

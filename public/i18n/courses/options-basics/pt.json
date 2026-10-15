@@ -1,0 +1,497 @@
+{
+  "course": "options-basics",
+  "locale": "pt",
+  "parts": [
+    {
+      "id": "A",
+      "name": "Por que e o quê",
+      "desc": "O que é uma opção, por que existem opções e como elas diferem de futuros e ações.",
+      "chapters": [
+        {
+          "n": 1,
+          "slug": "what-is-an-option",
+          "title": "O que é uma opção?",
+          "summary": "Uma opção é o direito, mas não o dever, de comprar ou vender a um preço definido e em uma data definida. Aprenda essa ideia com uma simples analogia da vida real antes que chegue qualquer jargão do mercado.",
+          "learn": [
+            "Um direito, não uma obrigação",
+            "A analogia do dinheiro simbólico",
+            "Subjacente, greve e expiração",
+            "Por que alguém paga pelo certo",
+            "Opções vs futuros em uma linha",
+            "Os dois tipos básicos"
+          ],
+          "tags": [
+            "Noções básicas"
+          ]
+        },
+        {
+          "n": 2,
+          "slug": "why-options-exist",
+          "title": "Por que existem opções",
+          "summary": "As opções não foram inventadas para jogos de azar. Aprenda as quatro funções reais que eles desempenham: cobertura, especulação, rendimento e alavancagem, e por que uma grande instituição os utiliza de forma muito diferente de um comerciante retalhista.",
+          "learn": [
+            "Cobertura de uma participação existente",
+            "Especulando com risco limitado",
+            "Ganhar renda vendendo",
+            "Alavancagem, a vantagem dupla",
+            "Como as instituições realmente usam as opções",
+            "Por que o uso indevido no varejo é comum"
+          ],
+          "tags": [
+            "Noções básicas"
+          ]
+        },
+        {
+          "n": 3,
+          "slug": "options-vs-futures-vs-stocks",
+          "title": "Opções vs Futuros vs Ações",
+          "summary": "Três formas de apostar na mesma jogada, com riscos bem diferentes. Aprenda como o capital, a forma do risco e a margem versus prêmio se comparam e por que uma opção não é apenas um futuro mais barato.",
+          "learn": [
+            "Capital necessário para cada",
+            "A forma do risco",
+            "Margem versus prêmio inicial",
+            "Por que as opções não são futuros baratos",
+            "Perda limitada vs ilimitada",
+            "Escolhendo a ferramenta certa"
+          ],
+          "tags": [
+            "Noções básicas"
+          ]
+        },
+        {
+          "n": 4,
+          "slug": "calls-and-puts",
+          "title": "Chamadas e opções de venda: os dois blocos de construção",
+          "summary": "Cada estratégia de opções já construída é feita de apenas duas peças. Aprenda a opção de compra (o direito de comprar) e a opção de venda (o direito de vender) e uma maneira simples de nunca mais confundi-los.",
+          "learn": [
+            "A chamada: o direito de comprar",
+            "A opção de venda: o direito de vender",
+            "Uma maneira de lembrar qual é qual",
+            "Quando você iria querer cada um",
+            "As chamadas sobem, colocam a queda",
+            "Combinando-os mais tarde"
+          ],
+          "tags": [
+            "Noções básicas"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "B",
+      "name": "O Contrato e Liquidação",
+      "desc": "Como um contrato de opção é construído, índice versus opções de ações e o que acontece no vencimento.",
+      "chapters": [
+        {
+          "n": 5,
+          "slug": "premium-strike-expiry",
+          "title": "Premium, Strike e Expiração",
+          "summary": "Três números definem cada opção. Saiba o prêmio que você paga, o preço de exercício que você bloqueia e a data de vencimento em que tudo termina, com um símbolo de opção real RELIANCE.",
+          "learn": [
+            "O prêmio (o preço da opção)",
+            "O preço de exercício",
+            "A data de validade",
+            "Lendo um símbolo de opção",
+            "Por ação vs por lote",
+            "Como os três interagem"
+          ],
+          "tags": [
+            "Mecânica"
+          ]
+        },
+        {
+          "n": 6,
+          "slug": "right-not-obligation",
+          "title": "O direito, não a obrigação",
+          "summary": "A única ideia que torna as opções especiais: o comprador pode ir embora. Saiba por que a perda de um comprador é limitada ao prêmio enquanto o vendedor assume uma obrigação e por que essa assimetria é importante.",
+          "learn": [
+            "O comprador pode optar por não agir",
+            "Perda limitada para o comprador",
+            "A obrigação do vendedor",
+            "Por que o vendedor é pago adiantado",
+            "Exercício e expiração sem valor",
+            "A assimetria central"
+          ],
+          "tags": [
+            "Noções básicas"
+          ]
+        },
+        {
+          "n": 7,
+          "slug": "index-vs-stock-options",
+          "title": "Índice vs opções de ações na Índia",
+          "summary": "As opções NIFTY e RELIANCE seguem regras diferentes. Aprenda as especificações do contrato, os tamanhos dos lotes e o grande problema: as opções de índice são liquidadas em dinheiro, enquanto as opções de ações são liquidadas por entrega física, o que surpreende os iniciantes.",
+          "learn": [
+            "Opções de índice (NIFTY, BANKNIFTY)",
+            "Opções de estoque único (RELIANCE)",
+            "Tamanho do lote e valor do contrato",
+            "Liquidação em dinheiro para o índice",
+            "Entrega física para estoques",
+            "Por que o vencimento das ações surpreende os iniciantes"
+          ],
+          "tags": [
+            "Mecânica"
+          ]
+        },
+        {
+          "n": 8,
+          "slug": "expiry-exercise-assignment",
+          "title": "Expiração, Exercício e Atribuição",
+          "summary": "O que realmente acontece no dia do vencimento. Aprenda como as opções dentro e fora do dinheiro são tratadas, como funciona o exercício automático e o risco de atribuição que um vendedor deve respeitar.",
+          "learn": [
+            "O que acontece no dia do vencimento",
+            "ITM, ATM e OTM no vencimento",
+            "Exercício automático das opções ITM",
+            "Liquidação em dinheiro ou ações",
+            "Risco de atribuição para vendedores",
+            "Por que você se enfrenta no tempo"
+          ],
+          "tags": [
+            "Mecânica"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "C",
+      "name": "Lendo o preço",
+      "desc": "Dinheiro, valor, a diferença crucial entre o retorno e o hoje, a cadeia de opções e a liquidez.",
+      "chapters": [
+        {
+          "n": 9,
+          "slug": "moneyness",
+          "title": "Dentro, dentro e fora do dinheiro",
+          "summary": "ITM, ATM, OTM são os rótulos que você verá em todos os lugares. Saiba o que significa dentro do dinheiro, dentro do dinheiro e fora do dinheiro para opções de compra e venda, com uma imagem clara.",
+          "learn": [
+            "No dinheiro (ATM)",
+            "Dentro do dinheiro (ITM)",
+            "Fora do dinheiro (OTM)",
+            "Dinheiro para opções de compra versus opções de venda",
+            "Por que as opções OTM são baratas",
+            "Como o dinheiro muda com o preço"
+          ],
+          "tags": [
+            "Leitura"
+          ]
+        },
+        {
+          "n": 10,
+          "slug": "intrinsic-and-time-value",
+          "title": "Valor intrínseco e valor temporal",
+          "summary": "O prêmio de uma opção é composto de duas partes. Aprenda o valor intrínseco (o valor real, aqui e agora) e o valor do tempo (o prêmio de esperança que desaparece à medida que o vencimento se aproxima).",
+          "learn": [
+            "Valor intrínseco definido",
+            "Valor de tempo definido",
+            "Prêmio = intrínseco + tempo",
+            "Por que OTM é o valor de todos os tempos",
+            "Diminuição do tempo conforme o vencimento se aproxima",
+            "Por que isso é importante para os compradores"
+          ],
+          "tags": [
+            "Leitura"
+          ]
+        },
+        {
+          "n": 11,
+          "slug": "payoff-vs-live-pnl",
+          "title": "Pagamento no vencimento vs ao vivo P&L antes do vencimento",
+          "summary": "A ideia mais incompreendida em opções. Um diagrama de retorno mostra seu resultado no vencimento, não seu lucro hoje. Saiba por que o preço de uma opção se move antes do vencimento com volatilidade, redução de tempo e delta, para que o gráfico e sua tela discordem.",
+          "learn": [
+            "O que um diagrama de recompensa realmente mostra",
+            "Por que não é o P&L de hoje",
+            "Delta, o efeito preço agora",
+            "Theta, o sangramento diário",
+            "Vega, o efeito da volatilidade",
+            "Por que você pode estar certo e ainda assim perder"
+          ],
+          "tags": [
+            "Leitura"
+          ]
+        },
+        {
+          "n": 12,
+          "slug": "the-option-chain",
+          "title": "Lendo a cadeia de opções",
+          "summary": "A cadeia de opções é o menu de cada strike e seu preço. Aprenda a lê-lo linha por linha, chame de um lado, coloque do outro e descubra rapidamente o golpe pelo dinheiro.",
+          "learn": [
+            "O layout de uma cadeia",
+            "Chamadas, greves e opções de venda",
+            "LTP, lance e pergunte",
+            "Juros em aberto e volume",
+            "Encontrando o ataque ATM",
+            "O que uma corrente lhe diz"
+          ],
+          "tags": [
+            "Leitura"
+          ]
+        },
+        {
+          "n": 13,
+          "slug": "bid-ask-spread-liquidity",
+          "title": "Bid, Ask, Spread e Liquidez",
+          "summary": "O último preço negociado pode mentir para você. Aprenda o lance, o pedido e o spread contra o qual você realmente negocia, a diferença entre volume e contratos em aberto e por que um ataque ilíquido é perigoso mesmo quando parece barato.",
+          "learn": [
+            "Por que o LTP pode enganar",
+            "Licite, pergunte e o spread",
+            "O custo real de um spread amplo",
+            "Volume vs juros em aberto",
+            "Detectando um ataque ilíquido",
+            "Por que as opções ilíquidas prendem você"
+          ],
+          "tags": [
+            "Leitura"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "D",
+      "name": "As quatro recompensas",
+      "desc": "As quatro posições unilaterais, desenhadas como diagramas de recompensa reais, a partir das quais tudo é construído.",
+      "chapters": [
+        {
+          "n": 14,
+          "slug": "long-call",
+          "title": "Comprando uma chamada (chamada longa)",
+          "summary": "A negociação de opções mais intuitiva. Aprenda o retorno da chamada longa em um exemplo real de RELIANCE: perda limitada (o prêmio), ponto de equilíbrio acima do exercício e vantagem ilimitada.",
+          "learn": [
+            "Quando você compra uma chamada",
+            "Perda limitada, o prêmio",
+            "O ponto de equilíbrio",
+            "Vantagens ilimitadas",
+            "Lendo a verdadeira recompensa",
+            "Por que a maioria dos compradores de chamadas ainda perde"
+          ],
+          "tags": [
+            "Pague"
+          ]
+        },
+        {
+          "n": 15,
+          "slug": "long-put",
+          "title": "Comprando uma opção de venda (opção de venda longa)",
+          "summary": "A imagem espelhada: lucrar com uma queda com risco limitado. Aprenda o retorno da opção de venda longa, o ponto de equilíbrio abaixo do exercício e como uma opção de venda pode funcionar como um seguro para uma participação.",
+          "learn": [
+            "Quando você compra uma opção de venda",
+            "Perda limitada, o prêmio",
+            "O ponto de equilíbrio abaixo do strike",
+            "Lucro grande, mas limitado",
+            "Uma opção de seguro",
+            "Lendo a verdadeira recompensa"
+          ],
+          "tags": [
+            "Pague"
+          ]
+        },
+        {
+          "n": 16,
+          "slug": "short-call-and-put",
+          "title": "Opções de venda (short call e put)",
+          "summary": "O outro lado do comércio: a cobrança do prêmio. Aprenda os pagamentos de opções de compra e de venda a descoberto, o lucro limitado, o risco grande ou ilimitado e por que os vendedores devem respeitar esse risco.",
+          "learn": [
+            "Vendendo para receber prêmio",
+            "Chamada curta: risco ilimitado",
+            "Venda curta: grande risco",
+            "Lucro limitado (o prêmio)",
+            "Margem para vendedores",
+            "Lendo as recompensas reais"
+          ],
+          "tags": [
+            "Pague"
+          ]
+        },
+        {
+          "n": 17,
+          "slug": "buyer-vs-seller",
+          "title": "Comprador x vendedor: quem tem vantagem?",
+          "summary": "Os compradores têm risco limitado; os vendedores têm chances. Aprenda a troca honesta entre os dois lados, por que a redução do tempo favorece o vendedor e por que nenhum dos dois é um almoço grátis.",
+          "learn": [
+            "Comprador: risco limitado, probabilidades baixas",
+            "Vendedor: probabilidades altas, grande risco",
+            "A redução do tempo favorece o vendedor",
+            "Probabilidade vs recompensa",
+            "Por que a maioria dos compradores perde",
+            "Escolhendo um lado honestamente"
+          ],
+          "tags": [
+            "Pague"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "E",
+      "name": "Volatilidade e Posicionamento",
+      "desc": "Os gregos, a volatilidade implícita, o movimento esperado e o que os contratos em aberto realmente dizem.",
+      "chapters": [
+        {
+          "n": 18,
+          "slug": "the-greeks",
+          "title": "Os gregos: Delta, Gamma, Theta, Vega",
+          "summary": "Os gregos medem o que move o preço de uma opção. Aprenda delta (direção), gama (aceleração), teta (decadência de tempo) e vega (volatilidade) em palavras simples, sem fórmulas.",
+          "learn": [
+            "Delta: sensibilidade ao preço",
+            "Gama: como o delta muda",
+            "Theta: a decadência diária do tempo",
+            "Vega: sensibilidade à volatilidade",
+            "Por que theta é o inimigo do comprador",
+            "Lendo os gregos simplesmente"
+          ],
+          "tags": [
+            "Gregos"
+          ]
+        },
+        {
+          "n": 19,
+          "slug": "implied-volatility",
+          "title": "Volatilidade implícita: o medidor de medo do mercado",
+          "summary": "A volatilidade implícita é a expectativa do mercado de quanto o preço irá se movimentar, incorporada ao prêmio. Saiba por que o alto IV torna as opções caras e por que comprar antes de um evento conhecido pode sair pela culatra.",
+          "learn": [
+            "O que é volatilidade implícita",
+            "IV e o premium",
+            "Alto IV vs baixo IV",
+            "IV crush depois de um evento",
+            "Por que opções caras decepcionam os compradores",
+            "Lendo IV praticamente"
+          ],
+          "tags": [
+            "Volatilidade"
+          ]
+        },
+        {
+          "n": 20,
+          "slug": "hv-iv-and-expected-move",
+          "title": "Volatilidade histórica versus implícita e o movimento esperado",
+          "summary": "A volatilidade implícita significa apenas algo próximo da história. Saiba como a volatilidade histórica se compara a IV, a ideia da classificação IV e como o mercado precifica uma faixa esperada, com o straddle at-the-money como um indicador rápido de movimento esperado.",
+          "learn": [
+            "Volatilidade histórica vs implícita",
+            "A ideia de classificação ou percentil IV",
+            "Por que caro não significa ruim",
+            "O movimento esperado explicado",
+            "O straddle ATM como medidor",
+            "Por que uma chamada certa ainda pode perder"
+          ],
+          "tags": [
+            "Volatilidade"
+          ]
+        },
+        {
+          "n": 21,
+          "slug": "open-interest-volume-pcr",
+          "title": "Juros em aberto, volume e PCR",
+          "summary": "Os contratos em aberto são o número mais cotado e mais mal interpretado nas opções. Aprenda o que OI realmente significa, como interpretar um acúmulo versus uma cobertura de desenrolamento ou venda, a relação put-call e por que nada disso é uma bola de cristal.",
+          "learn": [
+            "O que significa interesse em aberto",
+            "OI acumulação vs desenrolamento",
+            "Cobertura curta",
+            "Volume vs juros em aberto novamente",
+            "A relação put-call (PCR)",
+            "Por que OI não é uma máquina de previsões"
+          ],
+          "tags": [
+            "Leitura"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "F",
+      "name": "Escolha e custos",
+      "desc": "Escolher um período de exercício e um vencimento, as necessidades de venda de margem, os custos de transação e o risco do evento.",
+      "chapters": [
+        {
+          "n": 22,
+          "slug": "choosing-strike-and-expiry",
+          "title": "Como escolher um aviso e um vencimento",
+          "summary": "Duas decisões decidem a maior parte do seu resultado. Aprenda como escolher um strike (ITM, ATM ou OTM e o atalho baseado em delta), por que uma opção OTM distante é um bilhete de loteria e como escolher entre semanal e mensal, respeitando theta e os eventos.",
+          "learn": [
+            "ITM, ATM ou OTM, qual e por quê",
+            "Delta como guia de ataque",
+            "A armadilha da loteria distante OTM",
+            "Expiração semanal vs mensal",
+            "Expiração próxima vs distante e teta",
+            "Filtros de liquidez e eventos"
+          ],
+          "tags": [
+            "Seleção"
+          ]
+        },
+        {
+          "n": 23,
+          "slug": "margin-and-costs",
+          "title": "Margem para vendedores e custos de transação",
+          "summary": "Vender opções não é dinheiro de graça. Saiba por que um vendedor deve postar um grande SPAN mais margem de exposição, como um hedge a reduz e toda a pilha de encargos, corretagem, STT, taxas de câmbio, GST e imposto de selo, que movimentam seu ponto de equilíbrio real.",
+          "learn": [
+            "Por que vender precisa de grande margem",
+            "SPAN e exposição em palavras simples",
+            "Como um hedge corta a margem",
+            "Promessa de garantia, uma advertência",
+            "Corretagem, STT e os encargos",
+            "Seu verdadeiro ponto de equilíbrio ajustado ao custo"
+          ],
+          "tags": [
+            "Custos"
+          ]
+        },
+        {
+          "n": 24,
+          "slug": "event-risk",
+          "title": "Risco de Evento: Resultados, Política e Orçamentos",
+          "summary": "As opções vivem e morrem em torno dos eventos. Saiba como a volatilidade implícita se expande antes de um evento conhecido como resultados, uma política RBI, o Orçamento ou uma reunião do Fed, e diminui logo depois, de modo que uma chamada direcional correta ainda pode gerar perda de dinheiro.",
+          "learn": [
+            "O que conta como um evento",
+            "Expansão IV antes do evento",
+            "IV esmagar logo após",
+            "Por que os compradores se prejudicam nos eventos",
+            "Como os vendedores usam eventos",
+            "Negociando em torno de um evento com segurança"
+          ],
+          "tags": [
+            "Risco"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "G",
+      "name": "Negociando com Segurança e Próximos Passos",
+      "desc": "Gerenciando riscos e evitando os erros clássicos, depois a ponte para estratégias reais e um checklist.",
+      "chapters": [
+        {
+          "n": 25,
+          "slug": "risk-and-mistakes",
+          "title": "Gestão de Riscos e os Erros Clássicos",
+          "summary": "Como os iniciantes realmente explodem e como não explodir. Aprenda o dimensionamento da posição pelo prêmio em risco, conhecendo sua perda máxima antes da entrada, o pensamento de stop-loss versus risco definido e os erros recorrentes desde a compra na loteria distante OTM até a venda a descoberto sem entender a margem.",
+          "learn": [
+            "Dimensionamento por prêmio em risco",
+            "Conheça sua perda máxima antes da entrada",
+            "Stop-loss vs risco definido",
+            "Evitando negociações de vingança no vencimento",
+            "Os erros clássicos de iniciante",
+            "Quando NOT negociar opções"
+          ],
+          "tags": [
+            "Risco"
+          ]
+        },
+        {
+          "n": 26,
+          "slug": "spreads-and-checklist",
+          "title": "De pernas únicas a spreads e sua lista de verificação",
+          "summary": "Para onde ir a seguir e como estar pronto. Aprenda por que existem spreads, a ideia de risco definido e a diferença entre um spread de débito e de crédito (sem o trabalho estratégico profundo que reside no curso de estratégias) e, em seguida, uma lista de verificação pré-negociação clara para executar antes de cada negociação de opções.",
+          "learn": [
+            "Por que existem spreads",
+            "A ideia de risco definido",
+            "Spread de débito vs spread de crédito",
+            "A ponte para estratégias reais",
+            "Sua lista de verificação pré-negociação",
+            "Direção, greve, expiração, risco, saída"
+          ],
+          "tags": [
+            "Risco"
+          ]
+        }
+      ]
+    }
+  ]
+}

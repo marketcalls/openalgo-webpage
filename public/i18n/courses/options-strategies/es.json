@@ -1,0 +1,515 @@
+{
+  "course": "options-strategies",
+  "locale": "es",
+  "parts": [
+    {
+      "id": "A",
+      "name": "Leer una estrategia",
+      "desc": "El diagrama de pagos y los nueve números que describen cualquier estrategia de opciones.",
+      "chapters": [
+        {
+          "n": 1,
+          "slug": "the-strategy-builder",
+          "title": "El creador de estrategias y el diagrama de resultados",
+          "summary": "Antes de cualquier estrategia, es necesario leer un diagrama de pagos. Conozca lo que muestra la curva, la línea naranja al vencimiento frente a la línea azul T+0, las bandas sigma y cómo el creador de estrategias de OpenAlgo las extrae de sus piernas con datos reales de NIFTY.",
+          "learn": [
+            "Lo que muestra un diagrama de pagos",
+            "La curva al vencimiento frente a la curva T+0",
+            "Zonas de pérdidas y ganancias",
+            "Piernas: las piezas de una estrategia",
+            "Las bandas sigma y la línea puntual.",
+            "Leyendo un ejemplo real"
+          ],
+          "tags": [
+            "Cimientos"
+          ]
+        },
+        {
+          "n": 2,
+          "slug": "reading-payoffs",
+          "title": "Los nueve números: beneficio máximo, POP, margen y más",
+          "summary": "El constructor muestra nueve métricas para cada estrategia. Aprenda a leerlos todos: puntos de equilibrio, pérdidas y ganancias máximas, probabilidad de ganancias, riesgo de recompensa, crédito o débito neto, prima estimada, total P&L y el margen que bloquea la operación.",
+          "learn": [
+            "Puntos de equilibrio",
+            "Beneficio máximo y pérdida máxima",
+            "Probabilidad de ganancia (POP)",
+            "Riesgo para recompensar",
+            "Crédito neto versus débito neto",
+            "Prima y margen estimados"
+          ],
+          "tags": [
+            "Cimientos"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "B",
+      "name": "Estrategias alcistas",
+      "desc": "Las nueve estructuras alcistas en el constructor, desde una sola llamada hasta ratios y operaciones de mariposa.",
+      "chapters": [
+        {
+          "n": 3,
+          "slug": "long-call-short-put",
+          "title": "Call largo y put corto",
+          "summary": "Las dos operaciones alcistas de un solo tramo. Conozca la opción call larga (riesgo limitado, ventajas ilimitadas) y la opción put corta (prima cobrada, gran desventaja), los dos extremos del espectro alcista, con pagos reales de NIFTY.",
+          "learn": [
+            "la larga llamada",
+            "Riesgo limitado, ventajas ilimitadas",
+            "La posición corta",
+            "Cobro de prima, gran riesgo",
+            "Comprador vs vendedor alcista",
+            "Leyendo los verdaderos beneficios"
+          ],
+          "tags": [
+            "Alcista"
+          ]
+        },
+        {
+          "n": 4,
+          "slug": "bull-call-spread",
+          "title": "La propagación de la llamada alcista",
+          "summary": "Una operación levemente alcista con costos y ganancias limitados. Descubra cómo comprar una call y vender una más alta crea una forma más económica y de riesgo definido de ser alcista, con las métricas reales NIFTY.",
+          "learn": [
+            "Una visión ligeramente alcista",
+            "Compre una opción call, venda una opción call más alta",
+            "Costo limitado y beneficio limitado",
+            "El punto de equilibrio",
+            "Cuándo preferirlo a una llamada larga",
+            "Leyendo la verdadera recompensa"
+          ],
+          "tags": [
+            "Alcista"
+          ]
+        },
+        {
+          "n": 5,
+          "slug": "bull-put-spread",
+          "title": "El diferencial de venta alcista",
+          "summary": "Una operación alcista que le paga un crédito por adelantado. Descubra cómo vender una opción de venta y comprar una más baja genera una prima al mismo tiempo que limita el riesgo, y cómo obtiene ganancias si NIFTY simplemente no cae.",
+          "learn": [
+            "Una visión alcista y de cobranza de primas",
+            "Vender una opción de venta, comprar una opción de venta más baja",
+            "El crédito neto",
+            "Pérdida máxima definida",
+            "Probabilidad de ganancia",
+            "Leyendo la verdadera recompensa"
+          ],
+          "tags": [
+            "Alcista"
+          ]
+        },
+        {
+          "n": 6,
+          "slug": "bull-ratio-synthetic",
+          "title": "Ratio de extensión hacia atrás, sintético y rango hacia adelante",
+          "summary": "Tres formas alcistas más. Conozca el back spread del ratio call (alza barata y explosiva), el futuro sintético largo (calls y puts que imitan un futuro) y el rango forward, con sus beneficios reales y los riesgos a observar.",
+          "learn": [
+            "El ratio de call back spread",
+            "¿Por qué puede ser una operación de crédito?",
+            "El largo futuro sintético",
+            "Por qué es igual a un futuro",
+            "El cuello avanzado",
+            "Leyendo los verdaderos beneficios"
+          ],
+          "tags": [
+            "Alcista"
+          ]
+        },
+        {
+          "n": 7,
+          "slug": "bullish-butterfly-condor",
+          "title": "Mariposa alcista y cóndor alcista",
+          "summary": "Formas de riesgo definido para apuntar a una zona alcista específica. Conozca las métricas sobre la mariposa alcista y el cóndor alcista, estructuras all-call que pagan más si NIFTY sube hasta un nivel elegido.",
+          "learn": [
+            "Una visión alcista dirigida",
+            "La mariposa alcista",
+            "El cóndor alcista",
+            "Barato, alta recompensa al riesgo",
+            "Por qué el POP está bajo",
+            "Leyendo los verdaderos beneficios"
+          ],
+          "tags": [
+            "Alcista"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "C",
+      "name": "Estrategias bajistas",
+      "desc": "Las nueve estructuras bajistas, reflejo de la familia alcista.",
+      "chapters": [
+        {
+          "n": 8,
+          "slug": "long-put-short-call",
+          "title": "Put largo y call corto",
+          "summary": "Las dos operaciones bajistas de un solo tramo. Conozca la opción de venta larga (riesgo limitado, gran beneficio a la baja) y la opción de compra corta (prima cobrada, riesgo ilimitado), los dos extremos del espectro bajista, con pagos reales de NIFTY.",
+          "learn": [
+            "el largo puesto",
+            "Riesgo limitado, gran beneficio en caso de caída",
+            "La llamada corta",
+            "Cobro de prima, riesgo ilimitado",
+            "Comprador vs vendedor bajista",
+            "Leyendo los verdaderos beneficios"
+          ],
+          "tags": [
+            "Osuno"
+          ]
+        },
+        {
+          "n": 9,
+          "slug": "bear-call-spread",
+          "title": "La propagación de la llamada bajista",
+          "summary": "Una operación crediticia bajista. Descubra cómo vender una call y comprar una más alta genera una prima con riesgo definido, obteniendo ganancias si NIFTY se mantiene por debajo del ejercicio corto, con las métricas.",
+          "learn": [
+            "Una visión bajista y de cobranza de primas",
+            "Vender una call, comprar una call más alta",
+            "El crédito neto",
+            "Pérdida máxima definida",
+            "Beneficio si el precio se mantiene bajo",
+            "Leyendo la verdadera recompensa"
+          ],
+          "tags": [
+            "Osuno"
+          ]
+        },
+        {
+          "n": 10,
+          "slug": "bear-put-spread",
+          "title": "El oso puso propagación",
+          "summary": "Una operación bajista de riesgo definido. Descubra cómo comprar una opción de venta y vender una más baja crea una forma más económica de beneficiarse de una caída, con límites tanto de pérdidas como de ganancias, con datos reales de NIFTY.",
+          "learn": [
+            "Una visión bajista",
+            "Compre una opción de venta, venda una opción de venta más baja",
+            "Costo limitado y beneficio limitado",
+            "El punto de equilibrio",
+            "Cuándo preferirlo a una venta larga",
+            "Leyendo la verdadera recompensa"
+          ],
+          "tags": [
+            "Osuno"
+          ]
+        },
+        {
+          "n": 11,
+          "slug": "bear-ratio-synthetic",
+          "title": "Put Ratio Back Spread, sintético y reversión de riesgo",
+          "summary": "Tres formas bajistas más. Conozca el diferencial de rentabilidad del ratio de venta (baja barata y explosiva), el futuro sintético corto y la reversión del riesgo, con sus beneficios reales y los riesgos a respetar.",
+          "learn": [
+            "El diferencial de rentabilidad del ratio de venta",
+            "El corto futuro sintético",
+            "Por qué equivale a un futuro corto",
+            "La reversión del riesgo",
+            "Donde se esconde el riesgo ilimitado",
+            "Leyendo los verdaderos beneficios"
+          ],
+          "tags": [
+            "Osuno"
+          ]
+        },
+        {
+          "n": 12,
+          "slug": "bearish-butterfly-condor",
+          "title": "Mariposa bajista y cóndor bajista",
+          "summary": "Formas de riesgo definido para apuntar a una zona bajista específica. Conozca la mariposa bajista y el cóndor bajista, estructuras de todo tipo que pagan más si NIFTY desciende al nivel elegido.",
+          "learn": [
+            "Una visión bajista dirigida",
+            "La mariposa bajista",
+            "El cóndor bajista",
+            "Barato, alta recompensa al riesgo",
+            "Por qué el POP está bajo",
+            "Leyendo los verdaderos beneficios"
+          ],
+          "tags": [
+            "Osuno"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "D",
+      "name": "Estrategias de volatilidad",
+      "desc": "Apostar por un gran movimiento, o por la calma, más que por la dirección.",
+      "chapters": [
+        {
+          "n": 13,
+          "slug": "long-straddle-strangle",
+          "title": "Long Straddle and Strangle: apostar por un gran movimiento",
+          "summary": "A veces esperas un gran movimiento pero no en qué dirección. Aprenda el largo straddle y estrangulamiento, comprando tanto una opción de compra como una opción de venta, los dos puntos de equilibrio y la caída del tiempo que lucha contra usted, con métricas reales NIFTY.",
+          "learn": [
+            "Una visión no direccional y de grandes movimientos",
+            "El largo paseo",
+            "El estrangulamiento largo más barato",
+            "Dos puntos de equilibrio",
+            "El tiempo decae como enemigo",
+            "Leyendo los verdaderos beneficios"
+          ],
+          "tags": [
+            "Volatilidad"
+          ]
+        },
+        {
+          "n": 14,
+          "slug": "short-straddle-strangle",
+          "title": "Short Straddle and Strangle: apostar por la calma",
+          "summary": "La apuesta contraria es que ese precio permanece fijado. Aprenda el straddle and estrangulamiento corto, la venta de ambos lados para cobrar la prima, la amplia zona de ganancias, el gran margen y el riesgo ilimitado que exige respeto.",
+          "learn": [
+            "Una visión limitada",
+            "El corto paseo",
+            "El estrangulamiento corto más amplio",
+            "Cobro de prima",
+            "Riesgo ilimitado y gran margen",
+            "Leyendo los verdaderos beneficios"
+          ],
+          "tags": [
+            "Volatilidad"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "E",
+      "name": "Rango e ingresos",
+      "desc": "La familia del hierro, las mariposas, las proporciones y el lagarto de jade: formas de ingresos de riesgo definido.",
+      "chapters": [
+        {
+          "n": 15,
+          "slug": "iron-condor",
+          "title": "El cóndor de hierro",
+          "summary": "La estrategia de ingresos más popular. Descubra cómo las cuatro patas construyen una amplia zona de ganancias que le paga si NIFTY se mantiene en un rango, las versiones larga y corta, riesgo definido en ambos extremos, con las métricas.",
+          "learn": [
+            "Una jugada con rango de riesgo definido",
+            "Cuatro patas explicadas de forma sencilla",
+            "La amplia meseta de ganancias",
+            "Cóndor de hierro largo vs corto",
+            "Dos puntos de equilibrio y el POP",
+            "Leyendo la verdadera recompensa"
+          ],
+          "tags": [
+            "Rango"
+          ]
+        },
+        {
+          "n": 16,
+          "slug": "iron-fly-butterfly",
+          "title": "La mosca de hierro y la mariposa",
+          "summary": "Primos del cóndor más estrictos y con mayores recompensas. Aprenda la mosca de hierro (larga y corta) y la mariposa call and put, que pagan más si NIFTY marca un strike, con formas de pago reales.",
+          "learn": [
+            "la mosca de hierro",
+            "Mosca de hierro larga vs corta",
+            "La mariposa llama y pone",
+            "Una apuesta segura",
+            "Mayor recompensa, zona más estrecha",
+            "Leyendo los verdaderos beneficios"
+          ],
+          "tags": [
+            "Rango"
+          ]
+        },
+        {
+          "n": 17,
+          "slug": "ratio-and-backspreads",
+          "title": "Diferenciales de ratio call y put",
+          "summary": "Estrategias con un número desigual de patas. Conozca el diferencial del índice de compra y el diferencial del índice de venta, donde la venta de opciones adicionales financia la operación pero abre un riesgo ilimitado por un lado, con las métricas.",
+          "learn": [
+            "Piernas desiguales",
+            "El diferencial del ratio de llamadas",
+            "El diferencial del ratio de venta",
+            "Donde se esconde el riesgo desnudo",
+            "Versiones de crédito y débito",
+            "Leyendo los verdaderos beneficios"
+          ],
+          "tags": [
+            "Rango"
+          ]
+        },
+        {
+          "n": 18,
+          "slug": "jade-lizard",
+          "title": "El lagarto de jade y el lagarto de jade inverso",
+          "summary": "Estructuras crediticias ordenadas que eliminan el riesgo por un lado. Aprenda el lagarto de jade (sin riesgo de ganancias) y el lagarto de jade inverso (sin riesgo de desventajas), y cómo el crédito borra una cola, con beneficios reales.",
+          "learn": [
+            "La estructura del lagarto de jade.",
+            "Sin riesgo al alza",
+            "El lagarto de jade inverso",
+            "Sin riesgo a la baja",
+            "Por qué es importante el crédito",
+            "Leyendo los verdaderos beneficios"
+          ],
+          "tags": [
+            "Rango"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "F",
+      "name": "Avanzado y tiempo",
+      "desc": "Amplias estructuras de múltiples patas, calendarios que intercambian el tiempo y lo sintético.",
+      "chapters": [
+        {
+          "n": 19,
+          "slug": "advanced-multileg",
+          "title": "Batman, Doble Mosca y Doble Cóndor",
+          "summary": "Las grandes estructuras de múltiples patas. Aprenda el batman (dos alas de proporción), la mosca doble y el cóndor doble, que colocan dos estructuras de rango una al lado de la otra para una zona de ganancias más amplia o de dos picos, con las métricas.",
+          "learn": [
+            "Estructuras de apilamiento",
+            "el batman",
+            "la doble mosca",
+            "El doble cóndor",
+            "Picos de beneficios gemelos",
+            "Leyendo los verdaderos beneficios"
+          ],
+          "tags": [
+            "Avanzado"
+          ]
+        },
+        {
+          "n": 20,
+          "slug": "calendars",
+          "title": "Calendario y diferenciales diagonales: tiempo de negociación",
+          "summary": "Estrategias que venden cerca del vencimiento y compran cerca del vencimiento. Aprenda el calendario call and put y la diagonal, cómo el tramo del mes anterior mantiene su valor de tiempo para formar una tienda de campaña y cómo se benefician del deterioro del tiempo.",
+          "learn": [
+            "Vender cerca, comprar lejos",
+            "El calendario de llamada y venta",
+            "La extensión diagonal",
+            "La forma de la tienda del calendario",
+            "Aprovechando la decadencia del tiempo",
+            "Leyendo los verdaderos beneficios"
+          ],
+          "tags": [
+            "Avanzado"
+          ]
+        },
+        {
+          "n": 21,
+          "slug": "synthetic-and-covered",
+          "title": "Los sintéticos y la llamada cubierta",
+          "summary": "Las opciones pueden copiar un futuro y combinarse con uno. Conozca el futuro sintético largo y corto (una opción de compra más una opción de venta que imita un futuro) y la opción de compra cubierta (una participación más una opción de compra vendida para obtener ingresos).",
+          "learn": [
+            "El largo futuro sintético",
+            "El corto futuro sintético",
+            "Por qué equivalen a un futuro",
+            "La llamada cubierta",
+            "Obtener ingresos de una explotación",
+            "El límite al alza"
+          ],
+          "tags": [
+            "Avanzado"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "G",
+      "name": "Financiación, ajuste y elección",
+      "desc": "Margen y garantía, defender una operación probada y elegir la estrategia adecuada.",
+      "chapters": [
+        {
+          "n": 22,
+          "slug": "collateral-and-margin",
+          "title": "Margen y garantía para F&O",
+          "summary": "Vender opciones y negociar futuros bloquea el margen, pero no siempre se necesita efectivo. Descubra cómo se construye el margen a partir de SPAN y la exposición, cómo lo muestra la calculadora de margen OpenAlgo y qué activos puede pignorar como garantía en lugar de efectivo.",
+          "learn": [
+            "Por qué vender necesita margen",
+            "SPAN y margen de exposición",
+            "La calculadora de márgenes OpenAlgo",
+            "Proponer garantías en lugar de efectivo",
+            "¿Qué cuenta como garantía F&O?",
+            "Recortes de pelo y el componente de efectivo"
+          ],
+          "tags": [
+            "Gestión"
+          ]
+        },
+        {
+          "n": 23,
+          "slug": "pledging-for-margin",
+          "title": "Compromiso de margen, de forma inteligente",
+          "summary": "Las promesas le permiten negociar activos que ya posee sin venderlos. Descubra cómo el recorte decide cuánto margen obtiene, por qué la garantía líquida supera a las acciones volátiles, el costo de intereses de incumplir el componente de efectivo, el truco de la llamada cubierta y el riesgo de llamada de margen.",
+          "learn": [
+            "Cómo funciona la promesa",
+            "Cortes de pelo y cuánto margen obtienes.",
+            "Garantía en efectivo versus garantía no en efectivo",
+            "El costo de interés del componente en efectivo",
+            "Truco número uno: prefiera garantías líquidas",
+            "Truco dos: la llamada cubierta",
+            "Riesgo de llamada de margen y venta forzada"
+          ],
+          "tags": [
+            "Gestión"
+          ]
+        },
+        {
+          "n": 24,
+          "slug": "margin-penalties",
+          "title": "Márgenes y penalizaciones de margen",
+          "summary": "El intercambio verifica su margen en momentos aleatorios durante el día y un déficit le cuesta una multa. Conozca la regla del margen mínimo, los controles del margen máximo, las penalizaciones y las situaciones cotidianas que silenciosamente las desencadenan.",
+          "learn": [
+            "La regla del margen mínimo",
+            "Margen máximo y controles aleatorios.",
+            "Las losas de penalización",
+            "Déficit inicial versus déficit no inicial",
+            "Por qué una posición corta o sin cobertura aumenta el margen",
+            "Mantener un búfer de margen"
+          ],
+          "tags": [
+            "Gestión"
+          ]
+        },
+        {
+          "n": 25,
+          "slug": "options-adjustments",
+          "title": "Ajustes de opciones: defender una operación probada",
+          "summary": "Una estrategia rara vez se deja intacta hasta su vencimiento. Aprenda cómo ajustar una posición cuando el precio la prueba: hacer subir, bajar o retirar un strike en el tiempo, convertir un diferencial, agregar un tramo de cobertura y el flujo de trabajo OpenAlgo para cerrar y volver a ingresar tramos.",
+          "learn": [
+            "¿Por qué ajustarse?",
+            "Desplegándose en el tiempo",
+            "Hacer rodar un strike hacia arriba o hacia abajo",
+            "Conversión a una estructura más amplia",
+            "Agregar una pierna defensiva",
+            "Cuándo ajustar vs salir"
+          ],
+          "tags": [
+            "Gestión"
+          ]
+        },
+        {
+          "n": 26,
+          "slug": "position-greeks-and-iv",
+          "title": "La posición de los griegos y el régimen de volatilidad",
+          "summary": "Un diferencial es más que su imagen de rentabilidad. Lleva un delta, gamma, theta y vega netos, y vive dentro de un régimen de volatilidad. Aprenda a leer los griegos agregados de una posición completa, juzgue si la volatilidad implícita es rica o barata con un rango IV, lea el sesgo y la estructura de plazos, y elija estructuras de crédito, débito o calendario que se ajusten al régimen en el que se encuentra realmente.",
+          "learn": [
+            "Posición agregada delta y gamma",
+            "theta neto y vega",
+            "Rango y percentil IV",
+            "leyendo el sesgo",
+            "La estructura de plazos de volatilidad",
+            "Crédito, débito o calendario por régimen"
+          ],
+          "tags": [
+            "Gestión"
+          ]
+        },
+        {
+          "n": 27,
+          "slug": "choosing-and-managing",
+          "title": "Elegir una estrategia y gestionarla",
+          "summary": "Una estrategia es tan buena como la vista que hay detrás de ella. Aprenda a hacer coincidir una estrategia con vistas alcistas, bajistas, neutrales o de grandes movimientos utilizando las métricas, dimensione la posición para sobrevivir y administre o salga cuando se equivoque.",
+          "learn": [
+            "Estrategia coincidente para ver",
+            "Usando POP y riesgo para recompensar",
+            "Riesgo definido primero para principiantes",
+            "Tamaño de posición",
+            "Cuando tomar ganancias",
+            "Saber cuando alejarse"
+          ],
+          "tags": [
+            "Gestión"
+          ]
+        }
+      ]
+    }
+  ]
+}

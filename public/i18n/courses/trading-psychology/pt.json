@@ -1,0 +1,483 @@
+{
+  "course": "trading-psychology",
+  "locale": "pt",
+  "parts": [
+    {
+      "id": "A",
+      "name": "Psicologia comercial e inteligência emocional",
+      "desc": "Por que o mercado transforma emoções normais em más decisões - e os sistemas que protegem você de si mesmo.",
+      "chapters": [
+        {
+          "n": 1,
+          "slug": "your-brain-and-markets",
+          "title": "Seu cérebro não foi feito para os mercados",
+          "summary": "Medo, ganância, esperança, arrependimento e a dopamina de uma negociação vencedora. Por que a ligação que manteve os nossos antepassados ​​vivos nos torna péssimos a lidar com dinheiro em mercados voláteis - e o que fazer em relação a isso.",
+          "learn": [
+            "Por que os mercados sequestram as emoções",
+            "Medo, ganância, esperança, arrependimento",
+            "A armadilha da dopamina",
+            "A incerteza e o cérebro",
+            "Emoção vs decisão",
+            "Trabalhando com sua fiação"
+          ],
+          "tags": [
+            "Psicologia"
+          ]
+        },
+        {
+          "n": 2,
+          "slug": "loss-aversion-revenge",
+          "title": "Aversão à perda e negociação de vingança",
+          "summary": "Uma perda dói duas vezes mais do que o mesmo ganho é bom. Como esse desequilíbrio inicia uma negociação de vingança, por que a segunda negociação é geralmente pior que a primeira e como parar após o dano.",
+          "learn": [
+            "O que é aversão à perda",
+            "Por que as perdas doem em dobro",
+            "Como começam as negociações de vingança",
+            "A espiral de duplicação",
+            "Parando após dano",
+            "Uma regra de resfriamento"
+          ],
+          "tags": [
+            "Psicologia"
+          ]
+        },
+        {
+          "n": 3,
+          "slug": "fomo-overconfidence-herd",
+          "title": "FOMO, Excesso de confiança e comportamento de rebanho",
+          "summary": "Comprar porque todo mundo está ganhando dinheiro, avaliando depois de algumas vitórias e confundindo uma maré de sorte com habilidade. As três emoções da multidão que aparecem exatamente na hora errada.",
+          "learn": [
+            "Medo de perder",
+            "Excesso de confiança após vitórias",
+            "Comportamento de rebanho e bolhas",
+            "Sorte versus habilidade",
+            "Por que os tops se sentem mais seguros",
+            "Resistindo à multidão"
+          ],
+          "tags": [
+            "Psicologia"
+          ]
+        },
+        {
+          "n": 4,
+          "slug": "discipline-is-a-system",
+          "title": "Disciplina é um sistema, não um traço de personalidade",
+          "summary": "Disciplina não é a força de vontade com a qual você nasce - é um conjunto de regras e ferramentas que afastam as decisões dos momentos emocionais. Listas de verificação, dimensionamento predefinido, alertas e registro no diário que tornam a ação certa o padrão.",
+          "learn": [
+            "Disciplina como sistema",
+            "Por que a força de vontade falha",
+            "Pré-comprometendo-se com as regras",
+            "Listas de verificação e alertas",
+            "Removendo decisões instantâneas",
+            "Projetando seus padrões"
+          ],
+          "tags": [
+            "Disciplina"
+          ]
+        },
+        {
+          "n": 5,
+          "slug": "trading-journal",
+          "title": "Diário de Negociação e Processo de Revisão",
+          "summary": "O que realmente registrar – configuração, motivo, risco, emoção, erro, captura de tela, resultado – e por que uma revisão semanal supera o autojulgamento diário. O único hábito que transforma perdas em lições.",
+          "learn": [
+            "O que gravar",
+            "Registrando emoções e erros",
+            "Capturas de tela e contexto",
+            "Revisão semanal vs diária",
+            "Encontrando seus padrões",
+            "Um modelo de diário simples"
+          ],
+          "tags": [
+            "Disciplina"
+          ]
+        },
+        {
+          "n": 6,
+          "slug": "emotional-intelligence",
+          "title": "Construindo Inteligência Emocional",
+          "summary": "Reconhecer o medo, a raiva, o tédio, a ganância e a vergonha à medida que acontecem - e os movimentos simples que se seguem: pausar, reduzir o tamanho, afastar-se. Como parar de negociar sua identidade em vez de seu plano.",
+          "learn": [
+            "Nomeando suas emoções",
+            "Identificando os sinais de alerta",
+            "Pausar, reduzir, afastar-se",
+            "Tédio e vingança",
+            "Negociação baseada em identidade",
+            "Uma rotina de redefinição pessoal"
+          ],
+          "tags": [
+            "Psicologia"
+          ]
+        },
+        {
+          "n": 7,
+          "slug": "compulsive-trading",
+          "title": "Quando a negociação se torna compulsiva",
+          "summary": "A negociação ativa pode se transformar silenciosamente em um problema comportamental. Os sinais de alerta honestos - contrair empréstimos para negociar, esconder-se ou mentir sobre perdas, ser incapaz de parar, negociar para escapar ao stress - e a razão pela qual a resposta certa é uma ruptura total e uma ajuda real, e não uma posição maior.",
+          "learn": [
+            "Quando a negociação se torna compulsiva",
+            "O ciclo do jogo",
+            "Empréstimo para negociar",
+            "Escondendo e mentindo sobre perdas",
+            "Ser incapaz de parar",
+            "Fazendo uma pausa completa e obtendo ajuda"
+          ],
+          "tags": [
+            "Psicologia"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "B",
+      "name": "Cobertura: quando, por que e quando não",
+      "desc": "O hedge negocia um risco por um custo. Quando essa negociação vale a pena, quando não vale e as ferramentas simples para realizá-la.",
+      "chapters": [
+        {
+          "n": 8,
+          "slug": "what-hedging-does",
+          "title": "O que o hedge realmente faz",
+          "summary": "A cobertura reduz um risco ao aceitar outro custo. Não é proteção gratuita nem lucro garantido – é seguro, com prêmio. O modelo mental honesto antes de qualquer proteção.",
+          "learn": [
+            "Cobertura como seguro",
+            "Trocando um risco por um custo",
+            "Não é gratuito, não é garantido",
+            "O que uma cerca viva protege",
+            "O que uma cerca viva não pode fazer",
+            "A troca honesta"
+          ],
+          "tags": [
+            "Cobertura"
+          ]
+        },
+        {
+          "n": 9,
+          "slug": "when-to-hedge",
+          "title": "Quando você deve fazer hedge",
+          "summary": "Um grande portfólio em um evento, exposição concentrada em ações, risco de F&O overnight, exposição de negócios ou uma necessidade futura de caixa conhecida. As situações em que pagar pela proteção realmente faz sentido.",
+          "learn": [
+            "Risco de evento em um grande livro",
+            "Exposição concentrada em ações",
+            "Risco de F&O noturno",
+            "Exposição empresarial e cambial",
+            "Uma necessidade futura de caixa conhecida",
+            "Dimensionando a sebe"
+          ],
+          "tags": [
+            "Cobertura"
+          ]
+        },
+        {
+          "n": 10,
+          "slug": "when-not-to-hedge",
+          "title": "Quando você não deve fazer hedge",
+          "summary": "Uma carteira pequena, um SIP de longo prazo, posições minúsculas, medo puro, um hedge caro ou um risco que você não consegue definir. Muitas vezes, o movimento mais barato e mais limpo é simplesmente cortar a posição.",
+          "learn": [
+            "Quando o hedge é um exagero",
+            "Pequenos livros e SIPs",
+            "Protegendo-se do medo",
+            "Quando o hedge custa muito caro",
+            "Risco indefinido",
+            "Corte vs cobertura"
+          ],
+          "tags": [
+            "Cobertura"
+          ]
+        },
+        {
+          "n": 11,
+          "slug": "cost-of-hedging",
+          "title": "O custo da cobertura",
+          "summary": "Prêmio da opção, redução do tempo, spread de compra e venda, impostos, corretagem, derrapagem, risco de base, margem e a vantagem da qual você desiste. Cada hedge tem uma fatura – veja como lê-la antes de pagá-la.",
+          "learn": [
+            "Prêmio e redução de tempo",
+            "Spread, corretagem, impostos",
+            "Risco de base e rastreamento",
+            "Margem na cobertura",
+            "Desistindo do lado positivo",
+            "Custo total de proteção"
+          ],
+          "tags": [
+            "Cobertura"
+          ]
+        },
+        {
+          "n": 12,
+          "slug": "simple-hedging-tools",
+          "title": "Ferramentas de hedge simples",
+          "summary": "Opção de venda protetora, opção de compra coberta, colarinho, hedge de índice futuro, simplesmente redução do tamanho da posição, retenção de dinheiro e diversificação em si. As maneiras fáceis de reduzir riscos, classificadas por custo e simplicidade.",
+          "learn": [
+            "Colocação protetora",
+            "Chamada e coleira cobertas",
+            "Hedge futuro de índice",
+            "Dinheiro como hedge",
+            "Reduzindo tamanho",
+            "Diversificação como hedge"
+          ],
+          "tags": [
+            "Cobertura"
+          ]
+        },
+        {
+          "n": 13,
+          "slug": "hedge-ratio-portfolio",
+          "title": "Taxa de hedge e hedge de portfólio",
+          "summary": "Beta, valor nocional, hedge de índice, hedge parcial versus total e por que o excesso e a subcobertura custam para você. Como dimensionar um hedge de portfólio sem fingir que existe um hedge perfeito.",
+          "learn": [
+            "Valor beta e nocional",
+            "Dimensionando um hedge de índice",
+            "Hedge parcial vs total",
+            "Cobertura excessiva e insuficiente",
+            "Por que as sebes perfeitas são raras",
+            "Um hedge de portfólio trabalhado"
+          ],
+          "tags": [
+            "Cobertura"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "C",
+      "name": "O manual do vendedor de opções e do hedge",
+      "desc": "Para o vendedor de rendimento e o hedger: defina primeiro o risco, onde as estruturas ainda falham, e respeitando a cauda.",
+      "chapters": [
+        {
+          "n": 14,
+          "slug": "naked-vs-hedged-selling",
+          "title": "Venda nua versus venda coberta",
+          "summary": "Por que uma opção vendida a descoberto acarreta risco aberto, como um spread define sua perda máxima antecipadamente e por que a venda com risco definido é o único ponto de partida sensato para um iniciante.",
+          "learn": [
+            "O perigo do short curto",
+            "Como um spread limita a perda",
+            "Risco definido versus risco indefinido",
+            "Diferença de margem",
+            "Por que os iniciantes começam a se proteger",
+            "Lendo a perda máxima primeiro"
+          ],
+          "tags": [
+            "Opções"
+          ]
+        },
+        {
+          "n": 15,
+          "slug": "credit-spreads-condors",
+          "title": "Spreads de crédito, condores de ferro e moscas de ferro",
+          "summary": "Como estas estruturas de risco definido reduzem o risco, onde ainda falham e por que razão - para um vendedor - a perda máxima é muito mais importante do que o lucro máximo. Com diagramas de recompensa claros.",
+          "learn": [
+            "Noções básicas de spread de crédito",
+            "Condor de ferro e mosca de ferro",
+            "Onde as estruturas falham",
+            "Perda máxima vs lucro máximo",
+            "Probabilidade vs recompensa",
+            "Escolhendo greves com sensatez"
+          ],
+          "tags": [
+            "Opções"
+          ]
+        },
+        {
+          "n": 16,
+          "slug": "adjustment-risk",
+          "title": "Risco de ajuste",
+          "summary": "Rolando, mudando, adicionando pernas, dobrando. Quando um ajuste reduz genuinamente o risco e quando é apenas uma forma de esconder uma negociação perdedora e aumentar silenciosamente a posição.",
+          "learn": [
+            "O que significa 'ajustar'",
+            "Rolando e mudando",
+            "Adicionando pernas",
+            "Ajustes bons versus ruins",
+            "Escondendo uma negociação ruim",
+            "Uma regra de ajuste predefinida"
+          ],
+          "tags": [
+            "Opções"
+          ]
+        },
+        {
+          "n": 17,
+          "slug": "tail-risk-for-sellers",
+          "title": "Risco de cauda para vendedores de opções",
+          "summary": "A mudança de um dia que apaga meses de prêmio. Risco de cisne negro, gaps noturnos, explosão de volatilidade e liquidez seca exatamente quando você precisa sair – e como os vendedores se preparam para isso.",
+          "learn": [
+            "O que é risco de cauda",
+            "Meses de prêmio, um dia",
+            "Lacunas e explosões vol",
+            "Liquidez desaparecendo",
+            "Sebes de cauda",
+            "Sobrevivendo ao dia raro"
+          ],
+          "tags": [
+            "Opções"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "D",
+      "name": "Planos de risco completos por tipo de usuário",
+      "desc": "Junte tudo: um plano de risco concreto e pronto para uso para cada tipo de participante e uma lista de verificação mestre.",
+      "chapters": [
+        {
+          "n": 18,
+          "slug": "plan-long-term-investors",
+          "title": "Plano de Risco para Investidores de Longo Prazo",
+          "summary": "Alocação de ativos, SIPs, reequilíbrio, um fundo de emergência e a habilidade mais importante: como se comportar durante uma crise, em vez de vender o fundo do poço em pânico.",
+          "learn": [
+            "Alocação e SIPs",
+            "Cadência de reequilíbrio",
+            "Reserva de fundo de emergência",
+            "Regras de comportamento em caso de colisão",
+            "Evitando saídas de pânico",
+            "Um plano de investidor de uma página"
+          ],
+          "tags": [
+            "Plano"
+          ]
+        },
+        {
+          "n": 19,
+          "slug": "plan-stock-traders",
+          "title": "Plano de risco para traders de ações",
+          "summary": "Risco de configuração, stop-loss, dimensionamento de posição, limite de perda diário, risco de gap, diário e rotina de revisão – a lista completa de verificação de risco do trader de swing em um só lugar.",
+          "learn": [
+            "Risco por negociação",
+            "Parar e dimensionar",
+            "Limite diário de perdas",
+            "Regras de risco de lacuna",
+            "Registro no diário",
+            "Um plano de trader de uma página"
+          ],
+          "tags": [
+            "Plano"
+          ]
+        },
+        {
+          "n": 20,
+          "slug": "plan-intraday-traders",
+          "title": "Plano de risco para traders intradiários",
+          "summary": "Máximo de negociações e perda máxima por dia, uma regra de não vingança, um filtro de liquidez, risco de hora do dia e disciplina de execução – as barreiras de proteção que mantêm viva uma conta intradiária.",
+          "learn": [
+            "Máximo de negociações por dia",
+            "Perda máxima diária",
+            "A regra de não vingança",
+            "Liquidez e timing",
+            "Disciplina de execução",
+            "Um plano intradiário de uma página"
+          ],
+          "tags": [
+            "Plano"
+          ]
+        },
+        {
+          "n": 21,
+          "slug": "plan-futures-traders",
+          "title": "Plano de Risco para Negociadores de Futuros",
+          "summary": "Um limite de alavancagem, um buffer de marcação a mercado, risco overnight, disciplina de rolagem, estresse de margem e prevenção de eventos – dimensionamento e regras criadas para o mundo linear e alavancado dos futuros.",
+          "learn": [
+            "Limite de alavancagem",
+            "Buffer MTM",
+            "Risco noturno",
+            "Disciplina de rollover",
+            "Evitação de eventos",
+            "Um plano futuro de uma página"
+          ],
+          "tags": [
+            "Plano"
+          ]
+        },
+        {
+          "n": 22,
+          "slug": "plan-option-buyers",
+          "title": "Plano de risco para compradores de opções",
+          "summary": "Um orçamento premium, seleção de vencimento, consciência da volatilidade implícita, um stop-loss e disciplina para parar de comprar opções de bilhetes de loteria. Um plano realista para o comprador da opção.",
+          "learn": [
+            "Um orçamento premium",
+            "Escolhendo a expiração",
+            "Consciência IV",
+            "Paradas para compradores",
+            "Evitando comprar na loteria",
+            "Um plano de comprador de uma página"
+          ],
+          "tags": [
+            "Plano"
+          ]
+        },
+        {
+          "n": 23,
+          "slug": "plan-option-sellers",
+          "title": "Plano de risco para vendedores de opções",
+          "summary": "Risco definido, um buffer de margem, um hedge de cauda, ​​regras de ajuste predefinidas, um dia de perda máxima e filtros de eventos – o plano de sobrevivência do vendedor, porque vender é o que menos perdoa.",
+          "learn": [
+            "Apenas risco definido",
+            "Buffer de margem",
+            "Uma cerca viva de cauda em pé",
+            "Regras de ajuste",
+            "Dia de perda máxima",
+            "Um plano de vendedor de uma página"
+          ],
+          "tags": [
+            "Plano"
+          ]
+        },
+        {
+          "n": 24,
+          "slug": "plan-hedgers",
+          "title": "Plano de risco para hedgers",
+          "summary": "Qual exposição está realmente sendo coberta, o tamanho do hedge, seu custo, seu vencimento e quando removê-lo – um processo limpo para que um hedge proteja você em vez de se tornar silenciosamente uma segunda aposta.",
+          "learn": [
+            "Defina a exposição",
+            "Tamanho da cobertura",
+            "Custo e vencimento do hedge",
+            "Quando remover uma cerca viva",
+            "Hedge vs nova posição",
+            "Um plano de hedge de uma página"
+          ],
+          "tags": [
+            "Plano"
+          ]
+        },
+        {
+          "n": 25,
+          "slug": "final-checklist",
+          "title": "Lista de verificação final: antes de investir dinheiro de verdade",
+          "summary": "A lista de verificação principal que une todo o curso: capital, risco por negociação, perda máxima, a decisão de hedge, seu estado emocional, um plano de saída e um processo de revisão - execute-a antes de cada compromisso com dinheiro real.",
+          "learn": [
+            "Capital e baldes",
+            "Risco por negociação e perda máxima",
+            "A decisão de hedge",
+            "Verificação do estado emocional",
+            "Um plano de saída escrito",
+            "O ciclo de revisão"
+          ],
+          "tags": [
+            "Plano"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "E",
+      "name": "Referência e permanência atual",
+      "desc": "Os fatos reais por trás deste curso – tamanhos de lote, margens, datas de vencimento, números SEBI – mudam com o tempo. Aqui é onde verificá-los.",
+      "chapters": [
+        {
+          "n": 26,
+          "slug": "sources-and-staying-current",
+          "title": "Fontes e como se manter atualizado",
+          "summary": "Tamanhos de lote, datas de vencimento, margens, encargos e valores de SEBI mudam. Esta referência mostra onde verificar todos os fatos ao vivo que este curso usa e o simples hábito de 'atualizado' que evita que seus próprios números fiquem obsoletos.",
+          "learn": [
+            "Onde verificar tamanhos e especificações de lote NSE",
+            "Fontes de calendário de expiração",
+            "Os estudos de F&O SEBI",
+            "Regras de margem e liquidação",
+            "O hábito 'a partir da data'",
+            "Uma tabela de fatos para fontes"
+          ],
+          "tags": [
+            "Plano"
+          ]
+        }
+      ]
+    }
+  ]
+}

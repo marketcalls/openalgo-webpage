@@ -1,0 +1,515 @@
+{
+  "course": "options-strategies",
+  "locale": "pt",
+  "parts": [
+    {
+      "id": "A",
+      "name": "Lendo uma estratégia",
+      "desc": "O diagrama de retorno e os nove números que descrevem qualquer estratégia de opções.",
+      "chapters": [
+        {
+          "n": 1,
+          "slug": "the-strategy-builder",
+          "title": "O Construtor de Estratégia e o Diagrama de Pagamento",
+          "summary": "Antes de qualquer estratégia, você precisa ler um diagrama de resultados. Aprenda o que a curva mostra, a linha laranja no vencimento versus a linha azul T+0, as bandas sigma e como o construtor de estratégia do OpenAlgo tira isso de suas pernas em dados reais do NIFTY.",
+          "learn": [
+            "O que um diagrama de recompensa mostra",
+            "A curva no vencimento vs a curva T + 0",
+            "Zonas de lucros e perdas",
+            "Pernas: as peças de uma estratégia",
+            "As bandas sigma e linha spot",
+            "Lendo um exemplo real"
+          ],
+          "tags": [
+            "Fundações"
+          ]
+        },
+        {
+          "n": 2,
+          "slug": "reading-payoffs",
+          "title": "Os Nove Números: Lucro Máximo, POP, Margem e Mais",
+          "summary": "O construtor mostra nove métricas para cada estratégia. Aprenda a ler todos eles: ponto de equilíbrio, lucro e perda máximos, probabilidade de lucro, risco de recompensa, crédito ou débito líquido, prêmio estimado, total P&L e a margem que a negociação bloqueia.",
+          "learn": [
+            "Pontos de equilíbrio",
+            "Lucro máximo e perda máxima",
+            "Probabilidade de lucro (POP)",
+            "Risco para recompensar",
+            "Crédito líquido vs débito líquido",
+            "Prêmio e margem estimados"
+          ],
+          "tags": [
+            "Fundações"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "B",
+      "name": "Estratégias de alta",
+      "desc": "As nove estruturas de alta no construtor, desde uma única chamada até a proporção e negociações borboleta.",
+      "chapters": [
+        {
+          "n": 3,
+          "slug": "long-call-short-put",
+          "title": "Chamada longa e venda curta",
+          "summary": "As duas negociações de alta unilaterais. Aprenda a opção de compra comprada (risco limitado, vantagem ilimitada) e a opção de venda curta (cobrança de prêmio, grande desvantagem), os dois extremos do espectro de alta, com retornos reais de NIFTY.",
+          "learn": [
+            "A longa chamada",
+            "Risco limitado, vantagem ilimitada",
+            "A colocação curta",
+            "Cobrança de prêmio, grande risco",
+            "Comprador vs vendedor otimista",
+            "Lendo as recompensas reais"
+          ],
+          "tags": [
+            "Alta"
+          ]
+        },
+        {
+          "n": 4,
+          "slug": "bull-call-spread",
+          "title": "A propagação da chamada de touro",
+          "summary": "Uma negociação moderadamente otimista com custo e lucro limitados. Aprenda como comprar uma opção de compra e vender uma opção mais alta cria uma maneira mais barata e com risco definido de ser otimista, com as métricas reais NIFTY.",
+          "learn": [
+            "Uma visão levemente otimista",
+            "Compre uma opção de compra, venda uma opção mais alta",
+            "Custo limitado e lucro limitado",
+            "O ponto de equilíbrio",
+            "Quando preferir em vez de uma chamada longa",
+            "Lendo a verdadeira recompensa"
+          ],
+          "tags": [
+            "Alta"
+          ]
+        },
+        {
+          "n": 5,
+          "slug": "bull-put-spread",
+          "title": "A propagação do Bull Put",
+          "summary": "Uma negociação otimista que lhe paga um crédito adiantado. Aprenda como vender uma opção de venda e comprar uma mais baixa gera prêmio enquanto limita o risco e como lucra se NIFTY simplesmente não cair.",
+          "learn": [
+            "Uma visão otimista e de cobrança de prêmios",
+            "Vender uma opção de venda, comprar uma opção de venda mais baixa",
+            "O crédito líquido",
+            "Perda máxima definida",
+            "Probabilidade de lucro",
+            "Lendo a verdadeira recompensa"
+          ],
+          "tags": [
+            "Alta"
+          ]
+        },
+        {
+          "n": 6,
+          "slug": "bull-ratio-synthetic",
+          "title": "Proporção Back Spread, Sintético e Range Forward",
+          "summary": "Mais três formas de alta. Aprenda o índice de call back spread (vantagens baratas e explosivas), o futuro sintético longo (opções de compra e opções de venda que imitam um futuro) e o intervalo futuro, com seus retornos reais e os riscos a serem observados.",
+          "learn": [
+            "A taxa de call back spread",
+            "Por que pode ser uma negociação de crédito",
+            "O longo futuro sintético",
+            "Por que é igual a um futuro",
+            "O colarinho para frente",
+            "Lendo as recompensas reais"
+          ],
+          "tags": [
+            "Alta"
+          ]
+        },
+        {
+          "n": 7,
+          "slug": "bullish-butterfly-condor",
+          "title": "Borboleta altista e condor altista",
+          "summary": "Formas de risco definido para atingir uma zona positiva específica. Aprenda a borboleta altista e o condor altista, estruturas que pagam mais se NIFTY subir para um nível escolhido, com as métricas.",
+          "learn": [
+            "Uma visão altista direcionada",
+            "A borboleta altista",
+            "O condor altista",
+            "Barato e alta recompensa pelo risco",
+            "Por que o POP está baixo",
+            "Lendo as recompensas reais"
+          ],
+          "tags": [
+            "Alta"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "C",
+      "name": "Estratégias de baixa",
+      "desc": "As nove estruturas baixistas, a imagem espelhada da família altista.",
+      "chapters": [
+        {
+          "n": 8,
+          "slug": "long-put-short-call",
+          "title": "Venda longa e chamada curta",
+          "summary": "As duas negociações de baixa unilaterais. Aprenda a opção de venda longa (risco limitado, grande lucro negativo) e a opção de compra curta (receber prêmio, risco ilimitado), as duas extremidades do espectro de baixa, com retornos reais de NIFTY.",
+          "learn": [
+            "A longa colocação",
+            "Risco limitado, grande lucro em caso de queda",
+            "A chamada curta",
+            "Coletando prêmio e risco ilimitado",
+            "Comprador vs vendedor pessimista",
+            "Lendo as recompensas reais"
+          ],
+          "tags": [
+            "Grosseiro"
+          ]
+        },
+        {
+          "n": 9,
+          "slug": "bear-call-spread",
+          "title": "A propagação do chamado do urso",
+          "summary": "Uma negociação de crédito baixista. Aprenda como vender uma call e comprar uma mais alta gera prêmio com risco definido, lucrando se NIFTY ficar abaixo do short strike, com as métricas.",
+          "learn": [
+            "Uma visão pessimista e de cobrança de prêmios",
+            "Venda uma opção de compra, compre uma opção mais alta",
+            "O crédito líquido",
+            "Perda máxima definida",
+            "Lucro se o preço permanecer baixo",
+            "Lendo a verdadeira recompensa"
+          ],
+          "tags": [
+            "Grosseiro"
+          ]
+        },
+        {
+          "n": 10,
+          "slug": "bear-put-spread",
+          "title": "O Urso Put Spread",
+          "summary": "Uma negociação de baixa com risco definido. Saiba como comprar uma opção de venda e vender uma mais baixa cria uma maneira mais barata de lucrar com uma queda, com lucros e perdas limitados, com base em dados reais NIFTY.",
+          "learn": [
+            "Uma visão baixista",
+            "Compre uma opção de venda, venda uma opção de venda mais baixa",
+            "Custo limitado e lucro limitado",
+            "O ponto de equilíbrio",
+            "Quando preferir em vez de um longo prazo",
+            "Lendo a verdadeira recompensa"
+          ],
+          "tags": [
+            "Grosseiro"
+          ]
+        },
+        {
+          "n": 11,
+          "slug": "bear-ratio-synthetic",
+          "title": "Put Ratio Back Spread, Sintético e Reversão de Risco",
+          "summary": "Mais três formas de baixa. Aprenda o spread da relação de venda (desvantagem barata e explosiva), o futuro sintético curto e a reversão do risco, com seus retornos reais e os riscos a serem respeitados.",
+          "learn": [
+            "A relação de venda e spread",
+            "O curto futuro sintético",
+            "Por que isso equivale a um futuro curto",
+            "A reversão do risco",
+            "Onde o risco ilimitado se esconde",
+            "Lendo as recompensas reais"
+          ],
+          "tags": [
+            "Grosseiro"
+          ]
+        },
+        {
+          "n": 12,
+          "slug": "bearish-butterfly-condor",
+          "title": "Borboleta baixista e Condor baixista",
+          "summary": "Maneiras de risco definido para atingir uma zona negativa específica. Aprenda a borboleta baixista e o condor baixista, estruturas all-put que pagam mais se NIFTY cair para um nível escolhido.",
+          "learn": [
+            "Uma visão de baixa direcionada",
+            "A borboleta baixista",
+            "O condor baixista",
+            "Barato e alta recompensa pelo risco",
+            "Por que o POP está baixo",
+            "Lendo as recompensas reais"
+          ],
+          "tags": [
+            "Grosseiro"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "D",
+      "name": "Estratégias de Volatilidade",
+      "desc": "Apostar numa grande jogada, ou na calma, e não na direção.",
+      "chapters": [
+        {
+          "n": 13,
+          "slug": "long-straddle-strangle",
+          "title": "Long Straddle e Strangle: apostando em uma grande jogada",
+          "summary": "Às vezes você espera uma grande mudança, mas não em que direção. Aprenda o longo straddle e o strangle, comprando uma opção de compra e uma opção de venda, os dois pontos de equilíbrio e a queda de tempo que o enfrenta, com métricas NIFTY reais.",
+          "learn": [
+            "Uma visão não direcional e de grande movimento",
+            "A longa caminhada",
+            "O estrangulamento longo mais barato",
+            "Dois pontos de equilíbrio",
+            "Decadência do tempo como inimigo",
+            "Lendo as recompensas reais"
+          ],
+          "tags": [
+            "Volatilidade"
+          ]
+        },
+        {
+          "n": 14,
+          "slug": "short-straddle-strangle",
+          "title": "Short Straddle e Strangle: apostando na calma",
+          "summary": "A aposta oposta, esse preço permanece fixo. Aprenda o curto e o estrangulamento, vendendo ambos os lados para receber prémios, a ampla zona de lucro, a grande margem e o risco ilimitado que exige respeito.",
+          "learn": [
+            "Uma visão limitada por intervalo",
+            "O curto straddle",
+            "O estrangulamento curto mais largo",
+            "Coletando prêmio",
+            "Risco ilimitado e grande margem",
+            "Lendo as recompensas reais"
+          ],
+          "tags": [
+            "Volatilidade"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "E",
+      "name": "Alcance e Renda",
+      "desc": "A família do ferro, as borboletas, as proporções e o lagarto de jade: formas de rendimento com risco definido.",
+      "chapters": [
+        {
+          "n": 15,
+          "slug": "iron-condor",
+          "title": "O Condor de Ferro",
+          "summary": "A estratégia de renda mais popular. Aprenda como quatro pernas constroem uma ampla zona de lucro que compensa se NIFTY permanecer em um intervalo, as versões longa e curta, risco definido em ambas as extremidades, com as métricas.",
+          "learn": [
+            "Uma jogada com faixa de risco definida",
+            "Quatro pernas explicadas de forma simples",
+            "O amplo platô de lucro",
+            "Condor de ferro longo vs curto",
+            "Dois pontos de equilíbrio e POP",
+            "Lendo a verdadeira recompensa"
+          ],
+          "tags": [
+            "Faixa"
+          ]
+        },
+        {
+          "n": 16,
+          "slug": "iron-fly-butterfly",
+          "title": "A Mosca de Ferro e a Borboleta",
+          "summary": "Primos do condor mais rígidos e de maior recompensa. Aprenda a mosca de ferro (longa e curta) e a borboleta call and put, que pagam mais se NIFTY acertar um golpe, com formatos de retorno reais.",
+          "learn": [
+            "A mosca de ferro",
+            "Mosca de ferro longa vs curta",
+            "A chamada e a colocação da borboleta",
+            "Uma aposta pin-the-strike",
+            "Recompensa maior, zona mais estreita",
+            "Lendo as recompensas reais"
+          ],
+          "tags": [
+            "Faixa"
+          ]
+        },
+        {
+          "n": 17,
+          "slug": "ratio-and-backspreads",
+          "title": "Spreads de relação de compra e venda",
+          "summary": "Estratégias com número desigual de pernas. Aprenda o spread do índice de chamadas e o spread do índice de venda, onde a venda de opções extras financia a negociação, mas abre risco ilimitado de um lado, com as métricas.",
+          "learn": [
+            "Pernas desiguais",
+            "O spread da taxa de chamada",
+            "O spread da relação de venda",
+            "Onde o risco nu se esconde",
+            "Versões de crédito versus débito",
+            "Lendo as recompensas reais"
+          ],
+          "tags": [
+            "Faixa"
+          ]
+        },
+        {
+          "n": 18,
+          "slug": "jade-lizard",
+          "title": "O Lagarto de Jade e o Lagarto de Jade Reverso",
+          "summary": "Estruturas de crédito elegantes que eliminam o risco de um lado. Aprenda o lagarto de jade (sem risco positivo) e o lagarto de jade reverso (sem risco negativo) e como o crédito apaga uma cauda, ​​com recompensas reais.",
+          "learn": [
+            "A estrutura do lagarto de jade",
+            "Nenhum risco positivo",
+            "O lagarto de jade reverso",
+            "Nenhum risco no lado negativo",
+            "Por que o crédito é importante",
+            "Lendo as recompensas reais"
+          ],
+          "tags": [
+            "Faixa"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "F",
+      "name": "Avançado e Tempo",
+      "desc": "Estruturas amplas de múltiplas etapas, calendários que negociam horário e sintéticos.",
+      "chapters": [
+        {
+          "n": 19,
+          "slug": "advanced-multileg",
+          "title": "Batman, Mosca Dupla e Condor Duplo",
+          "summary": "As grandes estruturas com múltiplas pernas. Aprenda o batman (duas asas de proporção), a mosca dupla e o condor duplo, que colocam duas estruturas de alcance lado a lado para uma zona de lucro mais ampla ou de pico duplo, com as métricas.",
+          "learn": [
+            "Estruturas de empilhamento",
+            "O homem Morcego",
+            "A mosca dupla",
+            "O duplo condor",
+            "Picos de lucro gêmeos",
+            "Lendo as recompensas reais"
+          ],
+          "tags": [
+            "Avançado"
+          ]
+        },
+        {
+          "n": 20,
+          "slug": "calendars",
+          "title": "Spreads de calendário e diagonais: tempo de negociação",
+          "summary": "Estratégias que vendem um vencimento próximo e compram um vencimento distante. Aprenda o calendário call and put e a diagonal, como a perna do mês anterior mantém seu valor de tempo para formar uma tenda e como eles lucram com a redução do tempo.",
+          "learn": [
+            "Vendendo perto, comprando longe",
+            "A chamada e o calendário colocado",
+            "A propagação diagonal",
+            "O formato da tenda do calendário",
+            "Lucrando com a decadência do tempo",
+            "Lendo as recompensas reais"
+          ],
+          "tags": [
+            "Avançado"
+          ]
+        },
+        {
+          "n": 21,
+          "slug": "synthetic-and-covered",
+          "title": "Sintéticos e a chamada coberta",
+          "summary": "As opções podem copiar um futuro e emparelhar com um. Aprenda o futuro sintético longo e curto (uma opção de compra mais uma opção de venda que imita um futuro) e a opção de compra coberta (uma participação mais uma opção de compra vendida para obter renda).",
+          "learn": [
+            "O longo futuro sintético",
+            "O curto futuro sintético",
+            "Por que eles equivalem a um futuro",
+            "A chamada coberta",
+            "Ganhar renda em uma holding",
+            "A tampa do lado de cima"
+          ],
+          "tags": [
+            "Avançado"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "G",
+      "name": "Financiamento, Ajuste e Escolha",
+      "desc": "Margem e garantias, defendendo uma negociação testada e escolhendo a estratégia certa.",
+      "chapters": [
+        {
+          "n": 22,
+          "slug": "collateral-and-margin",
+          "title": "Margem e garantia para F&O",
+          "summary": "Vender opções e negociar futuros bloqueia a margem, mas nem sempre você precisa de dinheiro. Aprenda como a margem é construída a partir de SPAN e exposição, como a calculadora de margem OpenAlgo mostra isso e quais ativos você pode penhorar como garantia em vez de dinheiro.",
+          "learn": [
+            "Por que vender precisa de margem",
+            "SPAN e margem de exposição",
+            "A calculadora de margem OpenAlgo",
+            "Oferecendo garantias em vez de dinheiro",
+            "O que conta como garantia de F&O",
+            "Cortes de cabelo e o componente de dinheiro"
+          ],
+          "tags": [
+            "Gerenciamento"
+          ]
+        },
+        {
+          "n": 23,
+          "slug": "pledging-for-margin",
+          "title": "Prometendo margem de forma inteligente",
+          "summary": "A promessa permite que você negocie ativos que já possui sem vendê-los. Saiba como o corte de cabelo decide quanta margem você obtém, por que a garantia líquida supera as ações voláteis, o custo dos juros da violação do componente de caixa, o truque da chamada coberta e o risco da chamada de margem.",
+          "learn": [
+            "Como funciona o penhor",
+            "Cortes de cabelo e quanta margem você obtém",
+            "Garantia em dinheiro vs não em dinheiro",
+            "O custo dos juros do componente caixa",
+            "Truque um: prefira garantias líquidas",
+            "Truque dois: a chamada coberta",
+            "Risco de chamada de margem e venda forçada"
+          ],
+          "tags": [
+            "Gerenciamento"
+          ]
+        },
+        {
+          "n": 24,
+          "slug": "margin-penalties",
+          "title": "Margens e penalidades de margem",
+          "summary": "A bolsa verifica sua margem em momentos aleatórios ao longo do dia, e um déficit custa uma multa. Aprenda a regra da margem mínima, as verificações das margens de pico, as penalidades e as situações cotidianas que as desencadeiam silenciosamente.",
+          "learn": [
+            "A regra da margem mínima",
+            "Margem de pico e verificações aleatórias",
+            "As placas de penalidade",
+            "Déficits iniciais versus não iniciais",
+            "Por que uma venda curta ou sem hedge aumenta a margem",
+            "Manter um buffer de margem"
+          ],
+          "tags": [
+            "Gerenciamento"
+          ]
+        },
+        {
+          "n": 25,
+          "slug": "options-adjustments",
+          "title": "Ajustes de opções: defendendo uma negociação testada",
+          "summary": "Uma estratégia raramente é deixada intacta até expirar. Aprenda como ajustar uma posição quando o preço a testa: rolando um strike para cima, para baixo ou para fora no tempo, convertendo um spread, adicionando uma perna de hedge e o fluxo de trabalho OpenAlgo para fechar e reentrar nas pernas.",
+          "learn": [
+            "Por que ajustar tudo",
+            "Lançando no tempo",
+            "Rolando um golpe para cima ou para baixo",
+            "Convertendo para uma estrutura mais ampla",
+            "Adicionando uma perna defensiva",
+            "Quando ajustar vs sair"
+          ],
+          "tags": [
+            "Gerenciamento"
+          ]
+        },
+        {
+          "n": 26,
+          "slug": "position-greeks-and-iv",
+          "title": "Posição dos gregos e o regime de volatilidade",
+          "summary": "Um spread é mais do que sua imagem de retorno. Ele carrega delta, gama, teta e vega líquidos e vive dentro de um regime de volatilidade. Aprenda a ler os gregos agregados de uma posição inteira, julgue se a volatilidade implícita é rica ou barata com classificação IV, leia a distorção e a estrutura a termo e escolha estruturas de crédito, débito ou calendário que se ajustem ao regime em que você realmente se encontra.",
+          "learn": [
+            "Posição agregada delta e gama",
+            "Teta e vega líquidos",
+            "Classificação e percentil IV",
+            "Lendo a inclinação",
+            "A estrutura a termo da volatilidade",
+            "Crédito, débito ou calendário por regime"
+          ],
+          "tags": [
+            "Gerenciamento"
+          ]
+        },
+        {
+          "n": 27,
+          "slug": "choosing-and-managing",
+          "title": "Escolhendo uma estratégia e gerenciando-a",
+          "summary": "Uma estratégia é tão boa quanto a visão por trás dela. Aprenda como combinar uma estratégia com visões de alta, baixa, neutras ou de grande movimento usando as métricas, dimensionar a posição para sobrevivência e gerenciar ou sair quando estiver errado.",
+          "learn": [
+            "Estratégia de correspondência para visualizar",
+            "Usando POP e risco para recompensar",
+            "Risco definido primeiro para iniciantes",
+            "Dimensionamento de posição",
+            "Quando obter lucro",
+            "Saber quando ir embora"
+          ],
+          "tags": [
+            "Gerenciamento"
+          ]
+        }
+      ]
+    }
+  ]
+}

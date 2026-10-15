@@ -1,0 +1,687 @@
+{
+  "course": "amibroker",
+  "locale": "es",
+  "parts": [
+    {
+      "id": "A",
+      "name": "Conoce a AmiBroker",
+      "desc": "Qué es AmiBroker, cómo funciona el Editor de fórmulas y la única idea (matrices) que hace que AFL haga clic.",
+      "chapters": [
+        {
+          "n": 1,
+          "slug": "what-is-amibroker",
+          "title": "¿Qué es AmiBroker y AFL?",
+          "summary": "El panorama general: gráficos, la ventana de Análisis y las cuatro cosas que AFL puede hacer: indicar, explorar, escanear y realizar pruebas retrospectivas.",
+          "learn": [
+            "Para qué sirve AmiBroker",
+            "Indicador vs Exploración vs Backtest",
+            "Dónde vive el código AFL",
+            "El editor de fórmulas y aplicar",
+            "Paneles y hojas de gráficos",
+            "Cómo está estructurado este curso"
+          ],
+          "tags": [
+            "Lo esencial"
+          ]
+        },
+        {
+          "n": 2,
+          "slug": "formula-editor",
+          "title": "El editor de fórmulas y su primer indicador",
+          "summary": "Escriba, aplique y guarde su primer AFL (un diagrama de una línea RSI) y aprenda los hábitos de edición que le ahorrarán horas.",
+          "learn": [
+            "Abra el editor de fórmulas",
+            "_SECTION_BEGIN / _SECTION_END",
+            "Comentarios y legibilidad",
+            "Plot() tu primera línea",
+            "Aplicar indicador vs insertar",
+            "Guardar y organizar fórmulas"
+          ],
+          "tags": [
+            "Lo esencial",
+            "AFL"
+          ]
+        },
+        {
+          "n": 3,
+          "slug": "how-afl-thinks",
+          "title": "Cómo piensa AFL: matrices y barras",
+          "summary": "La idea más importante de AFL: cada variable es una matriz completa de valores, uno por barra. Obtén esto y todo lo demás es fácil.",
+          "learn": [
+            "¿Qué es realmente una matriz?",
+            "Un valor por barra",
+            "Pensamiento vectorizado vs barra por barra",
+            "La barra actual frente a la matriz",
+            "¿Por qué casi no hay bucles?",
+            "Visualizar matrices como columnas"
+          ],
+          "tags": [
+            "Lo esencial",
+            "AFL"
+          ]
+        },
+        {
+          "n": 4,
+          "slug": "price-and-variables",
+          "title": "Matrices de precios, variables y operadores",
+          "summary": "Conozca O, H, L, C, V y Volumen, almacene resultados en variables y haga cálculos en un gráfico completo a la vez.",
+          "learn": [
+            "Matrices abiertas/High/Low/Close/Volume",
+            "Asignar variables",
+            "Aritmética entre matrices",
+            "Precio típico y rangos",
+            "Operadores y precedencia",
+            "Leyendo la ventana de datos del gráfico"
+          ],
+          "tags": [
+            "Lo esencial",
+            "AFL"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "B",
+      "name": "El lenguaje AFL",
+      "desc": "La gramática de AFL: trazado, parámetros, funciones integradas, lógica, retrospectiva y escritura de sus propias funciones.",
+      "chapters": [
+        {
+          "n": 5,
+          "slug": "plotting-and-styles",
+          "title": "Estilos de trazado y gráficos",
+          "summary": "Dibuja líneas, velas, histogramas y bandas, y controla el color, el grosor y el estilo como un profesional.",
+          "learn": [
+            "Plot() en profundidad",
+            "styleLine / styleCandle / styleHistogram",
+            "GetPriceStyle y styleNoTitle",
+            "Colores y constantes colorXXX",
+            "Combinando estilos con |",
+            "Trazar en un nuevo panel"
+          ],
+          "tags": [
+            "Cuadro",
+            "AFL"
+          ]
+        },
+        {
+          "n": 6,
+          "slug": "parameters",
+          "title": "Parámetros: controles interactivos",
+          "summary": "Convierta números codificados en controles deslizantes, selectores de color y menús desplegables con Param, ParamColor, ParamList y amigos.",
+          "learn": [
+            "deslizadores Param()",
+            "ParamColor y ParamStyle",
+            "Lista de parámetros y alternancia de parámetros",
+            "Botones ParamTrigger",
+            "Por qué los parámetros superan a los números mágicos",
+            "La ventana de parámetros"
+          ],
+          "tags": [
+            "Cuadro",
+            "AFL"
+          ]
+        },
+        {
+          "n": 7,
+          "slug": "built-in-functions",
+          "title": "Funciones e indicadores integrados",
+          "summary": "Un recorrido guiado por las funciones que utilizará todos los días: MA, EMA, RSI, MACD, ATR, BBands y cómo leer la referencia de funciones.",
+          "learn": [
+            "Medias móviles: MA, EMA, WMA",
+            "RSI, MACD, Estocástico",
+            "ATR y bandas de Bollinger",
+            "Suma, más alta, más baja, HHV, LLV",
+            "Lectura de la referencia de función AFL",
+            "Funciones de anidamiento"
+          ],
+          "tags": [
+            "Indicador",
+            "AFL"
+          ]
+        },
+        {
+          "n": 8,
+          "slug": "conditions-and-logic",
+          "title": "Condiciones, lógica y IIf",
+          "summary": "Cree matrices reales/false con comparaciones y AND/OR, luego elija valores barra por barra con el importante IIf.",
+          "learn": [
+            "Operadores de comparación",
+            "AND, OR, NOT en matrices",
+            "Verdadero/false como 1/0",
+            "IIf(condition, a, b)",
+            "Anidamiento IIf",
+            "Errores lógicos comunes"
+          ],
+          "tags": [
+            "AFL"
+          ]
+        },
+        {
+          "n": 9,
+          "slug": "referencing-bars",
+          "title": "Mirando hacia atrás: referencia, cruz y barras desde",
+          "summary": "Acceda a barras anteriores (y posteriores) con Ref, detecte cruces con Cross y cuente barras desde un evento.",
+          "learn": [
+            "Ref() para cambiar una matriz",
+            "Cierre de ayer, máximo anterior",
+            "Cross() para cruces",
+            "BarsSince y lógica Barssince",
+            "HHV / LLV sobre una ventana",
+            "Evitar el sesgo de anticipación"
+          ],
+          "tags": [
+            "AFL"
+          ]
+        },
+        {
+          "n": 10,
+          "slug": "dates-and-sessions",
+          "title": "Fechas, horarios y sesión de negociación",
+          "summary": "Lea el calendario y el reloj (día, mes, hora) y responda la pregunta que todo sistema intradiario plantea: ¿ha comenzado un nuevo día?",
+          "learn": [
+            "Día / Mes / Año / Día De La Semana",
+            "TimeNum y el reloj HHMMSS",
+            "Detectando un nuevo día o sesión",
+            "Bares desde la apertura; primera y última barra del día",
+            "El día está abierto, altibajos hasta ahora",
+            "Restringir las entradas a una ventana de tiempo"
+          ],
+          "tags": [
+            "AFL",
+            "En tiempo real"
+          ]
+        },
+        {
+          "n": 11,
+          "slug": "arrays-and-loops",
+          "title": "Arrays vs bucles: el bucle for",
+          "summary": "La mayoría de los AFL no necesitan bucles, pero algo de lógica (como un trailing stop) sí los necesita. Aprenda cuándo y cómo escribir un bucle for limpio.",
+          "learn": [
+            "Cuando las matrices no son suficientes",
+            "for( i = 0; i < BarCount; i++ )",
+            "Indexar una matriz con [i]",
+            "Llevando el estado a través de las barras",
+            "Un simple bucle de trailing-stop",
+            "Rendimiento del bucle y dificultades"
+          ],
+          "tags": [
+            "AFL"
+          ]
+        },
+        {
+          "n": 12,
+          "slug": "custom-functions",
+          "title": "Funciones y procedimientos personalizados",
+          "summary": "Lógica del paquete que puede reutilizar en sus propias funciones y procedimientos, con alcance local y global.",
+          "learn": [
+            "función vs procedimiento",
+            "Parámetros y retorno",
+            "variables locales vs globales",
+            "Devolviendo una matriz",
+            "Una función indicadora reutilizable",
+            "Construyendo una pequeña biblioteca personal"
+          ],
+          "tags": [
+            "AFL"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "C",
+      "name": "Gráficos y visualización",
+      "desc": "Cree gráficos que comuniquen: flechas, velas codificadas por colores, títulos dinámicos, diseños de paneles múltiples y paneles GFX.",
+      "chapters": [
+        {
+          "n": 13,
+          "slug": "shapes-and-text",
+          "title": "Flechas, formas y texto",
+          "summary": "Marque las señales en el gráfico con PlotShapes y PlotText: flechas hacia arriba, flechas hacia abajo, estrellas y etiquetas.",
+          "learn": [
+            "PlotShapes y shapeUpArrow",
+            "Posicionamiento con compensación",
+            "Color por condición",
+            "PlotText para etiquetas",
+            "Apilar formas",
+            "Comprar/Sell convenciones de flechas"
+          ],
+          "tags": [
+            "Cuadro"
+          ]
+        },
+        {
+          "n": 14,
+          "slug": "color-coding",
+          "title": "Colores, cintas y velas condicionales",
+          "summary": "Colorea velas según la tendencia, pinta cintas de fondo y crea un contexto visual de un vistazo.",
+          "learn": [
+            "Colores impulsados ​​por IIf",
+            "Colorear velas según una regla.",
+            "Cintas de tendencia en la parte inferior.",
+            "sombreado de fondo",
+            "Codificación de colores MACD / RSI",
+            "colorXXX frente a ColorRGB"
+          ],
+          "tags": [
+            "Cuadro"
+          ]
+        },
+        {
+          "n": 15,
+          "slug": "title-and-strformat",
+          "title": "La barra de título y StrFormat",
+          "summary": "Cree un encabezado de gráfico rico y dinámico (nombre, OHLC, cambio porcentual) con Título, StrFormat y WriteIf.",
+          "learn": [
+            "La variable Título",
+            "StrFormat y especificadores de formato",
+            "{{NAME}}, {{DATE}} tokens",
+            "NumToStr y WriteIf",
+            "Valor seleccionado para el cursor",
+            "Un encabezado profesional"
+          ],
+          "tags": [
+            "Cuadro"
+          ]
+        },
+        {
+          "n": 16,
+          "slug": "panes-and-foreign",
+          "title": "Múltiples paneles y comparación de símbolos",
+          "summary": "Apile paneles de indicadores y extraiga los datos de otro símbolo con Foreign y PlotForeign para obtener una fuerza relativa.",
+          "learn": [
+            "Nuevo panel versus superposición",
+            "Foreign() para leer otro símbolo",
+            "PlotForeign en el gráfico",
+            "Fuerza relativa frente a un índice",
+            "SetForeign / RestorePriceArrays",
+            "Gráficos de diferenciales y proporciones"
+          ],
+          "tags": [
+            "Cuadro"
+          ]
+        },
+        {
+          "n": 17,
+          "slug": "gfx-dashboards",
+          "title": "GFX Paneles de control",
+          "summary": "Dibuja tus propios paneles (cuadros, degradados y texto) con las funciones de bajo nivel GFX para un tablero pulido.",
+          "learn": [
+            "GfxText y GfxSelectFont",
+            "GfxRectangle y GfxGradientRect",
+            "Coordenadas y píxeles",
+            "Un cuadro de estado de señal",
+            "Un panel superior responsivo",
+            "Cuando GFX vale la pena"
+          ],
+          "tags": [
+            "Cuadro"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "D",
+      "name": "Exploración y escaneo",
+      "desc": "Visualice todo el mercado a la vez: la ventana de Análisis, AddColumn, filtros y clasificación.",
+      "chapters": [
+        {
+          "n": 18,
+          "slug": "exploration-basics",
+          "title": "Exploración: la ventana de análisis",
+          "summary": "Convierta AFL en una hoja de cálculo sobre toda su lista de seguimiento con Filter y AddColumn.",
+          "learn": [
+            "La ventana de análisis",
+            "Filtro = el interruptor de fila",
+            "Agregar columna y agregar columna de texto",
+            "Formato decimal",
+            "Revisando una lista de vigilancia",
+            "Configuración de rango, fecha y N-barras"
+          ],
+          "tags": [
+            "Exploración"
+          ]
+        },
+        {
+          "n": 19,
+          "slug": "building-a-scanner",
+          "title": "Construyendo un escáner de señales",
+          "summary": "Escanee docenas de símbolos para encontrar una configuración real (cruces MACD, extremos y rupturas RSI) y enumere solo los aciertos.",
+          "learn": [
+            "Filtrado solo para señales",
+            "Escáneres MACD / RSI",
+            "Análisis de ruptura y de 52 semanas",
+            "Mostrando el valor de activación",
+            "Escanear versus explorar",
+            "Guardar un proyecto de análisis"
+          ],
+          "tags": [
+            "Exploración"
+          ]
+        },
+        {
+          "n": 20,
+          "slug": "ranking-and-filtering",
+          "title": "Filtrado, clasificación y clasificación",
+          "summary": "Ordena los resultados, colorea las celdas y clasifica tu universo por fuerza o volumen.",
+          "learn": [
+            "Filtros multicondiciones",
+            "Ordenar columnas",
+            "Color de celda condicional",
+            "Clasificación de volumen relativo",
+            "Destacando lo mejor",
+            "La exploración como rutina diaria"
+          ],
+          "tags": [
+            "Exploración"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "E",
+      "name": "Creación de sistemas comerciales",
+      "desc": "La mecánica de un sistema negociable: señales, entradas y salidas limpias, paradas, objetivos y dimensionamiento.",
+      "chapters": [
+        {
+          "n": 21,
+          "slug": "buy-sell-signals",
+          "title": "Comprar, vender, vender y cubrir",
+          "summary": "Los cuatro arreglos reservados que convierten una idea en un sistema y cómo los lee AmiBroker.",
+          "learn": [
+            "Comprar / Vender / Corto / Cobertura",
+            "Solo largo versus largo-corto",
+            "Las señales son verdaderas matrices /false.",
+            "ComprarPrecio y amigos",
+            "Del indicador al sistema",
+            "El ciclo de vida del comercio"
+          ],
+          "tags": [
+            "Estrategia"
+          ]
+        },
+        {
+          "n": 22,
+          "slug": "cleaning-signals",
+          "title": "Señales limpias: ExRem, Flip y sin repintar",
+          "summary": "Elimine señales duplicadas con ExRem, mantenga el estado con Flip y retrase una barra para que su sistema nunca vuelva a pintar.",
+          "learn": [
+            "Por qué se repiten las señales sin procesar",
+            "ExRem se quedará con el primero",
+            "Voltear para retenciones con estado",
+            "Ref(-1) para evitar repintar",
+            "Establecer retrasos comerciales",
+            "ValueWhen para precios de entrada"
+          ],
+          "tags": [
+            "Estrategia"
+          ]
+        },
+        {
+          "n": 23,
+          "slug": "stops-and-targets",
+          "title": "Paradas, objetivos y AplicarParada",
+          "summary": "Agregue un objetivo de stop-loss y ganancias, tanto como niveles de gráficos visuales como como salidas reales de backtest con ApplyStop.",
+          "learn": [
+            "Paradas fijas y porcentuales",
+            "Paradas basadas en ATR",
+            "Gráficos de parada visual/target",
+            "ApplyStop stopTypeLoss / Beneficio",
+            "paradas finales",
+            "Se detiene en el backtest"
+          ],
+          "tags": [
+            "Estrategia"
+          ]
+        },
+        {
+          "n": 24,
+          "slug": "position-sizing",
+          "title": "Tamaño de posición y retrasos comerciales",
+          "summary": "Controle cuánto opera con SetPositionSize y cuándo se realizan los llenados con SetTradeDelays y SetOption.",
+          "learn": [
+            "Modos SetPositionSize",
+            "Porcentaje de capital frente a fijo",
+            "spsShares / spsValue",
+            "SetTradeDelays explicado",
+            "Capital inicial y comisiones",
+            "Margen y apalancamiento"
+          ],
+          "tags": [
+            "Estrategia"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "F",
+      "name": "Backtesting y optimización",
+      "desc": "Demuestre su ventaja antes de arriesgar capital: realice una prueba retrospectiva, lea el informe y optimice sin engañarse.",
+      "chapters": [
+        {
+          "n": 25,
+          "slug": "first-backtest",
+          "title": "Tu primer backtest",
+          "summary": "Ejecute una prueba retrospectiva completa en la ventana de Análisis, establezca el rango de fechas y la configuración, y vea su curva de capital.",
+          "learn": [
+            "Del gráfico al backtest",
+            "Configuración de prueba retrospectiva",
+            "Rango de fechas y periodicidad",
+            "Ejecutando una prueba retrospectiva",
+            "La curva de equidad",
+            "Errores de configuración comunes"
+          ],
+          "tags": [
+            "Prueba retrospectiva"
+          ]
+        },
+        {
+          "n": 26,
+          "slug": "backtest-report",
+          "title": "Leer el informe de backtest",
+          "summary": "Entienda los números: beneficio neto, CAR, reducción, tasa de ganancia, rentabilidad y ratios ajustados al riesgo.",
+          "learn": [
+            "Beneficio neto y CAR",
+            "Reducción máxima y MAR",
+            "Tasa de ganancia y relación de pago",
+            "Sharpe y expectativa",
+            "Lista por operación",
+            "Banderas rojas en un informe"
+          ],
+          "tags": [
+            "Prueba retrospectiva"
+          ]
+        },
+        {
+          "n": 27,
+          "slug": "optimization",
+          "title": "Optimización y robustez",
+          "summary": "Barra los parámetros con Optimize(), lea los resultados y elija configuraciones sólidas, no solo el pico de ajuste de curva.",
+          "learn": [
+            "Optimize() en lugar de Param",
+            "Ejecutando una optimización",
+            "Leyendo la tabla de resultados",
+            "mapas de calor 2D",
+            "Configuraciones robustas versus configuraciones máximas",
+            "Evitar el ajuste excesivo"
+          ],
+          "tags": [
+            "Prueba retrospectiva"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "G",
+      "name": "Libro de estrategias",
+      "desc": "Cinco sistemas completos y explicados, cada uno de ellos listo para que usted pueda realizar pruebas retrospectivas y colocar sus propias imágenes de informes.",
+      "chapters": [
+        {
+          "n": 28,
+          "slug": "ema-crossover-system",
+          "title": "Estrategia: Sistema cruzado EMA",
+          "summary": "El sistema de tendencias clásico, construido de extremo a extremo: señales, flechas, retrasos y un backtest que puede ejecutar usted mismo.",
+          "learn": [
+            "Lógica rápida /slow EMA",
+            "Limpiar señales largas y cortas",
+            "Trazando el sistema",
+            "Configuración de prueba retrospectiva",
+            "Leyendo su informe",
+            "Ajustando los periodos"
+          ],
+          "tags": [
+            "Estrategia",
+            "Prueba retrospectiva"
+          ]
+        },
+        {
+          "n": 29,
+          "slug": "supertrend-system",
+          "title": "Estrategia: Sistema de Supertendencias",
+          "summary": "Cree la popular Supertendencia basada en ATR desde cero con un bucle for, trace el trailing stop y opere con él.",
+          "learn": [
+            "La idea de la supertendencia",
+            "ATR bandas y el bucle",
+            "Estado de tendencia y cambios",
+            "Gráfico de trailing-stop",
+            "Señales y backtest",
+            "Ajuste de factor y período"
+          ],
+          "tags": [
+            "Estrategia",
+            "Prueba retrospectiva"
+          ]
+        },
+        {
+          "n": 30,
+          "slug": "vwap-intraday-system",
+          "title": "Estrategia: VWAP Sistema Intradiario",
+          "summary": "Un sistema intradiario de reversión de media/tendencia alrededor de VWAP, con entradas basadas en tiempo y un reinicio de sesión.",
+          "learn": [
+            "¿Qué es VWAP?",
+            "Edificio intradiario VWAP",
+            "Lógica consciente de la sesión",
+            "Entradas alrededor de VWAP",
+            "Salidas basadas en tiempo",
+            "Notas retrospectivas intradía"
+          ],
+          "tags": [
+            "Estrategia",
+            "Prueba retrospectiva"
+          ]
+        },
+        {
+          "n": 31,
+          "slug": "breakout-system",
+          "title": "Estrategia: Donchian / Fuga en el rango de apertura",
+          "summary": "Dos clásicos de ruptura: el canal de Donchian y la ruptura de rango de apertura, codificados y listos para probar.",
+          "learn": [
+            "Donchian más alto/lowest",
+            "Entradas de desglose del canal",
+            "Niveles de rango de apertura",
+            "Ventanas horarias intradiarias",
+            "Se detiene en una fuga",
+            "Desgloses de backtesting"
+          ],
+          "tags": [
+            "Estrategia",
+            "Prueba retrospectiva"
+          ]
+        },
+        {
+          "n": 32,
+          "slug": "rsi-pullback-system",
+          "title": "Estrategia: RSI Retroceso y reversión a la media",
+          "summary": "Un sistema de retroceso contratendencia que utiliza RSI con un filtro de tendencia: compra en caídas en una tendencia alcista.",
+          "learn": [
+            "RSI como gatillo de retroceso",
+            "Filtro de tendencias con EMA",
+            "Reglas de entrada y salida",
+            "Evitar la caída de cuchillos",
+            "Backtest y expectativa",
+            "Sólo largo frente a ambos lados"
+          ],
+          "tags": [
+            "Estrategia",
+            "Prueba retrospectiva"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "H",
+      "name": "Tiempo real, alertas y automatización",
+      "desc": "Implemente un sistema en vivo: múltiples períodos de tiempo, alertas a su teléfono y automatización de pedidos a través de OpenAlgo.",
+      "chapters": [
+        {
+          "n": 33,
+          "slug": "multi-timeframe",
+          "title": "Múltiples marcos de tiempo",
+          "summary": "Lea un marco de tiempo más alto en un gráfico de marco de tiempo más bajo con TimeFrameSet, TimeFrameGetPrice y amigos.",
+          "learn": [
+            "¿Por qué multiplazo?",
+            "TimeFrameSet/Restaurar",
+            "Marco de tiempoObtenerPrecio",
+            "Marco temporalExpandir",
+            "Un filtro de tendencia superior TF",
+            "Errores y alineación"
+          ],
+          "tags": [
+            "En tiempo real"
+          ]
+        },
+        {
+          "n": 34,
+          "slug": "alerts",
+          "title": "Alertas: Telegram y Voz",
+          "summary": "Alertas de incendio en el momento en que se activa una señal: AlertIf en el gráfico, un mensaje de Telegram y una alerta de voz hablada.",
+          "learn": [
+            "Conceptos básicos de AlertIf",
+            "Suprimir repeticiones",
+            "Alertas de bots de Telegram",
+            "InternetOpenURL",
+            "Alertas de voz (decir)",
+            "Lógica de una vez por barra"
+          ],
+          "tags": [
+            "En tiempo real"
+          ]
+        },
+        {
+          "n": 35,
+          "slug": "openalgo-automation",
+          "title": "Automatización de pedidos con OpenAlgo",
+          "summary": "Envíe sus señales AFL a OpenAlgo para realizar pedidos reales: automatización basada en botones y señales, primero en la zona de pruebas.",
+          "learn": [
+            "AmiBroker a OpenAlgo",
+            "La orden API llamada",
+            "Módulo de comercio de botones",
+            "Órdenes automáticas basadas en señales",
+            "Primero el modo Sandbox (analizador)",
+            "Seguridad y confirmación"
+          ],
+          "tags": [
+            "En tiempo real",
+            "OpenAlgo"
+          ]
+        },
+        {
+          "n": 36,
+          "slug": "whats-next",
+          "title": "Adónde ir a continuación",
+          "summary": "Un mapa de lo que ha aprendido, las partes de AFL que aún quedan por explorar y cómo seguir mejorando.",
+          "learn": [
+            "Lo que puedes construir ahora",
+            "Áreas para profundizar",
+            "Buenos hábitos y control de versiones.",
+            "La referencia de la función.",
+            "Unirse a la comunidad",
+            "De AFL a un flujo de trabajo completo"
+          ],
+          "tags": [
+            "Lo esencial"
+          ]
+        }
+      ]
+    }
+  ]
+}

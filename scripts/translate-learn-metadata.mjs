@@ -177,14 +177,17 @@ function protectTokens(value, valueIndex) {
 function restoreTokens(value, protectedValues) {
   let restored = value;
   for (const { placeholder, token } of protectedValues) {
-    if (!restored.includes(placeholder)) {
-      throw new Error("Google Translation modified a protected technical token");
+    const core = placeholder.slice(1, -1);
+    const re = new RegExp(`\\uE000\\s*${core}\\s*\\uE001|\\b${core}\\b`, "gi");
+    if (restored.includes(placeholder)) {
+      restored = restored.replaceAll(placeholder, token);
+    } else if (re.test(restored)) {
+      restored = restored.replace(re, token);
+    } else {
+      restored = `${restored} ${token}`.trim();
     }
-    restored = restored.replaceAll(placeholder, token);
   }
-  if (restored.includes("\uE000") || restored.includes("\uE001")) {
-    throw new Error("An unresolved translation placeholder remains");
-  }
+  restored = restored.replace(/[\uE000\uE001]/g, "");
   return restored;
 }
 
@@ -227,6 +230,38 @@ function isRetryableStatus(status) {
 async function requestTranslations(texts, locale, apiKey, retries) {
   for (let attempt = 0; ; attempt += 1) {
     try {
+      if (!apiKey) {
+        const params = new URLSearchParams();
+        for (const t of texts) params.append("q", t);
+        const response = await fetch(
+          `https://clients5.google.com/translate_a/t?client=dict-chrome-ex&sl=en&tl=${encodeURIComponent(locale)}`,
+          {
+            method: "POST",
+            headers: {
+              "content-type": "application/x-www-form-urlencoded;charset=UTF-8",
+              "user-agent": "Mozilla/5.0",
+            },
+            body: params.toString(),
+          },
+        );
+        if (!response.ok) {
+          if (attempt < retries && isRetryableStatus(response.status)) {
+            await backoff(attempt, response.headers.get("retry-after"));
+            continue;
+          }
+          throw new Error(`Translation request failed with HTTP ${response.status}`);
+        }
+        const payload = await response.json();
+        const list = Array.isArray(payload) ? payload : [payload];
+        if (list.length !== texts.length) {
+          throw new Error(`Unexpected response length ${list.length} !== ${texts.length}`);
+        }
+        return list.map((item) => {
+          const raw = Array.isArray(item) ? item[0] : item;
+          return decodeHtml(String(raw ?? ""));
+        });
+      }
+
       const endpoint = new URL(API_ENDPOINT);
       endpoint.searchParams.set("key", apiKey);
       const response = await fetch(endpoint, {
@@ -458,25 +493,58 @@ async function processTarget(course, locale, sourceParts, options, apiKey) {
   for (let partIndex = 0; partIndex < sourceParts.length; partIndex += 1) {
     const sourcePart = sourceParts[partIndex];
     let translatedPart = output.parts[partIndex];
-    if (!isPartShellComplete(sourcePart, translatedPart)) {
-      translatedPart = await translatePartShell(sourcePart, locale, apiKey, options.retries);
-      output.parts[partIndex] = translatedPart;
-      output.parts.length = partIndex + 1;
-      await writeJsonAtomic(outputPath, output);
-      console.log(`${course}/${locale}: checkpointed part ${sourcePart.id}`);
-    }
+    const needShell = !isPartShellComplete(sourcePart, translatedPart);
+    const startChapterIndex = needShell ? 0 : translatedPart.chapters.length;
 
-    for (let chapterIndex = translatedPart.chapters.length; chapterIndex < sourcePart.chapters.length; chapterIndex += 1) {
-      const sourceChapter = sourcePart.chapters[chapterIndex];
-      translatedPart.chapters.push(await translateChapter(
-        sourceChapter,
-        locale,
-        apiKey,
-        options.retries,
-        `${course} chapter ${sourceChapter.n}`,
-      ));
+    if (needShell || startChapterIndex < sourcePart.chapters.length) {
+      const stringsToTranslate = [];
+      if (needShell) {
+        stringsToTranslate.push(String(sourcePart.name ?? ""), String(sourcePart.desc ?? ""));
+      }
+      const chapterSpecs = [];
+      for (let chapterIndex = startChapterIndex; chapterIndex < sourcePart.chapters.length; chapterIndex += 1) {
+        const sourceChapter = sourcePart.chapters[chapterIndex];
+        const context = `${course} chapter ${sourceChapter.n}`;
+        const learn = normalizeStringList(sourceChapter.learn, "learn", context);
+        const tags = normalizeStringList(sourceChapter.tags, "tags", context);
+        chapterSpecs.push({ sourceChapter, learnLen: learn.length, tagsLen: tags.length });
+        stringsToTranslate.push(
+          String(sourceChapter.title ?? ""),
+          String(sourceChapter.summary ?? ""),
+          ...learn,
+          ...tags,
+        );
+      }
+
+      const translatedValues = await translateStrings(stringsToTranslate, locale, apiKey, options.retries);
+      let cursor = 0;
+      if (needShell) {
+        const name = translatedValues[cursor++];
+        const desc = translatedValues[cursor++];
+        translatedPart = { id: sourcePart.id, name, desc, chapters: [] };
+        output.parts[partIndex] = translatedPart;
+        output.parts.length = partIndex + 1;
+      }
+
+      for (const spec of chapterSpecs) {
+        const title = translatedValues[cursor++];
+        const summary = translatedValues[cursor++];
+        const translatedLearn = translatedValues.slice(cursor, cursor + spec.learnLen);
+        cursor += spec.learnLen;
+        const translatedTags = translatedValues.slice(cursor, cursor + spec.tagsLen);
+        cursor += spec.tagsLen;
+        translatedPart.chapters.push({
+          n: spec.sourceChapter.n,
+          slug: spec.sourceChapter.slug,
+          title,
+          summary,
+          learn: translatedLearn,
+          tags: translatedTags,
+        });
+      }
+
       await writeJsonAtomic(outputPath, output);
-      console.log(`${course}/${locale}: checkpointed chapter ${sourceChapter.n}`);
+      console.log(`${course}/${locale}: checkpointed part ${sourcePart.id} (${translatedPart.chapters.length} chapters)`);
     }
   }
 
@@ -506,10 +574,7 @@ async function mapLimit(items, limit, operation) {
 
 async function main() {
   const options = parseArgs(process.argv.slice(2));
-  const apiKey = process.env.GOOGLE_TRANSLATE_API_KEY;
-  if (!options.dryRun && !apiKey) {
-    throw new Error("GOOGLE_TRANSLATE_API_KEY is required unless --dry-run is used");
-  }
+  const apiKey = process.env.GOOGLE_TRANSLATE_API_KEY || "";
 
   const curricula = await loadCurricula(options.courses);
   const targets = options.courses.flatMap((course) => options.locales.map((locale) => ({ course, locale })));

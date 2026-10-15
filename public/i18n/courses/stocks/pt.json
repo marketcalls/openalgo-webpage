@@ -1,0 +1,354 @@
+{
+  "course": "stocks",
+  "locale": "pt",
+  "parts": [
+    {
+      "id": "A",
+      "name": "Dinheiro e mercados",
+      "desc": "Por que investir não é opcional, onde o dinheiro pode crescer e o que realmente é um mercado de ações.",
+      "chapters": [
+        {
+          "n": 1,
+          "slug": "why-invest",
+          "title": "Por que você deve investir",
+          "summary": "A inflação consome silenciosamente o dinheiro ocioso. Veja como poupar difere de investir, por que a capitalização recompensa aqueles que começam cedo e por que a verdadeira vantagem de um iniciante não é prever o mercado, mas sim construir ativos com paciência e cedo.",
+          "learn": [
+            "Economizar versus investir",
+            "Como a inflação corrói o dinheiro",
+            "A magia da composição",
+            "Por que você não pode (e não precisa) prever o mercado",
+            "Comece jovem: o tempo supera o tempo",
+            "Como são os retornos reais"
+          ],
+          "tags": [
+            "Dinheiro"
+          ]
+        },
+        {
+          "n": 2,
+          "slug": "asset-classes",
+          "title": "Onde colocar seu dinheiro: as classes de ativos",
+          "summary": "Ações, dívidas, ouro, imóveis, dinheiro e criptografia, o que cada um é, a compensação entre risco e retorno e por que as ações historicamente construíram mais riqueza.",
+          "learn": [
+            "As principais classes de ativos",
+            "Risco versus retorno",
+            "Patrimônio líquido, dívida e ouro",
+            "Noções básicas de liquidez e tributação",
+            "Onde a criptografia se encaixa",
+            "Construindo uma mistura simples"
+          ],
+          "tags": [
+            "Dinheiro"
+          ]
+        },
+        {
+          "n": 3,
+          "slug": "what-is-a-stock",
+          "title": "O mercado de ações, desmistificado",
+          "summary": "Uma ação é uma fatia de um negócio real. Aprenda o que significa possuir ações, por que as empresas as vendem e a diferença entre os mercados primário e secundário.",
+          "learn": [
+            "O que realmente é um compartilhamento",
+            "Por que as empresas aumentam o patrimônio",
+            "Mercado primário vs secundário",
+            "Como você ganha dinheiro com ações",
+            "Direitos dos acionistas",
+            "O mercado como leilão"
+          ],
+          "tags": [
+            "Noções básicas"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "B",
+      "name": "O ecossistema de mercado",
+      "desc": "As bolsas, reguladores, corretores e encanadores que tornam uma negociação possível e confiável.",
+      "chapters": [
+        {
+          "n": 4,
+          "slug": "sebi-and-regulators",
+          "title": "SEBI e os Guardiões do Mercado",
+          "summary": "Os mercados só funcionam quando são justos. Conheça SEBI, RBI e as regras que o protegem, e por que existe regulamentação, contada através dos escândalos que a criaram.",
+          "learn": [
+            "Quem regula os mercados",
+            "O que SEBI faz",
+            "O papel de RBI",
+            "Proteção ao investidor",
+            "Por que existem regras (os escândalos)",
+            "Como as reclamações são tratadas"
+          ],
+          "tags": [
+            "Regulamento"
+          ]
+        },
+        {
+          "n": 5,
+          "slug": "market-ecosystem",
+          "title": "Bolsas, Corretores e Depositários",
+          "summary": "De NSE e BSE à sua conta demat em NSDL ou CDSL, o elenco de intermediários que roteiam, mantêm e protegem suas ações.",
+          "learn": [
+            "Trocas NSE e BSE",
+            "O papel dos corretores",
+            "Demat e depositários (NSDL/CDSL)",
+            "Compensação de corporações",
+            "Desconto vs serviço completo",
+            "O que cada um cobra"
+          ],
+          "tags": [
+            "Mercados"
+          ]
+        },
+        {
+          "n": 6,
+          "slug": "clearing-settlement",
+          "title": "O que acontece depois que você compra",
+          "summary": "O que realmente acontece depois que você clica em Comprar, a jornada dos bastidores do dinheiro e das ações, a mudança da Índia para T+1 (e T+0) e por que quase nunca falha.",
+          "learn": [
+            "O que significa compensação",
+            "Liquidação",
+            "Ciclo T+1 da Índia",
+            "O papel da empresa de compensação",
+            "Liquidação contínua",
+            "Por que os padrões são raros"
+          ],
+          "tags": [
+            "Mercados"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "C",
+      "name": "Tornando-se público",
+      "desc": "Como uma empresa privada se torna uma ação listada que você pode comprar, a jornada de financiamento e o IPO.",
+      "chapters": [
+        {
+          "n": 7,
+          "slug": "how-companies-get-funded",
+          "title": "Da startup ao estoque: como as empresas são financiadas",
+          "summary": "Cada gigante listado começou pequeno. Acompanhe a escada do financiamento, o bootstrapping, os anjos, o capital de risco, o private equity e como as avaliações aumentam ao longo do caminho.",
+          "learn": [
+            "A origem de um negócio",
+            "Inicialização e anjos",
+            "Capital de risco e PE",
+            "Rodadas de financiamento e avaliação",
+            "Diluição explicada",
+            "Por que as empresas eventualmente listam"
+          ],
+          "tags": [
+            "IPO"
+          ]
+        },
+        {
+          "n": 8,
+          "slug": "the-ipo",
+          "title": "O IPO: Como uma empresa abre o capital",
+          "summary": "A oferta pública inicial, passo a passo, RHP, bookbuilding, faixa de preço, tamanho do lote e dia de listagem, usando IPOs indianos recentes como exemplos ao vivo.",
+          "learn": [
+            "O que é um IPO",
+            "O RHP e DRHP",
+            "Criação de livros e faixa de preços",
+            "Tamanho do lote e aplicação via UPI",
+            "Dia de listagem e ganhos de listagem",
+            "Lendo o jargão IPO"
+          ],
+          "tags": [
+            "IPO"
+          ]
+        },
+        {
+          "n": 9,
+          "slug": "corporate-actions-raising",
+          "title": "Direitos, FPO, OFS, Bônus e Divisões",
+          "summary": "As empresas listadas continuam arrecadando dinheiro e recompensando os acionistas. Decodifique questões de direitos, FPOs, OFS, ações bônus, desdobramentos e recompras de ações e o que cada um faz com o preço.",
+          "learn": [
+            "Questão de direitos vs FPO",
+            "Oferta de venda (OFS)",
+            "Ações e divisões de bônus",
+            "Recompras",
+            "Dividendos",
+            "Ajustes de preços explicados"
+          ],
+          "tags": [
+            "IPO"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "D",
+      "name": "Lendo o Mercado",
+      "desc": "Entenda uma cotação de preço, os índices que todos citam e o idioma que os traders falam.",
+      "chapters": [
+        {
+          "n": 10,
+          "slug": "stock-quote",
+          "title": "Anatomia de uma cotação de ações",
+          "summary": "LTP, oferta e venda, abertura-alta-baixa-fechamento, volume e janela de profundidade de mercado de 5 níveis, cada número em uma tela de cotação, explicado em dados de mercado reais e atuais.",
+          "learn": [
+            "LTP e última quantidade negociada",
+            "Licite, pergunte e o spread",
+            "Aberto, alto, baixo, perto",
+            "Volume",
+            "Profundidade do mercado (a carteira de pedidos)",
+            "Limites do circuito"
+          ],
+          "tags": [
+            "Mercados"
+          ]
+        },
+        {
+          "n": 11,
+          "slug": "indices",
+          "title": "Nifty, Sensex e como os índices são construídos",
+          "summary": "O que um índice mede, as ações constituintes do Nifty 50 e do Sensex, como a ponderação do free float decide a atração de cada ação e exatamente como o índice sobe ou desce à medida que seus constituintes se movem.",
+          "learn": [
+            "O que é um índice",
+            "Os constituintes e seus pesos",
+            "Ponderação de capitalização de mercado de flutuação livre",
+            "Como o índice sobe e desce",
+            "Índices setoriais versus índices amplos",
+            "Por que os índices são importantes e os fundos de índice"
+          ],
+          "tags": [
+            "Índice"
+          ]
+        },
+        {
+          "n": 12,
+          "slug": "market-jargon",
+          "title": "Touro, urso e o jargão que você ouvirá",
+          "summary": "Um glossário amigável de palavras usadas sobre negócios TV, touro e urso, grande/mid/small-cap, circuitos, volume e como funciona a venda a descoberto.",
+          "learn": [
+            "Mercados em alta versus mercados em baixa",
+            "Grande, média e pequena capitalização",
+            "Circuitos superiores e inferiores",
+            "Longo vs curto",
+            "Como funciona a venda a descoberto",
+            "Jargão TV comum"
+          ],
+          "tags": [
+            "Noções básicas"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "E",
+      "name": "O que move os preços",
+      "desc": "As forças, desde uma ordem única até ao macro global, que empurram uma ação para cima e para baixo.",
+      "chapters": [
+        {
+          "n": 13,
+          "slug": "what-moves-a-stock",
+          "title": "O que faz uma movimentação de ações",
+          "summary": "O preço é apenas o último acordo entre um comprador e um vendedor. Veja como a oferta, a demanda, as notícias e as expectativas movimentam uma ação minuto a minuto.",
+          "learn": [
+            "Oferta e demanda",
+            "Por que os preços mudam passo a passo",
+            "Notícias e expectativas",
+            "Reações de ganhos",
+            "O papel do sentimento",
+            "Cálculo de retorno"
+          ],
+          "tags": [
+            "Mercados"
+          ]
+        },
+        {
+          "n": 14,
+          "slug": "macro-forces",
+          "title": "Macro, Taxas, Inflação e Sinais Globais",
+          "summary": "Nenhuma ação é uma ilha. Entenda como as taxas de juros, a inflação, a rupia, o petróleo bruto, os fluxos FII/DII e os mercados globais influenciam as ações indianas.",
+          "learn": [
+            "Taxas de juros e RBI",
+            "Efeito da inflação",
+            "Fluxos FII vs DII",
+            "Petróleo bruto e rupia",
+            "Dicas globais",
+            "Lendo o clima macro"
+          ],
+          "tags": [
+            "macro"
+          ]
+        },
+        {
+          "n": 15,
+          "slug": "events-and-prices",
+          "title": "Lucros, dividendos e eventos que alteram os preços",
+          "summary": "Temporada de resultados, dividendos, orientação, mudanças de gestão e eventos de choque, o calendário de catalisadores que todo investidor aprende a observar.",
+          "learn": [
+            "O calendário de ganhos",
+            "Como os resultados movem os preços",
+            "Dividendos e datas de registro",
+            "Orientação e surpresas",
+            "Eventos de choque",
+            "Construindo uma rotina de observação"
+          ],
+          "tags": [
+            "Mercados"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "F",
+      "name": "Tornando-se um Investidor",
+      "desc": "Dê os primeiros passos reais, gerencie os riscos e sua própria mente e identifique as armadilhas antes que elas o peguem.",
+      "chapters": [
+        {
+          "n": 16,
+          "slug": "getting-started",
+          "title": "Seus primeiros passos como investidor",
+          "summary": "Seus primeiros passos práticos, abrindo uma conta demat, os dois caminhos para comprar ações diretamente versus fundos mútuos e SIPs de fundos de índice e como formar seu próprio ponto de vista antes de comprar.",
+          "learn": [
+            "Demat & KYC, em palavras simples",
+            "Ações diretas versus fundos mútuos",
+            "Fundos de índice e o hábito SIP",
+            "Formando um ponto de vista",
+            "Um roteiro sensato para iniciantes",
+            "Começando pequeno e seguro"
+          ],
+          "tags": [
+            "Noções básicas"
+          ]
+        },
+        {
+          "n": 17,
+          "slug": "risk-and-psychology",
+          "title": "Seu pior inimigo: risco e mentalidade",
+          "summary": "A maioria dos investidores não é derrotada pelo mercado, mas por eles próprios. Conheça o dimensionamento de posição, as maiores armadilhas comportamentais, FOMO, ancoragem, aversão à perda e como vencê-las.",
+          "learn": [
+            "Risco versus recompensa",
+            "Noções básicas de dimensionamento de posição",
+            "FOMO e comportamento de rebanho",
+            "Aversão à perda e ancoragem",
+            "Por que a maioria dos traders perde",
+            "Construindo bons hábitos"
+          ],
+          "tags": [
+            "Risco"
+          ]
+        },
+        {
+          "n": 18,
+          "slug": "scams-and-protection",
+          "title": "Golpes, manipulação e como se proteger",
+          "summary": "De Harshad Mehta aos atuais pump-and-dumps do WhatsApp e armadilhas para influenciadores financeiros, os famosos golpes do mercado indiano, as bandeiras vermelhas que eles compartilham e como manter seu dinheiro seguro.",
+          "learn": [
+            "Os golpes clássicos (Mehta, Parekh, Satyam)",
+            "Esquemas de bomba e despejo",
+            "Finfluencer e armadilhas de dicas",
+            "Ponzi e fraudes de retorno garantido",
+            "Bandeiras vermelhas para detectar",
+            "Como se proteger"
+          ],
+          "tags": [
+            "Golpes"
+          ]
+        }
+      ]
+    }
+  ]
+}

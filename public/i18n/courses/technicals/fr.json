@@ -1,0 +1,524 @@
+{
+  "course": "technicals",
+  "locale": "fr",
+  "parts": [
+    {
+      "id": "A",
+      "name": "Premiers pas avec les graphiques",
+      "desc": "Qu'est-ce que l'analyse technique et comment lire un graphique de prix sans se perdre.",
+      "chapters": [
+        {
+          "n": 1,
+          "slug": "what-is-technical-analysis",
+          "title": "Ce qu'est réellement l'analyse technique (et ce qu'elle n'est pas)",
+          "summary": "L’analyse technique est l’étude du prix et du volume, pas une boule de cristal. Découvrez ce que les graphiques peuvent honnêtement vous dire, en quoi TA diffère des fondamentaux et pourquoi il s'agit de probabilités et de risques, jamais de certitude.",
+          "learn": [
+            "Le prix et le volume comme seuls intrants",
+            "TA vs analyse fondamentale",
+            "Quels graphiques peuvent et ne peuvent pas prédire",
+            "Pourquoi TA est une question de probabilité, pas de certitude",
+            "Les trois hypothèses fondamentales",
+            "Où TA ajoute réellement un avantage"
+          ],
+          "tags": [
+            "Les bases"
+          ]
+        },
+        {
+          "n": 2,
+          "slug": "reading-charts",
+          "title": "Lire un graphique sans se perdre",
+          "summary": "Ligne, barre et chandelier, les trois façons de tirer le même prix, et pourquoi les chandeliers gagnent. Décodez les axes, OHLC et ce qu'un véritable graphique journalier RELIANCE vous dit en un coup d'œil.",
+          "learn": [
+            "Ligne vs barre vs chandelier",
+            "Le OHLC de chaque barre",
+            "Axe des prix et axe du temps",
+            "Pourquoi les chandeliers dominent",
+            "Lire un vrai graphique journalier",
+            "Erreurs courantes de lecture des graphiques"
+          ],
+          "tags": [
+            "Graphiques"
+          ]
+        },
+        {
+          "n": 3,
+          "slug": "candlestick-anatomy",
+          "title": "Le chandelier : une barre, cinq chiffres, une histoire",
+          "summary": "Corps, mèches et couleur, une seule bougie s'ouvre, se ferme, se ferme en une seule forme. Découvrez comment lire la conviction, le rejet et l'indécision des bougies sur un graphique NSE en direct.",
+          "learn": [
+            "Corps contre mèche contre ombre",
+            "Bougies haussières et baissières",
+            "Mèches longues = rejet",
+            "Marubozu et conviction",
+            "Ce que dit vraiment une seule bougie",
+            "Taille et contexte de la bougie de lecture"
+          ],
+          "tags": [
+            "Bougies"
+          ]
+        },
+        {
+          "n": 4,
+          "slug": "timeframes-and-scales",
+          "title": "Délais, échelles et raisons pour lesquelles un graphique peut induire en erreur",
+          "summary": "Le même titre semble haussier sur une période et baissier sur une autre. Découvrez en quoi les vues quotidiennes, hebdomadaires et mensuelles diffèrent, pourquoi l'échelle logarithmique devient linéaire au fil des années et comment les paramètres des graphiques changent discrètement la donne.",
+          "learn": [
+            "Vues quotidiennes, hebdomadaires et mensuelles",
+            "Pourquoi ce cours utilise des données quotidiennes",
+            "Échelle linéaire ou logarithmique",
+            "Comment le délai modifie le signal",
+            "Choisir le bon délai",
+            "Comment les paramètres peuvent déformer un graphique"
+          ],
+          "tags": [
+            "Graphiques"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "B",
+      "name": "Structure et niveaux du marché",
+      "desc": "Tendances, lignes de tendance et niveaux de support/resistance où les prix tournent, le squelette de chaque graphique.",
+      "chapters": [
+        {
+          "n": 5,
+          "slug": "dow-theory",
+          "title": "Théorie du Dow : l'idée derrière chaque graphique",
+          "summary": "Bien avant les ordinateurs, Charles Dow a exposé les règles que chaque chartiste utilise encore, les tendances, les phases et la confirmation. Découvrez le cadre vieux de 120 ans qui sous-tend discrètement toute l’analyse technique moderne.",
+          "learn": [
+            "Les six principes de la théorie de Dow",
+            "Tendances primaires, secondaires et mineures",
+            "Accumulation, majoration, distribution",
+            "Des hauts et des bas plus élevés",
+            "Pourquoi le volume doit être confirmé",
+            "Comment la théorie de Dow apparaît aujourd'hui"
+          ],
+          "tags": [
+            "S'orienter"
+          ]
+        },
+        {
+          "n": 6,
+          "slug": "trends-and-trendlines",
+          "title": "La tendance est votre amie, jusqu'à ce qu'elle se plie",
+          "summary": "Une tendance haussière consiste simplement en des hauts et des bas plus élevés, jusqu'à ce que ce ne soit plus le cas. Apprenez à repérer, dessiner et faire confiance à une tendance, là où les lignes de tendance se brisent, et comment distinguer un véritable changement de tendance du bruit sur un graphique réel.",
+          "learn": [
+            "Tendance haussière, baissière, latérale",
+            "Tracer une ligne de tendance valide",
+            "Combien de touches le rendent réel",
+            "Quand une ligne de tendance se brise",
+            "Force et angle de tendance",
+            "Changement de tendance vs recul"
+          ],
+          "tags": [
+            "S'orienter"
+          ]
+        },
+        {
+          "n": 7,
+          "slug": "support-and-resistance",
+          "title": "Support et résistance : là où le prix se souvient",
+          "summary": "Les prix évoluent à des niveaux dont la foule se souvient. Découvrez comment se forment le support et la résistance, pourquoi ils inversent les rôles une fois rompus et comment marquer les niveaux qui comptent réellement sur un véritable graphique journalier NSE.",
+          "learn": [
+            "Que sont le support et la résistance",
+            "La psychologie derrière un niveau",
+            "Inversion des rôles après une pause",
+            "Chiffres ronds et sommets antérieurs/lows",
+            "Dessiner des zones, pas des lignes exactes",
+            "Pourquoi les niveaux finissent par échouer"
+          ],
+          "tags": [
+            "Niveaux"
+          ]
+        },
+        {
+          "n": 8,
+          "slug": "channels-and-breakouts",
+          "title": "Canaux, plages et répartition",
+          "summary": "Les marchés passent la plupart de leur temps à dérailler. Apprenez à négocier le canal et le range, à distinguer une véritable cassure d'un faux et à comprendre le retour en arrière qui piège les traders impatients.",
+          "learn": [
+            "Dessiner des canaux et des plages",
+            "Négocier à l'intérieur d'une fourchette",
+            "Breakout vs fausse cassure (fakeout)",
+            "Volume sur une cassure",
+            "Le retour en arrière/retest",
+            "Transitions entre gamme et tendance"
+          ],
+          "tags": [
+            "Niveaux"
+          ]
+        },
+        {
+          "n": 9,
+          "slug": "fibonacci",
+          "title": "Fibonacci : la carte de retrait",
+          "summary": "Après un mouvement important, jusqu’où le prix recule-t-il avant de reprendre ? Les niveaux 38.2%, 50% et 61.8% de Fibonacci donnent une carte étonnamment utile. Voyez où ils ont tenu, et où ils ont échoué, sur de véritables cartes indiennes.",
+          "learn": [
+            "D’où viennent les ratios de Fibonacci",
+            "Dessiner un retracement",
+            "Les niveaux 38.2 / 50 / 61.8",
+            "Extensions pour les cibles",
+            "Confluence avec le support/resistance",
+            "Pourquoi Fibonacci est un guide, pas de la magie"
+          ],
+          "tags": [
+            "Niveaux"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "C",
+      "name": "Modèles de chandeliers",
+      "desc": "Les formes à une ou plusieurs bougies qui suggèrent un tournant et pourquoi le contexte décide de tout.",
+      "chapters": [
+        {
+          "n": 10,
+          "slug": "single-candle-patterns",
+          "title": "Des bougies simples qui chuchotent un tour",
+          "summary": "Le doji, le marteau, l'étoile filante et le marubozu, une bougie qui peut signaler un changement de contrôle. Apprenez ce que chacun signifie réellement et trouvez de véritables exemples sur de vrais graphiques journaliers NSE.",
+          "learn": [
+            "Doji et indécision",
+            "Marteau et pendu",
+            "Étoile filante et marteau inversé",
+            "Condamnation de Marubozu",
+            "Toupies",
+            "Ce qu'une seule bougie peut et ne peut pas vous dire"
+          ],
+          "tags": [
+            "Bougies"
+          ]
+        },
+        {
+          "n": 11,
+          "slug": "multi-candle-patterns",
+          "title": "Des témoignages à deux et trois bougies",
+          "summary": "Engloutissement, harami, étoiles du matin et du soir, des motifs où quelques bougies ensemble retournent l'histoire. Voyez comment chaque forme et où ils sont réellement marqués se transforme en graphiques réels.",
+          "learn": [
+            "Engloutissement haussier et baissier",
+            "Le harami",
+            "Étoile du matin et étoile du soir",
+            "Trois soldats blancs / corbeaux noirs",
+            "Hauts et bas de pinces",
+            "Fiabilité des modèles multi-bougies"
+          ],
+          "tags": [
+            "Bougies"
+          ]
+        },
+        {
+          "n": 12,
+          "slug": "patterns-in-context",
+          "title": "Pourquoi un modèle n'a d'importance que dans son contexte",
+          "summary": "Un marteau au milieu de nulle part ne veut rien dire ; un marteau sur un support fort est un signal. Apprenez à combiner les bougies avec la tendance, les niveaux et le volume, et à ignorer les nombreuses qui ne mènent nulle part.",
+          "learn": [
+            "Modèles de support et de résistance",
+            "Modèles avec et contre la tendance",
+            "Confirmation de volume",
+            "Pourquoi la plupart des modèles échouent",
+            "Construire une liste de contrôle de confirmation",
+            "Éviter les biais de détection de tendances"
+          ],
+          "tags": [
+            "Bougies"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "D",
+      "name": "Modèles de graphiques",
+      "desc": "Les plus grandes formes, renversements, continuations et écarts, qui se jouent au fil des semaines.",
+      "chapters": [
+        {
+          "n": 13,
+          "slug": "reversal-patterns",
+          "title": "Hauts et bas : modèles d'inversion",
+          "summary": "Tête-épaules, double tops et double bottoms, les formes classiques qui marquent la fin d'une tendance. Apprenez à les repérer en train de former et à mesurer une cible réaliste à partir d'un exemple réel.",
+          "learn": [
+            "Tête et épaules (et inverse)",
+            "Plateaux doubles et triples/bottoms",
+            "Le décolleté et la cassure",
+            "Mesurer un objectif de prix",
+            "Du volume à travers le motif",
+            "Faux renversements et pièges"
+          ],
+          "tags": [
+            "Motifs"
+          ]
+        },
+        {
+          "n": 14,
+          "slug": "continuation-patterns",
+          "title": "Des pauses, pas des inversions : modèles de continuation",
+          "summary": "Drapeaux, fanions, triangles et rectangles, le marché reprend son souffle avant de continuer. Apprenez à distinguer une pause saine d'un véritable renversement, avec de vrais exemples de graphiques.",
+          "learn": [
+            "Drapeaux et fanions",
+            "Triangles ascendants, descendants et symétriques",
+            "Rectangles et consolidations",
+            "Mesurer le mouvement après une pause",
+            "Poursuite ou inversion",
+            "Là où ces modèles échouent"
+          ],
+          "tags": [
+            "Motifs"
+          ]
+        },
+        {
+          "n": 15,
+          "slug": "gaps",
+          "title": "Lacunes : quand le prix saute la file d'attente",
+          "summary": "Parfois, un titre ouvre loin du cours de clôture d'hier, laissant un écart. Apprenez les quatre types, commun, échappée, emballement et épuisement, et ce que chacun dit, en utilisant de vrais exemples d'écart NSE.",
+          "learn": [
+            "Pourquoi des écarts se forment (actualités, résultats)",
+            "Lacunes communes ou séparatives",
+            "Écarts d’emballement et d’épuisement",
+            "Les lacunes sont-elles comblées ?",
+            "Lacunes avec volume",
+            "Trader autour d’un écart en toute sécurité"
+          ],
+          "tags": [
+            "Motifs"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "E",
+      "name": "Indicateurs",
+      "desc": "Les indicateurs populaires expliquent à partir de zéro, les moyennes mobiles, le momentum, la force des tendances, la volatilité, le volume et les systèmes de suivi des tendances, ainsi qu'une visite guidée de la boîte à outils de plus de 80 indicateurs de OpenAlgo et comment ne pas s'y noyer.",
+      "chapters": [
+        {
+          "n": 16,
+          "slug": "moving-averages",
+          "title": "Moyennes mobiles : la tendance, lissée",
+          "summary": "Votre tout premier indicateur. Une moyenne mobile transforme un prix irrégulier en une ligne claire sur laquelle vous pouvez vous appuyer. Découvrez les SMA et EMA (et les plus rapides WMA, HMA et VWMA), le support dynamique et les fameuses croix d'or et de mort, datées et mesurées sur de véritables cartes.",
+          "learn": [
+            "Pourquoi nous lissons les prix",
+            "Simple vs exponentiel MA, en termes simples",
+            "Les cousins ​​plus rapides : WMA, HMA, VWMA",
+            "Longueurs courantes (20, 50, 200)",
+            "MA comme support dynamique et la croix dorée/death",
+            "Le compromis du décalage"
+          ],
+          "tags": [
+            "Indicateurs"
+          ]
+        },
+        {
+          "n": 17,
+          "slug": "rsi-and-momentum",
+          "title": "RSI et les oscillateurs Momentum",
+          "summary": "Les oscillateurs de momentum mesurent la rapidité avec laquelle le prix évolue, pas seulement où. Commencez par le RSI, puis rencontrez le Stochastique, le CCI, le Williams %R et le Stochastique RSI, et découvrez pourquoi le « surachat » n'est pas un bouton de vente.",
+          "learn": [
+            "Qu'est-ce que l'élan et un oscillateur",
+            "RSI de 0 à 100",
+            "Pourquoi le surachat peut rester suracheté",
+            "Stochastique, CCI et Williams %R",
+            "Divergence haussière et baissière",
+            "Oscillateurs dans les tendances par rapport aux plages"
+          ],
+          "tags": [
+            "Indicateurs"
+          ]
+        },
+        {
+          "n": 18,
+          "slug": "macd",
+          "title": "MACD : tendance et élan en un",
+          "summary": "Le MACD fusionne deux moyennes mobiles en un seul outil d'impulsion avec une ligne de signal et un histogramme. Apprenez à lire les croisements et les divergences, avec des exemples datés et le taux de réussite honnête à partir de graphiques réels.",
+          "learn": [
+            "Comment est construit MACD, en douceur",
+            "Le croisement de la ligne de signal",
+            "L'histogramme",
+            "Contexte de ligne zéro",
+            "divergence MACD",
+            "Son taux de réussite honnête"
+          ],
+          "tags": [
+            "Indicateurs"
+          ]
+        },
+        {
+          "n": 19,
+          "slug": "bollinger-bands",
+          "title": "Bandes de Bollinger, ATR et volatilité",
+          "summary": "La volatilité correspond à l’ampleur des fluctuations des prix, et elle est mesurable. Apprenez les bandes de Bollinger et le squeeze, le ATR avec lequel vous dimensionnerez les arrêts, ainsi que les canaux Keltner et Donchian, le tout sur de vrais graphiques.",
+          "learn": [
+            "Ce que la volatilité signifie pour votre risque",
+            "Les bandes de Bollinger et la compression",
+            "Pourquoi le contact d'un bracelet n'est pas un signal",
+            "ATR : la règle du trader pour les arrêts",
+            "Canaux Keltner et Donchian",
+            "La volatilité augmente et se contracte"
+          ],
+          "tags": [
+            "Indicateurs"
+          ]
+        },
+        {
+          "n": 20,
+          "slug": "volume",
+          "title": "Indicateurs de volume : OBV, MFI et Money Flow",
+          "summary": "Le prix vous dit quoi ; le volume vous le dit de manière convaincante. Au-delà du volume brut, découvrez le volume en solde, l'indice de flux monétaire, le flux monétaire Chaikin et la ligne A/D, et voyez ce que le volume réel NSE a fait lors des grands virages.",
+          "learn": [
+            "Le volume comme conviction",
+            "Volume en solde (OBV)",
+            "L'indice de flux monétaire (MFI)",
+            "Chaikin Money Flow et la ligne A/D",
+            "Pics et divergences de volume",
+            "Livraison vs volume échangé en Inde"
+          ],
+          "tags": [
+            "Volume"
+          ]
+        },
+        {
+          "n": 21,
+          "slug": "trend-strength",
+          "title": "Quelle est la force de la tendance ? ADX, DMI et Aroon",
+          "summary": "La mise en scène ne représente que la moitié de l’histoire ; la force est l’autre moitié. Les ADX, DMI et Aroon vous indiquent si une tendance a une réelle force derrière elle ou si elle dérive simplement, afin que vous sachiez quand un outil de tendance fonctionnera et quand il se brisera.",
+          "learn": [
+            "Direction vs force",
+            "Lecture du ADX et de la ligne 25",
+            "DMI : les lignes +DI et -DI",
+            "L'Aroon de haut en bas",
+            "Tendance forte vs gamme agitée",
+            "Utiliser la force comme filtre"
+          ],
+          "tags": [
+            "Indicateurs"
+          ]
+        },
+        {
+          "n": 22,
+          "slug": "trend-following-tools",
+          "title": "Outils de tendance basés sur le prix : Supertrend, SAR et Ichimoku",
+          "summary": "Certains indicateurs se basent directement sur le prix et passent de l'achat à la vente pour vous. Découvrez le Supertrend, le Parabolic SAR et l'Ichimoku Cloud, ce que chacun fait bien et où chacun est découpé en gamme.",
+          "learn": [
+            "Des indicateurs qui reposent sur le prix",
+            "Supertrend et le sentier ATR",
+            "Parabolique SAR (les points)",
+            "Le Cloud Ichimoku, tout simplement",
+            "Là où les adeptes de tendances s'affrontent",
+            "Suivre un arrêt avec eux"
+          ],
+          "tags": [
+            "Indicateurs"
+          ]
+        },
+        {
+          "n": 23,
+          "slug": "combining-indicators",
+          "title": "Empiler des indicateurs sans vous tromper",
+          "summary": "Cinq indicateurs qui disent tous la même chose donnent une fausse confiance, et non cinq confirmations. Apprenez à combiner un outil de chaque famille, tendance, élan, volatilité et volume, et mettez fin à l'encombrement.",
+          "learn": [
+            "Les quatre familles d'indicateurs",
+            "Redondance vs vraie confirmation",
+            "Un outil de chaque famille",
+            "Éviter la surcharge des indicateurs",
+            "Les indicateurs confirment, les prix mènent",
+            "Créer un modèle de graphique propre"
+          ],
+          "tags": [
+            "Indicateurs"
+          ]
+        },
+        {
+          "n": 24,
+          "slug": "indicator-toolbox",
+          "title": "La boîte à outils complète des indicateurs : plus de 80 à portée de main",
+          "summary": "La bibliothèque de OpenAlgo contient plus de 80 indicateurs de tendance, de dynamique, de volatilité, de volume, d'oscillateurs, de statistiques et d'hybrides. Ceci est votre carte de l'ensemble de la boîte à outils : à quoi sert chaque famille, les points forts de chacune et comment en choisir quelques-unes sans se noyer.",
+          "learn": [
+            "Les sept familles d'indicateurs",
+            "Variantes de tendance et de moyenne mobile",
+            "Momentum et oscillateurs",
+            "Volatilité et canaux",
+            "Volume et flux monétaire",
+            "Comment choisir et quoi ignorer"
+          ],
+          "tags": [
+            "Indicateurs"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "F",
+      "name": "De l'analyse à l'action",
+      "desc": "Transformez la lecture des graphiques en un processus reproductible et géré par les risques, ainsi que l'état d'esprit nécessaire pour le suivre.",
+      "chapters": [
+        {
+          "n": 25,
+          "slug": "multiple-timeframe-analysis",
+          "title": "Top-Down : analyse sur plusieurs périodes",
+          "summary": "Les pros décident de la direction sur la période la plus élevée et des entrées de temps sur la période inférieure. Apprenez la routine descendante, hebdomadaire pour la carte, quotidienne pour le déplacement, alignée sur une vraie carte.",
+          "learn": [
+            "Pourquoi un seul délai ne suffit pas",
+            "Délai plus élevé = direction",
+            "Délai inférieur = timing",
+            "Alignement hebdomadaire et quotidien",
+            "Éviter les conflits de délais",
+            "Une simple liste de contrôle descendante"
+          ],
+          "tags": [
+            "Stratégie"
+          ]
+        },
+        {
+          "n": 26,
+          "slug": "building-a-strategy",
+          "title": "De la configuration au système : construction et backtest",
+          "summary": "Combinez une tendance, un niveau et un déclencheur dans une configuration basée sur des règles, puis testez-la honnêtement sur un historique réel. Découvrez comment une arête simple et bien testée bat une supposition compliquée et comment la mesurer.",
+          "learn": [
+            "Transformer l'analyse en règles",
+            "Entrée, sortie et arrêt à l'avance",
+            "Ce que montre réellement le backtesting",
+            "Taux de victoire vs récompense/risque",
+            "Éviter l’ajustement des courbes",
+            "De l'idée à une configuration testée"
+          ],
+          "tags": [
+            "Stratégie"
+          ]
+        },
+        {
+          "n": 27,
+          "slug": "risk-management",
+          "title": "Le risque d’abord : dimensionnement des positions et arrêts",
+          "summary": "La survie passe avant le profit. Apprenez le stop-loss, le ratio récompense/risque et comment dimensionner une position afin qu'aucune transaction ne puisse vous nuire, les calculs peu glorieux qui maintiennent les traders en vie.",
+          "learn": [
+            "Pourquoi le risque passe avant tout",
+            "Placer un stop-loss raisonnable",
+            "Rapport récompense/risque",
+            "La règle des 1-2%",
+            "Positionnement à partir de la butée",
+            "Le calcul du retrait et de la récupération"
+          ],
+          "tags": [
+            "Risque"
+          ]
+        },
+        {
+          "n": 28,
+          "slug": "psychology-and-next-steps",
+          "title": "The Last Edge : psychologie, discipline et prochaines étapes",
+          "summary": "La plupart des traders échouent non pas sur le plan de l’analyse mais sur eux-mêmes. Apprenez les pièges mentaux, la discipline d'un plan écrit et d'un journal, et où aller ensuite, y compris l'automatisation d'une configuration testée avec OpenAlgo.",
+          "learn": [
+            "Peur, cupidité et FOMO",
+            "Le plan de trading et le journal",
+            "Pourquoi la plupart des commerçants de détail perdent",
+            "La discipline plutôt que la prédiction",
+            "Backtesting et automatisation avec OpenAlgo",
+            "Votre chemin à partir d'ici"
+          ],
+          "tags": [
+            "Psychologie"
+          ]
+        }
+      ]
+    }
+  ]
+}

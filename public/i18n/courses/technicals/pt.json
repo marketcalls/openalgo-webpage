@@ -1,0 +1,524 @@
+{
+  "course": "technicals",
+  "locale": "pt",
+  "parts": [
+    {
+      "id": "A",
+      "name": "Introdução aos gráficos",
+      "desc": "O que realmente é análise técnica e como ler um gráfico de preços sem se perder.",
+      "chapters": [
+        {
+          "n": 1,
+          "slug": "what-is-technical-analysis",
+          "title": "O que a análise técnica realmente é (e não é)",
+          "summary": "A análise técnica é o estudo de preço e volume, não uma bola de cristal. Aprenda o que os gráficos podem dizer honestamente, como TA difere dos fundamentos e por que se trata de probabilidades e risco, nunca de certeza.",
+          "learn": [
+            "Preço e volume como únicos insumos",
+            "TA vs análise fundamental",
+            "O que os gráficos podem ou não prever",
+            "Por que TA é uma questão de probabilidade, não de certeza",
+            "As três suposições principais",
+            "Onde TA realmente adiciona uma vantagem"
+          ],
+          "tags": [
+            "Noções básicas"
+          ]
+        },
+        {
+          "n": 2,
+          "slug": "reading-charts",
+          "title": "Lendo um gráfico sem se perder",
+          "summary": "Linha, barra e castiçal, as três maneiras de obter o mesmo preço e por que os castiçais vencem. Decodifique os eixos, OHLC e o que um gráfico diário real RELIANCE está lhe dizendo rapidamente.",
+          "learn": [
+            "Linha vs barra vs castiçal",
+            "O OHLC de cada barra",
+            "Eixo de preço e eixo de tempo",
+            "Por que os castiçais dominam",
+            "Lendo um gráfico diário real",
+            "Erros comuns de leitura de gráficos"
+          ],
+          "tags": [
+            "Gráficos"
+          ]
+        },
+        {
+          "n": 3,
+          "slug": "candlestick-anatomy",
+          "title": "O castiçal: uma barra, cinco números, uma história",
+          "summary": "Corpo, mechas e cor, uma única vela abre, alta, baixa e fechada em um único formato. Veja como ler convicção, rejeição e indecisão nas velas em um gráfico NSE ao vivo.",
+          "learn": [
+            "Corpo vs pavio vs sombra",
+            "Velas de alta e baixa",
+            "Mechas longas = rejeição",
+            "Marubozu e convicção",
+            "O que uma única vela realmente diz",
+            "Lendo o tamanho e o contexto da vela"
+          ],
+          "tags": [
+            "Velas"
+          ]
+        },
+        {
+          "n": 4,
+          "slug": "timeframes-and-scales",
+          "title": "Prazos, escalas e por que um gráfico pode enganar",
+          "summary": "A mesma ação parece otimista em um período e baixista em outro. Saiba como as visualizações diárias, semanais e mensais diferem, por que a escala logarítmica supera a linear ao longo dos anos e como as configurações do gráfico mudam silenciosamente a história.",
+          "learn": [
+            "Visualizações diárias, semanais e mensais",
+            "Por que este curso usa dados diários",
+            "Escala linear vs logarítmica",
+            "Como o prazo muda o sinal",
+            "Escolhendo o prazo certo",
+            "Como as configurações podem distorcer um gráfico"
+          ],
+          "tags": [
+            "Gráficos"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "B",
+      "name": "Estrutura e níveis de mercado",
+      "desc": "Tendências, linhas de tendência e níveis de suporte/resistance onde o preço gira, o esqueleto de cada gráfico.",
+      "chapters": [
+        {
+          "n": 5,
+          "slug": "dow-theory",
+          "title": "Teoria Dow: a ideia por trás de cada gráfico",
+          "summary": "Muito antes dos computadores, Charles Dow estabeleceu as regras que todo grafista ainda usa, tendências, fases e confirmação. Conheça a estrutura de 120 anos que sustenta silenciosamente todas as análises técnicas modernas.",
+          "learn": [
+            "Os seis princípios da Teoria Dow",
+            "Tendências primárias, secundárias e secundárias",
+            "Acumulação, marcação, distribuição",
+            "Altos mais altos e baixos mais altos",
+            "Por que o volume deve ser confirmado",
+            "Como a Teoria Dow aparece hoje"
+          ],
+          "tags": [
+            "Tendência"
+          ]
+        },
+        {
+          "n": 6,
+          "slug": "trends-and-trendlines",
+          "title": "A tendência é sua amiga, até que se dobre",
+          "summary": "Uma tendência de alta consiste apenas em máximos e mínimos mais altos, até que deixe de existir. Aprenda a identificar, desenhar e confiar em uma tendência, onde as linhas de tendência quebram e como diferenciar uma mudança real de tendência do ruído em um gráfico real.",
+          "learn": [
+            "Tendência de alta, tendência de baixa, lateral",
+            "Desenhando uma linha de tendência válida",
+            "Quantos toques tornam isso real",
+            "Quando uma linha de tendência quebra",
+            "Força e ângulo da tendência",
+            "Mudança de tendência versus retrocesso"
+          ],
+          "tags": [
+            "Tendência"
+          ]
+        },
+        {
+          "n": 7,
+          "slug": "support-and-resistance",
+          "title": "Suporte e resistência: onde o preço se lembra",
+          "summary": "Os preços oscilam em níveis que a multidão lembra. Aprenda como o suporte e a resistência se formam, por que eles invertem os papéis depois de quebrados e como marcar os níveis que realmente importam em um gráfico diário real NSE.",
+          "learn": [
+            "O que são suporte e resistência",
+            "A psicologia por trás de um nível",
+            "Inversão de papéis após um intervalo",
+            "Números redondos e máximos anteriores/lows",
+            "Zonas de desenho, não linhas exatas",
+            "Por que os níveis eventualmente falham"
+          ],
+          "tags": [
+            "Níveis"
+          ]
+        },
+        {
+          "n": 8,
+          "slug": "channels-and-breakouts",
+          "title": "Canais, intervalos e o Breakout",
+          "summary": "Os mercados passam a maior parte do tempo indo de lado. Aprenda a negociar no canal e no intervalo, diferencie um rompimento real de um rompimento falso e entenda o retrocesso que prende os traders impacientes.",
+          "learn": [
+            "Desenhando canais e intervalos",
+            "Negociando dentro de um intervalo",
+            "Breakout vs falso breakout (fakeout)",
+            "Volume em um breakout",
+            "O retrocesso / reteste",
+            "Transições de faixa para tendência"
+          ],
+          "tags": [
+            "Níveis"
+          ]
+        },
+        {
+          "n": 9,
+          "slug": "fibonacci",
+          "title": "Fibonacci: o mapa de retrocesso",
+          "summary": "Depois de uma grande mudança, até que ponto o preço recua antes de retomar? Os níveis 38.2%, 50% e 61.8% de Fibonacci fornecem um mapa surpreendentemente útil. Veja onde eles se mantiveram e falharam nas paradas indianas reais.",
+          "learn": [
+            "De onde vêm os índices de Fibonacci",
+            "Desenhando uma retração",
+            "Os níveis 38.2 / 50 / 61.8",
+            "Extensões para alvos",
+            "Confluence com suporte/resistance",
+            "Por que Fibonacci é um guia, não uma mágica"
+          ],
+          "tags": [
+            "Níveis"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "C",
+      "name": "Padrões de velas",
+      "desc": "Os formatos de vela única e múltipla que sugerem uma virada e por que o contexto decide tudo.",
+      "chapters": [
+        {
+          "n": 10,
+          "slug": "single-candle-patterns",
+          "title": "Velas únicas que sussurram uma volta",
+          "summary": "O doji, o martelo, a estrela cadente e o marubozu, uma vela que pode sinalizar uma mudança no controle. Aprenda o que cada um realmente significa e encontre exemplos genuínos em gráficos diários reais NSE.",
+          "learn": [
+            "Doji e indecisão",
+            "Martelo e homem pendurado",
+            "Estrela cadente e martelo invertido",
+            "Convicção de Marubozu",
+            "Piões",
+            "O que uma única vela pode ou não dizer"
+          ],
+          "tags": [
+            "Velas"
+          ]
+        },
+        {
+          "n": 11,
+          "slug": "multi-candle-patterns",
+          "title": "Indicadores de duas e três velas",
+          "summary": "Engolindo, harami, estrelas da manhã e da noite, padrões onde algumas velas juntas invertem a história. Veja como cada um se forma e onde eles realmente marcaram as curvas em gráficos reais.",
+          "learn": [
+            "Engolindo alta e baixa",
+            "O harami",
+            "Estrela da manhã e estrela da tarde",
+            "Três soldados brancos/corvos negros",
+            "Parte superior e inferior da pinça",
+            "Confiabilidade de padrões de múltiplas velas"
+          ],
+          "tags": [
+            "Velas"
+          ]
+        },
+        {
+          "n": 12,
+          "slug": "patterns-in-context",
+          "title": "Por que um padrão só importa no contexto",
+          "summary": "Um martelo no meio do nada não significa nada; um martelo com um apoio forte é um sinal. Aprenda a combinar velas com tendências, níveis e volumes, e a ignorar muitas que não levam a lugar nenhum.",
+          "learn": [
+            "Padrões de suporte e resistência",
+            "Padrões a favor e contra a tendência",
+            "Confirmação de volume",
+            "Por que a maioria dos padrões falha",
+            "Construindo uma lista de verificação de confirmação",
+            "Evitando o preconceito de detecção de padrões"
+          ],
+          "tags": [
+            "Velas"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "D",
+      "name": "Padrões de gráfico",
+      "desc": "As formas maiores, reversões, continuações e lacunas, que acontecem ao longo de semanas.",
+      "chapters": [
+        {
+          "n": 13,
+          "slug": "reversal-patterns",
+          "title": "Partes superiores e inferiores: padrões de reversão",
+          "summary": "Cabeça e ombros, topos duplos e fundos duplos, os formatos clássicos que marcam o fim de uma tendência. Aprenda como identificá-los formando e medir um alvo realista a partir de um exemplo real.",
+          "learn": [
+            "Cabeça e ombros (e inverso)",
+            "Topos duplos e triplos/bottoms",
+            "O decote e a ruptura",
+            "Medindo um preço-alvo",
+            "Volume através do padrão",
+            "Falsas reversões e armadilhas"
+          ],
+          "tags": [
+            "Padrões"
+          ]
+        },
+        {
+          "n": 14,
+          "slug": "continuation-patterns",
+          "title": "Pausas, não reversões: padrões de continuação",
+          "summary": "Bandeiras, flâmulas, triângulos e retângulos fazem o mercado recuperar o fôlego antes de continuar. Aprenda a diferenciar uma pausa saudável de uma reversão genuína, com exemplos reais de gráficos.",
+          "learn": [
+            "Bandeiras e flâmulas",
+            "Triângulos ascendentes, descendentes e simétricos",
+            "Retângulos e consolidações",
+            "Medindo o movimento após um intervalo",
+            "Continuação vs reversão",
+            "Onde esses padrões falham"
+          ],
+          "tags": [
+            "Padrões"
+          ]
+        },
+        {
+          "n": 15,
+          "slug": "gaps",
+          "title": "Lacunas: quando o preço sobe na fila",
+          "summary": "Às vezes, uma ação abre longe do fechamento de ontem, deixando uma lacuna. Aprenda os quatro tipos, comum, separatista, descontrolado e exaustão, e o que cada um diz, usando exemplos reais de lacunas NSE.",
+          "learn": [
+            "Por que se formam lacunas (notícias, resultados)",
+            "Lacunas comuns vs separatistas",
+            "Lacunas de fuga e exaustão",
+            "As lacunas são preenchidas?",
+            "Lacunas com volume",
+            "Negociando em torno de uma lacuna com segurança"
+          ],
+          "tags": [
+            "Padrões"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "E",
+      "name": "Indicadores",
+      "desc": "Os indicadores populares explicam do zero médias móveis, momentum, força de tendência, volatilidade, volume e sistemas de acompanhamento de tendências, além de um tour pela caixa de ferramentas de mais de 80 indicadores do OpenAlgo e como não se afogar neles.",
+      "chapters": [
+        {
+          "n": 16,
+          "slug": "moving-averages",
+          "title": "Médias Móveis: A Tendência, Suavizada",
+          "summary": "Seu primeiro indicador. Uma média móvel transforma o preço irregular em uma linha limpa na qual você pode se apoiar. Conheça o SMA e EMA (e os mais rápidos WMA, HMA e VWMA), suporte dinâmico e as famosas cruzes dourada e mortal, datadas e medidas em gráficos reais.",
+          "learn": [
+            "Por que suavizamos o preço",
+            "Simples vs exponencial MA, em palavras simples",
+            "Os primos mais rápidos: WMA, HMA, VWMA",
+            "Comprimentos comuns (20, 50, 200)",
+            "MA como suporte dinâmico e a cruz dourada/death",
+            "A compensação do atraso"
+          ],
+          "tags": [
+            "Indicadores"
+          ]
+        },
+        {
+          "n": 17,
+          "slug": "rsi-and-momentum",
+          "title": "RSI e os osciladores de momento",
+          "summary": "Os osciladores de momento medem a rapidez com que o preço está se movendo, e não apenas onde. Comece com RSI, depois conheça o Estocástico, CCI, Williams %R e Estocástico RSI e aprenda por que 'sobrecompra' não é um botão de venda.",
+          "learn": [
+            "O que são momento e oscilador",
+            "RSI de 0 a 100",
+            "Por que o sobrecomprado pode permanecer sobrecomprado",
+            "Estocástico, CCI e Williams %R",
+            "Divergência de alta e baixa",
+            "Osciladores em tendências versus faixas"
+          ],
+          "tags": [
+            "Indicadores"
+          ]
+        },
+        {
+          "n": 18,
+          "slug": "macd",
+          "title": "MACD: Tendência e impulso em um só",
+          "summary": "O MACD combina duas médias móveis em uma única ferramenta de impulso com uma linha de sinal e histograma. Aprenda a ler cruzamentos e divergências, com exemplos desatualizados e taxas de acerto honestas de gráficos reais.",
+          "learn": [
+            "Como MACD é construído, suavemente",
+            "O cruzamento da linha de sinal",
+            "O histograma",
+            "Contexto de linha zero",
+            "divergência MACD",
+            "Sua taxa de acerto honesta"
+          ],
+          "tags": [
+            "Indicadores"
+          ]
+        },
+        {
+          "n": 19,
+          "slug": "bollinger-bands",
+          "title": "Bandas de Bollinger, ATR e Volatilidade",
+          "summary": "A volatilidade é o quanto o preço oscila e é mensurável. Aprenda as Bandas de Bollinger e o squeeze, o ATR com o qual você dimensionará os stops e os canais Keltner e Donchian, tudo em gráficos reais.",
+          "learn": [
+            "O que a volatilidade significa para o seu risco",
+            "Bandas de Bollinger e o aperto",
+            "Por que um toque na banda não é um sinal",
+            "ATR: a régua do trader para stops",
+            "Canais Keltner e Donchian",
+            "A volatilidade se expande e contrai"
+          ],
+          "tags": [
+            "Indicadores"
+          ]
+        },
+        {
+          "n": 20,
+          "slug": "volume",
+          "title": "Indicadores de Volume: OBV, MFI e Fluxo de Dinheiro",
+          "summary": "O preço lhe diz o quê; o volume diz o quão convincentemente. Além do volume bruto, conheça o On-Balance Volume, o Money Flow Index, o Chaikin Money Flow e a linha A/D, e veja o que o volume real NSE fez em grandes giros.",
+          "learn": [
+            "Volume como convicção",
+            "Volume no equilíbrio (OBV)",
+            "O Índice de Fluxo de Dinheiro (MFI)",
+            "Chaikin Money Flow e a linha A/D",
+            "Picos de volume e divergência",
+            "Entrega versus volume negociado na Índia"
+          ],
+          "tags": [
+            "Volume"
+          ]
+        },
+        {
+          "n": 21,
+          "slug": "trend-strength",
+          "title": "Quão forte é a tendência? ADX, DMI e Aroon",
+          "summary": "A direção é apenas metade da história; a força é a outra metade. O ADX, DMI e o Aroon informam se uma tendência tem força real por trás dela ou está apenas à deriva, para que você saiba quando uma ferramenta de tendência funcionará e quando ela irá girar.",
+          "learn": [
+            "Direção vs força",
+            "Lendo o ADX e a linha 25",
+            "DMI: as linhas +DI e -DI",
+            "O Aroon para cima e para baixo",
+            "Tendência forte vs faixa instável",
+            "Usando a força como filtro"
+          ],
+          "tags": [
+            "Indicadores"
+          ]
+        },
+        {
+          "n": 22,
+          "slug": "trend-following-tools",
+          "title": "Ferramentas de tendências que dependem do preço: Supertrend, SAR e Ichimoku",
+          "summary": "Alguns indicadores são plotados diretamente no preço e passam da compra para a venda para você. Conheça o Supertrend, o Parabolic SAR e o Ichimoku Cloud, o que cada um faz bem e onde cada um é dividido em uma faixa.",
+          "learn": [
+            "Indicadores que se baseiam no preço",
+            "Supertendência e a trilha ATR",
+            "Parabólico SAR (os pontos)",
+            "A Nuvem Ichimoku, simplesmente",
+            "Onde os seguidores de tendências chicoteiam",
+            "Fazendo uma parada com eles"
+          ],
+          "tags": [
+            "Indicadores"
+          ]
+        },
+        {
+          "n": 23,
+          "slug": "combining-indicators",
+          "title": "Empilhando indicadores sem se enganar",
+          "summary": "Cinco indicadores que dizem a mesma coisa dão falsa confiança, e não cinco confirmações. Aprenda a combinar uma ferramenta de cada família, tendência, impulso, volatilidade e volume, e acabar com a desordem.",
+          "learn": [
+            "As quatro famílias de indicadores",
+            "Redundância vs confirmação real",
+            "Uma ferramenta de cada família",
+            "Evitando sobrecarga do indicador",
+            "Indicadores confirmam, preços levam",
+            "Construindo um modelo de gráfico limpo"
+          ],
+          "tags": [
+            "Indicadores"
+          ]
+        },
+        {
+          "n": 24,
+          "slug": "indicator-toolbox",
+          "title": "A caixa de ferramentas completa de indicadores: mais de 80 ao seu alcance",
+          "summary": "A biblioteca do OpenAlgo traz mais de 80 indicadores de tendência, impulso, volatilidade, volume, osciladores, estatísticas e híbridos. Este é o seu mapa de toda a caixa de ferramentas: para que serve cada família, os destaques de cada uma e como escolher algumas sem se afogar.",
+          "learn": [
+            "As sete famílias de indicadores",
+            "Variantes de tendência e média móvel",
+            "Momentum e osciladores",
+            "Volatilidade e canais",
+            "Volume e fluxo de dinheiro",
+            "Como escolher e o que ignorar"
+          ],
+          "tags": [
+            "Indicadores"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "F",
+      "name": "Da análise à ação",
+      "desc": "Transforme a leitura de gráficos em um processo repetível e gerenciado por riscos, e a mentalidade para realmente segui-lo.",
+      "chapters": [
+        {
+          "n": 25,
+          "slug": "multiple-timeframe-analysis",
+          "title": "De cima para baixo: análise de múltiplos prazos",
+          "summary": "Os profissionais decidem a direção no período mais alto e as entradas de tempo no período mais baixo. Aprenda a rotina de cima para baixo, semanalmente para o mapa, diariamente para a movimentação, alinhado em um gráfico real.",
+          "learn": [
+            "Por que um período de tempo não é suficiente",
+            "Prazo maior = direção",
+            "Prazo inferior = tempo",
+            "Alinhando semanalmente e diariamente",
+            "Evitando conflitos de prazo",
+            "Uma lista de verificação simples de cima para baixo"
+          ],
+          "tags": [
+            "Estratégia"
+          ]
+        },
+        {
+          "n": 26,
+          "slug": "building-a-strategy",
+          "title": "Da configuração ao sistema: construção e backtest",
+          "summary": "Combine tendência, um nível e um gatilho em uma configuração baseada em regras e teste-a honestamente no histórico real. Aprenda como uma vantagem simples e bem testada supera uma suposição complicada e como medi-la.",
+          "learn": [
+            "Transformando análises em regras",
+            "Entrada, saída e parada com antecedência",
+            "O que o backtesting realmente mostra",
+            "Taxa de vitória versus recompensa por risco",
+            "Evitando ajuste de curva",
+            "Da ideia a uma configuração testada"
+          ],
+          "tags": [
+            "Estratégia"
+          ]
+        },
+        {
+          "n": 27,
+          "slug": "risk-management",
+          "title": "Risco primeiro: dimensionamento de posição e paradas",
+          "summary": "A sobrevivência vem antes do lucro. Aprenda o stop-loss, a relação recompensa-risco e como dimensionar uma posição para que nenhuma negociação possa prejudicá-lo, a matemática nada glamorosa que mantém os traders vivos.",
+          "learn": [
+            "Por que o risco vem em primeiro lugar",
+            "Colocando um stop-loss sensato",
+            "Relação recompensa-risco",
+            "A regra de 1-2%",
+            "Dimensionamento da posição a partir do batente",
+            "A matemática do rebaixamento e da recuperação"
+          ],
+          "tags": [
+            "Risco"
+          ]
+        },
+        {
+          "n": 28,
+          "slug": "psychology-and-next-steps",
+          "title": "A última vantagem: psicologia, disciplina e o que vem a seguir",
+          "summary": "A maioria dos traders falha não na análise, mas em si mesmos. Aprenda as armadilhas mentais, a disciplina de um plano escrito e um diário e o que fazer em seguida, incluindo a automatização de uma configuração testada com OpenAlgo.",
+          "learn": [
+            "Medo, ganância e FOMO",
+            "O plano de negociação e diário",
+            "Por que a maioria dos comerciantes de varejo perde",
+            "Disciplina acima da previsão",
+            "Backtesting e automação com OpenAlgo",
+            "Seu caminho a partir daqui"
+          ],
+          "tags": [
+            "Psicologia"
+          ]
+        }
+      ]
+    }
+  ]
+}
