@@ -1,7 +1,7 @@
 # OpenAlgo Webpage — Project Notes
 
-Next.js 15 (App Router, React 19, JSX) + Tailwind v4, deployed to Cloudflare
-Workers via OpenNext (`npm run deploy`). Thirteen Varsity-style courses live
+Next.js 16 (App Router, React 19, JSX, built with webpack) + Tailwind v4,
+deployed to Cloudflare Workers via OpenNext (`npm run deploy`). Thirteen Varsity-style courses live
 under `/fundamentals`, `/python`, `/quant`, etc., indexed by `/learn`.
 
 ## Theme (monochrome, light-first)
@@ -282,9 +282,34 @@ the CPU limit. Two mitigations are in place; keep both:
   responses from the cache BEFORE running the routing/render layer, so cached
   pages cost little CPU. Safe here because there is no ISR (cache == build-time
   prerender, never stale).
+- Measured 2026-10-24: production answers `x-nextjs-cache: MISS` on every
+  request, so the interception above serves nothing. No `incrementalCache` is
+  configured, so OpenNext uses its dummy cache and every page renders in the
+  Worker. The documented fix is `incrementalCache:
+  staticAssetsIncrementalCache` in `open-next.config.ts` (the `ASSETS` binding
+  it needs exists); it changes how routes are served, so test it with
+  `opennextjs-cloudflare preview` and a burst of requests first.
 - `prefetch={false}` on the chapter-list `<Link>`s (the three `SyllabusRail.jsx`
   and the three course `page.jsx` landing grids). This stops the viewport-prefetch
   burst. Prev/next nav links keep prefetch (only 2 links, useful UX, no burst).
+
+## Next 16 (since 2026-10-24)
+
+- `build` and `dev` pass `--webpack`. `next.config.mjs` has a `webpack()` hook
+  (it swaps Next's polyfill-module for an empty one), and Next 16, whose
+  default bundler is Turbopack, refuses to build or start dev with a webpack
+  hook and no bundler flag. OpenNext's own Next 16 test apps build with
+  `--webpack` too. Moving to Turbopack means deleting the hook (the polyfill,
+  about 1.4 KB, comes back); test it with `opennextjs-cloudflare preview`.
+- `next lint` no longer exists. `npm run lint` is `eslint .` with
+  `eslint.config.mjs` (ESLint 9, `eslint-config-next` pinned to the Next
+  version). It reported 25 errors and 86 warnings in existing code on
+  2026-10-24, none of them a real fault when read; `next build` does not lint,
+  so they cannot fail a build.
+- `next dev` started by a coding agent writes `AGENTS.md` at the root. Delete
+  it; it is not part of the site.
+- Measured 2026-10-24 on Next 16.4.3 and OpenNext 1.20.13: 43.88 MiB
+  uncompressed, 6.43 MiB gzipped (wrangler: 6,566 KiB).
 
 ## Deploy on Windows
 
@@ -295,10 +320,13 @@ the CPU limit. Two mitigations are in place; keep both:
   wrapper can leave its `node ...\next\dist\server\lib\start-server.js` child
   holding the port (EADDRINUSE on the next `next dev`); find it with
   `Get-NetTCPConnection -LocalPort 3000` and stop that process.
-- DO NOT upgrade to Next 16 and deploy from Windows: `next/og`'s resvg/yoga wasm
-  fails to bundle under OpenNext, and the resulting Worker 500s at runtime
-  (took production down once; recovered via `wrangler rollback`). If Next 16 is
-  ever needed, build/deploy from Linux/WSL/CI, not Windows.
+- Do not build or deploy Next 16 from Windows until a Windows build has passed
+  `opennextjs-cloudflare preview`. The first Next 16 attempt, built on Windows,
+  produced a Worker that answered 500 at runtime (took production down once;
+  recovered via `wrangler rollback`). The cause was not confirmed: `next/og`'s
+  resvg/yoga wasm failing to bundle, or a Windows-only Turbopack fault that
+  OpenNext 1.20.2 fixed. The upgrade that shipped on 2026-10-24 was built and
+  deployed from macOS.
 - A failed deploy is safe, but a SUCCESSFUL deploy that then 500s is not — after
   any deploy, verify all routes return 200 and `wrangler rollback <VERSION_ID>`
   immediately if not.

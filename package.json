@@ -19,11 +19,11 @@
     "gen:library": "node scripts/script-library/gen-library.mjs",
     "check:library": "node scripts/script-library/check.mjs",
     "gen": "node scripts/gen-python-content.mjs && node scripts/gen-quant-content.mjs && node scripts/gen-fundamentals-content.mjs && node scripts/gen-amibroker-content.mjs && node scripts/gen-stocks-content.mjs && node scripts/gen-technicals-content.mjs && node scripts/gen-futures-content.mjs && node scripts/gen-options-basics-content.mjs && node scripts/gen-options-strategies-content.mjs && node scripts/gen-taxation-content.mjs && node scripts/gen-stats-arb-content.mjs && node scripts/gen-risk-content.mjs && node scripts/gen-psychology-content.mjs && node scripts/gen-learn-i18n-assets.mjs && node scripts/gen-script-docs.mjs && node scripts/script-library/gen-library.mjs",
-    "dev": "npm run gen && next dev",
+    "dev": "npm run gen && next dev --webpack",
     "prebuild": "npm run gen",
-    "build": "next build",
+    "build": "next build --webpack",
     "start": "next start",
-    "lint": "next lint",
+    "lint": "eslint .",
     "preview": "npm run gen && opennextjs-cloudflare build && opennextjs-cloudflare preview",
     "deploy": "npm run gen && opennextjs-cloudflare build && opennextjs-cloudflare deploy",
     "gen:stats-arb": "node scripts/gen-stats-arb-content.mjs",
@@ -50,7 +50,7 @@
     "lucide-react": "^0.475.0",
     "marked": "^18.1.1",
     "marked-highlight": "^2.2.4",
-    "next": "^15.4.8",
+    "next": "^16.4.3",
     "openalgo-charts": "^2.6.0",
     "openalgo-script": "^0.8.1",
     "react": "^19.3.1",
@@ -60,17 +60,17 @@
     "three": "^0.182.0"
   },
   "devDependencies": {
-    "@opennextjs/cloudflare": "^1.19.11",
+    "@opennextjs/cloudflare": "^1.20.13",
     "@tailwindcss/postcss": "^4.3.1",
     "@types/node": "^20.11.24",
     "@types/react": "^19.3.0",
     "@types/react-dom": "^19.3.0",
-    "eslint": "^8.57.0",
-    "eslint-config-next": "14.2.35",
+    "eslint": "^9.39.5",
+    "eslint-config-next": "16.4.3",
     "postcss": "^8.5.30",
     "tailwindcss": "^4.3.1",
     "typescript": "^5.3.3",
-    "wrangler": "^4.100.0"
+    "wrangler": "^4.148.0"
   },
   "overrides": {
     "postcss": "^8.5.30",
@@ -78,10 +78,10 @@
     "glob": "^10.5.0"
   },
   "browserslist": [
-    "chrome >= 109",
-    "edge >= 109",
-    "firefox >= 109",
-    "safari >= 16",
+    "chrome >= 111",
+    "edge >= 111",
+    "firefox >= 111",
+    "safari >= 16.4",
     "not dead"
   ]
 }
