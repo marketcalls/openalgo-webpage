@@ -49,6 +49,7 @@ import {
   Calculator,
   Users,
   Terminal,
+  Monitor,
 } from "lucide-react"
 
 function ProjectIcon({ icon: Icon, size = "h-5 w-5" }) {
@@ -128,6 +129,7 @@ export default function Home() {
   ]
 
   const integrations = [
+    { title: "OpenAlgo Desktop", description: t('home.int.22Desc'), icon: Monitor, url: "https://github.com/marketcalls/openalgo-desktop" },
     { title: "Excel Add-in", description: t('home.int.1Desc'), icon: FileSpreadsheet, url: "https://github.com/marketcalls/OpenAlgo-Excel" },
     { title: "Amibroker Plugin", description: t('home.int.2Desc'), icon: Plug, url: "https://github.com/marketcalls/OpenAlgoPlugin" },
     { title: "Backtrader", description: t('home.int.3Desc'), icon: History, url: "https://github.com/p2c2e/openalgo-backtrader" },
@@ -168,7 +170,7 @@ export default function Home() {
 
           <div className="reveal reveal-4 mb-12 flex flex-wrap items-center justify-center gap-x-12 gap-y-6">
             {[
-              { icon: Download, value: "5,10,000+", label: t('hero.statDownloads') },
+              { icon: Download, value: "5,20,000+", label: t('hero.statDownloads') },
               { icon: Code2, value: "100%", label: t('hero.statOpenSource') },
               { icon: Star, value: "2,900+", label: t('hero.statStars') },
             ].map(({ icon: Icon, value, label }) => (

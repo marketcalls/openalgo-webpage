@@ -3,7 +3,7 @@
 import { Button } from "@/components/ui/button"
 import { useI18n } from "@/components/i18n/LanguageProvider"
 import { Download, Laptop, Monitor, Terminal, ExternalLink, Github, Package, Chrome, FileSpreadsheet, GitBranch, BookOpen, Brain, Code2, Hexagon, Coffee, Hash, Wind, Plug, History, Layers, Bot, Smartphone, Globe, Puzzle, Gauge, TrendingUp, Cog, Network, BarChart3, FlaskConical, LineChart, PieChart, LayoutGrid, Activity, Calculator, Sigma } from "lucide-react"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 
 const iconAccents = [
   { tile: "bg-primary/10", glyph: "text-primary" },
@@ -23,6 +23,14 @@ function ProjectIcon({ icon: Icon, index = 0 }) {
 export default function DownloadPage() {
   const { t } = useI18n()
   const [activePlatform, setActivePlatform] = useState("mac")
+  const [desktopPlatform, setDesktopPlatform] = useState("windows")
+
+  // Open the OpenAlgo Desktop tab of the visitor's own computer.
+  useEffect(() => {
+    const p = (navigator.userAgentData?.platform || navigator.userAgent || "").toLowerCase()
+    if (p.includes("mac")) setDesktopPlatform("mac")
+    else if (p.includes("linux") && !p.includes("android")) setDesktopPlatform("linux")
+  }, [])
 
   // Kept in step with the same list on the home page. The two drifted once and
   // this page was the one left behind, still offering five SDKs and none of the
@@ -39,6 +47,7 @@ export default function DownloadPage() {
   ]
 
   const integrations = [
+    { title: "OpenAlgo Desktop", description: t('home.int.22Desc'), icon: Monitor, url: "https://github.com/marketcalls/openalgo-desktop", docs: "https://github.com/marketcalls/openalgo-desktop/blob/master/docs/userguide/README.md" },
     { title: "Excel Add-in", description: t('home.int.1Desc'), icon: FileSpreadsheet, url: "https://github.com/marketcalls/OpenAlgo-Excel", docs: "https://docs.openalgo.in/trading-platform/excel" },
     { title: "Amibroker Plugin", description: t('home.int.2Desc'), icon: Plug, url: "https://github.com/marketcalls/OpenAlgoPlugin", docs: "https://docs.openalgo.in/trading-platform/amibroker/amibroker-plugin" },
     { title: "Backtrader Integration", description: t('home.int.3Desc'), icon: History, url: "https://github.com/p2c2e/openalgo-backtrader" },
@@ -61,6 +70,34 @@ export default function DownloadPage() {
     { title: "OpenBull", description: t('home.int.21Desc'), icon: TrendingUp, url: "https://github.com/marketcalls/openbull" }
   ]
 
+
+  // OpenAlgo Desktop's installers carry the version in their file names, so a
+  // new release changes only this constant.
+  const desktopVersion = "1.0.2"
+  const desktopRepo = "https://github.com/marketcalls/openalgo-desktop"
+  const desktopFile = (suffix) => `${desktopRepo}/releases/download/v${desktopVersion}/OpenAlgo.Desktop_${desktopVersion}_${suffix}`
+
+  const desktopTabs = [
+    { id: "windows", label: "Windows", icon: Monitor },
+    { id: "mac", label: "macOS", icon: Laptop },
+    { id: "linux", label: "Linux", icon: Terminal },
+  ]
+
+  const desktopDownloads = {
+    windows: [
+      { platform: "Windows 10 / 11 (x64)", url: desktopFile("x64-setup.exe"), label: t('dl.downloadFmt').replace('{x}', "EXE") },
+    ],
+    mac: [
+      { platform: "macOS (Apple Silicon)", url: desktopFile("aarch64.dmg"), label: t('dl.downloadFmt').replace('{x}', "DMG") },
+      { platform: "macOS (Intel)", url: desktopFile("x64.dmg"), label: t('dl.downloadFmt').replace('{x}', "DMG") },
+    ],
+    linux: [
+      { platform: `${t('dl.ubuntuDebian')} (x64)`, url: desktopFile("amd64.deb"), label: t('dl.downloadFmt').replace('{x}', "DEB") },
+      { platform: `${t('dl.appImage')} (x64)`, url: desktopFile("amd64.AppImage"), label: t('dl.downloadFmt').replace('{x}', "AppImage") },
+      { platform: `${t('dl.ubuntuDebian')} (ARM64)`, url: desktopFile("arm64.deb"), label: t('dl.downloadFmt').replace('{x}', "DEB") },
+      { platform: `${t('dl.appImage')} (ARM64)`, url: desktopFile("aarch64.AppImage"), label: t('dl.downloadFmt').replace('{x}', "AppImage") },
+    ],
+  }
 
   const platformTabs = [
     { id: "mac", label: "macOS", icon: Laptop },
@@ -88,6 +125,114 @@ export default function DownloadPage() {
     <div className="container mx-auto px-4 py-16">
       <div className="max-w-6xl mx-auto">
         <h1 className="text-display-md text-center mb-14 text-on-surface">{t('dl.title')}</h1>
+
+        {/* OpenAlgo Desktop Section */}
+        <div className="mb-20">
+          <h2 className="text-display-sm text-center mb-3 text-on-surface">
+            OpenAlgo <span className="text-primary">{t('dl.fsDesktop')}</span>
+          </h2>
+          <p className="text-center text-on-surface-variant mb-10 max-w-3xl mx-auto">
+            {t('dl.oadSub')}
+          </p>
+
+          <div className="rounded-xl surface-low p-8 ghost-border">
+            <div className="flex justify-between items-center mb-8">
+              <h3 className="text-headline-sm text-on-surface">{t('dl.fsAvailable')}</h3>
+              <span className="font-label text-label-md px-3 py-1.5 rounded-full surface-container text-on-surface-variant">
+                {t('dl.versionLabel').replace('{n}', desktopVersion)}
+              </span>
+            </div>
+
+            {/* Platform Tabs */}
+            <div className="flex gap-1 sm:gap-2 mb-8 surface-container p-1.5 rounded-xl w-full sm:w-fit">
+              {desktopTabs.map(({ id, label, icon: Icon }) => (
+                <button
+                  key={id}
+                  className={`flex flex-1 sm:flex-none items-center justify-center px-3 sm:px-5 py-2.5 rounded-lg font-label text-label-lg transition-all ${
+                    desktopPlatform === id
+                      ? "surface-high text-on-surface ambient-shadow"
+                      : "text-on-surface-variant hover:text-on-surface"
+                  }`}
+                  onClick={() => setDesktopPlatform(id)}
+                >
+                  <Icon className="w-4 h-4 mr-2" />
+                  {label}
+                </button>
+              ))}
+            </div>
+
+            {/* Download Items */}
+            <div className="space-y-3">
+              {desktopDownloads[desktopPlatform].map(({ platform, url, label }) => (
+                <div key={platform} className="flex flex-wrap items-center justify-between gap-3 p-4 rounded-xl surface-container">
+                  <div className="flex items-center gap-4">
+                    <span className="text-on-surface font-medium">{platform}</span>
+                    <span className="font-label text-label-md text-on-surface-variant">v{desktopVersion}</span>
+                  </div>
+                  <Button size="sm" asChild>
+                    <a href={url}>{label}</a>
+                  </Button>
+                </div>
+              ))}
+            </div>
+            {desktopPlatform === "mac" && (
+              <p className="mt-4 text-sm text-on-surface-variant">{t('dl.oadMacHint')}</p>
+            )}
+
+            <div className="mt-6 p-4 rounded-xl surface-container text-sm text-on-surface-variant">
+              {t('dl.oadUnsigned')}{" "}
+              <a href={`${desktopRepo}#opening-the-app-the-first-time-unsigned-installers`} target="_blank" rel="noopener noreferrer"
+                 className="text-primary hover:underline font-label">
+                {t('dl.oadFirstOpen')} &rarr;
+              </a>
+            </div>
+            <p className="mt-4 text-sm">
+              <a href={`${desktopRepo}/releases/tag/v${desktopVersion}`} target="_blank" rel="noopener noreferrer"
+                 className="text-primary hover:underline font-label">
+                {t('dl.oadChecksums')} &rarr;
+              </a>
+            </p>
+          </div>
+
+          {/* OpenAlgo Desktop Features */}
+          <div className="mt-12">
+            <h3 className="text-headline-md mb-8 text-on-surface">{t('dl.oadFeatures')}</h3>
+            <div className="grid md:grid-cols-2 gap-6">
+              {[
+                { title: t('dl.oadF1t'), items: [t('dl.oadF1i1'), t('dl.oadF1i2'), t('dl.oadF1i3')] },
+                { title: t('dl.oadF2t'), items: [t('dl.oadF2i1'), t('dl.oadF2i2'), t('dl.oadF2i3')] },
+                { title: t('dl.oadF3t'), items: [t('dl.oadF3i1'), t('dl.oadF3i2'), t('dl.oadF3i3')] },
+                { title: t('dl.oadF4t'), items: [t('dl.oadF4i1'), t('dl.oadF4i2'), t('dl.oadF4i3')] },
+              ].map(({ title, items }) => (
+                <div key={title} className="obsidian-card p-6 rounded-xl ghost-border">
+                  <h4 className="text-lg font-semibold mb-4 text-on-surface">{title}</h4>
+                  <ul className="space-y-2 text-on-surface-variant">
+                    {items.map(item => (
+                      <li key={item} className="flex items-start gap-3">
+                        <span className="w-1.5 h-1.5 rounded-full bg-tertiary mt-2 shrink-0" />
+                        <span className="text-sm">{item}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              ))}
+            </div>
+            <div className="mt-10 flex flex-wrap justify-center gap-3">
+              <Button size="lg" asChild>
+                <a href={`${desktopRepo}/blob/master/docs/userguide/README.md`} target="_blank" rel="noopener noreferrer">
+                  <BookOpen className="mr-2 h-4 w-4" />
+                  {t('dl.oadGuide')}
+                </a>
+              </Button>
+              <Button variant="outline" size="lg" asChild>
+                <a href={desktopRepo} target="_blank" rel="noopener noreferrer">
+                  <Github className="mr-2 h-4 w-4" />
+                  {t('dl.oadGithub')}
+                </a>
+              </Button>
+            </div>
+          </div>
+        </div>
 
         {/* Mini FOSS Universe Section */}
         <div className="mb-20">
@@ -267,11 +412,11 @@ export default function DownloadPage() {
             </div>
 
             {/* Platform Tabs */}
-            <div className="flex gap-2 mb-8 surface-container p-1.5 rounded-xl w-fit">
+            <div className="flex gap-1 sm:gap-2 mb-8 surface-container p-1.5 rounded-xl w-full sm:w-fit">
               {platformTabs.map(({ id, label, icon: Icon }) => (
                 <button
                   key={id}
-                  className={`flex items-center px-5 py-2.5 rounded-lg font-label text-label-lg transition-all ${
+                  className={`flex flex-1 sm:flex-none items-center justify-center px-3 sm:px-5 py-2.5 rounded-lg font-label text-label-lg transition-all ${
                     activePlatform === id
                       ? "surface-high text-on-surface ambient-shadow"
                       : "text-on-surface-variant hover:text-on-surface"
