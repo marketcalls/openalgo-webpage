@@ -51,7 +51,7 @@
     "marked": "^18.1.1",
     "marked-highlight": "^2.2.4",
     "next": "^16.4.3",
-    "openalgo-charts": "^2.6.0",
+    "openalgo-charts": "^2.6.7",
     "openalgo-script": "^0.8.1",
     "react": "^19.3.1",
     "react-dom": "^19.3.1",
