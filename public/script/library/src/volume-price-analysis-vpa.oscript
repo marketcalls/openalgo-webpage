@@ -1,0 +1,574 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © openalgo
+// Original work (c) karthikmarar, MPL-2.0
+
+version 1
+study("Volume Price Analysis (VPA)", overlay = true)
+
+// Volume price analysis, version 5.0. Each bar is read for its spread (high
+// minus low), where it closed within that spread, and its volume against the
+// 60 bar average. Those readings, together with three trend measures, decide
+// the signs of strength and weakness marked on the chart. A status table, an
+// alert log, volume-shaded candles and optional trend, strength, support,
+// resistance and high volume lines complete the study.
+//
+// Every true or false condition below is passed through toBool, so a
+// comparison made before its average exists reads as false rather than
+// absent, and `not` of it reads as true.
+
+// ---------------------------------------------------------------- settings
+
+crt = input(false, "New Chart format with symbols and POP up descriptions")
+bkbg = input(true, "Black Background")
+showtrend = input(false, "Show Trend Bands", group = "Bands")
+strband = input(false, "Show Strength Bands", group = "Bands")
+plot50 = input(false, "Plot 50 EMA", group = "Mov.Avg")
+plot200 = input(false, "Plot 200 EMA", group = "Mov.Avg")
+
+showvwap = input(false, "Show VWAP", group = "VWAP & EMA")
+showpma = input(false, "Show EMA", group = "VWAP & EMA")
+emasrc = input("CLOSE", "EMA Source", options = ["CLOSE", "PIVOT"], group = "VWAP & EMA")
+shp = input(13, "Short EMA period", min = 1, group = "VWAP & EMA")
+mip = input(34, "Mid EMA period", min = 1, group = "VWAP & EMA")
+lop = input(55, "Long EMA period", min = 1, group = "VWAP & EMA")
+
+showut = input(true, "Show Up Thrusts (UT)", group = "VSA Signals", tooltip = "An Upthrust Bar. A sign of weakness. High Volume adds weakness.  A down bar after Upthrust adds weakness")
+showtrb = input(true, "Show Top Reversal Bar (TRB)", group = "VSA Signals", tooltip = "Top Reversal. Sign of Weakness.")
+showtch = input(true, "Show Trend Change (TC)", group = "VSA Signals", tooltip = "High volume Downbar after an upmove on high volume indicates weakness.")
+showput = input(true, "Show Pseudo Up Thrust (PST/PUC)", group = "VSA Signals", tooltip = "Psuedo UpThrust.   A Sign of Weakness.A Down Bar closing down after a Pseudo Upthrust confirms weakness.")
+shownd = input(true, "Show No Demand (ND)", group = "VSA Signals", tooltip = "No Demand in a Uptrend. A sign of Weakness. Otherwise upside unlikely soon")
+showns = input(true, "Show No Supply (NS)", group = "VSA Signals", tooltip = "No Supply. A sign of Strength.")
+showlvtst = input(true, "Show Low Volume Supply Test (LVT/ST)", group = "VSA Signals", tooltip = "Test of Supply. A high volume Bar closing on High after the Test will confirm the Strength")
+showstsig = input(true, "Show Strength Signals (ST)", group = "VSA Signals", tooltip = "Strength seen returning after a down trend.")
+showsv = input(true, "Show Stop Volume (SV)", group = "VSA Signals", tooltip = "Stopping volume. Normally indicates end of bearishness is nearing.")
+showeu = input(true, "Show Effort Up (EU)", group = "VSA Signals", tooltip = "Effort to Move up. Bullish Sign.")
+showeuf = input(true, "Show Effort Up Fail (EUF)", group = "VSA Signals", tooltip = "Effort to Move up Failed. Bearish sign.")
+showed = input(true, "Show Effort Down (ED)", group = "VSA Signals", tooltip = "Effort to Move Down. Bearish Sign.")
+showedf = input(true, "Show Effort Down Fail (EDF)", group = "VSA Signals", tooltip = "Effort to Move Down Failed. Bullish sign.")
+showrut = input(true, "Show Reverse Up Thrust (RUT)", group = "VSA Signals", tooltip = "Reverse Up Thrust - Bullish sign.")
+showbyc = input(true, "Show Buy Condition Exist (BCE)", group = "VSA Signals", tooltip = "Strength Returns - Buy Condition exist.")
+showsce = input(true, "Show Sell Condition Exist (SCE)", group = "VSA Signals", tooltip = "Weakness Returns - Sell Condition exist.")
+showbc = input(true, "Show Buying Climax (BC)", group = "VSA Signals", tooltip = "Buying Climax - End of Current Up Trend.")
+showsc = input(true, "Show Selling Climax (SC)", group = "VSA Signals", tooltip = "Selling Climax - End of Current Down Trend.")
+showtb = input(true, "Show Two bar Reversal  (TB)", group = "VSA Signals", tooltip = "Two bar revesal - Indicated possibility of reversal of current move. High volume adds strength")
+showfom = input(true, "Show Ease of Movement  (FOM)", group = "VSA Signals", tooltip = "High Supply Volume unable to Move the Price. Could be Demand/Supply area")
+
+log_show = input(true, "Show Alert window?", group = "Alert")
+log_show_msg = input(2, "# of message to show", min = 1, max = 20, group = "Alert")
+log_offset = input(0, "# of messages to offset", min = 0, max = 200, step = 1, group = "Alert")
+
+periods = input(22, "period", min = 5, max = 66, step = 1, group = "Money Flow")
+
+showrs = input(false, "Show support and resistance lines", group = "Support & Resistance lines")
+sens = input(10, "Sensitivity", min = 2, max = 15, group = "Support & Resistance lines")
+showhighvol = input(false, "Show high volume lines", group = "Support & Resistance lines")
+volpd = input(14, "Vol Length", min = 1, group = "Support & Resistance lines")
+volm = input(1.618, "Vol Factor", step = 0.1, group = "Support & Resistance lines")
+minvol = input(1, "Minimum volume", group = "Support & Resistance lines")
+
+// ------------------------------------------------------- moving averages
+
+ema50 = ema(close, 50)
+ema200 = ema(close, 200)
+plot(plot50 ? ema50 : none, "EMA50", #2196f3)
+plot(plot200 ? ema200 : none, "EMA200", fuchsia)
+
+// Restarted at the first bar of each calendar day in the chart's zone, stated
+// outright so it never depends on the chart knowing the instrument's trading
+// hours. On a daily chart each bar is its own day.
+newDay = bar.isFirst or not date.isSameDay(time, time[1])
+vwapLine = vwapAnchor(hlc3, newDay)
+plot(showvwap ? vwapLine : none, "VWAP", fade(#ff9800, 10), width = 2, style = "step")
+
+pe = emasrc == "CLOSE" ? close : hlc3
+ped = ema(pe, shp)
+pew = ema(pe, mip)
+pem = ema(pe, lop)
+plot1 = plot(showpma ? ped : none, "PEMA-Short", lime)
+plot2 = plot(showpma ? pew : none, "PEMA-Medium", yellow)
+plot3 = plot(showpma ? pem : none, "PEMA-Long", red)
+fill(plot1, plot2, green, opacity = 0.1)
+fill(plot2, plot3, yellow, opacity = 0.1)
+
+// ------------------------------------------------- basic bar definitions
+
+volAvg = sma(volume, 60)
+H = high
+L = low
+V = volume
+C = close
+O = open
+spread = H - L
+avgSpread = sma(spread, 40)
+AvgSpreadBar = toBool(spread > avgSpread)
+wideRangeBar = toBool(spread > 1.5 * avgSpread)
+narrowRangeBar = toBool(spread < 0.7 * avgSpread)
+lowVolume = toBool(V < volume[1] and V < volume[2] and V < volAvg)
+upBar = toBool(C > close[1])
+downBar = toBool(C < close[1])
+closeFactor = C - L
+clsPosition = spread / closeFactor
+closePosition = closeFactor == 0 ? avgSpread : clsPosition
+vb = toBool(V > volAvg or V > volume[1])
+upClose = toBool(C >= spread * 0.7 + L)
+downClose = toBool(C <= spread * 0.3 + L)
+aboveClose = toBool(C > spread * 0.5 + L)
+belowClose = toBool(C < spread * 0.5 + L)
+midClose = toBool(C > spread * 0.3 + L and C < spread * 0.7 + L)
+veryHighClose = toBool(closePosition < 1.35)
+
+// 1 down close, 2 below close, 3 mid close, 4 above close, 5 up close
+ClosePos = C <= spread * 0.2 + L ? 1 : C <= spread * 0.4 + L ? 2 : C <= spread * 0.6 + L ? 3 : C <= spread * 0.8 + L ? 4 : 5
+// 1 very high, 2 high, 3 above average, 4 less than average, 5 low
+volpos = V > volAvg * 2 ? 1 : V > volAvg * 1.3 ? 2 : V > volAvg ? 3 : V < volAvg and V < volAvg * 0.7 ? 4 : 5
+
+// High volume that cannot move the price
+pm = abs(C - O)
+pma = ema(pm, 40)
+Lpm = toBool(pm < 0.5 * pma)
+fom1 = toBool(V > 1.5 * volAvg and Lpm)
+
+// Two bar reversal after a fall: the previous close below the four before it
+tbcd = toBool(C[1] < C[5] and C[1] < C[4] and C[1] < C[3] and C[1] < C[2])
+tbc1 = toBool(L < L[1] and H > H[1])
+tbc1a = toBool(L < L[1] and C > C[1])
+tbc2 = toBool(tbcd and tbc1 and V > 1.2 * volAvg and upClose)
+tbc2a = toBool(tbcd and tbc1a and V > 1.2 * volAvg and upClose and not tbc1)
+tbc3 = toBool(tbcd and tbc1 and upClose and V <= 1.2 * volAvg)
+// Two bar reversal after a rise
+tbcu = toBool(C[1] > C[5] and C[1] > C[4] and C[1] > C[3] and C[1] > C[2])
+tbc4 = toBool(tbcu and tbc1 and V > 1.2 * volAvg and downClose)
+tbc5 = toBool(tbcu and tbc1 and downClose and V <= 1.2 * volAvg)
+
+// ------------------------------------------------------ trend analysis
+
+// How far the high and the low have travelled over 2, 8, 10 and 40 bars, in
+// units of the average true range over that span. A price from before the
+// first bar reads as zero.
+atr2 = atr(2)
+atr8 = atr(8)
+atr10 = atr(10)
+atr40 = atr(40)
+
+rwhmins = (high - orElse(low[2], 0)) / (atr2 * sqrt(2))
+rwhmaxs = (high - orElse(low[10], 0)) / (atr10 * sqrt(10))
+rwhs = max(rwhmins, rwhmaxs)
+
+rwlmins = (orElse(high[2], 0) - low) / (atr2 * sqrt(2))
+rwlmaxs = (orElse(high[10], 0) - low) / (atr10 * sqrt(10))
+rwls = max(rwlmins, rwlmaxs)
+
+rwhminl = (high - orElse(low[8], 0)) / (atr8 * sqrt(8))
+rwhmaxl = (high - orElse(low[40], 0)) / (atr40 * sqrt(40))
+rwhl = max(rwhminl, rwhmaxl)
+
+rwlminl = (orElse(high[8], 0) - low) / (atr8 * sqrt(8))
+rwlmaxl = (orElse(high[40], 0) - low) / (atr40 * sqrt(40))
+rwll = max(rwlminl, rwlmaxl)
+
+ground = rwhs
+sky = rwls
+j = rwhl - rwll
+j2 = rwhl
+k2 = rwll
+
+upmid = ground > 1 ? 1 : 0
+dnimd = sky > 1 ? 1 : 0
+upmajor = j > 1 ? 1 : j < -1 ? -1 : 0
+upminor = j2 > 1 ? 1 : -1
+dnminor = k2 > 1 ? 1 : -1
+
+// Trend bands: major, mid and minor trend, one row of squares each
+signal(showtrend and upmajor == 1 ? "" : none, color = #03fc24, at = "above", shape = "square")
+signal(showtrend and upmajor == -1 ? "" : none, color = #fa5050, at = "above", shape = "square")
+signal(showtrend and upmajor == 0 ? "" : none, color = #f4fc79, at = "above", shape = "square")
+signal(showtrend and upmid == 1 ? "" : none, color = lime, at = "above", shape = "square")
+signal(showtrend and upmid == 0 and dnimd == 1 ? "" : none, color = red, at = "above", shape = "square")
+signal(showtrend and upmid == 0 and dnimd != 1 ? "" : none, color = yellow, at = "above", shape = "square")
+signal(showtrend and upminor == 1 ? "" : none, color = lime, at = "above", shape = "square")
+signal(showtrend and upminor == -1 ? "" : none, color = red, at = "above", shape = "square")
+
+// ---------------------------------------------------- signal generation
+
+upThrustBar = toBool(wideRangeBar and downClose and high > high[1] and upmid == 1)
+// Each window is computed on every bar: `and` stops at the first false
+// operand, and a window placed after one would skip bars.
+highestVol60 = highest(volume, 60)
+highest10 = highest(H, 10)
+highest5 = highest(H, 5)
+lowest5 = lowest(low, 5)
+bc = toBool(wideRangeBar and aboveClose and volume == highestVol60 and upmajor == 1)
+upThrustBartrue = toBool(wideRangeBar and ClosePos == 1 and upmajor > 0 and H > H[1] and volpos < 4)
+upThrustCond1 = toBool(upThrustBar[1] and downBar and not narrowRangeBar)
+upThrustCond2 = toBool(upThrustBar[1] and downBar and V > volAvg * 1.3)
+upThrustCond3 = toBool(upThrustBar and V > volAvg * 2)
+topRevBar = toBool(V[1] > volAvg and upBar[1] and wideRangeBar[1] and downBar and downClose and wideRangeBar and upmajor > 0 and H == highest10)
+PseudoUpThrust = toBool(upBar[1] and H > H[1] and V[1] > 1.5 * volAvg and downBar and downClose and not upThrustBar)
+pseudoUtCond = toBool(PseudoUpThrust[1] and downBar and downClose and not upThrustBar)
+trendChange = toBool(upBar[1] and H == highest5 and downBar and (downClose or midClose) and V > volAvg and upmajor > 0 and upmid > 0 and not wideRangeBar and not PseudoUpThrust)
+noDemandBarUt = toBool(upBar and narrowRangeBar and lowVolume and (aboveClose or upClose) and ((upminor >= 0 and upmid >= 0) or (upminor <= 0 and upminor >= 0)))
+noDemandBarDt = toBool(upBar and narrowRangeBar and lowVolume and (aboveClose or upClose) and (upminor <= 0 or upmid <= 0))
+noSupplyBar = toBool(downBar and narrowRangeBar and lowVolume and midClose)
+
+lowVolTest = toBool(low == lowest5 and upClose and lowVolume)
+lowVolTest1 = toBool(low == lowest5 and V < volAvg and L < L[1] and upClose and upminor > 0 and upmajor > 0)
+lowVolTest2 = toBool(lowVolTest[1] and upBar and upClose)
+
+sellCond1 = toBool(upThrustCond1 or upThrustCond2 or upThrustCond3)
+sellCond2 = not toBool(sellCond1[1])
+sellCond = sellCond1 and sellCond2
+strengthDown0 = toBool(upmajor < 0 and volpos < 4 and downBar[1] and upBar and ClosePos > 3 and dnminor == 1 and dnimd == 1)
+strengthDown = toBool(volpos < 4 and downBar[1] and upBar and ClosePos > 3 and dnimd == 1 and dnminor == 1)
+strengthDown1 = toBool(upmajor == -1 and V > volAvg * 1.5 and downBar[1] and upBar and ClosePos > 3 and upmid <= 0 and upminor < 0)
+strengthDown2 = toBool(upmid <= 0 and V[1] < volAvg and upBar and veryHighClose and volpos < 4)
+buyCond1 = strengthDown or strengthDown1
+buyCond = toBool(upBar and buyCond1[1])
+stopVolume = toBool(L == lowest5 and (upClose or midClose) and V > 1.5 * volAvg and upmajor < 0)
+// This asks for an up bar that closed below the previous close, so it never
+// fires; it is kept because other conditions name it.
+revUpThrust = toBool(upBar and upClose and V > V[1] and V > volAvg and wideRangeBar and downBar[1] and downClose[1] and upminor < 0 and close < close[1])
+effortUp = toBool(H > H[1] and L > L[1] and C > C[1] and C >= (H - L) * 0.7 + L and spread > avgSpread and volpos < 4)
+effortUpfail = toBool(effortUp[1] and (upThrustBar or upThrustCond1 or upThrustCond2 or upThrustCond3 or (downBar and AvgSpreadBar)))
+effortDown = toBool(H < H[1] and L < L[1] and C < C[1] and C <= (H - L) * 0.25 + L and wideRangeBar and V > V[1])
+effortDownFail = toBool(effortDown[1] and ((upBar and AvgSpreadBar) or revUpThrust or buyCond1))
+upflag = sellCond or buyCond or effortUp or effortUpfail or stopVolume or effortDown or effortDownFail or revUpThrust or noDemandBarDt or noDemandBarUt or noSupplyBar or lowVolTest or lowVolTest1 or lowVolTest2 or bc
+bullBar = toBool((V > volAvg or V > V[1]) and C <= spread * 0.2 + L and upBar and not upflag)
+bearBar = toBool(vb and downClose and downBar and spread > avgSpread and not upflag)
+sc = toBool(wideRangeBar and belowClose and V == highestVol60 and upmajor == -1)
+
+UT1 = upThrustBar or upThrustBartrue
+UT2 = upThrustCond1 or upThrustCond2
+UT = UT1 or UT2
+lvt = lowVolTest or lowVolTest2
+EFD = effortDownFail
+ST1 = strengthDown0
+ST2 = strengthDown and not strengthDown2
+strcond = strengthDown2 and not strengthDown0 and not strengthDown and not strengthDown1
+ST3 = strengthDown1
+ST4 = strengthDown2 and strcond
+ST5 = strengthDown2 and not strcond
+ST = ST1 or ST2 or ST3 or ST4 or ST5
+
+// ----------------------------------------------------- marks (text mode)
+
+txt = not crt
+
+signal(showut and txt and (upThrustBar or upThrustBartrue) and not effortUpfail and not sellCond and not bc ? "UT1" : none, color = #990000, at = "above", shape = "triangleDown")
+signal(showut and txt and (upThrustCond1 or upThrustCond2) and not effortUpfail and not sellCond and not bc ? "UT2" : none, color = #ff0000, at = "above", shape = "triangleDown")
+signal(showtrb and txt and topRevBar and not sellCond and not UT and not effortUpfail ? "TRB" : none, color = #ff9900, at = "above", shape = "triangleDown")
+signal(showtch and txt and trendChange and not effortUpfail ? "TC" : none, color = #ff471a, at = "above", shape = "triangleDown")
+signal(showput and txt and PseudoUpThrust and not effortUpfail ? "PUT" : none, color = #ff471a, at = "above", shape = "triangleDown")
+signal(showput and txt and pseudoUtCond and not effortUpfail ? "PUC" : none, color = #ff471a, at = "above", shape = "triangleDown")
+signal(shownd and txt and noDemandBarUt ? "ND" : none, color = #f7e30c, at = "above", shape = "circle")
+signal(shownd and txt and noDemandBarDt ? "ND" : none, color = #f7e30c, at = "above", shape = "circle")
+signal(showns and txt and noSupplyBar ? "NS" : none, color = lime, at = "below", shape = "circle")
+signal(showlvtst and txt and lowVolTest and not effortDownFail ? "LVT" : none, color = lime, at = "below", shape = "circle")
+signal(showlvtst and txt and lowVolTest2 and not effortUp ? "ST" : none, color = lime, at = "below", shape = "triangleUp")
+signal(showstsig and txt and strengthDown0 ? "ST1" : none, color = lime, at = "below", shape = "triangleUp")
+signal(showstsig and txt and strengthDown and not strengthDown2 and not EFD and not effortUp and not stopVolume and not revUpThrust ? "ST1" : none, color = lime, at = "below", shape = "triangleUp")
+signal(showstsig and txt and strengthDown1 and not EFD and not effortUp and not stopVolume and not revUpThrust ? "ST1" : none, color = lime, at = "below", shape = "triangleUp")
+signal(showstsig and txt and strengthDown2 and strcond and not EFD and not effortUp and not stopVolume and not revUpThrust ? "ST2" : none, color = lime, at = "below", shape = "triangleUp")
+signal(showsv and txt and stopVolume and not ST ? "SV" : none, color = lime, at = "below", shape = "circle")
+signal(showeu and txt and effortUp and not ST and not buyCond and not effortDownFail and not bc ? "EU" : none, color = lime, at = "below", shape = "triangleUp")
+signal(showeuf and txt and effortUpfail and not UT ? "EUF" : none, color = red, at = "above", shape = "triangleDown")
+signal(showed and txt and effortDown and not effortUpfail and not sc ? "ED" : none, color = red, at = "above", shape = "triangleDown")
+signal(showedf and txt and effortDownFail and not ST ? "EDF" : none, color = lime, at = "below", shape = "triangleUp")
+signal(showrut and txt and revUpThrust and not ST ? "RUT" : none, color = lime, at = "below", shape = "triangleUp")
+signal(showbyc and txt and buyCond and not ST and not effortUp and not lvt ? "BCE" : none, color = lime, at = "below", shape = "triangleUp")
+signal(showsce and txt and sellCond and not UT ? "SCE" : none, color = red, at = "above", shape = "triangleDown")
+signal(showsce and txt and sellCond and UT1 ? "UT SCE" : none, color = red, at = "above", shape = "triangleDown")
+signal(showbc and txt and bc and not UT ? "BC" : none, color = red, at = "above", shape = "triangleDown")
+signal(showbc and txt and bc and UT1 ? "UT BC" : none, color = red, at = "above", shape = "triangleDown")
+signal(showsc and txt and sc and not ST ? "SC" : none, color = green, at = "below", shape = "triangleUp")
+signal(showsc and txt and sc and ST ? "ST SC" : none, color = green, at = "below", shape = "triangleUp")
+signal(showtb and txt and tbc2 ? "TB" : none, color = green, at = "below", shape = "triangleUp")
+signal(showtb and txt and tbc3 ? "TB" : none, color = #f7e30c, at = "below", shape = "triangleUp")
+signal(showtb and txt and tbc4 and not UT ? "TB" : none, color = red, at = "above", shape = "triangleDown")
+signal(showtb and txt and tbc5 and not UT ? "TB" : none, color = #f7e30c, at = "above", shape = "triangleDown")
+signal(showfom and txt and not UT and fom1 ? "DS" : none, color = yellow, at = "below", shape = "square")
+
+// ------------------------------------- plates with tooltips (symbol mode)
+
+// At most 500 plates are kept; the oldest goes when a new one passes that.
+var marks: array<label> = []
+
+fn putMark(held: array<label>, at: number, code: string, plate: color, ink: color, tip: string) =>
+    push(held, draw.label(time, at, code, color = plate, textColor = ink, tooltip = tip))
+    if size(held) > 500
+        draw.delete(shift(held))
+    0
+
+ofs = close * 0.02
+above = high + ofs
+below = low - ofs
+
+if crt and showut and UT
+    putMark(marks, above, "UT", red, white, "--------------- \n      SOW        \n--------------\n UPTHRUST BAR \n----------------\n A Sign of Weakness. The prices were marked up first, attracting the retail buyer. Then prices are rapidly marked down trapping the weak hands ")
+if crt and showtrb and topRevBar and not sellCond and not UT and not effortUpfail
+    putMark(marks, above, "TRB", red, white, "--------------- \n      SOW        \n--------------\n TOP REVERSAL BAR \n----------------\n A Sign of Weakness. Probable top is being formed and probability of reversal looks eminent ")
+if crt and showtch and trendChange and not effortUpfail
+    putMark(marks, above, "TC", red, white, "--------------- \n      SOW        \n--------------\n TREND CHANGE BAR \n----------------\n A Sign of Weakness. Indicates high probability of a Trend Change from Up Trend  ")
+if crt and showput and PseudoUpThrust and not effortUpfail
+    putMark(marks, above, "PUT", orange, white, "--------------- \n      SOW        \n--------------\n PSEUDO UPTHRUST BAR \n----------------\n A Sign of Weakness. Psuedo UpThrust Bar. An UpThrust Bar on lower volume. Indicates weakness, though reduced. ")
+if crt and shownd and noDemandBarUt
+    putMark(marks, above, "ND", yellow, black, "--------------- \n      SOW        \n--------------\n NO DEMAND BAR \n----------------\n A Sign of Weakness. Indicates lack of Demand. Without Demand price cannot move up. No Demand in a Up trend indicates more weakness ")
+if crt and shownd and noDemandBarDt
+    putMark(marks, above, "ND", yellow, black, "--------------- \n      SOW        \n--------------\n NO DEMAND BAR \n----------------\n A Sign of Weakness. Indicates lack of Demand in a down Trend.Does not have much impact ")
+if crt and showns and noSupplyBar
+    putMark(marks, below, "NS", yellow, black, "--------------- \n      SOS        \n--------------\n NO SUPPLY BAR \n----------------\n A Sign of Strength. Indicates lack of Supply. Without Supply price cannot move down ")
+if crt and showlvtst and lowVolTest and not effortDownFail
+    putMark(marks, below, "LVT", lime, black, "--------------- \n      SOS        \n--------------\n LOW VOLUME TEST \n----------------\n  Sign of Strength. \n Test of Supply. A high volume Bar closing on High after the Test will confirm the Strength")
+if crt and showlvtst and lowVolTest2 and not effortUp
+    putMark(marks, below, "ST", lime, black, "--------------- \n      SOS        \n--------------\n LOW VOLUME TEST \n----------------\n  Sign of Strength. \n Test of Supply. A high volume Bar closing on High after the Test will confirm the Strength")
+if crt and showstsig and strengthDown0
+    putMark(marks, below, "ST", lime, black, "--------------- \n      SOS        \n--------------\n STRENGTH COMING IN \n----------------\n  sign of Strength. \n Strength coming in after a Down Trend")
+if crt and showstsig and strengthDown
+    putMark(marks, below, "ST", lime, black, "--------------- \n      SOS        \n--------------\n STRENGTH COMING IN \n----------------\n  sign of Strength. \n Strength coming in after a Down Trend")
+if crt and showstsig and strengthDown1
+    putMark(marks, below, "ST", lime, black, "--------------- \n      SOS        \n--------------\n STRENGTH COMING IN \n----------------\n  sign of Strength. \n Strength coming in after a Down Trend. High VOlume adds to the strength")
+if crt and showstsig and strengthDown2
+    putMark(marks, below, "ST", lime, black, "--------------- \n      SOS        \n--------------\n STRENGTH COMING IN \n----------------\n  sign of Strength. \n High volume upBar closing on the high indicates strength.")
+if crt and showsv and stopVolume and not ST
+    putMark(marks, below, "SV", lime, black, "--------------- \n      SOS        \n--------------\n STOPPING VOLUME \n----------------\n 1. Stopping volume is also called as absorption volume. \n 2. This indicates that the weak hands are panic selling and the strong hands are stepping in to absorb the selling. As a result the stock will soon see side ways movement or go into a long accumulation phase. \n 3. In effect the stopping volume or absorption volume indicates that the long bearish move is likely to end soon. \n 4. Stopping volumes are basically alert to the impending reversal. ")
+if crt and showeu and effortUp and not ST and not buyCond and not effortDownFail and not bc
+    putMark(marks, below, "EU", lime, black, "--------------- \n      SOS        \n--------------\n EFFORT MOVE UP BAR \n----------------\n  1. Also called “Effort to Rise” Bar \n 2. Indicates that Smart money is pushing up the Price \n 3. Indicates that interest is coming in the stock \n 4. Most common signal seen")
+if crt and showeuf and effortUpfail and not UT
+    putMark(marks, above, "EUF", orange, white, "--------------- \n      SOW        \n--------------\n EFFORT TO MOVE UP FAILED \n----------------\n  sign of Weakness. \n Effort to Move Up Failed. Supply is still present and overcame effort to move up stock")
+if crt and showed and effortDown and not effortUpfail and not sc
+    putMark(marks, above, "ED", orange, white, "--------------- \n      SOW        \n--------------\n EFFORT TO MOVE DOWN \n----------------\n  sign of Weakness. \n Overwhelming supply psuhing down the Price")
+if crt and showedf and effortDownFail and not ST
+    putMark(marks, below, "EDF", rgba(81, 238, 152, 0.87), black, "--------------- \n      SOS        \n--------------\n EFFORT TO MOVE DOWN FAIL\n----------------\n  sign of Strength. \n Effort to push the prices down has been overcome by demand. Shows Demand has the upper hand.")
+if crt and showrut and revUpThrust and not ST
+    putMark(marks, below, "RUT", rgba(57, 193, 91, 0.87), black, "--------------- \n      SOS        \n--------------\n REVERSE UPTHRUST\n----------------\n  sign of WeaknessStrength. \n First the Prices are drivedriven down attracting short. Then the prices are quickly marked up Trapping the shorts. Normally happens at reversla points")
+if crt and showbyc and buyCond and not ST and not effortUp and not lvt
+    putMark(marks, below, "BCE", rgba(57, 193, 91, 0.87), black, "--------------- \n      SOS        \n--------------\n BUY CONDITION EXISTS\n----------------\n  sign of Strength. \n Strength has returned. Buy Conditions exits. Probability of bullish moves is high")
+if crt and showsce and sellCond and not UT
+    putMark(marks, above, "SCE", orange, white, "--------------- \n      SOW        \n--------------\n SELL CONDITION EXISTS\n----------------\n  sign of Weakness. \n Weakness has returned. Sell Conditions exits. Probability of Bearish moves is high")
+if crt and showbc and ((bc and not UT) or (bc and UT1))
+    putMark(marks, above, "BC", orange, white, "--------------- \n      SOW        \n--------------\n BUYING CLIMAX\n----------------\n  sign of Weakness. \n Buying Climax. \n  1.  Strong Hand passing of huge quantity of their stock to weak Hands. \n 2. Generally Indicates end of an up move \n 3. The move up need not necessarily reverse immediately ")
+if crt and showsc and sc
+    putMark(marks, below, "SC", lime, black, "--------------- \n      SOS        \n--------------\n SELLING CLIMAX\n----------------\n  Sign of Strength. \n Selling Climax. Smart money accumulating the stock in huge quantity. Possible end of the current Down move")
+if crt and showtb and tbc2
+    putMark(marks, above, "TB", lime, black, "--------------- \n      SOS        \n--------------\n TWO BAR REVERSAL\n----------------\n  Sign of Strength. \n Two Bar Reversal on High Volume during a up move. \n Temporary Reversal in the current move. \n High Prabability signal")
+if crt and showtb and tbc3
+    putMark(marks, above, "TB", yellow, black, "--------------- \n      SOS        \n--------------\n TWO BAR REVERSAL\n----------------\n  Sign of Strength. \n Two Bar Reversal on Low Volume during a up move.\n Temporary Reversal in the current move. \n Low Prabability signal")
+if crt and showtb and tbc4 and not UT
+    putMark(marks, below, "TB", orange, white, "--------------- \n      SOW        \n--------------\n TWO BAR REVERSAL\n----------------\n  Sign of Weakness. \n Two Bar Reversal on High Volume during a down move.\n Temporary Reversal in the current move. \n High Prabability signal")
+if crt and showtb and tbc5 and not UT
+    putMark(marks, below, "TB", yellow, black, "--------------- \n      SOW        \n--------------\n TWO BAR REVERSAL\n----------------\n  Sign of Weakness. \n Two Bar Reversal on Low Volume during a down move. \n Temporary Reversal in the current move. \n Low Prabability signal")
+if crt and showfom and fom1
+    putMark(marks, below, "DS", yellow, black, "--------------- \n      ALERT        \n--------------\n DEMAND?SUPPLY AREA \n----------------\n  Alert \n High Volume unable to move the price. Hence it could be a Supply or Demand Area. Evalaute based on the price struture and Price Action")
+
+// ---------------------------------------------------------- bar colours
+
+// Green when the close is above the previous close, red otherwise; the
+// lighter shade when volume is under its 60 bar average.
+mcolor = close > close[1] ? (volume < volAvg ? rgb(122, 236, 125) : rgb(73, 177, 52)) : (volume < volAvg ? rgb(243, 155, 155) : rgb(207, 58, 58))
+background(bkbg ? black : white)
+barColor(mcolor)
+
+// ------------------------------------------------------------ alert log
+
+var timeArr: array<string> = []
+var msgArr: array<string> = []
+var typeArr: array<string> = []
+
+fn logMsg(times: array<string>, msgs: array<string>, kinds: array<string>, when: string, message: string, kind: string) =>
+    push(times, when)
+    push(msgs, message)
+    push(kinds, kind)
+    0
+
+stamp = text(date.month(time)) + "-" + text(date.day(time)) + "  , " + text(date.hour(time)) + ":" + text(date.minute(time))
+
+if upThrustBar
+    logMsg(timeArr, msgArr, typeArr, stamp, "UpThrust Bar - A Sure sign of weakness", "weakness")
+if upThrustBar and not upThrustBartrue
+    logMsg(timeArr, msgArr, typeArr, stamp, "UpThrust Bar - A sign of weakness ", "weakness")
+if upThrustCond1
+    logMsg(timeArr, msgArr, typeArr, stamp, "A downbar after an Upthrust. Confirm weakness.", "weakness")
+if upThrustCond2 and not upThrustCond1
+    logMsg(timeArr, msgArr, typeArr, stamp, "A High Volume downbar after an Upthrust. Confirm weakness.", "weakness")
+if upThrustCond3
+    logMsg(timeArr, msgArr, typeArr, stamp, "This upthrust at very High Voume, Confirms weakness", "weakness")
+if PseudoUpThrust
+    logMsg(timeArr, msgArr, typeArr, stamp, "Psuedo UpThrust.   A Sign of Weakness.", "weakness")
+if pseudoUtCond
+    logMsg(timeArr, msgArr, typeArr, stamp, "A Down Bar closing down after a Pseudo Upthrust confirms weakness.", "weakness")
+if trendChange
+    logMsg(timeArr, msgArr, typeArr, stamp, "High volume Downbar after an upmove on high volume indicates weakness.", "weakness")
+if sellCond
+    logMsg(timeArr, msgArr, typeArr, stamp, "Possible end of Uptrend and start of Downtrend soon.", "weakness")
+if effortUpfail
+    logMsg(timeArr, msgArr, typeArr, stamp, "Effort to Move up has failed. Bearish sign.", "weakness")
+if bearBar
+    logMsg(timeArr, msgArr, typeArr, stamp, "Day's Move Indicates weakness.", "weakness")
+if bc
+    logMsg(timeArr, msgArr, typeArr, stamp, "Potential Buying climax.", "weakness")
+if effortDown
+    logMsg(timeArr, msgArr, typeArr, stamp, "Effort to Fall. Bearish sign. ", "weakness")
+if tbc4
+    logMsg(timeArr, msgArr, typeArr, stamp, "Two Bar Reversal on Higher volume ", "weakness")
+if noSupplyBar
+    logMsg(timeArr, msgArr, typeArr, stamp, "No Supply. A sign of Strength. ", "weakness")
+if lowVolTest
+    logMsg(timeArr, msgArr, typeArr, stamp, "Test for supply.  ", "strength")
+if lowVolTest2
+    logMsg(timeArr, msgArr, typeArr, stamp, "An upBar closing near High after a Test confirms strength.", "strength")
+if lowVolTest1
+    logMsg(timeArr, msgArr, typeArr, stamp, "Test for supply in a uptrend. Sign of Strength.", "strength")
+if strengthDown1
+    logMsg(timeArr, msgArr, typeArr, stamp, "Strength seen returning after a down trend. High volume adds to strength..", "strength")
+if strengthDown0 and not strengthDown
+    logMsg(timeArr, msgArr, typeArr, stamp, "Strength seen returning after a down trend.", "strength")
+if strengthDown and not strengthDown1
+    logMsg(timeArr, msgArr, typeArr, stamp, "Strength seen returning after a down trend.", "strength")
+if buyCond
+    logMsg(timeArr, msgArr, typeArr, stamp, "Possible end of downtrend and start of uptrend soon..", "strength")
+if effortDownFail
+    logMsg(timeArr, msgArr, typeArr, stamp, "Effort to Move Down has failed. Bulish sign. ", "strength")
+if strengthDown2
+    logMsg(timeArr, msgArr, typeArr, stamp, "High volume upBar closing on the high indicates strength. ", "strength")
+if stopVolume
+    logMsg(timeArr, msgArr, typeArr, stamp, "Stopping volume. Normally indicates end of bearishness is nearing.", "strength")
+if revUpThrust
+    logMsg(timeArr, msgArr, typeArr, stamp, "Reverse upthrust. Indicates strength", "strength")
+if bullBar
+    logMsg(timeArr, msgArr, typeArr, stamp, "Day's Move Indicates strength. ", "strength")
+if tbc2
+    logMsg(timeArr, msgArr, typeArr, stamp, "Two Bar Reversal on Higher volume. ", "strength")
+if tbc2a
+    logMsg(timeArr, msgArr, typeArr, stamp, "Two Bar like Reversal to upside on high volume.  ", "strength")
+if sc
+    logMsg(timeArr, msgArr, typeArr, stamp, " Possible Selling Climax ", "strength")
+if topRevBar
+    logMsg(timeArr, msgArr, typeArr, stamp, "Top Reversal. Sign of Weakness.  ", "warning")
+if noDemandBarDt
+    logMsg(timeArr, msgArr, typeArr, stamp, "No Demand. upside unlikely soon.  ", "warning")
+if noDemandBarUt
+    logMsg(timeArr, msgArr, typeArr, stamp, "No Demand in a Uptrend. A sign of Weakness.  ", "warning")
+if fom1
+    logMsg(timeArr, msgArr, typeArr, stamp, "High Volume unable to move the price. Could be a Supply / Demand Area ", "warning")
+if tbc2
+    logMsg(timeArr, msgArr, typeArr, stamp, "Two Bar Reversal to upside on High volume. ", "warning")
+if tbc3
+    logMsg(timeArr, msgArr, typeArr, stamp, "Two Bar Reversal to upside on Low volume. ", "warning")
+if tbc4
+    logMsg(timeArr, msgArr, typeArr, stamp, "Two Bar Reversal to upside on High volume. ", "warning")
+if tbc5
+    logMsg(timeArr, msgArr, typeArr, stamp, "Two Bar Reversal to upside on Low volume. ", "warning")
+
+// Only the newest rows can ever be shown, so older ones are let go rather
+// than held for the whole history.
+keepRows = log_show_msg + log_offset
+extra = size(msgArr) - keepRows
+for k = 1 to extra
+    shift(timeArr)
+    shift(msgArr)
+    shift(typeArr)
+
+// The grid has room for the largest log. Rows are filled from the bottom, so
+// the unused ones sit empty above the header.
+logTbl = table("Alert log", 21, 2, position = "bottomLeft")
+
+if bar.isLast and log_show
+    clear(logTbl)
+    first = 20 - log_show_msg
+    cell(logTbl, first, 0, "TIME", textColor = black, bgColor = #9894f7)
+    cell(logTbl, first, 1, "ALERT", textColor = black, bgColor = #9894f7)
+    for i = 1 to log_show_msg
+        arr_i = size(msgArr) - log_show_msg + i - 1 - log_offset
+        if arr_i < 0
+            break
+        msgType = element(typeArr, arr_i)
+        msgColor = msgType == "strength" ? #c2fc03 : msgType == "weakness" ? #fa5050 : #f4fc79
+        cell(logTbl, first + i, 0, element(timeArr, arr_i), textColor = black, bgColor = msgColor)
+        cell(logTbl, first + i, 1, element(msgArr, arr_i), textColor = black, bgColor = msgColor)
+
+// --------------------------------------------------------------- money flow
+
+TYP = hlc3
+RMF = TYP * volume
+PMF = TYP > TYP[1] ? RMF : 0
+NMF = TYP < TYP[1] ? RMF : 0
+MFR = sum(PMF, periods) / sum(NMF, periods)
+RMFI = 100 - 100 / (1 + MFR)
+JM = wma(RMFI, 22)
+
+// ------------------------------------------------------------ strength band
+
+RPeriod = 14
+Lb = 30
+mySig = rsi(close, 14)
+jh = highest(mySig, Lb)
+jl = lowest(mySig, Lb)
+jx = jh - jl
+jy = wma(jx, RPeriod) * 0.60 + wma(jl, RPeriod)
+Hiline = jh - jy * 0.2
+Loline = jl + jy * 0.2
+R = (4 * mySig + 3 * mySig[1] + 2 * mySig[2] + mySig[3]) / 10
+strongR = toBool(R > Hiline)
+weakR = toBool(R < Loline)
+// One square a bar: lime above the high line, orange below the low line,
+// blue between them and while the lines are still forming.
+signal(strband and strongR ? "" : none, color = lime, at = "below", shape = "square")
+signal(strband and not strongR and weakR ? "" : none, color = orange, at = "below", shape = "square")
+signal(strband and not strongR and not weakR ? "" : none, color = blue, at = "below", shape = "square")
+
+// ------------------------------------------------------------ status table
+
+spr = H - L
+avspr = sma(spread, 40)
+sprst = spr < avspr * 0.6 ? 1 : spr < avspr * 0.9 and spr > avspr * 0.6 ? 2 : spr > avspr * 0.9 and spr < avspr * 1.1 ? 3 : spr > avspr * 1.1 and spr < avspr * 1.5 ? 4 : spr > avspr * 1.5 and spr < avspr * 2 ? 5 : 6
+
+statusTbl = table("Bar status", 3, 3, position = "topRight")
+
+if bar.isLast
+    closeText = ClosePos == 1 ? "Close : Down Close  " : ClosePos == 2 ? "Close : Below Close  " : ClosePos == 3 ? "Close : Mid Close  " : ClosePos == 4 ? "Close : Above Close  " : "Close : UP Close  "
+    cell(statusTbl, 0, 0, closeText, textColor = black, bgColor = #f4fc79)
+    volText = volpos == 1 ? "Volume : Very High  " : volpos == 2 ? "Volume : High     " : volpos == 3 ? "Volume : Above Average  " : volpos == 4 ? "Volume : Less Than Avg  " : "Volume : Low Volume  "
+    cell(statusTbl, 0, 1, volText, textColor = black, bgColor = #f4fc79)
+    sprText = sprst == 1 ? "Spread : Narrow  " : sprst == 2 ? "Spread : Below Average" : sprst == 3 ? "Spread : Average  " : sprst == 4 ? "Spread : Above Average  " : sprst == 5 ? "Spread = Wide" : "SPread  : Very Wide"
+    cell(statusTbl, 0, 2, sprText, textColor = black, bgColor = #f4fc79)
+
+    majText = upmajor == 1 ? "Major Trend - UP  " : upmajor == -1 ? "Major Trend - DOWN  " : "Major Trend - No Trend"
+    cell(statusTbl, 1, 0, majText, textColor = black, bgColor = upmajor == 1 ? #c2fc03 : upmajor == -1 ? #fa5050 : #f4fc79)
+    minText = upmid == 1 ? "Minor Trend - UP  " : dnimd == 1 ? "Minor Trend - DOWN  " : "Minor Tend - No Trend"
+    cell(statusTbl, 1, 1, minText, textColor = black, bgColor = upmid == 1 ? #c2fc03 : dnimd == 1 ? #fa5050 : #f4fc79)
+    immText = upminor == 1 ? "Immed. Trend - UP  " : dnminor == 1 ? "Immed. Trend - DOWN  " : "Immed. Tend - No Trend"
+    cell(statusTbl, 1, 2, immText, textColor = black, bgColor = upminor == 1 ? #c2fc03 : dnminor == 1 ? #fa5050 : #f4fc79)
+
+    absText = R > Hiline ? "Abs. Strength Positive  " : R < Loline ? "Abs. Strength Negative  " : "Abs. Strength Neutral"
+    cell(statusTbl, 2, 0, absText, textColor = black, bgColor = R > Hiline ? #c2fc03 : R < Loline ? #fa5050 : #f4fc79)
+    mfText = RMFI > JM ? " Money Flow Positive " : " Money Flow Negative"
+    cell(statusTbl, 2, 1, mfText, textColor = black, bgColor = RMFI > JM ? #c2fc03 : #fa5050)
+
+// ------------------------------------- support and resistance volume lines
+
+// A new high beyond each of the previous `sens` highs (a new low below each of
+// the previous lows) moves the line to it; otherwise it holds its level.
+priorHigh = highest(high, sens)[1]
+priorLow = lowest(low, sens)[1]
+ph = high > priorHigh ? high : none
+pl = low < priorLow ? low : none
+
+var phl = none
+var pll = none
+if not isNone(ph) and ph != 0
+    phl = ph
+if not isNone(pl) and pl != 0
+    pll = pl
+plot(showrs ? phl : none, "Period High", #4fc3f7, style = "lineWithMarkers")
+plot(showrs ? pll : none, "Period Low", red, style = "lineWithMarkers")
+
+avol = sma(volume, volpd)
+hvol = volume > minvol and volume > volm * avol
+hhv = highest(high, 2)
+llv = lowest(low, 2)
+var hp = none
+var lp = none
+if hvol
+    hp = hhv
+    lp = llv
+plot(showhighvol ? hp : none, "HV - High", olive, width = 2, style = "lineWithMarkers")
+plot(showhighvol ? lp : none, "HV - Low", #880e4f, width = 2, style = "lineWithMarkers")

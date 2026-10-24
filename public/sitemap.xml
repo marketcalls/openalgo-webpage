@@ -4838,6 +4838,11 @@
     <priority>0.6</priority>
   </url>
   <url>
+    <loc>https://openalgo.in/script/library/volume-price-analysis-vpa</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
     <loc>https://openalgo.in/script/library/elliott-wave-oscillator</loc>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>

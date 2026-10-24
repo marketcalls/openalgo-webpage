@@ -10028,6 +10028,29 @@
   "reference": "content/script/library/references/smc-structures-and-fvg.mjs"
  },
  {
+  "slug": "volume-price-analysis-vpa",
+  "file": null,
+  "licence": "MPL-2.0",
+  "author": "karthikmarar",
+  "header": [
+   "// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/",
+   "// © openalgo",
+   "// Original work (c) karthikmarar, MPL-2.0"
+  ],
+  "title": "Volume Price Analysis (VPA)",
+  "originalName": null,
+  "category": "Volume",
+  "originalCategory": null,
+  "placement": "onchart",
+  "inputs": null,
+  "plots": null,
+  "hooks": [],
+  "bytes": null,
+  "runs": true,
+  "error": null,
+  "reference": "content/script/library/references/volume-price-analysis-vpa.mjs"
+ },
+ {
   "slug": "elliott-wave-oscillator",
   "file": null,
   "licence": "OWN",

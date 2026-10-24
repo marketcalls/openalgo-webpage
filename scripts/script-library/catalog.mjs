@@ -168,6 +168,7 @@ const EXTRA = [
   { slug: "ssl-hybrid", title: "SSL Hybrid", category: "Trend Strength", author: "Mihkel00" },
   { slug: "candlestick-patterns", title: "Candlestick Patterns", category: "Reversals", author: "repo32" },
   { slug: "smc-structures-and-fvg", title: "SMC Structures and FVG", category: "Smart Money", author: "LudoGH68" },
+  { slug: "volume-price-analysis-vpa", title: "Volume Price Analysis (VPA)", category: "Volume", author: "karthikmarar" },
   // A textbook formula with no author to credit: openalgo's own study.
   { slug: "elliott-wave-oscillator", title: "Elliott Wave Oscillator", category: "Oscillators", author: null },
   // openalgo's own studies written from published formulas, listed with a
