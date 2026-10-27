@@ -73,7 +73,7 @@ export default function DownloadPage() {
 
   // OpenAlgo Desktop's installers carry the version in their file names, so a
   // new release changes only this constant.
-  const desktopVersion = "1.0.2"
+  const desktopVersion = "1.0.3"
   const desktopRepo = "https://github.com/marketcalls/openalgo-desktop"
   const desktopFile = (suffix) => `${desktopRepo}/releases/download/v${desktopVersion}/OpenAlgo.Desktop_${desktopVersion}_${suffix}`
 
