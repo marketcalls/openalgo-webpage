@@ -1889,7 +1889,7 @@ const dict = {
   'charts.tier.trade': "Boletas de órdenes y escalera de profundidad",
   'charts.tier.webgl': "Renderizado de series por GPU",
   'charts.tier.workspace': "Espacios de trabajo guardados, plantillas y listas de seguimiento",
-  'charts.size.note': "Brotli, medido en la compilación de lanzamiento 2.6.0. Una llamada a createWidget, que es la terminal completa, carga 362.48 kB, y los paneles que el usuario abre más tarde (18.24 kB) se cargan la primera vez que se necesitan. Todos los niveles a la vez pesan 419.05 kB.",
+  'charts.size.note': "Brotli, medido en la compilación de lanzamiento 2.7.0. Una llamada a createWidget, que es la terminal completa, carga 374.10 kB, y los paneles que el usuario abre más tarde (21.00 kB) se cargan la primera vez que se necesitan. Todos los niveles a la vez pesan 436.91 kB.",
   'charts.install.kicker': "Comenzar",
   'charts.install.title': "Tres pasos para un gráfico",
   'charts.install.sub': "Lo único que el motor necesita de ti son barras. Todo lo demás tiene un valor predeterminado.",
