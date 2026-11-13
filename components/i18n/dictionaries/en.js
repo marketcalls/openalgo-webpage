@@ -34,6 +34,10 @@ const en = {
   'hero.ctaGetStarted': 'Get Started',
   'hero.ctaGithub': 'GitHub',
   'hero.integrates': 'Integrates with',
+  'hero.intPlatforms': 'Trading Platforms',
+  'hero.intSdk': 'SDK',
+  'hero.intAgents': 'Agents',
+  'hero.intAlerts': 'Alerts',
 
   // Platform capability blocks
   'platform.kicker': 'One platform, many desks',

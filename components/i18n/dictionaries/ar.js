@@ -29,6 +29,10 @@ const dict = {
   'hero.ctaGetStarted': 'ابدأ الآن',
   'hero.ctaGithub': 'GitHub',
   'hero.integrates': 'يتكامل مع',
+  'hero.intPlatforms': 'منصات التداول',
+  'hero.intSdk': 'SDK',
+  'hero.intAgents': 'الوكلاء',
+  'hero.intAlerts': 'التنبيهات',
 
   'platform.kicker': 'منصة واحدة، مكاتب متعددة',
   'platform.title': 'ليست مجرد منصة تداول آلي.',

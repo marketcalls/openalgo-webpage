@@ -32,6 +32,10 @@ const dict = {
   'hero.ctaGetStarted': 'தொடங்குங்கள்',
   'hero.ctaGithub': 'GitHub',
   'hero.integrates': 'இவற்றுடன் இணைந்து செயல்படுகிறது',
+  'hero.intPlatforms': 'டிரேடிங் பிளாட்ஃபார்ம்கள்',
+  'hero.intSdk': 'SDK',
+  'hero.intAgents': 'ஏஜென்ட்கள்',
+  'hero.intAlerts': 'அலர்ட்கள்',
 
   // Platform capability blocks
   'platform.kicker': 'ஒரு தளம், பல டெஸ்க்குகள்',

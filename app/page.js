@@ -128,6 +128,25 @@ export default function Home() {
     { icon: Database, title: t('platform.b9t'), desc: t('platform.b9d') },
   ]
 
+  const integrationGroups = [
+    {
+      label: t('hero.intPlatforms'),
+      items: ["Amibroker", "TradingView", "GoCharting", "MetaTrader", "NinjaTrader", "ChartInk", "Excel", "Google Sheets"],
+    },
+    {
+      label: t('hero.intSdk'),
+      items: ["Python", "Node.js", "Java", ".NET", "Go", "Rust", "R", "MATLAB"],
+    },
+    {
+      label: t('hero.intAgents'),
+      items: ["OpenClaw", "Hermes Agent", "GrokBot", "N8N"],
+    },
+    {
+      label: t('hero.intAlerts'),
+      items: ["Telegram", "WhatsApp", "Slack", "Discord"],
+    },
+  ]
+
   const integrations = [
     { title: "OpenAlgo Desktop", description: t('home.int.22Desc'), icon: Monitor, url: "https://github.com/marketcalls/openalgo-desktop" },
     { title: "Excel Add-in", description: t('home.int.1Desc'), icon: FileSpreadsheet, url: "https://github.com/marketcalls/OpenAlgo-Excel" },
@@ -170,7 +189,7 @@ export default function Home() {
 
           <div className="reveal reveal-4 mb-12 flex flex-wrap items-center justify-center gap-x-12 gap-y-6">
             {[
-              { icon: Download, value: "5,40,000+", label: t('hero.statDownloads') },
+              { icon: Download, value: "5,50,000+", label: t('hero.statDownloads') },
               { icon: Code2, value: "100%", label: t('hero.statOpenSource') },
               { icon: Star, value: "3,000+", label: t('hero.statStars') },
             ].map(({ icon: Icon, value, label }) => (
@@ -207,21 +226,29 @@ export default function Home() {
             <p className="mb-4 font-label text-label-md uppercase text-on-surface-variant">
               {t('hero.integrates')}
             </p>
-            <div className="mx-auto flex max-w-3xl flex-wrap justify-center gap-2">
-              {[
-                "Amibroker", "TradingView", "GoCharting", "Python", "MetaTrader",
-                "NinjaTrader", "N8N", "Java", "Go", ".NET", "Node.js", "Rust", "R", "MATLAB",
-                "ChartInk", "Excel", "Google Sheets", "OpenClaw", "Hermes Agent",
-                "GrokBot", "Telegram", "WhatsApp"
-              ].map((platform) => (
-                <span
-                  key={platform}
-                  className="rounded-full border bg-surface-bright px-3 py-1.5 font-label text-label-md text-on-surface-variant transition-colors hover:border-outline-variant hover:text-on-surface"
+            <dl className="overflow-hidden rounded-3xl border bg-background text-start">
+              {integrationGroups.map(({ label, items }) => (
+                <div
+                  key={label}
+                  className="grid gap-3 border-b px-6 py-5 last:border-b-0 sm:grid-cols-[11rem_1fr] sm:items-baseline sm:gap-6"
                 >
-                  {platform}
-                </span>
+                  <dt className="font-label text-label-md uppercase text-on-surface">
+                    {label}
+                  </dt>
+                  <dd className="flex flex-wrap gap-2">
+                    {items.map((item) => (
+                      <span
+                        key={item}
+                        dir="ltr"
+                        className="rounded-full border bg-surface-bright px-3 py-1.5 font-label text-label-md text-on-surface-variant transition-colors hover:border-outline-variant hover:text-on-surface"
+                      >
+                        {item}
+                      </span>
+                    ))}
+                  </dd>
+                </div>
               ))}
-            </div>
+            </dl>
           </div>
         </div>
       </section>

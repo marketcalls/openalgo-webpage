@@ -29,6 +29,10 @@ const dict = {
   'hero.ctaGetStarted': 'Começar',
   'hero.ctaGithub': 'GitHub',
   'hero.integrates': 'Integra com',
+  'hero.intPlatforms': 'Plataformas de trading',
+  'hero.intSdk': 'SDK',
+  'hero.intAgents': 'Agentes',
+  'hero.intAlerts': 'Alertas',
 
   'platform.kicker': 'Uma plataforma, várias mesas',
   'platform.title': 'Não é apenas uma plataforma de trading algorítmico.',
