@@ -1959,7 +1959,7 @@ const dict = {
   'home.int.11Desc': "Interface web NextJS + ShadcnUI",
   'home.int.12Desc': "Extension de navigateur pour OpenAlgo",
   'home.int.13Desc': "Application haute performance (Rust + Tauri)",
-  'home.int.14Desc': "Moteur graphique sur canvas HTML5 sans dépendance, 137,53 kB Brotli",
+  'home.int.14Desc': "Moteur graphique sur canvas HTML5 sans dépendance, 141,88 kB Brotli",
   'home.int.15Desc': "Analytique de portefeuille pour les quants - Quant Tearsheets",
   'home.int.16Desc': "Carte thermique de marché style Finviz (composant React)",
   'home.int.17Desc': "Agrégateur de données boursières en temps réel avec graphiques TradingView",

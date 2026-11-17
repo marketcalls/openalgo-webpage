@@ -1968,7 +1968,7 @@ const en = {
   "home.int.11Desc": "NextJS + ShadcnUI web interface",
   "home.int.12Desc": "Browser extension for OpenAlgo",
   "home.int.13Desc": "High-performance app (Rust + Tauri)",
-  "home.int.14Desc": "Dependency-free HTML5 canvas charting engine, 137.53 kB Brotli",
+  "home.int.14Desc": "Dependency-free HTML5 canvas charting engine, 141.88 kB Brotli",
   "home.int.15Desc": "Portfolio analytics for quants - Quant Tearsheets",
   "home.int.16Desc": "Finviz-style market heatmap (React Component)",
   "home.int.17Desc": "Realtime Stock Data Aggregator with TradingView Charts",

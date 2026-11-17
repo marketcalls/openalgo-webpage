@@ -2009,7 +2009,7 @@ const dict = {
   'home.int.11Desc': "NextJS + ShadcnUI ওয়েব ইন্টারফেস",
   'home.int.12Desc': "OpenAlgo-এর জন্য ব্রাউজার এক্সটেনশন",
   'home.int.13Desc': "হাই-পারফরম্যান্স অ্যাপ (Rust + Tauri)",
-  'home.int.14Desc': "ডিপেন্ডেন্সি-মুক্ত HTML5 ক্যানভাস চার্টিং ইঞ্জিন, 137.53 kB Brotli",
+  'home.int.14Desc': "ডিপেন্ডেন্সি-মুক্ত HTML5 ক্যানভাস চার্টিং ইঞ্জিন, 141.88 kB Brotli",
   'home.int.15Desc': "কোয়ান্টদের জন্য পোর্টফোলিও অ্যানালিটিক্স - Quant Tearsheets",
   'home.int.16Desc': "Finviz-স্টাইল মার্কেট হিটম্যাপ (React Component)",
   'home.int.17Desc': "TradingView চার্টসহ রিয়েলটাইম স্টক ডেটা অ্যাগ্রিগেটর",

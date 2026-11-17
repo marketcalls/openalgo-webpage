@@ -1975,7 +1975,7 @@ const dict = {
   'home.int.11Desc': "NextJS + ShadcnUI வெப் இடைமுகம்",
   'home.int.12Desc': "OpenAlgo-க்கான ப்ரவுசர் எக்ஸ்டென்ஷன்",
   'home.int.13Desc': "உயர்-செயல்திறன் ஆப் (Rust + Tauri)",
-  'home.int.14Desc': "சார்புகளற்ற HTML5 கேன்வாஸ் சார்ட்டிங் என்ஜின், 137.53 kB Brotli",
+  'home.int.14Desc': "சார்புகளற்ற HTML5 கேன்வாஸ் சார்ட்டிங் என்ஜின், 141.88 kB Brotli",
   'home.int.15Desc': "குவான்ட்களுக்கான போர்ட்ஃபோலியோ அனலிட்டிக்ஸ் - குவான்ட் டியர்ஷீட்கள்",
   'home.int.16Desc': "Finviz-பாணி மார்க்கெட் ஹீட்மேப் (React காம்போனென்ட்)",
   'home.int.17Desc': "TradingView சார்ட்களுடன் ரியல்டைம் ஸ்டாக் டேட்டா அக்ரிகேட்டர்",

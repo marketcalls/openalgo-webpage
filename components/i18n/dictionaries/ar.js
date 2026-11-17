@@ -1961,7 +1961,7 @@ const dict = {
   'home.int.11Desc': "واجهة ويب مبنية بـ NextJS + ShadcnUI",
   'home.int.12Desc': "إضافة متصفح لـ OpenAlgo",
   'home.int.13Desc': "تطبيق عالي الأداء (Rust + Tauri)",
-  'home.int.14Desc': "محرك رسوم بيانية HTML5 canvas بدون تبعيات، بحجم 137.53 kB بضغط Brotli",
+  'home.int.14Desc': "محرك رسوم بيانية HTML5 canvas بدون تبعيات، بحجم 141.88 kB بضغط Brotli",
   'home.int.15Desc': "تحليلات المحافظ للمحللين الكميين - Quant Tearsheets",
   'home.int.16Desc': "خريطة حرارية للسوق بأسلوب Finviz (مكوّن React)",
   'home.int.17Desc': "مجمّع بيانات الأسهم في الوقت الفعلي مع رسوم TradingView البيانية",
