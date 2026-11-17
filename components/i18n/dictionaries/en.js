@@ -1904,7 +1904,7 @@ const en = {
   'charts.tier.trade': 'Order tickets and depth ladder',
   'charts.tier.webgl': 'GPU series rendering',
   'charts.tier.workspace': 'Saved workspaces, templates and watchlists',
-  'charts.size.note': 'Brotli, measured on the 2.7.1 release build. One createWidget call, which is the full terminal, loads 374.92 kB, and the panels a user opens later (21.00 kB) load the first time they are needed. Every tier at once is 437.73 kB.',
+  'charts.size.note': 'Brotli, measured on the 2.7.3 release build. One createWidget call, which is the full terminal, loads 380.39 kB, and the panels a user opens later (21.04 kB) load the first time they are needed. Every tier at once is 444.07 kB.',
   'charts.install.kicker': 'Get started',
   'charts.install.title': 'Three steps to a chart',
   'charts.install.sub': 'The only thing the engine needs from you is bars. Everything else has a default.',

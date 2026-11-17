@@ -31,12 +31,12 @@ import {
  */
 
 /**
- * Every figure on this page is measured from the published 2.7.1 build, not
+ * Every figure on this page is measured from the published 2.7.3 build, not
  * recalled: `npm run size` for the brotli sizes and the tier registries at
  * runtime for the counts. A marketing page that overstates a bundle size is the
  * one claim a developer will check first.
  */
-const VERSION = "2.7.1"
+const VERSION = "2.7.3"
 const REPO = "https://github.com/marketcalls/openalgo-charts"
 const DOCS = "https://marketcalls.github.io/openalgo-charts"
 const NPM = "https://www.npmjs.com/package/openalgo-charts"
@@ -65,15 +65,15 @@ const FEATURES = [
  * what you draw. Sizes are brotli, the figure a browser actually pulls.
  */
 const TIERS = [
-  { name: "openalgo-charts", size: "140.06 kB", descKey: "charts.tier.base" },
-  { name: "/indicators", size: "44.85 kB", descKey: "charts.tier.indicators" },
-  { name: "/draw", size: "60.44 kB", descKey: "charts.tier.draw" },
-  { name: "/widget", size: "129.58 kB", descKey: "charts.tier.widget" },
-  { name: "/profile", size: "20.83 kB", descKey: "charts.tier.profile" },
-  { name: "/transform", size: "6.38 kB", descKey: "charts.tier.transform" },
-  { name: "/trade", size: "16.88 kB", descKey: "charts.tier.trade" },
+  { name: "openalgo-charts", size: "141.88 kB", descKey: "charts.tier.base" },
+  { name: "/indicators", size: "45.10 kB", descKey: "charts.tier.indicators" },
+  { name: "/draw", size: "61.86 kB", descKey: "charts.tier.draw" },
+  { name: "/widget", size: "131.55 kB", descKey: "charts.tier.widget" },
+  { name: "/profile", size: "20.96 kB", descKey: "charts.tier.profile" },
+  { name: "/transform", size: "6.55 kB", descKey: "charts.tier.transform" },
+  { name: "/trade", size: "17.29 kB", descKey: "charts.tier.trade" },
   { name: "/webgl", size: "6.99 kB", descKey: "charts.tier.webgl" },
-  { name: "/workspace", size: "11.73 kB", descKey: "charts.tier.workspace" },
+  { name: "/workspace", size: "11.89 kB", descKey: "charts.tier.workspace" },
 ]
 
 
