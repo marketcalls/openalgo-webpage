@@ -4,7 +4,7 @@ export const defaultMetadata = {
     default: 'OpenAlgo - Open Source Trading Platform for Algo and Options Traders',
     template: '%s | OpenAlgo'
   },
-  description: 'OpenAlgo is an open-source, self-hosted trading platform for algo, options and discretionary traders in Indian markets. Automate from TradingView, Amibroker or Python, build strategies with no code, trade options from the chain to multi-leg execution, and chart, scalp and test in Sandbox mode across 35+ brokers.',
+  description: 'OpenAlgo is an open-source, self-hosted trading platform for algo, options and discretionary traders in Indian markets. Automate from TradingView, Amibroker or Python, build strategies with no code, trade options from the chain to multi-leg execution, and chart, scalp and test in Sandbox mode across 38+ brokers.',
   keywords: ['algo trading', 'algorithmic trading', 'options analytics', 'options trading', 'strategy builder', 'option chain', 'Greeks', 'open interest', 'max pain', 'vol surface', 'GEX', 'trading platform', 'Indian markets', 'Amibroker', 'TradingView', 'Python trading'],
   authors: [{ name: 'OpenAlgo' }],
   creator: 'OpenAlgo',
@@ -19,7 +19,7 @@ export const defaultMetadata = {
     locale: 'en_US',
     url: 'https://openalgo.in',
     title: 'OpenAlgo - Open Source Trading Platform for Algo and Options Traders',
-    description: 'OpenAlgo is an open-source, self-hosted trading platform for algo, options and discretionary traders in Indian markets. Automate from TradingView, Amibroker or Python, build strategies with no code, trade options from the chain to multi-leg execution, and chart, scalp and test in Sandbox mode across 35+ brokers.',
+    description: 'OpenAlgo is an open-source, self-hosted trading platform for algo, options and discretionary traders in Indian markets. Automate from TradingView, Amibroker or Python, build strategies with no code, trade options from the chain to multi-leg execution, and chart, scalp and test in Sandbox mode across 38+ brokers.',
     siteName: 'OpenAlgo',
     images: [{
       url: 'https://openalgo.in/assets/images/og-image.png',
@@ -32,7 +32,7 @@ export const defaultMetadata = {
   twitter: {
     card: 'summary_large_image',
     title: 'OpenAlgo - Open Source Trading Platform for Algo and Options Traders',
-    description: 'OpenAlgo is an open-source, self-hosted trading platform for algo, options and discretionary traders in Indian markets. Automate from TradingView, Amibroker or Python, build strategies with no code, trade options from the chain to multi-leg execution, and chart, scalp and test in Sandbox mode across 35+ brokers.',
+    description: 'OpenAlgo is an open-source, self-hosted trading platform for algo, options and discretionary traders in Indian markets. Automate from TradingView, Amibroker or Python, build strategies with no code, trade options from the chain to multi-leg execution, and chart, scalp and test in Sandbox mode across 38+ brokers.',
     images: {
       url: 'https://openalgo.in/assets/images/og-image.png',
       width: 1200,

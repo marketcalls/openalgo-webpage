@@ -27,7 +27,7 @@ const en = {
   'hero.h1a': 'Your personal',
   'hero.h1b': 'trading platform.',
   'hero.desc':
-    'For algo, options and discretionary traders. Automate from TradingView, Amibroker or Python, or build strategies with no code. Trade options from the chain to multi-leg execution with built-in risk management. Chart, scalp and test in Sandbox mode, across 35+ brokers on your own server.',
+    'For algo, options and discretionary traders. Automate from TradingView, Amibroker or Python, or build strategies with no code. Trade options from the chain to multi-leg execution with built-in risk management. Chart, scalp and test in Sandbox mode, across 38+ brokers on your own server.',
   'hero.statDownloads': 'Downloads',
   'hero.statOpenSource': 'Open source',
   'hero.statStars': 'GitHub stars',
@@ -85,7 +85,7 @@ const en = {
   'why.h3t': 'Complete privacy & control',
   'why.h3d': 'Your code, your strategies, your data. Nothing leaves your infrastructure.',
   'why.h4t': 'Multi-platform support',
-  'why.h4d': 'Integrate with 35+ brokers. Use from Python, TradingView, Excel, and more.',
+  'why.h4d': 'Integrate with 38+ brokers. Use from Python, TradingView, Excel, and more.',
 
   // Trust indicators
   'trust.t1': '100% open source',
@@ -140,7 +140,7 @@ const en = {
   'values.v1t': 'Truly independent',
   'values.v1d':
     'No vendor lock-in. No hidden dependencies. Switch brokers anytime. Your strategies work everywhere. One API, multiple brokers.',
-  'values.v1i1': 'Unified API across 35+ brokers',
+  'values.v1i1': 'Unified API across 38+ brokers',
   'values.v1i2': 'Strategy portability guaranteed',
   'values.v1i3': 'No proprietary formats or protocols',
   'values.v2t': 'Community first',
@@ -354,7 +354,7 @@ const en = {
 
   // Features page
   'feat.title': "Platform Features",
-  'feat.desc': "OpenAlgo is a complete self-hosted stack for algo trading and options analytics - an 18-tool options and portfolio suite, a unified execution engine, and integrations across 35+ brokers, built for individual traders who want full control of their infrastructure.",
+  'feat.desc': "OpenAlgo is a complete self-hosted stack for algo trading and options analytics - an 18-tool options and portfolio suite, a unified execution engine, and integrations across 38+ brokers, built for individual traders who want full control of their infrastructure.",
   'feat.cat.openscript': "OpenScript",
   'feat.cat.optionsAnalytics': "Options Analytics",
   'feat.cat.aiSkills': "AI & Skills",
@@ -435,7 +435,7 @@ const en = {
   'feat.f31d': "GoCharting alerts and indicators can trigger live orders through OpenAlgo - Indian-market-native charting meets automation",
   'feat.f32t': "Multi-Platform Trading",
   'feat.f32d': "Trade from Amibroker, TradingView, Python, MetaTrader, Excel, or Google Sheets - OpenAlgo is the bridge to your broker",
-  'feat.f33t': "35+ Broker Support",
+  'feat.f33t': "38+ Broker Support",
   'feat.f33d': "Connect seamlessly with India's top broking platforms across discount, full-service, and emerging brokers",
   'feat.f34t': "Trade By Chatting (MCP)",
   'feat.f34d': "Connect your OpenAlgo account to Claude, Cursor, Windsurf, or ChatGPT and place orders, check positions, and pull live prices just by asking",
@@ -1222,7 +1222,7 @@ const en = {
   'gs.what.factsLabel': "Key Facts",
   'gs.what.fact1': "Single-user application: one instance, one broker",
   'gs.what.fact2': "No inbuilt strategies: you bring your own ideas",
-  'gs.what.fact3': "35+ Indian brokers supported (and growing)",
+  'gs.what.fact3': "38+ Indian brokers supported (and growing)",
   'gs.what.fact4': "You can vibe code your strategies using AI tools",
   'gs.what.fact5': "100% free, 100% open source (AGPL-3.0)",
   'gs.what.fact6': "Runs on Windows, Mac, Linux, even Raspberry Pi",
@@ -1303,7 +1303,7 @@ const en = {
   'gs.auth.ipHow3': "for step by step instructions.",
   'gs.connect.title': "What Can You Connect?",
   'gs.connect.sub': "One platform, many integrations. Trade from wherever you're comfortable.",
-  'gs.connect.brokersTitle': "35+ Supported Brokers",
+  'gs.connect.brokersTitle': "38+ Supported Brokers",
   'gs.connect.more': "and more...",
   'gs.connect.platformsTitle': "Trading Platforms",
   'gs.connect.p1d': "Charting & AFL strategies",
@@ -1315,7 +1315,7 @@ const en = {
   'gs.connect.p7d': "Workflow automation",
   'gs.connect.p8d': "Sheet-based trading",
   'gs.connect.sdkTitle': "SDKs in 8 Languages",
-  'gs.connect.sdkDesc': "Most brokers offer SDKs in 1 or 2 languages. OpenAlgo gives you SDKs in 8. Use whichever language you're comfortable with, and it works across all 35+ brokers.",
+  'gs.connect.sdkDesc': "Most brokers offer SDKs in 1 or 2 languages. OpenAlgo gives you SDKs in 8. Use whichever language you're comfortable with, and it works across all 38+ brokers.",
   'gs.install.title': "Getting Started",
   'gs.install.sub': "One-time setup. 5 minutes for techies, ~45 minutes if you're completely new.",
   'gs.install.s1title': "Step 1: Install VS Code",

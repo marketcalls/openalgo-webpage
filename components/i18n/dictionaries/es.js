@@ -22,7 +22,7 @@ const dict = {
   'hero.h1a': 'Tu plataforma personal',
   'hero.h1b': 'de trading.',
   'hero.desc':
-    'Para traders algorítmicos, de opciones y discrecionales. Automatiza desde TradingView, Amibroker o Python, o crea estrategias sin código. Opera opciones desde la cadena hasta la ejecución multi-leg con gestión de riesgo integrada. Gráficos, scalping y pruebas en modo Sandbox, con 35+ brokers y en tu propio servidor.',
+    'Para traders algorítmicos, de opciones y discrecionales. Automatiza desde TradingView, Amibroker o Python, o crea estrategias sin código. Opera opciones desde la cadena hasta la ejecución multi-leg con gestión de riesgo integrada. Gráficos, scalping y pruebas en modo Sandbox, con 38+ brokers y en tu propio servidor.',
   'hero.statDownloads': 'Descargas',
   'hero.statOpenSource': 'Código abierto',
   'hero.statStars': 'Estrellas en GitHub',
@@ -81,7 +81,7 @@ const dict = {
   'why.h3t': 'Privacidad y control totales',
   'why.h3d': 'Tu código, tus estrategias, tus datos. Nada sale de tu infraestructura.',
   'why.h4t': 'Soporte multiplataforma',
-  'why.h4d': 'Intégrate con 35+ brokers. Úsalo desde Python, TradingView, Excel y más.',
+  'why.h4d': 'Intégrate con 38+ brokers. Úsalo desde Python, TradingView, Excel y más.',
 
   'trust.t1': '100% código abierto',
   'trust.t2': 'Licencia AGPL-3.0',
@@ -131,7 +131,7 @@ const dict = {
   'values.v1t': 'Verdaderamente independiente',
   'values.v1d':
     'Sin dependencia de proveedores. Sin dependencias ocultas. Cambia de broker cuando quieras. Tus estrategias funcionan en todas partes. Una API, múltiples brokers.',
-  'values.v1i1': 'API unificada para 35+ brokers',
+  'values.v1i1': 'API unificada para 38+ brokers',
   'values.v1i2': 'Portabilidad de estrategias garantizada',
   'values.v1i3': 'Sin formatos ni protocolos propietarios',
   'values.v2t': 'La comunidad primero',
@@ -372,7 +372,7 @@ const dict = {
 
   // Batch B
   'feat.title': "Funciones de la plataforma",
-  'feat.desc': "OpenAlgo es un stack completo y autoalojado para trading algorítmico y análisis de opciones - una suite de opciones con 18 herramientas, un motor de ejecución unificado e integraciones con 35+ brokers, creado para traders individuales que quieren control total de su infraestructura.",
+  'feat.desc': "OpenAlgo es un stack completo y autoalojado para trading algorítmico y análisis de opciones - una suite de opciones con 18 herramientas, un motor de ejecución unificado e integraciones con 38+ brokers, creado para traders individuales que quieren control total de su infraestructura.",
   'feat.cat.openscript': "OpenScript",
   'feat.cat.optionsAnalytics': "Análisis de opciones",
   'feat.cat.aiSkills': "IA y habilidades",
@@ -453,7 +453,7 @@ const dict = {
   'feat.f31d': "Las alertas e indicadores de GoCharting pueden activar órdenes en vivo a través de OpenAlgo - un charting nativo del mercado indio se encuentra con la automatización",
   'feat.f32t': "Trading multiplataforma",
   'feat.f32d': "Opera desde Amibroker, TradingView, Python, MetaTrader, Excel o Google Sheets - OpenAlgo es el puente hacia tu broker",
-  'feat.f33t': "Soporte para 35+ brokers",
+  'feat.f33t': "Soporte para 38+ brokers",
   'feat.f33d': "Conéctate sin fricciones con las principales plataformas de brokers de India, entre brokers de descuento, de servicio completo y emergentes",
   'feat.f34t': "Opera conversando (MCP)",
   'feat.f34d': "Conecta tu cuenta de OpenAlgo a Claude, Cursor, Windsurf o ChatGPT y coloca órdenes, revisa posiciones y consulta los últimos precios con solo pedirlo",
